@@ -28,8 +28,11 @@ import DoorSetAjax from '@/pages/doorControl/utils/DoorAccessSetHttp.js';
 
 import ResidentHttp from '@/pages/residentManage/utils/ResidentHttp.js';
 import LoginAjax from '@/pages/login/utils/LoginAjax.js';
+
 Vue.prototype.$echarts = echarts;
+
 Vue.prototype.$http = Axios;
+
 Vue.config.productionTip = false;
 
 Vue.use(Vuex);

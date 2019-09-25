@@ -41,6 +41,7 @@
               <el-upload class="uploadClass"
                          :action="updateFileImage"
                          :show-file-list="false"
+                         accept="image/jpg,image/jpeg"
                          :headers="myHeaders"
                          :auto-upload="true"
                          :http-request="httpRequest">
@@ -612,7 +613,7 @@
 </template>
 
 <script>
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 import tagView from "@/common/Tag.vue";
 import tabTreeTag from "@/common/TabTreeTag.vue";
 import personTreeTag from "@/common/personTreeTag";
@@ -909,24 +910,23 @@ export default {
       // 把canvas图像转为img图片
       this.shootPhotoShow = true;
       this.img = document.getElementById("img");
-      this.img.src = canvas.toDataURL("image/jpg");
-      this.imageUrl = canvas.toDataURL("image/jpg");
+      this.img.src = canvas.toDataURL("image/jpeg");
+      this.imageUrl = canvas.toDataURL("image/jpeg");
       this.fileData = this.imageUrl
         .replace("data:image/jpeg;base64,", "jpeg:")
         .replace("data:image/png;base64,", "png:")
         .replace("data:image/jpg;base64,", "jpg:");
+
       this.getFaceQualityDetection(this.fileData);
       this.shootPhotoDialogVisible = false;
-      //   console.log(this.imageUrl);
+      // console.log(this.imageUrl);
     },
     // 调取摄像头
     shootPhoto() {
       this.canvas = document.getElementById("canvas");
       var _this = this;
       _this.shootPhotoDialogVisible = true;
-
       _this.shootPhotoShow = false;
-
       setTimeout(() => {
         _this.video = document.getElementById("video");
         // 媒体对象
@@ -996,7 +996,7 @@ export default {
     httpRequest(e) {
       //   this.fileData = e.file;
       console.log(e.file.type);
-      if (e.file.type === "image/jpg") {
+      if (e.file.type === "image/jpg" || e.file.type === "image/jpeg") {
         var reader = new FileReader();
         reader.readAsDataURL(e.file);
         this.imageUrl = URL.createObjectURL(e.file);
@@ -1282,7 +1282,7 @@ export default {
         if (val.visitorAuthList && val.visitorAuthList.length) {
           val.visitorAuthList.forEach(element => {
             element.id = element.groupUuid;
-            element.label = element.groupUuid;
+            element.label = element.groupName;
             this.visitorAuthList.push(element);
             this.dynamicVistorAuthTags.push(element);
           });

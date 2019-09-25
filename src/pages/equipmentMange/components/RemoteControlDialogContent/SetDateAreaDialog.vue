@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 import AddAccessCaseDialog from "@/pages/doorControl/components/doorAccessConfig/AddAccessCaseDialog";
 import ConfirmDialog from "@/common/ConfirmDialog";
 import * as api from "@/pages/doorControl/utils/ajax.js";

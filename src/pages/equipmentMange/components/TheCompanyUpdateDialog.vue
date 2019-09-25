@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 import * as api from "@/pages/equipmentMange/ajax.js";
 export default {
   name: "TreeChangeNameDialog.vue",
@@ -175,7 +175,7 @@ export default {
       // }
       this.uploader = new plupload.Uploader({
         browse_button: "selectFile", // 这里填写触发元素的按钮ID
-        url: api.getUpgradeUrl() + `?deviceUuidArr=${this.url}`, //上传的地址
+        url: api.getNewUpgradeUrl(), //上传的地址
         // url: "${window.config.protocolHeader}192.168.9.166:9220/v1/face/escaped/pluploadUpload",
         multi_selection: false,
         headers: {
@@ -189,10 +189,10 @@ export default {
           max_file_size: "2000000mb",
           mime_types: [
             //只允许上传图片和zip文件
-            { title: "Zip files", extensions: "zip,rar" }
+            { title: "Zip files", extensions: "zip,rar,upf" }
           ]
         },
-        file_data_name: "multipartFile",
+        file_data_name: "file",
         init: {
           FileFiltered(up, file) {
             console.log(file);
@@ -230,6 +230,7 @@ export default {
             let res = JSON.parse(responseObject.response);
             if (res.success) {
               // _this.$message.success("文件上传成功！");
+              _this.upgradeAfterUp(res.data);
               _this.upgradeProgress();
             } else {
               _this.$message.error("文件上传失败！");
@@ -253,6 +254,14 @@ export default {
       });
       this.uploader.init();
       /* eslint-enable */
+    },
+    upgradeAfterUp(fileUrl) {
+      api
+        .getUpgradeUrl({
+          deviceUuidArr: this.url,
+          fileUrl
+        })
+        .then();
     },
     research() {
       this.upgradeProgress();

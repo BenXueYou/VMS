@@ -8,12 +8,31 @@ import sbUrl from "@/utils/restApi/equipment";
 import pmUrl from "@/utils/restApi/permission";
 import vistorManageApi from "@/utils/restApi/vistorManageApi";
 import store from '@/store/store.js';
+import axios from "@/utils/Request";
 export default {
   api: {
     /**
      * 图片下载地址
      */
     imageUrl:window.config.protocolHeader+window.config.ip+`/fileforward-server-v1/project/${store.state.home.projectUuid}/fileforward/fileByUrl?fileUrl=`,
+    imageHeadUrl(param){
+       let url = window.config.protocolHeader+window.config.ip+`/fileforward-server-v1/project/${store.state.home.projectUuid}/fileforward/fileByUrl?fileUrl=${param}`;
+      //  let api = 'http://192.168.9.44:15000/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=http://192.168.9.44:9333/11,02821297cc4772.jpeg';
+       function getData() {
+         return axios({method: 'get', url: url});
+       }
+
+       async function httpUrl() {
+          await getData().then(res => {
+           return res.data;
+         }).catch(err => {
+           console.log(err);
+         });
+       }
+       let resData = httpUrl();
+       console.log(resData);
+       if(resData) resData
+    },
     /**
      * 全部翻译获取接口
      */

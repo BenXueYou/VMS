@@ -11,6 +11,7 @@
     </keep-alive>
     <the-company-edit-equipment-dialog v-show="isShowEdit"
                                        :row="row"
+                                       :isVideo="viewType==='video'"
                                        :deviceTypeArr="deviceTypeArr"
                                        :localService="localService"
                                        :visible="isShowEdit"
@@ -51,12 +52,14 @@ export default {
       isShowEdit: false,
       editEquipMentDialgoVisible: true,
       row: {},
-      deviceUuid: ""
+      deviceUuid: "",
+      viewType: "door"
     };
   },
   methods: {
-    serverList(arr) {
+    serverList(arr, viewType) {
       this.localService = arr;
+      this.viewType = viewType;
     },
     changeDevTypeArr(arr) {
       this.deviceTypeArr = arr;

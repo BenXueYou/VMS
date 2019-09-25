@@ -193,7 +193,7 @@
 </template>
 <script>
 import TabTreeTag from "@/common/TabTreeTag.vue";
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 export default {
   components: { TabTreeTag },
   props: {},

@@ -4,13 +4,19 @@ import Router from "vue-router";
 import Login from "@/pages/login/Login";
 import MainLayout from "@/pages/main/views/MainLayout";
 import Home from "@/pages/home/views/Home";
+import projectManage from "@/pages/projectManage/projectManage";
+import VistorMangeSubRoute from "@/pages/vistorMange/VistorMange";
+// 子系统系统路由
+import vistorManage from './modules/vistorManage';
 import unitManage from './modules/unitManage';
 import resident from './modules/resident';
 import personManage from './modules/personManage';
 import equipmentManage from './modules/equipmentManage';
 import doorAccess from './modules/doorAccess';
 import buildingHouse from './modules/buildingHouse';
+
 Vue.use(Router);
+
 export const constantRouterMap = [
   {
     path: "/",
@@ -42,6 +48,15 @@ export const constantRouterMap = [
         icon: "personMange",
         type: "config"
       },
+      {
+        path: "/VistorMange",
+        name: "VistorMange",
+        component: VistorMangeSubRoute,
+        title: "访客管理",
+        children: vistorManage,
+        icon: "vistorMange",
+        type: "app"
+      }, 
       {
         path: "/EquipmentMange",
         name: "EquipmentMange",
@@ -80,6 +95,11 @@ export const constantRouterMap = [
     path: "/Login",
     name: "Login",
     component: Login
+  },
+  {
+    path: "/projectManage",
+    name: "projectManage",
+    component: projectManage
   }
 ];
 

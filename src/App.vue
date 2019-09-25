@@ -1,8 +1,8 @@
 <template>
-  <div id="app">
-    <!-- <router-view v-if="isRouterAlive"/> -->
-    <router-view />
-  </div>
+	<div id="app">
+		<!-- <router-view v-if="isRouterAlive"/> -->
+		<router-view />
+	</div>
 </template>
 
 <script>
@@ -66,14 +66,15 @@ export default {
 <style>
 html,
 body {
-  padding: 0px;
-  margin: 0px;
-  height: 100%;
+	padding: 0px;
+	margin: 0px;
+	height: 100%;
 }
 #app {
-  height: 100%;
-  /* min-width: 1920px; */
-  overflow-x: auto;
-  margin: auto;
+	height: 100%;
+	/* min-width: 1920px; */
+	overflow-x: auto;
+	margin: auto;
+	background: #1b1b1b;
 }
 </style>

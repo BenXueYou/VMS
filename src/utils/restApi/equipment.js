@@ -97,6 +97,10 @@ export default {
   deleteFailTaskUrl: `${xfPrefix}issueTask`,
   // 远程控制 设备升级那块
   upgradeDeviceUrl: `${zwzPrefix}operation/operation/upgrade`,
+  // 远程控制 新的接口
+  newUpgradeDeviceUrl: `${
+    window.config.protocolHeader
+  }${ip}/zuul/fileforward-server-v1/project/system/fileforward/forwardFileToFileSystem`,
   // 数据备份
   dataBackupUrl: deviceUuid =>
     `${zwzPrefix}operation/operation/dataBackup/device/${deviceUuid}`,
@@ -147,9 +151,15 @@ export default {
   judgeTaskUrl: `${xfPrefix}checkConfigIssue`,
   // 获取本地服务列表
   serviceListUrl: `${sbPrefix}belong/server/list`,
+
+  // 获取设备类型列表
+  deviceTypeListUrl: `${sbPrefix}device/hand/view`,
+
   // 同步通道
   syncChannelUrl: `${sbPrefix}channel/hand`,
   // 手动添加设备
   manualEquipmentUrl: `${sbPrefix}device/hand`,
-  judgeRepeatCardUrl:`${wyfPrefix}info/exist`
+  // 获取设备类型
+  DTypetUrl: `${sbPrefix}device/hand/view`,
+  judgeRepeatCardUrl: `${wyfPrefix}info/exist`
 };

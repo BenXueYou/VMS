@@ -49,39 +49,45 @@
 
         <el-form-item label="设备端口号："
                       v-if="isLocal">
-          <el-input v-model.trim="ruleForm.devPort"
+          <el-input v-model.trim="ruleForm.devicePort"
                     size="samll"></el-input>
         </el-form-item>
 
         <el-form-item label="用户名："
                       v-if="isLocal">
-          <el-input v-model.trim="ruleForm.username"
+          <el-input v-model.trim="ruleForm.deviceUsername"
                     size="samll"></el-input>
         </el-form-item>
 
         <el-form-item label="密码："
                       v-if="isLocal">
-          <el-input v-model.trim="ruleForm.password"
+          <el-input v-model.trim="ruleForm.devicePassword"
                     size="samll"></el-input>
         </el-form-item>
 
         <el-form-item label="所属子服务："
                       v-if="isLocal">
-          <el-select v-model="ruleForm.service"
+          <el-select v-model="ruleForm.belongServiceUuid"
                      @change="changeOptions"
-                     style="width:100%;"
                      placeholder="请选择">
-            <el-option v-for="item in options"
+            <el-option v-for="item in localService"
+                       :key="item.value"
+                       :label="item.belongServiceName"
+                       :value="item.belongServiceUuid"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 上面都是新增的 -->
+        <el-form-item label="设备类型："
+                      prop="deviceType">
+          <el-select v-model="ruleForm.deviceType"
+                     placeholder="请选择">
+            <el-option v-for="item in deviceTypeArr"
                        :key="item.value"
                        :label="item.label"
                        :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
-        <!-- 上面都是新增的 -->
-        <el-form-item label="设备型号："
-                      prop="devMode">
-          <el-input v-model="ruleForm.devMode"
-                    readonly></el-input>
+          <!-- <el-input v-model="ruleForm.deviceType"
+                    readonly></el-input> -->
         </el-form-item>
 
         <el-form-item label="组织结构："
@@ -102,6 +108,11 @@
                                     @setUseData="setHouseData" />
         </el-form-item>
 
+        <el-form-item label="1400上传国标码"
+                      prop="gBCode">
+          <el-input v-model.trim="ruleForm.gBCode"
+                    size="samll"></el-input>
+        </el-form-item>
         <el-form-item label="设备描述："
                       prop="desc">
           <el-input v-model.trim="ruleForm.desc"
@@ -124,6 +135,33 @@
              :key="index">
           <label class="label">门{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
+          <label class="label"
+                 v-if="isVideo&&isLocal">通道类型：</label>
+          <el-select v-model="item.channelType"
+                     v-if="isVideo&&isLocal"
+                     placeholder="请选择">
+            <el-option v-for="item in options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label"
+                 v-if="isVideo&&isLocal">能力：</label>
+          <el-select v-model="item.ability"
+                     style='width:230px;'
+                     placeholder="请选择"
+                     @change="gogo"
+                     v-if="isVideo&&isLocal"
+                     multiple>
+            <el-option v-for="item in abilityOption"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label">通道国标码</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(1,index,x)"
@@ -137,6 +175,7 @@
               选择标签
             </el-button>
           </div>
+
         </div>
       </div>
 
@@ -152,6 +191,33 @@
              :key="index">
           <label class="label">读头{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
+          <label class="label"
+                 v-if="isVideo&&isLocal">通道类型：</label>
+          <el-select v-model="item.channelType"
+                     v-if="isVideo&&isLocal"
+                     placeholder="请选择">
+            <el-option v-for="item in options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label"
+                 v-if="isVideo&&isLocal">能力：</label>
+          <el-select v-model="item.ability"
+                     style='width:230px;'
+                     placeholder="请选择"
+                     v-if="isVideo&&isLocal"
+                     multiple
+                     @change="gogo">
+            <el-option v-for="item in abilityOption"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label">通道国标码</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(2,index,x)"
@@ -180,6 +246,33 @@
              :key="index">
           <label class="label">报警输入{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
+          <label class="label"
+                 v-if="isVideo&&isLocal">通道类型：</label>
+          <el-select v-model="item.channelType"
+                     v-if="isVideo&&isLocal"
+                     placeholder="请选择">
+            <el-option v-for="item in options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label"
+                 v-if="isVideo&&isLocal">能力：</label>
+          <el-select v-model="item.ability"
+                     style='width:230px;'
+                     placeholder="请选择"
+                     v-if="isVideo&&isLocal"
+                     @change="gogo"
+                     multiple>
+            <el-option v-for="item in abilityOption"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label">通道国标码</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(3,index,x)"
@@ -208,6 +301,33 @@
              :key="index">
           <label class="label">报警输出{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
+          <label class="label"
+                 v-if="isVideo&&isLocal">通道类型：</label>
+          <el-select v-model="item.channelType"
+                     v-if="isVideo&&isLocal"
+                     placeholder="请选择">
+            <el-option v-for="item in options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label"
+                 v-if="isVideo&&isLocal">能力：</label>
+          <el-select v-model="item.ability"
+                     style='width:230px;'
+                     placeholder="请选择"
+                     v-if="isVideo&&isLocal"
+                     @change="gogo"
+                     multiple>
+            <el-option v-for="item in abilityOption"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label">通道国标码</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(4,index,x)"
@@ -223,6 +343,119 @@
           </div>
         </div>
       </div>
+
+      <div class="section door"
+           v-if="ipc.length">
+        <div class="head">
+          <img :src="icons.door"
+               alt>
+          人脸抓拍相机
+        </div>
+        <div class="form-item"
+             v-for="(item,index) in ipc"
+             :key="index">
+          <label class="label">相机{{index+1}}：</label>
+          <el-input v-model="item.nickName"></el-input>
+          <label class="label"
+                 v-if="isVideo&&isLocal">通道类型：</label>
+          <el-select v-model="item.channelType"
+                     @change="gogo"
+                     v-if="isVideo&&isLocal"
+                     placeholder="请选择">
+            <el-option v-for="item in options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label"
+                 v-if="isVideo&&isLocal">能力：</label>
+          <el-select v-model="item.ability"
+                     style='width:230px;'
+                     placeholder="请选择"
+                     @change="gogo"
+                     v-if="isVideo&&isLocal"
+                     multiple>
+            <el-option v-for="item in abilityOption"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label">通道国标码</label>
+          <el-input v-model="item.gBCode"></el-input>
+          <div class="mytagWrap">
+            <gt-button class="button"
+                       @close="deleteTag(5,index,x)"
+                       v-for="(i,x) in item.tagPOList"
+                       :key="x">{{i.tagName}}</gt-button>
+            <el-button class="addIcon"
+                       type="primary"
+                       @click="chooseTag(5,index)"
+                       size="small">
+              <i class="el-icon-circle-plus-outline"></i>
+              选择标签
+            </el-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section door"
+           v-if="bullet_camera.length">
+        <div class="head">
+          <img :src="icons.door"
+               alt>
+          枪机
+        </div>
+        <div class="form-item"
+             v-for="(item,index) in bullet_camera"
+             :key="index">
+          <label class="label">枪机{{index+1}}：</label>
+          <el-input v-model="item.nickName"></el-input>
+          <label class="label"
+                 v-if="isVideo&&isLocal">通道类型：</label>
+          <el-select v-model="item.channelType"
+                     @change="gogo"
+                     v-if="isVideo&&isLocal"
+                     placeholder="请选择">
+            <el-option v-for="item in options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label"
+                 v-if="isVideo&&isLocal">能力：</label>
+          <el-select v-model="item.ability"
+                     style='width:230px;'
+                     placeholder="请选择"
+                     @change="gogo"
+                     v-if="isVideo&&isLocal"
+                     multiple>
+            <el-option v-for="item in abilityOption"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
+          <label class="label">通道国标码</label>
+          <el-input v-model="item.gBCode"></el-input>
+          <div class="mytagWrap">
+            <gt-button class="button"
+                       @close="deleteTag(6,index,x)"
+                       v-for="(i,x) in item.tagPOList"
+                       :key="x">{{i.tagName}}</gt-button>
+            <el-button class="addIcon"
+                       type="primary"
+                       @click="chooseTag(6,index)"
+                       size="small">
+              <i class="el-icon-circle-plus-outline"></i>
+              选择标签
+            </el-button>
+          </div>
+        </div>
+      </div>
+
       <person-tree-tag title="请选择要添加的标签"
                        rightTxt="已选择的标签"
                        :isShow.sync="isShow"
@@ -247,7 +480,7 @@ import PopoverTree from "@/common/selectOrgTree";
 // 这是楼栋房屋只到单元的下拉框树
 import BuildHousePopoverTree from "@/common/BuildHousePopoverTree2";
 import personTreeTag from "@/common/personTreeTag";
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 import * as api from "../ajax";
 export default {
   name: "TreeChangeNameDialog.vue",
@@ -257,6 +490,12 @@ export default {
     personTreeTag
   },
   props: {
+    isVideo: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     width: {
       type: String,
       default() {
@@ -287,6 +526,18 @@ export default {
         return false;
       }
     },
+    deviceTypeArr: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    localService: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
     center: {
       type: Boolean,
       default() {
@@ -305,7 +556,38 @@ export default {
       orgUuid: "",
       isLocal: false,
       service: "",
-      options: [],
+      options: [
+        {
+          value: "bullet_camera",
+          label: "枪机"
+        },
+        {
+          value: "dome_camera",
+          label: "半球机"
+        },
+        {
+          value: "ball_camera",
+          label: "球机"
+        },
+        {
+          value: "bullet_camera_ptz",
+          label: "带云台的枪机"
+        }
+      ],
+      abilityOption: [
+        {
+          value: "faceSnap",
+          label: "人脸"
+        },
+        {
+          value: "bodySnap",
+          label: "人体"
+        },
+        {
+          value: "vehicleSnap",
+          label: "车辆"
+        }
+      ],
       houseUuid: "", // 楼栋房屋的ID
       treeType: window.config.tagType,
       isShow: false,
@@ -316,19 +598,20 @@ export default {
         ip: "",
         tagSn: "",
         nickName: "",
-        devMode: "",
+        deviceType: "",
         oriz: "",
         build: "",
         desc: "",
+        gBCode: "",
         deviceIp: "",
         devicePort: "",
-        username: "",
-        password: ""
+        deviceUsername: "",
+        devicePassword: ""
       },
       rules: {
         nickName: [
           { required: true, message: "请输入设备名称", trigger: "blur" },
-          { min: 4, max: 32, message: "长度在 4 到 32 个字符", trigger: "blur" }
+          { min: 1, max: 32, message: "长度在 4 到 32 个字符", trigger: "blur" }
         ],
         desc: [
           { required: false, message: "请输入设备描述名称", trigger: "blur" },
@@ -339,7 +622,7 @@ export default {
             trigger: "blur"
           }
         ],
-        devMode: [
+        deviceType: [
           { required: false, message: "请选择设备型号", trigger: "change" }
         ],
         oriz: [
@@ -354,10 +637,12 @@ export default {
       dutouData: [],
       shuchuData: [],
       shuruData: [],
+      ipc: [],
       whichType: 1,
       whichIndex: 0,
       orgName: "",
-      houseName: ""
+      houseName: "",
+      bullet_camera: []
     };
   },
   mounted() {
@@ -365,11 +650,22 @@ export default {
     // this.name = this.value;
   },
   methods: {
+    gogo() {
+      this.ipc = this.ipc.concat();
+      this.bullet_camera = this.bullet_camera.concat();
+      this.doorData = this.doorData.concat();
+      this.dutouData = this.dutouData.concat();
+      this.shuchuData = this.shuchuData.concat();
+      this.shuruData = this.shuruData.concat();
+    },
     syncChannel() {
-      api.manualEquipment(this.deviceUuid).then(res => {
+      api.syncChannel(this.deviceUuid).then(res => {
         console.log(res);
         if (res.data.success) {
-          this.$emit("showEdit", false);
+          // 设备版本号 +1
+          this.ruleForm.version += 1;
+          this.$message.success("同步通道成功!");
+          console.log(this.ruleForm);
         }
       });
     },
@@ -384,6 +680,10 @@ export default {
         key = "shuruData";
       } else if (type === 4) {
         key = "shuchuData";
+      } else if (type === 5) {
+        key = "ipc";
+      } else if (type === 6) {
+        key = "bullet_camera";
       }
       console.log(key);
       this[key][i].tagPOList.splice(j, 1);
@@ -408,7 +708,13 @@ export default {
         key = "shuruData";
       } else if (this.whichType === 4) {
         key = "shuchuData";
+      } else if (this.whichType === 5) {
+        key = "ipc";
+      } else if (this.whichType === 6) {
+        key = "bullet_camera";
       }
+      console.log(key);
+      console.log(this.whichIndex);
       data = this[key][this.whichIndex].tagPOList;
       for (let i = 0; i < data.length; i++) {
         data[i].id = data[i].tagUuid;
@@ -436,7 +742,12 @@ export default {
         key = "shuruData";
       } else if (this.whichType === 4) {
         key = "shuchuData";
+      } else if (this.whichType === 5) {
+        key = "ipc";
+      } else if (this.whichType === 6) {
+        key = "bullet_camera";
       }
+
       this[key][this.whichIndex].tagPOList = data;
       this[key].concat();
       let channelUuid = this[key][this.whichIndex].channelUuid;
@@ -455,7 +766,24 @@ export default {
     },
     saveData() {
       let num = [];
+      console.log(this.ipc);
       const getNum = data => {
+        if (this.isLocal) {
+          data.forEach(item => {
+            item.faceSnap = item.faceSnap ? 1 : 0;
+            item.vehicleSnap = item.vehicleSnap ? 1 : 0;
+            item.bodySnap = item.bodySnap ? 1 : 0;
+            item.faceSnap = item.ability.indexOf("faceSnap") !== -1 ? 1 : 0;
+            item.vehicleSnap =
+              item.ability.indexOf("vehicleSnap") !== -1 ? 1 : 0;
+            item.bodySnap = item.ability.indexOf("bodySnap") !== -1 ? 1 : 0;
+            // channelList.push({
+            //   nickName: item.nickName,
+            //   channelUuid: item.channelUuid,
+            //   version: item.version
+            // });
+          });
+        }
         return data;
         // let channelList = [];
         // data.forEach(item => {
@@ -471,38 +799,67 @@ export default {
       num = num.concat(getNum(this.dutouData));
       num = num.concat(getNum(this.shuruData));
       num = num.concat(getNum(this.shuchuData));
+      num = num.concat(getNum(this.ipc));
+      num = num.concat(getNum(this.bullet_camera));
       console.log(num);
 
-      let data = {
-        productType: this.ruleForm.devMode,
-        orgUuid: this.ruleForm.oriz,
-        infrastructureUuid: this.ruleForm.build,
-        remarks: this.ruleForm.desc,
-        deviceUuid: this.deviceUuid,
-        nickName: this.ruleForm.nickName,
-        version: this.ruleForm.version,
-        channelList: num
-        // [
-        //   {
-        //     nickName: "测试的通道啊2",
-        //     channelUuid: "uuid0",
-        //     version: 11
-        //   },
-        //   {
-        //     nickName: "测试的通道啊3",
-        //     channelUuid: "uuid1",
-        //     version: 0
-        //   }
-        // ]
+      let data = {};
+      const getServiceNameByUuid = uuid => {
+        return this.localService.filter(v => {
+          return v.belongServiceUuid === uuid;
+        })[0].belongServiceName;
       };
+      if (this.isLocal) {
+        data = {
+          belongServiceName: getServiceNameByUuid(
+            this.ruleForm.belongServiceUuid
+          ),
+          belongServiceUuid: this.ruleForm.belongServiceUuid,
+          deviceIp: this.ruleForm.deviceIp,
+          devicePassword: this.ruleForm.devicePassword,
+          devicePort: this.ruleForm.devicePort,
+          deviceType: this.ruleForm.deviceType,
+          gBCode: this.ruleForm.gBCode,
+          deviceUsername: this.ruleForm.deviceUsername,
+          deviceUuid: this.deviceUuid,
+          infrastructureUuid: this.ruleForm.build,
+          nickName: this.ruleForm.nickName,
+          orgUuid: this.ruleForm.oriz,
+          remarks: this.ruleForm.remarks,
+          version: this.ruleForm.version,
+          channelList: num
+        };
+      } else {
+        data = {
+          gBCode: this.ruleForm.gBCode,
+          deviceType: this.ruleForm.deviceType,
+          orgUuid: this.ruleForm.oriz,
+          infrastructureUuid: this.ruleForm.build,
+          remarks: this.ruleForm.desc,
+          deviceUuid: this.deviceUuid,
+          nickName: this.ruleForm.nickName,
+          version: this.ruleForm.version,
+          channelList: num
+        };
+      }
       console.log(data);
-      api.saveDevice(data).then(res => {
-        console.log(res);
-        if (res.data.success) {
-          this.$message.success("保存成功！");
-          this.$emit("showEdit", true);
-        }
-      });
+      if (this.isLocal) {
+        api.editManualEquipment(data).then(res => {
+          console.log(res);
+          if (res.data.success) {
+            this.$message.success("保存成功！");
+            this.$emit("showEdit", true);
+          }
+        });
+      } else {
+        api.saveDevice(data).then(res => {
+          console.log(res);
+          if (res.data.success) {
+            this.$message.success("保存成功！");
+            this.$emit("showEdit", true);
+          }
+        });
+      }
     },
     confirm() {
       console.log(this.doorData);
@@ -532,19 +889,30 @@ export default {
       if (val) {
         console.log(this.row);
         this.ruleForm = {
+          belongServiceUuid:
+            this.row.extInfo.subService &&
+            this.row.extInfo.subService.serviceUuid,
           ip: this.row.deviceIp,
           tagSn: this.row.deviceSn,
           nickName: this.row.nickName,
-          devMode: this.row.productType,
-          oriz: this.row.orgUuid,
+          deviceType: this.row.deviceType,
+          oriz: this.row.org[0].orgUuid,
           build: this.row.infrastructureUuid,
           desc: this.row.remarks,
+          gBCode: this.row.gBCode || "",
           version: this.row.version,
           deviceIp: this.row.deviceIp,
           devicePort: this.row.devicePort,
-          username: this.row.username,
-          password: this.row.password
+          deviceUsername:
+            this.row.extInfo.loginInfo && this.row.extInfo.loginInfo.loginName,
+          devicePassword:
+            this.row.extInfo.loginInfo && this.row.extInfo.loginInfo.loginPwd
         };
+        if (this.row.extInfo.source === "local") {
+          this.isLocal = true;
+        } else {
+          this.isLocal = false;
+        }
         const deal = arr => {
           return arr.map(val => {
             if (this.isLocal) {
@@ -553,6 +921,17 @@ export default {
               val.bodySnap = !!(val.extInfo.bodySnap === 1);
             }
             val.tagPOList = val.tagPOList || [];
+            val.ability = [];
+            if (val.extInfo.faceSnap === 1) {
+              val.ability.push("faceSnap");
+            }
+            if (val.extInfo.vehicleSnap === 1) {
+              val.ability.push("vehicleSnap");
+            }
+            if (val.extInfo.bodySnap === 1) {
+              val.ability.push("bodySnap");
+            }
+
             return val;
             // return {
             //   nickName: val.nickName,
@@ -562,7 +941,12 @@ export default {
             // };
           });
         };
+        this.row.channelMapList = this.row.channelMapList || {};
         // 获取门状态的数组
+        this.doorData = [];
+        this.dutouData = [];
+        this.shuruData = [];
+        this.shuchuData = [];
         for (let k in this.row.channelMapList) {
           if (k === window.config.door) {
             this.doorData = deal(this.row.channelMapList[k]);
@@ -572,8 +956,16 @@ export default {
             this.shuruData = deal(this.row.channelMapList[k]);
           } else if (k === window.config.door_aoc) {
             this.shuchuData = deal(this.row.channelMapList[k]);
+          } else if (k === "face_ipc") {
+            let aaa = deal(this.row.channelMapList[k]);
+            this.ipc = aaa;
+          } else if (k === "bullet_camera") {
+            let bbb = deal(this.row.channelMapList[k]);
+            this.bullet_camera = bbb;
+            console.log(bbb);
           }
         }
+        // this.ipc = this.ipc.concat();
         // 记录门状态
         if (this.row.org && this.row.org.length) {
           this.orgName = this.row.org[0].orgName;
@@ -582,13 +974,12 @@ export default {
 
         this.houseName = this.row.infrastructureName;
         this.houseUuid = this.row.infrastructureUuid;
-        console.log(this.doorData);
         this.$nextTick(() => {
           this.$refs.scroll.initBar();
         });
-        if (this.isLocal) {
-          this.getServiceList();
-        }
+        // if (this.isLocal) {
+        // this.getServiceList();
+        // }
       } else {
         this.orgName = "";
         this.houseName = "";
@@ -603,6 +994,9 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 .editEquip {
+  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+    color: rgba(40, 255, 187, 1) !important;
+  }
   input {
     @include input30;
   }
@@ -659,7 +1053,7 @@ export default {
 }
 $dashline: 1px dashed rgba(255, 255, 255, 0.1);
 .editEquip {
-  width: 1000px;
+  width: 1200px;
   background: #212325;
   .header {
     padding-left: 30px;
@@ -722,6 +1116,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         $mleft: 10px;
         margin-bottom: 15px;
         vertical-align: top;
+        color: #fff;
         .el-input {
           display: inline-block;
           width: 160px;
@@ -742,11 +1137,12 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         .label {
           display: inline-block;
           @include font-s;
-          width: 80px;
-          vertical-align: top;
+          width: 60px;
+          vertical-align: middle;
         }
         .mytagWrap {
           display: inline-block;
+          margin-top: 10px;
           width: calc(100% - 300px);
         }
       }

@@ -453,8 +453,17 @@ export function upgradeProgress(uuid) {
     url
   });
 }
-export function getUpgradeUrl() {
-  return sbUrl.upgradeDeviceUrl;
+export function getUpgradeUrl(data) {
+  let url =
+    sbUrl.upgradeDeviceUrl +
+    `?fileUrl=${data.fileUrl}&deviceUuidArr=${data.deviceUuidArr}`;
+  return axios({
+    method: "post",
+    url
+  });
+}
+export function getNewUpgradeUrl() {
+  return sbUrl.newUpgradeDeviceUrl;
 }
 // 设备升级
 export function upgradeDevice(data) {
@@ -632,8 +641,23 @@ export function judgeTask(params) {
   });
 }
 // 获取本地服务列表
-export function serviceList() {
-  let url = sbUrl.serviceListUrl;
+export function serviceList(viewType) {
+  let url = sbUrl.serviceListUrl + "/" + viewType;
+  return axios({
+    method: "get",
+    url
+  });
+}
+export function DType(viewType) {
+  let url = sbUrl.DTypetUrl + "/" + viewType;
+  return axios({
+    method: "get",
+    url
+  });
+}
+// 获取设备类型列表
+export function deviceTypeListUrl(viewType) {
+  let url = sbUrl.deviceTypeListUrl + "/" + viewType;
   return axios({
     method: "get",
     url

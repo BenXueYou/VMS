@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 import * as api from "@/pages/equipmentMange/ajax.js";
 export default {
   name: "TreeChangeNameDialog.vue",
@@ -129,7 +129,7 @@ export default {
           max_file_size: "2000000mb",
           mime_types: [
             //只允许上传图片和zip文件
-            { title: "Zip files", extensions: "zip,rar" }
+            { title: "Zip files", extensions: "zip,rar,upf" }
           ]
         },
         file_data_name: "multipartFile",
