@@ -17,11 +17,9 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-    // 获取token projectUuid
+    // 获取token
     let Authorization = store.state.home.Authorization;
-    let projectUuid = store.state.home.projectUuid;
     config.headers["Authorization"] = Authorization;
-    config.headers["projectUuid"] = projectUuid;
     return config;
   },
   error => {

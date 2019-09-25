@@ -75,7 +75,7 @@ import ConfirmDialog from "@/common/ConfirmDialog.vue";
 import TheSystemBackupDialog from "./TheSystemBackupDialog";
 import TheSystemImportantDialog from "./TheSystemImportantDialog";
 import * as api from "@/pages/equipmentMange/ajax.js";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 export default {
   name: "system",
   props: {

@@ -11,6 +11,7 @@ import App from './App';
 import router from './router';
 
 // 权限控制中枢 路由守卫
+
 import './permission';
 
 import echarts from 'echarts';
@@ -27,11 +28,10 @@ import DoorSetAjax from '@/pages/doorControl/utils/DoorAccessSetHttp.js';
 
 import ResidentHttp from '@/pages/residentManage/utils/ResidentHttp.js';
 import LoginAjax from '@/pages/login/utils/LoginAjax.js';
-import SearchFaceHttp from '@/pages/faceModule/views/searchFaceWithFace/utils/SearchFaceHttp.js';
-
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = Axios;
 Vue.config.productionTip = false;
+
 Vue.use(Vuex);
 Vue.use(ElementUI);
 Vue.use(EventBus);
@@ -42,7 +42,6 @@ Vue.use(GuangTuoUI);
 Vue.use(HouseHttp);
 Vue.use(UnitHttp);
 Vue.use(LogSearchHttp);
-Vue.use(SearchFaceHttp);
 
 Vue.use(DoorSetAjax);
 Vue.use(ResidentHttp);

@@ -1,4 +1,3 @@
-// GatoCloud_V1.1_iac_account_project_Build(5613)
 var protocolHeader = window.location.protocol;
 var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;

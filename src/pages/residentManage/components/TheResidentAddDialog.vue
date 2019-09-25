@@ -41,7 +41,6 @@
               <el-upload class="uploadClass"
                          :action="updateFileImage"
                          :show-file-list="false"
-                         accept="image/jpg,image/jpeg"
                          :headers="myHeaders"
                          :auto-upload="true"
                          :http-request="httpRequest">
@@ -613,7 +612,7 @@
 </template>
 
 <script>
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import tagView from "@/common/Tag.vue";
 import tabTreeTag from "@/common/TabTreeTag.vue";
 import personTreeTag from "@/common/personTreeTag";
@@ -925,7 +924,9 @@ export default {
       this.canvas = document.getElementById("canvas");
       var _this = this;
       _this.shootPhotoDialogVisible = true;
+
       _this.shootPhotoShow = false;
+
       setTimeout(() => {
         _this.video = document.getElementById("video");
         // 媒体对象
@@ -995,7 +996,7 @@ export default {
     httpRequest(e) {
       //   this.fileData = e.file;
       console.log(e.file.type);
-      if (e.file.type === "image/jpg" || e.file.type === "image/jpeg") {
+      if (e.file.type === "image/jpg") {
         var reader = new FileReader();
         reader.readAsDataURL(e.file);
         this.imageUrl = URL.createObjectURL(e.file);
@@ -1281,7 +1282,7 @@ export default {
         if (val.visitorAuthList && val.visitorAuthList.length) {
           val.visitorAuthList.forEach(element => {
             element.id = element.groupUuid;
-            element.label = element.groupName;
+            element.label = element.groupUuid;
             this.visitorAuthList.push(element);
             this.dynamicVistorAuthTags.push(element);
           });

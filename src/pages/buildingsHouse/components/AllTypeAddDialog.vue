@@ -33,7 +33,6 @@
          class="dialog-footer">
       <el-button type="primary"
                  @click="onClickConfirm"
-                 :loading="isLoading"
                  size="small">确定</el-button>
       <el-button type="primary"
                  @click="onClickCancel"
@@ -97,7 +96,6 @@ export default {
           { required: true, message: "上级地址不能为空", trigger: "change" },
         ]
       },
-      isLoading: false
     };
   },
   created() {},
@@ -133,7 +131,6 @@ export default {
       });
     },
     addInfrastructure() {
-      this.isLoading = true;
       this.$houseHttp
         .addInfrastructure({
           parentUuid: this.formLabelAlign.upAddressId,
@@ -146,7 +143,6 @@ export default {
         });
     },
     addInfrastructureSuccessResponse(body) {
-      this.isLoading = false;
       this.$cToast.success(body.msg);
       this.resetFormData();
       this.$emit("onConfirm");

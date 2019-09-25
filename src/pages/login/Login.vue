@@ -337,7 +337,7 @@ export default {
 			padding: 8%;
 			box-sizing: border-box;
 			.block-title {
-				font-family: 'PingFangSC-Medium';
+				font-family: PingFangSC-Medium;
 				font-size: 30px;
 				color: #333333;
 				text-align: center;

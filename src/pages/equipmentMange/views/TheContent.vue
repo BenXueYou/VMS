@@ -11,11 +11,9 @@
     </keep-alive>
     <the-company-edit-equipment-dialog v-show="isShowEdit"
                                        :row="row"
-                                       :isVideo="viewType==='video'"
                                        :deviceTypeArr="deviceTypeArr"
                                        :localService="localService"
                                        :visible="isShowEdit"
-                                       :netStatus="netStatus"
                                        :deviceUuid="deviceUuid"
                                        @showEdit="hiddenEdit">
     </the-company-edit-equipment-dialog>
@@ -53,15 +51,12 @@ export default {
       isShowEdit: false,
       editEquipMentDialgoVisible: true,
       row: {},
-      deviceUuid: "",
-      viewType: "door",
-      netStatus: "offline"
+      deviceUuid: ""
     };
   },
   methods: {
-    serverList(arr, viewType) {
+    serverList(arr) {
       this.localService = arr;
-      this.viewType = viewType;
     },
     changeDevTypeArr(arr) {
       this.deviceTypeArr = arr;
@@ -69,14 +64,13 @@ export default {
     updateTree(uuid) {
       this.$emit("updateTree", uuid);
     },
-    showEdit(deviceUuid, netStatus) {
+    showEdit(deviceUuid) {
       this.row = {};
       this.deviceUuid = deviceUuid;
       api.getDeviceDetail(deviceUuid).then(res => {
         if (res.data.success) {
           this.row = res.data.data;
           this.isShowEdit = true;
-          this.netStatus = netStatus;
         }
       });
     },

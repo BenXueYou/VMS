@@ -632,23 +632,8 @@ export function judgeTask(params) {
   });
 }
 // 获取本地服务列表
-export function serviceList(viewType) {
-  let url = sbUrl.serviceListUrl + "/" + viewType;
-  return axios({
-    method: "get",
-    url
-  });
-}
-export function DType(viewType) {
-  let url = sbUrl.DTypetUrl + "/" + viewType;
-  return axios({
-    method: "get",
-    url
-  });
-}
-// 获取设备类型列表
-export function deviceTypeListUrl(viewType) {
-  let url = sbUrl.deviceTypeListUrl + "/" + viewType;
+export function serviceList() {
+  let url = sbUrl.serviceListUrl;
   return axios({
     method: "get",
     url

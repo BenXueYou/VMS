@@ -60,7 +60,7 @@
   </el-row>
 </template>
 <script>
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import * as api from "@/pages/equipmentMange/ajax.js";
 export default {
   components: {},

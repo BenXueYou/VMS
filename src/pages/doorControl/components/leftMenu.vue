@@ -15,6 +15,12 @@
 				>
 					<el-submenu index="1" :class="menuTitle === '1'? 'submenuActiveClass' : ''">
 						<template slot="title">
+							<!-- <div :class="menuTitle === '1'? 'activeClass' : ''"> -->
+							<!-- <img
+                v-show="menuTitle === '1'"
+                class="access_autn_select"
+                src="../../../assets/images/doorAccess/access_auth_select.png"
+							>-->
 							<img
 								class="access_autn_select"
 								src="../../../assets/images/doorAccess/access_authority.png"
@@ -23,9 +29,17 @@
 							<span>权限组</span>
 
 							<img
+								v-show="menuTitle === '1'"
 								class="left_menu_right_icon"
-								:src="menuTitle === '1'?require('@/assets/images/select-down.png'):require('@/assets/images/doorAccess/left_menu_down_icon.png')"
+								src="../../../assets/images/select-down.png"
 							/>
+							<img
+								v-show="menuTitle !== '1'"
+								class="left_menu_right_icon"
+								src="../../../assets/images/doorAccess/left_menu_down_icon.png"
+								alt
+							/>
+							<!-- </div> -->
 						</template>
 						<el-menu-item index="/DoorControl/AccessGroupConfig">权限组</el-menu-item>
 						<el-menu-item index="/DoorControl/AccessTimeConfig">通行时间段</el-menu-item>
@@ -33,11 +47,23 @@
 					</el-submenu>
 					<el-submenu index="2" :class="menuTitle === '2'? 'submenuActiveClass' : ''">
 						<template slot="title">
+							<!-- <img
+                v-show="menuTitle === '2'"
+                class="access_autn_select"
+                src="../../../assets/images/doorAccess/access_set_select.png"
+							>-->
 							<img class="access_autn_select" src="../../../assets/images/doorAccess/access_set.png" alt />
 							<span slot="title">高级配置</span>
 							<img
+								v-show="menuTitle === '2'"
 								class="left_menu_right_icon"
-								:src="menuTitle === '2'?require('@/assets/images/select-down.png'):require('@/assets/images/doorAccess/left_menu_down_icon.png')"
+								src="../../../assets/images/select-down.png"
+							/>
+							<img
+								v-show="menuTitle !== '2'"
+								class="left_menu_right_icon"
+								src="../../../assets/images/doorAccess/left_menu_down_icon.png"
+								alt
 							/>
 						</template>
 						<el-menu-item index="/DoorControl/Interlocking">互锁</el-menu-item>
@@ -48,6 +74,30 @@
 						<el-menu-item index="/DoorControl/LinkageAction">联动动作</el-menu-item>
 						<el-menu-item index="/DoorControl/PublicMessage">发布公告</el-menu-item>
 					</el-submenu>
+					<!-- <el-submenu index="3" :class="menuTitle === '3'? 'submenuActiveClass' : ''">
+						<template slot="title">
+							<img
+								class="access_autn_select"
+								src="@/assets/images/doorAccess/left_menu_search_icon.png"
+								alt
+							>
+							<span slot="title">检索</span>
+							<img
+								v-show="menuTitle === '3'"
+								class="left_menu_right_icon"
+								src="@/assets/images/select-down.png"
+							>
+							<img
+								v-show="menuTitle !== '3'"
+								class="left_menu_right_icon"
+								src="@/assets/images/doorAccess/left_menu_down_icon.png"
+								alt
+							>
+						</template>
+						<el-menu-item index="/DoorControl/DoorAccessRecord">门禁记录</el-menu-item>
+						<el-menu-item index="/DoorControl/DoorAlarmRecord">报警记录</el-menu-item>
+						<el-menu-item index="/DoorDialogRecord">通话记录</el-menu-item>
+					</el-submenu>-->
 					<el-menu-item
 						class="doorStateClass"
 						index="/DoorControl/DoorAccessRecord"

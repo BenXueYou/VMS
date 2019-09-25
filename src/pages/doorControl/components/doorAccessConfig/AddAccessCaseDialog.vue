@@ -493,13 +493,8 @@ export default {
       // 点击确定就来判断当前时间段的规则
 
       // 1、判断添加是否有空时间段
-      if (!this.accessTime.length) {
-        this.$message.error("请添加可通行时间段");
-        return;
-      }
-
-      if (!this.noAccessTime.length) {
-        this.$message.error("请添加不可通行时间段");
+      if (!this.accessTime.length && !this.noAccessTime.length) {
+        this.$message.error("请至少添加可通行时间段或者不可通行时间段");
         return;
       }
       // 判断日期选择的开始和结束日期是否有null
