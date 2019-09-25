@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+
+    const data2 = [
+        {
+            id: 1,
+            label: "一级 1",
+            children: [
+                {
+                    id: 4,
+                    label: "二级 1-1",
+                    children: [
+                        {
+                            id: 9,
+                            label: "三级 1-1-1"
+                        },
+                        {
+                            id: 10,
+                            label: "三级 1-1-2"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            id: 2,
+            label: "一级 2",
+            children: [
+                {
+                    id: 5,
+                    label: "二级 2-1"
+                },
+                {
+                    id: 6,
+                    label: "二级 2-2"
+                }
+            ]
+        },
+        {
+            id: 3,
+            label: "一级 3",
+            children: [
+                {
+                    id: 7,
+                    label: "二级 3-1"
+                },
+                {
+                    id: 8,
+                    label: "二级 3-2"
+                }
+            ]
+        }
+    ];
+
+
+    // var arr = data2;
+
+    // while (arr.length) {
+    //     var t = arr.shift();
+    //     console.log(t);
+    //     if (t.children && t.children.length) {
+    //         for (var i = 0; i < t.children.length; i++) {
+    //             if (t.children[i].children) {
+    //                 arr.push(t.children[i]);
+    //             }
+    //         }
+    //     }else{
+
+    //     }
+    // }
+
+    // var index = "1";
+    getChildren(data2, '0');
+
+    function getChildren(arr, index) {
+
+        for (var i = 0; i < arr.length; i++) {
+            var s = "";
+            if (index === '0') {
+                s = '' + (i + 1);
+                arr[i].path = s;
+            } else {
+                s = index + '-' + (i + 1);
+                arr[i].path = s;
+            }
+            console.log(arr[i].label)
+            if (arr[i].children) {
+                getChildren(arr[i].children, s);
+            } else {
+
+            }
+        }
+    }
+
+    console.log(data2);
+
+
+
+</script>
+
+</html>
