@@ -227,7 +227,7 @@ import TheResidentImportDialog from "@/pages/residentManage/components/TheReside
 import TheResidentDetailDialog from "@/pages/residentManage/components/TheResidentDetailDialog";
 import StaticsDialog from "@/common/StaticsDialog";
 import { mapState } from "vuex";
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 import RestApi from "@/utils/RestApi.js";
 export default {
   name: "TheCompanyTable",

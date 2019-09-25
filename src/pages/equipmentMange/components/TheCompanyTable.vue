@@ -148,7 +148,7 @@
             <el-button type="text"
                        @click="remoteControl(scope.row)"
                        :class="{'offLine':scope.row.netStatus==='offline'}"
-                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig))"
+                       :disabled="scope.row.netStatus==='offline'||scope.row.extInfo.remoteConfig==0"
                        size="small">配置</el-button>
           </template>
         </el-table-column>
@@ -190,7 +190,7 @@
 
       <the-company-add-equipment-dialog :visible.sync="addEquipMentDialgoVisible"
                                         :orgUuid="orgUuid"
-                                        :deviceType="viewType"
+                                        :deviceType="deviceType"
                                         @confirm="addSuccess">
       </the-company-add-equipment-dialog>
 
@@ -233,7 +233,6 @@ export default {
   name: "TheCompanyTable",
   data() {
     return {
-      viewType: "door",
       deviceTypeArr: window.config.door_machine,
       door: window.config.door_machine,
       video: window.config.video,
@@ -291,54 +290,21 @@ export default {
   methods: {
     serviceList() {
       api
-        .serviceList(this.viewType)
+        .serviceList()
         .then(res => {
           console.log(res);
           if (res.data.success) {
-            // this.localService = [
-            //   {
-            //     belongServiceName: "测试服务名称",
-            //     belongServiceUuid: "iotas_vd_serviceuuid_001"
-            //   }
-            // ].concat(res.data.data || []);
-            let num = (res.data.data || []).map(item => {
-              item.belongServiceName = item.serviceName;
-              item.belongServiceUuid = item.serviceUuid;
-              return item;
-            });
-            this.localService = num;
+            this.localService = [
+              {
+                belongServiceName: "测试服务名称",
+                belongServiceUuid: "iotas_vd_serviceuuid_001"
+              }
+            ].concat(res.data.data || []);
           }
-          this.$emit("serverList", this.localService, this.viewType);
+          this.$emit("serverList", this.localService);
         })
         .catch(() => {
-          this.$emit("serverList", this.localService, this.viewType);
-        });
-    },
-    DType() {
-      this.deviceTypeArr = [];
-      api
-        .DType(this.viewType)
-        .then(res => {
-          console.log(res);
-          if (res.data.success) {
-            // this.localService = [
-            //   {
-            //     belongServiceName: "测试服务名称",
-            //     belongServiceUuid: "iotas_vd_serviceuuid_001"
-            //   }
-            // ].concat(res.data.data || []);
-            let num = (res.data.data || []).map(item => {
-              item.label = item.value;
-              item.value = item.key;
-              return item;
-            });
-            this.deviceTypeArr = num;
-          }
-          // this.$emit("serverList", this.localService);
-          this.$emit("switch", this.deviceTypeArr);
-        })
-        .catch(() => {
-          this.$emit("switch", this.deviceTypeArr);
+          this.$emit("serverList", this.localService);
         });
     },
     searchBytext() {
@@ -360,8 +326,7 @@ export default {
           nickName: this.devName,
           deviceIp: this.deviceIp,
           productType: this.productType,
-          viewType: this.viewType
-          // deviceType: this.deviceType
+          deviceType: this.deviceType
         })
         .then(res => {
           this.showloading = false;
@@ -378,9 +343,7 @@ export default {
             // time: "2018-10-08"
             let list = data.list;
             for (let i = 0, len = list.length; i < len; i++) {
-              // list[i].devName = list[i].nickName;
-              // 保持跟下发数据的设备名字一样，所以改成deviceName
-              list[i].devName = list[i].deviceName;
+              list[i].devName = list[i].nickName;
               list[i].ip = list[i].deviceIp;
               list[i].devId = list[i].deviceSn;
               list[i].devMode = list[i].productType;
@@ -479,8 +442,6 @@ export default {
       this.updateDialogVisible = true;
     },
     manualAdd() {
-      this.serviceList(this.viewType);
-      this.DType(this.viewType);
       this.manualAddVisible = true;
     },
     addEquipMent() {
@@ -512,7 +473,6 @@ export default {
     },
     close() {},
     switchType(index) {
-      var arr = ["door", "video", "alarm", "visitor"];
       let num = [];
       if (index === 0) {
         num = this.door;
@@ -523,13 +483,12 @@ export default {
       } else if (index === 3) {
         num = this.vistor;
       }
-      this.viewType = arr[index];
-      this.serviceList(this.viewType);
       console.log(num);
-      // this.deviceTypeArr = num;
-      // this.deviceType = num.reduce((sum, val, index) => {
-      //   return sum + (index === 0 ? "" : ",") + val.value;
-      // }, "");
+      this.deviceTypeArr = num;
+      this.$emit("switch", num);
+      this.deviceType = num.reduce((sum, val, index) => {
+        return sum + (index === 0 ? "" : ",") + val.value;
+      }, "");
       this.index = index;
       this.getTableData();
       // this.deviceUuid = "123";
@@ -539,11 +498,8 @@ export default {
       this.multipleSelection = val;
     },
     editEquipment(row) {
-      if (row.extInfo.source === "local") {
-        this.serviceList(this.viewType);
-        this.DType(this.viewType);
-      }
-      this.$emit("showEdit", row.deviceUuid, row.netStatus);
+      // this.editEquipMentDialgoVisible = true;
+      this.$emit("showEdit", row.deviceUuid);
     },
     deleteEquip(row) {
       this.deleteOneRow = row;
@@ -583,7 +539,7 @@ export default {
     //   });
     // }
     this.getTableData();
-    this.serviceList(this.viewType);
+    this.serviceList();
   },
   watch: {
     orgUuid(val) {

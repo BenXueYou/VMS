@@ -974,12 +974,6 @@
         "exist": "存在",
         "none": "不存在"
     },
-    "ServerType": {
-        "GT_DOOR_HK": "海康门禁服务",
-        "GT_DOOR_DH": "大华门禁服务",
-        "GT_VIDEO_HK": "大华视频服务",
-        "GT_VIDEO_DH": "海康视频服务"
-    },
     "onoffline": {
         "online": "在线",
         "offline": "离线"
@@ -1107,7 +1101,6 @@
         "cancled": "已取消",
         "unleave": "到访未签离",
         "leave_overtime": "签离超时",
-        "leaved": "到访已签离",
-        "ineffective": "未生效"
+        "leaved": "到访已签离"
     }
 }

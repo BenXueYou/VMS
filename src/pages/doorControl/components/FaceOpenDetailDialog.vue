@@ -24,7 +24,7 @@
 				<div class="info-details">
 					<div class="info-details-title">
 						<img src="@/assets/images/calendar.png" width="15px" height="15px" />
-						<div class="info-details-title-text">开锁图片</div>
+						<div class="info-details-title-text">开锁图片1</div>
 					</div>
 					<div class="info-details-items">验证时间：{{$common.setStringText(itemData.validateTime)}}</div>
 					<div class="info-details-items">验证方式：{{$common.getEnumItemName("pass", itemData.validateType)}}</div>

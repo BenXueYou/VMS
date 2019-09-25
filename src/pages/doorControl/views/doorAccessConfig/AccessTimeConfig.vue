@@ -90,7 +90,7 @@
 import AddAccessTimeDialog from "@/pages/doorControl/components/doorAccessConfig/AddAcessTimeDialog";
 import ConfirmDialog from "@/common/ConfirmDialog";
 import { turnTimesArea, turnWeek, turnWeekToNumber } from "@/utils/date.js";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import * as api from "../../utils/ajax.js";
 
 export default {

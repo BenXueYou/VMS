@@ -30,7 +30,7 @@ export default {
   name: "projectManage",
   data() {
     return {
-      data: Array(0).fill({
+      data: Array(20).fill({
         projectUuid: "a123",
         projectName: "项目名称",
         projectStatus: "项目状态",
@@ -41,7 +41,8 @@ export default {
   },
   activated() {
     this.$nextTick(() => {
-      console.log(this.$store.state.home.projectList);
+      // alert(1);
+      // console.log(this.$store.state.home.projectList);
       this.data = this.$store.state.home.projectList;
     });
   },
