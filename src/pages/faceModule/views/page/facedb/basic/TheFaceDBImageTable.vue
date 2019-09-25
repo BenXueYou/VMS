@@ -1,0 +1,429 @@
+<template>
+  <div class='tablelist'
+       ref='tablelist'>
+    <div class="body"
+         v-loading='listtableloadding'>
+
+      <div class="box"
+           v-for='(item,index) in imageTableData '
+           :key='index'>
+        <div class="headerimg">
+
+          <img :src="preload[index]"
+               alt="">
+
+          <el-checkbox class='checkButton'
+                       v-model="item.checked"
+                       @change='checkboxchange(index)'></el-checkbox>
+          <div class="mask">
+            <div class="operator">
+              <!-- <i class='el-icon-search'
+                 @click="lookface(imageTableData[index])">查看</i> -->
+              <i class='el-icon-edit-outline'
+                 @click="editface(imageTableData[index])">查看/编辑</i>
+              <i class='el-icon-delete'
+                 @click="deleteface(imageTableData[index])"> 删除</i>
+            </div>
+          </div>
+        </div>
+
+        <p class="time">
+          <span class='item'>{{item.staffName||""}} &nbsp;</span>
+          <span class='item'>{{item.staffsexName||""}} </span>
+          <span class='item'>{{item.age||""}}{{!item.age?'':'岁'}} </span>
+        </p>
+
+        <el-tooltip class="item"
+                    effect="dark"
+                    :content="item.credentialno"
+                    placement="bottom">
+          <p class="adress">证件号:{{item.credentialno}}</p>
+        </el-tooltip>
+
+        <el-tooltip class="item"
+                    effect="dark"
+                    :content="item.address"
+                    placement="bottom">
+          <p class="adress">现地址:{{item.address}}</p>
+        </el-tooltip>
+        <!-- <el-tooltip class="item"
+                    effect="dark"
+                   content=""
+                    placement="bottom">
+          <p class="adress">案件号:</p>
+
+        </el-tooltip> -->
+
+      </div>
+
+      <div class="box hiddenitem"
+           v-for="(item,index) in getLast"
+           :key='item+index'>
+
+      </div>
+    </div>
+
+    <div class="footer">
+
+      <el-pagination background
+                     layout="prev, pager, next"
+                     :page-size="imagePageSize"
+                     :current-page="imagePageNow"
+                     @current-change='currentChange'
+                     :total="imagePageCount">
+      </el-pagination>
+
+      <p class='totalpagetitle'> 共{{ imagePageCount}}条</p>
+
+      <div class='tiaozhuan'>
+        <span>跳转至</span>
+        <el-input class='yeshu'
+                  v-model="yeshu"
+                  @blur="blur"
+                  type='number'>
+        </el-input>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "facedblist",
+  props: {
+    listtableloadding: {
+      type: Boolean,
+      default: function() {
+        return false;
+      }
+    },
+    imageTableData: {
+      type: Array,
+      default: function() {
+        return [];
+      }
+    },
+    selectall: {
+      type: Boolean,
+      default: function() {
+        return false;
+      }
+    },
+    imagePageNow: {
+      type: Number,
+      default() {
+        return 1;
+      }
+    },
+    imagePageSize: {
+      type: Number,
+      default() {
+        return 15;
+      }
+    },
+    imagePageCount: {
+      type: Number,
+      default() {
+        return 0;
+      }
+    }
+  },
+  data() {
+    return {
+      yeshu: "",
+      multipleSelection: [],
+      pageSize: 24,
+      pagenow: 1,
+      total: 1000,
+      countdata: 10000,
+      preload: []
+    };
+  },
+  computed: {
+    getLast() {
+      var len = this.imagePageSize - this.imageTableData.length;
+      var a = [];
+      while (len--) {
+        a.push("kj");
+      }
+      return a;
+    }
+  },
+  mounted() {
+    // this.$nextTick(function() {
+    //   var win_h = window.innerHeight;
+    //   var tableheight =
+    //     parseInt(getComputedStyle(this.$refs.tablelist).height) - 40;
+    //   this.pageSize = Math.floor(tableheight / 43);
+    //   //   alert(this.pageSize);
+    // });
+  },
+  methods: {
+    blur() {
+      if (this.yeshu !== "") {
+        if (this.yeshu > Math.ceil(this.listPageCount / this.listPageSize)) {
+          this.yeshu = Math.ceil(this.listPageCount / this.listPageSize);
+        }
+        this.yeshu = parseInt(this.yeshu);
+        this.$emit("changepage", parseInt(this.yeshu));
+      }
+    },
+    lookface(row) {
+      this.$emit("lookvip", row.staffUuid);
+    },
+    editface(row) {
+      console.log(row);
+      this.$emit("updatevip", row.staffUuid, row.libraryuuid);
+    },
+    deleteface(row) {
+      this.$emit("deletevip", [row.staffUuid]);
+    },
+    currentChange(index) {
+      this.$emit("changepage", index);
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    checkboxchange() {
+      var flag = this.judgeallchecked();
+      this.$emit("checkall", flag);
+    },
+    judgeallchecked() {
+      var flag = true;
+      for (var i = 0, len = this.imageTableData.length; i < len; i++) {
+        if (!this.imageTableData[i].checked) {
+          flag = false;
+          break;
+        }
+      }
+      return flag;
+    },
+    downloadImage(url) {
+      return new Promise((resolve, reject) => {
+        var img = new Image();
+        img.src = url;
+        if (img.complete) {
+          console.log("已经有了！！！！！！！！");
+          resolve();
+        }
+        img.onload = function() {
+          resolve();
+        };
+        img.onerror = function() {
+          resolve();
+        };
+      });
+    },
+    async preloadaaa() {
+      // var url="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1548152296736&di=af0935e6c17b142cd7110cea8347290d&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F54ebececeda0217648263cc944d6cfd413a17cdf2cc6-MGHS0y_fw658";
+      var url = "";
+      for (var i = 0; i < this.imageTableData.length; i++) {
+        url = this.imageTableData[i].photoUri;
+        var result = await this.downloadImage(url);
+        console.log(result);
+        this.preload[i] = url;
+        this.preload.splice(i, 1, url);
+      }
+      console.log(this.preload);
+    }
+  },
+  deactivated() {
+    this.imageTableData.map(row => {
+      row.checked = false;
+      return row;
+    });
+  },
+  watch: {
+    imageTableData: function() {
+      this.preload = new Array(this.imageTableData.length);
+      this.preloadaaa();
+    },
+    selectall: function() {
+      // alert(this.selectall);
+      if (this.selectall) {
+        this.imageTableData.map(row => {
+          row.checked = true;
+          return row;
+        });
+      } else {
+        var flag = this.judgeallchecked();
+        if (flag) {
+          this.imageTableData.map(row => {
+            row.checked = false;
+            return row;
+          });
+        }
+      }
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+$fontcolor: #aaa;
+
+.tablelist {
+  height: 100%;
+  // height: calc(100vh - 76px - 57px - 70px);
+}
+.body {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: space-between;
+  // overflow: auto;
+  overflow: hidden;
+  .hiddenitem {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .box {
+    width: 140px;
+    min-height: 178px;
+    background-color: rgb(36, 39, 42);
+    border-radius: 4px;
+    font-size: 12px;
+    color: $fontcolor;
+    box-sizing: border-box;
+    overflow: auto;
+    padding: 10px 11px 8px;
+    margin: 0px 5px 8px;
+    .headerimg {
+      position: relative;
+      width: 114px;
+      height: 114px;
+      // background-color: cornflowerblue;
+      margin: 5px auto;
+      &:hover .mask {
+        display: block;
+      }
+      img {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+      .checkButton {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        z-index: 11;
+        &:hover ~ .mask {
+          display: none;
+        }
+      }
+      .mask {
+        display: none;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.6);
+        box-shadow: 0px 0px 0px 110px rgba(0, 0, 0, 0.7);
+        .operator {
+          margin-top: 30px;
+          margin-left: 10px;
+        }
+        .operator i {
+          cursor: pointer;
+          display: block;
+          line-height: 30px;
+          font-family: " PingFangSC-Regular";
+          font-size: 16px;
+          color: #28ffbb;
+          letter-spacing: 0;
+          &:before {
+            padding-right: 7px;
+          }
+        }
+      }
+    }
+    p {
+      text-align: left;
+      line-height: 16px;
+      font-family: " PingFangSC-Regular";
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0;
+      display: flex;
+      justify-content: space-between;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .adress {
+      cursor: pointer;
+    }
+  }
+}
+.footer {
+  position: relative;
+  margin: 10px 0px;
+  .totalpagetitle {
+    font-size: 14px;
+    color: #fff;
+    float: right;
+    margin-right: 20px;
+    margin-top: 17px;
+  }
+  .el-pagination {
+    margin-right: 180px;
+    margin-top: 10px;
+    float: right;
+  }
+  .tiaozhuan {
+    position: absolute;
+    right: 20px;
+    top: 6px;
+    span {
+      font-size: 14px;
+      color: #fff;
+      padding-right: 20px;
+    }
+    .yeshu {
+      display: inline-block;
+      width: 90px;
+      input {
+        padding: 0px;
+      }
+    }
+  }
+}
+</style>
+
+<style  lang="scss">
+.tiaozhuan {
+  span {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .yeshu {
+    display: inline-block;
+    width: 90px;
+    vertical-align: middle;
+    height: 40px;
+
+    .el-input__inner {
+      margin-top: 5px;
+      width: 50px;
+      height: 28px;
+      line-height: 28px;
+      padding: 0px 5px;
+    }
+  }
+}
+</style>

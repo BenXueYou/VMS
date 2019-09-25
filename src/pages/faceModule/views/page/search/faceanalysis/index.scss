@@ -1,0 +1,81 @@
+@mixin basicfont {
+    font-family: "PingFangSC-Regular";
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  @mixin basicfont2 {
+    font-family: "PingFangSC-Regular";
+    font-size: 14px;
+    color: #ccc;
+  }
+  
+  .facealarm {
+    width: 100%;
+    height: 100%;
+    background: rgb(27, 28, 31);
+    padding: 40px 50px 40px 50px;
+    box-sizing: border-box;
+    text-align: left;
+  
+    .facealarm-table {
+      width: 100%;
+      margin-top: 20px;
+      height: calc(100vh - 190px);
+      padding: 30px;
+      box-sizing: border-box;
+      background-color: rgb(32, 35, 38);
+    }
+  
+    .facealarm-header {
+      //   width: 1700px;
+      width: 100%;
+      height: 100px;
+      background-color: rgb(32, 35, 38);
+      padding: 30px;
+      box-sizing: border-box;
+  
+      .header-line {
+        height: 40px;
+        width: 100%;
+          overflow: hidden;
+        &:not(&:first-child) {
+          margin-bottom: 20px;
+        }
+  
+        .header-line-label {
+          text-align: right;
+          display: inline-block;
+          width: 70px;
+          @include basicfont2;
+        }
+  
+        .header-line-input {
+          display: inline-block;
+          width: 200px;
+          margin-right: 20px;
+        }
+  
+        .header-line-time-label {
+          text-align: center;
+          display: inline-block;
+          width: 50px;
+          @include basicfont2;
+        }
+  
+        .header-line-time {
+          display: inline-block;
+          width: 220px;
+        }
+  
+        .search {
+          float: right;
+  
+          span {
+            @include basicfont;
+          }
+        }
+      }
+    }
+  }
+  
