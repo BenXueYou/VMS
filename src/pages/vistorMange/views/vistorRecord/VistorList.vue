@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 import VistorSearchView from "../../components/vistorRecord/VistorSearchView";
 import VistorDetail from "../../components/vistorRecord/VistorDetail";
 import * as api from "../../utils/ajax";

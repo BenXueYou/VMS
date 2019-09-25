@@ -1,53 +1,237 @@
-import Axios from "@/utils/Request";
-import RestApi from "@/utils/RestApi";
-import store from '@/store/store.js'; import { Message } from 'element-ui';
+import Axios from 'axios';
 
-let FaceModuleApi = RestApi.api.faceModuleAPi;
-// 1V1对比
-export function faceComparison1v1(data) {
-  let url = FaceModuleApi.faceComparison1v1(store.state.home.projectUuid);
-  return Axios({
-    method: "get",
-    url,
-    params: data
+// import QS from 'qs';
+
+import { Message } from 'element-ui';
+
+// let token = mpprClient.getLoginToken()
+// let ip = mpprClient.getIpAndPort()
+
+let token = window.config.token;
+// alert('token:'+mpprClient.getLoginToken());
+// alert('token:'+token)
+
+let ip = window.config.ip;
+
+// alert('ip===='+window.config.ip);
+// alert('ip==='+mpprClient.getIpAndPort());
+
+Axios.defaults.headers.common['token'] = token;
+
+// axios 设置请求超时机制
+Axios.defaults.retry = 0;
+Axios.defaults.retryDelay = 15000;
+
+Axios.interceptors.response.use(undefined, function axiosRetryInterceptor(err) {
+  var config = err.config;
+  // If config does not exist or the retry option is not set, reject
+  if (!config || !config.retry) return Promise.reject(err);
+
+  // Set the variable for keeping track of the retry count
+  config.__retryCount = config.__retryCount || 0;
+
+  // Check if we've maxed out the total number of retries
+  if (config.__retryCount >= config.retry) {
+    // Reject with the error
+    return Promise.reject(err);
+  }
+
+  // Increase the retry count
+  config.__retryCount += 1;
+
+  // Create new promise to handle exponential backoff
+  var backoff = new Promise(function (resolve) {
+    setTimeout(function () {
+      resolve();
+    }, config.retryDelay || 1);
   });
-}
-// 抓拍列表
-export function getSnapshotList(data) {
-  let url = FaceModuleApi.getSnapshotList(store.state.home.projectUuid);
-  return Axios({
-    method: "get",
-    url,
-    params: data
+
+    // Return the promise in which recalls Axios to retry the request
+  return backoff.then(function () {
+    return Axios(config);
   });
+});
+
+// 抓拍记录到同行人分析检测的判断
+export function photoRecordToAnalysis(xhr) {
+  return Axios.get('http://' + ip + '/mppr-statistics/staffuuid?detecteduuid=' + xhr, { retry: 1, retryDelay: 15000 });
 }
-// 识别列表
-export function getRecognizeList(data) {
-  let url = FaceModuleApi.getRecognizeList(store.state.home.projectUuid);
-  return Axios({
-    method: "get",
-    url,
-    params: data
-  });
+
+// 临时布控
+export function tempCtrlTask(xhr) {
+  return Axios.get('http://' + ip + '/jcfgs/v2/vip/info/temp?photouri=' + xhr, { retry: 1, retryDelay: 15000 });
 }
-// 识别详情
-export function getRecognizeInfo(data) {
-  let url = FaceModuleApi.getRecognizeInfo(store.state.home.projectUuid);
-  return Axios({
-    method: "get",
-    url,
-    params: data
-  });
+
+// 获取WebRtc的连接地址
+export function getWebRtcSocketIPAddress(XhrParams) {
+  return Axios.get('http://' + ip + '/mppr-vids/v1/vids/rtsp/address', { retry: 1, retryDelay: 15000 });
 }
-// 报警列表
-export function getAlarmList(data) {
-  let url = FaceModuleApi.getAlarmList(store.state.home.projectUuid);
-  return Axios({
-    method: "get",
-    url,
-    params: data
-  });
+
+// 获取布控任务的列表
+export function getTaskList(XhrParams) {
+  // 本地代理
+  // return Axios.get('/api/face/v2/dispatching/task/list', { retry: 1, retryDelay: 15000 });
+  return Axios.get('http://' + ip + '/mppr-model/face/v2/dispatching/task/list', { retry: 1, retryDelay: 15000 });
 }
+// 根据任务id获取任务的关联库和设备
+export function getFaceLibsAndDeviceList(xhr) {
+  return Axios.post('http://' + ip + '/mppr-model/face/v2/dispatching/channel/face', xhr, { retry: 1, retryDelay: 15000 });
+}
+
+// 根据任务id查询任务的识别记录
+export function getRecongizeList(xhr) {
+  return Axios.get('http://' + ip + '/mppr-statistics/log/taskInfo?taskUuidList=' + xhr.taskUuids + "&starttime=" + xhr.startTime + "&overtime=" + xhr.endTime, { retry: 1, retryDelay: 15000 });
+}
+
+// 获取所有设备树的列表
+export function getDeviceList(XhrParams) {
+  // return Axios.get('/api/v2/baseDevice/deviceTree'); get /v2/baseDevice/deviceFaceAndBodyTree
+  return Axios.get('http://' + ip + '/jcfgs/v2/baseDevice/deviceFaceAndBodyTree', { retry: 1, retryDelay: 15000 });
+}
+
+// 获取人体相机的设备树列表
+export function getBodyDeviceList(XhrParams) {
+  // return Axios.get('/api/v2/baseDevice/deviceTree'); get /v2/baseDevice/deviceBodyTree
+  return Axios.get('http://' + ip + '/jcfgs/v2/baseDevice/deviceBodyTree', { retry: 1, retryDelay: 15000 });
+}
+
+// 根据通道id批量获取rtsp地址
+export function getRTSPAddress(XhrData) {
+  Axios.defaults.headers.common['token'] = token;
+  return Axios.post('http://' + ip + '/mppr-vids/v1/vids/rtsps',
+    {
+      'resource': XhrData
+    }, { retry: 1, retryDelay: 15000 });
+}
+
+// 获取抓拍记录
+export function getPhotoList(xhr) {
+  var params = {};
+  if (xhr.channelUuids) {
+    params.channeluuid = xhr.channelUuids;
+  }
+  if (xhr.quality) {
+    params.quality = xhr.quality;
+  }
+  if (xhr.gender) {
+    params.gender = xhr.gender;
+  }
+  if (xhr.pageSize) {
+    params.pageSize = xhr.pageSize;
+  }
+  if (xhr.currentPage) {
+    params.currentPage = xhr.currentPage;
+  }
+  if (xhr.startDate) {
+    params.starttime = xhr.startDate;
+  }
+  if (xhr.endDate) {
+    params.overtime = xhr.endDate;
+  }
+  var url = 'http://' + ip + '/mppr-statistics/log/photograph';
+
+  return Axios.post(url, params, { retry: 1, retryDelay: 15000 });
+}
+
+// 获取对比记录
+export function getCompareList(xhr) {
+  return Axios.get('http://' + ip + '/mppr-statistics/log/rec?taskUuidList=' + xhr.taskUuids + '&channelUuidList=' + xhr.channelIds + "&database=" + xhr.faceLibListUuids + "&starttime=" + xhr.startTime + "&overtime=" + xhr.endTime + "&currentPage=" + xhr.currentPage + "&pageSize=" + xhr.pageSize, { retry: 1, retryDelay: 15000 });
+}
+
+export function getCompareRecList(xhr) {
+  return Axios.get('http://' + ip + '/mppr-statistics/log/faceRec?channelUuidList=' + xhr.channelIds + "&database=" + xhr.faceLibListUuids + "&starttime=" + xhr.startTime + "&overtime=" + xhr.endTime + "&currentPage=" + xhr.currentPage + "&pageSize=" + xhr.pageSize, { retry: 1, retryDelay: 15000 });
+}
+
+// 获取今日抓拍次数
+export function getShootPhotoCount(xhr) {
+  return Axios.get('http://' + ip + '/mppr-statistics/log/sum?channelUuidList=' + xhr.channelUuids + '&date=' + xhr.currentTime, { retry: 1, retryDelay: 15000 });
+}
+
+// 获取今日对比次数
+export function getCompareCount(xhr) {
+  console.log(typeof xhr, '------获取今日抓拍次数-----参数：', xhr);
+  return Axios.get('http://' + ip + '/mppr-statistics/log/countDis?taskuuid=' + xhr, { retry: 1, retryDelay: 15000 });
+}
+
+// 获取今日整点时分抓拍次数
+export function getStaticHourCount(xhr) {
+  var paramsStr = '';
+
+  if (xhr.quality) {
+    paramsStr = 'quality=' + xhr.quality + '&';
+  }
+  if (xhr.channelUuids) {
+    paramsStr += 'devname=' + xhr.channelUuids + '&';
+  }
+  if (xhr.currentTime) {
+    paramsStr += 'date=' + xhr.currentTime;
+  }
+  return Axios.get('http://' + ip + '/mppr-statistics/statistics/singlevid_day?' + paramsStr, { retry: 1, retryDelay: 15000 });
+}
+
+// 根据人员StaffUuid获取抓拍记录
+
+export function getShootPhotosForStaffUuid(xhr) {
+  return Axios.get('http://' + ip + '/mppr-statistics/log/disInfo?staffUuid=' + xhr.staffUuid, { retry: 1, retryDelay: 15000 });
+}
+
+// 获取人脸库列表  /mppr-face/v1/face/libs
+export function getFaceLibs(xhr) {
+  return Axios.get('http://' + ip + '/mppr-face/v1/face/libs', { retry: 1, retryDelay: 15000 });
+}
+
+// 人体查询：/v1/face/analysis/query/bodyInfo/list
+export function getMBodyRecordList(xhr) {
+  // var params = {}
+  // if (xhr.channelIds) {
+  //     params.channelname = xhr.channelIds;
+  // }
+  // if (xhr.faceLibListUuids) {
+  //     params.database = xhr.faceLibListUuids;
+  // }
+  // if (xhr.scores) {
+  //     params.scores = xhr.scores;
+  // }
+  // if (xhr.pageSize) {
+  //     params.pageSize = xhr.pageSize;
+  // }
+  // if (xhr.currentPage) {
+  //     params.currentPage = xhr.currentPage;
+  // }
+  // if (xhr.startTime) {
+  //     params.starttime = xhr.startTime;
+  // }
+  // if (xhr.endTime) {
+  //     params.overtime = xhr.endTime;
+  // }
+
+  let url = 'http://' + ip + '/mppr-statistics/log/body';
+  return Axios.post(url, xhr, { retry: 1, retryDelay: 15000 });
+}
+
+// 上传两张人脸对比 POST /v1/face/analysis/model/compare/images
+export function compareTwoFacePhoto(xhr) {
+  return Axios.post('http://' + ip + '/mppr-baseface/v2/face/search/match', xhr, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    }
+  }, { retry: 1, retryDelay: 15000 });
+}
+// 任务列表 ，该接口暂未用到
+export function getTaskLibsList(xhr) {
+  return Axios.get('http://' + ip + '/mppr-face/v1/face/dispatching/list?taskName=ALL&isBody=' + xhr, { retry: 1, retryDelay: 15000 });
+}
+
+// 人体分析查询
+export function getBobyRecList(xhr) { //
+  return Axios.get('http://' + ip + '/mppr-statistics/body/list?channeluuid=' + xhr, { retry: 1, retryDelay: 15000 });
+}
+
+// 人体分析次数统计
+export function getBobyRecNum(xhr) { //
+  return Axios.get('http://' + ip + '/mppr-statistics/today/body/number?channeluuid=' + xhr, { retry: 1, retryDelay: 15000 });
+}
+
 // ------------------请求开始-------------
 function tips(res) {
   if (!res || res.result === undefined) {

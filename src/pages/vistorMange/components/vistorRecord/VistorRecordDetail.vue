@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import tagView from "@/common/Tag.vue";
 import RestApi from "@/utils/RestApi.js";
 import * as api from "../../utils/ajax";

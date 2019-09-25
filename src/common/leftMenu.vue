@@ -3,9 +3,9 @@
 		<el-row class>
 			<el-col :span="24">
 				<el-menu
-					:default-active="$route.path"
 					mode="vertical"
 					background-color
+					default-active="$route.path"
 					text-color="#DDDDDD"
 					active-text-color="#FFFFFF"
 					:router="true"
@@ -19,7 +19,7 @@
 								/>
 							</el-row>人脸预览
 						</el-menu-item>
-						<el-submenu index="Search">
+						<el-submenu index="analysis">
 							<template slot="title">
 								<div class="menuItemTitle">
 									<span class="images">
@@ -33,9 +33,9 @@
 							</template>
 							<el-menu-item index="FaceRecord">抓拍查询</el-menu-item>
 							<el-menu-item index="CompareRecord">对比查询</el-menu-item>
-							<el-menu-item index="searchFaceWithFace">以脸搜脸</el-menu-item>
+							<el-menu-item index="faceImpact">以脸搜脸</el-menu-item>
 							<el-menu-item index="faceAlarm">报警查询</el-menu-item>
-							<el-menu-item index="judgeAnalysis">研判查询</el-menu-item>
+							<el-menu-item index="faceAnalysis">研判查询</el-menu-item>
 							<el-menu-item index="OVO">1V1对比</el-menu-item>
 						</el-submenu>
 						<el-submenu index="ManBodyAnalysis" :class="{isActive:($route.path == '/ManBodyAnalysis')}">
@@ -47,8 +47,8 @@
 								</div>实景战法
 							</template>
 							<el-menu-item index="faceImpact">人员轨迹</el-menu-item>
-							<el-menu-item index="FaceAnalysisTable">频次分析</el-menu-item>
-							<el-menu-item index="Companion">同行人分析</el-menu-item>
+							<el-menu-item index="FaceRecord">频次分析</el-menu-item>
+							<el-menu-item index="MBAnalysisRecord">同行人分析</el-menu-item>
 						</el-submenu>
 						<el-menu-item index="taskDB" :class="{isActive:($route.path == '/taskDB')}">
 							<div class="images">
@@ -84,8 +84,8 @@
 								</div>统计
 							</div>
 							<el-menu-item index="PersonFlowAnalysis">抓拍统计</el-menu-item>
-							<el-menu-item index="SingleCaptureAnalysis">比对统计</el-menu-item>
-							<el-menu-item index="ModuleCount">模型统计</el-menu-item>
+							<el-menu-item index="PersonCompareCount">比对统计</el-menu-item>
+							<el-menu-item index="FaceAnalysisTable">模型统计</el-menu-item>
 						</el-submenu>
 						<el-menu-item index="Settings" :class="{isActive:($route.path == '/Settings')}" class>
 							<div class="images">
@@ -147,10 +147,8 @@ export default {
 	},
 	methods: {
 		handleSelect: function(key, keyPath) {
-			// this.$router.push({ path: "/" + key });
-			// this.routerIndex = this.$route.path;
-			// console.log(key,keyPath);
-			// console.log(this.$route.path);
+			this.$router.push({ path: "/" + key });
+			this.routerIndex = this.$route.path;
 		},
 		clearActBtn(e) {
 			this.$router.push({ path: "/" });
@@ -185,9 +183,12 @@ export default {
 .FaceHeader .el-submenu.is-active .el-submenu__title {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
-/* .FaceHeader .el-menu-item:focus, */
-.FaceHeader .magg .el-menu-item.is-active{
-	background-color: rgba(38, 211, 157, 0.6);
+.FaceHeader .el-menu-item:focus,
+.FaceHeader .el-menu-item.is-active,
+.FaceHeader .el-menu-item.isActive {
+	background-color: rgba(38, 211, 157, 0.6) !important;
+}
+.FaceHeader .magg .el-menu-item.is-active {
 	color: #ffffff;
 }
 .FaceHeader .el-menu--collapse {
@@ -198,7 +199,10 @@ export default {
 	max-width: 200px;
 	background: rgba(39, 42, 45, 0.8);
 	box-sizing: border-box;
-	overflow: auto;
+}
+.FaceHeader .el-menu {
+	background: rgba(39, 42, 45, 0.9);
+	border: none;
 }
 .FaceHeader .el-submenu {
 	line-height: 50px;

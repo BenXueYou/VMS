@@ -33,8 +33,7 @@
 					</el-col>
 				</el-row>
 				<el-row>
-					<!-- @click="scrollToRight"	-->
-					<i class="el-icon-caret-right" @mouseup="mouseUp" @mousedown="mouseDown" @click="scrollToRight"></i>
+					<i class="el-icon-caret-right" @click="scrollToRight"></i>
 				</el-row>
 			</el-row>
 
@@ -64,7 +63,7 @@
 						<el-progress
 							style="margin:auto;color:#28ffbb;font-size:14px;"
 							:stroke-width="3"
-							:width="progWidth"
+							:width="80"
 							type="circle"
 							color="#ffffff"
 							:percentage="scores"
@@ -97,9 +96,8 @@
 	</div>
 </template>
 <script type="text/javascript">
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js";
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
-import * as api from "@/pages/faceModule/api.js";
 export default {
   name: "ovo",
   props: {
@@ -108,8 +106,8 @@ export default {
   components: { "big-img": BigImg },
   data: function() {
     return {
-      progWidth: 80,
       fileList: [],
+
       showImg: false,
       imgSrc: "",
       photoCompareDeals: false,
@@ -128,57 +126,27 @@ export default {
 				"/mppr-face/v1/face/image/upload?fileType=full_body_shot",
       leftImg: "",
       rightImg: "",
-      imageBase641: null,
-      imageBase642: null,
       scores: 0,
-      compareBtnLoad: false,
-      mouseDownTimeStr: false,
-      setInt: null
+      compareBtnLoad: false
     };
   },
   mounted: function(e) {
     // 父組件向子組件傳值
     console.log(this.dialogParama);
-    window.addEventListener("resize", this.PROGWIDTH);
+    //  this.shootPhotoList = this.dialogParama.shootPhotoList;
   },
   activated: function() {
     console.log("刷新页面");
+    // this.getAlarmShootPhotoList();
   },
-  deactivated: function() {
-    window.removeEventListener("resize", this.PROGWIDTH);
-  },
-  computed: {},
   methods: {
-    mouseDown() {
-      // 长按事件
-      this.mouseDown = true;
-      this.setInt = setInterval(() => {
-        if (!this.mouseDown) return;
-        this.scrollToRight();
-      }, 500);
-    },
-    mouseUp() {
-      // 结束长按事件
-      this.mouseDown = false;
-      clearInterval(this.setInt);
-    },
-    PROGWIDTH() {
-      let w =
-				document.body.clientWidth ||
-				document.documentElement.clientWidth ||
-				window.innerWidth;
-      if (w > 1400) {
-        this.progWidth = 80;
-      } else {
-        this.progWidth = 50;
-      }
-    },
     statuschange() {
-      //   alert("文件选择成功！");
+      alert("文件选择成功！");
     },
     httpRequest2(e2) {
       console.log(e2, "---", e2.file, "---", e2.file.raw);
       this.fileList[1] = e2.file;
+
       this.imageUrl2 = URL.createObjectURL(e2.file);
     },
     httpRequest1(e1) {
@@ -204,50 +172,29 @@ export default {
     },
     // 开始对比
     compareTwoFacePhoto() {
+      // debugger;
       this.scores = 0;
       if (this.imageUrl1 && this.imageUrl2) {
         this.compareBtnLoad = true;
-        console.log(this.fileList);
-        let reader1 = new FileReader();
-        let reader2 = new FileReader();
-        reader1.readAsDataURL(this.fileList[0]);
-        reader2.readAsDataURL(this.fileList[1]);
 
-        var _this = this;
-        reader1.onload = function(e) {
-          _this.imageBase641 = this.result
-            .replace("data:image/jpeg;base64,", "jpeg:")
-            .replace("data:image/png;base64,", "png:")
-            .replace("data:image/jpg;base64,", "jpg:");
-        };
-        reader2.onload = function(e) {
-          _this.imageBase642 = this.result
-            .replace("data:image/jpeg;base64,", "jpeg:")
-            .replace("data:image/png;base64,", "png:")
-            .replace("data:image/jpg;base64,", "jpg:");
-        };
-        this.sendFileImgToServer();
+        console.log(this.fileList);
+        // var url = "http://192.168.9.166:9400/v2/face/search/match";
+        let param = new FormData(); // 创建form对象
+        param.append("imageFileOne", this.fileList[0]); // 通过append向form对象添加数据
+        param.append("imageFileTwo", this.fileList[1]); // 通过append向form对象添加数据
+        this.$store.dispatch("compareTwoFacePhoto", param).then(res => {
+          this.compareBtnLoad = false;
+          if (res.result === 0 && res.data) {
+            this.scores = parseInt(res.data);
+          } else {
+            this.$message({ message: "服务器开小差了！", type: "error" });
+          }
+
+          console.log("====", res);
+        });
       } else {
         this.$message({ message: "请上传图片", type: "warning" });
       }
-    },
-    sendFileImgToServer() {
-      api
-        .faceComparison1v1({
-          imageBase641: this.imageBase641,
-          imageBase642: this.imageBase642
-        })
-        .then(res => {
-          this.compareBtnLoad = false;
-          if (res.data.success) {
-            this.scores = res.data.data;
-          } else {
-            this.$message({ type: "warning", message: res.data.msg });
-          }
-        })
-        .catch(() => {
-          this.compareBtnLoad = false;
-        });
     },
     // 删除历史记录
     deleteImgRecord() {
@@ -347,20 +294,18 @@ export default {
 
     scrollToRight() {
       let dom = document.getElementById("scrollView");
-      let scrollLeft = dom.scrollLeft;
+      console.log(dom, "向左滚动", dom.scrollLeft);
       document.getElementById("scrollView").scrollLeft += this.scrollValue;
-      if (document.getElementById("scrollView").scrollLeft === scrollLeft) {
-        this.$message.warning("已经是最右端了");
-        // console.log("向左滚动", document.getElementById("scrollView").scrollLeft);
-      }
+
+      console.log("向左滚动", document.getElementById("scrollView").scrollLeft);
     },
     scrollToLeft() {
+      console.log("向右滚动");
       let dom = document.getElementById("scrollView");
-      if (dom.scrollLeft) {
-        document.getElementById("scrollView").scrollLeft -= this.scrollValue;
-      } else {
-        this.$message.warning("已经是最左端了");
-      }
+      console.log(dom, "向右滚动", dom.scrollLeft);
+      document.getElementById("scrollView").scrollLeft -= this.scrollValue;
+
+      console.log("向右滚动", document.getElementById("scrollView").scrollLeft);
     },
     handleAvatarError(err, file, fileList) {
       console.log(err, "===", file, "====", fileList);
@@ -380,13 +325,13 @@ export default {
 	height: 100%;
 }
 .OVO .font-color {
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	font-size: 12px;
 	color: #cccccc;
 	text-align: right;
 }
 .OVO .fontClass {
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	font-size: 16px;
 	color: #ffffff;
 }
@@ -417,7 +362,7 @@ export default {
 }
 
 .ovo-card-img {
-	margin: 45% 30% 10%;
+	margin: 50% 30% 10%;
 	vertical-align: middle;
 	width: 30%;
 	height: 20%;
@@ -500,7 +445,7 @@ export default {
 }
 .OVO .dialogPhotoItemTxt {
 	opacity: 0.8;
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	font-size: 12px;
 	color: #ffffff;
 	text-align: center;
@@ -540,23 +485,10 @@ export default {
 	overflow-y: hidden;
 }
 
-@media screen and (max-width: 1400px) {
-	.OVO .colBoxClass {
-		width: calc(100% + 15px);
-		height: 130px;
-		overflow: -webkit-paged-x;
-		padding-top: 15px;
-		box-sizing: border-box;
-		display: flex;
-		overflow-x: auto;
-		overflow-y: hidden;
-	}
-}
-
 .OVO .OVOTitle {
 	padding: 35px 50px 17px 0px;
 	text-align: left;
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	font-size: 18px;
 	/* color: #28FFBB; */
 }
@@ -579,6 +511,7 @@ export default {
 .OVO {
 	text-align: center;
 	background-color: transparent;
+
 	width: 100%;
 	height: calc(100% - 40px);
 	box-sizing: border-box;
@@ -615,6 +548,6 @@ export default {
 	vertical-align: middle;
 	/*margin-left: 10px;*/
 	line-height: 1;
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 }
 </style>

@@ -136,7 +136,7 @@ import TreeChangeNameDialog from "@/common/TreeChangeNameDialog";
 import ConfirmDialog from "@/common/ConfirmDialog";
 import * as api from "@/pages/equipmentMange/ajax.js";
 import { mapState } from "vuex";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import { addTreeKey, copyTreeKey } from "@/utils/tree";
 export default {
   name: "leftmenu",

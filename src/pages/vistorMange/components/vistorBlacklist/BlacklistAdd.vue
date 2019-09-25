@@ -49,7 +49,6 @@
 </template>
 <script>
 import * as api from "../../utils/ajax";
-import RestApi from "@/utils/RestApi.js";
 export default {
   name: "BlacklistAdd",
   props: {
@@ -102,7 +101,7 @@ export default {
       },
       dialogVisible: false,
       imageUrl: null,
-      imageHeaderUrl: RestApi.api.imageUrl
+      imageHeaderUrl: window.config.imageUrl
     };
   },
   mounted() {
@@ -237,7 +236,6 @@ export default {
           ? this.defaultRow.certificatePhotoUri
           : this.defaultRow.snapPhotoUri;
         this.imageUrl = this.imageHeaderUrl + this.imageUrl;
-        console.log(this.imageUrl);
         Object.assign(this.SearchObj, this.defaultRow);
       } else {
         this.SearchObj = {

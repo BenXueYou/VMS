@@ -6,9 +6,7 @@ const FaceRecord = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/fa
 const CompareRecord = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/CompareRecord');
 const IntelligentModel = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/IntelligentModel');
 const OVO = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/OVO');
-const searchFaceWithFace = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/searchFaceWithFace/view/SearchFaceWithFace');
-const judgeAnalysis = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/judgeAnalysis/view/JudgeAnalysis');
-const ModuleCount = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/moduleCount/view/ModuleCount');
+const faceImpact = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/faceImpact');
 const ManBodyAnalysis = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/ManBodyAnalysis');
 const MBAnalysisRecord = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/MBAnalysisRecord');
 const faceAlarm = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/page/search/facealarm/faceAlarm');
@@ -20,6 +18,7 @@ const SingleCaptureAnalysis = () => import(/* webpackChunkName: "FaceModule" */ 
 const SingleMissionAnalysis = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/statisticalForms/view/SingleMissionAnalysis');
 const FaceAnalysisTable = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/statisticalForms/view/FaceAnalysisTable');
 const Companion = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/companion/view/Companion');
+const CarFellow = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/carFellow/view/CarFellow');
 const Settings = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/settings/view/Settings');
 
 const routes = [
@@ -116,20 +115,12 @@ const routes = [
     component: OVO
   },
   {
-    path: '/searchFaceWithFace',
-    name: 'searchFaceWithFace',
+    path: '/faceImpact',
+    name: 'faceImpact',
     meta: {
       keepAlive: true // 需要缓存
     },
-    component: searchFaceWithFace
-  },
-  {
-    path: '/judgeAnalysis',
-    name: 'judgeAnalysis',
-    meta: {
-      keepAlive: true // 需要缓存
-    },
-    component: judgeAnalysis
+    component: faceImpact
   },
   {
     path: '/IGMRecord',
@@ -196,12 +187,12 @@ const routes = [
     component: Settings
   },
   {
-    path: '/ModuleCount',
-    name: 'ModuleCount',
+    path: '/CarFellow',
+    name: 'CarFellow',
     meta: {
       keepAlive: true // 需要缓存
     },
-    component: ModuleCount
+    component: CarFellow
   }
 ];
 export default {

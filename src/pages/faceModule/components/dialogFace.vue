@@ -167,7 +167,7 @@
 	</div>
 </template>
 <script type="text/javascript">
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js";
 import BigImg from "./BigImg.vue";
 export default {
   name: "mydialog",

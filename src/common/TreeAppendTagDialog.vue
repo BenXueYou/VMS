@@ -56,37 +56,10 @@ export default {
         return false;
       }
     },
-    select: {
+    value: {
       type: String,
       default() {
         return "";
-      }
-    },
-    options: {
-      type: Array,
-      default() {
-        return [
-          {
-            value: "选项1",
-            label: "黄金糕"
-          },
-          {
-            value: "选项2",
-            label: "双皮奶"
-          },
-          {
-            value: "选项3",
-            label: "蚵仔煎"
-          },
-          {
-            value: "选项4",
-            label: "龙须面"
-          },
-          {
-            value: "选项5",
-            label: "北京烤鸭"
-          }
-        ];
       }
     }
   },
@@ -115,8 +88,11 @@ export default {
   },
   watch: {
     visible(val) {
-      this.name = "";
-      this.selectValue = this.select;
+      if (val) {
+        this.name = this.value;
+      } else {
+        this.name = "";
+      }
       this.TreechangeNameDialogVisible = this.visible;
     }
   }

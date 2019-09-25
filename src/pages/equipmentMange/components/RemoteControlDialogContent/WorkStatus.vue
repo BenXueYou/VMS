@@ -141,7 +141,7 @@
 
 <script>
 import * as api from "@/pages/equipmentMange/ajax.js";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 export default {
   name: "DeviceInfo",
   props: {

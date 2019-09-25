@@ -70,7 +70,7 @@ import TreeAppendChildDialog from "@/common/TreeAppendChildDialog";
 import TreeChangeNameDialog from "@/common/TreeChangeNameDialog";
 import TreeAppendTagDialog from "@/common/TreeAppendTagDialog";
 import ConfirmDialog from "@/common/ConfirmDialog";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import * as api from "@/pages/equipmentMange/ajax.js";
 import orgDialog from "@/pages/equipmentMange/components/orgDialog";
 import { addTreeKey, copyTreeKey, remeberLast } from "@/utils/tree";

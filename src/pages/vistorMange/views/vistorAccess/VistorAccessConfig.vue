@@ -200,7 +200,7 @@
 
 <script>
 import TheCompanyTableXiafaDialog from "@/pages/equipmentMange/components/TheCompanyTableXiafaDialog";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import ConfirmDialog from "@/common/ConfirmDialog";
 import AddNewPowerDialog from "@/pages/vistorMange/components/vistorAccess/AddNewPowerDialog";
 import * as api from "../../utils/vistorAccess/ajax.js";

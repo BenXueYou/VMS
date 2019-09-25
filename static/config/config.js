@@ -1,4 +1,3 @@
-// GatoCloud_V1.1_iac_account_project_Build(5613)
 var protocolHeader = window.location.protocol;
 var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
@@ -17,9 +16,9 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  ip = "192.168.9.44:15000";
+  ip = "192.168.9.94:15000";
   // ip = '192.168.6.191:51880';
-  websocketIp = "192.168.9.44:15007";
+  websocketIp = "192.168.9.94:15007";
   imageUrl =
     protocolHeader +
     "//" +

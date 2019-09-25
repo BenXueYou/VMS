@@ -308,10 +308,10 @@ export default {
             });
             this.localService = num;
           }
-          this.$emit("serverList", this.localService, this.viewType);
+          this.$emit("serverList", this.localService);
         })
         .catch(() => {
-          this.$emit("serverList", this.localService, this.viewType);
+          this.$emit("serverList", this.localService);
         });
     },
     DType() {
@@ -378,9 +378,7 @@ export default {
             // time: "2018-10-08"
             let list = data.list;
             for (let i = 0, len = list.length; i < len; i++) {
-              // list[i].devName = list[i].nickName;
-              // 保持跟下发数据的设备名字一样，所以改成deviceName
-              list[i].devName = list[i].deviceName;
+              list[i].devName = list[i].nickName;
               list[i].ip = list[i].deviceIp;
               list[i].devId = list[i].deviceSn;
               list[i].devMode = list[i].productType;
@@ -543,7 +541,9 @@ export default {
         this.serviceList(this.viewType);
         this.DType(this.viewType);
       }
-      this.$emit("showEdit", row.deviceUuid, row.netStatus);
+      // this.editEquipMentDialgoVisible = true;
+
+      this.$emit("showEdit", row.deviceUuid);
     },
     deleteEquip(row) {
       this.deleteOneRow = row;

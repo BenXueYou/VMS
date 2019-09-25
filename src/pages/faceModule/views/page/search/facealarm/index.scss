@@ -27,7 +27,6 @@
   height: 43px;
   text-align: left;
   font-size: 0px;
-  line-height: 43px;
 
   .imagebtn {
     display: inline-block;
@@ -54,8 +53,16 @@
   padding: 40px 50px 40px 50px;
   box-sizing: border-box;
   text-align: left;
+
+  .topTitleTxt {
+    font-family: "PingFangSC-Regular";
+    font-size: 14px;
+    color: #cccccc;
+  }
+
   .facealarm-table {
     width: 100%;
+    margin-top: 20px;
     height: calc(100vh - 250px);
     padding: 0px 30px;
     box-sizing: border-box;

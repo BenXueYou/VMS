@@ -299,7 +299,7 @@
 <script>
 import dialogview from "@/pages/faceModule/components/dialogForm.vue";
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 // let id = 1000;
 export default {
   name: "MBAnalysis",

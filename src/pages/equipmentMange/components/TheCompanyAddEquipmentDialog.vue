@@ -110,7 +110,7 @@
 
 <script>
 import TheCompanyUpdateDialog from "@/pages/equipmentMange/components/TheCompanyUpdateDialog";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import * as api from "../ajax";
 export default {
   name: "TreeChangeNameDialog.vue",

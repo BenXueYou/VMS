@@ -36,25 +36,25 @@
 					<el-col :span="7">
 						<img
 							class="xydialog-card-img"
-							:src="dialogParama.staffinfo?dialogParama.staffinfo.facePhotoUrl:require('@/assets/user.png')"
+							:src="dialogParama&&dialogParama.faceRecognization?dialogParama.faceRecognization.staffinfo.photoUri:require('@/assets/user.png')"
 						/>
 					</el-col>
 					<el-col :span="17">
 						<el-row type="flex" justify="space-between" class="rightTxt">
 							<el-col :span="10" style="margin-right:8px">
-								<div>所属库：{{dialogParama.staffInfo?dialogParama.staffInfo.faceLibraryName:''}}</div>
-								<div>姓名：{{dialogParama.staffInfo?dialogParama.staffInfo.staffName:''}}</div>
-								<div>性别：{{dialogParama.staffInfo?dialogParama.staffInfo.gender:''}}</div>
-								<div>人员类型：{{dialogParama.staffInfo?dialogParama.staffInfo.staffType:''}}</div>
-								<div>住户类型：{{dialogParama.staffInfo?dialogParama.staffInfo.householdType:''}}</div>
-								<div>户籍：{{dialogParama.staffInfo?dialogParama.staffInfo.householdRegister:''}}</div>
+								<div>所属库：{{dialogParama.libName}}</div>
+								<div>姓名：{{dialogParama.staffName}}</div>
+								<div>性别：{{dialogParama.genderName}}</div>
+								<div>人员类型：{{dialogParama.staffType}}</div>
+								<div>住户类型：{{dialogParama.staffType}}</div>
+								<div>户籍：{{dialogParama.native}}</div>
 							</el-col>
 							<el-col :span="14">
-								<div>民族：{{dialogParama.staffInfo?dialogParama.staffInfo.nation:''}}</div>
-								<div>出生年月：{{dialogParama.staffInfo?dialogParama.staffInfo.birthday:''}}</div>
-								<div>证件类型：{{dialogParama.staffInfo?dialogParama.staffInfo.credentialType:''}}</div>
-								<div>证件号码：{{dialogParama.staffInfo?dialogParama.staffInfo.credentialNo:''}}</div>
-								<div>住户地址：{{dialogParama.staffInfo?dialogParama.staffInfo.address:''}}</div>
+								<div>民族：{{dialogParama.libName}}</div>
+								<div>出生年月：{{dialogParama.staffName}}</div>
+								<div>证件类型：{{dialogParama.genderName}}</div>
+								<div>证件号码：{{dialogParama.staffType}}</div>
+								<div>住户地址：{{dialogParama.staffType}}</div>
 							</el-col>
 						</el-row>
 					</el-col>
@@ -82,14 +82,14 @@
 					</el-row>
 					<div class="cardBoxFooter">
 						<el-row type="flex" justify="space-between">
-							<el-col :span="12">{{item.channelName?item.channelName:"通道名称"}}</el-col>
-							<el-col :span="12">{{item.captureDatetime?item.captureDatetime:"抓拍时间"}}</el-col>
+							<el-col :span="12">通道名称</el-col>
+							<el-col :span="12">抓拍时间</el-col>
 						</el-row>
 						<el-row type="flex" justify="space-around">
-							<span>特征：{{item.sunglasses?'戴墨镜 ':" "}} {{item.mask?'戴口罩':""}}</span>
-							<span>性别：{{item.genderCapture||''}}</span>
-							<span>年龄：{{item.age||''}}</span>
-							<span>眼镜：{{item.glasses?'戴眼镜 ':" "}}   </span>
+							<span>特征：</span>
+							<span>性别：</span>
+							<span>年龄：</span>
+							<span>眼镜：</span>
 						</el-row>
 					</div>
 				</div>
@@ -98,7 +98,7 @@
 	</div>
 </template>
 <script type="text/javascript">
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js";
 import BigImg from "./BigImg.vue";
 export default {
   name: "xydialog",

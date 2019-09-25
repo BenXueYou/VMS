@@ -1,54 +1,92 @@
 <template>
-	<div class="tablelist" ref="tablelist">
-		<div class="aaaa">
-			<el-table :data="tableData" border v-loading="isloading" style="width: 100%">
-				<el-table-column prop="index" label="序号" width="60">
-					<template slot-scope="scope">{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</template>
-				</el-table-column>
-				<el-table-column prop="taskname" label="布控任务"></el-table-column>
-				<el-table-column prop="alarmtime" label="报警时间"></el-table-column>
-				<el-table-column prop="zhuapai" label="抓拍摄像机"></el-table-column>
+  <div class='tablelist'
+       ref='tablelist'>
+    <div class='aaaa'>
+      <el-table :data="tableData"
+                border
+                v-loading="isloading"
+                style="width: 100%">
 
-				<el-table-column prop="staffname" label="人员姓名" width="100"></el-table-column>
-				<el-table-column prop="sex" label="性别" width="100"></el-table-column>
-				<el-table-column prop="idcard" label="证件号码"></el-table-column>
-				<el-table-column prop="belong" label="人员类型" width="160">
+        <el-table-column prop="index"
+                         label="序号"
+                         width="60">
           <template slot-scope="scope">
-            {{scope.row.staffType?$common.getEnumItemName("staff_t", scope.row.staffType):''}}
+
+            {{("0"+(parseInt(scope.$index)+1)).slice(-2)}}
+
           </template>
         </el-table-column>
-				<el-table-column prop="belong" label="所属库" width="160"></el-table-column>
-				<el-table-column prop="xiangsidu" label="相似度" width="80"></el-table-column>
-				<el-table-column prop="dealstate" label="状态" width="160"></el-table-column>
+        <el-table-column prop="taskname"
+                         label="布控任务"
+                        >
+        </el-table-column>
+        <el-table-column prop="zhuapai"
+                         label="抓拍摄像机"
+                         >
+        </el-table-column>
 
-				<el-table-column label="操作" width="160">
-					<template slot-scope="scope">
-						<el-button @click="lookface(scope.row)" type="text" size="small">
-							<i class="el-icon-search"></i>
-							查看
-						</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
-		</div>
-		<div class="footer">
-			<el-pagination
-				background
-				layout="prev, pager, next"
-				:page-size="pageSize"
-				:current-page="pageNow"
-				@current-change="currentChange"
-				:total="pageCount"
-			></el-pagination>
+        <el-table-column prop="alarmtime"
+                         label="报警时间"
+                        >
+        </el-table-column>
+        <el-table-column prop="xiangsidu"
+                         label="相似度"
+                         width='80'>
+        </el-table-column>
+        <el-table-column prop="staffname"
+                         label="人员姓名"
+                         width="100">
+        </el-table-column>
+        <el-table-column prop="idcard"
+                         label="证件号码">
+        </el-table-column>
+        <el-table-column prop="belong"
+                         label="所属库"
+                         width="160">
+        </el-table-column>
 
-			<p class="totalpagetitle">共{{pageCount}}条</p>
+        <el-table-column prop="dealstate"
+                         label="状态"
+                         width="160"
+                         >
 
-			<div class="tiaozhuan">
-				<span>跳转至</span>
-				<el-input class="yeshu" v-model="yeshu" @blur="blur" type="number"></el-input>
-			</div>
-		</div>
-	</div>
+        </el-table-column>
+
+        <el-table-column label="操作"  width="160">
+          <template slot-scope="scope">
+            <el-button @click="lookface(scope.row)"
+                       type="text"
+                       size="small">
+              <i class='el-icon-search'></i>
+              查看
+            </el-button>
+
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="footer">
+      <el-pagination background
+                     layout="prev, pager, next"
+                     :page-size="pageSize"
+                     :current-page="pageNow"
+                     @current-change='currentChange'
+                     :total="pageCount">
+      </el-pagination>
+
+      <p class='totalpagetitle'> 共{{pageCount}}条</p>
+
+      <div class='tiaozhuan'>
+        <span>跳转至</span>
+        <el-input class='yeshu'
+                  v-model="yeshu"
+                  @blur="blur"
+                  type='number'>
+        </el-input>
+      </div>
+    </div>
+
+  </div>
 </template>
 
 <script>
@@ -103,7 +141,15 @@ export default {
       yeshu: ""
     };
   },
-  mounted() {},
+  mounted() {
+    // this.$nextTick(function() {
+    //   var win_h = window.innerHeight;
+    //   var tableheight =
+    //     parseInt(getComputedStyle(this.$refs.tablelist).height) - 40;
+    //   this.pageSize = Math.floor(tableheight / 43);
+    //   //   alert(this.pageSize);
+    // });
+  },
   methods: {
     blur() {
       if (this.yeshu !== "") {
@@ -115,6 +161,8 @@ export default {
       }
     },
     lookface(row) {
+      // alert(row.alarminfoid);
+
       this.$emit("lookface", row.detail);
     },
     currentChange(index) {
@@ -138,59 +186,59 @@ export default {
 
 <style lang="scss" scoped>
 .aaaa {
-	height: calc(100% - 150px);
+  height: calc(100% - 150px);
 }
 .tablelist {
-	height: 100%;
-	height: 100%;
+  height: 100%;
+  height: 100%;
 }
 .footer {
-	position: relative;
-	margin: 30px 0px;
-	.totalpagetitle {
-		font-size: 14px;
-		color: #fff;
-		float: right;
-		margin-right: 20px;
-		margin-top: 17px;
-	}
-	.el-pagination {
-		margin-right: 180px;
-		margin-top: 10px;
-		float: right;
-	}
-	.tiaozhuan {
-		position: absolute;
-		right: 20px;
-		top: 6px;
-		span {
-			font-size: 14px;
-			color: #fff;
-			padding-right: 20px;
-		}
-		.yeshu {
-			display: inline-block;
-			width: 90px;
-			input {
-				padding: 0px;
-			}
-		}
-	}
+  position: relative;
+  margin: 30px 0px;
+  .totalpagetitle {
+    font-size: 14px;
+    color: #fff;
+    float: right;
+    margin-right: 20px;
+    margin-top: 17px;
+  }
+  .el-pagination {
+    margin-right: 180px;
+    margin-top: 10px;
+    float: right;
+  }
+  .tiaozhuan {
+    position: absolute;
+    right: 20px;
+    top: 6px;
+    span {
+      font-size: 14px;
+      color: #fff;
+      padding-right: 20px;
+    }
+    .yeshu {
+      display: inline-block;
+      width: 90px;
+      input {
+        padding: 0px;
+      }
+    }
+  }
 }
 </style>
 
 <style lang="scss">
 .tablelist .yeshu {
-	display: inline-block;
-	width: 90px;
-	vertical-align: middle;
-	height: 40px;
-	.el-input__inner {
-		margin-top: 5px;
-		width: 50px;
-		height: 28px;
-		line-height: 28px;
-		padding: 0px 5px;
-	}
+  display: inline-block;
+  width: 90px;
+  vertical-align: middle;
+  height: 40px;
+  .el-input__inner {
+    margin-top: 5px;
+    width: 50px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0px 5px;
+  }
 }
 </style>

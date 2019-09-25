@@ -9,7 +9,6 @@
 					type="datetime"
 					placeholder="选择日期"
 					value-format="yyyy-MM-dd HH:mm:ss"
-					@change="selectDate=null"
 				></el-date-picker>
 				<span class="timeText">至</span>
 				<el-date-picker
@@ -18,7 +17,6 @@
 					type="datetime"
 					placeholder="选择日期"
 					value-format="yyyy-MM-dd HH:mm:ss"
-					@change="selectDate=null"
 				></el-date-picker>
 			</div>
 			<div class="topBoxDiv topBoxDateRadioBtnBox">
@@ -168,7 +166,7 @@
 import CarFellowDetailDialog from "@/pages/faceModule/views/carFellow/view/CarFellowDetailDialog";
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import AlTree from "@/pages/faceModule/components/AlElTree.vue";
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 export default {
   components: { elPopverTree, AlTree, CarFellowDetailDialog },
   mounted: function() {
@@ -913,7 +911,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	overflow: auto;
-	/* display: flex; */
+	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: flex-start;
@@ -951,11 +949,11 @@ export default {
 	flex-direction: column;
 	justify-content: flex-start;
 	background: rgb(28, 29, 32);
-	padding: 1.5% 2% 1.5%;
+	padding: 2% 2%;
 	box-sizing: border-box;
 }
 .bottomBox {
-	padding: 0px 27px 10px;
+	padding: 0px 27px 0;
 	display: flex;
 	align-items: center;
 	width: 100%;
@@ -967,7 +965,7 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding: 25px 40px 0px 27px;
-	/* height: 140px; */
+	height: 140px;
 	background: rgba(36, 39, 42, 1);
 	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
 	/* overflow-y: auto; */

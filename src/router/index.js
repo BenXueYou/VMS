@@ -106,6 +106,22 @@ export const constantRouterMap = [
         icon: "FaceManage",
         type: "app",
         redirect: "/FaceManage" //设置默认子路由
+      },
+      {
+        path: "/VideoPreview",
+        name: "VideoPreview",
+        component: VideoPreview,
+        title: "视频预览",
+        icon: "VideoPreview",
+        type: "config"
+      },
+      {
+        path: "/VideoPlayback",
+        name: "VideoPlayback",
+        component: VideoPlayback,
+        title: "视频回放",
+        icon: "vistorMange",
+        type: "config"
       }
     ]
   },

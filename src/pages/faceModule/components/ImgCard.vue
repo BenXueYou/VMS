@@ -31,7 +31,7 @@
 	</transition>
 </template>
 <script>
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 export default {
   props: {
     photoItem: {

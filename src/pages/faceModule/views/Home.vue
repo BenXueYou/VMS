@@ -216,7 +216,7 @@
 <script>
 import dialogview from "@/pages/faceModule/components/dialogForm.vue";
 import alPopoverTree from "@/pages/faceModule/components/AlElTree.vue";
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import ImgCard from "@/pages/faceModule/components/ImgCard.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
@@ -314,7 +314,8 @@ export default {
       dialogfullscreenLoading: false
     };
   },
-  computed: {},
+  computed: {
+  },
   mounted: function() {
     this.vlc = null;
     let w = this.WIDTH();
@@ -891,9 +892,7 @@ export default {
     },
     // 弹窗的传值
     dialogAction(e) {
-      // this.dothis(e);
-      console.log("-----");
-      this.dialogVisible = true;
+      this.dothis(e);
     },
     dothis(e) {
       console.log("右侧的弹窗事件index", e);
@@ -1328,6 +1327,13 @@ iframe html {
 	color: #bbbbbb;
 	font-size: 14px;
 }
+.RTask .asidCompareTxtClass {
+	text-align: left;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	padding: 10px 0px 0px;
+}
 .RTask .HomeFooterChannelName {
 	font-size: 12px;
 	position: relative;
@@ -1445,7 +1451,7 @@ iframe html {
 	border: 1px solid rgba(255, 255, 255, 0.3);
 	border-radius: 3px;
 	margin: 5px auto;
-	font-family: "PingFangSC-Medium";
+	font-family: 'PingFangSC-Medium';
 }
 .RTask .el-dialog {
 	width: 920px;
@@ -1505,10 +1511,19 @@ iframe html {
 	display: block;
 	font-size: 14px;
 }
+
+.RTask .asidListRowFooter {
+	/* line-height: 35px; */
+	font-size: 14px;
+	text-align: left;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
 .RTask .asidListRow {
 	width: 100%;
-	margin-top: 3%;
-	/* height: 18%; */
+	margin-top: 3.5%;
+	height: 17.5%;
 	color: #fff;
 	/* background-color: rgb(29, 31, 34); */
 	background-color: rgba(0, 0, 0, 0.15);
@@ -1523,7 +1538,7 @@ iframe html {
 }
 .RTask .textclipsClass,
 .RTask .asidListRow span {
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	/* display: inline-block; */
 	/* width: 100%; */
 	white-space: nowrap;

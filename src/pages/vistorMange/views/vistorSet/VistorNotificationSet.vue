@@ -142,7 +142,7 @@
 
 <script>
 import * as api from "../../utils/ajax";
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 export default {
   components: {},
   props: {},

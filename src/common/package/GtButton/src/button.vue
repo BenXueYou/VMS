@@ -4,7 +4,8 @@
     <img v-if='icon'
          :src="icon"
          alt="">
-    <span class='text'>
+    <span class='text'
+          v-if="showText">
       <slot></slot>
     </span>
     <span class="close"
@@ -29,11 +30,19 @@ export default {
       default() {
         return true;
       }
+    },
+    showText: {
+      type: Boolean,
+      default() {
+        return true;
+      }
     }
   },
   computed: {},
   methods: {
-    clickbutton() {},
+    clickbutton() {
+      this.$emit("click");
+    },
     close() {
       this.$emit("close");
     }

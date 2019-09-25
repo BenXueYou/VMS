@@ -69,7 +69,7 @@ import TheFaceAlarmDialog from "@/pages/faceModule/views/page/search/facealarm/b
 import * as api from "@/pages/faceModule/api";
 import TheAnalysisDialog from "@/pages/faceModule/views/page/search/IntelligentModelRecord/basic/IGMDialog.vue";
 
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 export default {
   name: "facedblist",
   props: {

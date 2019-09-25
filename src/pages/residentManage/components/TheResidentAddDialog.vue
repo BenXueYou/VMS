@@ -548,7 +548,7 @@
               <span>信息来源：</span>
             </span>
             <span>
-              <span>{{defaultResident.source==='platform'?'平台录入':defaultResident.source}}</span>
+              <span>xxxx设备/平台录入</span>
             </span>
           </p>
         </div>
@@ -613,7 +613,7 @@
 </template>
 
 <script>
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import tagView from "@/common/Tag.vue";
 import tabTreeTag from "@/common/TabTreeTag.vue";
 import personTreeTag from "@/common/personTreeTag";
