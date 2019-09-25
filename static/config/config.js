@@ -1,6 +1,5 @@
 // GatoCloud_V1.1_h5_iac_Build(5730)
-// var protocolHeader = window.location.protocol;
-var protocolHeader = 'https:';
+var protocolHeader = window.location.protocol;
 var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
@@ -18,9 +17,9 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  // ip = "192.168.9.44:15000";
-  ip = 'www.guangtuo.com';
-  websocketIp = "192.168.9.44:15007";
+  ip = "192.168.9.94:15000";
+  // ip = '192.168.6.191:51880';
+  websocketIp = "192.168.9.94:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -31,6 +30,8 @@ if (DEBUG == "DEBUG") {
   if (protocolHeader === "https:") {
     ip = hostname;
     websocketIp = hostname;
+    if (window.location.port) ip += ':443';
+    if (window.location.port) websocketIp += ':443';
   } else {
     ip = hostname + ":51880";
     websocketIp = "180.167.210.2:51881";

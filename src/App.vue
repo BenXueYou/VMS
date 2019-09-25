@@ -30,7 +30,7 @@ export default {
   },
   mounted() {
     console.log(this.$route);
-    if (this.$route.fullPath.indexOf("/DoorControl") !== -1) {
+    if (this.$route.fullPath.toLocaleLowerCase().indexOf("/DoorControl") !== -1) {
       this.doorRoute = this.$route.fullPath;
     }
     if (

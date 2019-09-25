@@ -22,7 +22,6 @@
                     class="i-tree-style">
         <el-tree :data="treeData"
                  :props="defaultProps"
-                 
                  node-key="id"
                  lazy
                  :load="loadNode"
@@ -174,9 +173,9 @@ export default {
       this.getUpAddress(this.labelArr);
       this.nodeText = this.upAddress;
       this.$emit("setUseData", {
-        node: this.currentNode
+        node: this.currentNode,
+        name: this.upAddress
       });
-      console.log(node);
       this.defaultExpKeys = [node.data.id];
       // }
     },

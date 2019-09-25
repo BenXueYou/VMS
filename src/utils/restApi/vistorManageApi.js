@@ -3,7 +3,7 @@ import store from "@/store/store.js";
 let ip = window.config.ip,
     protocolHeader = window.config.protocolHeader,
     projectUuid = store.state.home.projectUuid;
-let URLHeader = `${protocolHeader}${ip}/zuul/visitant-v1/project`;
+let URLHeader = `${protocolHeader}${ip}/visitant-v1/project`;
 let BlacklistURLHeader = `${protocolHeader}${ip}/blacklist-v1/project/`;
 let BlacklistArlarmURLHeader = `${protocolHeader}${ip}/alarmlog-v1/project/`
 export default {

@@ -153,7 +153,7 @@ export default {
     title: {
       type: String,
       default() {
-        return "手动搜索";
+        return "手动添加";
       }
     },
     value: {

@@ -20,8 +20,8 @@
       <div class="btn-group">
         <el-button type="primary"
                    @click='addEquipMent'>搜索设备</el-button>
-        <!-- <el-button type="primary"
-                   @click='manualAdd'>手动添加</el-button> -->
+        <el-button type="primary"
+                   @click='manualAdd'>手动添加</el-button>
         <el-button type="primary"
                    @click="deletetableData">删除</el-button>
         <el-button type="primary"
@@ -379,6 +379,8 @@ export default {
             // time: "2018-10-08"
             let list = data.list;
             for (let i = 0, len = list.length; i < len; i++) {
+              // list[i].devName = list[i].nickName;
+              // 保持跟下发数据的设备名字一样，所以改成deviceName
               list[i].devName = list[i].nickName;
               list[i].ip = list[i].deviceIp;
               list[i].devId = list[i].deviceSn;
@@ -542,9 +544,7 @@ export default {
         this.serviceList(this.viewType);
         this.DType(this.viewType);
       }
-      // this.editEquipMentDialgoVisible = true;
-
-      this.$emit("showEdit", row.deviceUuid);
+      this.$emit("showEdit", row.deviceUuid, row.netStatus);
     },
     deleteEquip(row) {
       this.deleteOneRow = row;

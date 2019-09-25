@@ -38,7 +38,7 @@ export const constantRouterMap = [
         children: doorAccess.children,
         icon: "doorControl",
         type: "app",
-        redirect:'/DoorControl/AccessGroupConfig' //设置默认子路由
+        // redirect:'/DoorControl/' //设置默认子路由
       },
       {
         path: "/PersonMange",

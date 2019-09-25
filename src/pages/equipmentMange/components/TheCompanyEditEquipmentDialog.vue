@@ -121,6 +121,7 @@
       </el-form>
       <el-button type="primary"
                  v-if="isLocal"
+                 :disabled="netStatus!='online'"
                  @click="syncChannel">同步通道</el-button>
       <div class="section door"
            v-if="doorData.length">
@@ -251,7 +252,7 @@
           <el-select v-model="item.channelType"
                      v-if="isVideo&&isLocal"
                      placeholder="请选择">
-            <el-option v-for="item in options"
+            <el-option v-for="item in alarmInOptions"
                        :key="item.value"
                        :label="item.label"
                        :value="item.value">
@@ -306,7 +307,7 @@
           <el-select v-model="item.channelType"
                      v-if="isVideo&&isLocal"
                      placeholder="请选择">
-            <el-option v-for="item in options"
+            <el-option v-for="item in alarmOutOptions"
                        :key="item.value"
                        :label="item.label"
                        :value="item.value">
@@ -520,6 +521,12 @@ export default {
         return "";
       }
     },
+    netStatus: {
+      type: String,
+      default() {
+        return "";
+      }
+    },
     visible: {
       type: Boolean,
       default() {
@@ -549,6 +556,12 @@ export default {
       default() {
         return {};
       }
+    },
+    update: {
+      type: Number,
+      default() {
+        return 0;
+      }
     }
   },
   data() {
@@ -556,6 +569,90 @@ export default {
       orgUuid: "",
       isLocal: false,
       service: "",
+      alarmInOptions: [
+        {
+          value: "pulse_fence",
+          label: "脉冲电子围栏（I/O）"
+        },
+        {
+          value: "touch_net_fence",
+          label: "触网脉冲电子围栏（I/O）"
+        },
+        {
+          value: "tension_fence",
+          label: "张力围栏（I/O）"
+        },
+        {
+          value: "vibrating_fiber",
+          label: "振动光纤（I/O）"
+        },
+        {
+          value: "leaky_cable",
+          label: "泄漏电缆（I/O）"
+        },
+        {
+          value: "infrared_detector",
+          label: "红外探测器"
+        },
+        {
+          value: "infrared_radiation",
+          label: "红外对射"
+        },
+        {
+          value: "temperature_detector",
+          label: "温感探测器"
+        },
+        {
+          value: "humidity_detector",
+          label: "湿度探测器"
+        },
+        {
+          value: "emergency_button",
+          label: "紧急按钮"
+        },
+        {
+          value: "smoke_detector",
+          label: "烟感探测器"
+        },
+        {
+          value: "fire_alarm",
+          label: "火警"
+        },
+        {
+          value: "other_detector",
+          label: "其他探测器"
+        }
+      ],
+      alarmOutOptions: [
+        {
+          value: "bell",
+          label: "警号"
+        },
+        {
+          value: "printer",
+          label: "打印机"
+        },
+        {
+          value: "lcm",
+          label: "灯控模块（输出）"
+        },
+        {
+          value: "sound_light",
+          label: "声光告警器"
+        },
+        {
+          value: "emap",
+          label: "电子地图模块"
+        },
+        {
+          value: "aom",
+          label: "视频联动模块"
+        },
+        {
+          value: "other_bell",
+          label: "其他告警器"
+        }
+      ],
       options: [
         {
           value: "bullet_camera",
@@ -666,6 +763,7 @@ export default {
           this.ruleForm.version += 1;
           this.$message.success("同步通道成功!");
           console.log(this.ruleForm);
+          this.$emit("updateEdit", this.deviceUuid, this.netStatus);
         }
       });
     },
@@ -762,7 +860,7 @@ export default {
     },
     setHouseData(params) {
       this.ruleForm.build = params.node.data.id;
-      this.houseName = params.node.data.label;
+      this.houseName = params.name;
     },
     saveData() {
       let num = [];
@@ -885,9 +983,11 @@ export default {
     }
   },
   watch: {
-    visible(val) {
+    update() {
+      let val = this.visible;
       if (val) {
         console.log(this.row);
+        this.row.extInfo = this.row.extInfo || {};
         this.ruleForm = {
           belongServiceUuid:
             this.row.extInfo.subService &&
@@ -899,7 +999,7 @@ export default {
           oriz: this.row.org[0].orgUuid,
           build: this.row.infrastructureUuid,
           desc: this.row.remarks,
-          gBCode: this.row.gBCode || "",
+          gBCode: this.row.extInfo.gBCode || "",
           version: this.row.version,
           deviceIp: this.row.deviceIp,
           devicePort: this.row.devicePort,
@@ -941,6 +1041,7 @@ export default {
             // };
           });
         };
+        console.log(this.row.channelMapList);
         this.row.channelMapList = this.row.channelMapList || {};
         // 获取门状态的数组
         this.doorData = [];
@@ -948,6 +1049,7 @@ export default {
         this.shuruData = [];
         this.shuchuData = [];
         for (let k in this.row.channelMapList) {
+          console.log(k);
           if (k === window.config.door) {
             this.doorData = deal(this.row.channelMapList[k]);
           } else if (k === window.config.readhead) {
@@ -965,6 +1067,7 @@ export default {
             console.log(bbb);
           }
         }
+
         // this.ipc = this.ipc.concat();
         // 记录门状态
         if (this.row.org && this.row.org.length) {
