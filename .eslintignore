@@ -1,0 +1,10 @@
+/build/
+/config/
+/dist/
+/static/
+/*.js
+/src/router/
+/src/store/
+/src/style/
+/src/utils/
+/src/common/
