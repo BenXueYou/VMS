@@ -22,7 +22,6 @@
 		</div>
 		<div class="form-item">
 			<label for>人员类型：</label>
-			<!-- <el-input class="input" v-model="staffType"></el-input> -->
 			<el-select v-model="staffType" placeholder="请选择人员类型">
 				<el-option
 					v-for="item in staffTypeOptions"

@@ -234,8 +234,7 @@ export default {
       taskList: [],
       taskItem: null, // 当前任务
       visible_popver: false, // task弹窗是否弹出，默认隐藏
-      rtspAddress:
-				"rtsp://admin:abcd1234@172.20.10.190:554/Streaming/tracks/501?starttime=20181121T110831z&endtime=20181121T124543z",
+      rtspAddress: "",
       channelInfoList: [], // 所有通道名称和ID的二元list
       checkedRtspList: [], // 选中的轮询通道Rtsp地址
       channelUuidList: [],

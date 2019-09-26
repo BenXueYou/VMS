@@ -116,11 +116,10 @@
 						:listTableData="listTableData"
 						:imageTableData="imageTableData"
 						:listtableloadding="listtableloadding"
-						:listtablecolumns="listtablecolumns"
-						@lookvip="lookvip"
-						@updatevip="editstaff"
+						:listTableColumns="listTableColumns"
+						@getFaceDetail="editstaff"
 						@deletevip="deletevip"
-						@checkall="checkall"
+						@checkall="selectAll"
 						@changepage="changepage"
 					></component>
 				</keep-alive>
@@ -131,7 +130,7 @@
 				:libraryarr="libraryarr"
 				:libraryuuid="faceLibraryUuid"
 				:isUpdate="isUpdate"
-				:parentForm="vipinfo"
+				:staffDetail="staffDetail"
 				:title="addtitle"
 				@getstafflirary="getstafflirary"
 				@closeAddAct="closeStaffAddDialogAct"
@@ -163,6 +162,7 @@
 			@close="faceDBDialogUpdateHistoryVisible=false"
 		></the-face-d-b-update-history-dialog>
 
+    <!-- 人脸删除弹窗 -->
 		<el-dialog title="提示" width="30%" class="DeleteDialogClass" :visible.sync="dialogVisible">
 			<p class="mydelete">
 				<img src="@/assets/delete.png" alt />
@@ -173,6 +173,7 @@
 				<el-button type="primary" @click="dialogVisible = false">取 消</el-button>
 			</span>
 		</el-dialog>
+    <!-- 导出模板选择弹窗 -->
 		<el-dialog
 			class="ExportDialogClass"
 			title="导出模板选择"
@@ -208,7 +209,6 @@ import TheFaceDBUpdateHistoryDialog from "@/pages/faceModule/views/page/facedb/b
 import TheFaceDBAdd from "@/pages/faceModule/views/page/facedb/basic/TheFaceDBAdd";
 import SearchOptionView from "./basic/SearchOptionView";
 import * as api from "@/pages/faceModule/api.js";
-// const TABLECOLUMNS = [];
 export default {
   name: "faceDB",
   components: {
@@ -244,6 +244,8 @@ export default {
       imagePageCount: 1000,
       listPageNow: 1,
       imagePageNow: 1,
+      pageNow: 1,
+      pageSize: 24,
       imageTableData: [],
       listTableData: [],
       libraryarr: [],
@@ -253,7 +255,7 @@ export default {
       listtableloadding: false,
       shituarr: [], // 视图数组
       isUpdate: false, // false 添加vip true为修改vip
-      vipinfo: {}, // 当isUpdate为true 储存编辑人员的信息
+      staffDetail: {}, // 当isUpdate为true 储存编辑人员的信息
       taskNum: [],
       realtimeNum: [], // 实时更新的数据的进度
       addtitle: "添加人脸",
@@ -265,7 +267,7 @@ export default {
       row: "",
       uploadstatusZnarr: [],
       defaultHeader: require("@/assets/user.png"),
-      listtablecolumns: [], // 右边表格，显示哪些数据
+      listTableColumns: [], // 右边表格，显示哪些数据
       ws: "" // 定义全局的websocket对象
     };
   },
@@ -286,12 +288,21 @@ export default {
     selectLibRow: {
       handler() {},
       deep: true
+    },
+    typeradio(val) {
+      if (val === "TheFaceDBListTable") {
+        this.pageSize = this.listPageSize;
+        this.pageNow = this.listPageNow;
+      } else {
+        this.pageSize = this.imagePageSize;
+        this.pageNow = this.imagePageNow;
+      }
     }
   },
   methods: {
     queryAct(data) {
       this.queryData = data;
-      this.ajaxdata(data);
+      this.getStaffLibStaffData(data);
     },
     suoxiao() {
       this.issuoxiao = !this.issuoxiao;
@@ -301,7 +312,7 @@ export default {
           var w = el.offsetWidth;
           this.imagePageSize = 4 * Math.floor(w / 150);
           if (this.typeradio === "TheFaceDBImageTable") {
-            this.ajaxdata();
+            this.getStaffLibStaffData();
           }
         });
       } else {
@@ -373,103 +384,93 @@ export default {
       this.dialogVisible = false;
       this[this.deleteWay]();
     },
-    gettranslate(zidian, value) {
-      console.log(zidian);
-      console.log(value);
-      var str = value;
-      for (let i = 0, len = zidian.length; i < len; i++) {
-        if (zidian[i].typestr === value) {
-          str = zidian[i].typename;
-        }
-      }
-      return str;
-    },
-    ajaxdata(data) {
-      // 这里发起请求数据，然后更新数据，子组件更新。
-      // console.log("请求数据");
+    getStaffLibStaffData(data) {
       this.selectall = false;
-      var pageSize = 1,
-        pageNow = 1;
       if (!this.faceLibraryUuid) {
+        this.$message.warning("请选择人脸库");
         return;
       }
-      if (this.typeradio === "TheFaceDBListTable") {
-        pageSize = this.listPageSize;
-        pageNow = this.listPageNow;
-      } else {
-        pageSize = this.imagePageSize;
-        pageNow = this.imagePageNow;
-      }
       this.listtableloadding = true;
-      console.log(`第${pageNow}页，一页${pageSize}条`);
+      console.log(`第${this.pageNow}页，一页${this.pageSize}条`);
       let params = {
         libraryuuid: this.faceLibraryUuid,
         staffName: this.staffName,
-        page: pageNow,
-        limit: pageSize
+        page: this.pageNow,
+        limit: this.pageSize
       };
       Object.assign(params, data);
       api
-        .queryvipinfo(params)
+        .getStaffList(params)
         .then(res => {
           this.listtableloadding = false;
-          if (this.typeradio === "TheFaceDBListTable") {
-            this.listTableData = [];
-            this.listPageCount = 0;
-          } else {
-            this.imageTableData = [];
-            this.imagePageCount = 0;
-          }
-          if (!res.data.data || !res.data.data.list) {
+          if (res.data.success || !res.data.data || !res.data.data.list) {
+            this.$message.success(this.libraryname + "没有数据");
             return;
           }
-          var num = [];
-          for (let i = 0, len = res.data.data.list.length; i < len; i++) {
-            res.data.data.list[i].checked = false;
-            if (
-              !res.data.data.list[i].photoUri ||
-							res.data.data.list[i].isshow === false
-            ) {
-              res.data.data.list[i].photoUri = this.defaultHeader;
+          let arr = res.data.data.list;
+          for (let i = 0; i < arr.length; i++) {
+            let tmpItem = arr[i];
+            tmpItem.checked = false;
+            tmpItem.faceLibraryName = this.selectLibRow.faceLibraryName;
+            // 翻译 性别 人员类型 证件类型
+            tmpItem["gender"] = this.$common.getEnumItemName(
+              "gender",
+              tmpItem.gender
+            );
+            tmpItem["staffType"] = this.$common.getEnumItemName(
+              "staff_t",
+              tmpItem.staffType
+            );
+            tmpItem["credentialType"] = this.$common.getEnumItemName(
+              "cred",
+              tmpItem.credentialType
+            );
+            // 照片设置默认图片
+            if (!tmpItem.photoUrl || tmpItem.isshow === false) {
+              tmpItem.photoUrl = this.defaultHeader;
             }
-            res.data.data.list[i].checked = false;
-            num.push({
-              checked: false,
-              staffUuid: res.data.data.list[i].staffUuid,
-              photoUri: res.data.data.list[i].photoUri,
-              staffName: res.data.data.list[i].staffName,
-              staffsexName: res.data.data.list[i].staffsexName,
-              age: res.data.data.list[i].age,
-              credentialno: res.data.data.list[i].credentialno,
-              address: res.data.data.list[i].address
-            });
-          }
-          if (this.typeradio === "TheFaceDBListTable") {
-            this.listTableData = res.data.data.list;
-            this.listPageCount = res.data.data.total;
-            for (let i = 0; i < res.data.data.list.length; i++) {
-              if (res.data.data.list[i].credentialtype) {
-                let templateStr = this.$common.getEnumItemName(
-                  "cred",
-                  res.data.data.list[i].credentialtype
-                );
-                res.data.data.list[i].credentialtype = templateStr;
-              }
+            if (this.typeradio === "TheFaceDBListTable") {
+              this.listTableData = [];
+              this.listPageCount = res.data.data.total;
+              this.listTableData.push(tmpItem);
+            } else {
+              this.imageTableData = [];
+              this.imagePageCount = res.data.data.total;
+              this.imageTableData.push(tmpItem);
             }
-            this.listTableData.concat();
-          } else {
-            this.imageTableData = num;
-            this.imagePageCount = res.data.data.total;
-            this.imageTableData.concat();
-            console.log(this.imageTableData);
-          }
-          if (!res.data.data.list.length) {
-            this.$message.success(this.libraryname + "没有数据");
           }
         })
         .catch(err => {
           console.log(err);
           this.listtableloadding = false;
+          if (window.config.DeBug) {
+            let num = Array.from({ length: this.pageSize - 1 }, (v, i) => ({
+              modelUuid: i, // 模型uuid(动态库用)
+              staffName: "李静", // 人员名称
+              gender: "女", // 性别
+              phoneNo: "13265897889", // 手机号
+              photoUrl: "", // 图片url
+              credentialType: "身份证", // 证件类型
+              credentialNo: "342227122344567789", // 证件号码
+              birthday: "12231223", // 出生日期
+              staffType: "住户", // 人员类型
+              nation: "汉", // 民族
+              extInfo: {}, // 扩展字段
+              securityExtInfo: {}, // 公安部门扩展字段（静态库逃犯导入用）
+              education: "本科", // 文化程度
+              maritalState: "已婚", // 婚姻状况
+              nationality: "中国", // 国籍
+              nativePlace: "", // 籍贯
+              householdRegister: "string", // 户籍
+              remarks: "string", // 备注
+              householdType: "string", // 住户类型（系统人员库，居民信息特有自信）
+              address: "string", // 住址（系统人员库，居民特有信，由基建树拼接而来）
+              version: 0, // 版本号
+              faceUrl: "string" // 人脸图片base64
+            }));
+            this.imageTableData = num;
+            this.listTableData = num;
+          }
         });
     },
     search() {
@@ -479,7 +480,7 @@ export default {
       } else {
         this.imagePageNow = 1;
       }
-      this.ajaxdata();
+      this.getStaffLibStaffData();
     },
     changepage(index) {
       // 改变页数
@@ -489,11 +490,7 @@ export default {
       } else {
         this.imagePageNow = index;
       }
-      this.ajaxdata();
-    },
-    checkall(flag) {
-      //
-      this.selectall = flag;
+      this.getStaffLibStaffData();
     },
     selectAll(val) {
       // 选择全部
@@ -522,15 +519,17 @@ export default {
           this.faceDBDialogVisible = !this.faceDBDialogVisible;
         });
     },
+    // 删除人脸
     deleteface() {
       api.deleteFaceLib({}).then(res => {
         if (res.data.status === 0) {
           this.$message.success("删除成功！");
-          this.ajaxdata();
+          this.getStaffLibStaffData();
           this.getStaffLibList();
         }
       });
     },
+    // 添加样式
     currentRowStyle(index) {
       setTimeout(() => {
         // 刷新之后，恢复当前选中的状态
@@ -550,6 +549,7 @@ export default {
         }
       }, 10);
     },
+    // 切换视图
     changetype(val) {
       this.currentcomponents = val;
       this.selectall = false;
@@ -557,7 +557,7 @@ export default {
         this.typeradio === "TheFaceDBListTable" &&
 				!this.listTableData.length
       ) {
-        this.ajaxdata();
+        this.getStaffLibStaffData();
       }
       if (this.typeradio === "TheFaceDBImageTable") {
         if (this.issuoxiao) {
@@ -570,7 +570,7 @@ export default {
               this.typeradio === "TheFaceDBImageTable" &&
 							size !== this.imagePageSize
             ) {
-              this.ajaxdata();
+              this.getStaffLibStaffData();
             }
           });
         } else {
@@ -582,6 +582,7 @@ export default {
               this.imagePageSize = 4 * Math.floor(w / 150);
               this.imageTableData.splice(this.imagePageSize, 20000);
               if (size !== this.imagePageSize) {
+                this.getStaffLibStaffData();
               }
             });
           } else {
@@ -589,7 +590,7 @@ export default {
               var el = this.$refs.dataWrap;
               var w = el.offsetWidth;
               this.imagePageSize = 4 * Math.floor(w / 150);
-              this.ajaxdata();
+              this.getStaffLibStaffData();
             });
           }
         }
@@ -690,45 +691,17 @@ export default {
       // 当点击左边的列表，右边进行更新
       this.selectLibRow = row;
       this.currentRowStyle(this.selectLibRow.index);
-      console.log(document.querySelector(".index"));
-      // if (this.faceLibraryUuid !== row.faceLibraryUuid) {
-      // this.faceLibraryUuid = row.faceLibraryUuid;
-      // this.libraryname = row.faceLibraryName;
-      // console.log(row.columns);
-      // var columndata = JSON.parse(row.columns);
-      // var namearr = columndata.name.split(",");
-      // var namearr2 = columndata.columns.split(",");
-      // var arr = [];
-      // for (var k = 0; k < namearr.length; k++) {
-      //   arr.push({
-      //     name: namearr[k],
-      //     enname: namearr2[k]
-      //   });
-      // }
-      // this.listtablecolumns = arr;
-      // this.selectall = false;
-      // this.resetall();
-      // this.ajaxdata();
-      // }
+      this.selectall = false;
+      this.resetall();
+      this.getStaffLibStaffData();
     },
     closeStaffAddDialogAct(is) {
       this.isUpdate = !this.isUpdate;
       this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;
       if (is) {
-        this.ajaxdata();
+        this.getStaffLibStaffData();
         this.getStaffLibList();
       }
-    },
-    lookvip(uuid) {
-      this.addtitle = "添加人脸";
-      api
-        .queryvip({
-          staffUuid: uuid
-        })
-        .then(res => {
-          // console.log("查询到vip用户的详细信息1");
-          // console.log(res);
-        });
     },
     editstaff(uuid, faceLibraryUuid) {
       // 点击编辑的时候获取人员信息
@@ -737,27 +710,15 @@ export default {
         return;
       }
       this.addtitle = "修改人脸";
+      this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;
       api
-        .queryvip({
-          staffUuid: uuid
+        .getStaffDetail({
+          faceUuid: uuid
         })
         .then(res => {
-          if (res.data.data) {
-            console.log("+++++++++TTTTTTTTTTTTTTTTTTTTTT+++++++++++++++++++");
-            console.log(res.data.data);
-            this.isUpdate = true;
-            res.data.data.photos = res.data.data.photos || [];
-            for (let i = 0, len = res.data.data.photos.length; i < len; i++) {
-              console.log(res.data.data.photos[i]);
-              if (res.data.data.photos[i].isshow === false) {
-                res.data.data.photos[i].nowUrl = this.defaultHeader;
-              } else {
-                res.data.data.photos[i].nowUrl =
-									res.data.data.photos[i].photoUri;
-              }
-            }
-            this.vipinfo = res.data.data;
-            this.vipinfo.faceLibraryUuid = faceLibraryUuid;
+          if (res.data.success && res.data.data) {
+            this.staffDetail = res.data.data;
+            this.staffDetail.faceLibraryUuid = faceLibraryUuid;
             this.faceDBDialogAddVisible = true;
           } else {
             this.$message.error("获取数据为空!");
@@ -779,53 +740,46 @@ export default {
       api.deletevip(uuid).then(res => {
         if (res.data.status === 0) {
           this.$message.success("删除成功！");
-          this.ajaxdata();
+          this.getStaffLibStaffData();
           this.getStaffLibList();
         }
       });
     },
     // 查询人员库
     getStaffLibList(flag = false) {
-      const _this = this;
       this.loadding = true;
       api
         .getFaceLib()
         .then(res => {
-          for (let i = 0; i < res.data.data.length; i++) {
-            res.data.data[i].index = i;
-            if (res.data.data[i].faceLibraryName === "逃犯库") {
-              this.taofanlibraryuuid = res.data.data[i].faceLibraryUuid;
-            }
+          this.loadding = false;
+          if (res.data.success && res.data.data) {
+            this.tableData = res.data.data;
+            this.selectLibRow = this.tableData[0];
+            if (this.faceLibraryUuid) return;
+            this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
+            this.libraryname = res.data.data[0].faceLibraryName;
+            this.getStaffLibStaffData();
+          } else {
+            this.$message.warning(res.data.msg);
           }
-          this.tableData = res.data.data;
-          this.selectLibRow = this.tableData[0];
-          if (res.data && res.data.data.length) {
-            if (!this.faceLibraryUuid) {
-              this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
-              this.libraryname = res.data.data[0].faceLibraryName;
-              // this.listtablecolumns = arr;
-            }
-            if (flag) {
-              this.ajaxdata();
-            }
-          }
-          _this.loadding = false;
         })
         .catch(() => {
-          _this.loadding = false;
-          this.tableData = Array.from({ length: 15 }, (v, i) => ({
-            index: i,
-            faceLibraryName: "人脸库", // 名称
-            faceLibraryUuid: "uuid" + i, // uuid
-            faceTotal: i * i, // 人脸总数
-            editabled: 1, // 是否可编辑
-            deletable: 1, // 是否可删除
-            addFaceByUser: 1, // 人员是否可添加
-            delFaceByUser: 1, // 人员是否可删除
-            editFaceByUser: 1 // 人员是否可编辑
-          }));
-          this.selectLibRow = this.tableData[0];
-          this.currentRowStyle(this.selectLibRow.index);
+          this.loadding = false;
+          if (window.config.DeBug) {
+            this.tableData = Array.from({ length: 15 }, (v, i) => ({
+              index: i,
+              faceLibraryName: "人脸库", // 名称
+              faceLibraryUuid: "uuid" + i, // uuid
+              faceTotal: i * i, // 人脸总数
+              editabled: 1, // 是否可编辑
+              deletable: 1, // 是否可删除
+              addFaceByUser: 1, // 人员是否可添加
+              delFaceByUser: 1, // 人员是否可删除
+              editFaceByUser: 1 // 人员是否可编辑
+            }));
+            this.selectLibRow = this.tableData[0];
+            this.currentRowStyle(this.selectLibRow.index);
+          }
         });
     },
     conSocket() {

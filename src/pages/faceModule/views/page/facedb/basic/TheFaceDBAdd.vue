@@ -164,6 +164,12 @@ export default {
       default: function() {
         return true;
       }
+    },
+    staffDetail: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
   components: { snapShootPhoto },
@@ -204,6 +210,34 @@ export default {
   watch: {
     faceDBDialogVisible(val) {
       this.diglogvisible = val;
+      if (val) {
+        Object.assign(this.staffInfo, this.staffDetail);
+        this.staffInfo.facePhotoUrl = this.staffInfo.photoUrl;
+        this.staffInfo.maritalState = this.staffInfo.maritalStatus;
+      } else {
+        this.staffInfo = {
+          faceUuid: null, // 人脸uuid
+          staffName: null, // 姓名
+          gender: null, // 性别
+          phoneNo: null, // 手机号
+          credentialType: null, // 证件类型
+          credentialNo: null, // 证件号
+          birthday: null, // 出生日期（根据身份证号获取）
+          staffType: null, // 人员类型
+          nation: null, // 民族
+          education: null, // 文化程度
+          maritalState: null, // 婚姻状况
+          nationality: null, // 国籍
+          nativePlace: null, // 籍贯
+          householdRegister: null, // 户籍
+          remarks: null, // 备注
+          staffUuid: null, // 人员UUID/访客UUID
+          householdType: null, // 住户类型（系统人员库的居民信息特有信息）
+          address: null, // 住址（系统人员库的居民信息特有信息，由基建树拼接而来）
+          facePhotoUrl: null, // 图片的url
+          faceImage: null // 图片的base64 字符串
+        };
+      }
     }
   },
   activated() {},

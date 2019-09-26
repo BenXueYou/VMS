@@ -2,41 +2,23 @@
 	<div class="dialogwrap">
 		<el-dialog :title="title" :visible.sync="diglogvisible" width="650px" center>
 			<el-form ref="form" label-width="150px">
-				<!-- <el-form-item label="任务名称：">
-          <el-input :value="kuname"
-                    readonly
-                    class='myinput'></el-input>
-				</el-form-item>-->
-
 				<el-form-item label="人脸库：">
 					<el-input :value="library" readonly class="myinput"></el-input>
 				</el-form-item>
-
-				<!-- <el-form-item label="导入方式：">
-          <el-input :value="exprotway"
-                    readonly
-                    class='myinput'></el-input>
-				</el-form-item>-->
-
 				<el-form-item label="导入类型：">
 					<el-input :value="templatetype" readonly class="myinput"></el-input>
 				</el-form-item>
-
 				<div class="daorutips">
 					注：该功能只支持Excel文件，格式必须与模板一致
 					<span>模板下载</span>
 				</div>
 				<el-form-item label="文件路径：">
 					<el-input class="myinput" :value="filename" readonly></el-input>
-					<!-- <el-button id='fileSelect'
-                     ref='fileSelect'
-					class='mybutton'>浏览</el-button>-->
 				</el-form-item>
 			</el-form>
 		</el-dialog>
 	</div>
 </template>
-
 <script>
 export default {
   name: "TheFaceDBDialog",

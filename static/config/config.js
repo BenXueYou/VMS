@@ -41,6 +41,7 @@ if (DEBUG == "DEBUG") {
 }
 
 window.config = {
+  DeBug:true,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",

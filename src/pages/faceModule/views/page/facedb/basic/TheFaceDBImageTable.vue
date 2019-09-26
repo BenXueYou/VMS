@@ -1,93 +1,51 @@
 <template>
-  <div class='tablelist'
-       ref='tablelist'>
-    <div class="body"
-         v-loading='listtableloadding'>
-
-      <div class="box"
-           v-for='(item,index) in imageTableData '
-           :key='index'>
-        <div class="headerimg">
-
-          <img :src="preload[index]"
-               alt="">
-
-          <el-checkbox class='checkButton'
-                       v-model="item.checked"
-                       @change='checkboxchange(index)'></el-checkbox>
-          <div class="mask">
-            <div class="operator">
-              <!-- <i class='el-icon-search'
-                 @click="lookface(imageTableData[index])">查看</i> -->
-              <i class='el-icon-edit-outline'
-                 @click="editface(imageTableData[index])">查看/编辑</i>
-              <i class='el-icon-delete'
-                 @click="deleteface(imageTableData[index])"> 删除</i>
-            </div>
-          </div>
-        </div>
-
-        <p class="time">
-          <span class='item'>{{item.staffName||""}} &nbsp;</span>
-          <span class='item'>{{item.staffsexName||""}} </span>
-          <span class='item'>{{item.age||""}}{{!item.age?'':'岁'}} </span>
-        </p>
-
-        <el-tooltip class="item"
-                    effect="dark"
-                    :content="item.credentialno"
-                    placement="bottom">
-          <p class="adress">证件号:{{item.credentialno}}</p>
-        </el-tooltip>
-
-        <el-tooltip class="item"
-                    effect="dark"
-                    :content="item.address"
-                    placement="bottom">
-          <p class="adress">现地址:{{item.address}}</p>
-        </el-tooltip>
-        <!-- <el-tooltip class="item"
-                    effect="dark"
-                   content=""
-                    placement="bottom">
-          <p class="adress">案件号:</p>
-
-        </el-tooltip> -->
-
-      </div>
-
-      <div class="box hiddenitem"
-           v-for="(item,index) in getLast"
-           :key='item+index'>
-
-      </div>
-    </div>
-
-    <div class="footer">
-
-      <el-pagination background
-                     layout="prev, pager, next"
-                     :page-size="imagePageSize"
-                     :current-page="imagePageNow"
-                     @current-change='currentChange'
-                     :total="imagePageCount">
-      </el-pagination>
-
-      <p class='totalpagetitle'> 共{{ imagePageCount}}条</p>
-
-      <div class='tiaozhuan'>
-        <span>跳转至</span>
-        <el-input class='yeshu'
-                  v-model="yeshu"
-                  @blur="blur"
-                  type='number'>
-        </el-input>
-      </div>
-    </div>
-  </div>
+	<div class="tablelist" ref="tablelist">
+		<div class="body" v-loading="listtableloadding">
+			<div class="box" v-for="(item,index) in imageTableData " :key="index">
+				<div class="headerimg">
+					<img :src="preload[index]" alt />
+					<el-checkbox class="checkButton" v-model="item.checked" @change="checkboxchange(index)"></el-checkbox>
+					<div class="mask">
+						<div class="operator">
+							<i class="el-icon-edit-outline" @click="editface(imageTableData[index])">查看/编辑</i>
+							<i class="el-icon-delete" @click="deleteface(imageTableData[index])">删除</i>
+						</div>
+					</div>
+				</div>
+				<p class="time">
+					<span class="item">{{item.staffName||""}} &nbsp;</span>
+					<span class="item">{{item.gender||""}}</span>
+					<span class="item">{{item.staffType||""}}</span>
+				</p>
+				<el-tooltip class="item" effect="dark" :content="item.credentialType" placement="bottom">
+					<div class="credentialType">{{item.credentialType||"证件类型"}}</div>
+				</el-tooltip>
+				<el-tooltip class="item" effect="dark" :content="item.credentialNo" placement="bottom">
+					<p class="adress">{{item.credentialNo||'证件号码'}}</p>
+				</el-tooltip>
+			</div>
+			<!-- <div class="box hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
+		</div>
+		<div class="footer">
+			<el-pagination
+				background
+				layout="prev, pager, next"
+				:page-size="imagePageSize"
+				:current-page="imagePageNow"
+				@current-change="currentChange"
+				:total="imagePageCount"
+			></el-pagination>
+			<p class="totalpagetitle">共{{ imagePageCount}}条</p>
+			<div class="tiaozhuan">
+				<span>跳转至</span>
+				<el-input class="pageIndexClass" v-model="pageIndex" @blur="blur" type="number"></el-input>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
+import RestApi from "@/utils/RestApi.js";
 export default {
   name: "facedblist",
   props: {
@@ -130,7 +88,8 @@ export default {
   },
   data() {
     return {
-      yeshu: "",
+      imageHeader: RestApi.api.imageUrl,
+      pageIndex: "",
       multipleSelection: [],
       pageSize: 24,
       pagenow: 1,
@@ -160,16 +119,15 @@ export default {
   },
   methods: {
     blur() {
-      if (this.yeshu !== "") {
-        if (this.yeshu > Math.ceil(this.listPageCount / this.listPageSize)) {
-          this.yeshu = Math.ceil(this.listPageCount / this.listPageSize);
+      if (this.pageIndex !== "") {
+        if (
+          this.pageIndex > Math.ceil(this.listPageCount / this.listPageSize)
+        ) {
+          this.pageIndex = Math.ceil(this.listPageCount / this.listPageSize);
         }
-        this.yeshu = parseInt(this.yeshu);
-        this.$emit("changepage", parseInt(this.yeshu));
+        this.pageIndex = parseInt(this.pageIndex);
+        this.$emit("changepage", parseInt(this.pageIndex));
       }
-    },
-    lookface(row) {
-      this.$emit("lookvip", row.staffUuid);
     },
     editface(row) {
       console.log(row);
@@ -210,11 +168,8 @@ export default {
     downloadImage(url) {
       return new Promise((resolve, reject) => {
         var img = new Image();
-        img.src = url;
-        if (img.complete) {
-          console.log("已经有了！！！！！！！！");
-          resolve();
-        }
+        img.src = this.imageHeader + url;
+        if (img.complete) resolve();
         img.onload = function() {
           resolve();
         };
@@ -223,17 +178,15 @@ export default {
         };
       });
     },
-    async preloadaaa() {
-      // var url="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1548152296736&di=af0935e6c17b142cd7110cea8347290d&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F54ebececeda0217648263cc944d6cfd413a17cdf2cc6-MGHS0y_fw658";
+    async preloadImage() {
       var url = "";
       for (var i = 0; i < this.imageTableData.length; i++) {
         url = this.imageTableData[i].photoUri;
         var result = await this.downloadImage(url);
         console.log(result);
-        this.preload[i] = url;
+        this.preload[i] = this.imageHeader + url;
         this.preload.splice(i, 1, url);
       }
-      console.log(this.preload);
     }
   },
   deactivated() {
@@ -245,7 +198,7 @@ export default {
   watch: {
     imageTableData: function() {
       this.preload = new Array(this.imageTableData.length);
-      this.preloadaaa();
+      this.preloadImage();
     },
     selectall: function() {
       // alert(this.selectall);
@@ -272,158 +225,162 @@ export default {
 $fontcolor: #aaa;
 
 .tablelist {
-  height: 100%;
-  // height: calc(100vh - 76px - 57px - 70px);
+	height: 100%;
+	// height: calc(100vh - 76px - 57px - 70px);
 }
 .body {
-  height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-content: space-between;
-  // overflow: auto;
-  overflow: hidden;
-  .hiddenitem {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .box {
-    width: 140px;
-    min-height: 178px;
-    background-color: rgb(36, 39, 42);
-    border-radius: 4px;
-    font-size: 12px;
-    color: $fontcolor;
-    box-sizing: border-box;
-    overflow: auto;
-    padding: 10px 11px 8px;
-    margin: 0px 5px 8px;
-    .headerimg {
-      position: relative;
-      width: 114px;
-      height: 114px;
-      // background-color: cornflowerblue;
-      margin: 5px auto;
-      &:hover .mask {
-        display: block;
-      }
-      img {
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-      }
-      .checkButton {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        z-index: 11;
-        &:hover ~ .mask {
-          display: none;
-        }
-      }
-      .mask {
-        display: none;
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        bottom: 0px;
-        left: 0px;
-        z-index: 2;
-        background-color: rgba(0, 0, 0, 0.6);
-        box-shadow: 0px 0px 0px 110px rgba(0, 0, 0, 0.7);
-        .operator {
-          margin-top: 30px;
-          margin-left: 10px;
-        }
-        .operator i {
-          cursor: pointer;
-          display: block;
-          line-height: 30px;
-          font-family: " PingFangSC-Regular";
-          font-size: 16px;
-          color: #28ffbb;
-          letter-spacing: 0;
-          &:before {
-            padding-right: 7px;
-          }
-        }
-      }
+	height: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-content: space-between;
+	// overflow: auto;
+	overflow: hidden;
+	.hiddenitem {
+		opacity: 0;
+		pointer-events: none;
+	}
+	.box {
+		width: 140px;
+		min-height: 178px;
+		background-color: rgb(36, 39, 42);
+		border-radius: 4px;
+		font-size: 12px;
+		color: $fontcolor;
+		box-sizing: border-box;
+		overflow: auto;
+		padding: 10px 11px 8px;
+		margin: 0px 5px 8px;
+		.headerimg {
+			position: relative;
+			width: 114px;
+			height: 114px;
+			// background-color: cornflowerblue;
+			margin: 5px auto;
+			&:hover .mask {
+				display: block;
+			}
+			img {
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				width: 100%;
+				height: 100%;
+				z-index: 1;
+			}
+			.checkButton {
+				position: absolute;
+				top: 5px;
+				left: 5px;
+				z-index: 11;
+				&:hover ~ .mask {
+					display: none;
+				}
+			}
+			.mask {
+				display: none;
+				position: absolute;
+				top: 0px;
+				right: 0px;
+				bottom: 0px;
+				left: 0px;
+				z-index: 2;
+				background-color: rgba(0, 0, 0, 0.6);
+				box-shadow: 0px 0px 0px 110px rgba(0, 0, 0, 0.7);
+				.operator {
+					margin-top: 30px;
+					margin-left: 10px;
+				}
+				.operator i {
+					cursor: pointer;
+					display: block;
+					line-height: 30px;
+					font-family: " PingFangSC-Regular";
+					font-size: 16px;
+					color: #28ffbb;
+					letter-spacing: 0;
+					&:before {
+						padding-right: 7px;
+					}
+				}
+			}
+		}
+		p {
+			text-align: left;
+			line-height: 16px;
+			font-family: " PingFangSC-Regular";
+			font-size: 12px;
+			color: rgba(255, 255, 255, 0.6);
+			letter-spacing: 0;
+			display: flex;
+			justify-content: space-between;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+      margin: 3px 0
+		}
+		.adress {
+			cursor: pointer;
+		}
+    .credentialType{
+      text-align: center!important;
     }
-    p {
-      text-align: left;
-      line-height: 16px;
-      font-family: " PingFangSC-Regular";
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
-      letter-spacing: 0;
-      display: flex;
-      justify-content: space-between;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-    .adress {
-      cursor: pointer;
-    }
-  }
+	}
 }
 .footer {
-  position: relative;
-  margin: 10px 0px;
-  .totalpagetitle {
-    font-size: 14px;
-    color: #fff;
-    float: right;
-    margin-right: 20px;
-    margin-top: 17px;
-  }
-  .el-pagination {
-    margin-right: 180px;
-    margin-top: 10px;
-    float: right;
-  }
-  .tiaozhuan {
-    position: absolute;
-    right: 20px;
-    top: 6px;
-    span {
-      font-size: 14px;
-      color: #fff;
-      padding-right: 20px;
-    }
-    .yeshu {
-      display: inline-block;
-      width: 90px;
-      input {
-        padding: 0px;
-      }
-    }
-  }
+	position: relative;
+	margin: 10px 0px;
+	.totalpagetitle {
+		font-size: 14px;
+		color: #fff;
+		float: right;
+		margin-right: 20px;
+		margin-top: 17px;
+	}
+	.el-pagination {
+		margin-right: 180px;
+		margin-top: 10px;
+		float: right;
+	}
+	.tiaozhuan {
+		position: absolute;
+		right: 20px;
+		top: 6px;
+		span {
+			font-size: 14px;
+			color: #fff;
+			padding-right: 20px;
+		}
+		.pageIndexClass {
+			display: inline-block;
+			width: 90px;
+			input {
+				padding: 0px;
+			}
+		}
+	}
 }
 </style>
 
 <style  lang="scss">
 .tiaozhuan {
-  span {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .yeshu {
-    display: inline-block;
-    width: 90px;
-    vertical-align: middle;
-    height: 40px;
+	span {
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.pageIndexClass {
+		display: inline-block;
+		width: 90px;
+		vertical-align: middle;
+		height: 40px;
 
-    .el-input__inner {
-      margin-top: 5px;
-      width: 50px;
-      height: 28px;
-      line-height: 28px;
-      padding: 0px 5px;
-    }
-  }
+		.el-input__inner {
+			margin-top: 5px;
+			width: 50px;
+			height: 28px;
+			line-height: 28px;
+			padding: 0px 5px;
+		}
+	}
 }
 </style>
