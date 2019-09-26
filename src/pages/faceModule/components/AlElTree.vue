@@ -162,7 +162,7 @@ export default {
   }
 };
 </script>
-<style lang="postcss">
+<style lang="postcss" scoped>
 .el-popover {
 	position: absolute;
 	background: #26292b;
