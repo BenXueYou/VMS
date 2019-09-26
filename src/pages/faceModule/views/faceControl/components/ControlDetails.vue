@@ -53,7 +53,7 @@ export default {
 };
 </script>
 <style lang="scss">
-  .el-dialog--center .el-dialog__body {
+ .dialog-main-unit .el-dialog--center .el-dialog__body {
     padding: 0px;
   }
 </style>
