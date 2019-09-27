@@ -7,7 +7,7 @@
 					<el-checkbox class="checkButton" v-model="item.checked" @change="checkboxchange(index)"></el-checkbox>
 					<div class="mask">
 						<div class="operator">
-							<i class="el-icon-edit-outline" @click="editface(imageTableData[index])">查看/编辑</i>
+							<i class="el-icon-edit-outline" @click="editface(imageTableData[index])">编辑</i>
 							<i class="el-icon-delete" @click="deleteface(imageTableData[index])">删除</i>
 						</div>
 					</div>
@@ -131,25 +131,13 @@ export default {
     },
     editface(row) {
       console.log(row);
-      this.$emit("updatevip", row.staffUuid, row.libraryuuid);
+      this.$emit("getFaceDetail", row.staffUuid, row.libraryuuid);
     },
     deleteface(row) {
-      this.$emit("deletevip", [row.staffUuid]);
+      this.$emit("deleteStaffFace", [row.staffUuid]);
     },
     currentChange(index) {
       this.$emit("changepage", index);
-    },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
     },
     checkboxchange() {
       var flag = this.judgeallchecked();
@@ -243,8 +231,10 @@ $fontcolor: #aaa;
 	.box {
 		width: 140px;
 		min-height: 178px;
-		background-color: rgb(36, 39, 42);
-		border-radius: 4px;
+		// background-color: rgb(36, 39, 42);
+		background: rgba(0, 0, 0, 0.1);
+		border: 0 solid #ffffff;
+		border-radius: 2px;
 		font-size: 12px;
 		color: $fontcolor;
 		box-sizing: border-box;
@@ -285,22 +275,32 @@ $fontcolor: #aaa;
 				bottom: 0px;
 				left: 0px;
 				z-index: 2;
-				background-color: rgba(0, 0, 0, 0.6);
-				box-shadow: 0px 0px 0px 110px rgba(0, 0, 0, 0.7);
+				// background-color: rgba(0, 0, 0, 0.6);
+				// box-shadow: 0px 0px 0px 110px rgba(0, 0, 0, 0.7);
 				.operator {
-					margin-top: 30px;
-					margin-left: 10px;
+					margin-top: 50px;
+					margin-left: 12px;
+					margin-right: 2px;
 				}
 				.operator i {
 					cursor: pointer;
 					display: block;
 					line-height: 30px;
 					font-family: " PingFangSC-Regular";
-					font-size: 16px;
-					color: #28ffbb;
+					padding-left: 10px;
+					font-size: 12px;
+					color: #dddddd;
 					letter-spacing: 0;
+					background: rgba(17, 17, 17, 0.9);
+					box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.2);
+					border-radius: 1px;
+					border-radius: 1px;
 					&:before {
 						padding-right: 7px;
+					}
+					&:hover {
+						color: #ffffff;
+						background-color: rgba(40, 255, 187, 0.3);
 					}
 				}
 			}
@@ -317,14 +317,14 @@ $fontcolor: #aaa;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
-      margin: 3px 0
+			margin: 3px 0;
 		}
 		.adress {
 			cursor: pointer;
 		}
-    .credentialType{
-      text-align: center!important;
-    }
+		.credentialType {
+			text-align: center !important;
+		}
 	}
 }
 .footer {

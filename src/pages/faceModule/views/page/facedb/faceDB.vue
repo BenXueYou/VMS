@@ -36,7 +36,7 @@
 								编辑
 							</el-button>
 
-							<el-button type="text" size="small" @click.stop="openDeleteDialog('deleteface',scope.row)">
+							<el-button type="text" size="small" @click.stop="openDeleteDialog('deletefaceLib',scope.row)">
 								<i class="el-icon-delete"></i>
 								删除
 							</el-button>
@@ -50,7 +50,7 @@
 				<ul>
 					<li>
 						<img src="@/assets/facedb/onepeople.png" alt />
-						{{libraryname?libraryname:'库名称'}}
+						{{libraryName?libraryName:'库名称'}}
 					</li>
 					<li>
 						<el-checkbox v-model="selectall" @change="selectAll">本页全选</el-checkbox>
@@ -118,7 +118,7 @@
 						:listtableloadding="listtableloadding"
 						:listTableColumns="listTableColumns"
 						@getFaceDetail="editstaff"
-						@deletevip="deletevip"
+						@deleteStaffFace="deleteStaffFace"
 						@checkall="selectAll"
 						@changepage="changepage"
 					></component>
@@ -156,7 +156,7 @@
 		<the-face-d-b-update-history-dialog
 			:faceDBDialogVisible="faceDBDialogUpdateHistoryVisible"
 			:uploadstatusZnarr="uploadstatusZnarr"
-			:libraryname="libraryname"
+			:libraryname="libraryName"
 			:libraryuuid="faceLibraryUuid"
 			:realtimeNum="realtimeNum"
 			@close="faceDBDialogUpdateHistoryVisible=false"
@@ -277,7 +277,7 @@ export default {
         return (sum += val.faceTotal);
       }, 0);
     },
-    libraryname() {
+    libraryName() {
       return this.selectLibRow.faceLibraryName;
     },
     faceLibraryUuid() {
@@ -373,7 +373,7 @@ export default {
     },
     openDeleteDialog(way, row) {
       if (!row.deletable) {
-        this.$message.error(`不可以删除${this.libraryname}数据`);
+        this.$message.error(`不可以删除${this.libraryName}数据`);
         return;
       }
       this.row = row;
@@ -404,7 +404,7 @@ export default {
         .then(res => {
           this.listtableloadding = false;
           if (res.data.success || !res.data.data || !res.data.data.list) {
-            this.$message.success(this.libraryname + "没有数据");
+            this.$message.success(this.libraryName + "没有数据");
             return;
           }
           let arr = res.data.data.list;
@@ -504,7 +504,7 @@ export default {
     // 编辑人脸库
     editFaceLib(row) {
       if (!row.editabled) {
-        this.$message.error(`不可以编辑${this.libraryname}数据`);
+        this.$message.error(`不可以编辑${this.libraryName}数据`);
         return;
       }
       api
@@ -519,8 +519,8 @@ export default {
           this.faceDBDialogVisible = !this.faceDBDialogVisible;
         });
     },
-    // 删除人脸
-    deleteface() {
+    // 删除人脸库
+    deletefaceLib() {
       api.deleteFaceLib({}).then(res => {
         if (res.data.status === 0) {
           this.$message.success("删除成功！");
@@ -638,7 +638,7 @@ export default {
         this.$message.error("未选中人员");
         return;
       }
-      this.deletevip(num);
+      this.deleteStaffFace(num);
     },
     addDaoKuTask({ time, data, num, uploader }) {
       if (!this.ws) {
@@ -706,7 +706,7 @@ export default {
     editstaff(uuid, faceLibraryUuid) {
       // 点击编辑的时候获取人员信息
       if (!this.selectLibRow.editabled) {
-        this.$message.error(`不可以编辑${this.libraryname}人员`);
+        this.$message.error(`不可以编辑${this.libraryName}人员`);
         return;
       }
       this.addtitle = "修改人脸";
@@ -725,19 +725,19 @@ export default {
           }
         });
     },
-
-    deletevip(uuid) {
+    // 删除人脸
+    deleteStaffFace(uuid) {
       if (!this.selectLibRow.deletable) {
-        this.$message.error(`不可以删除${this.libraryname}人员`);
+        this.$message.error(`不可以删除${this.libraryName}人员`);
         return;
       }
-      this.row = uuid;
+      this.row = [uuid];
       this.dialogVisible = true;
       this.deleteWay = "deleteviprealy";
     },
     deleteviprealy() {
-      var uuid = this.row;
-      api.deletevip(uuid).then(res => {
+      var uuids = this.row;
+      api.deleteStaff({faceUuid: uuids}).then(res => {
         if (res.data.status === 0) {
           this.$message.success("删除成功！");
           this.getStaffLibStaffData();
@@ -757,7 +757,7 @@ export default {
             this.selectLibRow = this.tableData[0];
             if (this.faceLibraryUuid) return;
             this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
-            this.libraryname = res.data.data[0].faceLibraryName;
+            this.libraryName = res.data.data[0].faceLibraryName;
             this.getStaffLibStaffData();
           } else {
             this.$message.warning(res.data.msg);

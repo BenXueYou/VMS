@@ -4,10 +4,11 @@
 			<el-table :data="listTableData" border style="width: 100%;" v-loading="listtableloadding">
 				<el-table-column prop="index" label="序号" width="120">
 					<template slot-scope="scope">
-						<el-checkbox
+            {{("0"+(parseInt(scope.$index)+1)).slice(-2)}}
+						<!-- <el-checkbox
 							v-model="scope.row.checked"
 							@change="selectchange"
-						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
+						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox> -->
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -24,7 +25,7 @@
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="editface(scope.row)">
 							<i class="el-icon-edit-outline"></i>
-							查看/编辑
+							编辑
 						</el-button>
 						<el-button type="text" size="small" @click="deleteface(scope.row)">
 							<i class="el-icon-delete"></i>
@@ -139,7 +140,7 @@ export default {
       this.$emit("getFaceDetail", row.staffUuid, row.libraryuuid);
     },
     deleteface(row) {
-      this.$emit("deletevip", [row.staffUuid]);
+      this.$emit("deleteStaffFace", [row.staffUuid]);
     },
 
     currentChange(index) {

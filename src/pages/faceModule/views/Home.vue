@@ -1355,9 +1355,9 @@ iframe html {
 .leftflexButton,
 .leftflexButton:focus,
 .leftflexButton:hover {
-	background-color: transparent;
-	color: #ffffff;
-	border: 0;
+	background-color: transparent!important;
+	color: #ffffff!important;
+	border: 0!important;
 	padding: 10px 14px !important;
 }
 .font12 {

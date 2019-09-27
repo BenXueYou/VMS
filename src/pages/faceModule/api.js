@@ -145,7 +145,7 @@ export function getStaffDetail(data) {
 export function deleteStaff(data) {
   let url = FaceModuleApi.faceDBApi.deleteStaffUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'DELETE',
     url,
     data
   });
@@ -153,7 +153,7 @@ export function deleteStaff(data) {
 export function updateStaff(data) {
   let url = FaceModuleApi.faceDBApi.updateStaffUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'PUT',
     url,
     data
   });
