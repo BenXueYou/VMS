@@ -131,10 +131,10 @@ export default {
     },
     editface(row) {
       console.log(row);
-      this.$emit("getFaceDetail", row.staffUuid, row.libraryuuid);
+      this.$emit("getFaceDetail", row.faceUuid, row.faceLibraryUuid);
     },
     deleteface(row) {
-      this.$emit("deleteStaffFace", [row.staffUuid]);
+      this.$emit("deleteStaffFace", [row.faceUuid]);
     },
     currentChange(index) {
       this.$emit("changepage", index);

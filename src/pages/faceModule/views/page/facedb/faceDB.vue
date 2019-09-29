@@ -36,7 +36,11 @@
 								编辑
 							</el-button>
 
-							<el-button type="text" size="small" @click.stop="openDeleteDialog('deletefaceLib',scope.row)">
+							<el-button
+								type="text"
+								size="small"
+								@click.stop="openDeleteDialog('deletefaceLib',scope.row)"
+							>
 								<i class="el-icon-delete"></i>
 								删除
 							</el-button>
@@ -67,11 +71,11 @@
 						<img src="@/assets/facedb/onepeople.png" alt />
 						<span>导出</span>
 					</li>
-					<li class="active" @click="gengxinlishi">
+					<li class="active" @click="faceLibUpdateRecord">
 						<img src="@/assets/facedb/onepeople.png" alt />
 						<span>更新历史</span>
 					</li>
-					<li class="active" @click="kugengxin">
+					<li class="active" @click="updateLibraryTask">
 						<img src="@/assets/facedb/onepeople.png" alt />
 						<span>库更新</span>
 					</li>
@@ -162,7 +166,7 @@
 			@close="faceDBDialogUpdateHistoryVisible=false"
 		></the-face-d-b-update-history-dialog>
 
-    <!-- 人脸删除弹窗 -->
+		<!-- 人脸删除弹窗 -->
 		<el-dialog title="提示" width="30%" class="DeleteDialogClass" :visible.sync="dialogVisible">
 			<p class="mydelete">
 				<img src="@/assets/delete.png" alt />
@@ -173,7 +177,7 @@
 				<el-button type="primary" @click="dialogVisible = false">取 消</el-button>
 			</span>
 		</el-dialog>
-    <!-- 导出模板选择弹窗 -->
+		<!-- 导出模板选择弹窗 -->
 		<el-dialog
 			class="ExportDialogClass"
 			title="导出模板选择"
@@ -376,7 +380,7 @@ export default {
         this.$message.error(`不可以删除${this.libraryName}数据`);
         return;
       }
-      this.row = row;
+      this.row = [row.faceUuid];
       this.dialogVisible = true;
       this.deleteWay = way;
     },
@@ -412,6 +416,7 @@ export default {
             let tmpItem = arr[i];
             tmpItem.checked = false;
             tmpItem.faceLibraryName = this.selectLibRow.faceLibraryName;
+            tmpItem.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
             // 翻译 性别 人员类型 证件类型
             tmpItem["gender"] = this.$common.getEnumItemName(
               "gender",
@@ -466,6 +471,9 @@ export default {
               householdType: "string", // 住户类型（系统人员库，居民信息特有自信）
               address: "string", // 住址（系统人员库，居民特有信，由基建树拼接而来）
               version: 0, // 版本号
+              faceUuid: null,
+              faceLibraryUuid: this.selectLibRow.faceLibraryUuid,
+              faceLibraryName: this.selectLibRow.faceLibraryName,
               faceUrl: "string" // 人脸图片base64
             }));
             this.imageTableData = num;
@@ -521,13 +529,15 @@ export default {
     },
     // 删除人脸库
     deletefaceLib() {
-      api.deleteFaceLib({}).then(res => {
-        if (res.data.status === 0) {
-          this.$message.success("删除成功！");
-          this.getStaffLibStaffData();
-          this.getStaffLibList();
-        }
-      });
+      api
+        .deleteFaceLib({ faceLibraryUuid: this.selectLibRow.faceLibraryUuid })
+        .then(res => {
+          if (res.data.status === 0) {
+            this.$message.success("删除成功！");
+            this.getStaffLibStaffData();
+            this.getStaffLibList();
+          }
+        });
     },
     // 添加样式
     currentRowStyle(index) {
@@ -597,17 +607,16 @@ export default {
       }
     },
 
-    kugengxin() {
-      this.faceDBDialogDKVisible = true;
-      console.log(this.libraryarr);
+    updateLibraryTask() {
+      this.faceDBDialogDKVisible = !this.faceDBDialogDKVisible;
     },
-    gengxinlishi() {
-      this.faceDBDialogUpdateHistoryVisible = true;
+    faceLibUpdateRecord() {
+      this.faceDBDialogUpdateHistoryVisible = !this.faceDBDialogUpdateHistoryVisible;
     },
     addfile() {
       if (this.selectLibRow.addFaceByUser) {
         this.isUpdate = false;
-        this.faceDBDialogAddVisible = true;
+        this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;
       } else {
         this.$message.warning(
           `${this.selectLibRow.faceLibraryName}人员是不可添加`
@@ -624,13 +633,13 @@ export default {
       if (this.typeradio === "TheFaceDBImageTable") {
         for (let i = 0, len = this.imageTableData.length; i < len; i++) {
           if (this.imageTableData[i].checked) {
-            num.push(this.imageTableData[i].staffUuid);
+            num.push(this.imageTableData[i].faceUuid);
           }
         }
       } else {
         for (let i = 0, len = this.listTableData.length; i < len; i++) {
           if (this.listTableData[i].checked) {
-            num.push(this.listTableData[i].staffUuid);
+            num.push(this.listTableData[i].faceUuid);
           }
         }
       }
@@ -731,13 +740,17 @@ export default {
         this.$message.error(`不可以删除${this.libraryName}人员`);
         return;
       }
-      this.row = [uuid];
+      this.row = uuid;
       this.dialogVisible = true;
       this.deleteWay = "deleteviprealy";
     },
     deleteviprealy() {
+      if (!this.row.length) {
+        this.$message.warning('没有选中的faceUuid');
+        return;
+      }
       var uuids = this.row;
-      api.deleteStaff({faceUuid: uuids}).then(res => {
+      api.deleteStaff({ faceUuid: uuids }).then(res => {
         if (res.data.status === 0) {
           this.$message.success("删除成功！");
           this.getStaffLibStaffData();

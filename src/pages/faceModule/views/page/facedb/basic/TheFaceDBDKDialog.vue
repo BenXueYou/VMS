@@ -194,7 +194,6 @@ export default {
         return;
       }
       /* eslint-disable */
-
 			this.uploader = new plupload.Uploader({
 				browse_button: "fileSelect", // 这里填写触发元素的按钮ID
 				url: `http://${window.config.ip}/mppr-file/v1/file/import/pluploadUpload`, // 上传的地址

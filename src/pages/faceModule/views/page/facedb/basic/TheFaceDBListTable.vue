@@ -21,7 +21,7 @@
 						<span :title="scope.row[item.propName]">{{scope.row[item.propName]}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column label="操作">
+				<el-table-column label="操作" min-width="120">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="editface(scope.row)">
 							<i class="el-icon-edit-outline"></i>
@@ -137,10 +137,10 @@ export default {
       }
     },
     editface(row) {
-      this.$emit("getFaceDetail", row.staffUuid, row.libraryuuid);
+      this.$emit("getFaceDetail", row.faceUuid, row.faceLibraryUuid);
     },
     deleteface(row) {
-      this.$emit("deleteStaffFace", [row.staffUuid]);
+      this.$emit("deleteStaffFace", [row.faceUuid]);
     },
 
     currentChange(index) {
