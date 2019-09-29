@@ -67,3 +67,11 @@ export function addView(data) {
     data
   });
 }
+export function videoTree(params = {}) {
+  let url = vUrl.videoTreeUrl;
+  return axios({
+    method: "GET",
+    url,
+    params
+  });
+}

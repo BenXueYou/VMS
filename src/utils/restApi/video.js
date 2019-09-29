@@ -6,6 +6,9 @@ let ip = window.config.ip,
 let urlPrefix = `${
   window.config.protocolHeader
 }${ip}/video/project/${projectUuid}`;
+let zwUrlPrefix = `${
+  window.config.protocolHeader
+}${ip}/basedata-v1/project/${projectUuid}`;
 
 export default {
   // 获取视频预览信息
@@ -23,5 +26,9 @@ export default {
   // 查询视图
   getViewUrl: `${urlPrefix}/video/view/list`,
   // 添加视图
-  addViewUrl: `${urlPrefix}/video/view`
+  addViewUrl: `${urlPrefix}/video/view`,
+  // 获取子节点及视频设备通道数据
+  videoTreeUrl: `${zwUrlPrefix}/organization/video/children`
+  // 先使用下面的url测试
+  // videoTreeUrl: `http://192.168.9.164:9000/project/baefb892f4ab4cb495b0e1a4c2b2caad/organization/video/children`
 };

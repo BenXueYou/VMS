@@ -323,7 +323,7 @@ export default {
       data: [],
       data2: [],
       devprops: {
-        label: "name",
+        label: "label",
         isLeaf: "leaf"
       },
       props: {
@@ -415,37 +415,6 @@ export default {
     })
   },
   methods: {
-    devloadNode(node, resolve) {
-      //  懒加载子结点
-      if (node.level === 0) {
-        return resolve([{ name: "广拓视频点位" }]);
-      }
-      if (node.level > 3) return resolve([]);
-
-      var hasChild;
-      if (node.data.name === "广拓视频点位") {
-        hasChild = true;
-      }
-      setTimeout(() => {
-        var data;
-        if (hasChild) {
-          data = [
-            {
-              name: "东门区域"
-            },
-            {
-              name: "西门区域"
-            },
-            {
-              name: "北门区域"
-            }
-          ];
-        } else {
-          data = [];
-        }
-        resolve(data);
-      }, 500);
-    },
     viewhandleCheckChange() {
       console.log(this.$refs.tree3.getCheckedNodes());
     },
@@ -480,6 +449,25 @@ export default {
     },
     handleNodeClick() {
       // 点击展开
+    },
+    async devloadNode(node, resolve) {
+      //  懒加载子结点
+      console.log(node);
+      let data = await this.videoTree(node.data && node.data.id);
+      data = data.map(item => {
+        item.leaf = item.openFlag ? false : true;
+        return item;
+      });
+      return resolve(data);
+    },
+    videoTree(parentOrgUuid) {
+      let data = parentOrgUuid ? { parentOrgUuid } : {};
+      return new Promise((resolve, reject) => {
+        api2.videoTree(data).then(res => {
+          let list = res.data.data || [];
+          resolve(list);
+        });
+      });
     },
     async loadNode(node, resolve) {
       // 加载子结点
