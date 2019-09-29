@@ -136,7 +136,13 @@
                               ref="camera1"
                               containerId="camera1" />
           </div>
-          <div class="block-line">排除人脸库: {{intelModelObj.notInlibrary}}</div>
+          <div class="block-line">排除人脸库:
+            <template v-for="(item, index) in intelModelObj.notInlibrary">
+              <span :key="index">
+                {{index === 0 ? item : ` ；${item}`}}
+              </span>
+            </template>
+          </div>
           <div class="block-line">两次抓拍时间间隔：{{intelModelObj.captureInterval}}秒</div>
           <div class="block-line">备注：{{intelModelObj.remarks}}</div>
         </div>
