@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import TheFaceAlarmDialog from "@/pages/faceModule/views/page/search/facealarm/basic/TheFaceAlarmDialog.vue";
+import TheFaceAlarmDialog from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmDialog.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
 export default {
   name: "facedblist",

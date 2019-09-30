@@ -100,7 +100,7 @@
 
 <script>
 import * as api from "@/pages/faceModule/api";
-import displaydk from "@/pages/faceModule/views/page/facedb/basic/displaydk";
+import displaydk from "@/pages/faceModule/views/facedb/basic/displaydk";
 export default {
   name: "TheFaceDBDialog",
   components: {

@@ -94,23 +94,23 @@
 				>
 					<el-row class="FRelPopoverRow" justify="space-between">
 						<el-col class="FRelPopoverCol" @click.native="searchImageToFace(o,index,'/faceImpact')">
-							<img src="@/assets/fr-svg/2.png" />
+							<img src="@/assets/images/faceModule/2.png" />
 							以脸搜脸
 						</el-col>
 						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'/Companion')">
-							<img src="@/assets/fr-svg/4.png" />
+							<img src="@/assets/images/faceModule/4.png" />
 							人员轨迹
 						</el-col>
 						<el-col class="FRelPopoverCol" @click.native="shoWholeImgUrl(o,index)">
-							<img src="@/assets/fr-svg/3.png" />
+							<img src="@/assets/images/faceModule/3.png" />
 							查看大图
 						</el-col>
 						<el-col class="FRelPopoverCol" @click.native="tempCtrlTask(o,index)">
-							<img src="@/assets/fr-svg/5.png" />
+							<img src="@/assets/images/faceModule/5.png" />
 							临时布控
 						</el-col>
 						<el-col class="FRelPopoverCol" @click.native="downloadImg(o,index)">
-							<img src="@/assets/fr-svg/6.png" />
+							<img src="@/assets/images/faceModule/6.png" />
 							导出图片
 						</el-col>
 					</el-row>
@@ -166,7 +166,6 @@
 	</el-row>
 </template>
 <script>
-import CarFellowDetailDialog from "@/pages/faceModule/views/carFellow/view/CarFellowDetailDialog";
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import AlTree from "@/pages/faceModule/components/AlElTree.vue";
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
@@ -174,7 +173,7 @@ import PicQulitySelect from "@/common/PicQulitySelect";
 import * as api from "@/pages/faceModule/api.js";
 import RestApi from "@/utils/RestApi.js";
 export default {
-  components: { elPopverTree, AlTree, CarFellowDetailDialog, PicQulitySelect },
+  components: { elPopverTree, AlTree, PicQulitySelect },
   mounted: function() {
     let h =
 			window.innerHeight ||

@@ -8,7 +8,7 @@ const FaceHome = () =>
   import(/* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/Home");
 const faceDB = () =>
   import(
-    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/page/facedb/faceDB"
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/facedb/faceDB"
   );
 const FaceRecord = () =>
   import(
@@ -38,15 +38,7 @@ const ModuleCount = () =>
   );
 const faceAlarm = () =>
   import(
-    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/page/search/facealarm/faceAlarm"
-  );
-const faceAnalysis = () =>
-  import(
-    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/page/search/faceanalysis/faceAnalysis"
-  );
-const IGMRecord = () =>
-  import(
-    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/page/search/IntelligentModelRecord/IMRecord"
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/facealarm/faceAlarm"
   );
 const PersonFlowAnalysis = () =>
   import(
@@ -81,14 +73,6 @@ const routes = [
       keepAlive: false // 不需要缓存
     },
     component: FaceHome
-  },
-  {
-    path: "faceAnalysis",
-    name: "faceAnalysis",
-    meta: {
-      keepAlive: true // 需要缓存
-    },
-    component: faceAnalysis
   },
   {
     path: "faceAlarm",
@@ -161,14 +145,6 @@ const routes = [
       keepAlive: true // 需要缓存
     },
     component: judgeAnalysis
-  },
-  {
-    path: "IGMRecord",
-    name: "IGMRecord",
-    meta: {
-      keepAlive: true // 需要缓存
-    },
-    component: IGMRecord
   },
   {
     path: "PersonFlowAnalysis",

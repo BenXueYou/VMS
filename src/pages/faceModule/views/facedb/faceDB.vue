@@ -6,7 +6,7 @@
 			</div>
 
 			<div class="leftHeader">
-				<img src="@/assets/facedb/twopeople.png" alt />
+				<img src="@/assets/images/faceModule/twopeople.png" alt />
 				人脸库
 			</div>
 
@@ -53,30 +53,30 @@
 			<div v-show="!faceDBDialogAddVisible" class="rightheader">
 				<ul>
 					<li>
-						<img src="@/assets/facedb/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/onepeople.png" alt />
 						{{libraryName?libraryName:'库名称'}}
 					</li>
 					<li>
 						<el-checkbox v-model="selectall" @change="selectAll">本页全选</el-checkbox>
 					</li>
 					<li class="active" @click="addfile">
-						<img src="@/assets/facedb/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/onepeople.png" alt />
 						<span>新增</span>
 					</li>
 					<li class="active" @click="deletefile">
-						<img src="@/assets/facedb/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/onepeople.png" alt />
 						<span>删除</span>
 					</li>
 					<li class="active" @click="exportExcel2">
-						<img src="@/assets/facedb/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/onepeople.png" alt />
 						<span>导出</span>
 					</li>
 					<li class="active" @click="faceLibUpdateRecord">
-						<img src="@/assets/facedb/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/onepeople.png" alt />
 						<span>更新历史</span>
 					</li>
 					<li class="active" @click="updateLibraryTask">
-						<img src="@/assets/facedb/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/onepeople.png" alt />
 						<span>库更新</span>
 					</li>
 
@@ -205,12 +205,12 @@
 	</div>
 </template>
 <script>
-import TheFaceDBDialog from "@/pages/faceModule/views/page/facedb/basic/TheFaceDBDialog";
-import TheFaceDBImageTable from "@/pages/faceModule/views/page/facedb/basic/TheFaceDBImageTable";
-import TheFaceDBListTable from "@/pages/faceModule/views/page/facedb/basic/TheFaceDBListTable";
-import TheFaceDBDKDialog from "@/pages/faceModule/views/page/facedb/basic/TheFaceDBDKDialog";
-import TheFaceDBUpdateHistoryDialog from "@/pages/faceModule/views/page/facedb/basic/TheFaceDBUpdateHistoryDialog";
-import TheFaceDBAdd from "@/pages/faceModule/views/page/facedb/basic/TheFaceDBAdd";
+import TheFaceDBDialog from "@/pages/faceModule/views/facedb/basic/TheFaceDBDialog";
+import TheFaceDBImageTable from "@/pages/faceModule/views/facedb/basic/TheFaceDBImageTable";
+import TheFaceDBListTable from "@/pages/faceModule/views/facedb/basic/TheFaceDBListTable";
+import TheFaceDBDKDialog from "@/pages/faceModule/views/facedb/basic/TheFaceDBDKDialog";
+import TheFaceDBUpdateHistoryDialog from "@/pages/faceModule/views/facedb/basic/TheFaceDBUpdateHistoryDialog";
+import TheFaceDBAdd from "@/pages/faceModule/views/facedb/basic/TheFaceDBAdd";
 import SearchOptionView from "./basic/SearchOptionView";
 import * as api from "@/pages/faceModule/api.js";
 export default {
@@ -228,7 +228,7 @@ export default {
     return {
       taofanlibraryuuid: "", // 逃犯库的UUID记录
       issuoxiao: false,
-      rightarrow: require("@/assets/facedb/rightarrow.png"),
+      rightarrow: require("@/assets/images/faceModule/rightarrow.png"),
       choosetemplate: "scalper",
       templatetypearr: [],
       exportdialogVisible: false,

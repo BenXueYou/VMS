@@ -123,7 +123,6 @@ export default {
 				this.$route.path == "/faceAlarm" ||
 				this.$route.path == "/PersonTrace" ||
 				this.$route.path == "/OVO" ||
-				this.$route.path == "/IGMRecord" ||
 				this.$route.path == "/CompareRecord" ||
 				this.$route.path == "/MBAnalysisRecord" ||
 				this.$route.path == "/FaceRecord"

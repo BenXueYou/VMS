@@ -131,9 +131,9 @@
 <script>
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import alPopverTree from "@/pages/faceModule/components/AlElTree.vue";
-import TheFaceAlarmDialog from "@/pages/faceModule/views/page/search/facealarm/basic/TheFaceAlarmDialog.vue";
-import faceAlarmTable from "@/pages/faceModule/views/page/search/facealarm/basic/TheFaceAlarmTable.vue";
-import theFaceAlarmImageTable from "@/pages/faceModule/views/page/search/facealarm/basic/TheFaceAlarmImageTable.vue";
+import TheFaceAlarmDialog from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmDialog.vue";
+import faceAlarmTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmTable.vue";
+import theFaceAlarmImageTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmImageTable.vue";
 import * as api from "@/pages/faceModule/api.js";
 export default {
   name: "facealarm",

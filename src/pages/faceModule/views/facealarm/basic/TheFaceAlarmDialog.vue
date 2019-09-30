@@ -19,7 +19,7 @@
         </div>
         <div class="item iconitem">
           <div style='height:15px;'></div>
-          <img src="@/assets/facedb/addr.png"
+          <img src="@/assets/images/faceModule/addr.png"
                alt="">
         </div>
         <div class="item iteminfo">
@@ -56,7 +56,7 @@
         </div>
         <div class="item iconitem">
           <div style='height:15px;'></div>
-          <img src="@/assets/facedb/addr.png"
+          <img src="@/assets/images/faceModule/addr.png"
                alt="">
         </div>
         <div class="item iteminfo">
