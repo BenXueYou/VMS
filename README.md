@@ -86,7 +86,7 @@
 │  │      └─statisticalForms               统计分析
 │  │          ├─util
 │  │          └─view
-│  ├─home                              首页tab组件                                 
+│  ├─home                              首页tab组件                             
 │  │  ├─components
 │  │  ├─utils
 │  │  └─views
@@ -126,8 +126,8 @@
 ├─router                              路由
 │  └─modules
 ├─store                               vuex
-│  └─modules                          全局样式
-├─style                               
+│  └─modules                          
+├─style                               全局样式  
 └─utils                               全局函数
     └─restApi                         全局API
 
