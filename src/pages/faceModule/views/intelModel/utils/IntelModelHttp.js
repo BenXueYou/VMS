@@ -47,6 +47,17 @@ export var IntelModelHttp = {
     return axios.put(api, data);
   },
   /**
+   * 新增智能模型
+   */
+  addIntelModel(holder) {
+    let api = `${RestApi.api.faceModuleAPi.addIntelModel}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.post(api, data);
+  },
+  /**
    * 删除智能模型
    */
   deleteIntelModel(holder) {

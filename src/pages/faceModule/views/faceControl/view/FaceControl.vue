@@ -258,6 +258,7 @@ export default {
     },
     onConfirmEditOrAddControl() {
       this.isShowMain = true;
+      this.getMonitoringTaskList();
     },
     onCancelEditOrAddControl() {
       this.isShowMain = true;
@@ -297,6 +298,7 @@ export default {
     },
     editTaskInit() {
       this.isAdd = false;
+      this.$refs.addOrEditControl.formLabelAlign = this.$common.copyObject(this.faceMonitorObj, this.$refs.addOrEditControl.formLabelAlign);
       this.isShowMain = false;
     },
     formatObj() {

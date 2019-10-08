@@ -51,10 +51,12 @@ export default {
   getMonitoringTaskDetails: (taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
   deleteMonitoringTask: (taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
   getAlarmList: `${URLHeader}/${projectUuid}/alarm/list`,
+  addMonitoringTask: `${URLHeader}/${projectUuid}/monitoringTask/info`,
   editMonitoringTask: `${URLHeader}/${projectUuid}/monitoringTask/info`,
   getIntelModelList: `${URLHeader}/${projectUuid}/IntelligentModel/info/list`,
   getIntelModelDetails: (modelUuid) => `${URLHeader}/${projectUuid}/IntelligentModel/info/${modelUuid}`,
   getJudgedList: `${URLHeader}/${projectUuid}/judged/info/list`,
   deleteIntelModel: (modelUuid) => `${URLHeader}/${projectUuid}/IntelligentModel/info/${modelUuid}`,
+  addIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
   editIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
 };

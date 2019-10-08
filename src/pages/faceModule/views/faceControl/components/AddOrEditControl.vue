@@ -14,57 +14,61 @@
       </div>
       <div class="form">
         <el-form :rules="rules"
-                 ref="addUnitForm"
+                 ref="monitorForm"
                  label-position="right"
                  label-width="180px"
                  :model="formLabelAlign"
                  class="info-form">
           <el-form-item label="名称："
-                        prop="name">
+                        prop="faceMonitorName">
             <el-input class="time-interal left-space"
-                      v-model="formLabelAlign.name"></el-input>
+                      v-model="formLabelAlign.faceMonitorName"></el-input>
           </el-form-item>
           <el-form-item label="人脸库："
-                        prop="name">
+                        prop="libraryList">
           </el-form-item>
           <el-form-item label="视频源："
-                        prop="name">
+                        prop="channelList">
           </el-form-item>
           <el-form-item label="相似度不低于："
-                        prop="name">
+                        prop="faceSimilarityThreshold">
             <el-input class="time-interal left-space"
-                      v-model="formLabelAlign.name"></el-input>
+                      style="width: 60px"
+                      v-model="formLabelAlign.faceSimilarityThreshold"></el-input>
+            <span class="unit">%</span>
           </el-form-item>
           <el-form-item label="抓拍图片需达到的质量："
-                        prop="selectedButtons">
-            <pic-qulity-select :selectedButtons.sync="formLabelAlign.selectedButtons"
+                        prop="faceCapturePhotoQualities">
+            <pic-qulity-select :selectedButtons.sync="formLabelAlign.faceCapturePhotoQualities"
                                class="left-space" />
           </el-form-item>
           <el-form-item label="目标人列表："
-                        prop="name">
+                        prop="reservedCount">
             <el-input class="time-interal left-space"
-                      v-model="formLabelAlign.name"></el-input>
+                      style="width: 60px"
+                      v-model="formLabelAlign.reservedCount"></el-input>
+            <span class="unit">位</span>
           </el-form-item>
           <el-form-item label="是否报警："
-                        prop="isAlarm">
-            <el-radio-group v-model="formLabelAlign.isAlarm"
+                        prop="alarmed">
+            <el-radio-group v-model="formLabelAlign.alarmed"
                             class="left-space">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="是否报警弹窗："
-                        prop="isAlarm">
-            <el-radio-group v-model="formLabelAlign.isAlarm"
+                        prop="popup">
+            <el-radio-group v-model="formLabelAlign.popup"
                             class="left-space">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="请选择报警声音："
-                        prop="vioce">
+                        prop="alarmSoundName">
             <el-select class="time-interal left-space"
-                       v-model="formLabelAlign.vioce"
+                       v-model="formLabelAlign.alarmSoundName"
                        size="small"
                        clearable
                        placeholder="请选择">
@@ -76,11 +80,14 @@
             </el-select>
           </el-form-item>
           <el-form-item label="布控颜色："
-                        prop="name">
+                        prop="taskColour">
+            <el-color-picker v-model="formLabelAlign.taskColour"
+                             size="mini"
+                             style="margin-top: 7px;margin-left: 8px;"></el-color-picker>
           </el-form-item>
           <el-form-item label="布控状态："
-                        prop="status">
-            <el-switch v-model="formLabelAlign.status"
+                        prop="enabled">
+            <el-switch v-model="formLabelAlign.enabled"
                        class="left-space"
                        active-color="rgba(32,204,150,0.2)"
                        inactive-color="rgba(255,255,255,0.2)"></el-switch>
@@ -117,25 +124,26 @@ export default {
   data() {
     return {
       formLabelAlign: {
-        name: "",
-        selectedButtons: [],
-        isAlarm: 1,
-        vioce: "",
-        status: ""
+        faceMonitorName: "",
+        libraryList: [],
+        channelList: [],
+        faceSimilarityThreshold: 0,
+        faceCapturePhotoQualities: [],
+        reservedCount: 0,
+        alarmed: 0,
+        popup: 0,
+        alarmSoundName: "",
+        alarmSoundUrl: "",
+        taskColour: "",
+        enabled: 0
       },
       vioceOptions: [],
       rules: {
-        name: [
+        faceMonitorName: [
           { required: true, message: "名称不能为空", trigger: "blur" },
           { whitespace: true, message: "不允许输入空格", trigger: "blur" },
           { min: 1, max: 32, message: "长度在 1 到 32 个字符", trigger: "blur" }
-        ],
-        selectedButtons: [
-          { required: true, message: "名称不能为空", trigger: "blur" }
-        ],
-        isAlarm: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-        vioce: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-        status: [{ required: true, message: "名称不能为空", trigger: "blur" }]
+        ]
       }
     };
   },
@@ -147,12 +155,60 @@ export default {
     initData() {
       // this.houseTypeOptions = this.$common.getEnumByGroupStr("house_t");
     },
-    resetFormData() {},
-    onClickConfirm() {},
+    resetFormData() {
+      this.formLabelAlign = {
+        faceMonitorName: "",
+        libraryList: [],
+        channelList: [],
+        faceSimilarityThreshold: 0,
+        faceCapturePhotoQualities: [],
+        reservedCount: 0,
+        alarmed: 0,
+        popup: 0,
+        alarmSoundName: "",
+        alarmSoundUrl: "",
+        taskColour: "",
+        enabled: 0
+      };
+    },
+    onClickConfirm() {
+      this.$refs.monitorForm.validate(valid => {
+        if (valid) {
+          if (this.isAdd) {
+            this.addMonitoringTask();
+          } else {
+            this.editMonitoringTask();
+          }
+        } else {
+          this.$cToast.error("请正确填写内容");
+        }
+      });
+    },
     onClickCancel() {
       this.resetFormData();
       this.$emit("onCancel");
-    }
+    },
+    addMonitoringTask() {
+      this.$faceControlHttp
+        .addMonitoringTask(this.formLabelAlign)
+        .then(res => {
+          let body = res.data;
+          this.monitoringTaskSuccess(body);
+        });
+    },
+    monitoringTaskSuccess(body) {
+      this.$cToast.success(body.msg);
+      this.resetFormData();
+      this.$emit("onConfirm");
+    },
+    editMonitoringTask() {
+      this.$faceControlHttp
+        .editMonitoringTask(this.formLabelAlign)
+        .then(res => {
+          let body = res.data;
+          this.monitoringTaskSuccess(body);
+        });
+    },
   },
   watch: {},
   destroyed() {}
@@ -241,6 +297,11 @@ export default {
       right: 0px;
       top: 18px;
     }
+  }
+  .unit {
+    font-family: PingFangSC-Regular;
+    font-size: 12px;
+    color: #dddddd;
   }
 }
 </style>
