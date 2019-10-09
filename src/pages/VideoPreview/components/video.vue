@@ -44,8 +44,16 @@
     <!-- 默认摄像头图片 -->
     <img class='camera'
          :src="icons.defaultIcon"
+         v-show="!rtspUrl.length"
          alt="">
+    <!-- <div class='tipsText'
+         v-show="rtspUrl.length">
+      码流请求中
+    </div> -->
+    <div id='canvasWrap'
+         ref='canvasRefs'>
 
+    </div>
   </div>
 </template>
 
@@ -71,6 +79,12 @@ export default {
       default() {
         return false;
       }
+    },
+    rtspUrl: {
+      type: String,
+      default() {
+        return "";
+      }
     }
   },
   data() {
@@ -93,10 +107,53 @@ export default {
           icon: "close",
           name: "关闭"
         }
-      ]
+      ],
+      video_mgr: null,
+      canvas: null,
+      video: null,
+      video_list: []
     };
   },
+  mounted() {
+    /* eslint-disable */
+    this.video_mgr = new CVideoMgrSdk();
+    if (this.rtspUrl) {
+      setTimeout(() => {
+        this.playVideo();
+      }, 500);
+    }
+  },
+  watch: {
+    rtspUrl(val) {
+      console.log(val);
+      if (val) {
+        this.playVideo();
+      } else {
+        this.stopVideo();
+      }
+    }
+  },
   methods: {
+    playVideo() {
+      this.canvas = document.createElement("canvas");
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+      this.video = this.video_mgr.play(
+        '{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.35", "port":"4400"}}}',
+        '{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.35", "port":"4401"}}}',
+        "rtsp://admin:admin@192.168.9.121:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif",
+        "rtsp",
+        "preview",
+        this.canvas
+      );
+      this.$refs.canvasRefs.appendChild(this.canvas);
+    },
+    stopVideo() {
+      this.video_mgr.stop(this.video);
+      if (this.canvas) {
+        this.$refs.canvasRefs.removeChild(this.canvas);
+      }
+    },
     dragstart(e) {
       this.$emit("dragstart", this.index);
     },
@@ -129,6 +186,22 @@ export default {
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
+  #canvasWrap {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 111;
+  }
+  .tipsText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #fff;
+    font-size: 2em;
+    z-index: 1;
+  }
   .header {
     position: absolute;
     top: -46px;
@@ -139,6 +212,7 @@ export default {
     display: flex;
     justify-content: space-between;
     transition: top ease-out 0.3s;
+    z-index: 1111;
     .menu {
       ul {
         list-style: none;

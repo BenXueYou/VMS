@@ -18,6 +18,7 @@
                     :isActive="operatorIndex===index"
                     :width="videoWidth"
                     :height="videoHeight"
+                    :rtspUrl="item.url"
                     :IsShowMenu="!!item.url"
                     @dragstart="dragstart(index)"
                     @drop="drop(index)"
@@ -85,7 +86,7 @@ export default {
       imageAdjustVisible: false,
       videoArr: [
         {
-          url: "1" // 播放的视频 Url
+          url: "" // 播放的视频 Url
         }
       ],
       icons,
@@ -189,9 +190,9 @@ export default {
     chooseFenlu(index) {
       this.fenluIndex = index;
       this.initWrapDom();
-      this.videoArr = Array.from({ length: this.fenlu[this.fenluIndex] }).fill(
-        {}
-      );
+      this.videoArr = Array.from({ length: this.fenlu[this.fenluIndex] }).fill({
+        url: "11"
+      });
     },
     ClickViDeoA(index) {
       // 选中哪个视频块
