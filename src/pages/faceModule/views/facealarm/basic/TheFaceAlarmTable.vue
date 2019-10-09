@@ -29,7 +29,7 @@
 				</el-table-column>
 				<el-table-column label="操作" width="112">
 					<template slot-scope="scope">
-						<el-button @click="lookface(scope.row)" type="text" size="small">
+						<el-button @click="lookAlarmDetail(scope.row)" type="text" size="small">
 							<i class="el-icon-search"></i>
 							查看
 						</el-button>
@@ -46,9 +46,7 @@
 				@current-change="currentChange"
 				:total="pageCount"
 			></el-pagination>
-
 			<p class="totalpagetitle">共{{pageCount}}条</p>
-
 			<div class="tiaozhuan">
 				<span>跳转至</span>
 				<el-input class="yeshu" v-model="yeshu" @blur="blur" type="number"></el-input>
@@ -120,8 +118,8 @@ export default {
         this.$emit("pagechange", parseInt(this.yeshu));
       }
     },
-    lookface(row) {
-      this.$emit("lookface", row.detail);
+    lookAlarmDetail(row) {
+      this.$emit("lookAlarmDetail", row);
     },
     currentChange(index) {
       this.$emit("pagechange", index);

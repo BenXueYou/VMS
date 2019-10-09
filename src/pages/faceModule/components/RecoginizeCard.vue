@@ -85,7 +85,7 @@
 					>{{(recoginizeItem)&&(recoginizeItem.captureDatetime)?recoginizeItem.captureDatetime.split(" ")[1]:'抓拍时间：-- --'}}</div>
 				</div>
 			</div>
-			<div v-if="alarmState" class="alarmStateTxt">已处理</div>
+			<div v-if="alarmState" class="alarmStateTxt">{{alarmState?$common.getEnumItemName("alarm_r",alarmState):'已处理'}}</div>
 		</div>
 	</transition>
 </template>

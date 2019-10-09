@@ -152,16 +152,12 @@
 		</el-row>
 		<!-- ======================================================= 人脸 弹 窗 ========================================================== -->
 		<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
-			<img
-				style="width:35%;height:100%"
-				:src="dialogPhotoImgUrl?dialogPhotoImgUrl:require('@/assets/user.png')"
-				alt
-			/>
-			<img
-				style="width:63%;height:100%;margin-left:2%"
-				:src="dialogPanoramaImgUrl?dialogPanoramaImgUrl:require('@/assets/user.png')"
-				alt
-			/>
+			<div class="leftImgBox">
+				<img :src="dialogPhotoImgUrl?dialogPhotoImgUrl:require('@/assets/user.png')" alt />
+			</div>
+			<div class="rightImgBox">
+				<img :src="dialogPanoramaImgUrl?dialogPanoramaImgUrl:require('@/assets/user.png')" alt />
+			</div>
 		</el-dialog>
 	</el-row>
 </template>
@@ -563,8 +559,25 @@ export default {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
-	padding: 25px 27px;
+	padding: 25px 38px;
 	box-sizing: border-box;
+	width: 100%;
+}
+.dialogPhotoClass .el-dialog {
+	width: 800px;
+}
+.dialogPhotoClass img {
+	width: 100%;
+	height: 100%;
+}
+.dialogPhotoClass .leftImgBox {
+	width: 35%;
+	height: 100%;
+}
+.dialogPhotoClass .rightImgBox {
+	width: 63%;
+	height: 100%;
+	margin-left: 2%;
 }
 .reccordCellClass .FRelPopoverClass {
 	min-width: 118px;

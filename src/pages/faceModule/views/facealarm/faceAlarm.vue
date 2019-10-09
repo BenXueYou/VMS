@@ -120,10 +120,10 @@
 				:pageCount="pageCount"
 				:tableData="tableData"
 				:isloading="isloading"
-				@lookface="lookface"
+				@lookAlarmDetail="lookAlarmDetail"
 				@pagechange="pagechange"
 			></component>
-			<the-face-alarm-dialog
+			<!-- <the-face-alarm-dialog
 				title="报警详情"
 				:detail="detail"
 				:detail2="detail2"
@@ -131,18 +131,21 @@
 				:alarminfoid="alarminfoid"
 				:faceDBDialogVisible="facealarmvisible"
 				@close="facealarmvisible=false"
-			></the-face-alarm-dialog>
+			></the-face-alarm-dialog>-->
+			<face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" />
 		</div>
 	</div>
 </template>
 
 <script>
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
+import FaceImgDialog from "@/pages/faceModule/components/FaceImgDialog.vue";
 import alPopverTree from "@/pages/faceModule/components/AlElTree.vue";
 import TheFaceAlarmDialog from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmDialog.vue";
 import faceAlarmTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmTable.vue";
 import theFaceAlarmImageTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmImageTable.vue";
 import * as api from "@/pages/faceModule/api.js";
+import RestApi from "@/utils/RestApi.js";
 export default {
   name: "facealarm",
   components: {
@@ -150,12 +153,15 @@ export default {
     theFaceAlarmImageTable,
     TheFaceAlarmDialog,
     elPopverTree,
-    alPopverTree
+    alPopverTree,
+    FaceImgDialog
   },
   data() {
     return {
+      imageHeader: RestApi.api.imageUrl,
       isIndeterminate: false,
       checkTaskAll: true,
+      faceImgDialogVisible: false,
       checkLibAll: true,
       facealarmPopoverClass: "facealarmPopoverClass",
       faceDBDefaultProps: {
@@ -347,7 +353,6 @@ export default {
           this.endTime = enddate + " " + "23:59:59";
           break;
       }
-
       console.log(this.startTime, "-----", this.endTime);
     },
     handleLibCheckAllChange(val) {
@@ -446,69 +451,12 @@ export default {
         credentialNo: ""
       };
     },
-    lookface(detail) {
-      const _this = this;
+    lookAlarmDetail(detail) {
+      detail.dialogPhotoImgUrl = this.imageHeader + detail.faceCapturePhotoUrl;
+      detail.dialogPanoramaImgUrl = this.imageHeader + detail.panoramaCapturePhotoUrl;
       this.detail = detail;
-      _this.facearr = [];
-      // 这个获取抓拍记录
-      api.getAlarmDetail({ staffUuid: detail.staffuuid }).then(res => {
-        var data = res.data.data;
-        if (data) {
-          console.log(data);
-          for (let i = 0; i < data.length; i++) {
-            data[i].panoramauri = data[i].panoramauri
-              ? data[i].panoramauri.replace(/"/g, "")
-              : "";
-            data[i].photouri = data[i].photouri
-              ? data[i].photouri.replace(/"/g, "")
-              : "";
-            data[i].channelName = data[i].channelName
-              ? data[i].channelName.replace(/"/g, "")
-              : "";
-            data[i].time = data[i].time ? data[i].time.replace(/"/g, "") : "";
-            data[i].panoramauri = data[i].panoramauri || _this.defaultHeader;
-            data[i].photouri = data[i].photouri || _this.defaultHeader;
-          }
-          _this.facearr = data;
-        }
-      });
-      // 下面获取一些特殊信息，
-
-      this.detail2 = {};
-      api
-        .getStaffDetail({
-          staffUuid: detail.staffuuid
-        })
-        .then(res => {
-          var data = res.data.data;
-          if (data) {
-            _this.detail2 = {
-              sex: data.staffsexName,
-              huji: data.nation,
-              minzu: data.domicileAddress,
-              bir: data.birthdate,
-              cardtype: _this.getidName(data.credentialtype),
-              credentialNo: data.credentialno
-            };
-          } else {
-            // this.$message.error("获取数据为空!");
-          }
-          console.log("---------------");
-          console.log(_this.detail2);
-        });
-      // 这边有个请求。
-      this.alarminfoid = detail.alarminfoid;
-      this.facealarmvisible = true;
-    },
-    statusChange(val) {
-      var str = val;
-      for (let i = 0; i < this.statusOptions.length; i++) {
-        if (this.statusOptions[i].typeStr === val) {
-          str = this.statusOptions[i].typeName;
-          break;
-        }
-      }
-      return str;
+      this.faceImgDialogVisible = !this.faceImgDialogVisible;
+      // this.facealarmvisible = true;
     },
     changeIndex(index) {
       this.showindex = index;
@@ -516,7 +464,6 @@ export default {
       this.ajaxdata();
     },
     init() {
-      //
       var _w =
 				window.innerWidth ||
 				document.documentElement.clientWidth ||
@@ -525,7 +472,6 @@ export default {
 				window.innerHeight ||
 				document.documentElement.clientHeight ||
 				document.body.clientHeight;
-
       this.pageSize = Math.floor((_h - 410) / 43);
       console.log(_w);
       // this.ajaxdata();
@@ -573,82 +519,13 @@ export default {
           this.tableData = num;
         });
     },
-    search() {},
     pagechange(index) {
       this.pageNow = index;
-
       this.ajaxdata();
     },
     selectvisiblechange() {},
     selectChange() {
-      this.gettranslate();
-    },
-    timeChange() {
-      if (this.startTime && this.endTime) {
-        if (new Date(this.startTime) > new Date(this.endTime)) {
-          var t = this.startTime;
-          this.startTime = this.endTime;
-          this.endTime = t;
-        }
-      }
-    },
-    mock() {
-      this.devicearr = [
-        {
-          label: "全部",
-          value: ""
-        },
-        {
-          label: "设备1",
-          value: "1"
-        },
-        {
-          label: "设备2",
-          value: "2"
-        }
-      ];
-      this.alarmtypearr = [
-        {
-          label: "全部",
-          value: ""
-        },
-        {
-          label: "报警类型1",
-          value: "1"
-        },
-        {
-          label: "报警类型2",
-          value: "2"
-        }
-      ];
-      this.belongtoarr = [
-        {
-          label: "全部",
-          value: ""
-        },
-        {
-          label: "库1",
-          value: "1"
-        },
-        {
-          label: "库2",
-          value: "2"
-        }
-      ];
-      this.statusarr = [
-        {
-          label: "全部",
-          value: ""
-        },
-        {
-          label: "状态1",
-          value: "1"
-        },
-        {
-          label: "状态2",
-          value: "2"
-        }
-      ];
+      this.ajaxdata();
     },
     getStartTime() {
       var new111 = new Date();
@@ -709,7 +586,8 @@ export default {
 	line-height: 1;
 	background: transparent;
 	border: 0;
-	color: #efefef;
+	/* color: #efefef; */
+	color: #26d39d;
 	text-align: center;
 	box-sizing: border-box;
 	outline: 0;

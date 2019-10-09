@@ -2,12 +2,12 @@
 	<div class="tablelist" ref="tablelist">
 		<div class="aaaa" v-loading="isloading">
 			<div class="fater">
-				<div class="item" v-for="(item,index) in tableData" :key="index">
+				<div class="item" v-for="(item,index) in tableSourceData" :key="index">
 					<recoginize-card
 						:recoginizeItem="item"
-						@detailClick="openDialog(item.detail)"
-						@click="openDialog(item.detail)"
-						:alarmState = item.status
+						@detailClick="openDialog(item)"
+						@click="openDialog(item)"
+						:alarmState="item.status"
 					/>
 				</div>
 				<div class="item hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div>
@@ -113,12 +113,24 @@ export default {
   data() {
     return {
       multipleSelection: [],
+      tableSourceData: [],
       facealarmvisible: false,
       arr: [1, 1, 1, 1, 1],
       dialogImageUrl: "",
       dialogVisible: false,
       userheader: require("@/assets/user.png")
     };
+  },
+  watch: {
+    tableData(val) {
+      if (val && val.length) {
+        this.tableSourceData = [];
+        val.forEach(item => {
+          item.captureDatetime = item.alarmDatetime;
+          this.tableSourceData.push(item);
+        });
+      }
+    }
   },
   mounted() {},
   methods: {
@@ -129,9 +141,10 @@ export default {
       }
     },
     openDialog(detail) {
-      this.$emit("lookface", detail);
+      console.log(detail);
+      this.$emit("lookAlarmDetail", detail);
     },
-    lookface() {
+    lookAlarmDetail() {
       this.facealarmvisible = true;
     },
     currentChange(index) {
