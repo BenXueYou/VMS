@@ -47,6 +47,17 @@ export var FaceControlHttp = {
     return axios.put(api, data);
   },
   /**
+   * 新增布控任务
+   */
+  addMonitoringTask(holder) {
+    let api = `${RestApi.api.faceModuleAPi.addMonitoringTask}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.post(api, data);
+  },
+  /**
    * 删除布控任务
    */
   deleteMonitoringTask(holder) {

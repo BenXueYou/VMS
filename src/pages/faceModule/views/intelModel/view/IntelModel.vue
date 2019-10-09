@@ -139,7 +139,7 @@
           <div class="block-line">排除人脸库:
             <template v-for="(item, index) in intelModelObj.notInlibrary">
               <span :key="index">
-                {{index === 0 ? item : ` ；${item}`}}
+                {{index === 0 ? item : `；${item}`}}
               </span>
             </template>
           </div>
