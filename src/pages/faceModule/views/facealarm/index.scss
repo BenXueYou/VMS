@@ -51,16 +51,15 @@
   width: 100%;
   height: 100%;
   background: rgb(27, 28, 31);
-  padding: 40px 50px 40px 50px;
+  padding: 40px 30px 40px 30px;
   box-sizing: border-box;
   text-align: left;
   .facealarm-table {
     width: 100%;
-    height: calc(100vh - 250px);
-    padding-left:30px;
+    padding:0 30px 20px;
     box-sizing: border-box;
     background-color: rgb(32, 35, 38);
-    overflow: hidden;
+    overflow: auto;
   }
 
   .facealarm-header {

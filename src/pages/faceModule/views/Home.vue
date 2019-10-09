@@ -174,6 +174,7 @@
 				<el-row class="asidListBox">
 					<div class="asidListRow" v-for="(o,index) in 5" :key="index">
 						<recoginize-card
+              imgWidth='99'
 							:recoginizeItem="comparePhotoList[index]"
 							@detailClick="doRecoginizeDetail(index)"
 						/>

@@ -6,74 +6,13 @@
 					<recoginize-card
 						:recoginizeItem="item"
 						@detailClick="openDialog(item.detail)"
-            @click="openDialog(item.detail)"
+						@click="openDialog(item.detail)"
+						:alarmState = item.status
 					/>
-					<!--	<div class="header1">
-						<img
-							v-if="!item.alarmed"
-							src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAAXNSR0IArs4c6QAAAsJJREFUOBF1U0tIVGEU/v7rI51ZpJipEVHYwnGkFINIQh0V6QVBEi2iAiuiRUGLisLAwGiRtAsirVWLtEWrMppxZjYVgb2mfGQFmYKjERXhI517T98Zu2WWB/77n//7vnPuuf8512CB+SWyVmDvEyAgkJWAMQYywj1C7OaAqRucH2LcQ7VEMsZgt/J8hIFfGPDAAt4DIgJTSKyeXA7x9mx4Tjw2FVMam0ywTl56ZzHezXMZ16U8pLZETWBaBa5tlbdLhjB01oGcJvYqB5k1D83m70neJ6HOIglNFUm43A1YbOcnlvokOMGYO6oxJRKsTgARC9bRPlN7VUG/9KY7iJ8EnC1JEUyXQUFrr/HP6Nkn3YcETpuBqbdsoJHf8cINbhaxHIwGGXyG+Qe4Bh2gycbofeU0Qb+pbefWw9VIwFQwU5cSah0I7+W2CbAq+03dYa6DrC7Ay6y8hfCepIgPC+YesQqLt5vLc9wl+GYG4znf8szF+kzNE74kxrNySWNLx+gss0iMMMnyX7i2ZZzkCrY11cXKpSeNfgHn4ZOLUZfH9g5rBe8I+v4QppOl5caRuFYioTzeev4kvrYxaVYaLHJzxnvx0xtkBYgy07ZyCS5VqtfU9bGqA3QbEpC4jcQo/Z385v0xU/NGNb+02+lGLQ9wg6XZk8AxJdV4cR0p8K5h8h26LHgK2aXbcyygWuIJL+R6EuMQXSiS4LRfQsWuaLFdNarlMLWoJtlXL7Ka2c4Yx7SrVCKrlfif+SW4inNzV7UeZJ9XTTLBU7NhNh0pu3ie+QE7WizhjQsTFEuwjMFRlm6nIq1BY34nUCdmAiMZyKyi+9mB/Yjjepnt8+wWSWG5TbxozgK+pcNUvTZVwxqjRuxv07/uAz5e5KwfJz3Elk5QwZZZV/JhnVr4l/6TwE3nl/B6Bw4vSuffOjd/Ml2N7j8BJgcRwi91UMEAAAAASUVORK5CYII="
-							alt
-						/>
-						<img
-							v-else
-							src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAOCAYAAAD0f5bSAAAAAXNSR0IArs4c6QAAAdNJREFUKBVdkj1IHFEQx2eWvTsRtBOCNoFEQiAEP8o0QpQUFsHWgLd3OS5KPBAsLEMqA4kf4Eehp7ciIihptBHbQBAhSJqIYiOkUAhCtPFc8OU3ezlRB2Zn5j/znzfvzarcEpfJvBbneoBasPWi+hP/m9TVzejUVLlaquZQ3CDX10WKnhFOiuftYS/AnmN70UfkAi2VvuOLOudUgmAb8Jh4UMPw0hK3xaXTb4gnJZFo1WLxty/Z7HuAekkmB3RuLnJB0MFowzEmsiZhOKuqK+BPJIoWwF/5jBDgTMSEdLod/yvjjUA8RUclk6kF+0zTMbm6OnP9/U0eQDOj7WKF4j78aWYvMuYmyDv0raVo+hdzKOXyY4+iMzRhCSTiZOtcEdVaTouqIX5KfP+Pj3MIqY3EL+w8usPF7TFO0BH0I1p5YecapabmyE5ahZizhC4uHhC/QBsIzRZ0ackuD8tl+W7YvtQVCik5P9+n4AP3WI4L7n14uYdAexA7afLDizet2gswTbLrXr2APQDbIv/FCJaP/whzuEc3p62QHJdUavT/Cl6ClUivM4XtLpYbkkUul3vKApcpTBJaV/sPhyCE2Bu5QzLU5fMJdpGH2Ez4CYK94h35BwTZsnFaUjdeAAAAAElFTkSuQmCC"
-							alt
-						/>
-						<span class="adadr" :style="{'color':item.alarmed?'#FF5F5F':''}">
-							{{item.zhuapai}}
-						</span>
-						<span class="aaac" @click="openDialog(item.detail)">
-							<span class="xiangqing">详情</span>
-							<img
-								src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhNJREFUOBGFU01rE2EQnpl9Q9u0Hqz+gGz9KhQsZHMo0oLYSwvq0aOHfpDQc+ql6EG9qFEQIWmgvfToRfBgvVQPBamwG6lQWlSaCh6FHOyHssmOM2vXLjGpc9gd5nmemXnfeQehyez14gWowxQzjgJyJ8gHGH4hwJsE0MKnTHYrLpH4H7vMb81Xb/OBCIYBuJDsOr28MXBjV9GL60vdPxr74xAEeURcO8k062WyvmJhAhXvVLZeAuNa1cneExIr2GwsbfV9KM0Jb7iX6ZomISWFlUW8k8ndbSdWnmLV9Mx9cVdrGDwKY+GZfVzadnJDcbFdKV6Xs9eqzsyqEuOmndiV+XcJMBMEdZqUgzyOi5VsWYmK1Hxme8WRuFh95RJCoc7+FEm20WTnqVfNpC+D098sY662S9Jjdb+Wi7pCMqWu6LaPS9LnlmU6R/Zx8OaedN5hjkJtPD/oEISA+GcrBslIDgY2nve0As+65TMNCF4g4cR2OufGOY5bTuoDI7mQlf2D7+NxUP3jxIrXkMf0dRKYYFEuKq+jUSAyRj7XqrLiyg2AZw0mFkJ+yis9SbnzdyLx//62V5qz3dJT5YUvMZXuvyXTGJLg7eZO4skUU7HERnqB8or9bftwHx4i8yUgKpywksvhqISky7Tb2BsLGPJS8f0/y6SZIjvvlvt9bExKscN1FiRcZ1wxaBY/O9ObEVf/vwEU9ODwC7zj1QAAAABJRU5ErkJggg=="
-								alt
-							/>
-						</span>
-					</div>
-					<div class="content">
-						<div class="aitem">
-							<div class="aitemimg">
-								<img
-									:src="item.zhuapaipic?item.zhuapaipic:userheader"
-									@click="showbig(item.zhuapaipic)"
-									alt
-								/>
-							</div>
-							<div class="aitemprogress">
-								<el-progress
-									class="progressCircle"
-									:class="{isactive:item.alarmed}"
-									:stroke-width="3"
-									:width="progressWidth"
-									:color="item.alarmed?'#FF5F5F':'#28FFBB'"
-									type="circle"
-									:percentage="item.percent"
-								></el-progress>
-							</div>
-							<div class="aitemimg">
-								<img :src="item.kulipic?item.kulipic:userheader" @click="showbig(item.kulipic)" alt />
-							</div>
-							<div class="aitemp">
-								<el-tooltip effect="dark" :content="item.alarmtime" placement="right">
-									<p>{{item.alarmtime}}&nbsp;</p>
-								</el-tooltip>
-								<el-tooltip effect="dark" :content="item.staffname" placement="right">
-									<p>{{item.staffname}}&nbsp;</p>
-								</el-tooltip>
-								<p>
-									<el-tooltip effect="dark" :content="item.belong" placement="right">
-										<span>{{item.belong}}&nbsp;</span>
-									</el-tooltip>
-									<i class="el-icon-warning" :style="{'color':item.alarmed?'#FF5F5F':item.librarycolor}"></i>
-								</p>
-							</div>
-						</div>
-					</div>-->
 				</div>
 				<div class="item hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div>
 			</div>
 		</div>
-
 		<div class="footer">
 			<el-pagination
 				background
@@ -181,27 +120,7 @@ export default {
       userheader: require("@/assets/user.png")
     };
   },
-  mounted() {
-    // this.$nextTick(function() {
-    //   var win_h = window.innerHeight;
-    //   var tableheight =
-    //     parseInt(getComputedStyle(this.$refs.tablelist).height) - 40;
-    //   this.pageSize = Math.floor(tableheight / 43);
-    //   //   alert(this.pageSize);
-    // });
-    var num = [];
-    for (var i = 0; i < 12; i++) {
-      num.push({
-        index: ("0" + (i + 1)).slice(-2),
-        name: "王小虎",
-        sex: "男",
-        time: "2018-10-18 12:00:00",
-        id: "342626199411060399",
-        ku: "住户"
-      });
-    }
-    this.tableData = num;
-  },
+  mounted() {},
   methods: {
     showbig(url) {
       if (url) {
@@ -258,7 +177,7 @@ export default {
 		height: 100%;
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: flex-start;
+		justify-content: space-around;
 		align-content: space-between;
 		overflow: auto;
 		.item {

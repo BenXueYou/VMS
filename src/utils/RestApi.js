@@ -194,9 +194,16 @@ export default {
       updateUnits: `/basedata-v1/${store.state.home.projectUuid}/units/updateUnits`,
       selPeople: `/basedata-v1/${store.state.home.projectUuid}/units/selPeople`
     },
+
+    // 设备管理
     sbUrl,
+
+    // 权限组
     pmUrl,
+
+    // 访客管理
     vistorManageApi,
+    
     //人脸图片质量检测
     faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`,
 

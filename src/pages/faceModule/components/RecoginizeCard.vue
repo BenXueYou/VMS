@@ -29,7 +29,7 @@
 			</el-row>
 			<div class="asidListRowBody">
 				<div class="relativeClass">
-					<div class="asidCompareImgBox">
+					<div class="asidCompareImgBox" :style="`width:${imgWidth}px;height:${imgWidth}px`">
 						<img
 							class="asidCardImg"
 							:src="recoginizeItem.faceCapturePhotoUrl?imageHeader+recoginizeItem.faceCapturePhotoUrl:require('@/assets/user.png')"
@@ -50,7 +50,7 @@
 					<div class="asidFontClass" style="visibility:hidden">布控照</div>
 				</div>
 				<div class="relativeClass">
-					<div class="asidCompareImgBox">
+					<div class="asidCompareImgBox" :style="`width:${imgWidth}px;height:${imgWidth}px`">
 						<img
 							class="asidCardImg"
 							:src="recoginizeItem.facePhotoUrl?imageHeader+recoginizeItem.facePhotoUrl:require('@/assets/user.png')"
@@ -99,6 +99,10 @@ export default {
       default() {
         return {};
       }
+    },
+    imgWidth: {
+      type: String,
+      default: '95'
     },
     alarmState: {
       type: Boolean,

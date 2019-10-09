@@ -7,19 +7,27 @@
 					:treeDataList="taskItemList"
 					:alPopoverClass="facealarmPopoverClass"
 					:defaultProps="defaultProps"
-					nodeKey="taskuuid"
+					nodeKey="faceMonitorUuid"
 					inputWidth="160px"
 					@transferAct="transferTaskAct"
 				></alPopverTree>
 			</div>
 			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
 				抓拍设备：
-				<elPopverTree
+				<!-- <elPopverTree
 					:channelInfoList="DeviceTreeList"
 					:elPopoverClass="facealarmPopoverClass"
 					@transferCheckedChannel="transferCheckedChannel"
 					inputWidth="160px"
-				></elPopverTree>
+				></elPopverTree>-->
+				<alPopverTree
+					:treeDataList="DeviceTreeList"
+					:alPopoverClass="facealarmPopoverClass"
+					:defaultProps="defaultDeviceProps"
+					nodeKey="channelUuid"
+					inputWidth="160px"
+					@transferAct="transferCheckedChannel"
+				></alPopverTree>
 			</div>
 			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
 				所属库：
@@ -27,18 +35,18 @@
 					:treeDataList="faceDBList"
 					:alPopoverClass="facealarmPopoverClass"
 					:defaultProps="faceDBDefaultProps"
-					nodeKey="libraryuuid"
+					nodeKey="faceLibraryUuid"
 					inputWidth="160px"
 					@transferAct="handleLibCheckAllChange"
 				></alPopverTree>
 			</div>
 			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
 				姓名：
-				<el-input placeholder v-model="username" />
+				<el-input placeholder v-model="staffName" />
 			</div>
 			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
 				证件号：
-				<el-input placeholder v-model="idcard" />
+				<el-input placeholder v-model="credentialNo" />
 			</div>
 			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
 				<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
@@ -96,15 +104,15 @@
 				</el-select>
 			</div>
 			<div :span="2" style="margin-top:-15px;">
-				<el-button icon="el-icon-search" class="search-btn" @click="gettranslate" type="primary">查询</el-button>
+				<el-button icon="el-icon-search" class="search-btn" @click="queryBtnAct" type="primary">查询</el-button>
 				<el-button class="search-btn" @click="resetData" type="primary">重置</el-button>
 			</div>
 		</el-row>
 		<div class="facealarm-table">
-				<el-radio-group class="switchBtn" v-model="showindex" @change="changeIndex">
-					<el-radio label="0">图片</el-radio>
-					<el-radio label="1">列表</el-radio>
-				</el-radio-group>
+			<el-radio-group class="switchBtn" v-model="showindex" @change="changeIndex">
+				<el-radio label="0">图片</el-radio>
+				<el-radio label="1">列表</el-radio>
+			</el-radio-group>
 			<component
 				:is="['theFaceAlarmImageTable','faceAlarmTable'][showindex]"
 				:pageSize="pageSize"
@@ -151,10 +159,13 @@ export default {
       checkLibAll: true,
       facealarmPopoverClass: "facealarmPopoverClass",
       faceDBDefaultProps: {
-        label: "libraryname"
+        label: "libraryName"
       },
       defaultProps: {
-        label: "taskname"
+        label: "faceMonitorName"
+      },
+      defaultDeviceProps: {
+        label: "channelName"
       },
       alarminfoid: "",
       startTime: "",
@@ -173,10 +184,10 @@ export default {
       imagePageSize: 12,
       imagePageNow: 1,
       tableData: [],
-      showindex: '0',
+      showindex: "0",
       statusOptions: [],
-      username: "",
-      idcard: "",
+      staffName: "",
+      credentialNo: "",
       isloading: false,
       facealarmvisible: false,
       genderOption: null,
@@ -189,13 +200,13 @@ export default {
         jindu: 80,
         kuurl: "",
         belong: "",
-        username: "",
+        staffName: "",
         sex: "",
         huji: "",
         minzu: "",
         bir: "",
         cardtype: "",
-        idcard: ""
+        credentialNo: ""
       },
       detail2: {},
       defaultHeader: require("@/assets/user.png"),
@@ -220,12 +231,7 @@ export default {
     // 获取布控任务
     api.getbukongrenwu().then(res => {
       console.log(res);
-      var num = [
-        //   {
-        //   taskname:"全部",
-        //   taskuuid:"",
-        // }
-      ];
+      var num = [];
       if (res.data.data) {
         var diaabled = res.data.data.disable;
         var enableed = res.data.data.enable;
@@ -242,16 +248,6 @@ export default {
 
       // this.getFaceLibsAndDeviceList(test);
     });
-    // 获取身份证的
-    api
-      .getIdCardType({
-        typegroupstring: "credential"
-      })
-      .then(res => {
-        console.log(res);
-        var data = res.data.data;
-        this.idtypetranslatearr = data;
-      });
   },
   mounted() {
     // 调用翻译
@@ -269,6 +265,29 @@ export default {
     }
   },
   methods: {
+    // 获取布控任务
+    getTaskList(isTrue) {
+      api
+        .getTaskList({ enabled: 1 })
+        .then(res => {
+          if (res.data.success) {
+            this.taskItemList = res.data.data;
+            for (var i = 0; i < this.taskItemList.length; i++) {
+              var tempTask = this.taskItemList[i];
+              this.checkedTaskUuidList.push(tempTask.taskuuid);
+            }
+            this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
+            if (isTrue) {
+              this.currentPage = 1;
+              this.totalCompareItemList = [];
+              this.queryAct(true);
+            }
+          } else {
+            this.$message({ message: "请求布控任务列表错误", type: "warning" });
+          }
+        })
+        .catch(() => {});
+    },
     changeDate() {
       this.selectDate = null;
     },
@@ -361,148 +380,33 @@ export default {
       this.$refs.tree1.setCheckedKeys(this.checkedTaskUuidList);
       this.isIndeterminate = false;
     },
-
-    // 清除按钮
-    clearAction(e) {
-      console.log("清除----");
-      if (e === 1) {
-        this.checkedTaskNameString = "";
-        this.checkedTaskUuidList = [];
-        this.checkedTaskObj = [];
-        this.checkTaskAll = true;
-      } else if (e === 1) {
-      } else {
-        this.checkFaceDBNameString = "";
-        this.checkedFaceUuidList = [];
-        this.checkedFaceLibObj = [];
-        this.checkLibAll = true;
-      }
-    },
     transferCheckedChannel(checkedChannel) {
-      console.log("+++++++++++");
-      console.log(checkedChannel);
-      this.checkedChannelObj = checkedChannel;
-      this.checkedChannelsUuidList = [];
-      // 设备树
-      if (this.checkedChannelObj && this.checkedChannelObj.length) {
-        //  this.checkNameString = '';
-        for (let i = 0; i < this.checkedChannelObj.length; i++) {
-          var item = this.checkedChannelObj[i];
-          this.checkedChannelsUuidList.push(item.id);
-          // this.checkNameString += item.channelName;
-          // this.checkNameString += ',';
-        }
-      } else {
-        this.checkNameString = "全部设备";
-      }
-    },
-    checkChanges(data, node) {
-      var checkedKeys = node.checkedKeys;
-      this.checkedTaskUuidList = checkedKeys;
-      this.checkedTaskObj = node.checkedNodes;
-      this.$refs.tree1.setCheckedKeys(this.checkedTaskUuidList);
-      console.log(this.checkedTaskUuidList);
-      console.log(this.checkedTaskObj);
-    },
-    // 勾选人脸库
-    checkFaceDBChanges(data, node) {
-      this.checkedFaceUuidList = node.checkedKeys;
-      this.checkedFaceLibObj = node.checkedNodes;
-      this.$refs.tree3.setCheckedKeys(this.checkedFaceUuidList);
-      console.log("+++++++++++++++++");
-      console.log(data);
-      console.log(node);
-      console.log(this.checkedFaceUuidList);
+      this.checkedChannelsUuidList = checkedChannel;
     },
     getFaceLibsAndDeviceList(taskuuidList) {
-      this.$store
-        .dispatch("getFaceLibsAndDeviceList", taskuuidList)
+      if (!taskuuidList.length) {
+        for (var i = 0; i < this.taskItemList.length; i++) {
+          var tempTask = this.taskItemList[i];
+          taskuuidList.push(tempTask.taskuuid);
+        }
+      }
+      this.faceDBList = [];
+      this.DeviceTreeList = [];
+      taskuuidList.forEach(item => {
+        this.getMonitoringTaskDetails(item.faceMonitorUuid);
+      });
+    },
+    // 查询布控任务详情
+    getMonitoringTaskDetails(taskUuid) {
+      api
+        .getTaskDeatailChannelAndLib(taskUuid)
         .then(res => {
-          console.log(res);
-          if (res.result === 0 && res.data) {
-            var arr = [];
-            arr.push(res.data.vcDeviceTreeDTO);
-            this.DeviceTreeList = JSON.parse(JSON.stringify(arr));
-            this.faceDBList = res.data.faceLibDTOS;
-            console.log("+++++++++++++++++++++++++++++++++++++++++");
-            console.log(this.faceDBList);
-            this.checkedFaceUuidList = [];
-            for (let i = 0; i < this.faceDBList.length; i++) {
-              var temp = this.faceDBList[i];
-              this.checkedFaceUuidList.push(temp.libraryuuid);
-            }
-          } else {
-            this.$message({
-              message: "没有查找到相关设备",
-              type: "warning"
-            });
+          if (res.data.success && res.data.data) {
+            this.faceDBList.push(...res.data.data.libraryList);
+            this.DeviceTreeList.push(...res.data.data.channelList);
           }
-        });
-    },
-    // 弹窗消失的回调
-    popverHidden(e) {
-      if (e === 1) {
-        // 任务树
-        // this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
-        if (this.checkedTaskObj && this.checkedTaskObj.length) {
-          this.checkedTaskNameString = "";
-          for (let i = 0; i < this.checkedTaskObj.length; i++) {
-            var item = this.checkedTaskObj[i];
-            this.checkedTaskNameString += item.taskname;
-            this.checkedTaskNameString += ",";
-          }
-        } else {
-          this.checkedTaskNameString = "全部任务";
-          this.checkedTaskUuidList = [];
-        }
-      } else if (e === 2) {
-      } else if (e === 3) {
-        // 任务树
-        if (this.checkedFaceLibObj && this.checkedFaceLibObj.length) {
-          this.checkFaceDBNameString = "";
-          for (let i = 0; i < this.checkedFaceLibObj.length; i++) {
-            // var item = this.checkedFaceLibObj[i];
-            this.checkFaceDBNameString += item.libraryname;
-            this.checkFaceDBNameString += ",";
-          }
-        } else {
-          this.checkFaceDBNameString = "全部对比库";
-          this.checkedFaceUuidList = [];
-        }
-      } else {
-        console.log("其他异常");
-      }
-    },
-    // 弹窗展开的回调
-    popverShow(e) {
-      var num = [];
-      if (e === 1) {
-        // 任务树
-        console.log(this.checkedTaskUuidList);
-        if (this.checkTaskAll) {
-          for (let i = 0, len = this.alarmtypearr.length; i < len; i++) {
-            num.push(this.alarmtypearr[i].taskuuid);
-          }
-        }
-        this.$refs.tree1.setCheckedKeys(
-          this.checkTaskAll ? num : this.checkedTaskUuidList
-        );
-      } else if (e === 2) {
-        // 设备树
-      } else if (e === 3) {
-        // 任务树
-        if (this.checkLibAll) {
-          // alert(this.faceDBList.length);
-          for (let i = 0, len = this.faceDBList.length; i < len; i++) {
-            num.push(this.faceDBList[i].libraryuuid);
-          }
-        }
-        this.$refs.tree3.setCheckedKeys(
-          this.checkLibAll ? num : this.checkedFaceUuidList
-        );
-      } else {
-        console.log("其他异常");
-      }
+        })
+        .catch(() => {});
     },
     getidName(val) {
       var str = val;
@@ -513,28 +417,11 @@ export default {
       }
       return str;
     },
-    gettranslate() {
+    queryBtnAct() {
       this.init();
       if (!this.statusOptions.length) {
         // 点击搜索按钮从而发起请求
-        api
-          .gettranslateword({
-            typegroupstring: "alarm_receiving"
-          })
-          .then(res => {
-            // console.log(res);
-            if (res.data && res.data.data) {
-              this.statusOptions = [{ typeName: "全部", typeStr: "" }].concat(
-                res.data.data
-              );
-            }
-            this.getAfterFanyi();
-            this.ajaxdata();
-          })
-          .catch(() => {
-            this.$message.error("获取请求失败！");
-            this.ajaxdata();
-          });
+        this.ajaxdata();
       } else {
         this.pageNow = 1; // 点击搜索条件变更,当前页设置为第一页
         this.ajaxdata();
@@ -550,13 +437,13 @@ export default {
         jindu: 0,
         kuurl: "",
         belong: "",
-        username: "",
+        staffName: "",
         sex: "",
         huji: "",
         minzu: "",
         bir: "",
         cardtype: "",
-        idcard: ""
+        credentialNo: ""
       };
     },
     lookface(detail) {
@@ -589,7 +476,7 @@ export default {
 
       this.detail2 = {};
       api
-        .queryvip({
+        .getStaffDetail({
           staffUuid: detail.staffuuid
         })
         .then(res => {
@@ -601,7 +488,7 @@ export default {
               minzu: data.domicileAddress,
               bir: data.birthdate,
               cardtype: _this.getidName(data.credentialtype),
-              idcard: data.credentialno
+              credentialNo: data.credentialno
             };
           } else {
             // this.$message.error("获取数据为空!");
@@ -612,22 +499,6 @@ export default {
       // 这边有个请求。
       this.alarminfoid = detail.alarminfoid;
       this.facealarmvisible = true;
-    },
-    getAfterFanyi() {
-      this.init();
-      // const _this = this;
-      // this.alarmtypearr = face.alarmsubtype;
-      this.statusarr = window.face.dealstate;
-      // this.mock();
-
-      // 获取所属库和
-      // this.getku();
-
-      // api.getDeviceName(face.devicetypearr).then(res => {
-      //   if (res.data && res.data.data) {
-      //     this.devicearr = res.data.data;
-      //   }
-      // });
     },
     statusChange(val) {
       var str = val;
@@ -641,26 +512,8 @@ export default {
     },
     changeIndex(index) {
       this.showindex = index;
-      if (index === 1) {
-        if (this.pageSize >= 12) {
-          this.tableData.splice(12, 100);
-        } else {
-          this.pageSize = 12;
-          // this.tableData = [];
-          // this.ajaxdata();
-        }
-      } else {
-        this.init();
-        // this.tableData = [];
-        // this.ajaxdata();
-      }
-    },
-    getku() {
-      const _this = this;
-      api.querystafflibrarylist().then(res => {
-        // console.log(res);
-        _this.belongtoarr = res.data.data;
-      });
+      this.pageSize = index === "1" ? 13 : 12;
+      this.ajaxdata();
     },
     init() {
       //
@@ -678,114 +531,46 @@ export default {
       // this.ajaxdata();
     },
     ajaxdata() {
-      const _this = this;
-      this.init();
-      var pageSize = this.pageSize;
-      var pageNow = this.pageNow;
-      if (this.showindex === '0') {
-        pageSize = this.imagePageSize;
-      }
-      console.log(`请求数据：第${pageNow}页，一页${pageSize}条`);
-      console.log(this.devicename);
-      console.log(this.checkedTaskUuidList);
-      console.log(this.checkedChannelsUuidList);
-      console.log(this.checkedFaceUuidList);
-
       this.isloading = true;
       api
-        .getAlarmRecord({
-          staffname: this.username,
-          IDnumber: this.idcard,
-          state: this.status,
-          taskNameList: this.checkedTaskUuidList.toString(),
-          database: this.checkedFaceUuidList.toString(),
-          devname: this.checkedChannelsUuidList.toString(),
-          starttime: this.startTime,
-          overtime: this.endTime,
-          currentPage: pageNow,
-          pageSize: pageSize
+        .getAlarmList({
+          staffName: this.staffName,
+          credentialNo: this.credentialNo,
+          dealState: this.status,
+          faceMonitorUuid: this.checkedTaskUuidList.toString(),
+          faceLibraryUuids: this.checkedFaceUuidList.toString(),
+          channelUuids: this.checkedChannelsUuidList.toString(),
+          alarmDatetimeBegin: this.startTime,
+          alarmDatetimeEnd: this.endTime,
+          page: this.pageNow,
+          limit: this.pageSize,
+          gender: this.genderOption,
+          credentialType: null
         })
         .then(res => {
           this.isloading = false;
-          // console.log(res);
-          // for (let i = 0; i < res.data.data.list.length; i++) {
-          //   console.log(res.data.data.list[i]);
-          //   console.log(JSON.parse(res.data.data.list[i].extinfo));
-          // }
-          var data = res.data;
-
           this.tableData = [];
-          this.pageCount = data.data.total;
-          var num = [];
-          if (data && data.data) {
-            this.pageCount = data.data.total;
-            // console.log(data.data);
-            for (let i = 0; i < res.data.data.list.length; i++) {
-              var waimian = res.data.data.list[i];
-              var limian = JSON.parse(res.data.data.list[i].extinfo);
-              if (i === 0) {
-                console.log(waimian);
-                console.log(limian);
-              }
-              if (limian.faceRecognization) {
-                var detectedinfo, photoinfo2, staffinfo;
-                if (typeof limian.faceRecognization.detectedinfo === "string") {
-                  detectedinfo = JSON.parse(
-                    limian.faceRecognization.detectedinfo
-                  );
-                } else {
-                  detectedinfo = limian.faceRecognization.detectedinfo;
-                }
-                if (typeof limian.faceRecognization.photoinfo === "string") {
-                  photoinfo2 = JSON.parse(limian.faceRecognization.photoinfo);
-                } else {
-                  photoinfo2 = limian.faceRecognization.photoinfo;
-                }
-                if (typeof limian.faceRecognization.staffinfo === "string") {
-                  staffinfo = JSON.parse(limian.faceRecognization.staffinfo);
-                } else {
-                  staffinfo = limian.faceRecognization.staffinfo;
-                }
-                num.push({
-                  detail: {
-                    alarminfoid: waimian.alarminfoid,
-                    staffuuid: staffinfo.staffUuid,
-                    zhuapaiurl: photoinfo2.imageUri,
-                    zhuapaiaddress: detectedinfo.channelinfo.channelName,
-                    zhuapaitime: data.data.list[i].alarmtime,
-                    tezheng: "",
-                    taskName: limian.taskname,
-                    jindu: Math.round(limian.faceRecognization.scores),
-                    kuurl: staffinfo.photoUri || _this.defaultHeader,
-                    belong: limian.faceRecognization.staffinfo.libraryName,
-                    username: limian.faceRecognization.staffinfo.staffName
-                  },
-                  alarmed: waimian.alarmed,
-                  alarminfoid: waimian.alarminfoid,
-                  zhuapaipic: photoinfo2.imageUri || _this.defaultHeader, //
-                  kulipic: staffinfo.photoUri || _this.defaultHeader,
-                  taskname: limian.taskname,
-                  zhuapai: limian.faceRecognization.channelName,
-                  alarmtime: waimian.alarmtime,
-                  xiangsidu: Math.round(limian.faceRecognization.scores) + "%",
-                  percent: Math.round(limian.faceRecognization.scores),
-                  staffname: limian.faceRecognization.staffinfo.staffName,
-                  idcard: limian.faceRecognization.staffinfo.credentialNo,
-                  // idcard: "342626199411060399",
-                  belong: limian.faceRecognization.staffinfo.libraryName,
-                  librarycolor: limian.faceRecognization.staffinfo.librarycolor,
-                  // librarycolor: "red",
-                  dealstate: _this.statusChange(waimian.dealstate)
-                });
-              }
-            }
-            console.log(num);
-            this.tableData = num;
+          if (res.data.success && res.data.data) {
+            this.pageCount = res.data.data.total;
+            this.tableData = res.data.data.list;
           }
         })
         .catch(err => {
           console.log(err);
           this.isloading = false;
+          var num = [];
+          for (var i = 0; i < 12; i++) {
+            num.push({
+              index: ("0" + (i + 1)).slice(-2),
+              staffName: "王小虎",
+              gender: "male",
+              time: "2018-10-18 12:00:00",
+              credentialNo: "342626199411060399",
+              libraryName: "住户",
+              status: true
+            });
+          }
+          this.tableData = num;
         });
     },
     search() {},
@@ -796,11 +581,6 @@ export default {
     },
     selectvisiblechange() {},
     selectChange() {
-      console.log("改变了");
-      console.log(this.devicename);
-      console.log(this.status);
-      console.log(this.belongto);
-      console.log(this.alarmtype);
       this.gettranslate();
     },
     timeChange() {
@@ -944,8 +724,8 @@ export default {
 	-webkit-transform: translateX(-200%);
 	transform: translateX(-200%);
 }
-.facealarm .facealarmTxt{
-  color: rgba(255, 255, 255, 0.15);
+.facealarm .facealarmTxt {
+	color: rgba(255, 255, 255, 0.15);
 }
 .facealarm .el-checkbox-button__inner,
 .facealarm .el-radio-button__inner {

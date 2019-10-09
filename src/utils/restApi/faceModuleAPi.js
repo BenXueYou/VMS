@@ -6,20 +6,24 @@ let ip = window.config.ip,
 let URLHeader = `${protocolHeader}${ip}/faceconfig-v1/project`;
 export default {
   // @pengxueyou
-  homeApi:{
-    // 获取布控任务
-    getTaskListApi:projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
-  },
+  // 获取人脸设备
+  getFaceDeviceList: projectUuid => `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}`,
+  // 获取布控任务
+  getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
+
+  // 根据布控任务查询关联的设备和人脸库
+  getTaskDetailChannelAndLibs: (projectUuid,taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
+
   // 日志查询
   faceComparison1v1: projectUuid => `${URLHeader}/${projectUuid}/faceComparison/1v1`,
   getSnapshotList: projectUuid => `${URLHeader}/${projectUuid}/snapshot/list`,
   getRecognizeList: projectUuid => `${URLHeader}/${projectUuid}/recognize/list`,
   getRecognizeInfo: projectUuid => `${URLHeader}/${projectUuid}/recognize/info`,
-  getAlarmList: projectUuid => `${URLHeader}/${projectUuid}/alarm/list`,
+  getAlarmInfoList: projectUuid => `${URLHeader}/${projectUuid}/alarm/list`,
 
   // 文件中转接口
-  uploadFileApi:`${protocolHeader}${ip}/fileforward-server-v1/project/${projectUuid}/fileforward/forwardFileToFileSystem`,
-  
+  uploadFileApi: `${protocolHeader}${ip}/fileforward-server-v1/project/${projectUuid}/fileforward/forwardFileToFileSystem`,
+
   // @pengxueyou
   faceDBApi: {
     addStaffUrl: (projectUuid) => `${URLHeader}/${projectUuid}/faceInfo`,

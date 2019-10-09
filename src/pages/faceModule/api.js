@@ -3,16 +3,25 @@ import RestApi from "@/utils/RestApi";
 import store from '@/store/store.js'; import { Message } from 'element-ui';
 
 let FaceModuleApi = RestApi.api.faceModuleAPi;
+
+// 根据布控任务查询关联的设备以及人脸库
+export function getTaskDeatailChannelAndLib(uuid) {
+  let url = FaceModuleApi.getTaskDetailChannelAndLibs(store.state.home.projectUuid, uuid);
+  return Axios({
+    method: 'GET',
+    url
+  });
+}
 /**
  *
  * @param {enabled} 布控任务启用状态(1启用，0不启用)
  */
 export function getTaskList(enabled) {
-  let url = FaceModuleApi.homeApi.getTaskListApi(store.state.home.projectUuid);
+  let url = FaceModuleApi.getTaskListApi(store.state.home.projectUuid);
   return Axios({
     method: 'get',
     url,
-    params: {enabled: enabled}
+    params: { enabled: enabled }
   });
 }
 // 1V1对比
@@ -53,7 +62,7 @@ export function getRecognizeInfo(data) {
 }
 // 报警列表
 export function getAlarmList(data) {
-  let url = FaceModuleApi.getAlarmList(store.state.home.projectUuid);
+  let url = FaceModuleApi.getAlarmInfoList(store.state.home.projectUuid);
   return Axios({
     method: "get",
     url,
@@ -126,6 +135,7 @@ export function addStaffInfo(data) {
     data
   });
 }
+// 人脸库人员列表
 export function getStaffList(data) {
   let url = FaceModuleApi.faceDBApi.addStaffUrl(store.state.home.projectUuid);
   return Axios({
@@ -134,6 +144,7 @@ export function getStaffList(data) {
     data
   });
 }
+// 人脸库人员详情
 export function getStaffDetail(data) {
   let url = FaceModuleApi.faceDBApi.getStaffDetailUrl(store.state.home.projectUuid);
   return Axios({
@@ -142,6 +153,7 @@ export function getStaffDetail(data) {
     data
   });
 }
+// 删除人员
 export function deleteStaff(data) {
   let url = FaceModuleApi.faceDBApi.deleteStaffUrl(store.state.home.projectUuid);
   return Axios({
@@ -150,6 +162,7 @@ export function deleteStaff(data) {
     data
   });
 }
+// 编辑人员
 export function updateStaff(data) {
   let url = FaceModuleApi.faceDBApi.updateStaffUrl(store.state.home.projectUuid);
   return Axios({
@@ -238,15 +251,6 @@ function deleteajax(url, param) {
       });
   });
 }
-// 人脸报警记录
-export function getAlarmRecord(param) {
-  var url = `http://${window.config.ip}/mppr-statistics/log/alarm`;
-  return get(url, param);
-}
-export function getModelRecord(param) {
-  var url = `http://${window.config.ip}/mppr-statistics/log/model`;
-  return get(url, param);
-}
 // 获取到报警记录的详情信息
 export function getAlarmDetail(param) {
   var url = `http://${window.config.ip}/mppr-statistics/log/alarmDetailInfo`;
@@ -288,52 +292,6 @@ export function getkutask(param) {
 // 查询导入任务列表
 export function gettaskdetail(param) {
   var url = `http://${window.config.ip}/mppr-file/v1/file/staffImportErrorInfo/task`;
-  return get(url, param);
-}
-
-// 查询所有人员库的信息
-export function querystafflibrarylist() {
-  var url = `http://${window.config.ip}/jcfgs/v1/staffLibrary/staffLibraryInfo/list`;
-  return get(url);
-}
-// 查询某个人员库的具体信息
-export function querystaffbyuuid(param) {
-  var url = `http://${window.config.ip}/jcfgs/v1/staffLibrary/staffLibraryInfo`;
-  return get(url, param);
-}
-// 查询人员库及其人员库数量
-export function querystaff() {
-  var url = `http://${window.config.ip}/jcfgs/v1/staffLibrary/libraryNumberList`;
-  return get(url);
-}
-// 查询重点人员列表
-export function queryvipinfo(param) {
-  var url = `http://${window.config.ip}/jcfgs/v2/vip/vipInfo/list`;
-  return get(url, param);
-}
-// 添加重点人员
-export function addvip(param) {
-  var url = `http://${window.config.ip}/jcfgs/v2/vip/info`;
-  return post(url, param);
-}
-// 修改重点人员
-export function updatevip(param) {
-  var url = `http://${window.config.ip}/jcfgs/v2/vip/info`;
-  return put(url, param);
-}
-// 删除重点人员
-export function deletevip(param) {
-  var url = `http://${window.config.ip}/jcfgs/v2/vip/vipInfo`;
-  return deleteajax(url, param);
-}
-// 查询重点人员
-export function queryvip(param) {
-  var url = `http://${window.config.ip}/jcfgs/v2/vip/vipInfo`;
-  return get(url, param);
-}
-// 获取证件类型 获取所有库和颜色
-export function getIdCardType(param) {
-  var url = `http://${window.config.ip}/jcfgs/v1/baseType/baseTypedto/groupList`;
   return get(url, param);
 }
 // 上传base64 得到图片url

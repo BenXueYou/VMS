@@ -7,19 +7,27 @@
 					:treeDataList="taskItemList"
 					:alPopoverClass="CRTaskPopoverClass"
 					:defaultProps="defaultProps"
-					nodeKey="taskuuid"
+					nodeKey="faceMonitorUuid"
 					inputWidth="160px"
 					@transferAct="transferTaskAct"
 				></alPopverTree>
 			</div>
 			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
 				抓拍设备：
-				<elPopverTree
+				<!-- <elPopverTree
 					:channelInfoList="DeviceTreeList"
 					:elPopoverClass="CompareRecordPopoverClass"
 					@transferCheckedChannel="transferCheckedChannel"
 					inputWidth="160px"
-				></elPopverTree>
+				></elPopverTree>-->
+				<alPopverTree
+					:treeDataList="DeviceTreeList"
+					:alPopoverClass="CRTaskPopoverClass"
+					:defaultProps="defaultDeviceProps"
+					nodeKey="channelUuid"
+					inputWidth="160px"
+					@transferAct="transferCheckedChannel"
+				></alPopverTree>
 			</div>
 			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
 				所属库：
@@ -27,7 +35,7 @@
 					:treeDataList="faceDBList"
 					:alPopoverClass="CRTaskPopoverClass"
 					:defaultProps="faceDBDefaultProps"
-					nodeKey="libraryuuid"
+					nodeKey="faceLibraryUuid"
 					inputWidth="160px"
 					@transferAct="transferAct"
 				></alPopverTree>
@@ -89,6 +97,7 @@
 		>
 			<div class="elCardBoxClass" v-for="(item, index) in pageSize" :key="index">
 				<recoginize-card
+					imgWidth="95"
 					:recoginizeItem="totalCompareItemList[index]"
 					@detailClick="doComparethis(index)"
 				/>
@@ -169,11 +178,9 @@ export default {
     });
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    // this.getTaskList(true);
   },
   activated: function() {
     this.deactivated = false;
-    // this.getTaskList(false);
   },
   deactivated: function() {
     this.deactivated = true;
@@ -244,11 +251,7 @@ export default {
       this.checkedFaceUuidList = transferArray;
     },
     transferTaskAct(transferArray) {
-      this.checkedTaskUuidList = transferArray;
-      var _this = this;
-      setTimeout(function() {
-        _this.getFaceLibsAndDeviceList(_this.checkedTaskUuidList);
-      }, 200);
+      this.getFaceLibsAndDeviceList(transferArray);
     },
     changeShowStatus(flag) {
       this.showImg = flag;
@@ -261,62 +264,26 @@ export default {
           taskuuidList.push(tempTask.taskuuid);
         }
       }
-      let _this = this;
-      _this.$store
-        .dispatch("getFaceLibsAndDeviceList", taskuuidList)
+      this.faceDBList = [];
+      this.DeviceTreeList = [];
+      taskuuidList.forEach(item => {
+        this.getMonitoringTaskDetails(item.faceMonitorUuid);
+      });
+    },
+    // 查询布控任务详情
+    getMonitoringTaskDetails(taskUuid) {
+      api
+        .getTaskDeatailChannelAndLib(taskUuid)
         .then(res => {
-          console.log(res);
-          if (res.result === 0 && res.data) {
-            var arr = [];
-            arr.push(res.data.vcDeviceTreeDTO);
-            _this.DeviceTreeList = JSON.parse(JSON.stringify(arr));
-            _this.faceDBList = res.data.faceLibDTOS;
-            _this.checkedFaceUuidList = [];
-            for (var i = 0; i < _this.faceDBList.length; i++) {
-              var temp = _this.faceDBList[i];
-              _this.checkedFaceUuidList.push(temp.libraryuuid);
-            }
-
-            // 获取checkedChannelUuidList
-            _this.getChildren(
-              _this.DeviceTreeList,
-              _this.checkedChannelsUuidList
-            );
-          } else {
-            _this.$message({
-              message: "没有查找到相关设备",
-              type: "warning"
-            });
+          if (res.data.success && res.data.data) {
+            this.faceDBList.push(...res.data.data.libraryList);
+            this.DeviceTreeList.push(...res.data.data.channelList);
           }
-        });
+        })
+        .catch(() => {});
     },
-    // 获取所有叶子节点
-    getChildren(data, arr) {
-      if (!data || data.length === 0) {
-        return;
-      }
-      for (let index = 0; index < data.length; index++) {
-        if (data[index].children === null) {
-          let channelObj = JSON.parse(JSON.stringify(data[index]));
-          arr.push(channelObj.id);
-        } else {
-          this.getChildren(data[index].children, arr);
-        }
-      }
-    },
-
     transferCheckedChannel(checkedChannel) {
-      this.checkedChannelObj = checkedChannel;
-      this.checkedChannelsUuidList = [];
-      // 设备树
-      if (this.checkedChannelObj && this.checkedChannelObj.length) {
-        for (var i = 0; i < this.checkedChannelObj.length; i++) {
-          var item = this.checkedChannelObj[i];
-          this.checkedChannelsUuidList.push(item.id);
-        }
-      } else {
-        this.checkNameString = "全部设备";
-      }
+      this.checkedChannelsUuidList = checkedChannel;
     },
     // 点击查询按钮
     queryAct() {
@@ -462,7 +429,7 @@ export default {
       dialogParama: {},
       shootPhotoList: [],
       defaultProps: {
-        label: "taskname"
+        label: "faceMonitorName"
       },
       faceDBDefaultProps: {
         label: "libraryname"

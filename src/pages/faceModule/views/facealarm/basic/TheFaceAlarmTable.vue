@@ -5,23 +5,29 @@
 				<el-table-column prop="index" label="序号" width="60">
 					<template slot-scope="scope">{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</template>
 				</el-table-column>
-				<el-table-column prop="taskname" label="布控任务"></el-table-column>
-				<el-table-column prop="alarmtime" label="报警时间"></el-table-column>
-				<el-table-column prop="zhuapai" label="抓拍摄像机"></el-table-column>
-
-				<el-table-column prop="staffname" label="人员姓名" width="100"></el-table-column>
-				<el-table-column prop="sex" label="性别" width="100"></el-table-column>
-				<el-table-column prop="idcard" label="证件号码"></el-table-column>
-				<el-table-column prop="belong" label="人员类型" width="160">
-          <template slot-scope="scope">
-            {{scope.row.staffType?$common.getEnumItemName("staff_t", scope.row.staffType):''}}
-          </template>
-        </el-table-column>
-				<el-table-column prop="belong" label="所属库" width="160"></el-table-column>
-				<el-table-column prop="xiangsidu" label="相似度" width="80"></el-table-column>
-				<el-table-column prop="dealstate" label="状态" width="160"></el-table-column>
-
-				<el-table-column label="操作" width="160">
+				<el-table-column prop="faceMonitorName" label="布控任务"></el-table-column>
+				<el-table-column prop="alarmDatetime" label="报警时间"></el-table-column>
+				<el-table-column prop="channelName" label="抓拍摄像机"></el-table-column>
+				<el-table-column prop="staffName" label="人员姓名" width="100"></el-table-column>
+				<el-table-column prop="gender" label="性别" width="100">
+					<template
+						slot-scope="scope"
+					>{{scope.row.staffType?$common.getEnumItemName("gender", scope.row.gender):''}}</template>
+				</el-table-column>
+				<el-table-column prop="credentialNo" label="证件号码" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="belong" label="人员类型" width="120">
+					<template
+						slot-scope="scope"
+					>{{scope.row.staffType?$common.getEnumItemName("staff_t", scope.row.staffType):''}}</template>
+				</el-table-column>
+				<el-table-column prop="libraryName" label="所属库" width="120"></el-table-column>
+				<el-table-column prop="similarity" label="相似度" width="80"></el-table-column>
+				<el-table-column prop="status" label="状态">
+					<template
+						slot-scope="scope"
+					>{{scope.row.staffType?$common.getEnumItemName("alarm_r", scope.row.status):''}}</template>
+				</el-table-column>
+				<el-table-column label="操作" width="112">
 					<template slot-scope="scope">
 						<el-button @click="lookface(scope.row)" type="text" size="small">
 							<i class="el-icon-search"></i>
@@ -137,12 +143,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.aaaa {
-	height: calc(100% - 150px);
-}
 .tablelist {
 	height: 100%;
 	height: 100%;
+	overflow: auto;
 }
 .footer {
 	position: relative;

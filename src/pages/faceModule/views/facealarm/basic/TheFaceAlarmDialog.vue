@@ -12,7 +12,7 @@
         <div class='item'>
           <div class="headerimg">
             <img :src="detail.zhuapaiurl"
-                 @click='bigImage(detail.zhuapaiurl)'
+                 @click='bigImage(detail.panoramaCapturePhotoUrl)'
                  alt="">
           </div>
           <p class='imgtitle'>抓拍图片</p>
@@ -25,16 +25,16 @@
         <div class="item iteminfo">
           <div style='height:15px;'></div>
           <p class='info'>
-            {{detail.zhuapaiaddress}}
+            {{detail.channelName}}
           </p>
           <p class='.info'>
-            {{detail.zhuapaitime}}
+            {{detail.alarmDatetime}}
           </p>
           <p class='.info'>
             特征识别：{{detail.tezheng}}
           </p>
           <p class='.info'>
-            布控任务：{{detail.taskName}}
+            布控任务：{{detail.faceMonitorName}}
           </p>
         </div>
         <div class="item itemprogress">
@@ -43,7 +43,7 @@
                        :stroke-width="3"
                        color="#28FFBB"
                        type="circle"
-                       :percentage="detail.jindu"></el-progress>
+                       :percentage="detail.similarity"></el-progress>
         </div>
         <!-- 在库 图片 -->
         <div class='item'>
@@ -62,13 +62,13 @@
         <div class="item iteminfo">
           <div style='height:15px;'></div>
           <p class='.info'>
-            所属库：{{detail.belong}}
+            所属库：{{detail.libraryName}}
           </p>
           <p class='.info'>
-            姓名：{{detail.username}}
+            姓名：{{detail.staffName}}
           </p>
           <p class='.info'>
-            性别：{{detail2.sex}}
+            性别：{{detail2.gender}}
           </p>
           <p class='.info'>
             户籍：{{detail2.huji}}
@@ -83,10 +83,10 @@
             出生年月：{{detail2.bir}}
           </p>
           <p class='.info'>
-            证件类型：{{detail2.cardtype}}
+            证件类型：{{detail2.credentialNo}}
           </p>
           <p class='.info'>
-            证件号:{{detail2.idcard}}
+            证件号:{{detail2.credentialNo}}
           </p>
         </div>
       </div>
@@ -113,12 +113,12 @@
                v-for="(item,index) in facearr"
                :key="index">
             <div class="imgfather">
-              <img :src="item.photouri"
-                   @click='bigImage(item.photouri)'
+              <img :src="item.faceCapturePhotoUrl"
+                   @click='bigImage(item.faceCapturePhotoUrl)'
                    alt="">
             </div>
             <p class='time'>
-              {{item.time}}
+              {{item.alarmDatetime}}
             </p>
             <p class='address'>
               {{item.channelName}}
@@ -131,12 +131,12 @@
                v-for="(item,index) in facearr"
                :key='index'>
             <div class="imgfather">
-              <img :src="item.panoramauri"
-                    @click='bigImage(item.panoramauri)'
+              <img :src="item.panoramaCapturePhotoUrl"
+                    @click='bigImage(item.panoramaCapturePhotoUrl)'
                    alt="">
             </div>
             <p class='time'>
-              {{item.time}}
+              {{item.alarmDatetime}}
             </p>
             <p class='address'>
               {{item.channelName}}
