@@ -22,9 +22,7 @@
 				@current-change="currentChange"
 				:total="pageCount"
 			></el-pagination>
-
 			<p class="totalpagetitle">共{{pageCount}}条</p>
-
 			<div class="tiaozhuan">
 				<span>跳转至</span>
 				<el-input class="yeshu" type="number"></el-input>

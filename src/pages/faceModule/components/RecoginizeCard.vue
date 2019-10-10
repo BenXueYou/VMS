@@ -200,7 +200,6 @@ export default {
 	color: #ffffff;
 	font-family: "PingFangSC-Medium";
 }
-
 .RecognizeCardClass .asidFontClass {
 	font-family: PingFangSC-Regular;
 	font-size: 12px;
@@ -240,7 +239,6 @@ export default {
 	border-left: 1px dashed #333333;
 	margin-left: 10px;
 }
-
 @media screen and (max-width: 1400px) {
 	.RecognizeCardClass .asidCompareImgBox {
 		width: 75px;
@@ -249,7 +247,6 @@ export default {
 		box-sizing: border-box;
 	}
 }
-
 .RecognizeCardClass .asidCardImg {
 	width: 100%;
 	height: 100%;
