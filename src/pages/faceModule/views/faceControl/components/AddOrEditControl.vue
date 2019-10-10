@@ -26,14 +26,25 @@
           </el-form-item>
           <el-form-item label="人脸库："
                         prop="libraryList">
+            <div class="add-item" @click="addFaceDB">
+              <img src="@/assets/images/faceModule/add.png">
+              <span>添加</span>
+            </div>
+            <div></div>
           </el-form-item>
           <el-form-item label="视频源："
                         prop="channelList">
+            <div class="add-item" @click="addVideoSource">
+              <img src="@/assets/images/faceModule/add.png">
+              <span>添加</span>
+            </div>
+            <div></div>
           </el-form-item>
           <el-form-item label="相似度不低于："
                         prop="faceSimilarityThreshold">
             <el-input class="time-interal left-space"
                       style="width: 60px"
+                      type="number"
                       v-model="formLabelAlign.faceSimilarityThreshold"></el-input>
             <span class="unit">%</span>
           </el-form-item>
@@ -46,6 +57,7 @@
                         prop="reservedCount">
             <el-input class="time-interal left-space"
                       style="width: 60px"
+                      type="number"
                       v-model="formLabelAlign.reservedCount"></el-input>
             <span class="unit">位</span>
           </el-form-item>
@@ -209,6 +221,8 @@ export default {
           this.monitoringTaskSuccess(body);
         });
     },
+    addFaceDB() {},
+    addVideoSource() {},
   },
   watch: {},
   destroyed() {}
@@ -302,6 +316,12 @@ export default {
     font-family: PingFangSC-Regular;
     font-size: 12px;
     color: #dddddd;
+  }
+  .add-item {
+    font-family: PingFangSC-Regular;
+    font-size: 13px;
+    color: #26D39D;
+    cursor: pointer;
   }
 }
 </style>
