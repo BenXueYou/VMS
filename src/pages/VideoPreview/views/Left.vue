@@ -404,7 +404,8 @@ export default {
     this.data2 = [];
     this.parentOrgUuid = "";
     this.Treeparent = "";
-    this.getOrgTree(true);
+    // this.getOrgTree(true);
+    this.getPreset();
   },
   activated() {},
   computed: {
@@ -415,6 +416,11 @@ export default {
     })
   },
   methods: {
+    getPreset() {
+      api2.getPreset().then(res => {
+        console.log(res);
+      });
+    },
     viewhandleCheckChange() {
       console.log(this.$refs.tree3.getCheckedNodes());
     },

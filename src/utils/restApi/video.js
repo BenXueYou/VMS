@@ -17,6 +17,8 @@ export default {
   ctrlUrl: `${urlPrefix}/video/ptz/ctrl`,
   // 云台控制预置
   presetUrl: `${urlPrefix}/video/ptz/preset`,
+  // 获取预置点
+  getPresetUrl: `${urlPrefix}/video/preset/position`,
   //  云台巡航操作
   cruizeUrl: `${urlPrefix}/video/ptz/preset`,
   // 录像查询

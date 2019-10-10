@@ -27,6 +27,13 @@ export function preset(data) {
     data
   });
 }
+export function getPreset(data) {
+  let url = vUrl.getPresetUrl;
+  return axios({
+    method: "GET",
+    url
+  });
+}
 export function cruize(data) {
   let url = vUrl.cruizeUrl;
   return axios({
