@@ -7,7 +7,7 @@ function CDecoder(canvas)
 
 CDecoder.prototype.play = function()
 {
-    this.m_player = new Player(1920, 1080);  // fix: 分辨率先保留
+    this.m_player = new Player(704, 576);  // fix: 分辨率先保留
     this.m_player.setCanvas(this.m_canvas);
     this.m_cache = new CDeque;
 }

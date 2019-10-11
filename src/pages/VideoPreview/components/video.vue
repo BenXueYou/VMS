@@ -124,9 +124,24 @@ export default {
     }
   },
   watch: {
+    width(val) {
+      // 宽度变化 则更新canvas的大小
+      if (this.width && this.canvas) {
+        this.canvas.width = this.width;
+      }
+    },
+    height(val) {
+      if (this.height && this.canvas) {
+        this.canvas.height = this.height;
+      }
+    },
     rtspUrl(val) {
       console.log(val);
       if (val) {
+        // 播放之前判断是否已经在播放了，如果有则删除掉
+        if (this.canvas) {
+          this.stopVideo();
+        }
         this.playVideo();
       } else {
         this.stopVideo();
@@ -139,9 +154,9 @@ export default {
       this.canvas.width = this.width;
       this.canvas.height = this.height;
       this.video = this.video_mgr.play(
-        '{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.35", "port":"4400"}}}',
-        '{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.35", "port":"4401"}}}',
-        "rtsp://admin:admin@192.168.9.121:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif",
+        '{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.21", "port":"4400"}}}',
+        '{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.21", "port":"4401"}}}',
+        "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast",
         "rtsp",
         "preview",
         this.canvas
@@ -152,6 +167,7 @@ export default {
       this.video_mgr.stop(this.video);
       if (this.canvas) {
         this.$refs.canvasRefs.removeChild(this.canvas);
+        this.canvas = null;
       }
     },
     dragstart(e) {
@@ -191,6 +207,7 @@ export default {
     width: 100%;
     height: 100%;
     z-index: 111;
+    pointer-events: none;
   }
   .tipsText {
     position: absolute;

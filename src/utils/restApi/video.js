@@ -26,7 +26,7 @@ export default {
   // 获取视频回放信息
   backupUrl: `${urlPrefix}/video/playback/rtsp`,
   // 查询视图
-  getViewUrl: `${urlPrefix}/video/view/list`,
+  getViewUrl: `${urlPrefix}/video/view`,
   // 添加视图
   addViewUrl: `${urlPrefix}/video/view`,
   // 获取子节点及视频设备通道数据

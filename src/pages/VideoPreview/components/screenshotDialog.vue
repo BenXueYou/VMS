@@ -9,7 +9,9 @@
     <div class="c">
       <div class="leftWrap">
         <!-- 这里摆抓拍的照片 -->
-        <!-- <img src="" alt=""> -->
+        <img v-if="src"
+             :src="src"
+             alt="">
       </div>
       <div class="rightInfo">
         <div class="item">
@@ -85,6 +87,9 @@ export default {
       default() {
         return false;
       }
+    },
+    src: {
+      type: String
     }
   },
   data() {
@@ -157,6 +162,9 @@ $labelwidth: 8em;
   padding: 30px;
   .leftWrap {
     width: 55%;
+    img {
+      width: 100%;
+    }
   }
   .rightInfo {
     width: 45%;

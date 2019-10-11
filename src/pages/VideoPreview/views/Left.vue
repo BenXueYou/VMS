@@ -21,12 +21,6 @@
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
                    name="organiza">
-        <!-- <gt-tree ref="tree1"
-                 class="tree"
-                 @getChidrendata="getChidrendata"
-                 @clickmenu="clickmenu"
-                 @exportData="exportData"
-                 :initdata="data"></gt-tree> -->
         <el-tree :props="devprops"
                  :load="devloadNode"
                  ref="tree1"
@@ -34,7 +28,7 @@
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
             <span>{{ node.label }}</span>
-            <!-- v-if="data.hasOwnProperty('channelType')" -->
+            <!-- v-if="data.h5Type==='channel'" -->
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
@@ -260,6 +254,7 @@ import * as api2 from "@/pages/VideoPreview/ajax.js";
 import orgDialog from "@/pages/equipmentMange/components/orgDialog";
 import { addTreeKey, copyTreeKey, remeberLast } from "@/utils/tree";
 import { mapState } from "vuex";
+// 接口调不了，自己mock数据来测试一下
 export default {
   name: "leftmenu",
   components: {
@@ -443,15 +438,7 @@ export default {
       }
     },
     getPreviewInfo(channelUuid) {
-      api2
-        .getPreviewInfo({
-          channelUuid,
-          streamType: "string"
-        })
-        .then(res => {
-          console.log(res);
-          // 这里会得到rtsp的码流地址，然后进行一些操作
-        });
+      this.$emit("playRtsp", channelUuid);
     },
     handleNodeClick() {
       // 点击展开
@@ -460,19 +447,27 @@ export default {
       //  懒加载子结点
       console.log(node);
       let data = await this.videoTree(node.data && node.data.id);
+
       data = data.map(item => {
-        item.leaf = !!item.openFlag;
+        item.leaf = !item.openFlag;
         return item;
       });
+      console.log(data);
       return resolve(data);
     },
     videoTree(parentOrgUuid) {
       let data = parentOrgUuid ? { parentOrgUuid } : {};
       return new Promise((resolve, reject) => {
-        api2.videoTree(data).then(res => {
-          let list = res.data.data || [];
-          resolve(list);
-        });
+        api2
+          .videoTree(data)
+          .then(res => {
+            let list = res.data.data || [];
+            resolve(list);
+          })
+          .catch(err => {
+            console.log(err);
+            resolve([]);
+          });
       });
     },
     async loadNode(node, resolve) {
@@ -564,36 +559,35 @@ export default {
         .then(() => {});
     },
     cloundControl(name, index) {
+      console.log(name, index);
+      let action = "";
       if (name === "zoom_in") {
-        switch (index) {
-          case 3:
-            name = "focus_near";
-            break;
-          case 6:
-            name = "iris_open";
-            break;
-          default:
-            break;
-        }
+        action = "zoom_in";
       } else if (name === "zoom_out") {
-        switch (index) {
-          case 3:
-            name = "focus_far";
-            break;
-          case 6:
-            name = "iris_close";
-            break;
-          default:
-            break;
-        }
+        action = "zoom_out";
+      } else if (name === "fangda") {
+        action = "focus_near";
+      } else if (name === "quan") {
+        action = "focus_far";
+      } else if (name === "centerbig") {
+        action = "iris_close";
+      } else if (name === "center") {
+        action = "iris_open";
+      } else {
+        action = name;
       }
-      console.log(name);
+      this.$emit("ctrl", action, true, 1);
     },
+
     getViewTree() {
       // 获取视图
-      api2.getView().then(res => {
-        console.log(res);
-      });
+      api2
+        .getView({
+          viewUuid: ""
+        })
+        .then(res => {
+          console.log(res);
+        });
     },
     showAddChildrenDialog() {
       // this.appendChildrenDialogVisible = true;

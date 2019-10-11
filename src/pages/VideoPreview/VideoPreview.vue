@@ -3,8 +3,11 @@
     <left-content orgType="device"
                   needType=""
                   tagType="device"
-                  @changetab="changetab"
                   ref='testTree'
+                  @playRtsp="playRtsp"
+                  @jumpToPlayback="jumpToPlayback"
+                  @ctrl="ctrl"
+                  @changetab="changetab"
                   @clickNode="clickNode"
                   :deviceUuid="deviceUuid"></left-content>
     <div class='right'
@@ -53,7 +56,8 @@
     <image-adjust-dialog title="画面调节"
                          :visible.sync="imageAdjustVisible">
     </image-adjust-dialog>
-    <screenshot-dialog :visible.sync="screenShotVisible">
+    <screenshot-dialog :visible.sync="screenShotVisible"
+                       :src="src">
 
     </screenshot-dialog>
   </div>
@@ -65,6 +69,8 @@ import VideoWrap from "@/pages/VideoPreview/components/video";
 import videoInfoDialog from "@/pages/VideoPreview/components/videoInfoDialog";
 import imageAdjustDialog from "@/pages/VideoPreview/components/imageAdjustDialog";
 import screenshotDialog from "@/pages/VideoPreview/components/screenshotDialog";
+// import * as api from "@/pages/equipmentMange/ajax.js";
+import * as api2 from "@/pages/VideoPreview/ajax.js";
 
 import icons from "@/common/icon.js";
 
@@ -86,7 +92,7 @@ export default {
       imageAdjustVisible: false,
       videoArr: [
         {
-          url: "" // 播放的视频 Url
+          url: "test" // 播放的视频 Url
         }
       ],
       icons,
@@ -150,7 +156,8 @@ export default {
           label: "全屏",
           value: "全屏"
         }
-      ]
+      ],
+      src: ""
     };
   },
   mounted() {
@@ -164,6 +171,45 @@ export default {
   },
   destroyed() {},
   methods: {
+    playRtsp(channelUuid, streamType = "string", operator = -1) {
+      // 请求码流地址从而进行播放
+      // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
+      api2
+        .getPreviewInfo({
+          channelUuid,
+          streamType
+        })
+        .then(res => {
+          console.log(res);
+          // 这里会得到rtsp的码流地址，然后进行一些操作
+        })
+        .catch(err => {
+          console.log(err);
+          if (operator === -1) {
+            this.playVideo(
+              "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast",
+              channelUuid
+            );
+          } else {
+            this.videoArr[operator].url =
+              "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast" +
+              Math.random();
+            this.videoArr.concat();
+          }
+        });
+    },
+    playVideo(url, channelUuid) {
+      // 根据通道获取到了视频流地址，从而进行播放
+      // 遍历videoArr数组，看哪个分路的url为空，则在上面播放
+      for (let i = 0; i < this.videoArr.length; i++) {
+        if (!this.videoArr[i].url) {
+          this.videoArr[i].url = url;
+          this.videoArr[i].channelUuid = channelUuid;
+          break;
+        }
+      }
+      this.videoArr.concat();
+    },
     dragstart(index, e) {
       // 拖拽开始
       console.log("dragstart:" + index);
@@ -190,9 +236,32 @@ export default {
     chooseFenlu(index) {
       this.fenluIndex = index;
       this.initWrapDom();
-      this.videoArr = Array.from({ length: this.fenlu[this.fenluIndex] }).fill({
-        url: "11"
-      });
+      // 切换分路，还需要保留之前已经打开的视频画面
+
+      let num = Array.from(
+        { length: this.fenlu[this.fenluIndex] },
+        (item, index) => {
+          item = { url: "" };
+          if (this.videoArr[index]) {
+            item = this.videoArr[index];
+          }
+          return item;
+        }
+      );
+      this.videoArr = num;
+      console.log(num);
+    },
+    // 控制云台
+    ctrl(action, start, speed) {
+      api2
+        .ctrl({
+          action, // 操作类型，必填
+          start: "bool", // 开始/结束，必填
+          speed: "int" // 速度，必填
+        })
+        .then(res => {
+          console.log(res);
+        });
     },
     ClickViDeoA(index) {
       // 选中哪个视频块
@@ -216,11 +285,23 @@ export default {
     dealContextMenu(value) {
       console.log(value);
       switch (value) {
+        case "关闭窗口":
+          // 清空url，则触发video组件stop事件
+          this.videoArr[this.operatorIndex].url = "";
+          this.videoArr.concat();
+          break;
+        case "关闭所有窗口":
+          // 把所有分路的url都清空
+          this.videoArr = this.videoArr.map(item => {
+            item.url = "";
+            return item;
+          });
+          break;
         case "摄像机信息":
           this.videoInfoVisible = true;
           break;
         case "抓图":
-          this.screenShotVisible = true;
+          this.screenShot();
           break;
         case "全屏":
           this.setFullScreen(this.$refs["video" + this.operatorIndex][0].$el);
@@ -229,14 +310,42 @@ export default {
           this.imageAdjustVisible = true;
           break;
         case "开始录像":
-          this.$router.push({
-            name: "VideoPlayback",
-            params: { rtsp: "rtsp://xxx.xxx" }
-          });
+          this.jumpToPlayback(this.videoArr[this.operatorIndex].channelUuid);
+          break;
+        case "主码流":
+          this.switchMaLiu(this.operatorIndex, "main");
+          break;
+        case "辅码流":
+          this.switchMaLiu(this.operatorIndex, "sub");
+          break;
+        case "三码流":
+          this.switchMaLiu(this.operatorIndex, "thrid");
           break;
         default:
           break;
       }
+    },
+    screenShot() {
+      // 抓图
+      this.screenShotVisible = true;
+      let canvas = this.$refs["video" + this.operatorIndex][0].canvas;
+      console.log(canvas);
+      var dataURL = canvas.toDataURL();
+      console.log(dataURL);
+      this.src = dataURL;
+    },
+    jumpToPlayback(channelUuid) {
+      this.$router.push({
+        name: "VideoPlayback",
+        params: { channelUuid: "channelUuid" }
+      });
+    },
+    switchMaLiu(index, streamType) {
+      if (!this.videoArr[index].url) {
+        this.$message.error("该分路没有视频在播放，切换失败！");
+        return;
+      }
+      this.playRtsp(this.videoArr[index].channelUuid, streamType, index);
     },
     PreviewAreafullScreen() {
       this.setFullScreen(this.$refs.vedioWrap);
