@@ -92,7 +92,7 @@ export default {
       imageAdjustVisible: false,
       videoArr: [
         {
-          url: "test" // 播放的视频 Url
+          url: "" // 播放的视频 Url
         }
       ],
       icons,
@@ -157,7 +157,9 @@ export default {
           value: "全屏"
         }
       ],
-      src: ""
+      src: "",
+      dragStartIndex: -1,
+      dragEndIndex: -1
     };
   },
   mounted() {
@@ -205,6 +207,7 @@ export default {
         if (!this.videoArr[i].url) {
           this.videoArr[i].url = url;
           this.videoArr[i].channelUuid = channelUuid;
+          // 左边的树添加到右边去播放
           break;
         }
       }
@@ -212,12 +215,21 @@ export default {
     },
     dragstart(index, e) {
       // 拖拽开始
+
       console.log("dragstart:" + index);
+      this.dragStartIndex = index;
     },
     drop(index, e) {
       // 拖拽结束
       console.log("drop:" + index);
+      this.dragEndIndex = index;
       // 这里用于切换两个视频的拖拽交换逻辑,dragstart记录拖拽的是哪个,drop用于记录放在哪个上面
+      [this.videoArr[this.dragStartIndex], this.videoArr[this.dragEndIndex]] = [
+        this.videoArr[this.dragEndIndex],
+        this.videoArr[this.dragStartIndex]
+      ];
+      this.videoArr.concat();
+      this.dragStartIndex = -1;
     },
     clickNode(node) {
       console.log(node);
@@ -253,6 +265,11 @@ export default {
     },
     // 控制云台
     ctrl(action, start, speed) {
+      // 判断操作的分路视频是否存在
+      if (!this.videoArr[this.operatorIndex].channelUuid) {
+        this.$message.error("该分路没有视频，请先添加视频");
+        return;
+      }
       api2
         .ctrl({
           action, // 操作类型，必填
@@ -327,12 +344,17 @@ export default {
     },
     screenShot() {
       // 抓图
-      this.screenShotVisible = true;
+      // 判断该分路有没有canvas,从而是否显示弹窗
       let canvas = this.$refs["video" + this.operatorIndex][0].canvas;
-      console.log(canvas);
-      var dataURL = canvas.toDataURL();
-      console.log(dataURL);
-      this.src = dataURL;
+      if (canvas) {
+        this.screenShotVisible = true;
+        console.log(canvas);
+        var dataURL = canvas.toDataURL("image/png");
+        console.log(dataURL);
+        this.src = dataURL;
+      } else {
+        this.$message.error("该分路没有视频在播放，请先添加视频！");
+      }
     },
     jumpToPlayback(channelUuid) {
       this.$router.push({
