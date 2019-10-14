@@ -24,6 +24,14 @@ export default {
   // 文件中转接口
   uploadFileApi: `${protocolHeader}${ip}/fileforward-server-v1/project/${projectUuid}/fileforward/forwardFileToFileSystem`,
 
+  // 声音上传的接口
+  uploadAudioApi:(projectUuid) => `${URLHeader}/${projectUuid}/face/config/sound`,
+  deleteAudioApi:(projectUuid) => `${URLHeader}/${projectUuid}/face/config/sound`,
+  //基础设置的接口
+  getFaceModuleConfigApi:(projectUuid)=>`${URLHeader}/${projectUuid}/face/config`,
+  postFaceModuleConfigApi:(projectUuid)=>`${URLHeader}/${projectUuid}/face/config`,
+
+
   // @pengxueyou
   faceDBApi: {
     addStaffUrl: (projectUuid) => `${URLHeader}/${projectUuid}/faceInfo`,

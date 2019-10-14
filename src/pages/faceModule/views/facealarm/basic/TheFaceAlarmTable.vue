@@ -54,7 +54,6 @@
 		</div>
 	</div>
 </template>
-
 <script>
 export default {
   name: "facedblist",
@@ -139,7 +138,6 @@ export default {
   }
 };
 </script>
-
 <style lang="scss" scoped>
 .tablelist {
 	height: 100%;
@@ -180,7 +178,6 @@ export default {
 	}
 }
 </style>
-
 <style lang="scss">
 .tablelist .yeshu {
 	display: inline-block;

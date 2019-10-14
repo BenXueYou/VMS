@@ -42,10 +42,10 @@
 					<p class="cursorClass" style="text-align:left" @click="uploadBtnAct">
 						<img class="img" src="@/assets/images/add.png" alt srcset />添加
 					</p>
-					<p v-for="tag in tags" :key="tag.name">
+					<p v-for="tag in tags" :key="tag.soundUrl">
 						<el-tag closable @close="handleClose(tag)" :disable-transitions="false">
 							<img class="img" src="@/assets/images/faceModule/voice.png" alt srcset />
-							{{tag.name}}
+							{{tag.soundName}}
 						</el-tag>
 						<span class="cursorClass" style="margin-left:40px;" @click="tryListenBtnAct(tag)">
 							<img class="img" src="@/assets/images/faceModule/tryListen.png" alt srcset />试听
@@ -82,12 +82,13 @@
 				</div>
 			</div>
 			<div class="footerClass">
-				<el-button>保存</el-button>
+				<el-button @click="postData">保存</el-button>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
+import * as api from "@/pages/faceModule/api.js";
 export default {
   components: {},
   props: {},
@@ -108,17 +109,76 @@ export default {
         ] /* 报警声音 */,
         saveImageUriDay: 0 /* 人脸抓拍人脸图保存天数 */,
         savePanoramauriDay: 0 /* 人脸抓全景图保存天数 */,
-        saveAlarmImageType: 0 /* 人脸报警图片保存天数类型，true长期，false短期 */,
+        saveAlarmImageType: 1 /* 人脸报警图片保存天数类型，true长期，false短期 */,
         savaAlarmIangeDay: 0 /* 人脸报警图片保存天数 */
       }
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.initData();
+  },
   methods: {
-    queryAct() {},
+    initData() {
+      api
+        .getFaceModuleConfig()
+        .then(res => {
+          if (res.data.success) {
+            this.queryBody = res.data.data;
+            this.tags = res.data.data.alarmSound;
+          }
+        })
+        .catch(() => {});
+    },
+    postData() {
+      let data = {
+        projectUuid: "" /* 项目uuid */,
+        saveQualityLowerImage: 0 /* 抓拍质量无效图片是否保存 */,
+        removeDuplicationImage: 0 /* 抓拍查重 */,
+        captureInterval: 0 /* 抓拍间隔 */,
+        similarity: 0 /* 相似度 */,
+        alarmSound: this.tags /* 报警声音 */,
+        saveImageUriDay: 0 /* 人脸抓拍人脸图保存天数 */,
+        savePanoramauriDay: 0 /* 人脸抓全景图保存天数 */,
+        saveAlarmImageType: true /* 人脸报警图片保存天数类型，true长期，false短期 */,
+        savaAlarmIangeDay: 0 /* 人脸报警图片保存天数 */
+      };
+      Object.assign(data, this.queryBody);
+      data.alarmSound = this.tags;
+      api
+        .postFaceModuleConfig(data)
+        .then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {});
+    },
     handleClose(tag) {
-      this.tags.splice(this.tags.indexOf(tag), 1);
+      if (tag.defaulted) {
+        this.$message.warning("该资源不允许删除");
+        return;
+      }
+      if (tag.url.indexOf("blob:http://") !== -1) {
+        this.tags.splice(this.tags.indexOf(tag), 1);
+        return;
+      }
+      this.$confirm("是否确定删除该条音频?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.delteAudioFile(tag);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     tryListenBtnAct(tag) {
       // 试听
@@ -131,28 +191,52 @@ export default {
     uploadBtnAct() {
       var input = document.createElement("input");
       input.type = "file";
-      input.accept = 'audio/*';
+      input.accept = "audio/*";
       input.click();
-      input.onchange = (res) => {
+      input.onchange = res => {
         var file = input.files[0];
-        var url = URL.createObjectURL(file);
-        var fileTag = {
-          name: file.name,
-          url: url,
-          type: file.type
-        };
-        console.log(file);
-        console.log(fileTag);
-        this.tags.push(fileTag);
-        console.log(this.tags);
         var form = new FormData();
         form.append("file", file); // 第一个参数是后台读取的请求key值
         form.append("fileName", file.name);
-        this.queryBody.alarmSound.push(form);
+        console.log(form);
+        this.uploadSoundFile(form, file);
+        // this.queryBody.alarmSound.push(form);
       };
     },
     // 处理声音文件上传
-    detealSoundFile() {}
+    uploadSoundFile(formData, file) {
+      api
+        .uploadAudio(formData)
+        .then(res => {
+          if (res.data.success && res.data.data) {
+            this.$message.success(res.data.msg);
+            var fileTag = {
+              soundName: file.name,
+              soundUrl: res.data.data,
+              defaulted: 0,
+              type: file.type
+            };
+            this.tags.push(fileTag);
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {});
+    },
+    // 删除配置的声音 soundUrl
+    delteAudioFile(tag) {
+      api
+        .deleteAudio({ soundUrl: tag.soundUrl })
+        .then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+            this.tags.splice(this.tags.indexOf(tag), 1);
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {});
+    }
   },
   watch: {},
   destroyed() {}
@@ -165,6 +249,27 @@ export default {
 	color: transparent;
 	top: -15px;
 	right: -15px;
+}
+.el-message-box__title {
+	padding-left: 0;
+	margin-bottom: 0;
+	font-size: 16px;
+	line-height: 1;
+	color: #dddddd;
+}
+.el-message-box__header {
+	border-bottom: 1px solid #303133;
+}
+.el-message-box__content {
+	color: #dddddd;
+}
+.el-message-box .el-button--default,
+.el-message-box .el-button--default:hover,
+.el-message-box .el-button--default:active,
+.el-message-box .el-button--default:focus {
+	background: rgba(40, 255, 187, 0.1);
+	border: 1px solid rgba(40, 255, 187, 0.45);
+	border-radius: 2px;
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

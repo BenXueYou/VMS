@@ -4,6 +4,37 @@ import store from '@/store/store.js'; import { Message } from 'element-ui';
 
 let FaceModuleApi = RestApi.api.faceModuleAPi;
 
+// 基础设置接口
+export function getFaceModuleConfig() {
+  let url = FaceModuleApi.getFaceModuleConfigApi(store.state.home.projectUuid);
+  return Axios({
+    method: 'GET',
+    url,
+  });
+}
+export function postFaceModuleConfig(xhr) {
+  let url = FaceModuleApi.postFaceModuleConfigApi(store.state.home.projectUuid);
+  return Axios({
+    method: 'POST',
+    url,
+  });
+}
+export function uploadAudio(xhr) {
+  let url = FaceModuleApi.uploadAudioApi(store.state.home.projectUuid);
+  return Axios({
+    method: 'POST',
+    url,
+    data: xhr
+  });
+}
+export function deleteAudio(xhr) {
+  let url = FaceModuleApi.deleteAudioApi(store.state.home.projectUuid);
+  return Axios({
+    method: 'DELETE',
+    url,
+    data: xhr
+  });
+}
 // 根据布控任务查询关联的设备以及人脸库
 export function getTaskDeatailChannelAndLib(uuid) {
   let url = FaceModuleApi.getTaskDetailChannelAndLibs(store.state.home.projectUuid, uuid);
