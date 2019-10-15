@@ -483,9 +483,7 @@ export default {
     // 选中某通道
     handleCheckedCitiesChange(value) {
       console.log("选中某通道------", this.checkedChannel);
-
       this.$store.commit("setCheckedChannel", this.checkedChannel);
-
       if (this.checkAll) {
         this.checkedChannelsUuidList = [];
         this.checkedChannelsUuidList[0] = this.checkedChannel.id;
