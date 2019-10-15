@@ -104,7 +104,7 @@
         </el-table-column>
         <el-table-column prop="doorCount"
                          width='80'
-                         label="门数量">
+                         :label="index!=1?'门数量':'视频通道'">
         </el-table-column>
         <el-table-column prop="netStatus"
                          width='80'
@@ -148,8 +148,8 @@
             <el-button type="text"
                        @click="remoteControl(scope.row)"
                        :class="{'offLine':scope.row.netStatus==='offline'}"
-                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig))"
                        size="small">配置</el-button>
+            <!-- :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig))" -->
           </template>
         </el-table-column>
       </el-table>
@@ -169,6 +169,11 @@
                              :isVistors="index===3"
                              :deviceUuid="deviceUuid">
       </remote-control-dialog>
+
+      <video-set-dialog :visible.sync="videoDialogVisiable"
+                        :deviceUuid="deviceUuid">
+
+      </video-set-dialog>
 
       <confirm-dialog :visible.sync="ConfirmDialogVisible"
                       confirmText="是否要下发到设备内"
@@ -214,6 +219,7 @@
                          :localService="localService">
 
       </manual-add-dialog>
+
     </div>
   </div>
 </template>
@@ -227,6 +233,8 @@ import InputRetrieve from "@/common/InputRetrieve";
 import TheCompanyUpdateDialog from "@/pages/equipmentMange/components/TheCompanyUpdateDialog";
 import TheCompanyUpgradingDialog from "@/pages/equipmentMange/components/TheCompanyUpgradingDialog";
 import ManualAddDialog from "@/pages/equipmentMange/components/ManualAddDialog";
+import VideoSetDialog from "@/pages/equipmentMange/components/videoSetDialog";
+
 import * as api from "../ajax.js";
 import { mapState } from "vuex";
 export default {
@@ -253,6 +261,7 @@ export default {
       deleteConfirmDialogVisible: false,
       index: 0,
       remoteControlDialogVisiable: false,
+      videoDialogVisiable: false,
       updateDialogVisible: false,
       tableData: [],
       multipleSelection: [],
@@ -273,6 +282,7 @@ export default {
   },
   components: {
     ManualAddDialog,
+    VideoSetDialog,
     RemoteControlDialog,
     ConfirmDialog,
     TheCompanyAddEquipmentDialog,
@@ -562,9 +572,11 @@ export default {
       // debug
       // let deviceUuid = "494F1F75B788464BB05AE87DAB1E8AF2";
       // this.deviceUuid = deviceUuid;
-
       this.deviceUuid = row.deviceUuid;
-      this.remoteControlDialogVisiable = true;
+      // eslint-disable-next-line
+      this[
+        this.index === 1 ? "videoDialogVisiable" : "remoteControlDialogVisiable"
+      ] = true;
     }
   },
   mounted() {
