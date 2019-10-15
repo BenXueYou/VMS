@@ -174,7 +174,7 @@
 				<el-row class="asidListBox">
 					<div class="asidListRow" v-for="(o,index) in 5" :key="index">
 						<recoginize-card
-              imgWidth='99'
+							imgWidth="99"
 							:recoginizeItem="comparePhotoList[index]"
 							@detailClick="doRecoginizeDetail(index)"
 						/>
@@ -275,7 +275,8 @@ export default {
       timeOuter: null,
       vlc: null,
       options: new Array("rtsp-tcp"),
-      dialogfullscreenLoading: false
+      dialogfullscreenLoading: false,
+      stompClient: null
     };
   },
   computed: {},
@@ -601,31 +602,35 @@ export default {
       if (this.websocket) {
         return;
       }
-      this.websocket = new WebSocket(this.socketIP);
-      this.websocket.onopen = this.websocketonopen;
-      this.websocket.onerror = this.websocketonerror;
-      this.websocket.onmessage = this.websocketonmessage;
-      this.websocket.onclose = this.websocketclose;
+      /* eslint-disable */
+			this.websocket = new SockJS(
+				window.config.protocolHeader + window.config.socketIP
+			);
+			this.stompClient = Stomp.over(socket);
+			this.stompClient.connect(
+				{ projectUuid: this.$store.state.home.projectUuid },
+				frame => {
+					console.log("connect success: ", frame);
+					this.stompClient.subscribe("/user/topic/face/capture", greeting => {
+						console.log("subscribe success: ", greeting);
+						this.handleSubscribe(JSON.parse(greeting.body));
+					});
+				},
+				err => {
+					console.log("error, errMsg: ", err);
+				}
+			);
+			/* eslint-enable */
     },
-    // 开启链接
-    websocketonopen() {
-      console.log("WebSocket连接成功==========================");
+    disConnectSocket() {
+      if (this.stompClient != null) {
+        this.stompClient.disconnect();
+        console.log("Disconnected");
+      }
     },
-    // 连接错误
-    websocketonerror(e) {
-      // 错误
-      console.log("WebSocket连接发生错误");
-    },
-    // 数据接收
-    websocketonmessage(e) {},
-    // 数据发送
-    websocketsend(agentData) {
-      this.websocket.send(agentData);
-    },
-    // 关闭
-    websocketclose(e) {
-      // this.initWebSocket();
-      console.log("connection closed (" + e.code + ")");
+    // 抓拍消息通知处理
+    handleSubscribe(data) {
+      this.photoList.push(data);
     },
     loadVideo(url) {},
 
@@ -1354,9 +1359,9 @@ iframe html {
 .leftflexButton,
 .leftflexButton:focus,
 .leftflexButton:hover {
-	background-color: transparent!important;
-	color: #ffffff!important;
-	border: 0!important;
+	background-color: transparent !important;
+	color: #ffffff !important;
+	border: 0 !important;
 	padding: 10px 14px !important;
 }
 .font12 {

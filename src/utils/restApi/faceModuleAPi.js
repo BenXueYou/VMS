@@ -4,6 +4,7 @@ let ip = window.config.ip,
   protocolHeader = window.config.protocolHeader,
   projectUuid = store.state.home.projectUuid;
 let URLHeader = `${protocolHeader}${ip}/faceconfig-v1/project`;
+let URLHeaderFaceLog = `${protocolHeader}${ip}/facelog-v1/project`;
 export default {
   // @pengxueyou
   // 获取人脸设备
@@ -15,11 +16,11 @@ export default {
   getTaskDetailChannelAndLibs: (projectUuid,taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
 
   // 日志查询
-  faceComparison1v1: projectUuid => `${URLHeader}/${projectUuid}/faceComparison/1v1`,
-  getSnapshotList: projectUuid => `${URLHeader}/${projectUuid}/snapshot/list`,
-  getRecognizeList: projectUuid => `${URLHeader}/${projectUuid}/recognize/list`,
-  getRecognizeInfo: projectUuid => `${URLHeader}/${projectUuid}/recognize/info`,
-  getAlarmInfoList: projectUuid => `${URLHeader}/${projectUuid}/alarm/list`,
+  faceComparison1v1: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/faceComparison/1v1`,
+  getSnapshotList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/list`,
+  getRecognizeList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/list`,
+  getRecognizeInfo: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/info`,
+  getAlarmInfoList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/alarm/list`,
 
   // 文件中转接口
   uploadFileApi: `${protocolHeader}${ip}/fileforward-server-v1/project/${projectUuid}/fileforward/forwardFileToFileSystem`,
@@ -50,8 +51,8 @@ export default {
   },
 
   // @fengyawen
-  searchFace: `${URLHeader}/${projectUuid}/searchFace/list`,
-  getJudgeList: `${URLHeader}/${projectUuid}/judged/info/list`,
+  searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list`,
+  getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
   getModelList: `${URLHeader}/${projectUuid}/modelStatistics/list`,
   getFaceCaptureAll: `${URLHeader}/${projectUuid}/snapshotStatistics/all/list`,
   getFaceCaptureOne: `${URLHeader}/${projectUuid}/snapshotStatistics/one/list`,
@@ -67,7 +68,7 @@ export default {
   editMonitoringTask: `${URLHeader}/${projectUuid}/monitoringTask/info`,
   getIntelModelList: `${URLHeader}/${projectUuid}/IntelligentModel/info/list`,
   getIntelModelDetails: (modelUuid) => `${URLHeader}/${projectUuid}/IntelligentModel/info/${modelUuid}`,
-  getJudgedList: `${URLHeader}/${projectUuid}/judged/info/list`,
+  getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
   deleteIntelModel: (modelUuid) => `${URLHeader}/${projectUuid}/IntelligentModel/info/${modelUuid}`,
   addIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
   editIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
