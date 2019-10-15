@@ -7,13 +7,15 @@ import Home from "@/pages/home/views/Home";
 import projectManage from "@/pages/projectManage/projectManage";
 import VistorMangeSubRoute from "@/pages/vistorMange/VistorMange";
 // 子系统系统路由
-import vistorManage from './modules/vistorManage';
-import unitManage from './modules/unitManage';
-import resident from './modules/resident';
-import personManage from './modules/personManage';
-import equipmentManage from './modules/equipmentManage';
-import doorAccess from './modules/doorAccess';
-import buildingHouse from './modules/buildingHouse';
+import vistorManage from "./modules/vistorManage";
+import unitManage from "./modules/unitManage";
+import resident from "./modules/resident";
+import personManage from "./modules/personManage";
+import equipmentManage from "./modules/equipmentManage";
+import doorAccess from "./modules/doorAccess";
+import buildingHouse from "./modules/buildingHouse";
+import log from "./modules/log";
+import user from "./modules/auth";
 
 Vue.use(Router);
 
@@ -37,7 +39,7 @@ export const constantRouterMap = [
         title: "门禁管理",
         children: doorAccess.children,
         icon: "doorControl",
-        type: "app",
+        type: "app"
         // redirect:'/DoorControl/' //设置默认子路由
       },
       {
@@ -56,7 +58,7 @@ export const constantRouterMap = [
         children: vistorManage,
         icon: "vistorMange",
         type: "app"
-      }, 
+      },
       {
         path: "/EquipmentMange",
         name: "EquipmentMange",
@@ -88,6 +90,24 @@ export const constantRouterMap = [
         title: "居民管理",
         icon: "residentManage",
         type: "config"
+      },
+      {
+        path: "/log",
+        name: "log",
+        component: log.component,
+        title: "日志管理",
+        children: log.children,
+        icon: "doorControl",
+        type: "app"
+      },
+      {
+        path: "/user",
+        name: "user",
+        component: user.component,
+        title: "用户管理",
+        children: user.children,
+        icon: "doorControl",
+        type: "app"
       }
     ]
   },
