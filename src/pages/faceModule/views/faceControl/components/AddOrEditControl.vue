@@ -1,5 +1,10 @@
 <template>
   <div class="control-main-add">
+    <select-face :isShow="isShowAddFaceDB"
+                 ref="selectFace"
+                 @onCancel="cancelAddFaceDB"
+                 @onConfirm="confirmAddFaceDB"
+                 :faceDBSelectedList.sync="faceDBSelectedList" />
     <div class="access-main">
       <div class="dialog-title">
         <div class="title-text">{{isAdd ? "新建" : "编辑"}}布控</div>
@@ -26,15 +31,33 @@
           </el-form-item>
           <el-form-item label="人脸库："
                         prop="libraryList">
-            <div class="add-item" @click="addFaceDB">
+            <div class="add-item"
+                 @click="addFaceDB">
               <img src="@/assets/images/faceModule/add.png">
               <span>添加</span>
             </div>
-            <div></div>
+            <div class="item-select">
+              <template v-for="(item, index) in faceDBSelectedList">
+                <div :key="index"
+                     class="select-item">
+                  <img src="@/assets/images/person_g.png"
+                       width="11px"
+                       height="11px">
+                  <span style="margin-left: 4px">{{item.faceDBName}}</span>
+                  <div class="del-image"
+                       @click="deleteItem(item)">
+                    <img src="@/assets/images/delete_x.png"
+                         width="13px"
+                         height="13px">
+                  </div>
+                </div>
+              </template>
+            </div>
           </el-form-item>
           <el-form-item label="视频源："
                         prop="channelList">
-            <div class="add-item" @click="addVideoSource">
+            <div class="add-item"
+                 @click="addVideoSource">
               <img src="@/assets/images/faceModule/add.png">
               <span>添加</span>
             </div>
@@ -122,10 +145,12 @@
 
 <script>
 import PicQulitySelect from "@/common/PicQulitySelect";
+import SelectFace from "@/common/SelectFaceDB";
 
 export default {
   components: {
-    PicQulitySelect
+    PicQulitySelect,
+    SelectFace
   },
   props: {
     isAdd: {
@@ -156,7 +181,9 @@ export default {
           { whitespace: true, message: "不允许输入空格", trigger: "blur" },
           { min: 1, max: 32, message: "长度在 1 到 32 个字符", trigger: "blur" }
         ]
-      }
+      },
+      isShowAddFaceDB: false,
+      faceDBSelectedList: []
     };
   },
   created() {},
@@ -201,12 +228,10 @@ export default {
       this.$emit("onCancel");
     },
     addMonitoringTask() {
-      this.$faceControlHttp
-        .addMonitoringTask(this.formLabelAlign)
-        .then(res => {
-          let body = res.data;
-          this.monitoringTaskSuccess(body);
-        });
+      this.$faceControlHttp.addMonitoringTask(this.formLabelAlign).then(res => {
+        let body = res.data;
+        this.monitoringTaskSuccess(body);
+      });
     },
     monitoringTaskSuccess(body) {
       this.$cToast.success(body.msg);
@@ -221,8 +246,20 @@ export default {
           this.monitoringTaskSuccess(body);
         });
     },
-    addFaceDB() {},
+    addFaceDB() {
+      this.isShowAddFaceDB = true;
+    },
+    confirmAddFaceDB() {
+      this.isShowAddFaceDB = false;
+    },
+    cancelAddFaceDB() {
+      this.isShowAddFaceDB = false;
+    },
     addVideoSource() {},
+    deleteItem(item) {
+      this.$refs.selectFace.deleteItem(item);
+      this.$refs.selectFace.changeSelectList();
+    }
   },
   watch: {},
   destroyed() {}
@@ -320,8 +357,35 @@ export default {
   .add-item {
     font-family: PingFangSC-Regular;
     font-size: 13px;
-    color: #26D39D;
+    color: #26d39d;
     cursor: pointer;
+    margin-left: 8px;
+  }
+  .item-select {
+    display: flex;
+    align-content: flex-start;
+    flex-flow: row wrap;
+    .select-item {
+      height: 32px;
+      padding: 0 12px;
+      box-sizing: border-box;
+      position: relative;
+      display: flex;
+      align-items: center;
+      font-family: PingFangSC-Regular;
+      font-size: 13px;
+      color: #dddddd;
+      background: rgba($color: #ffffff, $alpha: 0.05);
+      border-radius: 3px;
+      margin-bottom: 10px;
+      margin-right: 15px;
+      .del-image {
+        position: absolute;
+        top: -16px;
+        right: -5px;
+        cursor: pointer;
+      }
+    }
   }
 }
 </style>
