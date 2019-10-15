@@ -438,7 +438,7 @@ export default {
       }
     },
     getPreviewInfo(channelUuid) {
-      this.$emit("playRtsp", channelUuid);
+      this.$emit("playRtsp", channelUuid, "main");
     },
     handleNodeClick() {
       // 点击展开
@@ -452,6 +452,14 @@ export default {
         item.leaf = !item.openFlag;
         return item;
       });
+      data = [
+        {
+          label: "测试",
+          id: 1,
+          channelUuid: "49D2B7299EAAA3AF295E33F03B982D32",
+          leaf: true
+        }
+      ];
       console.log(data);
       return resolve(data);
     },

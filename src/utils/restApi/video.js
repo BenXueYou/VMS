@@ -3,6 +3,7 @@ import store from "@/store/store.js";
 let ip = window.config.ip,
   // projectUuid = window.config.projectUuid;
   projectUuid = store.state.home.projectUuid;
+ip = "192.168.9.105:15029";
 let urlPrefix = `${
   window.config.protocolHeader
 }${ip}/video/project/${projectUuid}`;
@@ -12,7 +13,7 @@ let zwUrlPrefix = `${
 
 export default {
   // 获取视频预览信息
-  getPreviewInfoUrl: `${urlPrefix}/view/previewInfo`,
+  getPreviewInfoUrl: `${urlPrefix}/video/previewInfo`,
   // 云台控制视角
   ctrlUrl: `${urlPrefix}/video/ptz/ctrl`,
   // 云台控制预置
