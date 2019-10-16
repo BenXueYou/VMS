@@ -34,19 +34,19 @@ function Logger(module) {
 }
 
 Logger.prototype.log = function (line) {
-    // console.log("[" + this.currentTimeStr() + "][" + this.module + "]" + line);
+    console.log("[" + this.currentTimeStr() + "][" + this.module + "]" + line);
 }
 
 Logger.prototype.logError = function (line) {
-    // console.log("[" + this.currentTimeStr() + "][" + this.module + "][ER] " + line);
+    console.log("[" + this.currentTimeStr() + "][" + this.module + "][ER] " + line);
 }
 
 Logger.prototype.logInfo = function (line) {
-    // console.log("[" + this.currentTimeStr() + "][" + this.module + "][IF] " + line);
+    console.log("[" + this.currentTimeStr() + "][" + this.module + "][IF] " + line);
 }
 
 Logger.prototype.logDebug = function (line) {
-    // console.log("[" + this.currentTimeStr() + "][" + this.module + "][DT] " + line);
+    console.log("[" + this.currentTimeStr() + "][" + this.module + "][DT] " + line);
 }
 
 Logger.prototype.currentTimeStr = function () {

@@ -117,7 +117,8 @@
         <div class="btngroup">
           <div class="button"
                v-for='(item,index) in btnGroup'
-               @click="cloundControl(item,index)"
+               @mousedown="cloundControl(item,index)"
+               @mouseup="cloundControl2(item,index)"
                :key="index">
             <img :src="icons[item]"
                  alt="">
@@ -126,8 +127,9 @@
         <div class="btngroup">
           <div class="button"
                v-for='(item,index) in btnGroup2'
-               @click="cloundControl(item,index)"
+               @mousedown="cloundControl(item,index)"
                :key="index">
+            <!-- @mouseup="cloundControl2(item,index)"" -->
             <img :src="icons[item]"
                  alt="">
           </div>
@@ -382,16 +384,17 @@ export default {
         label: "viewName"
       },
       viewTreeData: [
-        {
-          viewName: "一级 1"
-        },
-        {
-          viewName: "一级 2"
-        },
-        {
-          viewName: "一级 3"
-        }
-      ]
+        // {
+        //   viewName: "一级 1"
+        // },
+        // {
+        //   viewName: "一级 2"
+        // },
+        // {
+        //   viewName: "一级 3"
+        // }
+      ],
+      channelUuid: ""
     };
   },
   mounted() {
@@ -412,7 +415,7 @@ export default {
   },
   methods: {
     getPreset() {
-      api2.getPreset().then(res => {
+      api2.getPreset({ presetPositionUuid: "" }).then(res => {
         console.log(res);
       });
     },
@@ -427,7 +430,7 @@ export default {
       console.log(command);
       if (command === "video") {
         // 打开视频操作
-        this.getPreviewInfo(this.operatorData.channelUuid);
+        this.getPreviewInfo(this.operatorData.id);
       } else if (command === "playback") {
       } else if (command === "view") {
       } else if (command === "renameView") {
@@ -455,8 +458,7 @@ export default {
       data = [
         {
           label: "测试",
-          id: 1,
-          channelUuid: "49D2B7299EAAA3AF295E33F03B982D32",
+          id: "49D2B7299EAAA3AF295E33F03B982D32",
           leaf: true
         }
       ];
@@ -524,12 +526,7 @@ export default {
     },
     chooseItem() {
       // 选定预置点，这边进行一个跳转
-      api2
-        .preset({
-          action: "goto_preset", // 操作类型，必填
-          index: this.yuzhi // 预置点，必填
-        })
-        .then(() => {});
+      this.$emit("preset", "goto_preset", this.yuzhi);
     },
     setback() {
       this.isChoose = false;
@@ -540,12 +537,7 @@ export default {
     },
     chooseIcno() {
       if (this.value === "yuzhi") {
-        api2
-          .preset({
-            action: "set_preset", // 操作类型，必填
-            index: this.yuzhi // 预置点，必填
-          })
-          .then(() => {});
+        this.$emit("preset", "set_preset", this.yuzhi);
       } else {
         api2
           .cruize({
@@ -559,12 +551,7 @@ export default {
     deleteChoose() {
       // 清空预置点
       this.isChoose = false;
-      api2
-        .preset({
-          action: "clear_preset", // 操作类型，必填
-          index: this.yuzhi // 预置点，必填
-        })
-        .then(() => {});
+      this.$emit("preset", "clear_preset", this.yuzhi);
     },
     cloundControl(name, index) {
       console.log(name, index);
@@ -585,6 +572,26 @@ export default {
         action = name;
       }
       this.$emit("ctrl", action, true, 1);
+    },
+    cloundControl2(name, index) {
+      console.log(name, index);
+      let action = "";
+      if (name === "zoom_in") {
+        action = "zoom_in";
+      } else if (name === "zoom_out") {
+        action = "zoom_out";
+      } else if (name === "fangda") {
+        action = "focus_near";
+      } else if (name === "quan") {
+        action = "focus_far";
+      } else if (name === "centerbig") {
+        action = "iris_close";
+      } else if (name === "center") {
+        action = "iris_open";
+      } else {
+        action = name;
+      }
+      this.$emit("ctrl", action, false, 1);
     },
 
     getViewTree() {

@@ -11,27 +11,28 @@ export function getPreviewInfo(params = {}) {
     params
   });
 }
-export function ctrl(data) {
-  let url = vUrl.ctrlUrl;
+export function ctrl(deviceUuid, data) {
+  let url = vUrl.ctrlUrl + "?channelUuid=" + deviceUuid;
   return axios({
     method: "POST",
     url,
     data
   });
 }
-export function preset(data) {
-  let url = vUrl.presetUrl;
+export function preset(uuid, data) {
+  let url = vUrl.presetUrl + `?channelUuid=${uuid}`;
   return axios({
     method: "POST",
     url,
     data
   });
 }
-export function getPreset(data) {
+export function getPreset(params) {
   let url = vUrl.getPresetUrl;
   return axios({
     method: "GET",
-    url
+    url,
+    params
   });
 }
 export function cruize(data) {

@@ -1,4 +1,4 @@
-function CSession(jSignal, jMedia, url, protocol, action, observer)
+function CSession(jSignal, jMedia, url, protocol, action, observer,streamType)
 {
     this.m_wsSignal     = null;
     this.m_wsMedia      = null;
@@ -8,7 +8,8 @@ function CSession(jSignal, jMedia, url, protocol, action, observer)
     this.m_protocol     = protocol;
     this.m_action       = action;
     this.m_observer     = observer;
-
+    this.streamType     = streamType;
+    
     this.m_context      = 123456;
 
     this.m_sessionId    = 0;
@@ -66,6 +67,10 @@ CSession.prototype.play = function()
                         {
                             break;
                         }
+                    case "resumeRsp":
+                        {
+                            break;
+                        }
                         defualt:
                         {
                             break;
@@ -91,6 +96,7 @@ CSession.prototype.createWsMedia = function()
         {
             let uri = "ws://" + obj.param.location.ip + ":" + obj.param.location.port + "/" + obj.srcUuid;
             this.m_wsMedia = new WebSocket(uri);
+            this.m_wsMedia.binaryType = "blob";
             ret = 0;
             this.m_wsMedia.onopen = function(){
                 // 媒体通道连接成功
@@ -124,4 +130,49 @@ CSession.prototype.stop = function()
         return true;
     }
     return false;
+}
+
+CSession.prototype.pause = function()
+{
+    let pauseReq = {"msgType": "pauseReq"};
+    pauseReq.context = this.m_context;
+    pauseReq.sessionId = this.m_sessionId;
+    if (this.m_connected == 1)
+    {
+        this.m_wsSignal.send(JSON.stringify(pauseReq));
+    }
+}
+
+CSession.prototype.resume = function()
+{
+    let resumeReq = {"msgType": "resumeReq"};
+    resumeReq.context = this.m_context;
+    resumeReq.sessionId = this.m_sessionId;
+    if (this.m_connected == 1)
+    {
+        this.m_wsSignal.send(JSON.stringify(resumeReq));
+    }
+}
+
+CSession.prototype.speedControl = function()
+{
+    let speedControlReq = {"msgType": "speedControlReq"};
+    speedControlReq.context = this.m_context;
+    speedControlReq.sessionId = this.m_sessionId;
+    if (this.m_connected == 1)
+    {
+        this.m_wsSignal.send(JSON.stringify(speedControlReq));
+    }
+}
+
+CSession.prototype.drag = function(position)
+{
+    let dragReq = {"msgType": "dragReq"};
+    dragReq.context = this.m_context;
+    dragReq.sessionId = this.m_sessionId;
+    dragReq.position = position;
+    if (this.m_connected == 1)
+    {
+        this.m_wsSignal.send(JSON.stringify(dragReq));
+    }
 }

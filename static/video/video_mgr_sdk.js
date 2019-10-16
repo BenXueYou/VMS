@@ -3,10 +3,10 @@ function CVideoMgrSdk()
     this.m_videoList  = new Array;
 }
 
-CVideoMgrSdk.prototype.play = function(jSignal, jMedia, url, protocol, action, canvas)
+CVideoMgrSdk.prototype.play = function(jSignal, jMedia, url, protocol, action, canvas,streamType)
 {
     var video = new CVideo;
-    video.play(jSignal, jMedia, url, protocol, action, canvas);
+    video.play(jSignal, jMedia, url, protocol, action, canvas,streamType);
     this.m_videoList[this.m_videoList.length] = video;
     return video;
 }
@@ -23,11 +23,112 @@ CVideoMgrSdk.prototype.stop = function(video)
     }
     if (i != this.m_videoList.length)
     {
+        video.stopRecord();
         video.stop();
         this.m_videoList.splice(i, 1);
     }
     else
     {}
+}
+
+CVideoMgrSdk.prototype.pause = function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            break;
+        }
+    }
+    if (i != this.m_videoList.length)
+    {
+        video.pause();
+    }
+    else
+    {}
+}
+
+CVideoMgrSdk.prototype.resume = function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            break;
+        }
+    }
+    if (i != this.m_videoList.length)
+    {
+        video.resume();
+    }
+    else
+    {}
+}
+
+CVideoMgrSdk.prototype.speedControl = function(video, speed)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            break;
+        }
+    }
+    if (i != this.m_videoList.length)
+    {
+        video.speedControl(speed);
+    }
+    else
+    {}
+}
+
+CVideoMgrSdk.prototype.drag = function(video, position)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            break;
+        }
+    }
+    if (i != this.m_videoList.length)
+    {
+        video.drag(position);
+    }
+    else
+    {}
+}
+
+CVideoMgrSdk.prototype.record = function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            video.record();
+            return true;
+        }
+    }
+    return false;
+}
+
+CVideoMgrSdk.prototype.stopRecord = function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            video.stopRecord();
+            return true;
+        }
+    }
+    return false;
 }
 
 CVideoMgrSdk.prototype.findVideo = function(canvas)

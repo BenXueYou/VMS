@@ -85,6 +85,18 @@ export default {
       default() {
         return "";
       }
+    },
+    action: {
+      type: String,
+      default() {
+        return "preview";
+      }
+    },
+    streamType: {
+      type: String,
+      default() {
+        return "main";
+      }
     }
   },
   data() {
@@ -124,10 +136,18 @@ export default {
     }
   },
   watch: {
+    streamType(val) {
+      // 码流切换，则先停掉，在重新播放
+      // 判断是否在播放，在切换
+    },
     width(val) {
       // 宽度变化 则更新canvas的大小
       if (this.width && this.canvas) {
         this.canvas.width = this.width;
+      }
+      if (this.canvas) {
+        this.stopVideo();
+        this.playVideo();
       }
     },
     height(val) {
@@ -153,13 +173,15 @@ export default {
       this.canvas = document.createElement("canvas");
       this.canvas.width = this.width;
       this.canvas.height = this.height;
+      let ip = "192.168.9.21";
       this.video = this.video_mgr.play(
-        '{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.21", "port":"4400"}}}',
-        '{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.21", "port":"4401"}}}',
-        "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast",
+        `{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4400"}}}`,
+        `{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4401"}}}`,
+        this.rtspUrl,
         "rtsp",
-        "preview",
-        this.canvas
+        this.action,
+        this.canvas,
+        this.streamType
       );
       this.$refs.canvasRefs.appendChild(this.canvas);
     },

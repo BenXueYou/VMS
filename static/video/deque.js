@@ -92,3 +92,11 @@ CDeque.prototype.empty = function()
 {
     return this.size() === 0;
 }
+
+/* 清空队列 */
+CDeque.prototype.clear = function()
+{
+    this.m_count        = 0;
+    this.m_array        = {};
+    this.m_frontIndex   = 0;
+}

@@ -3,22 +3,24 @@ function CVideo()
     this.m_session      = null;
     this.m_decoder      = null;
     this.m_canvas       = null;
+    this.m_download     = null;
 }
 
-CVideo.prototype.play = function(jSignal, jMedia, url, protocol, action, canvas)
+CVideo.prototype.play = function(jSignal, jMedia, url, protocol, action, canvas,streamType)
 {
     this.m_canvas = canvas;
-    this.m_session = new CSession(jSignal, jMedia, url, protocol, action, this);
+    this.m_session = new CSession(jSignal, jMedia, url, protocol, action, this,streamType);
     this.m_session.play();
     if (action === "preview" || action === "playback")
     {
-        this.m_decoder = new CDecoder(canvas);
+        this.m_decoder = new CDecoder(canvas,streamType);
         this.m_decoder.play();
     }
     else if (action === "download")
     {
         // 下载需要下载模块
         // fix: 下载模块暂未实现
+        this.m_download = new CDownload(Date().toString());
     }
     else
     {
@@ -36,6 +38,10 @@ CVideo.prototype.onMedia = function(data)
 
     // 2. 如果有下载模块 写入下载模块
     // fix: 下载模块暂未实现
+    if (this.m_download != null)
+    {
+        this.m_download.writeBlob(data);
+    }
 }
 
 CVideo.prototype.stop = function()
@@ -45,6 +51,45 @@ CVideo.prototype.stop = function()
 
     // 2. 停止session
     this.m_session.stop();
+}
+
+CVideo.prototype.pause = function()
+{
+    this.m_decoder.pause();
+    this.m_session.pause();
+}
+
+CVideo.prototype.resume = function()
+{
+    this.m_decoder.resume();
+    this.m_session.resume();
+}
+
+CVideo.prototype.speedControl = function(speed)
+{
+    this.m_decoder.speedControl(speed);
+    this.m_session.speedControl(speed);
+}
+
+CVideo.prototype.drag = function(position)
+{
+    this.m_decoder.drag(position);
+    this.m_session.drag(position);
+}
+
+CVideo.prototype.record = function()
+{
+    this.m_download = new CDownload(Date().toString());
+}
+
+CVideo.prototype.stopRecord = function()
+{
+    if (this.m_download != null)
+    {
+        this.m_download.close();
+        delete this.m_download;
+        this.m_download = null;
+    }
 }
 
 /*

@@ -7,6 +7,7 @@
                   @playRtsp="playRtsp"
                   @jumpToPlayback="jumpToPlayback"
                   @ctrl="ctrl"
+                  @preset="preset"
                   @changetab="changetab"
                   @clickNode="clickNode"
                   :deviceUuid="deviceUuid"></left-content>
@@ -23,6 +24,7 @@
                     :height="videoHeight"
                     :rtspUrl="item.url"
                     :IsShowMenu="!!item.url"
+                    :streamType="item.streamType"
                     @dragstart="dragstart(index)"
                     @drop="drop(index)"
                     @contextmenu="showMenu"
@@ -40,8 +42,8 @@
           </ul>
         </div>
         <div class="operator">
-          <gt-button class='
-                    button'
+          <gt-button class='button'
+                     @click='saveShiTu'
                      :showClose="false">保存视图</gt-button>
           <gt-button class='button'
                      :icon="icons.fullScreen"
@@ -92,7 +94,8 @@ export default {
       imageAdjustVisible: false,
       videoArr: [
         {
-          url: "" // 播放的视频 Url
+          url: "", // 播放的视频 Url
+          streamType: ""
         }
       ],
       icons,
@@ -173,6 +176,45 @@ export default {
   },
   destroyed() {},
   methods: {
+    saveShiTu() {
+      // 保存视图
+      let data = {};
+      // let data = {
+      //   viewType: string,
+      //   viewInfo: {
+      //     view_name: string
+      //   },
+      //   rowTotal: int8,
+      //   colTotal: int8,
+      //   elements: [
+      //     {
+      //       position: {
+      //         row: int8,
+      //         col: int8
+      //       },
+      //       channelUuid: string
+      //     }
+      //   ],
+      //   videoRadio: {
+      //     width: int,
+      //     height: int
+      //   },
+      //   parentUuid: string
+      // };
+      api2.addView(data);
+    },
+    preset(action, index) {
+      if (!this.videoArr[this.operatorIndex].channelUuid) {
+        this.$message.error("请先选择播放的视频设备！");
+        return;
+      }
+      api2
+        .preset(this.videoArr[this.operatorIndex].channelUuid, {
+          action, // 操作类型，必填
+          index // 预置点，必填
+        })
+        .then(() => {});
+    },
     playRtsp(channelUuid, streamType = "string", operator = -1) {
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
@@ -183,30 +225,28 @@ export default {
         })
         .then(res => {
           console.log(res);
+          let data = res.data.data;
           // 这里会得到rtsp的码流地址，然后进行一些操作
+          if (operator === -1) {
+            this.playVideo(data.rtspUrl, channelUuid);
+          } else {
+            this.videoArr[operator].url = data.rtspUrl;
+            this.videoArr[operator].streamType = data.streamType;
+            this.videoArr.concat();
+          }
         })
         .catch(err => {
           console.log(err);
-          if (operator === -1) {
-            this.playVideo(
-              "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast",
-              channelUuid
-            );
-          } else {
-            this.videoArr[operator].url =
-              "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast" +
-              Math.random();
-            this.videoArr.concat();
-          }
         });
     },
-    playVideo(url, channelUuid) {
+    playVideo(url, channelUuid, streamType) {
       // 根据通道获取到了视频流地址，从而进行播放
       // 遍历videoArr数组，看哪个分路的url为空，则在上面播放
       for (let i = 0; i < this.videoArr.length; i++) {
         if (!this.videoArr[i].url) {
           this.videoArr[i].url = url;
           this.videoArr[i].channelUuid = channelUuid;
+          this.videoArr[i].streamType = streamType;
           // 左边的树添加到右边去播放
           break;
         }
@@ -271,10 +311,10 @@ export default {
         return;
       }
       api2
-        .ctrl({
+        .ctrl(this.videoArr[this.operatorIndex].channelUuid, {
           action, // 操作类型，必填
-          start: "bool", // 开始/结束，必填
-          speed: "int" // 速度，必填
+          start, // 开始/结束，必填
+          speed // 速度，必填
         })
         .then(res => {
           console.log(res);
