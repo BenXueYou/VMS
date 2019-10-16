@@ -85,10 +85,6 @@ export default {
       type: Boolean,
       default: false
     },
-    faceDBSelectedList: {
-      type: Array,
-      default: () => []
-    }
   },
   data() {
     return {
@@ -167,11 +163,8 @@ export default {
         this.$set(item, "id", this.$common.genLocalId());
       }
     },
-    changeSelectList() {
-      this.$emit("update:faceDBSelectedList", this.selectedList);
-    },
     onClickConfirm() {
-      this.changeSelectList();
+      this.$emit("onConfirm", this.selectedList);
       this.$emit("onCancel");
     },
     onClickCancel() {

@@ -3,8 +3,7 @@
     <select-face :isShow="isShowAddFaceDB"
                  ref="selectFace"
                  @onCancel="cancelAddFaceDB"
-                 @onConfirm="confirmAddFaceDB"
-                 :faceDBSelectedList.sync="faceDBSelectedList" />
+                 @onConfirm="confirmAddFaceDB" />
     <div class="access-main">
       <div class="dialog-title">
         <div class="title-text">{{isAdd ? "新建" : "编辑"}}布控</div>
@@ -249,7 +248,8 @@ export default {
     addFaceDB() {
       this.isShowAddFaceDB = true;
     },
-    confirmAddFaceDB() {
+    confirmAddFaceDB(val) {
+      this.faceDBSelectedList = this.$common.copyArray(val, this.faceDBSelectedList);
       this.isShowAddFaceDB = false;
     },
     cancelAddFaceDB() {
@@ -257,8 +257,12 @@ export default {
     },
     addVideoSource() {},
     deleteItem(item) {
+      for (let [i, v] of this.faceDBSelectedList.entries()) {
+        if (v.id === item.id) {
+          this.faceDBSelectedList.splice(i, 1);
+        }
+      }
       this.$refs.selectFace.deleteItem(item);
-      this.$refs.selectFace.changeSelectList();
     }
   },
   watch: {},
