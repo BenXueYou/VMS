@@ -5,6 +5,7 @@ let ip = window.config.ip,
   projectUuid = store.state.home.projectUuid;
 let URLHeader = `${protocolHeader}${ip}/faceconfig-v1/project`;
 let URLHeaderFaceLog = `${protocolHeader}${ip}/facelog-v1/project`;
+let URLHeaderFaceServer = `${protocolHeader}${ip}/faceserver-v1/project`;
 export default {
   // @pengxueyou
   // 获取人脸设备
@@ -16,11 +17,11 @@ export default {
   getTaskDetailChannelAndLibs: (projectUuid,taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
 
   // 日志查询
-  faceComparison1v1: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/faceComparison/1v1`,
-  getSnapshotList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/list`,
-  getRecognizeList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/list`,
-  getRecognizeInfo: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/info`,
-  getAlarmInfoList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/alarm/list`,
+  faceComparison1v1: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/faceComparison/1v1?asgName=${projectUuid}`,
+  getSnapshotList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/list?asgName=${projectUuid}`,
+  getRecognizeList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/list?asgName=${projectUuid}`,
+  getRecognizeInfo: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/info?asgName=${projectUuid}`,
+  getAlarmInfoList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/alarm/list?asgName=${projectUuid}`,
 
   // 文件中转接口
   uploadFileApi: `${protocolHeader}${ip}/fileforward-server-v1/project/${projectUuid}/fileforward/forwardFileToFileSystem`,
@@ -31,6 +32,9 @@ export default {
   //基础设置的接口
   getFaceModuleConfigApi:(projectUuid)=>`${URLHeader}/${projectUuid}/face/config`,
   postFaceModuleConfigApi:(projectUuid)=>`${URLHeader}/${projectUuid}/face/config`,
+
+  // 图片质量检测
+  postImageQuantityVerify:(projectUuid)=>`${URLHeaderFaceServer}/faceserver-v1/project/${projectUuid}/imageQualityVerify`,
 
 
   // @pengxueyou
@@ -51,8 +55,8 @@ export default {
   },
 
   // @fengyawen
-  searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list`,
-  getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
+  searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
+  getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
   getModelList: `${URLHeader}/${projectUuid}/modelStatistics/list`,
   getFaceCaptureAll: `${URLHeader}/${projectUuid}/snapshotStatistics/all/list`,
   getFaceCaptureOne: `${URLHeader}/${projectUuid}/snapshotStatistics/one/list`,

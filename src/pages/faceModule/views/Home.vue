@@ -1,4 +1,3 @@
-
 <template>
 	<div id="home" class="RTask">
 		<el-row type="flex" class="row-bg" justify="center" ref="heightBox">
