@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div class="left_menu">
+    <div class="left_menu header">
       <el-menu :default-active="defaultActive"
                class="el-menu-vertical"
                @open="handleOpen"
