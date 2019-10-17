@@ -83,3 +83,11 @@ export function videoTree(params = {}) {
     params
   });
 }
+export function getCameraInfo(params = {}) {
+  let url = vUrl.getCameraInfoUrl;
+  return axios({
+    method: "GET",
+    url,
+    params
+  });
+}

@@ -38,7 +38,7 @@ Player.prototype.setCanvas = function (canvas) {
 
 Player.prototype.initDecodeWorker = function () {
     var self = this;
-    this.decodeWorker = new Worker("./decoder/decoder.js");
+    this.decodeWorker = new Worker("./static/video/decoder/decoder.js");
     this.decodeWorker.onmessage = function (evt) {
         var objData = evt.data;
         switch (objData.t) {

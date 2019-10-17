@@ -1,6 +1,6 @@
 <template>
   <div class='VideoPlaybackContent'>
-    <left-content></left-content>
+    <left-content @playRtsp="playRtsp"></left-content>
     <div class='right'
          ref='rigth'>
       <div class='vedioWrap'
@@ -13,12 +13,16 @@
                     :width="videoWidth"
                     :height="videoHeight"
                     :IsShowMenu="!!item.url"
+                    :rtspUrl="item.url"
+                    :streamType="item.streamType"
+                    action="playback"
                     @contextmenu="showMenu"
                     @click="ClickViDeoA(index)">
         </video-wrap>
       </div>
       <div class="footer">
-        <control-panel @download="download">
+        <control-panel @download="download"
+                       :data="controlData">
 
         </control-panel>
       </div>
@@ -47,6 +51,7 @@ import downloadDialog from "@/pages/VideoPlayback/components/downloadDialog";
 import localBroadcastDialog from "@/pages/VideoPlayback/components/localBroadcastDialog";
 
 import icons from "@/common/icon.js";
+import * as api2 from "@/pages/VideoPreview/ajax.js";
 
 export default {
   name: "VideoPreview",
@@ -62,6 +67,22 @@ export default {
   },
   data() {
     return {
+      controlData: new Array(16).fill({
+        timeData: [
+          {
+            startTime: "00:00:00",
+            endTime: "02:00:00"
+          },
+          {
+            startTime: "11:00:00",
+            endTime: "13:00:00"
+          },
+          {
+            startTime: "22:00:00",
+            endTime: "24:00:00"
+          }
+        ]
+      }),
       downloadVisible: false,
       screenShotVisible: false,
       videoInfoVisible: false,
@@ -146,6 +167,58 @@ export default {
   },
   destroyed() {},
   methods: {
+    playVideo(url, channelUuid, streamType) {
+      // 根据通道获取到了视频流地址，从而进行播放
+      // 遍历videoArr数组，看哪个分路的url为空，则在上面播放
+      for (let i = 0; i < this.videoArr.length; i++) {
+        if (!this.videoArr[i].url) {
+          this.videoArr[i].url = url;
+          this.videoArr[i].channelUuid = channelUuid;
+          this.videoArr[i].streamType = streamType;
+          // 左边的树添加到右边去播放
+          break;
+        }
+      }
+      this.videoArr.concat();
+    },
+    async playRtsp(arr, sd, ed, streamType) {
+      // 播放rtsp,传过来的可能是多个通道id
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].h5Type === "channel") {
+          let rtspUrl = await this.backup(arr[i].id, sd, ed, "", streamType);
+          this.playVideo(rtspUrl, arr[i].channelUuid, streamType);
+        }
+      }
+    },
+    records(channelUuid, startTime, endTime, videoType, streamType) {
+      api2
+        .records({
+          channelUuid,
+          startTime,
+          endTime,
+          videoType,
+          streamType
+        })
+        .then(res => {
+          console.log(res);
+        });
+    },
+    backup(channelUuid, startTime, endTime, videoType, streamType) {
+      return new Promise((resolve, reject) => {
+        api2
+          .backup({
+            channelUuid,
+            startTime,
+            endTime,
+            videoType,
+            streamType
+          })
+          .then(res => {
+            let data = res.data.data;
+            resolve(data.rtspUrl);
+          });
+      });
+    },
     download() {
       this.downloadVisible = true;
     },
@@ -195,9 +268,26 @@ export default {
         case "图像调节":
           this.imageAdjustVisible = true;
           break;
+        case "主码流":
+          this.switchMaLiu(this.operatorIndex, "main");
+          break;
+        case "辅码流":
+          this.switchMaLiu(this.operatorIndex, "sub");
+          break;
+        case "三码流":
+          this.switchMaLiu(this.operatorIndex, "thrid");
+          break;
         default:
           break;
       }
+    },
+    switchMaLiu(index, streamType) {
+      if (!this.videoArr[index].url) {
+        this.$message.error("该分路没有视频在播放，切换失败！");
+        return;
+      }
+      this.videoArr[index].streamType = streamType;
+      this.videoArr.concat();
     },
     PreviewAreafullScreen() {
       this.setFullScreen(this.$refs.vedioWrap);

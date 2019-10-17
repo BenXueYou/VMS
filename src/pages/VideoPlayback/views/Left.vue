@@ -166,7 +166,7 @@ export default {
       searchText: "",
       tabsIndex: 0,
       devprops: {
-        label: "name",
+        label: "label",
         isLeaf: "leaf"
       },
       props: {
@@ -266,15 +266,29 @@ export default {
         item.leaf = !!item.openFlag;
         return item;
       });
+      data = [
+        {
+          label: "测试",
+          id: "49D2B7299EAAA3AF295E33F03B982D32",
+          h5Type: "channel",
+          leaf: true
+        }
+      ];
       return resolve(data);
     },
     videoTree(parentOrgUuid) {
       let data = parentOrgUuid ? { parentOrgUuid } : {};
       return new Promise((resolve, reject) => {
-        api2.videoTree(data).then(res => {
-          let list = res.data.data || [];
-          resolve(list);
-        });
+        api2
+          .videoTree(data)
+          .then(res => {
+            let list = res.data.data || [];
+            resolve(list);
+          })
+          .catch(err => {
+            console.log(err);
+            resolve([]);
+          });
       });
     },
     devhandleCheckChange() {
@@ -344,7 +358,23 @@ export default {
         d1.getDate() !== d2.getDate()
       ) {
         this.$message.error("请选择同一天时间！");
+        return;
       }
+      // 获取树选中的节点
+      let treeData = [];
+      if (this.activeName === "organiza") {
+        treeData = this.$refs.tree1.getCheckedNodes();
+      } else if (this.activeName === "tag") {
+        treeData = this.$refs.tree2.getCheckedNodes();
+      } else if (this.activeName === "view") {
+        treeData = this.$refs.tree3.getCheckedNodes();
+      }
+      console.log(treeData);
+      if (!treeData.length) {
+        this.$message.error("请选择视频通道!");
+        return;
+      }
+      this.$emit("playRtsp", treeData, this.startDate, this.endDate, "main");
     },
     showAddChildrenDialog() {}
   }

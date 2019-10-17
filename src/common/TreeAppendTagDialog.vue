@@ -8,7 +8,7 @@
 
       <div class="body form-item">
         <label class="label"
-               for>名称：</label>
+               for>{{labelName}}：</label>
         <el-input class="input"
                   v-model="name"></el-input>
       </div>
@@ -32,6 +32,12 @@
 export default {
   name: "TreeChangeNameDialog.vue",
   props: {
+    labelName: {
+      type: String,
+      default() {
+        return "名称";
+      }
+    },
     width: {
       type: String,
       default() {
@@ -99,7 +105,7 @@ export default {
 };
 </script>
 <style lang="scss">
-$labelwidth: 5em;
+$labelwidth: 7em;
 .c {
   .input {
     input {
@@ -123,7 +129,7 @@ $labelwidth: 5em;
 </style>
 
 <style lang="scss" scoped>
-$labelwidth: 5em;
+$labelwidth: 7em;
 .c {
   overflow: hidden;
   .body {

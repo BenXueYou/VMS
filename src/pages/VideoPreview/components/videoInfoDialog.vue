@@ -11,27 +11,27 @@
       <div class="body form-item">
         <label class="label"
                for>设备名称：</label>
-        <span class='name'>XXX设备型号！！</span>
+        <span class='name'>{{devName}}</span>
       </div>
       <div class="body form-item">
         <label class="label"
                for>通道名称：</label>
-        <span class='name'></span>
+        <span class='name'>{{channelName}}</span>
       </div>
       <div class="body form-item">
         <label class="label"
                for>通道类型：</label>
-        <span class='name'></span>
+        <span class='name'>{{channelType}}</span>
       </div>
       <div class="body form-item">
         <label class="label"
                for>经度</label>
-        <span class='name'></span>
+        <span class='name'>{{jd}}</span>
       </div>
       <div class="body form-item">
         <label class="label"
                for>纬度</label>
-        <span class='name'></span>
+        <span class='name'>{{wd}}</span>
       </div>
 
       <div class="body">
@@ -50,6 +50,9 @@
 export default {
   name: "TreeChangeNameDialog.vue",
   props: {
+    videoinfo: {
+      type: Object
+    },
     width: {
       type: String,
       default() {
@@ -83,6 +86,11 @@ export default {
   },
   data() {
     return {
+      devName: "",
+      channelName: "",
+      channelType: "",
+      jd: "",
+      wd: "",
       TreechangeNameDialogVisible: false,
       name: "",
       selectValue: ""
@@ -93,11 +101,6 @@ export default {
   },
   methods: {
     confirm() {
-      if (!this.name) {
-        this.$message.error("标签名称不可以为空!");
-        return;
-      }
-      this.$emit("confirm", this.name);
       this.$emit("update:visible", false);
     },
     close() {
@@ -107,9 +110,17 @@ export default {
   watch: {
     visible(val) {
       if (val) {
-        this.name = this.value;
+        this.devName = this.videoinfo.deviceName;
+        this.channelName = this.videoinfo.channelName;
+        this.channelType = this.videoinfo.channelType;
+        this.jd = "";
+        this.wd = "";
       } else {
-        this.name = "";
+        this.devName = "";
+        this.channelName = "";
+        this.channelType = "";
+        this.jd = "";
+        this.wd = "";
       }
       this.TreechangeNameDialogVisible = this.visible;
     }

@@ -23,8 +23,8 @@
                     :width="videoWidth"
                     :height="videoHeight"
                     :rtspUrl="item.url"
-                    :IsShowMenu="!!item.url"
                     :streamType="item.streamType"
+                    :IsShowMenu="!!item.url"
                     @dragstart="dragstart(index)"
                     @drop="drop(index)"
                     @contextmenu="showMenu"
@@ -54,20 +54,25 @@
       </div>
     </div>
     <video-info-Dialog title="摄像机信息"
+                       :info="videoinfo"
                        :visible.sync="videoInfoVisible"></video-info-Dialog>
     <image-adjust-dialog title="画面调节"
                          :visible.sync="imageAdjustVisible">
     </image-adjust-dialog>
     <screenshot-dialog :visible.sync="screenShotVisible"
                        :src="src">
-
     </screenshot-dialog>
+    <tree-append-tag-dialog @confirm="addView"
+                            title="添加视图"
+                            labelName="视图名称"
+                            :visible.sync="appendViewVisible"></tree-append-tag-dialog>
   </div>
 </template>
 
 <script>
 import LeftContent from "./views/Left";
 import VideoWrap from "@/pages/VideoPreview/components/video";
+import TreeAppendTagDialog from "@/common/TreeAppendTagDialog";
 import videoInfoDialog from "@/pages/VideoPreview/components/videoInfoDialog";
 import imageAdjustDialog from "@/pages/VideoPreview/components/imageAdjustDialog";
 import screenshotDialog from "@/pages/VideoPreview/components/screenshotDialog";
@@ -81,6 +86,7 @@ export default {
   components: {
     LeftContent,
     VideoWrap,
+    TreeAppendTagDialog,
     videoInfoDialog,
     imageAdjustDialog,
     screenshotDialog,
@@ -88,6 +94,8 @@ export default {
   },
   data() {
     return {
+      videoinfo: {},
+      appendViewVisible: false,
       deviceUuid: "", // 正在操作的通道设备的uuid
       screenShotVisible: false,
       videoInfoVisible: false,
@@ -176,36 +184,47 @@ export default {
   },
   destroyed() {},
   methods: {
-    saveShiTu() {
+    addView(name) {
       // 保存视图
-      let data = {};
-      // let data = {
-      //   viewType: string,
-      //   viewInfo: {
-      //     view_name: string
-      //   },
-      //   rowTotal: int8,
-      //   colTotal: int8,
-      //   elements: [
-      //     {
-      //       position: {
-      //         row: int8,
-      //         col: int8
-      //       },
-      //       channelUuid: string
-      //     }
-      //   ],
-      //   videoRadio: {
-      //     width: int,
-      //     height: int
-      //   },
-      //   parentUuid: string
-      // };
+      let elements = this.videoArr.map(item => {
+        return {
+          position: {
+            // 元素位置
+            row: 0, // 行索引
+            col: 0 // 列索引
+          },
+          channelUuid: item.channelUuid, // 通道uuid
+          rtspUrl: item.url, // rtsp url
+          streamType: item.streamType // 流类型
+        };
+      });
+      let data = {
+        viewType: "preview", // 视图类型
+        viewInfo: {
+          view_name: name // 视图名称
+        },
+        rowTotal: this.fenluIndex + 1, // 行总数
+        colTotal: this.fenluIndex + 1, // 列总数
+        elements,
+        videoRadio: {
+          // 视频比例
+          width: 0, // 宽度
+          height: 0 // 高度
+        },
+        parentUuid: "" // 父节点uuid
+      };
       api2.addView(data);
+    },
+    saveShiTu() {
+      this.appendViewVisible = true;
     },
     preset(action, index) {
       if (!this.videoArr[this.operatorIndex].channelUuid) {
         this.$message.error("请先选择播放的视频设备！");
+        return;
+      }
+      if (index === "") {
+        this.$message.error("请选择预置点再进行操作！");
         return;
       }
       api2
@@ -226,12 +245,12 @@ export default {
         .then(res => {
           console.log(res);
           let data = res.data.data;
-          // 这里会得到rtsp的码流地址，然后进行一些操作
+          // 这里会得到rtsp的码流地址，然后进行一些操作,默认是主码流
           if (operator === -1) {
-            this.playVideo(data.rtspUrl, channelUuid);
+            this.playVideo(data.rtspUrl, channelUuid, streamType);
           } else {
             this.videoArr[operator].url = data.rtspUrl;
-            this.videoArr[operator].streamType = data.streamType;
+            this.videoArr[operator].streamType = streamType;
             this.videoArr.concat();
           }
         })
@@ -355,7 +374,19 @@ export default {
           });
           break;
         case "摄像机信息":
-          this.videoInfoVisible = true;
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.videoInfoVisible = true;
+            api2
+              .getCameraInfo({
+                channelUuid: this.videoArr[this.operatorIndex].channelUuid
+              })
+              .then(res => {
+                this.videoinfo = res.data.data;
+              });
+          }
+
           break;
         case "抓图":
           this.screenShot();

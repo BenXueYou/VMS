@@ -160,9 +160,9 @@
         <el-select v-model="yuzhi"
                    placeholder="请选择">
           <el-option v-for="item in yuzhiOptions"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value">
+                     :key="item.presetPoisition"
+                     :label="item.presetPositionUuid"
+                     :value="item.presetPoisition">
           </el-option>
         </el-select>
       </div>
@@ -376,8 +376,8 @@ export default {
         }
       ],
       yuzhiOptions: Array.from({ length: 256 }, (v, i) => ({
-        value: i + 1,
-        label: "预置点" + (i + 1)
+        presetPoisition: i + 1,
+        presetPositionUuid: "预置点" + (i + 1)
       })),
       xunhangOptions: [],
       viewProps: {
@@ -417,6 +417,9 @@ export default {
     getPreset() {
       api2.getPreset({ presetPositionUuid: "" }).then(res => {
         console.log(res);
+        let data = res.data.data;
+        let list = (data && data.list) || [];
+        this.yuzhiOptions = list;
       });
     },
     viewhandleCheckChange() {

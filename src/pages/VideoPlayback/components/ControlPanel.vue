@@ -149,25 +149,7 @@ export default {
   },
   props: {
     data: {
-      type: Array,
-      default() {
-        return new Array(16).fill({
-          timeData: [
-            {
-              startTime: "00:00:00",
-              endTime: "02:00:00"
-            },
-            {
-              startTime: "11:00:00",
-              endTime: "13:00:00"
-            },
-            {
-              startTime: "22:00:00",
-              endTime: "24:00:00"
-            }
-          ]
-        });
-      }
+      type: Array
     }
   },
   data() {

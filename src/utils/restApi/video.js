@@ -30,6 +30,8 @@ export default {
   getViewUrl: `${urlPrefix}/video/view`,
   // 添加视图
   addViewUrl: `${urlPrefix}/video/view`,
+  // 获取摄像机信息
+  getCameraInfoUrl: `${urlPrefix}/video/cameraInfo`,
   // 获取子节点及视频设备通道数据
   // videoTreeUrl: `${zwUrlPrefix}/organization/video/children`
   // 先使用下面的url测试
