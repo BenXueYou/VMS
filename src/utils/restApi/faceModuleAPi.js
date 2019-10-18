@@ -14,7 +14,7 @@ export default {
   getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
 
   // 根据布控任务查询关联的设备和人脸库
-  getTaskDetailChannelAndLibs: (projectUuid,taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
+  getTaskDetailChannelAndLibs: (projectUuid, taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
 
   // 日志查询
   faceComparison1v1: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/faceComparison/1v1?asgName=${projectUuid}`,
@@ -23,18 +23,21 @@ export default {
   getRecognizeInfo: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/info?asgName=${projectUuid}`,
   getAlarmInfoList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/alarm/list?asgName=${projectUuid}`,
 
+  // 根据抓拍的UUid查找人脸ID 判断的是是否有人员轨迹
+  getFaceUuidByFaceCaptureUuid: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/search_faceUuid`,
+
   // 文件中转接口
   uploadFileApi: `${protocolHeader}${ip}/fileforward-server-v1/project/${projectUuid}/fileforward/forwardFileToFileSystem`,
 
   // 声音上传的接口
-  uploadAudioApi:(projectUuid) => `${URLHeader}/${projectUuid}/face/config/sound`,
-  deleteAudioApi:(projectUuid) => `${URLHeader}/${projectUuid}/face/config/sound`,
+  uploadAudioApi: (projectUuid) => `${URLHeader}/${projectUuid}/face/config/sound`,
+  deleteAudioApi: (projectUuid) => `${URLHeader}/${projectUuid}/face/config/sound`,
   //基础设置的接口
-  getFaceModuleConfigApi:(projectUuid)=>`${URLHeader}/${projectUuid}/face/config`,
-  postFaceModuleConfigApi:(projectUuid)=>`${URLHeader}/${projectUuid}/face/config`,
+  getFaceModuleConfigApi: (projectUuid) => `${URLHeader}/${projectUuid}/face/config`,
+  postFaceModuleConfigApi: (projectUuid) => `${URLHeader}/${projectUuid}/face/config`,
 
   // 图片质量检测
-  postImageQuantityVerify:(projectUuid)=>`${URLHeaderFaceServer}/faceserver-v1/project/${projectUuid}/imageQualityVerify`,
+  postImageQuantityVerify: (projectUuid) => `${URLHeaderFaceServer}/faceserver-v1/project/${projectUuid}/imageQualityVerify`,
 
 
   // @pengxueyou

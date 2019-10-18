@@ -4,6 +4,15 @@ import store from '@/store/store.js'; import { Message } from 'element-ui';
 
 let FaceModuleApi = RestApi.api.faceModuleAPi;
 
+export function getFaceUuidByFaceCaptureUuid(data) {
+  let url = FaceModuleApi.getFaceUuidByFaceCaptureUuid(store.state.home.projectUuid);
+  return Axios({
+    method: "GET",
+    url,
+    params: data
+  });
+}
+
 // 基础设置接口
 export function getFaceModuleConfig() {
   let url = FaceModuleApi.getFaceModuleConfigApi(store.state.home.projectUuid);
