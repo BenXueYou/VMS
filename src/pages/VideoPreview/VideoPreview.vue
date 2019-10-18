@@ -3,10 +3,12 @@
     <left-content orgType="device"
                   needType=""
                   tagType="device"
-                  ref='testTree'
+                  ref='leftTree'
                   @playRtsp="playRtsp"
                   @jumpToPlayback="jumpToPlayback"
+                  @updateView="updateView"
                   @ctrl="ctrl"
+                  @openView="openView"
                   @preset="preset"
                   @changetab="changetab"
                   @clickNode="clickNode"
@@ -22,9 +24,9 @@
                     :isActive="operatorIndex===index"
                     :width="videoWidth"
                     :height="videoHeight"
-                    :rtspUrl="item.url"
+                    :rtspUrl="item.rtspUrl"
                     :streamType="item.streamType"
-                    :IsShowMenu="!!item.url"
+                    :IsShowMenu="!!item.rtspUrl"
                     @dragstart="dragstart(index)"
                     @drop="drop(index)"
                     @contextmenu="showMenu"
@@ -102,7 +104,7 @@ export default {
       imageAdjustVisible: false,
       videoArr: [
         {
-          url: "", // 播放的视频 Url
+          rtspUrl: "", // 播放的视频 Url
           streamType: ""
         }
       ],
@@ -184,6 +186,26 @@ export default {
   },
   destroyed() {},
   methods: {
+    openView(data) {
+      // 打开视图
+      this.fenluIndex = data.colTotal - 1;
+      this.initWrapDom();
+      // 打开视图之后，默认选中第一分路的视频
+      this.operatorIndex = 0;
+      this.videoArr = data.elements;
+    },
+    updateView(viewData) {
+      console.log(viewData);
+      api2.updateView(viewData).then(res => {
+        if (res.data.success) {
+          this.$message.success("保存成功！");
+        } else {
+          this.$message.error(res.data.msg);
+        }
+        // 更新视图树结构
+        this.$refs.leftTree.getViewTree();
+      });
+    },
     addView(name) {
       // 保存视图
       let elements = this.videoArr.map(item => {
@@ -194,7 +216,7 @@ export default {
             col: 0 // 列索引
           },
           channelUuid: item.channelUuid, // 通道uuid
-          rtspUrl: item.url, // rtsp url
+          rtspUrl: item.rtspUrl, // rtsp rtspUrl
           streamType: item.streamType // 流类型
         };
       });
@@ -213,7 +235,14 @@ export default {
         },
         parentUuid: "" // 父节点uuid
       };
-      api2.addView(data);
+      api2.addView(data).then(res => {
+        if (res.data.success) {
+          this.$message.success("保存视图成功！");
+        } else {
+          this.$message.error(res.data.msg);
+        }
+        this.$refs.leftTree.getViewTree();
+      });
     },
     saveShiTu() {
       this.appendViewVisible = true;
@@ -249,7 +278,7 @@ export default {
           if (operator === -1) {
             this.playVideo(data.rtspUrl, channelUuid, streamType);
           } else {
-            this.videoArr[operator].url = data.rtspUrl;
+            this.videoArr[operator].rtspUrl = data.rtspUrl;
             this.videoArr[operator].streamType = streamType;
             this.videoArr.concat();
           }
@@ -258,12 +287,12 @@ export default {
           console.log(err);
         });
     },
-    playVideo(url, channelUuid, streamType) {
+    playVideo(rtspUrl, channelUuid, streamType) {
       // 根据通道获取到了视频流地址，从而进行播放
-      // 遍历videoArr数组，看哪个分路的url为空，则在上面播放
+      // 遍历videoArr数组，看哪个分路的rtspUrl为空，则在上面播放
       for (let i = 0; i < this.videoArr.length; i++) {
-        if (!this.videoArr[i].url) {
-          this.videoArr[i].url = url;
+        if (!this.videoArr[i].rtspUrl) {
+          this.videoArr[i].rtspUrl = rtspUrl;
           this.videoArr[i].channelUuid = channelUuid;
           this.videoArr[i].streamType = streamType;
           // 左边的树添加到右边去播放
@@ -312,7 +341,7 @@ export default {
       let num = Array.from(
         { length: this.fenlu[this.fenluIndex] },
         (item, index) => {
-          item = { url: "" };
+          item = { rtspUrl: "" };
           if (this.videoArr[index]) {
             item = this.videoArr[index];
           }
@@ -362,14 +391,14 @@ export default {
       console.log(value);
       switch (value) {
         case "关闭窗口":
-          // 清空url，则触发video组件stop事件
-          this.videoArr[this.operatorIndex].url = "";
+          // 清空rtspUrl，则触发video组件stop事件
+          this.videoArr[this.operatorIndex].rtspUrl = "";
           this.videoArr.concat();
           break;
         case "关闭所有窗口":
-          // 把所有分路的url都清空
+          // 把所有分路的rtspUrl都清空
           this.videoArr = this.videoArr.map(item => {
-            item.url = "";
+            item.rtspUrl = "";
             return item;
           });
           break;
@@ -434,7 +463,7 @@ export default {
       });
     },
     switchMaLiu(index, streamType) {
-      if (!this.videoArr[index].url) {
+      if (!this.videoArr[index].rtspUrl) {
         this.$message.error("该分路没有视频在播放，切换失败！");
         return;
       }

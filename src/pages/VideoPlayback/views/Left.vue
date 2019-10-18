@@ -9,10 +9,10 @@
              :src="icons.search"
              alt>
       </el-input>
-      <img @click="showAddChildrenDialog"
+      <!-- <img @click="showAddChildrenDialog"
            v-show="tabsIndex==2"
            :src="icons.add"
-           alt>
+           alt> -->
     </div>
     <el-tabs v-model="activeName"
              class="tabs"
@@ -182,27 +182,27 @@ export default {
         label: "viewName"
       },
       activeName: "organiza",
-      viewTreeData: [
-        {
-          viewName: "一级 1"
-        },
-        {
-          viewName: "一级 2"
-        },
-        {
-          viewName: "一级 3"
-        }
-      ],
+      viewTreeData: [],
       operatorData: {}
     };
   },
   methods: {
     deleteNode() {
       // 删除该视图 this.operatorData
+      api2.deleteView(this.operatorData.viewUuid).then(res => {
+        if (res.data.success) {
+          this.$message.success("删除成功！");
+        } else {
+          this.$message.error(res.data.msg);
+        }
+        this.getViewTree();
+      });
     },
-    changeName(val) {
-      // 确定修改视图名字
-      console.trace(val);
+    changeName(name) {
+      // 修改视图的名字
+      console.log(name, this.operatorData);
+      this.operatorData.viewInfo.view_name = name;
+      this.$emit("updateView", this.operatorData);
     },
     saveClickData(node, data) {
       // 点击三角菜单保存树节点信息
@@ -216,6 +216,7 @@ export default {
         // this.getPreviewInfo(this.operatorData.channelUuid);
       } else if (command === "playback") {
       } else if (command === "view") {
+        this.$emit("openView", this.operatorData);
       } else if (command === "renameView") {
         this.nodeValue = this.operatorData.viewName;
         this.changeNameDialogVisible = true;
@@ -241,15 +242,28 @@ export default {
       if (tab.index === "0") {
       } else if (tab.index === "1") {
       } else if (tab.index === "2") {
-        this.getViewData();
+        this.getViewTree();
       }
     },
-    getViewData() {
-      api2.getView().then(res => {
-        console.log(res);
-        let data = res.data.data.list || [];
-        this.viewTreeData = data;
-      });
+    getViewTree() {
+      api2
+        .getView({
+          viewUuid: "",
+          viewType: "playback"
+        })
+        .then(res => {
+          console.log(res);
+          let data = res.data.data;
+          let list = (data && data.list) || [] || [];
+          this.viewTreeData = list
+            .filter(item => {
+              return item.viewType === "playback";
+            })
+            .map(item => {
+              item.viewName = item.viewInfo.view_name;
+              return item;
+            });
+        });
     },
     handleCheckChange(data, checked, indeterminate) {
       // 树上的节点选中发生了改变

@@ -9,10 +9,10 @@
              :src="icons.search"
              alt>
       </el-input>
-      <img v-if="activeName==='view'"
+      <!-- <img v-if="activeName==='view'"
            @click="showAddTagDialog"
            :src="icons.addSign"
-           alt>
+           alt> -->
     </div>
 
     <el-tabs v-model="activeName"
@@ -140,6 +140,7 @@
           步长1
         </label>
         <el-slider class='slide'
+                   :max="10"
                    v-model="steplen"></el-slider>
         <span class="num">
           {{steplen}}
@@ -295,7 +296,7 @@ export default {
   data() {
     return {
       operatorData: "", // 存储树菜单正在操作的节点
-      changeTitle: "",
+      changeTitle: "视图重命名",
       addTitle: "",
       showOrgDialogVisible: false,
       VideoOprName: "",
@@ -368,7 +369,7 @@ export default {
       value: "yuzhi",
       yuzhi: "",
       xunhang: "",
-      steplen: 30,
+      steplen: 5,
       DOptions: [
         {
           value: "yuzhi",
@@ -431,11 +432,13 @@ export default {
     },
     handleCommand(command) {
       console.log(command);
+      console.log(this.operatorData);
       if (command === "video") {
         // 打开视频操作
         this.getPreviewInfo(this.operatorData.id);
       } else if (command === "playback") {
       } else if (command === "view") {
+        this.$emit("openView", this.operatorData);
       } else if (command === "renameView") {
         this.nodeValue = this.operatorData.viewName;
         this.changeNameDialogVisible = true;
@@ -601,10 +604,21 @@ export default {
       // 获取视图
       api2
         .getView({
-          viewUuid: ""
+          viewUuid: "",
+          viewType: "preview"
         })
         .then(res => {
           console.log(res);
+          let data = res.data.data;
+          let list = (data && data.list) || [] || [];
+          this.viewTreeData = list
+            .filter(item => {
+              return item.viewType === "preview";
+            })
+            .map(item => {
+              item.viewName = item.viewInfo.view_name;
+              return item;
+            });
         });
     },
     showAddChildrenDialog() {
@@ -1115,61 +1129,10 @@ export default {
       });
     },
     changeName(name) {
-      // if (this.treeName === "tree1") {
-      //   api
-      //     .updateOrg({
-      //       orgName: name,
-      //       orgUuid: this.orgUuid,
-      //       version: this.version
-      //     })
-      //     .then(res => {
-      //       if (res.data.success) {
-      //         // this.getOrgTree();
-      //         // 当前节点更新之后，怎么刷新呢
-      //         // this.$refs[this.treeName].operator({
-      //         //   operator: "changeName",
-      //         //   node: this.parent,
-      //         //   value: name
-      //         // });
-      //         // 返回来有一个version版本号，把这个version字段也更新了
-      //         // alert(res.data.data.version);
-      //         this.$refs[this.treeName].operator({
-      //           operator: "changeName",
-      //           version: res.data.data.version,
-      //           node: this.Treeparent,
-      //           value: name
-      //         });
-      //         this.nodeValue = name;
-      //         this.version = res.data.data.version;
-      //         // 更新options;
-      //         // console.log(this.options);
-      //         for (let i = 0; i < this.options.length; i++) {
-      //           if (this.options[i].id === this.orgUuid) {
-      //             this.options[i].orgName = name;
-      //             this.options[i].label = name;
-      //             this.options[i].version = this.version;
-      //           }
-      //         }
-      //         this.$emit("clickNode", {
-      //           id: this.orgUuid,
-      //           orgName: name
-      //         });
-      //       }
-      //     });
-      // } else if (this.treeName === "tree2") {
-      //   api
-      //     .updateTagUrl({
-      //       tagName: name,
-      //       tagType: this.tagType,
-      //       tagUuid: this.orgUuid,
-      //       version: this.version
-      //     })
-      //     .then(res => {
-      //       if (res.data.success) {
-      //         this.getOrgTag();
-      //       }
-      //     });
-      // }
+      // 修改视图的名字
+      console.log(name, this.operatorData);
+      this.operatorData.viewInfo.view_name = name;
+      this.$emit("updateView", this.operatorData);
     },
     moveupNode() {
       if (this.treeName === "tree2") {
@@ -1231,30 +1194,15 @@ export default {
       }
     },
     deleteNode() {
-      // // alert(1);
-      // if (this.treeName === "tree1") {
-      //   api.deleteOrgTree(this.orgUuid).then(res => {
-      //     // this.Treeparent = "";
-      //     // this.parentOrgUuid = "";
-      //     // this.data1 = [];
-      //     // this.orgUuid = "";
-      //     if (res.data.success) {
-      //       this.$message.success("删除成功！");
-      //       // this.getOrgTree(true);
-      //       this.getOrgTree2();
-      //     }
-      //   });
-      // } else {
-      //   api.deleteTag(this.orgUuid).then(res => {
-      //     // this.Treeparent = "";
-      //     // this.data1 = [];
-      //     // this.orgUuid = "";
-      //     if (res.data.success) {
-      //       this.$message.success("删除成功！");
-      //       this.getOrgTag();
-      //     }
-      //   });
-      // }
+      // 确认删除视图
+      api2.deleteView(this.operatorData.viewUuid).then(res => {
+        if (res.data.success) {
+          this.$message.success("删除成功！");
+        } else {
+          this.$message.error(res.data.msg);
+        }
+        this.getViewTree();
+      });
     },
     handleClick(tab, event) {
       this.treeName = ["tree1", "tree2", "tree3"][tab.index];
@@ -1269,6 +1217,7 @@ export default {
       } else if (tab.index === "1") {
         this.getOrgTag();
       } else if (tab.index === "2") {
+        // 获取视图代码
         this.getViewTree();
       }
       this.$emit("changetab", tab);

@@ -54,7 +54,8 @@
         </li>
         <li style='width:70px;'>
           <div class='center'
-               style='cursor:pointer;'><img :src="icons.save"
+               style='cursor:pointer;'
+               @click='saveView'><img :src="icons.save"
                  alt="">
             保存视图</div>
         </li>
@@ -169,6 +170,9 @@ export default {
     }
   },
   methods: {
+    saveView() {
+      this.$emit("saveView");
+    },
     download() {
       this.$emit("download");
     },

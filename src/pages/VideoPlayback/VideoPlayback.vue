@@ -1,6 +1,9 @@
 <template>
   <div class='VideoPlaybackContent'>
-    <left-content @playRtsp="playRtsp"></left-content>
+    <left-content @playRtsp="playRtsp"
+                  @updateView="updateView"
+                  ref="leftTree"
+                  @openView="openView"></left-content>
     <div class='right'
          ref='rigth'>
       <div class='vedioWrap'
@@ -22,6 +25,7 @@
       </div>
       <div class="footer">
         <control-panel @download="download"
+                       @saveView="saveView"
                        :data="controlData">
 
         </control-panel>
@@ -37,11 +41,17 @@
     </screenshot-dialog>
     <download-dialog :visible.sync="downloadVisible"></download-dialog>
     <local-broadcast-dialog></local-broadcast-dialog>
+    <tree-append-tag-dialog @confirm="addView"
+                            title="添加视图"
+                            labelName="视图名称"
+                            :visible.sync="appendViewVisible"></tree-append-tag-dialog>
+
   </div>
 </template>
 
 <script>
 import LeftContent from "./views/Left";
+import TreeAppendTagDialog from "@/common/TreeAppendTagDialog";
 import VideoWrap from "@/pages/VideoPreview/components/video";
 import ControlPanel from "@/pages/VideoPlayback/components/ControlPanel";
 import videoInfoDialog from "@/pages/VideoPreview/components/videoInfoDialog";
@@ -58,6 +68,7 @@ export default {
   components: {
     LeftContent,
     VideoWrap,
+    TreeAppendTagDialog,
     videoInfoDialog,
     imageAdjustDialog,
     screenshotDialog,
@@ -67,6 +78,7 @@ export default {
   },
   data() {
     return {
+      appendViewVisible: false,
       controlData: new Array(16).fill({
         timeData: [
           {
@@ -167,6 +179,66 @@ export default {
   },
   destroyed() {},
   methods: {
+    updateView(viewData) {
+      api2.updateView(viewData).then(res => {
+        if (res.data.success) {
+          this.$message.success("保存成功！");
+        } else {
+          this.$message.error(res.data.msg);
+        }
+        // 更新视图树结构
+        this.$refs.leftTree.getViewTree();
+      });
+    },
+    openView(data) {
+      // 打开视图
+      this.fenluIndex = data.colTotal - 1;
+      this.initWrapDom();
+      // 打开视图之后，默认选中第一分路的视频
+      this.operatorIndex = 0;
+      this.videoArr = data.elements;
+    },
+    addView(name) {
+      // 保存视图
+      let elements = this.videoArr.map(item => {
+        return {
+          position: {
+            // 元素位置
+            row: 0, // 行索引
+            col: 0 // 列索引
+          },
+          channelUuid: item.channelUuid, // 通道uuid
+          rtspUrl: item.rtspUrl, // rtsp rtspUrl
+          streamType: item.streamType // 流类型
+        };
+      });
+      let data = {
+        viewType: "playback", // 视图类型
+        viewInfo: {
+          view_name: name // 视图名称
+        },
+        rowTotal: this.fenluIndex + 1, // 行总数
+        colTotal: this.fenluIndex + 1, // 列总数
+        elements,
+        videoRadio: {
+          // 视频比例
+          width: 0, // 宽度
+          height: 0 // 高度
+        },
+        parentUuid: "" // 父节点uuid
+      };
+      api2.addView(data).then(res => {
+        if (res.data.success) {
+          this.$message.success("保存视图成功！");
+        } else {
+          this.$message.error(res.data.msg);
+        }
+        this.$refs.leftTree.getViewTree();
+      });
+    },
+    saveView() {
+      this.appendViewVisible = true;
+    },
     playVideo(url, channelUuid, streamType) {
       // 根据通道获取到了视频流地址，从而进行播放
       // 遍历videoArr数组，看哪个分路的url为空，则在上面播放
@@ -185,23 +257,28 @@ export default {
       // 播放rtsp,传过来的可能是多个通道id
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].h5Type === "channel") {
-          let rtspUrl = await this.backup(arr[i].id, sd, ed, "", streamType);
-          this.playVideo(rtspUrl, arr[i].channelUuid, streamType);
+          // let rtspUrl = await this.backup(arr[i].id, sd, ed, "", streamType);
+          // this.playVideo(rtspUrl, arr[i].channelUuid, streamType);
+          // 这里根据通道uuid来获取所有设备的播放时间的，播放由用户点击右边的控制面板再播放
         }
       }
     },
     records(channelUuid, startTime, endTime, videoType, streamType) {
-      api2
-        .records({
-          channelUuid,
-          startTime,
-          endTime,
-          videoType,
-          streamType
-        })
-        .then(res => {
-          console.log(res);
-        });
+      return new Promise((resolve, reject) => {
+        api2
+          .records({
+            channelUuid,
+            startTime,
+            endTime,
+            videoType,
+            streamType
+          })
+          .then(res => {
+            console.log(res);
+            // let data = res.data.data;
+            // let videos = (data && data.videos) || [] || [];
+          });
+      });
     },
     backup(channelUuid, startTime, endTime, videoType, streamType) {
       return new Promise((resolve, reject) => {

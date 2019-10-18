@@ -67,10 +67,25 @@ export function getView(params = {}) {
     params
   });
 }
+export function deleteView(uuid) {
+  let url = vUrl.deleteViewUrl + `?viewUuid=${uuid}`;
+  return axios({
+    method: "DELETE",
+    url
+  });
+}
 export function addView(data) {
   let url = vUrl.addViewUrl;
   return axios({
     method: "POST",
+    url,
+    data
+  });
+}
+export function updateView(data) {
+  let url = vUrl.updateViewUrl;
+  return axios({
+    method: "PUT",
     url,
     data
   });
