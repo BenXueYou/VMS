@@ -208,6 +208,7 @@ import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import ImgCard from "@/pages/faceModule/components/ImgCard.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
 import * as api from "@/pages/faceModule/api.js";
+import { mapState } from "vuex";
 export default {
   name: "home",
   components: {
@@ -278,7 +279,16 @@ export default {
       stompClient: null
     };
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      CapturePhotoArr: state => {
+        return state.home.CapturePhotoArr;
+      },
+      RecognizationArr: state => {
+        return state.home.RecognizationArr;
+      },
+    })
+  },
   mounted: function() {
     this.vlc = null;
     let w = this.WIDTH();
@@ -327,7 +337,16 @@ export default {
       player.innerHTML = null;
     }
   },
-  watch: {},
+  watch: {
+    CapturePhotoArr(val) {
+      console.log(val);
+      this.shootPhotoList = val;
+    },
+    RecognizationArr(val) {
+      console.log(val);
+      this.comparePhotoList = val;
+    }
+  },
   methods: {
     // 点击设备树的事件
     handleNodeClick(data) {
@@ -605,7 +624,7 @@ export default {
 			this.websocket = new SockJS(
 				window.config.protocolHeader + window.config.socketIP
 			);
-			this.stompClient = Stomp.over(socket);
+			this.stompClient = Stomp.over(this.websocket);
 			this.stompClient.connect(
 				{ projectUuid: this.$store.state.home.projectUuid },
 				frame => {
