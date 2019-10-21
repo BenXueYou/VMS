@@ -16,13 +16,19 @@
 			>
 				<el-tree
 					ref="deviceTree"
+					:indent="10"
 					class="popverTreeClass"
-					:check-on-click-node="true"
-					default-expand-all
 					:data="treeData"
+					lazy
 					node-key="id"
+					:load="loadNode"
 					:props="defaultProps"
+					:check-strictly="true"
+					:check-on-click-node="true"
+					:expand-on-click-node="false"
+					:highlight-current="true"
 					@node-click="handleNodeClick"
+					:default-expanded-keys="defaultExpandedKeys"
 				></el-tree>
 			</el-row>
 			<el-row class="popverTreeParent" style="width:65%;background: #202124;">
@@ -44,9 +50,9 @@
 						<el-radio
 							style="margin:10px 15px 9px;font-family: PingFangSC-Regular;font-size: 14px;color: #AAAAAA;letter-spacing: 0;"
 							v-for="item in channels"
-							:key="item.id"
-							:label="item"
-						>{{item.label}}</el-radio>
+							:key="item.channelUuid"
+							:label="item.channelName"
+						>{{item.channelName}}</el-radio>
 					</el-radio-group>
 					<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
 				</template>
@@ -60,9 +66,9 @@
 						<el-checkbox
 							class="checkBoxClass"
 							v-for="item in channels"
-							:key="item.id"
-							:label="item"
-						>{{item.label}}</el-checkbox>
+							:key="item.channelUuid"
+							:label="item.channelName"
+						>{{item.channelName}}</el-checkbox>
 					</el-checkbox-group>
 					<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
 				</template>
@@ -83,6 +89,7 @@
 // import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
 // import BigImg from "./BigImg.vue";
 // var cityOptions = [];
+import * as api from "@/pages/faceModule/api.js";
 export default {
   name: "elPopverTree",
   props: {
@@ -115,6 +122,7 @@ export default {
 
   data: function() {
     return {
+      defaultExpandedKeys: [],
       checkedChannel: [], // 此变量的类型不可定义为字符串
       defaultProps: {
         children: "children",
@@ -141,21 +149,15 @@ export default {
       // 若单选框则默认设置第一阶段的叶子
       if (this.boxType === "radio") {
         this.treeData = JSON.parse(JSON.stringify(this.channelInfoList));
-        var arr = [];
-        arr = this.getInitChannelInfoList(this.channelInfoList);
-        this.channels = arr;
-        this.checkedChannel = arr[0];
-        this.checkedChannelName = arr[0].label;
+        this.handleNodeClick(this.treeData[0]);
+        this.checkedChannel = this.channels[0];
+        this.checkedChannelName = this.channels[0].label;
         this.$emit("getRadioDefaultData", this.checkedChannel);
       } else {
         if (this.checkedChannelKeys && this.checkedChannelKeys.length) {
           this.channels = [];
           this.checkedChannel = [];
-          for (let i = 0; i < this.checkedChannelKeys.length; i++) {
-            var id = this.checkedChannelKeys[i];
-            var _this = this;
-            _this.getChannelInfoList(_this.channelInfoList, id, _this);
-          }
+          this.channels = this.checkedChannelKeys;
           this.checkedChannel = this.channels;
           this.checkedChannelName = "";
           for (let i = 0; i < this.checkedChannel.length; i++) {
@@ -164,32 +166,14 @@ export default {
           }
         } else {
           this.channels = [];
-          this.getChildren(this.channelInfoList, this.channels);
+          this.handleNodeClick(this.channelInfoList[0]);
           this.checkedChannel = this.channels;
         }
       }
     }
   },
 
-  mounted: function(e) {
-    // 若设置了默认选中的节点
-    // if(this.checkedChannelKeys && this.checkedChannelKeys.length){
-    //     this.channels = [];
-    //     this.checkedChannel = [];
-    //     for(var i=0;i<this.checkedChannelKeys.length;i++){
-    //       var id = this.checkedChannelKeys[i];
-    //       var _this = this;
-    //       _this.getChannelInfoList(_this.channelInfoList, id, _this);
-    //     }
-    //     this.checkedChannel = this.channels;
-    //     this.checkedChannelName = '';
-    //     for(var i=0;i<this.checkedChannel.length;i++){
-    //       this.checkedChannelName += this.checkedChannel[i].label;
-    //       this.checkedChannelName += ',';
-    //     }
-    // }else{
-    // }
-  },
+  mounted: function(e) {},
   activated: function() {
     console.log("刷新页面");
   },
@@ -227,21 +211,19 @@ export default {
     show() {
       console.log("--------show-------");
       this.treeData = JSON.parse(JSON.stringify(this.channelInfoList));
-      this.hasChildren(this.treeData);
+      this.handleNodeClick(this.treeData[0]);
       // 若设置了默认选中的节点
       if (this.checkedChannelKeys && this.checkedChannelKeys.length) {
-        this.channels = [];
         this.checkedChannel = [];
-        for (let i = 0; i < this.checkedChannelKeys.length; i++) {
-          var id = this.checkedChannelKeys[i];
-          var _this = this;
-          _this.getChannelInfoList(_this.channelInfoList, id, _this);
-        }
-        this.checkedChannel = this.channels;
         this.checkedChannelName = "";
-        for (let i = 0; i < this.checkedChannel.length; i++) {
-          this.checkedChannelName += this.checkedChannel[i].label;
-          this.checkedChannelName += ",";
+        for (let i = 0; i < this.checkedChannelKeys.length; i++) {
+          for (let j = 0; j < this.channels.length; j++) {
+            if (this.checkedChannelKeys[i] === this.channels[j].id) {
+              this.checkedChannel.push(this.channels[j]);
+              this.checkedChannelName += this.channels[i].label;
+              this.checkedChannelName += ",";
+            }
+          }
         }
       } else {
         // 默认展示所有节点
@@ -250,7 +232,7 @@ export default {
         }
         if (this.boxType !== "radio") {
           this.channels = [];
-          this.getChildren(this.channelInfoList, this.channels);
+          this.handleNodeClick(this.channelInfoList[0]);
           this.checkedChannel = this.channels;
         }
       }
@@ -274,7 +256,7 @@ export default {
         this.checkedChannelName = "全部";
         if (this.boxType !== "radio") {
           this.channels = [];
-          this.getChildren(this.channelInfoList, this.channels);
+          this.handleNodeClick(this.channelInfoList[0]);
           this.checkedChannel = this.channels;
         }
       }
@@ -298,49 +280,48 @@ export default {
 					checkedCount > 0 && checkedCount < this.channels.length;
       }
     },
-    // 点击左边设备树的事件
-    handleNodeClick(data, node) {
-      console.log(this.treeData);
-      if (data) {
-        this.channels = [];
-        var _this = this;
-        _this.getChannelInfoList(_this.channelInfoList, data.id, _this);
-        _this.checkedChannel = [];
-        _this.checkedChannelName = "";
-      }
-    },
-    // 递归查找被选择的设备节点的通道列表
-    getChannelInfoList(data, id, _this) {
-      for (var index = 0; index < data.length; index++) {
-        if (data[index].id === id) {
-          var arr = data[index].children;
-          if (!arr) {
-            arr = [];
-            arr.push(data[index]);
+    loadNode(node, resolve) {
+      api
+        .getFaceDeviceList({ parentOrgUuid: node.data.id })
+        .then(res => {
+          if (res.data.success && res.data.data) {
+            let data = res.data.data;
+            for (let i = 0, len = data.length; i < len; i++) {
+              if (parseInt(data[i].nextCount) === 0) {
+                data[i].isLeaf = true;
+                this.$set(data[i], "isLeaf", true);
+              }
+            }
+            resolve(data);
+          } else {
+            resolve([]);
           }
-          _this.getChildren(arr, _this.channels);
-          break;
-        } else {
-          if (!data[index].children || data[index].children.length === 0) {
-            continue;
-          }
-          this.getChannelInfoList(data[index].children, id, _this);
-        }
-      }
+        })
+        .catch(() => {
+          resolve([]);
+        });
     },
-    // 获取子节点的叶子
-    getChildren(data, arr) {
-      if (!data || data.length === 0) {
-        return;
-      }
-      for (let index = 0; index < data.length; index++) {
-        if (!data[index].children) {
-          arr.push(JSON.parse(JSON.stringify(data[index])));
-        } else {
-          this.getChildren(data[index].children, arr);
-        }
-      }
-    }
+    // 点击设备树的事件
+    /**
+     *  "channelUuid": "string",  通道UUID
+        "channelName": "string",通道名称
+    		"nickName": "string",昵称
+    		"channelType": "int",通道类型
+    		"deviceUuid": "string",设备UUID
+     */
+    handleNodeClick(data) {
+      api
+        .getDeviceChannelList({ parentOrgUuid: data.id })
+        .then(res => {
+          if (res.data.success && res.data.data) {
+            this.channels = res.data.data;
+          } else {
+            console.log(res.data.data);
+            this.$message({ type: "warning", message: "查询数据为空" });
+          }
+        })
+        .catch(() => {});
+    },
   }
 };
 // const ArrayObj = [

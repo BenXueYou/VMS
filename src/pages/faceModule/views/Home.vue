@@ -19,9 +19,16 @@
 							<el-row class="taskParent taskParentPopoverBox">
 								<el-tree
 									ref="deviceTree"
-									:data="deviceTreeList"
-									default-expand-all
 									:props="defaultProps"
+									:check-strictly="true"
+									:highlight-current="true"
+									:indent="10"
+									:expand-on-click-node="false"
+									:data="deviceTreeList"
+									lazy
+									:load="loadNode"
+									node-key="id"
+									:default-expanded-keys="defaultExpandedKeys"
 									@node-click="handleNodeClick"
 								></el-tree>
 							</el-row>
@@ -276,7 +283,8 @@ export default {
       vlc: null,
       options: new Array("rtsp-tcp"),
       dialogfullscreenLoading: false,
-      stompClient: null
+      stompClient: null,
+      defaultExpandedKeys: []
     };
   },
   computed: {
@@ -286,7 +294,7 @@ export default {
       },
       RecognizationArr: state => {
         return state.home.RecognizationArr;
-      },
+      }
     })
   },
   mounted: function() {
@@ -313,15 +321,9 @@ export default {
       });
       that.footerHeight = (3 * h) / 10 + "px";
       that.asideWidth = w / 3 - 40 + "px";
-      // that.drawLine();
     });
-    var player = document.getElementById("player");
-    player.innerHTML = this.vlcObj;
-    this.vlc = document.getElementById("vlc");
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    this.checkedChannel = this.$store.getters.getCheckedChannel;
-    this.rtspAddress = this.$store.getters.getCheckedHMRtspUrl;
   },
 
   destroyed: function() {
@@ -348,88 +350,70 @@ export default {
     }
   },
   methods: {
+    loadNode(node, resolve) {
+      api
+        .getFaceDeviceList({ parentOrgUuid: node.data.id })
+        .then(res => {
+          if (res.data.success && res.data.data) {
+            let data = res.data.data;
+            for (let i = 0, len = data.length; i < len; i++) {
+              if (parseInt(data[i].nextCount) === 0) {
+                data[i].isLeaf = true;
+                this.$set(data[i], "isLeaf", true);
+              }
+            }
+            resolve(data);
+          } else {
+            resolve([]);
+          }
+        })
+        .catch(() => {
+          resolve([]);
+        });
+    },
     // 点击设备树的事件
+    /**
+     *  "channelUuid": "string",  通道UUID
+        "channelName": "string",通道名称
+    		"nickName": "string",昵称
+    		"channelType": "int",通道类型
+    		"deviceUuid": "string",设备UUID
+     */
     handleNodeClick(data) {
-      if (data) {
-        this.channelInfoList = [];
-        var _this = this;
-        _this.getChannelInfoList(_this.deviceDataList, data.id, _this);
-      }
-    },
-    // 递归查找被选择的设备节点的通道列表
-    getChannelInfoList(data, id, _this) {
-      for (var index = 0; index < data.length; index++) {
-        if (data[index].id === id) {
-          var arr = data[index].children;
-          _this.getChildren(arr, _this.channelInfoList);
-          break;
-        } else {
-          if (!data[index].children || data[index].children.length === 0) {
-            continue;
+      api
+        .getDeviceChannelList({ parentOrgUuid: data.id })
+        .then(res => {
+          if (res.data.success && res.data.data) {
+            this.channelInfoList = res.data.data;
+          } else {
+            console.log(res.data.data);
+            this.$message({type: 'warning', message: '查询数据为空'});
           }
-          this.getChannelInfoList(data[index].children, id, _this);
-        }
-      }
+        })
+        .catch(() => {});
     },
-    // 获取子节点的叶子
-    getChildren(data, arr) {
-      if (!data || data.length === 0) {
-        return;
-      }
-      for (let index = 0; index < data.length; index++) {
-        if (data[index].children === null) {
-          arr.push(JSON.parse(JSON.stringify(data[index])));
-        } else {
-          this.getChildren(data[index].children, arr);
-        }
-      }
-    },
+
     // 获取设备列表
-    getDeviceList(isBool) {
-      var _this = this;
-      _this.$store.dispatch("getDeviceList", false).then(res => {
-        if (res.result === 0) {
-          var treeArray = res.data;
-          _this.deviceTreeList = res.data;
-          // 深拷贝保存一份源数据
-          _this.deviceDataList = JSON.parse(JSON.stringify(treeArray));
-          _this.$store.commit("setDeviceList", _this.deviceDataList);
-
-          _this.channelInfoList = [];
-          // 默认通道列表
-          _this.getChildren(_this.deviceDataList, _this.channelInfoList);
-
-          // 默认的通道id list
-          _this.initChannelInfoList(_this.channelInfoList, isBool);
-
-          if (isBool) {
-            _this.getRtspInChannelUuid(_this.channelInfoList[0].id, isBool);
-          }
-          // 页面刚进入时开启长连接
-          _this.initWebSocket();
-
-          // 递归去通道
-          _this.hasChildren(_this.deviceTreeList);
-        } else {
-          _this.$message({ message: "设备列表更新失败", type: "error" });
-        }
-      });
+    getDeviceList(uuid) {
+      let data = { parentOrgUuid: uuid };
+      api
+        .getFaceDeviceList(data)
+        .then(res => {
+          api
+            .getFaceDeviceList(data)
+            .then(res => {
+              if (res.data.success && res.data.data) {
+                this.deviceTreeList = [];
+                this.deviceTreeList.push(res.data.data);
+                this.defaultExpandedKeys = [];
+                this.defaultExpandedKeys.push(this.deviceTreeList[0].id);
+              } else {
+              }
+            })
+            .catch(() => {});
+        })
+        .catch(() => {});
     },
-    // 递归去掉设备树的通道节点，建立设备树节点
-    hasChildren(data) {
-      if (!data && data.length === 0) {
-        return;
-      }
-      for (let index = 0; index < data.length; index++) {
-        if (data[index].children === null) {
-          data.splice(index, 1);
-          index = index - 1;
-        } else {
-          this.hasChildren(data[index].children);
-        }
-      }
-    },
-
     // 布控任务列表
     getTaskList() {
       this.taskList = [];
@@ -490,7 +474,6 @@ export default {
       // 更新抓拍数据和统计数据
       this.todayShootCount = 0;
       this.getPhotoList();
-
       if (this.footerLiftType === true) {
         // 获取人脸统计
         this.getPhotoStaticList();

@@ -9,7 +9,8 @@ let URLHeaderFaceServer = `${protocolHeader}${ip}/faceserver-v1/project`;
 export default {
   // @pengxueyou
   // 获取人脸设备
-  getFaceDeviceList: projectUuid => `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}`,
+  getFaceDeviceList: projectUuid => `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/organization/video/children`,
+  getDeviceChannelList: projectUuid => `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/organization/video/channel`,
   // 获取布控任务
   getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
 

@@ -1,8 +1,28 @@
 import Axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
-import store from '@/store/store.js'; import { Message } from 'element-ui';
+import store from '@/store/store.js';
+import { Message } from 'element-ui';
 
 let FaceModuleApi = RestApi.api.faceModuleAPi;
+
+export function getFaceDeviceList(data) {
+  if (data) { data.projectUuid = store.state.home.projectUuid; }
+  let url = FaceModuleApi.getFaceDeviceList(store.state.home.projectUuid);
+  return Axios({
+    method: 'GET',
+    url,
+    params: data
+  });
+}
+export function getDeviceChannelList(data) {
+  if (data) { data.projectUuid = store.state.home.projectUuid; }
+  let url = FaceModuleApi.getDeviceChannelList(store.state.home.projectUuid);
+  return Axios({
+    method: 'GET',
+    url,
+    params: data
+  });
+}
 
 export function getFaceUuidByFaceCaptureUuid(data) {
   let url = FaceModuleApi.getFaceUuidByFaceCaptureUuid(store.state.home.projectUuid);
