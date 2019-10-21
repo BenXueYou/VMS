@@ -280,14 +280,14 @@ export default {
         item.leaf = !!item.openFlag;
         return item;
       });
-      data = [
-        {
-          label: "测试",
-          id: "49D2B7299EAAA3AF295E33F03B982D32",
-          h5Type: "channel",
-          leaf: true
-        }
-      ];
+      // data = [
+      //   {
+      //     label: "测试",
+      //     id: "49D2B7299EAAA3AF295E33F03B982D32",
+      //     h5Type: "channel",
+      //     leaf: true
+      //   }
+      // ];
       return resolve(data);
     },
     videoTree(parentOrgUuid) {
@@ -388,7 +388,14 @@ export default {
         this.$message.error("请选择视频通道!");
         return;
       }
-      this.$emit("playRtsp", treeData, this.startDate, this.endDate, "main");
+      this.$emit(
+        "playRtsp",
+        treeData,
+        this.startDate,
+        this.endDate,
+        "normal_vod",
+        "main"
+      );
     },
     showAddChildrenDialog() {}
   }

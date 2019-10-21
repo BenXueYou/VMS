@@ -27,6 +27,8 @@
                     :rtspUrl="item.rtspUrl"
                     :streamType="item.streamType"
                     :IsShowMenu="!!item.rtspUrl"
+                    :position="item.position"
+                    :fenlu="fenluIndex+1"
                     @dragstart="dragstart(index)"
                     @drop="drop(index)"
                     @contextmenu="showMenu"
@@ -104,6 +106,7 @@ export default {
       imageAdjustVisible: false,
       videoArr: [
         {
+          position: 0, // 表示视频的位置，初始化的时候是从0-n的按顺序的，拖动之后position就会变化
           rtspUrl: "", // 播放的视频 Url
           streamType: ""
         }
@@ -263,6 +266,9 @@ export default {
         })
         .then(() => {});
     },
+    updatePreset(data) {
+      api2.updatePreset(data);
+    },
     playRtsp(channelUuid, streamType = "string", operator = -1) {
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
@@ -311,13 +317,25 @@ export default {
       // 拖拽结束
       console.log("drop:" + index);
       this.dragEndIndex = index;
+
       // 这里用于切换两个视频的拖拽交换逻辑,dragstart记录拖拽的是哪个,drop用于记录放在哪个上面
-      [this.videoArr[this.dragStartIndex], this.videoArr[this.dragEndIndex]] = [
-        this.videoArr[this.dragEndIndex],
-        this.videoArr[this.dragStartIndex]
+      // 这里直接修改数组中的url来达到视频交换的效果。这样会重新停止并且重新播放视频
+      // 优化，每个video的位置应该是fixed，这样交换两个video的postiion就可以了。
+      // [this.videoArr[this.dragStartIndex], this.videoArr[this.dragEndIndex]] = [
+      //   this.videoArr[this.dragEndIndex],
+      //   this.videoArr[this.dragStartIndex]
+      // ];
+      // 优化之后的写法
+      [
+        this.videoArr[this.dragStartIndex].position,
+        this.videoArr[this.dragEndIndex].position
+      ] = [
+        this.videoArr[this.dragEndIndex].position,
+        this.videoArr[this.dragStartIndex].position
       ];
-      this.videoArr.concat();
+      this.videoArr = this.videoArr;
       this.dragStartIndex = -1;
+      console.log(this.videoArr);
     },
     clickNode(node) {
       console.log(node);
@@ -341,8 +359,8 @@ export default {
       let num = Array.from(
         { length: this.fenlu[this.fenluIndex] },
         (item, index) => {
-          item = { rtspUrl: "" };
-          if (this.videoArr[index]) {
+          item = { rtspUrl: "", position: index };
+          if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
             item = this.videoArr[index];
           }
           return item;
@@ -447,11 +465,12 @@ export default {
       // 判断该分路有没有canvas,从而是否显示弹窗
       let canvas = this.$refs["video" + this.operatorIndex][0].canvas;
       if (canvas) {
-        this.screenShotVisible = true;
-        console.log(canvas);
-        var dataURL = canvas.toDataURL("image/png");
-        console.log(dataURL);
-        this.src = dataURL;
+        // 抓图由webplay控制
+        // this.screenShotVisible = true;
+        // console.log(canvas);
+        // var dataURL = canvas.toDataURL("image/png");
+        // console.log(dataURL);
+        // this.src = dataURL;
       } else {
         this.$message.error("该分路没有视频在播放，请先添加视频！");
       }
@@ -504,9 +523,8 @@ export default {
     box-sizing: border-box;
     user-select: none;
     .vedioWrap {
+      position: relative;
       height: calc(100% - 80px);
-      display: flex;
-      flex-wrap: wrap;
     }
     .footer {
       height: 60px;

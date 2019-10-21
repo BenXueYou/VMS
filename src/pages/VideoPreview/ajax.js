@@ -35,6 +35,14 @@ export function getPreset(params) {
     params
   });
 }
+export function updatePreset(data) {
+  let url = vUrl.updatePresetUrl;
+  return axios({
+    method: "PUT",
+    url,
+    data
+  });
+}
 export function cruize(data) {
   let url = vUrl.cruizeUrl;
   return axios({

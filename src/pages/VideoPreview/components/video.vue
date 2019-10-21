@@ -7,7 +7,7 @@
        @dragover="dragover"
        draggable="true"
        :class="{'VideoActive':isActive}"
-       :style="{height:height+'px',width:width+'px'}">
+       :style="{height:height+'px',width:width+'px',left:left+'px',top:top+'px'}">
     <!-- 视频信息展示菜单 -->
     <div class="header"
          v-if='IsShowMenu'>
@@ -50,6 +50,7 @@
          v-show="rtspUrl.length">
       码流请求中
     </div> -->
+    <!-- 1 -->
     <div id='canvasWrap'
          ref='canvasRefs'>
 
@@ -66,6 +67,12 @@ export default {
       type: Number
     },
     height: {
+      type: Number
+    },
+    fenlu: {
+      type: Number
+    },
+    position: {
       type: Number
     },
     index: {
@@ -126,6 +133,16 @@ export default {
       video_list: []
     };
   },
+  computed: {
+    left() {
+      // console.log((this.index % this.fenlu) * this.width);
+      return (this.position % this.fenlu) * this.width;
+    },
+    top() {
+      // console.log((this.index % this.fenlu) * this.height);
+      return Math.floor(this.position / this.fenlu) * this.height;
+    }
+  },
   mounted() {
     /* eslint-disable */
     this.video_mgr = new CVideoMgrSdk();
@@ -136,6 +153,9 @@ export default {
     }
   },
   watch: {
+    position(val) {
+      console.log(val);
+    },
     streamType(val) {
       // 码流切换，则先停掉，在重新播放
       // 判断是否在播放，在切换
@@ -169,6 +189,14 @@ export default {
     }
   },
   methods: {
+    drag(start) {
+      // 时间跳转
+      console.log(start);
+      if (!this.canvas) {
+        this.playVideo();
+      }
+      this.video_mgr.drag(this.video, start);
+    },
     playVideo() {
       this.canvas = document.createElement("canvas");
       this.canvas.width = this.width;
@@ -219,10 +247,10 @@ export default {
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .displayWrap {
+  position: absolute;
   background: #242527;
   border: 2px solid #1b1b1b;
   box-sizing: border-box;
-  position: relative;
   overflow: hidden;
   #canvasWrap {
     position: absolute;

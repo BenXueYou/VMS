@@ -3,13 +3,13 @@ import store from "@/store/store.js";
 let ip = window.config.ip,
   // projectUuid = window.config.projectUuid;
   projectUuid = store.state.home.projectUuid;
+let zwUrlPrefix = `${
+  window.config.protocolHeader
+}${ip}/basedata-v1/project/${projectUuid}`;
 ip = "192.168.9.105:15029";
 let urlPrefix = `${
   window.config.protocolHeader
 }${ip}/video/project/${projectUuid}`;
-let zwUrlPrefix = `${
-  window.config.protocolHeader
-}${ip}/basedata-v1/project/${projectUuid}`;
 
 export default {
   // 获取视频预览信息
@@ -20,6 +20,8 @@ export default {
   presetUrl: `${urlPrefix}/video/ptz/preset`,
   // 获取预置点
   getPresetUrl: `${urlPrefix}/video/preset/position`,
+  // 更新预置点
+  updatePresetUrl: `${urlPrefix}/video/preset/position`,
   //  云台巡航操作
   cruizeUrl: `${urlPrefix}/video/ptz/preset`,
   // 录像查询
@@ -36,7 +38,7 @@ export default {
   // 获取摄像机信息
   getCameraInfoUrl: `${urlPrefix}/video/cameraInfo`,
   // 获取子节点及视频设备通道数据
-  // videoTreeUrl: `${zwUrlPrefix}/organization/video/children`
+  videoTreeUrl: `${zwUrlPrefix}/organization/video/children`
   // 先使用下面的url测试
-  videoTreeUrl: `http://192.168.9.164:9000/project/a2445ed3830b4a3d9607ef502e8333bf/organization/video/children`
+  // videoTreeUrl: `http://192.168.9.164:9000/project/a2445ed3830b4a3d9607ef502e8333bf/organization/video/children`
 };

@@ -137,7 +137,7 @@
       </div>
       <div class='steplen'>
         <label class='label'>
-          步长1
+          步长
         </label>
         <el-slider class='slide'
                    :max="10"
@@ -461,13 +461,13 @@ export default {
         item.leaf = !item.openFlag;
         return item;
       });
-      data = [
-        {
-          label: "测试",
-          id: "49D2B7299EAAA3AF295E33F03B982D32",
-          leaf: true
-        }
-      ];
+      // data = [
+      //   {
+      //     label: "测试",
+      //     id: "49D2B7299EAAA3AF295E33F03B982D32",
+      //     leaf: true
+      //   }
+      // ];
       console.log(data);
       return resolve(data);
     },
@@ -543,7 +543,15 @@ export default {
     },
     chooseIcno() {
       if (this.value === "yuzhi") {
-        this.$emit("preset", "set_preset", this.yuzhi);
+        console.log(this.yuzhi);
+        for (let i = 0; i < this.yuzhiOptions.length; i++) {
+          if (this.yuzhiOptions[i].presetPositionUuid === this.yuzhi) {
+            this.yuzhiOptions[i].presetName = this.VideoOprName;
+            this.yuzhiOptions[i].stepLength = this.steplen;
+            this.$emit("preset", this.yuzhiOptions[i]);
+            break;
+          }
+        }
       } else {
         api2
           .cruize({
@@ -557,23 +565,31 @@ export default {
     deleteChoose() {
       // 清空预置点
       this.isChoose = false;
-      this.$emit("preset", "clear_preset", this.yuzhi);
+      this.$emit("updatePreset", "clear_preset", this.yuzhi);
     },
     cloundControl(name, index) {
       console.log(name, index);
+      if (name === "fangda" || name === "centerbig" || name === "quan") {
+        return;
+      }
       let action = "";
       if (name === "zoom_in") {
         action = "zoom_in";
+        if (index === 0) {
+          action = "zoom_in";
+        } else if (index === 3) {
+          action = "focus_near";
+        } else if (index === 5) {
+          action = "iris_open";
+        }
       } else if (name === "zoom_out") {
-        action = "zoom_out";
-      } else if (name === "fangda") {
-        action = "focus_near";
-      } else if (name === "quan") {
-        action = "focus_far";
-      } else if (name === "centerbig") {
-        action = "iris_close";
-      } else if (name === "center") {
-        action = "iris_open";
+        if (index === 2) {
+          action = "zoom_out";
+        } else if (index === 5) {
+          action = "focus_far";
+        } else if (index === 8) {
+          action = "iris_close";
+        }
       } else {
         action = name;
       }

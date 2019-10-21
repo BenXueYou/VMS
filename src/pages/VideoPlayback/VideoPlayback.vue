@@ -19,6 +19,8 @@
                     :rtspUrl="item.url"
                     :streamType="item.streamType"
                     action="playback"
+                    :position="item.position"
+                    :fenlu="fenluIndex+1"
                     @contextmenu="showMenu"
                     @click="ClickViDeoA(index)">
         </video-wrap>
@@ -26,6 +28,7 @@
       <div class="footer">
         <control-panel @download="download"
                        @saveView="saveView"
+                       @choosetime="choosetime"
                        :data="controlData">
 
         </control-panel>
@@ -80,20 +83,8 @@ export default {
     return {
       appendViewVisible: false,
       controlData: new Array(16).fill({
-        timeData: [
-          {
-            startTime: "00:00:00",
-            endTime: "02:00:00"
-          },
-          {
-            startTime: "11:00:00",
-            endTime: "13:00:00"
-          },
-          {
-            startTime: "22:00:00",
-            endTime: "24:00:00"
-          }
-        ]
+        fileName: "",
+        timeData: []
       }),
       downloadVisible: false,
       screenShotVisible: false,
@@ -101,7 +92,9 @@ export default {
       imageAdjustVisible: false,
       videoArr: [
         {
-          url: "1" // 播放的视频 Url
+          position: 0, // 表示视频的位置，初始化的时候是从0-n的按顺序的，拖动之后position就会变化
+          rtspUrl: "", // 播放的视频 Url
+          streamType: ""
         }
       ],
       icons,
@@ -120,34 +113,32 @@ export default {
           value: "关闭所有窗口"
         },
         {
+          label: "加速",
+          value: "加速"
+        },
+        {
+          label: "减速",
+          value: "减速"
+        },
+        {
+          label: "单帧",
+          value: "单帧"
+        },
+        {
+          label: "设置回放时间",
+          value: "设置回放时间"
+        },
+        {
           label: "抓图",
           value: "抓图"
         },
         {
-          label: "码流切换",
-          value: "码流切换",
-          children: [
-            {
-              label: "主码流",
-              value: "主码流"
-            },
-            {
-              label: "辅码流",
-              value: "辅码流"
-            },
-            {
-              label: "三码流",
-              value: "三码流"
-            }
-          ]
+          label: "切换至实时",
+          value: "切换至实时"
         },
         {
-          label: "切换至录像",
-          value: "切换至录像"
-        },
-        {
-          label: "开始录像",
-          value: "开始录像"
+          label: "下载",
+          value: "下载"
         },
         {
           label: "图像调节",
@@ -179,6 +170,11 @@ export default {
   },
   destroyed() {},
   methods: {
+    // 录像播放跳转时间
+    choosetime(index, chooseTime) {
+      this.videoArr[index].rtspUrl = this.controlData[index].rtspUrl;
+      this.$refs["video" + index][0].drag(chooseTime);
+    },
     updateView(viewData) {
       api2.updateView(viewData).then(res => {
         if (res.data.success) {
@@ -253,13 +249,61 @@ export default {
       }
       this.videoArr.concat();
     },
-    async playRtsp(arr, sd, ed, streamType) {
+    async playRtsp(arr, sd, ed, videoType, streamType) {
       // 播放rtsp,传过来的可能是多个通道id
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].h5Type === "channel") {
-          // let rtspUrl = await this.backup(arr[i].id, sd, ed, "", streamType);
-          // this.playVideo(rtspUrl, arr[i].channelUuid, streamType);
-          // 这里根据通道uuid来获取所有设备的播放时间的，播放由用户点击右边的控制面板再播放
+          let videos = await this.records(
+            arr[i].id,
+            sd,
+            ed,
+            videoType,
+            streamType
+          );
+          // videos是录像的信息，现在将这些放倒控制面板中
+          // {
+          //       "rtspUrl" : "string", // 回放RtspUrl
+          //       "localId": "string", // 本地流媒体服务智能组件id
+          //       "videos":
+          //           [
+          //               {
+          //                   "fileName":"string", //文件名
+          //                   "startTime":"string", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
+          //                   "endTime":"string", // 结束时间（yyyy-MM-dd hh:mm:ss），必填
+          //                   "videoType":"string", // 录像类型，必填
+          //                   "streamType":"string"	// 码流类型
+          //               }
+          //           ]
+          //   }
+          // 模拟数据
+          videos = {
+            fileName: "string", // 文件名
+            videoType: "string", // 录像类型，必填
+            streamType: "string", // 码流类型
+            rtspUrl: "",
+            ymd: "", // 用于记录年月日
+            timeData: [
+              {
+                startTime: "00:00:00",
+                endTime: "02:00:00"
+              },
+              {
+                startTime: "11:00:00",
+                endTime: "13:00:00"
+              },
+              {
+                startTime: "22:00:00",
+                endTime: "24:00:00"
+              }
+            ]
+          };
+          for (let i = 0; i < this.controlData.length; i++) {
+            // 如果controlData哪个没有数据则找到它添加他
+            if (!this.controlData[i].rtspUrl) {
+              this.controlData.splice(i, 1, videos);
+              break;
+            }
+          }
         }
       }
     },
@@ -277,6 +321,10 @@ export default {
             console.log(res);
             // let data = res.data.data;
             // let videos = (data && data.videos) || [] || [];
+            resolve(res.data.data.videos);
+          })
+          .catch(() => {
+            resolve([]);
           });
       });
     },
@@ -308,9 +356,22 @@ export default {
     chooseFenlu(index) {
       this.fenluIndex = index;
       this.initWrapDom();
-      this.videoArr = Array.from({ length: this.fenlu[this.fenluIndex] }).fill(
-        {}
+      // 切换分路，还需要保留之前已经打开的视频画面
+
+      let num = Array.from(
+        { length: this.fenlu[this.fenluIndex] },
+        (item, index) => {
+          console.log(index);
+          console.log(this.videoArr[index]);
+          item = { rtspUrl: "", position: index };
+          if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
+            item = this.videoArr[index];
+          }
+          return item;
+        }
       );
+      console.log(num);
+      this.videoArr = num;
     },
     ClickViDeoA(index) {
       this.operatorIndex = index;
@@ -333,6 +394,18 @@ export default {
     dealContextMenu(value) {
       console.log(value);
       switch (value) {
+        case "关闭窗口":
+          // 清空rtspUrl，则触发video组件stop事件
+          this.videoArr[this.operatorIndex].rtspUrl = "";
+          this.videoArr.concat();
+          break;
+        case "关闭所有窗口":
+          // 把所有分路的rtspUrl都清空
+          this.videoArr = this.videoArr.map(item => {
+            item.rtspUrl = "";
+            return item;
+          });
+          break;
         case "摄像机信息":
           this.videoInfoVisible = true;
           break;
@@ -408,8 +481,7 @@ export default {
     user-select: none;
     .vedioWrap {
       height: calc(100% - 240px);
-      display: flex;
-      flex-wrap: wrap;
+      position: relative;
     }
     .footer {
       height: 240px;

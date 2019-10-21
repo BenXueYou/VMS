@@ -84,9 +84,9 @@
         </div>
         <div class='window'>
           <div class="windowItem"
-               v-for="(item,index) in data"
-               :key="index">
-            窗口{{index+1}}
+               v-for="(item,index)  in controlData"
+               :key="index">{{item.fileName}}
+            {{item.fileName?(item.fileName):('窗口'+(index+1))}}
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@
             </div>
           </div>
           <div class="moveLeft"
-               v-for="(item,index) in data"
+               v-for="(item,index)  in controlData"
                :key="index">
             <div class="button2 cursor">
               <img :src="icons.down"
@@ -115,11 +115,13 @@
                     :left="left"
                     :move="move"
                     @zoomFc="zoomFc"></timeline>
-          <time-select v-for="(item,index) in data"
+          <time-select v-for="(item,index)  in controlData"
                        :scale="zoomNow"
                        :timeData="item.timeData"
+                       @chooseTime="chooseTime"
                        :left="left"
                        :move="move"
+                       :index="index"
                        :key="index">
 
           </time-select>
@@ -160,7 +162,8 @@ export default {
       voice: 50,
       zoom: 1, // 时间轴缩放倍数
       move: 0,
-      left: 0
+      left: 0,
+      controlData: []
     };
   },
   computed: {
@@ -169,7 +172,14 @@ export default {
       return this.zoom;
     }
   },
+  mounted() {
+    this.controlData = this.data;
+  },
   methods: {
+    chooseTime(index, chooseTime) {
+      console.log(index, chooseTime);
+      this.$emit("choosetime", index, chooseTime);
+    },
     saveView() {
       this.$emit("saveView");
     },
@@ -187,13 +197,17 @@ export default {
       // 这边根据move的正负判断往哪边移动
       // 如果是向左移动，则left减去10，反之相加
       // 判断移动的边界，left小于0，大于(scale-1)*100
-      let left = this.left + (val > 0 ? 10 : -10);
+      let left = this.left + (val > 0 ? 30 : -30);
       if (left <= 0 && left >= -(this.zoom - 1) * 100) {
         this.left = left;
       }
     }
   },
   watch: {
+    data(val) {
+      console.log(val);
+      this.controlData = this.data;
+    },
     zoom(newVal, oldVal) {
       console.log(newVal, oldVal);
       // 监听scale缩放系数的变化

@@ -39,6 +39,12 @@ export default {
         return 1;
       }
     },
+    index: {
+      type: Number,
+      default() {
+        return 1;
+      }
+    },
     timeData: {
       type: Array,
       default() {
@@ -87,6 +93,7 @@ export default {
     },
     chooseTime(index, e) {
       this.time = this.calcTime(index, e.offsetX / e.target.clientWidth);
+      this.$emit("chooseTime", this.index, this.time);
     },
     turnTotime(timestamp) {
       const fixZero = n => ("00" + n).slice(-2);
@@ -124,7 +131,7 @@ export default {
     }
   },
   watch: {
-    data() {
+    timeData() {
       this.init();
     }
   }
