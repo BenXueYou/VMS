@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="logBox">
     <div class="left_menu header">
       <el-menu :default-active="defaultActive"
                class="el-menu-vertical"
@@ -14,7 +14,7 @@
                     :class="menuTitle === '1'? 'submenuActiveClass' : ''">
           <template slot="title">
             <img class="access_autn_select"
-                 src="../../assets/images/doorAccess/access_authority.png"
+                 src="../../assets/images/log/sys_log_icon.png"
                  alt />
             <span>系统日志</span>
 
@@ -67,26 +67,20 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" >
 @import "@/style/variables.scss";
-.box {
+.logBox {
   display: flex;
   justify-content: space-between;
   height: 100%;
   color: #cccccc;
 }
-.box .left_menu {
+.logBox .left_menu {
   width: 20%;
   max-width: 200px;
 }
-.box .main {
+.logBox .main {
   width: calc(100% - 200px);
   height: 100%;
   padding: $rightContentMargin;
-}
-.left_menu .el-menu-item.doorStateClass {
-  padding-left: 20px !important;
-  font-size: 14px !important;
-  background-color: transparent !important;
-  height: 56px;
 }
 .left_menu .left_menu_right_icon {
   width: 9.2px;
@@ -103,6 +97,7 @@ export default {
   text-align: justify;
   background-color: rgba(27, 27, 27, 0.6) !important;
   height: 45px;
+  line-height: 45px;
 }
 .left_menu .access_autn_select {
   margin-right: 10px;

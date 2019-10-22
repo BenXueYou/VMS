@@ -97,7 +97,7 @@ export const constantRouterMap = [
         component: log.component,
         title: "日志管理",
         children: log.children,
-        icon: "doorControl",
+        icon: "log",
         type: "app"
       },
       {
@@ -106,7 +106,7 @@ export const constantRouterMap = [
         component: user.component,
         title: "用户管理",
         children: user.children,
-        icon: "doorControl",
+        icon: "userManage",
         type: "app"
       }
     ]

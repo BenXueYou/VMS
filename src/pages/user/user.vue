@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="userBox">
     <div class="left_menu header">
       <el-menu :default-active="defaultActive"
                class="el-menu-vertical"
@@ -64,21 +64,21 @@ export default {
 @import "@/style/variables.scss";
 .iamtired {
   img {
-    vertical-align: middle;
+    vertical-align: text-top;
     padding: 0px 10px;
   }
 }
-.box {
+.userBox {
   display: flex;
   justify-content: space-between;
   height: 100%;
   color: #cccccc;
 }
-.box .left_menu {
+.userBox .left_menu {
   width: 20%;
   max-width: 200px;
 }
-.box .main {
+.userBox .main {
   width: calc(100% - 200px);
   height: 100%;
   padding: $rightContentMargin;

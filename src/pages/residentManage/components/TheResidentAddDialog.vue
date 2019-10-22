@@ -1,528 +1,448 @@
 <template>
-  <div class="dialogBoxClass"
-       v-show="addResidentDialogVisible">
-    <div class="dialogHeaderClass">
-      <el-row type="flex"
-              justify="space-between">
-        <el-col style="text-align:left"
-                :span="4">
-          <div class="header_left_txt">{{titleTxt}}</div>
-        </el-col>
-        <el-col class="header_right_box"
-                :span="20">
-          <el-button v-if="titleTxt === '新增居民'"
-                     @click="confirm(false)"
-                     type="primary">保存并新增</el-button>
-          <el-button @click="confirm(true)"
-                     type="primary">确认</el-button>
-          <el-button @click="close"
-                     type="primary">取消</el-button>
-        </el-col>
-      </el-row>
-    </div>
-    <!----------------------------------------------------------------------->
-    <div class="body">
-      <div class="body_box">
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3">
-            <div>
-              <img class="img"
-                   src="../../../assets/images/resident/baseMsg.png"
-                   alt
-                   srcset>
-              <span>基本信息</span>
-            </div>
-          </el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <div>
-              <el-upload class="uploadClass"
-                         :action="updateFileImage"
-                         :show-file-list="false"
-                         accept="image/jpg,image/jpeg"
-                         :headers="myHeaders"
-                         :auto-upload="true"
-                         :http-request="httpRequest">
-                <span v-if="imageUrl"
-                      class="left_tips_txt imgBox">
-                  <img class="img"
-                       :src="imageUrl"
-                       alt>
-                  <div class="deleteIconBox"
-                       @click.stop="imageUrl='';fileData=''">
-                    <img src="@/assets/images/doorAccess/delete_icon.png"
-                         alt>
-                  </div>
-                </span>
-                <span v-else
-                      style="display:block;padding:5px 0;">
-                  <span class="left_tips_txt"
-                        style="line-height:60px;display:block;">
-                    <img class="img"
-                         src="@/assets/images/doorAccess/add_img_icon.png"
-                         alt>本地
-                  </span>
-                  <span class="left_tips_txt"
-                        @click.stop="shootPhoto"
-                        style="line-height:60px;display:block;">
-                    <img class="img"
-                         src="@/assets/images/personMange/shootPhoto.png"
-                         alt> 拍摄
-                  </span>
-                </span>
-              </el-upload>
-            </div>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-input v-model="name"
-                        required
-                        placeholder="姓名"></el-input>
-              <span style="color:#ff5f5f;margin-left:10px;line-height:30px">*</span>
-              <span class="cursorClass"
-                    @click="getIcdIdCard()"
-                    style="color:#26D39D;margin-left:10px;line-height:30px">从身份证阅读器读取</span>
-            </p>
-            <p>
-              <el-radio-group v-model="radioGender">
-                <el-radio label="male">男</el-radio>
-                <el-radio label="female">女</el-radio>
-              </el-radio-group>
-            </p>
-            <p>
-              <el-input v-model="phoneNumber"
-                        placeholder="手机号"></el-input>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>选择房间号：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <multi-popover-tree treeType="residentTree"
-                                  placeholderTxt="房间号允许多选"
-                                  :initData="initData"
-                                  :topCheckedNodeTitle="topCheckedNodeTitle"
-                                  :houseName="houseName"
-                                  @transferData="transferCheckedData"
-                                  :checkedNodes="checkeTreedNodes"></multi-popover-tree>
-              <span style="color:#ff5f5f;margin-left:10px;line-height:30px">*</span>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>证件类型：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-select v-model="certificateOption"
-                         placeholder="请选择证件类型">
-                <el-option v-for="item in certificateOptions"
-                           :key="item.typeStr"
-                           :label="item.typeName"
-                           :value="item.typeStr"></el-option>
-              </el-select>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>证件号码：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-input v-model="credentialNo"
-                        placeholder="证件号码"></el-input>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>标签：</p>
-          </el-col>
-          <el-col :span="17">
-            <tag-view style="display:inline;margin-left: -14px;"
-                      :tags="dynamicTags"
-                      @handleClose="handleClose"></tag-view>
-            <p style="display: inline-block">
-              <img style="vertical-align:middle;margin-left:10px;margin-right:7px;"
-                   src="@/assets/images/personMange/addCard.png"
-                   alt
-                   srcset>
-              <span class="themeFont cursorClass"
-                    @click="isShow=!isShow">修改标签</span>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>人员类型：</p>
-          </el-col>
-          <el-col :span="13">
-            <p>
-              <el-select v-model="staffOption"
-                         placeholder="请选择人员类型">
-                <el-option v-for="item in staffOptions"
-                           :key="item.typeStr"
-                           :label="item.typeName"
-                           :value="item.typeStr"></el-option>
-              </el-select>
-              <span style="color:#ff5f5f;margin-left:10px;line-height:30px">*</span>
-            </p>
-          </el-col>
-          <el-col class="themeFont"
-                  style="text-align:center;"
-                  :span="4">
-            <p class="themeFont cursorClass"
-               @click="firstShow =!firstShow">
-              {{firstShow?'展开':'收起'}}
-              <i :class="firstShow?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
-            </p>
-          </el-col>
-        </el-row>
-      </div>
-      <div v-show="!firstShow"
-           class="body_box">
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>民族：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-select v-model="nationOption"
-                         placeholder="请选择民族">
-                <el-option v-for="item in nationOptions"
-                           :key="item.typeStr"
-                           :label="item.typeName"
-                           :value="item.typeStr"></el-option>
-              </el-select>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>文化程度：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-select v-model="educationOption"
-                         placeholder="请选择学历">
-                <el-option v-for="item in educationOptions"
-                           :key="item.typeStr"
-                           :label="item.typeName"
-                           :value="item.typeStr"></el-option>
-              </el-select>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>婚姻状况：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-select v-model="maritalOption"
-                         placeholder="请选择婚姻状况">
-                <el-option v-for="item in maritalOptions"
-                           :key="item.typeStr"
-                           :label="item.typeName"
-                           :value="item.typeStr"></el-option>
-              </el-select>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>国籍：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-select v-model="countryOption"
-                         placeholder="请选择国籍">
-                <el-option v-for="item in countryOptions"
-                           :key="item.typeStr"
-                           :label="item.typeName"
-                           :value="item.typeStr"></el-option>
-              </el-select>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>籍贯：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-input v-model="nativePlace"
-                        placeholder="籍贯"></el-input>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>户籍：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-input v-model="address"
-                        placeholder="户籍"></el-input>
-            </p>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col :span="3"></el-col>
-          <el-col style="text-align:right;"
-                  :span="4">
-            <p>备注：</p>
-          </el-col>
-          <el-col :span="17">
-            <p>
-              <el-input v-model="remarks"
-                        placeholder="备注"></el-input>
-            </p>
-          </el-col>
-        </el-row>
-      </div>
-      <div class="body_box">
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col style="text-align:left;"
-                  :span="3">
-            <div>
-              <img class="img"
-                   src="../../../assets/images/resident/access_auth_icon.png"
-                   alt
-                   srcset>
-              <span>通行权限</span>
-            </div>
-          </el-col>
-          <el-col class="body_box_left_txt"
-                  style="text-align:right;"
-                  :span="4">
-            <p>门禁权限组：</p>
-          </el-col>
-          <el-col :span="13">
-            <p style="margin:0">
-              <multi-popover-tree treeType="doorAccessAuth"
-                                  placeholderTxt="请选择权限组"
-                                  @transferCheckedBoxData="getTrafficAuthList"
-                                  :checkedNodes="trafficAuthList"></multi-popover-tree>
-            </p>
-            <tag-view style="display:inline;margin-left: -14px;"
-                      :tags="dynamicAuthTags"
-                      @handleClose="handleAuthTagClose"></tag-view>
-          </el-col>
-          <el-col class="themeFont body_box_left_txt"
-                  style="text-align:center;"
-                  :span="4">
-            <p style="visibility:hidden"
-               class="themeFont cursorClass"
-               @click="secondShow =!secondShow">
-              {{!secondShow?'展开':'收起'}}
-              <i :class="firstShow?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
-            </p>
-            <p class="themeFont cursorClass"
-               @click="secondShow =!secondShow">
-              {{secondShow?'展开':'收起'}}
-              <i :class="secondShow?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
-            </p>
-          </el-col>
-        </el-row>
-        <div v-show="!secondShow">
-          <el-row type="flex"
-                  justify="flex-start"
-                  :gutter="20">
-            <el-col :span="3"></el-col>
-            <el-col class="body_box_left_txt"
-                    style="text-align:right;"
-                    :span="4">
-              <p>有效期：</p>
-            </el-col>
-            <el-col :span="17">
-              <p style="height:40px;margin:0">
-                <el-radio-group v-model="radioDate">
-                  <el-radio label="1">长期</el-radio>
-                  <el-radio label="0">短期</el-radio>
-                </el-radio-group>
-              </p>
-              <div v-show="radioDate!=='1'">
-                <el-date-picker v-model="startTime"
-                                type="date"
-                                class="time-interal-date"
-                                placeholder="选择日期"
-                                value-format="yyyy-MM-dd"></el-date-picker>
-                <span class="time-line"></span>
-                <el-date-picker v-model="endTime"
-                                type="date"
-                                class="time-interal-date"
-                                placeholder="选择日期"
-                                value-format="yyyy-MM-dd"></el-date-picker>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row type="flex"
-                  justify="flex-start"
-                  :gutter="20">
-            <el-col :span="3"></el-col>
-            <el-col style="text-align:right;"
-                    :span="4">
-              <p>延迟时间：</p>
-            </el-col>
-            <el-col :span="17">
-              <p>
-                <el-input v-model="openDelayTime"
-                          style="width:10%;margin-right:5px"></el-input>秒
-                <span style="margin-left:25px">
-                  <span style="color:#ff5f5f">注：</span>为行动不便的人员增加通过门禁的时间
-                </span>
-              </p>
-            </el-col>
-          </el-row>
-          <el-row type="flex"
-                  justify="flex-start"
-                  :gutter="20">
-            <el-col :span="3"></el-col>
-            <el-col style="text-align:right;"
-                    :span="4">
-              <p>访客权限：</p>
-            </el-col>
-            <el-col :span="17">
-              <p>
-                <multi-popover-tree treeType="visitorAuth"
-                                    placeholderTxt="请选择访客权限"
-                                    @transferCheckedBoxData="getVisitorAuthList"></multi-popover-tree>
-              </p>
-              <tag-view style="display:inline;margin-left: -14px;"
-                        :tags="dynamicVistorAuthTags"
-                        @handleClose="handleVistorAuthTagClose"></tag-view>
-            </el-col>
-          </el-row>
-        </div>
-      </div>
-      <div class="body_box">
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col style="text-align:left;"
-                  :span="3">
-            <div>
-              <img class="img"
-                   src="../../../assets/images/resident/access_card.png"
-                   alt
-                   srcset>
-              <span>通行凭证</span>
-            </div>
-          </el-col>
-          <el-col class="body_box_left_txt"
-                  style="text-align:right;"
-                  :span="4">
-            <p>卡片：</p>
-          </el-col>
-          <el-col :span="17">
-            <div>
-              <span>
-                <img style="vertical-align:middle;margin-left:10px;margin-right:7px;"
-                     src="@/assets/images/personMange/addCard.png"
-                     alt
-                     srcset>
-                <span class="themeFont cursorClass"
-                      @click="addCardDialogAct">新增卡片</span>
-                <span style="color:rgba(255,255,255,0.1);margin:0 10px;">|</span>
-                <span class="themeFont cursorClass">发卡器配置</span>
-              </span>
-            </div>
-            <div class="card_icon_class">
-              <p v-for="(item, index) in cardList"
-                 :key="index">
-                <span>
-                  <span class="card-span">{{item.cardName}}</span>
-                  <span class="card-span">卡号：{{item.cardId}}</span>
-                  <span class="card-span">{{item.cardEnable?'已启用':'已停用'}}</span>
-                  <span class="card-span">{{item.addCardFuncName || '未知'}}</span>
-                </span>
-                <span>
-                  <span @click="editCardAct(index,item)"
-                        style="color:#26D39D;padding:0 12px">编辑</span>
-                  <span @click="deleteCardAct(index,item)"
-                        style="color:#ff5f5f">删除</span>
-                </span>
-              </p>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row type="flex"
-                justify="flex-start"
-                :gutter="20">
-          <el-col style="text-align:left;"
-                  :span="3"></el-col>
-          <el-col class
-                  style="text-align:right;"
-                  :span="4">
-            <p>指纹：</p>
-          </el-col>
-          <el-col :span="17">
-            <div>
-              <p>
-                <img style="vertical-align:middle;margin-left:10px;margin-right:7px;"
-                     src="@/assets/images/personMange/addCard.png"
-                     alt
-                     srcset>
-                <span class="themeFont cursorClass">新增指纹</span>
-              </p>
-            </div>
-            <!-- <div class="card_icon_class">
+	<div class="dialogBoxClass" v-show="addResidentDialogVisible">
+		<div class="dialogHeaderClass">
+			<el-row type="flex" justify="space-between">
+				<el-col style="text-align:left" :span="4">
+					<div class="header_left_txt">{{titleTxt}}</div>
+				</el-col>
+				<el-col class="header_right_box" :span="20">
+					<el-button v-if="titleTxt === '新增居民'" @click="confirm(false)" type="primary">保存并新增</el-button>
+					<el-button @click="confirm(true)" type="primary">确认</el-button>
+					<el-button @click="close" type="primary">取消</el-button>
+				</el-col>
+			</el-row>
+		</div>
+		<!----------------------------------------------------------------------->
+		<div class="body">
+			<div class="body_box">
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3">
+						<div>
+							<img class="img" src="../../../assets/images/resident/baseMsg.png" alt srcset />
+							<span>基本信息</span>
+						</div>
+					</el-col>
+					<el-col style="text-align:right;" :span="4">
+						<div>
+							<el-upload
+								class="uploadClass"
+								:action="updateFileImage"
+								:show-file-list="false"
+								accept="image/jpg, image/jpeg"
+								:headers="myHeaders"
+								:auto-upload="true"
+								:http-request="httpRequest"
+							>
+								<span v-if="imageUrl" class="left_tips_txt imgBox">
+									<img class="img" :src="imageUrl" alt />
+									<div class="deleteIconBox" @click.stop="imageUrl='';fileData=''">
+										<img src="@/assets/images/doorAccess/delete_icon.png" alt />
+									</div>
+								</span>
+								<span v-else style="display:block;padding:5px 0;">
+									<span class="left_tips_txt" style="line-height:60px;display:block;">
+										<img class="img" src="@/assets/images/doorAccess/add_img_icon.png" alt />本地
+									</span>
+									<span
+										class="left_tips_txt"
+										@click.stop="shootPhoto"
+										style="line-height:60px;display:block;"
+									>
+										<img class="img" src="@/assets/images/personMange/shootPhoto.png" alt /> 拍摄
+									</span>
+								</span>
+							</el-upload>
+						</div>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-input v-model="name" required placeholder="姓名"></el-input>
+							<span style="color:#ff5f5f;margin-left:10px;line-height:30px">*</span>
+							<span
+								class="cursorClass"
+								@click="getIcdIdCard()"
+								style="color:#26D39D;margin-left:10px;line-height:30px"
+							>从身份证阅读器读取</span>
+						</p>
+						<p>
+							<el-radio-group v-model="radioGender">
+								<el-radio label="male">男</el-radio>
+								<el-radio label="female">女</el-radio>
+							</el-radio-group>
+						</p>
+						<p>
+							<el-input v-model="phoneNumber" placeholder="手机号"></el-input>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>选择房间号：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<multi-popover-tree
+								treeType="residentTree"
+								placeholderTxt="房间号允许多选"
+								:initData="initData"
+								:topCheckedNodeTitle="topCheckedNodeTitle"
+								:houseName="houseName"
+								@transferData="transferCheckedData"
+								:checkedNodes="checkeTreedNodes"
+							></multi-popover-tree>
+							<span style="color:#ff5f5f;margin-left:10px;line-height:30px">*</span>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>证件类型：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-select v-model="certificateOption" placeholder="请选择证件类型">
+								<el-option
+									v-for="item in certificateOptions"
+									:key="item.typeStr"
+									:label="item.typeName"
+									:value="item.typeStr"
+								></el-option>
+							</el-select>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>证件号码：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-input v-model="credentialNo" placeholder="证件号码"></el-input>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>标签：</p>
+					</el-col>
+					<el-col :span="17">
+						<tag-view
+							style="display:inline;margin-left: -14px;"
+							:tags="dynamicTags"
+							@handleClose="handleClose"
+						></tag-view>
+						<p style="display: inline-block">
+							<img
+								style="vertical-align:middle;margin-left:10px;margin-right:7px;"
+								src="@/assets/images/personMange/addCard.png"
+								alt
+								srcset
+							/>
+							<span class="themeFont cursorClass" @click="isShow=!isShow">修改标签</span>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>人员类型：</p>
+					</el-col>
+					<el-col :span="13">
+						<p>
+							<el-select v-model="staffOption" placeholder="请选择人员类型">
+								<el-option
+									v-for="item in staffOptions"
+									:key="item.typeStr"
+									:label="item.typeName"
+									:value="item.typeStr"
+								></el-option>
+							</el-select>
+							<span style="color:#ff5f5f;margin-left:10px;line-height:30px">*</span>
+						</p>
+					</el-col>
+					<el-col class="themeFont" style="text-align:center;" :span="4">
+						<p class="themeFont cursorClass" @click="firstShow =!firstShow">
+							{{firstShow?'展开':'收起'}}
+							<i :class="firstShow?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+						</p>
+					</el-col>
+				</el-row>
+			</div>
+			<div v-show="!firstShow" class="body_box">
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>民族：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-select v-model="nationOption" placeholder="请选择民族">
+								<el-option
+									v-for="item in nationOptions"
+									:key="item.typeStr"
+									:label="item.typeName"
+									:value="item.typeStr"
+								></el-option>
+							</el-select>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>文化程度：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-select v-model="educationOption" placeholder="请选择学历">
+								<el-option
+									v-for="item in educationOptions"
+									:key="item.typeStr"
+									:label="item.typeName"
+									:value="item.typeStr"
+								></el-option>
+							</el-select>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>婚姻状况：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-select v-model="maritalOption" placeholder="请选择婚姻状况">
+								<el-option
+									v-for="item in maritalOptions"
+									:key="item.typeStr"
+									:label="item.typeName"
+									:value="item.typeStr"
+								></el-option>
+							</el-select>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>国籍：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-select v-model="countryOption" placeholder="请选择国籍">
+								<el-option
+									v-for="item in countryOptions"
+									:key="item.typeStr"
+									:label="item.typeName"
+									:value="item.typeStr"
+								></el-option>
+							</el-select>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>籍贯：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-input v-model="nativePlace" placeholder="籍贯"></el-input>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>户籍：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-input v-model="address" placeholder="户籍"></el-input>
+						</p>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col :span="3"></el-col>
+					<el-col style="text-align:right;" :span="4">
+						<p>备注：</p>
+					</el-col>
+					<el-col :span="17">
+						<p>
+							<el-input v-model="remarks" placeholder="备注"></el-input>
+						</p>
+					</el-col>
+				</el-row>
+			</div>
+			<div class="body_box">
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col style="text-align:left;" :span="3">
+						<div>
+							<img class="img" src="../../../assets/images/resident/access_auth_icon.png" alt srcset />
+							<span>通行权限</span>
+						</div>
+					</el-col>
+					<el-col class="body_box_left_txt" style="text-align:right;" :span="4">
+						<p>门禁权限组：</p>
+					</el-col>
+					<el-col :span="13">
+						<p style="margin:0">
+							<multi-popover-tree
+								treeType="doorAccessAuth"
+								placeholderTxt="请选择权限组"
+								@transferCheckedBoxData="getTrafficAuthList"
+								:checkedNodes="trafficAuthList"
+							></multi-popover-tree>
+						</p>
+						<tag-view
+							style="display:inline;margin-left: -14px;"
+							:tags="dynamicAuthTags"
+							@handleClose="handleAuthTagClose"
+						></tag-view>
+					</el-col>
+					<el-col class="themeFont body_box_left_txt" style="text-align:center;" :span="4">
+						<p style="visibility:hidden" class="themeFont cursorClass" @click="secondShow =!secondShow">
+							{{!secondShow?'展开':'收起'}}
+							<i :class="firstShow?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+						</p>
+						<p class="themeFont cursorClass" @click="secondShow =!secondShow">
+							{{secondShow?'展开':'收起'}}
+							<i :class="secondShow?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+						</p>
+					</el-col>
+				</el-row>
+				<div v-show="!secondShow">
+					<el-row type="flex" justify="flex-start" :gutter="20">
+						<el-col :span="3"></el-col>
+						<el-col class="body_box_left_txt" style="text-align:right;" :span="4">
+							<p>有效期：</p>
+						</el-col>
+						<el-col :span="17">
+							<p style="height:40px;margin:0">
+								<el-radio-group v-model="radioDate">
+									<el-radio label="1">长期</el-radio>
+									<el-radio label="0">短期</el-radio>
+								</el-radio-group>
+							</p>
+							<div v-show="radioDate!=='1'">
+								<el-date-picker
+									v-model="startTime"
+									type="date"
+									class="time-interal-date"
+									placeholder="选择日期"
+									value-format="yyyy-MM-dd"
+								></el-date-picker>
+								<span class="time-line"></span>
+								<el-date-picker
+									v-model="endTime"
+									type="date"
+									class="time-interal-date"
+									placeholder="选择日期"
+									value-format="yyyy-MM-dd"
+								></el-date-picker>
+							</div>
+						</el-col>
+					</el-row>
+					<el-row type="flex" justify="flex-start" :gutter="20">
+						<el-col :span="3"></el-col>
+						<el-col style="text-align:right;" :span="4">
+							<p>延迟时间：</p>
+						</el-col>
+						<el-col :span="17">
+							<p>
+								<el-input v-model="openDelayTime" style="width:10%;margin-right:5px"></el-input>秒
+								<span style="margin-left:25px">
+									<span style="color:#ff5f5f">注：</span>为行动不便的人员增加通过门禁的时间
+								</span>
+							</p>
+						</el-col>
+					</el-row>
+					<el-row type="flex" justify="flex-start" :gutter="20">
+						<el-col :span="3"></el-col>
+						<el-col style="text-align:right;" :span="4">
+							<p>访客权限：</p>
+						</el-col>
+						<el-col :span="17">
+							<p>
+								<multi-popover-tree
+									treeType="visitorAuth"
+									placeholderTxt="请选择访客权限"
+									@transferCheckedBoxData="getVisitorAuthList"
+								></multi-popover-tree>
+							</p>
+							<tag-view
+								style="display:inline;margin-left: -14px;"
+								:tags="dynamicVistorAuthTags"
+								@handleClose="handleVistorAuthTagClose"
+							></tag-view>
+						</el-col>
+					</el-row>
+				</div>
+			</div>
+			<div class="body_box">
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col style="text-align:left;" :span="3">
+						<div>
+							<img class="img" src="../../../assets/images/resident/access_card.png" alt srcset />
+							<span>通行凭证</span>
+						</div>
+					</el-col>
+					<el-col class="body_box_left_txt" style="text-align:right;" :span="4">
+						<p>卡片：</p>
+					</el-col>
+					<el-col :span="17">
+						<div>
+							<span>
+								<img
+									style="vertical-align:middle;margin-left:10px;margin-right:7px;"
+									src="@/assets/images/personMange/addCard.png"
+									alt
+									srcset
+								/>
+								<span class="themeFont cursorClass" @click="addCardDialogAct">新增卡片</span>
+								<span style="color:rgba(255,255,255,0.1);margin:0 10px;">|</span>
+								<span class="themeFont cursorClass">发卡器配置</span>
+							</span>
+						</div>
+						<div class="card_icon_class">
+							<p v-for="(item, index) in cardList" :key="index">
+								<span>
+									<span class="card-span">{{item.cardName}}</span>
+									<span class="card-span">卡号：{{item.cardId}}</span>
+									<span class="card-span">{{item.cardEnable?'已启用':'已停用'}}</span>
+									<span class="card-span">{{item.addCardFuncName || '未知'}}</span>
+								</span>
+								<span>
+									<span @click="editCardAct(index,item)" style="color:#26D39D;padding:0 12px">编辑</span>
+									<span @click="deleteCardAct(index,item)" style="color:#ff5f5f">删除</span>
+								</span>
+							</p>
+						</div>
+					</el-col>
+				</el-row>
+				<el-row type="flex" justify="flex-start" :gutter="20">
+					<el-col style="text-align:left;" :span="3"></el-col>
+					<el-col class style="text-align:right;" :span="4">
+						<p>指纹：</p>
+					</el-col>
+					<el-col :span="17">
+						<div>
+							<p>
+								<img
+									style="vertical-align:middle;margin-left:10px;margin-right:7px;"
+									src="@/assets/images/personMange/addCard.png"
+									alt
+									srcset
+								/>
+								<span class="themeFont cursorClass">新增指纹</span>
+							</p>
+						</div>
+						<!-- <div class="card_icon_class">
 							<p v-for="(item, index) in cardList" :key="index">
 								<span>
 									<span class="card-span">{{item.cardName}}</span>
@@ -536,80 +456,71 @@
 								</span>
 							</p>
 						</div>-->
-          </el-col>
-        </el-row>
-      </div>
-      <div v-if="titleTxt !== '新增居民'">
-        <div class="finger_icon_class"
-             v-for="(item, index) in 1"
-             :key="index">
-          <p>
-            <span>
-              <span>信息来源：</span>
-            </span>
-            <span>
-              <span>{{defaultResident.source==='platform'?'平台录入':defaultResident.source}}</span>
-            </span>
-          </p>
-        </div>
-      </div>
-    </div>
-    <!-- ----------------->
-    <div class="dialogHeaderClass">
-      <el-row type="flex"
-              justify="space-between">
-        <el-col style="text-align:left"
-                :span="4">
-          <!-- <div class="header_left_txt">新增居民</div> -->
-        </el-col>
-        <el-col class="header_right_box"
-                :span="20">
-          <el-button :loading='isloading'
-                     v-if="titleTxt === '新增居民'"
-                     @click="confirm(false)"
-                     type="primary">保存并新增</el-button>
-          <el-button :loading='isloading'
-                     @click="confirm(true)"
-                     type="primary">确认</el-button>
-          <el-button @click="close"
-                     type="primary">取消</el-button>
-        </el-col>
-      </el-row>
-    </div>
-    <person-tree-tag title="选择居民所属标签"
-                     rightTxt="已选择居民所属标签"
-                     :isShow="isShow"
-                     :treeType="treeType"
-                     :isTag="true"
-                     :checkedNodeArr="checkedNode"
-                     @onCancel="onCancel"
-                     @onConfirm="onConfirm"></person-tree-tag>
-    <el-dialog title="拍照"
-               center
-               :visible.sync="shootPhotoDialogVisible"
-               width="400px"
-               :before-close="handleClose">
-      <video v-show="!shootPhotoShow"
-             id="video"
-             ref="video"
-             width="350"
-             height="350"></video>
-      <img v-show="shootPhotoShow"
-           id="img"
-           src>
-      <span slot="footer"
-            style="padding:15px">
-        <el-button type="primary"
-                   @click="shootPhotoDialogVisible = false">取 消</el-button>
-        <el-button type="primary"
-                   @click="shootAct">拍摄</el-button>
-      </span>
-    </el-dialog>
-    <add-card-dialog :addCardDialog.sync="addCardDialogVisible"
-                     :checkedCard="currentCard"
-                     :cardList="cardList"
-                     @transferCard="transferCard"></add-card-dialog>
-  </div>
+					</el-col>
+				</el-row>
+			</div>
+			<div v-if="titleTxt !== '新增居民'">
+				<div class="finger_icon_class" v-for="(item, index) in 1" :key="index">
+					<p>
+						<span>
+							<span>信息来源：</span>
+						</span>
+						<span>
+							<span>{{defaultResident.source==='platform'?'平台录入':defaultResident.source}}</span>
+						</span>
+					</p>
+				</div>
+			</div>
+		</div>
+		<!-- ----------------->
+		<div class="dialogHeaderClass">
+			<el-row type="flex" justify="space-between">
+				<el-col style="text-align:left" :span="4">
+					<!-- <div class="header_left_txt">新增居民</div> -->
+				</el-col>
+				<el-col class="header_right_box" :span="20">
+					<el-button
+						:loading="isloading"
+						v-if="titleTxt === '新增居民'"
+						@click="confirm(false)"
+						type="primary"
+					>保存并新增</el-button>
+					<el-button :loading="isloading" @click="confirm(true)" type="primary">确认</el-button>
+					<el-button @click="close" type="primary">取消</el-button>
+				</el-col>
+			</el-row>
+		</div>
+		<person-tree-tag
+			title="选择居民所属标签"
+			rightTxt="已选择居民所属标签"
+			:isShow="isShow"
+			:treeType="treeType"
+			:isTag="true"
+			:checkedNodeArr="checkedNode"
+			@onCancel="onCancel"
+			@onConfirm="onConfirm"
+		></person-tree-tag>
+		<el-dialog
+			title="拍照"
+			center
+			:visible.sync="shootPhotoDialogVisible"
+			width="400px"
+			:before-close="handleClose"
+		>
+			<video v-show="!shootPhotoShow" id="video" ref="video" width="350" height="350"></video>
+			<img v-show="shootPhotoShow" id="img" src />
+			<span slot="footer" style="padding:15px">
+				<el-button type="primary" @click="shootPhotoDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="shootAct">拍摄</el-button>
+			</span>
+		</el-dialog>
+		<add-card-dialog
+			:addCardDialog.sync="addCardDialogVisible"
+			:checkedCard="currentCard"
+			:cardList="cardList"
+			@transferCard="transferCard"
+		></add-card-dialog>
+	</div>
 </template>
 
 <script>
@@ -764,15 +675,15 @@ export default {
   },
   methods: {
     /**
-     * "idNumber": "string",   //身份证号
-     * "idIssued": "string",   //签证机关
-     * "issuedDate": "string", //签发日期 格式：yyyy-MM-dd
-     * "validDate": "string",  //有效截止日期 格式：yyyy-MM-dd
-     * "photoData": "string",  //身份证图片 base64编码
-     * "cardPhotoF": "string", //身份证真面图片 base64编码
-     * "cardPhotoB": "string", //身份证反面图片 base64编码
-     * "fpData": "string"      //指纹数据 base64编码
-     */
+		 * "idNumber": "string",   //身份证号
+		 * "idIssued": "string",   //签证机关
+		 * "issuedDate": "string", //签发日期 格式：yyyy-MM-dd
+		 * "validDate": "string",  //有效截止日期 格式：yyyy-MM-dd
+		 * "photoData": "string",  //身份证图片 base64编码
+		 * "cardPhotoF": "string", //身份证真面图片 base64编码
+		 * "cardPhotoB": "string", //身份证反面图片 base64编码
+		 * "fpData": "string"      //指纹数据 base64编码
+		 */
     getIcdIdCard() {
       // 发信令，读取
       this.initWebsocket();
@@ -878,7 +789,7 @@ export default {
       for (var i = 0; i < cardArr.length; i++) {
         if (
           item.cardName === cardArr[i].cardName &&
-          item.cardId === cardArr[i].cardId
+					item.cardId === cardArr[i].cardId
         ) {
           flag = 1;
           break;
@@ -931,10 +842,12 @@ export default {
         _this.video = document.getElementById("video");
         // 媒体对象
         window.navigator.getMedia =
-          window.navigator.getUserMedia ||
-          window.navigator.webkitGetUserMedia ||
-          window.navigator.mozGetUserMedia ||
+					window.navigator.getUserMedia ||
+					window.navigator.webkitGetUserMedia ||
+					window.navigator.mozGetUserMedia ||
           window.navigator.msGetUserMedia;
+        console.log(window.navigator);
+        console.log(window.navigator.getMedia, window.navigator.webkitGetUserMedia, window.navigator.mozGetUserMedia, window.navigator.msGetUserMedia);
         if (window.navigator.getMedia) {
           window.navigator.getMedia(
             {
@@ -954,8 +867,7 @@ export default {
             function(error) {
               console.log(error);
               _this.shootPhotoDialogVisible = false;
-
-              alert("未捕捉到摄像头");
+              alert("未捕捉到摄像头", error);
             }
           );
         } else {
@@ -1189,7 +1101,7 @@ export default {
       this.dynamicAuthTags = [];
       this.dynamicVistorAuthTags = [];
       this.icdPhotofileData = null;
-      this.houseName = '';
+      this.houseName = "";
     },
     transferCheckedData(data) {
       console.log("获取到选中的节点：", data);
@@ -1221,7 +1133,7 @@ export default {
         }
         this.dynamicAuthTags = [];
         this.dynamicTags = [];
-        this.houseName = '';
+        this.houseName = "";
         if (val.addressOrgList && val.addressOrgList.length) {
           let aName = [];
           val.addressOrgList.forEach(element => {
@@ -1315,134 +1227,134 @@ export default {
 </script>
 <style>
 .dialogBoxClass {
-  width: 1000px;
-  height: 100%;
-  overflow-y: auto;
-  background: #212325;
+	width: 1000px;
+	height: 100%;
+	overflow-y: auto;
+	background: #212325;
 }
 .dialogBoxClass #video {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.01);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.01);
 }
 .dialogBoxClass .el-input__icon {
-  line-height: 30px;
-  /* color: #26d39d; */
+	line-height: 30px;
+	/* color: #26d39d; */
 }
 .dialogHeaderClass {
-  width: 100%;
-  padding: 25px 40px 24px;
-  box-sizing: border-box;
+	width: 100%;
+	padding: 25px 40px 24px;
+	box-sizing: border-box;
 }
 .dialogBoxClass .dialogHeaderClass .header_left_txt {
-  border-left: 2px solid #26d39d;
-  font-family: "PingFangSC-Regular";
-  font-size: 14px;
-  color: #ffffff;
-  padding-left: 10px;
+	border-left: 2px solid #26d39d;
+	font-family: "PingFangSC-Regular";
+	font-size: 14px;
+	color: #ffffff;
+	padding-left: 10px;
 }
 .dialogBoxClass .header_right_box {
-  text-align: right;
-  margin-top: -10px;
+	text-align: right;
+	margin-top: -10px;
 }
 .dialogBoxClass .header_right_box button {
-  height: 32px;
-  font-family: "PingFangSC-Regular";
-  font-size: 13px;
-  color: #ffffff;
-  text-align: justify;
-  padding: 7px 17px;
+	height: 32px;
+	font-family: "PingFangSC-Regular";
+	font-size: 13px;
+	color: #ffffff;
+	text-align: justify;
+	padding: 7px 17px;
 }
 
 .dialogBoxClass .uploadClass {
-  display: inline-block;
-  width: 75%;
-  position: relative;
-  height: 135px;
-  background: rgba(0, 0, 0, 0.1);
-  border: 0 solid rgba(255, 255, 255, 0.1);
-  /* height: 100%; */
+	display: inline-block;
+	width: 75%;
+	position: relative;
+	height: 135px;
+	background: rgba(0, 0, 0, 0.1);
+	border: 0 solid rgba(255, 255, 255, 0.1);
+	/* height: 100%; */
 }
 .dialogBoxClass .left_tips_txt {
-  font-family: "PingFangSC-Regular";
-  font-size: 13px;
-  color: #26d39d;
+	font-family: "PingFangSC-Regular";
+	font-size: 13px;
+	color: #26d39d;
 }
 .dialogBoxClass .imgBox {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }
 .dialogBoxClass .themeFont {
-  color: #26d39d !important;
-  font-family: "PingFangSC-Regular" !important;
-  font-size: 12px !important;
+	color: #26d39d !important;
+	font-family: "PingFangSC-Regular" !important;
+	font-size: 12px !important;
 }
 .dialogBoxClass .imgBox .img {
-  width: 100%;
-  height: 100%;
-  background-origin: border-box;
-  background-clip: border-box;
-  background-size: 100%;
+	width: 100%;
+	height: 100%;
+	background-origin: border-box;
+	background-clip: border-box;
+	background-size: 100%;
 }
 .dialogBoxClass .el-upload {
-  display: inline-block;
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  outline: none;
+	display: inline-block;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	outline: none;
 }
 .dialogBoxClass .card-span {
-  margin-right: 6px;
+	margin-right: 6px;
 }
 .dialogBoxClass .el-select {
-  display: inline-block;
-  position: relative;
-  width: 140px;
+	display: inline-block;
+	position: relative;
+	width: 140px;
 }
 .dialogBoxClass .el-select .el-input {
-  width: 100% !important;
+	width: 100% !important;
 }
 .dialogBoxClass .el-select .el-select-dropdown__list {
-  width: 100%;
+	width: 100%;
 }
 .dialogBoxClass .body_box .el-input {
-  display: inline-block;
-  width: 215px;
-  /* width: 30%; */
-  height: 30px;
-  font-size: 12px;
+	display: inline-block;
+	width: 215px;
+	/* width: 30%; */
+	height: 30px;
+	font-size: 12px;
 }
 .dialogBoxClass .el-input .el-input__inner {
-  height: 30px;
-  padding-right: 15px;
-  font-size: 12px;
+	height: 30px;
+	padding-right: 15px;
+	font-size: 12px;
 }
 .dialogBoxClass input::-webkit-input-placeholder {
-  font-size: 12px;
+	font-size: 12px;
 }
 .dialogBoxClass .body_box {
-  border-top: 1px dashed rgba(255, 255, 255, 0.1);
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-  padding: 15px 0px 20px;
-  color: #bbbbbb;
+	border-top: 1px dashed rgba(255, 255, 255, 0.1);
+	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+	padding: 15px 0px 20px;
+	color: #bbbbbb;
 }
 .el-dialog__wrapper {
-  overflow: auto;
+	overflow: auto;
 }
 .dialogBoxClass .time-line {
-  display: inline-block;
-  border-width: 1px 0px 0px 0px;
-  width: 8px;
-  border-color: #7a7b7c;
-  border-style: solid;
-  margin: 0px 3px;
+	display: inline-block;
+	border-width: 1px 0px 0px 0px;
+	width: 8px;
+	border-color: #7a7b7c;
+	border-style: solid;
+	margin: 0px 3px;
 }
 .dialogBoxClass .img {
-  vertical-align: baseline;
+	vertical-align: baseline;
 }
 .dialogBoxClass .el-dialog__footer {
-  padding-bottom: 15px;
-  margin-top: -15px;
+	padding-bottom: 15px;
+	margin-top: -15px;
 }
 </style>
 
@@ -1450,105 +1362,105 @@ export default {
 @import "@/style/variables.scss";
 
 @mixin padding {
-  padding: 10px 46px 30px;
-  box-sizing: border-box;
+	padding: 10px 46px 30px;
+	box-sizing: border-box;
 }
 .body {
-  @include padding;
-  .title {
-    height: 40px;
-    line-height: 30px;
-    @include font-s;
-  }
-  .righttips {
-    float: right;
-    .test {
-      padding-right: 20px;
-    }
-    .refresh {
-      cursor: pointer;
-      img {
-        display: inline-block;
-        vertical-align: middle;
-      }
-      color: $add-text-color;
-    }
-  }
-  .body_box {
-    .body_box_left_txt {
-      p {
-        margin: 0;
-      }
-    }
-    p {
-      margin: 15px 0 0;
-      font-family: "PingFangSC-Regular";
-      font-size: 13px;
-      color: #dddddd;
-      // text-align: right;
-      line-height: 30px;
-    }
-  }
-  .card_icon_class {
-    text-align: left;
-    p {
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 2px;
-      border-radius: 2px;
-      font-family: "PingFangSC-Regular";
-      font-size: 12px;
-      color: #bbbbbb;
-      line-height: 35px;
-      // margin: 0 20%;
-      padding: 0 20px;
-      width: 60%;
-      text-align: center;
-      display: flex;
-      justify-content: space-between;
-    }
-  }
-  .finger_icon_class {
-    padding-left: 30px;
-    font-family: "PingFangSC-Regular";
-    font-size: 12px;
-    color: #dddddd;
-    // text-align: right;
-  }
-  .deleteIconBox {
-    width: 22px;
-    height: 22px;
-    border-radius: 11px;
-    position: absolute;
-    right: 3px;
-    top: 3px;
-    background-color: rgba(17, 17, 17, 0.5);
-    img {
-      width: 10px;
-      height: 10px;
-      margin: 6px;
-    }
-  }
+	@include padding;
+	.title {
+		height: 40px;
+		line-height: 30px;
+		@include font-s;
+	}
+	.righttips {
+		float: right;
+		.test {
+			padding-right: 20px;
+		}
+		.refresh {
+			cursor: pointer;
+			img {
+				display: inline-block;
+				vertical-align: middle;
+			}
+			color: $add-text-color;
+		}
+	}
+	.body_box {
+		.body_box_left_txt {
+			p {
+				margin: 0;
+			}
+		}
+		p {
+			margin: 15px 0 0;
+			font-family: "PingFangSC-Regular";
+			font-size: 13px;
+			color: #dddddd;
+			// text-align: right;
+			line-height: 30px;
+		}
+	}
+	.card_icon_class {
+		text-align: left;
+		p {
+			background: rgba(255, 255, 255, 0.03);
+			border-radius: 2px;
+			border-radius: 2px;
+			font-family: "PingFangSC-Regular";
+			font-size: 12px;
+			color: #bbbbbb;
+			line-height: 35px;
+			// margin: 0 20%;
+			padding: 0 20px;
+			width: 60%;
+			text-align: center;
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+	.finger_icon_class {
+		padding-left: 30px;
+		font-family: "PingFangSC-Regular";
+		font-size: 12px;
+		color: #dddddd;
+		// text-align: right;
+	}
+	.deleteIconBox {
+		width: 22px;
+		height: 22px;
+		border-radius: 11px;
+		position: absolute;
+		right: 3px;
+		top: 3px;
+		background-color: rgba(17, 17, 17, 0.5);
+		img {
+			width: 10px;
+			height: 10px;
+			margin: 6px;
+		}
+	}
 
-  .el-select {
-    .el-input {
-      width: 100% !important;
-    }
-  }
+	.el-select {
+		.el-input {
+			width: 100% !important;
+		}
+	}
 }
 .footer {
-  @include padding;
-  overflow: hidden;
-  button {
-    height: 30px;
-    padding: 7px 21px;
-    background: rgba(40, 255, 187, 0.12);
-    border: 1px solid rgba(40, 255, 187, 0.8);
-    border-radius: 2px;
-    border-radius: 2px;
-    font-family: "PingFangSC-Regular";
-    font-size: 12px;
-    color: #ffffff;
-    letter-spacing: 0;
-  }
+	@include padding;
+	overflow: hidden;
+	button {
+		height: 30px;
+		padding: 7px 21px;
+		background: rgba(40, 255, 187, 0.12);
+		border: 1px solid rgba(40, 255, 187, 0.8);
+		border-radius: 2px;
+		border-radius: 2px;
+		font-family: "PingFangSC-Regular";
+		font-size: 12px;
+		color: #ffffff;
+		letter-spacing: 0;
+	}
 }
 </style>

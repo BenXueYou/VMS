@@ -23,7 +23,7 @@ const userMap = {
   component: user,
   title: "日志管理",
   children: userChildRoutes,
-  icon: "user",
+  icon: "userManage",
   type: "app",
   redirect: "/user/" //设置默认子路由
 };
