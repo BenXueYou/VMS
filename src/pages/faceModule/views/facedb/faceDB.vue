@@ -495,7 +495,8 @@ export default {
       }
       api
         .getFaceLibDetail({
-          faceLibraryUuid: row.faceLibraryUuid
+          faceLibraryUuid: row.faceLibraryUuid,
+          projectUuid: this.$store.state.home.projectUuid
         })
         .then(res => {
           this.updatefacedata = res.data.data;

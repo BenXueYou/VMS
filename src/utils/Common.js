@@ -1,6 +1,39 @@
 import store from "@/store/store.js";
+import { callbackify } from "util";
 export var COMMON = {
 
+  /**
+   * image url 转 base64
+   * @param {imageUrl }  
+   */
+  imageToBase64(url,callback) {
+    let httpRequest = null;
+    if (window.XMLHttpRequest) {
+      // 除了IE外的其它浏览器
+      httpRequest = new XMLHttpRequest();
+    } else {
+      httpRequest = new ActiveXObject("MsXml2.XmlHttp");
+    }
+    httpRequest.responseType = "blob";
+    httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState === 4) {
+        if (httpRequest.status === 200) {
+          var value = this.response;
+          var reader = new window.FileReader();
+          reader.readAsDataURL(value);
+          reader.onloadend = function () {
+            var base64data = reader.result;
+            callback(base64data);
+          };
+        }else{
+          callback();
+        }
+      }
+    };
+    httpRequest.open("GET", url, true);
+    httpRequest.setRequestHeader("token", store.state.home.Authorization);
+    httpRequest.send(null);
+  },
   /**
    * 判断 object 的所有属性是不是全部为空
    */
