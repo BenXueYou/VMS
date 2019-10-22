@@ -42,7 +42,10 @@ export default {
     ) {
       this.vistorRoute = this.$route.fullPath;
     }
-    if (this.$route.fullPath.toLocaleLowerCase().indexOf("/log") !== -1) {
+    if (
+      this.$route.fullPath.toLocaleLowerCase().indexOf("/log") !== -1 &&
+      this.$route.fullPath.toLocaleLowerCase() !== "/login"
+    ) {
       this.logRoute = this.$route.fullPath;
     }
     if (this.$route.fullPath.toLocaleLowerCase().indexOf("/user") !== -1) {
@@ -74,7 +77,10 @@ export default {
       if (newVal.toLocaleLowerCase().indexOf("/vistormange") !== -1) {
         this.vistorRoute = newVal;
       }
-      if (newVal.toLocaleLowerCase().indexOf("/log") !== -1) {
+      if (
+        newVal.toLocaleLowerCase().indexOf("/log") !== -1 &&
+        newVal.toLocaleLowerCase() !== "/login"
+      ) {
         this.logRoute = newVal;
       }
       if (newVal.toLocaleLowerCase().indexOf("/user") !== -1) {
