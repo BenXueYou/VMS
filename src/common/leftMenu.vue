@@ -50,7 +50,7 @@
 							<el-menu-item index="/FaceManage/FaceAnalysisTable">频次分析</el-menu-item>
 							<el-menu-item index="/FaceManage/Companion">同行人分析</el-menu-item>
 						</el-submenu>
-						<el-menu-item index="/FaceManage/FaceControl" :class="{isActive:($route.path == '/FaceControl')}">
+						<el-menu-item index="/FaceManage/FaceControl" :class="{isActive:($route.path == '/FaceManage/FaceControl')}">
 							<div class="images">
 								<img
 									:src="$route.path == '/FaceControl'?require('@/assets/images/faceModule/face_task_select.png'):require('@/assets/images/faceModule/face_task_icon.png')"
@@ -59,19 +59,19 @@
 						</el-menu-item>
 						<el-menu-item
 							index="/FaceManage/IntelModel"
-							:class="{isActive:($route.path == '/IntelModel')}"
+							:class="{isActive:($route.path == '/FaceManage/IntelModel')}"
 							class
 						>
 							<div class="images">
 								<img
-									:src="$route.path == '/IntelModel'?require('@/assets/images/faceModule/inteligent_model_select.png'):require('@/assets/images/faceModule/inteligent_model_icon.png')"
+									:src="$route.path == '/FaceManage/IntelModel'?require('@/assets/images/faceModule/inteligent_model_select.png'):require('@/assets/images/faceModule/inteligent_model_icon.png')"
 								/>
 							</div>智能模型
 						</el-menu-item>
 						<el-menu-item index="/FaceManage/faceDB" :class="{isActive:($route.path == '/faceDB')}" class>
 							<div class="images">
 								<img
-									:src="$route.path == '/faceDB'?require('@/assets/images/faceModule/face_db_select.png'):require('@/assets/images/faceModule/face_db_icon.png')"
+									:src="$route.path == '/FaceManage/faceDB'?require('@/assets/images/faceModule/face_db_select.png'):require('@/assets/images/faceModule/face_db_icon.png')"
 								/>
 							</div>人脸库
 						</el-menu-item>

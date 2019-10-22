@@ -10,17 +10,14 @@
 				<el-form-item label="库名称：" prop="faceLibraryName">
 					<el-input v-model="formData.faceLibraryName" class="myinput"></el-input>
 				</el-form-item>
-				<el-form-item label="库标识颜色：" prop="faceLibraryColor">
-					<el-color-picker v-model="formData.faceLibraryColor"></el-color-picker>
+				<el-form-item label="库标识颜色：" prop="faceLibraryColour">
+					<el-color-picker v-model="formData.faceLibraryColour"></el-color-picker>
 				</el-form-item>
-				<el-form-item label="入库需达到的质量：" prop="faceLibraryPhotoQuality">
-					<pic-qulity-select
-						:selectedButtons.sync="formData.faceLibraryPhotoQuality"
-						defaultSelect="low"
-					/>
+				<el-form-item label="入库需达到的质量：" prop="facePhotoQualities">
+					<pic-qulity-select :selectedButtons.sync="formData.facePhotoQualities" defaultSelect="low" />
 				</el-form-item>
-				<el-form-item label="库描述：" prop="faceLibraryDescription">
-					<el-input v-model="formData.faceLibraryDescription" class="myinput"></el-input>
+				<el-form-item label="库描述：" prop="description">
+					<el-input v-model="formData.description" class="myinput"></el-input>
 				</el-form-item>
 			</el-form>
 			<span class="dialog-footer button-div btnBox">
@@ -38,13 +35,13 @@ const RULES = {
   faceLibraryName: [
     { required: true, message: "人脸库名称不能为空", trigger: "change" }
   ],
-  faceLibraryColor: [
+  faceLibraryColour: [
     { required: true, message: "人脸库颜色不能为空", trigger: "change" }
   ],
-  faceLibraryPhotoQuality: [
+  facePhotoQualities: [
     { required: true, message: "人脸入库质量不能为空", trigger: "change" }
   ],
-  faceLibraryDescription: [
+  description: [
     { required: true, message: "人脸库描述不能为空", trigger: "change" }
   ]
 };
@@ -78,9 +75,9 @@ export default {
       rules: RULES,
       formData: {
         faceLibraryName: "",
-        faceLibraryDescription: "",
-        faceLibraryColor: "#26D39D",
-        faceLibraryPhotoQuality: []
+        description: "",
+        faceLibraryColour: "#26D39D",
+        facePhotoQualities: []
       }
     };
   },
@@ -88,13 +85,11 @@ export default {
     faceDBDialogVisible(val) {
       this.diglogvisible = val;
       if (val && this.updatefacedata.faceLibraryUuid) {
-        console.log(this.updatefacedata);
-        this.formData.faceLibraryDescription = this.updatefacedata.description;
-        this.formData.faceLibraryColor = this.updatefacedata.faceLibraryColour
+        this.formData.faceLibraryColour = this.updatefacedata.faceLibraryColour
           ? this.updatefacedata.faceLibraryColour
           : "#26D39D";
-        this.formData.faceLibraryPhotoQuality = this.updatefacedata.facePhotoQualities;
         Object.assign(this.formData, this.updatefacedata);
+        console.log(this.formData);
       } else {
         this.resetdata();
       }
@@ -105,12 +100,12 @@ export default {
       this.$refs["formRef"].validate(valid => {
         if (valid) {
           let data = {
-            facePhotoQualities: this.formData.faceLibraryPhotoQuality, // 人脸质量（LOW，NORMAL,HIGH）
-            description: this.formData.faceLibraryDescription, // 描述
+            facePhotoQualities: this.formData.facePhotoQualities, // 人脸质量（LOW，NORMAL,HIGH）
+            description: this.formData.description, // 描述
             faceLibraryUuid: null, // 人脸库UUID
             faceLibraryName: this.formData.faceLibraryName, // 人脸库名称,64个字符以内
             faceLibraryType: null, // 人脸库类型
-            faceLibraryColour: this.formData.faceLibraryColor, // 人脸库颜色（RGB，如："#000000"）
+            faceLibraryColour: this.formData.faceLibraryColour, // 人脸库颜色（RGB，如："#000000"）
             editabled: 1, // 是否可编辑（0：不可编辑；1：可编辑）
             deletable: 1, // 是否可删除
             addFaceByUser: 1, // 人员是否可添加
@@ -120,22 +115,23 @@ export default {
             extInfo: {}
           };
           Object.assign(data, this.formData);
+          console.log(data);
           // 是否是添加人员，true是添加 false为修改
-          if (this.updatefacedata.faceLibraryUuid) {
+          if (!this.updatefacedata.faceLibraryUuid) {
             console.log("submit!");
             this.addstaffku(data);
           } else {
-            this.updatestaffku(data, this.updatefacedata.libraryuuid);
+            this.updatestaffku(data, this.updatefacedata.faceLibraryUuid);
           }
         } else {
           return false;
         }
       });
     },
-    updatestaffku(data, libraryuuid) {
+    updatestaffku(data) {
       const _this = this;
-      api.putFaceLib(data, libraryuuid).then(res => {
-        if (res.data.result === 0) {
+      api.putFaceLib(data).then(res => {
+        if (res.data.success) {
           _this.$message.success("修改人员库成功");
           this.$emit("close", true);
         }
@@ -143,9 +139,10 @@ export default {
     },
     addstaffku(data) {
       const _this = this;
+      data.faceLibraryType = 'staticFaceLib';
       api.addFaceLid(data).then(res => {
         console.log(res);
-        if (res.data.result === 0) {
+        if (res.data.success) {
           _this.$message.success("添加人员库成功");
           this.$emit("close", true);
         }
@@ -154,9 +151,9 @@ export default {
     resetdata() {
       this.formData = {
         faceLibraryName: "",
-        faceLibraryDescription: "",
-        faceLibraryColor: "",
-        faceLibraryPhotoQuality: []
+        description: "",
+        faceLibraryColour: "",
+        facePhotoQualities: []
       };
     },
     close() {

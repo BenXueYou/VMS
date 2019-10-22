@@ -152,18 +152,18 @@ export function getFaceLib(data) {
 }
 // 二查
 export function getFaceLibDetail(data) {
-  let url = FaceModuleApi.faceDBApi.getFaceLibDetailUrl();
+  let url = FaceModuleApi.faceDBApi.getFaceLibDetailUrl(store.state.home.projectUuid);
   return Axios({
     method: 'GET',
     url,
-    data
+    params: data
   });
 }
 // 改
 export function putFaceLib(data) {
   let url = FaceModuleApi.faceDBApi.putFaceLibUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'PUT',
     url,
     data
   });
@@ -172,9 +172,9 @@ export function putFaceLib(data) {
 export function deleteFaceLib(data) {
   let url = FaceModuleApi.faceDBApi.deleteFaceLibUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'delete',
     url,
-    data
+    params: data
   });
 }
 

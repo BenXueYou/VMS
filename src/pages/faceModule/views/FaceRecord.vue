@@ -337,36 +337,11 @@ export default {
         });
     },
     searchImageToFace(o, index, routeName) {
-      var httpRequest = null;
       var url = this.imageHeader + o.faceCapturePhotoUrl;
-      if (window.XMLHttpRequest) {
-        // 除了IE外的其它浏览器
-        httpRequest = new XMLHttpRequest();
-      } else {
-        // eslint-disable-next-line no-undef
-        httpRequest = new ActiveXObject("MsXml2.XmlHttp");
-      }
-      // this.mainScreenLoading = true;
-      httpRequest.responseType = "blob";
-      var _this = this;
-      httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4) {
-          // _this.mainScreenLoading = false;
-          if (httpRequest.status === 200) {
-            var value = this.response;
-            var reader = new window.FileReader();
-            reader.readAsDataURL(value);
-            reader.onloadend = function() {
-              var base64data = reader.result;
-              o.imageBase64 = base64data;
-              _this.$router.push({ path: routeName, query: { imgObj: o } });
-            };
-          }
-        }
-      };
-      httpRequest.open("GET", url, true);
-      httpRequest.setRequestHeader("token", this.$store.state.token);
-      httpRequest.send(null);
+      this.$common.imageToBase64(url, base64 => {
+        o.imageBase64 = base64;
+        this.$router.push({ path: routeName, query: { imgObj: o } });
+      });
     },
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
