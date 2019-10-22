@@ -46,6 +46,7 @@ export function postFaceModuleConfig(xhr) {
   return Axios({
     method: 'POST',
     url,
+    data: xhr
   });
 }
 export function uploadAudio(xhr) {
@@ -144,9 +145,9 @@ export function addFaceLid(data) {
 export function getFaceLib(data) {
   let url = FaceModuleApi.faceDBApi.getFaceLibUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'GET',
     url,
-    data
+    params: data
   });
 }
 // 二查
@@ -197,11 +198,11 @@ export function addStaffInfo(data) {
 }
 // 人脸库人员列表
 export function getStaffList(data) {
-  let url = FaceModuleApi.faceDBApi.addStaffUrl(store.state.home.projectUuid);
+  let url = FaceModuleApi.faceDBApi.getStaffListUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'GET',
     url,
-    data
+    params: data
   });
 }
 // 人脸库人员详情

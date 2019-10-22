@@ -315,10 +315,10 @@ export default {
       let h = that.HEIGHT();
       w = w - 120;
       h = h - 65;
-      that.$nextTick(() => {
-        that.$refs.mainHeightBox.$el.style.height = (7 * h) / 10 + "px";
-        that.$refs.heightBox.$el.style.height = h + "px";
-      });
+      // that.$nextTick(() => {
+      //   that.$refs.mainHeightBox.$el.style.height = (7 * h) / 10 + "px";
+      //   that.$refs.heightBox.$el.style.height = h + "px";
+      // });
       that.footerHeight = (3 * h) / 10 + "px";
       that.asideWidth = w / 3 - 40 + "px";
     });
@@ -333,11 +333,11 @@ export default {
     }
     this.websocket = null;
     clearInterval(this.timer);
-    this.timer = null;
-    var player = document.getElementById("player");
-    if (player) {
-      player.innerHTML = null;
-    }
+    // this.timer = null;
+    // var player = document.getElementById("player");
+    // if (player) {
+    //   player.innerHTML = null;
+    // }
   },
   watch: {
     CapturePhotoArr(val) {

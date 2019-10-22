@@ -244,8 +244,8 @@ export default {
       currentcomponents: "TheFaceDBImageTable",
       listPageSize: 15,
       imagePageSize: 24,
-      listPageCount: 1000,
-      imagePageCount: 1000,
+      listPageCount: 0,
+      imagePageCount: 0,
       listPageNow: 1,
       imagePageNow: 1,
       pageNow: 1,
@@ -253,7 +253,7 @@ export default {
       imageTableData: [],
       listTableData: [],
       libraryarr: [],
-      staffName: "",
+      staffName: null,
       loadding: false, //
       selectLibRow: { index: 0 }, // 是否是动态库的标识
       listtableloadding: false,
@@ -269,6 +269,7 @@ export default {
       dialogVisible: false, // 删除的弹窗。
       deleteWay: "",
       row: "",
+      faceLibraryUuid: '',
       uploadstatusZnarr: [],
       defaultHeader: require("@/assets/user.png"),
       listTableColumns: [], // 右边表格，显示哪些数据
@@ -281,16 +282,24 @@ export default {
         return (sum += val.faceTotal);
       }, 0);
     },
-    libraryName() {
-      return this.selectLibRow.faceLibraryName;
+    libraryName: {
+      // libraryName在组件中是双向绑定的，computed单向get， 则需加set双向绑定
+      set(val) {
+        this.selectLibRow.faceLibraryName = val;
+      },
+      get() {
+        return this.selectLibRow.faceLibraryName;
+      },
     },
-    faceLibraryUuid() {
-      return this.selectLibRow.faceLibraryUuid;
-    }
+    // faceLibraryUuid() {
+    //   return this.selectLibRow.faceLibraryUuid;
+    // }
   },
   watch: {
     selectLibRow: {
-      handler() {},
+      handler(newVal, oldVal) {
+        this.faceLibraryUuid = newVal.faceLibraryUuid;
+      },
       deep: true
     },
     typeradio(val) {
@@ -397,7 +406,7 @@ export default {
       this.listtableloadding = true;
       console.log(`第${this.pageNow}页，一页${this.pageSize}条`);
       let params = {
-        libraryuuid: this.faceLibraryUuid,
+        faceLibraryUuid: this.faceLibraryUuid,
         staffName: this.staffName,
         page: this.pageNow,
         limit: this.pageSize
@@ -448,37 +457,6 @@ export default {
         .catch(err => {
           console.log(err);
           this.listtableloadding = false;
-          if (window.config.DeBug) {
-            let num = Array.from({ length: this.pageSize - 1 }, (v, i) => ({
-              modelUuid: i, // 模型uuid(动态库用)
-              staffName: "李静", // 人员名称
-              gender: "女", // 性别
-              phoneNo: "13265897889", // 手机号
-              photoUrl: "", // 图片url
-              credentialType: "身份证", // 证件类型
-              credentialNo: "342227122344567789", // 证件号码
-              birthday: "12231223", // 出生日期
-              staffType: "住户", // 人员类型
-              nation: "汉", // 民族
-              extInfo: {}, // 扩展字段
-              securityExtInfo: {}, // 公安部门扩展字段（静态库逃犯导入用）
-              education: "本科", // 文化程度
-              maritalState: "已婚", // 婚姻状况
-              nationality: "中国", // 国籍
-              nativePlace: "", // 籍贯
-              householdRegister: "string", // 户籍
-              remarks: "string", // 备注
-              householdType: "string", // 住户类型（系统人员库，居民信息特有自信）
-              address: "string", // 住址（系统人员库，居民特有信，由基建树拼接而来）
-              version: 0, // 版本号
-              faceUuid: null,
-              faceLibraryUuid: this.selectLibRow.faceLibraryUuid,
-              faceLibraryName: this.selectLibRow.faceLibraryName,
-              faceUrl: "string" // 人脸图片base64
-            }));
-            this.imageTableData = num;
-            this.listTableData = num;
-          }
         });
     },
     search() {
@@ -767,8 +745,8 @@ export default {
           this.loadding = false;
           if (res.data.success && res.data.data) {
             this.tableData = res.data.data;
-            this.selectLibRow = this.tableData[0];
             if (this.faceLibraryUuid) return;
+            this.selectLibRow = this.tableData[0];
             this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
             this.libraryName = res.data.data[0].faceLibraryName;
             this.getStaffLibStaffData();
@@ -778,21 +756,6 @@ export default {
         })
         .catch(() => {
           this.loadding = false;
-          if (window.config.DeBug) {
-            this.tableData = Array.from({ length: 15 }, (v, i) => ({
-              index: i,
-              faceLibraryName: "人脸库", // 名称
-              faceLibraryUuid: "uuid" + i, // uuid
-              faceTotal: i * i, // 人脸总数
-              editabled: 1, // 是否可编辑
-              deletable: 1, // 是否可删除
-              addFaceByUser: 1, // 人员是否可添加
-              delFaceByUser: 1, // 人员是否可删除
-              editFaceByUser: 1 // 人员是否可编辑
-            }));
-            this.selectLibRow = this.tableData[0];
-            this.currentRowStyle(this.selectLibRow.index);
-          }
         });
     },
     conSocket() {

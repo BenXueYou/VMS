@@ -302,7 +302,7 @@ export default {
 			}
 			.el-button {
 				background: rgba(40, 255, 187, 0.08);
-				border: 0 solid rgba(38, 211, 157, 0.8);
+				border: 1px solid rgba(38, 211, 157, 0.8);
 				border-radius: 2px;
 				border-radius: 2px;
 				width: 80px;
@@ -371,7 +371,7 @@ export default {
 			text-align: right;
 			.el-button {
 				background: rgba(40, 255, 187, 0.08);
-				border: 0 solid rgba(38, 211, 157, 0.8);
+				border: 1px solid rgba(38, 211, 157, 0.8);
 				border-radius: 2px;
 				border-radius: 2px;
 				width: 80px;
