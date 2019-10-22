@@ -29,7 +29,9 @@
         <control-panel @download="download"
                        @saveView="saveView"
                        @choosetime="choosetime"
-                       :data="controlData">
+                       @chooseFenlu="chooseFenlu"
+                       :fenlu="fenlu"
+                       :data="videoArr">
 
         </control-panel>
       </div>
@@ -48,7 +50,7 @@
                             title="添加视图"
                             labelName="视图名称"
                             :visible.sync="appendViewVisible"></tree-append-tag-dialog>
-
+    <download-dialog :visible.sync="downloadVisible"></download-dialog>
   </div>
 </template>
 
@@ -82,7 +84,7 @@ export default {
   data() {
     return {
       appendViewVisible: false,
-      controlData: new Array(16).fill({
+      controlData: new Array(4).fill({
         fileName: "",
         timeData: []
       }),
@@ -94,11 +96,13 @@ export default {
         {
           position: 0, // 表示视频的位置，初始化的时候是从0-n的按顺序的，拖动之后position就会变化
           rtspUrl: "", // 播放的视频 Url
-          streamType: ""
+          streamType: "",
+          fileName: "",
+          timeData: []
         }
       ],
       icons,
-      fenlu: [1, 4, 9, 16, 25, 36],
+      fenlu: [1, 4, 9, 16],
       fenluIndex: 0,
       operatorIndex: 0,
       videoWidth: 0,
@@ -160,6 +164,7 @@ export default {
     };
   },
   mounted() {
+    this.jugdeJump();
     this.$nextTick(() => {
       this.chooseFenlu(1);
     });
@@ -170,6 +175,28 @@ export default {
   },
   destroyed() {},
   methods: {
+    jugdeJump() {
+      console.log(this.$route);
+      // 判断$route有没有channelUuid，有表示是跳转过来播放视频的
+      if (
+        this.$route.params.channelUuid &&
+        this.$route.path === "/VideoPlayback"
+      ) {
+        this.jumpVideo(this.$route.params.channelUuid);
+      }
+    },
+    jumpVideo(id) {
+      let d = new Date();
+      let ymd = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay();
+      let hms = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      this.playVideo(
+        id,
+        ymd + " 00:00:00",
+        ymd + " " + hms,
+        "normal_vod",
+        "main"
+      );
+    },
     // 录像播放跳转时间
     choosetime(index, chooseTime) {
       this.videoArr[index].rtspUrl = this.controlData[index].rtspUrl;
@@ -235,75 +262,68 @@ export default {
     saveView() {
       this.appendViewVisible = true;
     },
-    playVideo(url, channelUuid, streamType) {
-      // 根据通道获取到了视频流地址，从而进行播放
-      // 遍历videoArr数组，看哪个分路的url为空，则在上面播放
-      for (let i = 0; i < this.videoArr.length; i++) {
-        if (!this.videoArr[i].url) {
-          this.videoArr[i].url = url;
-          this.videoArr[i].channelUuid = channelUuid;
-          this.videoArr[i].streamType = streamType;
-          // 左边的树添加到右边去播放
-          break;
-        }
-      }
-      this.videoArr.concat();
-    },
-    async playRtsp(arr, sd, ed, videoType, streamType) {
+    playRtsp(arr, sd, ed, videoType, streamType) {
       // 播放rtsp,传过来的可能是多个通道id
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].h5Type === "channel") {
-          let videos = await this.records(
-            arr[i].id,
-            sd,
-            ed,
-            videoType,
-            streamType
-          );
-          // videos是录像的信息，现在将这些放倒控制面板中
-          // {
-          //       "rtspUrl" : "string", // 回放RtspUrl
-          //       "localId": "string", // 本地流媒体服务智能组件id
-          //       "videos":
-          //           [
-          //               {
-          //                   "fileName":"string", //文件名
-          //                   "startTime":"string", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
-          //                   "endTime":"string", // 结束时间（yyyy-MM-dd hh:mm:ss），必填
-          //                   "videoType":"string", // 录像类型，必填
-          //                   "streamType":"string"	// 码流类型
-          //               }
-          //           ]
-          //   }
-          // 模拟数据
-          videos = {
-            fileName: "string", // 文件名
-            videoType: "string", // 录像类型，必填
-            streamType: "string", // 码流类型
-            rtspUrl: "",
-            ymd: "", // 用于记录年月日
-            timeData: [
-              {
-                startTime: "00:00:00",
-                endTime: "02:00:00"
-              },
-              {
-                startTime: "11:00:00",
-                endTime: "13:00:00"
-              },
-              {
-                startTime: "22:00:00",
-                endTime: "24:00:00"
-              }
-            ]
-          };
-          for (let i = 0; i < this.controlData.length; i++) {
-            // 如果controlData哪个没有数据则找到它添加他
-            if (!this.controlData[i].rtspUrl) {
-              this.controlData.splice(i, 1, videos);
-              break;
-            }
+          this.playVideo(arr[i].id, sd, ed, videoType, streamType);
+        }
+      }
+    },
+    async playVideo(id, sd, ed, videoType, streamType) {
+      let data = await this.backup(id, sd, ed, videoType, streamType);
+      // videos是录像的信息，现在将这些放倒控制面板中
+      // {
+      //       "rtspUrl" : "string", // 回放RtspUrl
+      //       "localId": "string", // 本地流媒体服务智能组件id
+      //       "videos":
+      //           [
+      //               {
+      //                   "fileName":"string", //文件名
+      //                   "startTime":"string", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
+      //                   "endTime":"string", // 结束时间（yyyy-MM-dd hh:mm:ss），必填
+      //                   "videoType":"string", // 录像类型，必填
+      //                   "streamType":"string"	// 码流类型
+      //               }
+      //           ]
+      //   }
+      // 处理数据
+      let videos = data.videos;
+      let timeData = videos.map(item => {
+        return {
+          date: item.startTime.split(" ")[0],
+          startTime: item.startTime.split(" ")[1],
+          endTime: item.endTime.split(" ")[1]
+        };
+      });
+      console.log(timeData);
+      // 模拟数据
+      videos = {
+        fileName: "string", // 文件名
+        videoType: "string", // 录像类型，必填
+        streamType: "string", // 码流类型
+        rtspUrl: "",
+        ymd: "", // 用于记录年月日
+        timeData: [
+          {
+            startTime: "00:00:00",
+            endTime: "02:00:00"
+          },
+          {
+            startTime: "11:00:00",
+            endTime: "13:00:00"
+          },
+          {
+            startTime: "22:00:00",
+            endTime: "24:00:00"
           }
+        ]
+      };
+      for (let i = 0; i < this.videoArr.length; i++) {
+        // 如果controlData哪个没有数据则找到它添加他
+        if (!this.videoArr[i].rtspUrl) {
+          this.videoArr.splice(i, 1, videos);
+          break;
         }
       }
     },
@@ -321,7 +341,7 @@ export default {
             console.log(res);
             // let data = res.data.data;
             // let videos = (data && data.videos) || [] || [];
-            resolve(res.data.data.videos);
+            resolve(res.data.data);
           })
           .catch(() => {
             resolve([]);
@@ -344,9 +364,6 @@ export default {
           });
       });
     },
-    download() {
-      this.downloadVisible = true;
-    },
     initWrapDom() {
       let vedioWrapDom = this.$refs.vedioWrap;
       let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
@@ -354,6 +371,7 @@ export default {
       this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
     },
     chooseFenlu(index) {
+      console.log(index);
       this.fenluIndex = index;
       this.initWrapDom();
       // 切换分路，还需要保留之前已经打开的视频画面
@@ -361,8 +379,6 @@ export default {
       let num = Array.from(
         { length: this.fenlu[this.fenluIndex] },
         (item, index) => {
-          console.log(index);
-          console.log(this.videoArr[index]);
           item = { rtspUrl: "", position: index };
           if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
             item = this.videoArr[index];
@@ -370,8 +386,8 @@ export default {
           return item;
         }
       );
-      console.log(num);
       this.videoArr = num;
+      console.log(num);
     },
     ClickViDeoA(index) {
       this.operatorIndex = index;
@@ -406,11 +422,33 @@ export default {
             return item;
           });
           break;
+        case "加速":
+          this.videoSpeedUp();
+          break;
+        case "减速":
+          this.videoSpeedDown();
+          break;
+        case "单帧":
+          this.videoSingleFrame();
+          break;
+        case "设置回访时间":
+          this.setVideoTime();
+          break;
+        case "切换至实时":
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.swithlive(this.videoArr[this.operatorIndex].channelUuid);
+          }
+          break;
         case "摄像机信息":
           this.videoInfoVisible = true;
           break;
         case "抓图":
           this.screenShotVisible = true;
+          break;
+        case "下载":
+          this.download();
           break;
         case "全屏":
           this.setFullScreen(this.$refs["video" + this.operatorIndex][0].$el);
@@ -418,18 +456,20 @@ export default {
         case "图像调节":
           this.imageAdjustVisible = true;
           break;
-        case "主码流":
-          this.switchMaLiu(this.operatorIndex, "main");
-          break;
-        case "辅码流":
-          this.switchMaLiu(this.operatorIndex, "sub");
-          break;
-        case "三码流":
-          this.switchMaLiu(this.operatorIndex, "thrid");
-          break;
-        default:
-          break;
       }
+    },
+    videoSpeedUp() {},
+    videoSpeedDown() {},
+    videoSingleFrame() {},
+    setVideoTime() {},
+    swithlive(channelUuid) {
+      this.$router.push({
+        name: "VideoPreview",
+        params: { channelUuid }
+      });
+    },
+    download() {
+      this.downloadVisible = true;
     },
     switchMaLiu(index, streamType) {
       if (!this.videoArr[index].url) {
@@ -460,7 +500,7 @@ export default {
   watch: {
     "$route.path": function(newVal, oldVal) {
       // 监听路由，查看params是否携带参数rtsp，从而判断是否跳转播放码流
-      console.log(this.$route);
+      this.jugdeJump();
     }
   }
 };

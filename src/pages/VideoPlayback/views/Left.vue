@@ -277,7 +277,7 @@ export default {
       console.log(node);
       let data = await this.videoTree(node.data && node.data.id);
       data = data.map(item => {
-        item.leaf = !!item.openFlag;
+        item.leaf = !item.openFlag;
         return item;
       });
       // data = [

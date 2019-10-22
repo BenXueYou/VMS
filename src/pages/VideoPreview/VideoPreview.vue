@@ -12,6 +12,7 @@
                   @preset="preset"
                   @changetab="changetab"
                   @clickNode="clickNode"
+                  @switchLuxiang="switchLuxiang"
                   :deviceUuid="deviceUuid"></left-content>
     <div class='right'
          ref='rigth'>
@@ -179,6 +180,7 @@ export default {
     };
   },
   mounted() {
+    this.jugdeJump();
     this.$nextTick(() => {
       this.initWrapDom();
     });
@@ -189,6 +191,14 @@ export default {
   },
   destroyed() {},
   methods: {
+    jugdeJump() {
+      if (
+        this.$route.params.channelUuid &&
+        this.$route.path === "/VideoPreview"
+      ) {
+        this.playRtsp(this.$route.params.channelUuid, "main");
+      }
+    },
     openView(data) {
       // 打开视图
       this.fenluIndex = data.colTotal - 1;
@@ -436,7 +446,14 @@ export default {
 
           break;
         case "抓图":
-          this.screenShot();
+          this.screenShot(this.videoArr[this.operatorIndex].channelUuid);
+          break;
+        case "切换至录像":
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.switchLuxiang(this.videoArr[this.operatorIndex].channelUuid);
+          }
           break;
         case "全屏":
           this.setFullScreen(this.$refs["video" + this.operatorIndex][0].$el);
@@ -459,6 +476,12 @@ export default {
         default:
           break;
       }
+    },
+    switchLuxiang(channelUuid) {
+      this.$router.push({
+        name: "VideoPlayback",
+        params: { channelUuid }
+      });
     },
     screenShot() {
       // 抓图
@@ -504,6 +527,12 @@ export default {
       if (target.msRequestFullscreen) {
         target.msRequestFullscreen();
       }
+    }
+  },
+  watch: {
+    "$route.path": function(newVal, oldVal) {
+      // 监听路由，查看params是否携带参数rtsp，从而判断是否跳转播放码流
+      this.jugdeJump();
     }
   }
 };

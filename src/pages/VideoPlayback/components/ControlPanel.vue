@@ -42,8 +42,15 @@
           </el-slider>
         </li>
         <li style="width:60px;">
-          <el-input class='speed'
-                    v-model='speed'></el-input>
+          <!-- <el-input class='speed'
+                    v-model='speed'></el-input> -->
+          <el-select class='speed'
+                     @change="changeFenlu"
+                     v-model='speed'>
+            <el-option v-for="(item,index) in fenlu"
+                       :key="index"
+                       :value="item">{{item}}</el-option>
+          </el-select>
         </li>
         <li style='width:50px;'>
           <div class='center'
@@ -153,12 +160,15 @@ export default {
   props: {
     data: {
       type: Array
+    },
+    fenlu: {
+      type: Array
     }
   },
   data() {
     return {
       icons,
-      speed: 1,
+      speed: 4,
       voice: 50,
       zoom: 1, // 时间轴缩放倍数
       move: 0,
@@ -176,6 +186,14 @@ export default {
     this.controlData = this.data;
   },
   methods: {
+    changeFenlu() {
+      for (let i = 0, len = this.fenlu.length; i < len; i++) {
+        if (this.speed === this.fenlu[i]) {
+          this.$emit("chooseFenlu", i);
+          break;
+        }
+      }
+    },
     chooseTime(index, chooseTime) {
       console.log(index, chooseTime);
       this.$emit("choosetime", index, chooseTime);

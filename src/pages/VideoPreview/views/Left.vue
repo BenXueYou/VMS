@@ -28,8 +28,8 @@
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
             <span>{{ node.label }}</span>
-            <!-- v-if="data.h5Type==='channel'" -->
             <el-dropdown trigger="click"
+                         v-if="data.h5Type==='channel'"
                          @command="handleCommand"
                          placement="bottom"
                          class='threelinemenu'>
@@ -437,6 +437,7 @@ export default {
         // 打开视频操作
         this.getPreviewInfo(this.operatorData.id);
       } else if (command === "playback") {
+        this.$emit("switchLuxiang", this.operatorData.id);
       } else if (command === "view") {
         this.$emit("openView", this.operatorData);
       } else if (command === "renameView") {
