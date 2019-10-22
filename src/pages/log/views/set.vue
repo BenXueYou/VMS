@@ -55,9 +55,11 @@
 				<el-table-column prop="gender" label="姓名" width="128">
 					<template slot-scope="scope">{{$common.getEnumItemName("gender", scope.row.gender)}}</template>
 				</el-table-column>
-				<el-table-column prop="phoneNo" label="登陆IP"></el-table-column>
-				<el-table-column prop="plateNo" label="时间" :show-overflow-tooltip="true"></el-table-column>
-				<el-table-column prop="reason" label="事件"></el-table-column>
+				<el-table-column prop="phoneNo" label="配置IP"></el-table-column>
+				<el-table-column prop="plateNo" label="模块" :show-overflow-tooltip="true"></el-table-column>
+				<el-table-column prop="reason" label="类型"></el-table-column>
+				<el-table-column prop="reason" label="详情"></el-table-column>
+				<el-table-column prop="reason" label="配置时间"></el-table-column>
 			</el-table>
 			<!----------------------------------表格分页器---------------------------------->
 			<div class="footer">

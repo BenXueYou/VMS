@@ -21,9 +21,9 @@
             <img class="left_menu_right_icon"
                  src="../../assets/images/select-down.png" />
           </template>
-          <el-menu-item index="/log/set">配置日志</el-menu-item>
-          <el-menu-item index="/log/operator">操作日志</el-menu-item>
-          <el-menu-item index="/log/login">登陆日志</el-menu-item>
+          <el-menu-item index="/log/setLog">配置日志</el-menu-item>
+          <el-menu-item index="/log/operatorLog">操作日志</el-menu-item>
+          <el-menu-item index="/log/loginLog">登陆日志</el-menu-item>
         </el-submenu>
       </el-menu>
     </div>
@@ -54,9 +54,9 @@ export default {
       this.menuTitle = key;
     },
     handleSelect(index, indexpath) {
-      // console.log(index, indexpath);
+      console.log(index, indexpath);
       this.menuTitle = indexpath[0];
-      //   console.log(this.menuTitle);
+      console.log(this.menuTitle);
       this.subRoute = index.split("/")[index.split("/").length - 1];
     }
   },

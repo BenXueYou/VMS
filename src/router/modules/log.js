@@ -1,26 +1,26 @@
 const loglog= () => import("@/pages/log/log");
 
-const login = () => import("@/pages/log/views/login");
-const set = () => import("@/pages/log/views/set");
-const operator = () => import("@/pages/log/views/operator");
+const loginLog = () => import("@/pages/log/views/login");
+const setLog = () => import("@/pages/log/views/set");
+const operatorLog = () => import("@/pages/log/views/operator");
 
 const logChildRoutes = [
   {
-    path: "login",
-    name: "login",
-    component: login,
+    path: "loginLog",
+    name: "loginLog",
+    component: loginLog,
     title: "登陆日志"
   },
   {
-    path: "set",
-    name: "set",
-    component: set,
+    path: "setLog",
+    name: "setLog",
+    component: setLog,
     title: "配置日志"
   },
   {
-    path: "operator",
-    name: "operator",
-    component: operator,
+    path: "operatorLog",
+    name: "operatorLog",
+    component: operatorLog,
     title: "操作日志"
   }
 ];

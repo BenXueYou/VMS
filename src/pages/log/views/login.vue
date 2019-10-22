@@ -181,12 +181,7 @@ export default {
     // this.initData();
   },
   activated() {
-    console.log(this.$route.params.data, "---------openDoor-------");
-    var params = this.$route.params.data;
     var data = {};
-    if (params && params.visitorUuid) {
-      data.visitorUuid = params.visitorUuid;
-    }
     this.currentPage = 1;
     Object.assign(this.otherSearchData, data);
     // this.initData();

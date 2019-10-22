@@ -18,7 +18,7 @@ export default {
       // isRouterAlive: true,
       doorRoute: "/DoorControl/AccessGroupConfig",
       vistorRoute: "/VistorMange/VistorRecord",
-      logRoute: "/log/set",
+      logRoute: "/log/setLog",
       userRoute: "/user/accout"
     };
   },
