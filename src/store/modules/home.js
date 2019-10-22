@@ -7,6 +7,8 @@ const home = {
     tagViewArr: Storage.readSession("tagViewArr") || [],
     localTag: Storage.readSession("localTag") || "Home",
     localEnums: Storage.read("localEnums") || {},
+    CapturePhotoArr: Storage.read("CapturePhotoArr") || {},
+    RecognizationArr: Storage.read("RecognizationArr") || {},
     Authorization: Storage.readSession("Authorization") || "",
     projectUuid: Storage.readSession("projectUuid") || "",
     account: Storage.read("account") || "",
@@ -21,22 +23,8 @@ const home = {
       Storage.saveSession("tagViewArr", tagViewArr);
     },
     ADD_TAG_VIEW_ITEM: (state, compomentItem) => {
-      // if (state.tagViewArr.length === 0) {
-      //   state.tagViewArr.push(compomentItem);
-      // } else {
-      //   for (let index in state.tagViewArr) {
-      //     if (compomentItem.name === state.tagViewArr[index].name) {
-      //       break;
-      //     }
-      //     if (parseInt(index) === state.tagViewArr.length - 1) {
-      //       state.tagViewArr.push(compomentItem);
-      //     }
-      //   }
-      // }
       if (state.tagViewArr.some(v => v.name === compomentItem.name)) return;
       state.tagViewArr.push(compomentItem);
-
-      console.log(state.tagViewArr);
       Storage.saveSession("tagViewArr", state.tagViewArr);
     },
     DEL_TAG_VIEW_ITEM: (state, compomentItem) => {
@@ -50,13 +38,19 @@ const home = {
     },
     SET_LOCAL_TAG: (state, localTag) => {
       state.localTag = localTag;
-      // Cookies.set('localTag', localTag);
       Storage.saveSession("localTag", localTag);
     },
     SET_LOCAL_ENUMS: (state, localEnums) => {
       state.localEnums = localEnums;
-
       Storage.save("localEnums", localEnums);
+    },
+    SET_CAPTURE_PHOTO_ARR: (state, CapturePhotoArr) => {
+      state.CapturePhotoArr = CapturePhotoArr;
+      Storage.save("CapturePhotoArr", CapturePhotoArr);
+    },
+    SET_RECOGNIZATION_ARR: (state, RecognizationArr) => {
+      state.RecognizationArr = RecognizationArr;
+      Storage.save("RecognizationArr", RecognizationArr);
     },
     SET_AUTHORIZATION: (state, Authorization) => {
       state.Authorization = Authorization;
@@ -99,6 +93,12 @@ const home = {
     },
     setLocalEnums({ commit }, localEnums) {
       commit("SET_LOCAL_ENUMS", localEnums);
+    },
+    setCapturePhotoArr({ commit }, CapturePhotoArr) {
+      commit("SET_CAPTURE_PHOTO_ARR", CapturePhotoArr);
+    },
+    setRecognizationArr({ commit }, RecognizationArr) {
+      commit("SET_RECOGNIZATION_ARR", RecognizationArr);
     },
     setAuthorization({ commit }, Authorization) {
       commit("SET_AUTHORIZATION", Authorization);

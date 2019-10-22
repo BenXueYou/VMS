@@ -35,7 +35,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     if (response.data.hasOwnProperty("success")) {
-      // debugger;
       if (response.data.success) {
         return response;
       } else if (response.data.errCode === 7000) {
@@ -43,7 +42,6 @@ service.interceptors.response.use(
           name: "Login"
         });
       } else {
-        // debugger;
         Toast.error(response.data.msg);
         return Promise.reject("error");
       }

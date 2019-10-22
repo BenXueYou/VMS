@@ -147,8 +147,8 @@
                        size="small">删除</el-button>
             <el-button type="text"
                        @click="remoteControl(scope.row)"
-                       :class="{'offLine':scope.row.netStatus==='offline'}"
                        size="small">配置</el-button>
+            <!-- :class="{'offLine':scope.row.netStatus==='offline'}" -->
             <!-- :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig))" -->
           </template>
         </el-table-column>

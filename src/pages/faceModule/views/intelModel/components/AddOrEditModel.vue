@@ -1,8 +1,12 @@
 <template>
   <div class="control-main-add">
+    <select-face :isShow="isShowAddFaceDB"
+                 ref="selectFace"
+                 @onCancel="cancelAddFaceDB"
+                 @onConfirm="confirmAddFaceDB" />
     <div class="access-main">
       <div class="dialog-title">
-        <div class="title-text">{{isAdd ? "新建" : "编辑"}}布控</div>
+        <div class="title-text">{{isAdd ? "新建" : "编辑"}}模型</div>
         <div class="title-button">
           <el-button type="primary"
                      @click="onClickCancel"
@@ -14,32 +18,54 @@
       </div>
       <div class="form">
         <el-form :rules="rules"
-                 ref="addUnitForm"
+                 ref="modelForm"
                  label-position="right"
                  label-width="180px"
                  :model="formLabelAlign"
                  class="info-form">
           <el-form-item label="名称："
-                        prop="name">
+                        prop="faceModelName">
             <el-input class="time-interal left-space"
-                      v-model="formLabelAlign.name"></el-input>
+                      v-model="formLabelAlign.faceModelName"></el-input>
           </el-form-item>
           <el-form-item label="人脸库："
                         prop="name">
+            <div class="add-item"
+                 @click="addFaceDB">
+              <img src="@/assets/images/faceModule/add.png">
+              <span>添加</span>
+            </div>
+            <div class="item-select">
+              <template v-for="(item, index) in faceDBSelectedList">
+                <div :key="index"
+                     class="select-item">
+                  <img src="@/assets/images/person_g.png"
+                       width="11px"
+                       height="11px">
+                  <span style="margin-left: 4px">{{item.faceDBName}}</span>
+                  <div class="del-image"
+                       @click="deleteItem(item)">
+                    <img src="@/assets/images/delete_x.png"
+                         width="13px"
+                         height="13px">
+                  </div>
+                </div>
+              </template>
+            </div>
           </el-form-item>
           <el-form-item label="相似度不低于："
-                        prop="name">
+                        prop="faceSimilarityThreshold">
             <el-input class="time-interal left-space"
-                      v-model="formLabelAlign.name"></el-input>
+                      v-model="formLabelAlign.faceSimilarityThreshold"></el-input>
           </el-form-item>
           <el-form-item label="抓拍图片需达到的质量："
-                        prop="selectedButtons">
-            <pic-qulity-select :selectedButtons.sync="formLabelAlign.selectedButtons"
+                        prop="faceCapturePhotoQualities">
+            <pic-qulity-select :selectedButtons.sync="formLabelAlign.faceCapturePhotoQualities"
                                class="left-space" />
           </el-form-item>
           <el-form-item label="时间段：">
             <div class="left-space time-select">
-              <template v-for="(item, index) in timePickerList">
+              <template v-for="(item, index) in formLabelAlign.timeList">
                 <div class="time-item"
                      :key="index">
                   <el-time-picker v-model="item.startTime"
@@ -75,9 +101,9 @@
               <div>
                 <span>最近</span>
                 <el-input style="width: 60px;"
-                          v-model="formLabelAlign.name"></el-input>
+                          v-model="formLabelAlign.recentDays"></el-input>
                 <span>天</span>
-                <el-select v-model="formLabelAlign.num"
+                <el-select v-model="formLabelAlign.statisticType"
                            size="small"
                            style="width: 80px; margin-left: 40px;"
                            placeholder=" ">
@@ -90,10 +116,10 @@
                 <span>满足：</span>
               </div>
               <div>
-                <template v-for="(item, index) in devResList">
+                <template v-for="(item, index) in allVideoSource">
                   <div :key="index">
                     <div v-if="index === 0">
-                      <el-select v-model="formLabelAlign.num"
+                      <el-select v-model="item.logic"
                                  size="small"
                                  style="width: 180px;"
                                  placeholder="请选择视频源">
@@ -103,7 +129,7 @@
                                    :value="item.typeStr">
                         </el-option>
                       </el-select>
-                      <el-select v-model="formLabelAlign.num"
+                      <el-select v-model="item.logic"
                                  size="small"
                                  style="width: 64px; margin-left: 20px;"
                                  placeholder="≧">
@@ -114,13 +140,13 @@
                         </el-option>
                       </el-select>
                       <el-input style="width: 60px; margin-left: 20px;"
-                                v-model="formLabelAlign.name"
+                                v-model="item.frequency"
                                 type="number"></el-input>
                       <span>次</span>
                       <span style="margin-left: 40px;">且至少</span>
                       <el-input style="width: 60px;"
                                 type="number"
-                                v-model="formLabelAlign.name"></el-input>
+                                v-model="item.leastNumberOfChannel"></el-input>
                       <span>个摄像机抓拍</span>
                       <img src="@/assets/images/faceModule/add.png"
                            width="14px"
@@ -129,7 +155,7 @@
                            height="14px">
                     </div>
                     <div v-if="index !== 0">
-                      <el-select v-model="formLabelAlign.num"
+                      <el-select v-model="item.localType"
                                  size="small"
                                  style="width: 120px;"
                                  placeholder="同时符合">
@@ -139,7 +165,7 @@
                                    :value="item.typeStr">
                         </el-option>
                       </el-select>
-                      <el-select v-model="formLabelAlign.num"
+                      <el-select v-model="item.logic"
                                  size="small"
                                  style="width: 180px; margin-left: 15px;"
                                  placeholder="请选择视频源">
@@ -149,7 +175,7 @@
                                    :value="item.typeStr">
                         </el-option>
                       </el-select>
-                      <el-select v-model="formLabelAlign.num"
+                      <el-select v-model="item.logic"
                                  size="small"
                                  style="width: 64px; margin-left: 15px;"
                                  placeholder="≧">
@@ -160,7 +186,7 @@
                         </el-option>
                       </el-select>
                       <el-input style="width: 60px; margin-left: 15px;"
-                                v-model="formLabelAlign.name"
+                                v-model="item.frequency"
                                 type="number"></el-input>
                       <span>次</span>
                       <img src="@/assets/images/faceModule/add.png"
@@ -181,8 +207,8 @@
             </div>
           </el-form-item>
           <el-form-item label="模型状态："
-                        prop="status">
-            <el-switch v-model="formLabelAlign.status"
+                        prop="enabled">
+            <el-switch v-model="formLabelAlign.enabled"
                        class="left-space"
                        active-color="rgba(32,204,150,0.2)"
                        inactive-color="rgba(255,255,255,0.2)"></el-switch>
@@ -211,10 +237,12 @@
 
 <script>
 import PicQulitySelect from "@/common/PicQulitySelect";
+import SelectFace from "@/common/SelectFaceDB";
 
 export default {
   components: {
-    PicQulitySelect
+    PicQulitySelect,
+    SelectFace
   },
   props: {
     isAdd: {
@@ -225,35 +253,38 @@ export default {
   data() {
     return {
       formLabelAlign: {
-        name: "",
-        selectedButtons: [],
-        isAlarm: 1,
-        num: "",
-        status: "",
-        remark: ""
+        faceModelName: "",
+        faceLibraryUuids: [],
+        faceSimilarityThreshold: 0,
+        faceCapturePhotoQualities: [],
+        timeList: [
+          {
+            startTime: "",
+            endTime: ""
+          }
+        ],
+        recentDays: 0,
+        statisticType: "",
+        videoSource: {},
+        otherVideoSource: [],
+        notInVideoSource: [],
+        notInlibrary: "",
+        captureInterval: "",
+        enabled: "",
+        remarks: ""
       },
       numOptions: [],
-      rules: {
-        name: [
-          { required: true, message: "名称不能为空", trigger: "blur" },
-          { whitespace: true, message: "不允许输入空格", trigger: "blur" },
-          { min: 1, max: 32, message: "长度在 1 到 32 个字符", trigger: "blur" }
-        ],
-        selectedButtons: [
-          { required: true, message: "名称不能为空", trigger: "blur" }
-        ],
-        isAlarm: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-        vioce: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-        status: [{ required: true, message: "名称不能为空", trigger: "blur" }]
-      },
-      timePickerList: [
+      rules: {},
+      faceDBSelectedList: [],
+      isShowAddFaceDB: false,
+      allVideoSource: [
         {
-          startTime: "",
-          endTime: ""
+          localType: "videoSource",
+          channelList: [],
+          logic: "",
+          frequency: 0,
+          leastNumberOfChannel: 0,
         }
-      ],
-      devResList: [
-        {}
       ]
     };
   },
@@ -265,30 +296,101 @@ export default {
     initData() {
       // this.houseTypeOptions = this.$common.getEnumByGroupStr("house_t");
     },
-    resetFormData() {},
-    onClickConfirm() {},
+    resetFormData() {
+      this.formLabelAlign = {
+        faceModelName: "",
+        faceLibraryUuids: [],
+        faceSimilarityThreshold: 0,
+        faceCapturePhotoQualities: [],
+        timeList: [
+          {
+            startTime: "",
+            endTime: ""
+          }
+        ],
+        recentDays: 0,
+        statisticType: "",
+        videoSource: {},
+        otherVideoSource: [],
+        notInVideoSource: [],
+        notInlibrary: "",
+        captureInterval: "",
+        enabled: "",
+        remarks: ""
+      };
+    },
+    onClickConfirm() {
+      this.$refs.modelForm.validate(valid => {
+        if (valid) {
+          if (this.isAdd) {
+            this.addIntelModel();
+          } else {
+            this.editIntelModel();
+          }
+        } else {
+          this.$cToast.error("请正确填写内容");
+        }
+      });
+    },
     onClickCancel() {
       this.resetFormData();
       this.$emit("onCancel");
     },
+    addIntelModel() {
+      this.$intelModelHttp.addIntelModel(this.formLabelAlign).then(res => {
+        let body = res.data;
+        this.modelSuccess(body);
+      });
+    },
+    modelSuccess(body) {
+      this.$cToast.success(body.msg);
+      this.resetFormData();
+      this.$emit("onConfirm");
+    },
+    editIntelModel() {
+      this.$intelModelHttp.editIntelModel(this.formLabelAlign).then(res => {
+        let body = res.data;
+        this.modelSuccess(body);
+      });
+    },
     addTimePicker(index) {
-      this.timePickerList.splice(index + 1, 0, {
+      this.formLabelAlign.timeList.splice(index + 1, 0, {
         startTime: "",
         endTime: ""
       });
     },
     reduceTimePicker(index) {
-      this.timePickerList.splice(index, 1);
+      this.formLabelAlign.timeList.splice(index, 1);
     },
     addDevRes(index) {
-      this.devResList.splice(index + 1, 0, {
-        startTime: "",
-        endTime: ""
+      this.allVideoSource.splice(index + 1, 0, {
+        localType: "",
+        channelList: [],
+        logic: "",
+        frequency: 0,
       });
     },
     reduceDevRes(index) {
-      this.devResList.splice(index, 1);
+      this.allVideoSource.splice(index, 1);
     },
+    addFaceDB() {
+      this.isShowAddFaceDB = true;
+    },
+    confirmAddFaceDB(val) {
+      this.faceDBSelectedList = this.$common.copyArray(val, this.faceDBSelectedList);
+      this.isShowAddFaceDB = false;
+    },
+    cancelAddFaceDB() {
+      this.isShowAddFaceDB = false;
+    },
+    deleteItem(item) {
+      for (let [i, v] of this.faceDBSelectedList.entries()) {
+        if (v.id === item.id) {
+          this.faceDBSelectedList.splice(i, 1);
+        }
+      }
+      this.$refs.selectFace.deleteItem(item);
+    }
   },
   watch: {},
   destroyed() {}
@@ -385,6 +487,39 @@ export default {
       position: absolute;
       right: 0px;
       top: 18px;
+    }
+  }
+  .add-item {
+    font-family: PingFangSC-Regular;
+    font-size: 13px;
+    color: #26d39d;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .item-select {
+    display: flex;
+    align-content: flex-start;
+    flex-flow: row wrap;
+    .select-item {
+      height: 32px;
+      padding: 0 12px;
+      box-sizing: border-box;
+      position: relative;
+      display: flex;
+      align-items: center;
+      font-family: PingFangSC-Regular;
+      font-size: 13px;
+      color: #dddddd;
+      background: rgba($color: #ffffff, $alpha: 0.05);
+      border-radius: 3px;
+      margin-bottom: 10px;
+      margin-right: 15px;
+      .del-image {
+        position: absolute;
+        top: -16px;
+        right: -5px;
+        cursor: pointer;
+      }
     }
   }
 }

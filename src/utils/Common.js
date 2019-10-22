@@ -435,7 +435,15 @@ export var COMMON = {
     };
 
     return throttled;
-  }
+  },
+  /**
+   * 前端生成不重复的ID
+   */
+  genLocalId() {
+    let idStr = Date.now().toString(36);
+    idStr += Math.random().toString(36).substr(3);
+    return idStr;
+  },
 };
 function install(Vue) {
   Vue.prototype.$common = COMMON;

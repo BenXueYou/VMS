@@ -25,7 +25,7 @@
         <el-form-item label="请添加人脸库："
                       prop="interval">
           <el-button class='iconButton'
-                     @click="openDB(item)"
+                     @click="openDB()"
                      type="primary"
                      size='small'>
             <img :src="icons.tianjia"
@@ -66,6 +66,9 @@
                    @click='close'>
           取消
         </el-button>
+        <select-face-d-b :isShow.sync="isShow"
+                         @onConfirm="onConfirm"
+                         @onCancel="onCancel"></select-face-d-b>
       </el-form>
     </div>
   </el-dialog>
@@ -74,8 +77,12 @@
 <script>
 import icons from "@/common/js/icon.js";
 import * as api from "@/pages/equipmentMange/ajax.js";
+import SelectFaceDB from "@/common/SelectFaceDB";
 export default {
   name: "videoset",
+  components: {
+    SelectFaceDB
+  },
   props: {
     deviceUuid: {
       type: String,
@@ -111,6 +118,7 @@ export default {
       }
     };
     return {
+      isShow: false,
       faceDBArr: [],
       icons,
       editEquipmentDialogVisible: false,
@@ -145,7 +153,9 @@ export default {
     this.getData();
   },
   methods: {
-    openDB() {},
+    openDB() {
+      this.isShow = true;
+    },
     delteDBitem(item) {},
     close() {
       this.$emit("update:visible", false);

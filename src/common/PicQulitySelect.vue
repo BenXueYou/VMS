@@ -27,22 +27,22 @@ export default {
     return {
       picQultButtons: [
         {
-          value: "high",
+          value: "HIGH",
           text: "高",
           selected: false
         },
         {
-          value: "normal",
+          value: "NORMAL",
           text: "中",
           selected: false
         },
         {
-          value: "low",
+          value: "LOW",
           text: "低",
           selected: false
         },
         {
-          value: "invalid",
+          value: "LOWER",
           text: "无效",
           selected: false
         }
@@ -64,28 +64,28 @@ export default {
     changeSelect(item) {
       item.selected = !item.selected;
       switch (item.value) {
-        case "high":
+        case "HIGH":
           this.picQultButtons.forEach((v, i) => {
             if (i > 0 && !item.selected) {
               v.selected = item.selected;
             }
           });
           break;
-        case "normal":
+        case "NORMAL":
           this.picQultButtons.forEach((v, i) => {
             if ((i < 1 && item.selected) || (i > 1 && !item.selected)) {
               v.selected = item.selected;
             }
           });
           break;
-        case "low":
+        case "LOW":
           this.picQultButtons.forEach((v, i) => {
             if ((i < 2 && item.selected) || (i > 2 && !item.selected)) {
               v.selected = item.selected;
             }
           });
           break;
-        case "invalid":
+        case "LOWER":
           this.picQultButtons.forEach((v, i) => {
             if (item.selected) {
               v.selected = item.selected;
@@ -107,27 +107,27 @@ export default {
     },
     setButtonsSelect(val) {
       let obj = {};
-      if (val.some(v => v === "invalid")) {
+      if (val.some(v => v === "LOWER")) {
         obj = {
-          value: "invalid",
+          value: "LOWER",
           text: "无效",
           selected: false
         };
-      } else if (val.some(v => v === "low")) {
+      } else if (val.some(v => v === "LOW")) {
         obj = {
-          value: "low",
+          value: "LOW",
           text: "低",
           selected: false
         };
-      } else if (val.some(v => v === "normal")) {
+      } else if (val.some(v => v === "NORMAL")) {
         obj = {
-          value: "normal",
+          value: "NORMAL",
           text: "中",
           selected: false
         };
-      } else if (val.some(v => v === "high")) {
+      } else if (val.some(v => v === "HIGH")) {
         obj = {
-          value: "high",
+          value: "HIGH",
           text: "高",
           selected: false
         };
@@ -141,22 +141,22 @@ export default {
     resetButtons() {
       this.picQultButtons = [
         {
-          value: "high",
+          value: "HIGH",
           text: "高",
           selected: false
         },
         {
-          value: "normal",
+          value: "NORMAL",
           text: "中",
           selected: false
         },
         {
-          value: "low",
+          value: "LOW",
           text: "低",
           selected: false
         },
         {
-          value: "invalid",
+          value: "LOWER",
           text: "无效",
           selected: false
         }

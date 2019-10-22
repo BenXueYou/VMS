@@ -93,11 +93,14 @@
 					trigger="click"
 				>
 					<el-row class="FRelPopoverRow" justify="space-between">
-						<el-col class="FRelPopoverCol" @click.native="searchImageToFace(o,index,'/faceImpact')">
+						<el-col
+							class="FRelPopoverCol"
+							@click.native="searchImageToFace(o,index,'/FaceManage/searchFaceWithFace')"
+						>
 							<img src="@/assets/images/faceModule/2.png" />
 							以脸搜脸
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'/Companion')">
+						<el-col class="FRelPopoverCol" @click.native="judgeStaffTrace(o,'/FaceManage/PersonTrace')">
 							<img src="@/assets/images/faceModule/4.png" />
 							人员轨迹
 						</el-col>
@@ -292,6 +295,27 @@ export default {
           });
         }
       });
+    },
+    // 是否有人员轨迹
+    judgeStaffTrace(item, routeName) {
+      let data = {
+        faceRecognitionRecordUuid: item.faceRecognitionRecordUuid,
+        captureDatetime: item.captureDatetime
+      };
+      api
+        .getFaceUuidByFaceCaptureUuid(data)
+        .then(res => {
+          if (res.data.success) {
+            let params = res.data.data;
+            this.$router.push({
+              path: routeName,
+              query: { faceUuid: params.faceUuid }
+            });
+          } else {
+            this.$message({ type: "warning", message: res.data.msg });
+          }
+        })
+        .catch(() => {});
     },
     // 是否有同行人分析
     analysisAct(o, index, routeName) {

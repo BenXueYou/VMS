@@ -1,9 +1,70 @@
 import Axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
-import store from '@/store/store.js'; import { Message } from 'element-ui';
+import store from '@/store/store.js';
+import { Message } from 'element-ui';
 
 let FaceModuleApi = RestApi.api.faceModuleAPi;
 
+export function getFaceDeviceList(data) {
+  if (data) { data.projectUuid = store.state.home.projectUuid; }
+  let url = FaceModuleApi.getFaceDeviceList(store.state.home.projectUuid);
+  return Axios({
+    method: 'GET',
+    url,
+    params: data
+  });
+}
+export function getDeviceChannelList(data) {
+  if (data) { data.projectUuid = store.state.home.projectUuid; }
+  let url = FaceModuleApi.getDeviceChannelList(store.state.home.projectUuid);
+  return Axios({
+    method: 'GET',
+    url,
+    params: data
+  });
+}
+
+export function getFaceUuidByFaceCaptureUuid(data) {
+  let url = FaceModuleApi.getFaceUuidByFaceCaptureUuid(store.state.home.projectUuid);
+  return Axios({
+    method: "GET",
+    url,
+    params: data
+  });
+}
+
+// 基础设置接口
+export function getFaceModuleConfig() {
+  let url = FaceModuleApi.getFaceModuleConfigApi(store.state.home.projectUuid);
+  return Axios({
+    method: 'GET',
+    url,
+  });
+}
+export function postFaceModuleConfig(xhr) {
+  let url = FaceModuleApi.postFaceModuleConfigApi(store.state.home.projectUuid);
+  return Axios({
+    method: 'POST',
+    url,
+    data: xhr
+  });
+}
+export function uploadAudio(xhr) {
+  let url = FaceModuleApi.uploadAudioApi(store.state.home.projectUuid);
+  return Axios({
+    method: 'POST',
+    url,
+    data: xhr
+  });
+}
+export function deleteAudio(xhr) {
+  let url = FaceModuleApi.deleteAudioApi(store.state.home.projectUuid);
+  return Axios({
+    method: 'DELETE',
+    url,
+    data: xhr
+  });
+}
 // 根据布控任务查询关联的设备以及人脸库
 export function getTaskDeatailChannelAndLib(uuid) {
   let url = FaceModuleApi.getTaskDetailChannelAndLibs(store.state.home.projectUuid, uuid);
@@ -84,9 +145,9 @@ export function addFaceLid(data) {
 export function getFaceLib(data) {
   let url = FaceModuleApi.faceDBApi.getFaceLibUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'GET',
     url,
-    data
+    params: data
   });
 }
 // 二查
@@ -137,11 +198,11 @@ export function addStaffInfo(data) {
 }
 // 人脸库人员列表
 export function getStaffList(data) {
-  let url = FaceModuleApi.faceDBApi.addStaffUrl(store.state.home.projectUuid);
+  let url = FaceModuleApi.faceDBApi.getStaffListUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'GET',
     url,
-    data
+    params: data
   });
 }
 // 人脸库人员详情
