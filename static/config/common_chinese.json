@@ -194,12 +194,9 @@
         "bullet_camera": "枪机",
         "dome_camera": "半球机",
         "ball_camera": "球机",
-        "vehicle_ipc": "车辆抓拍相机",
-        "face_ipc": "人脸抓拍相机",
-        "face_recog_ipc": "人脸识别相机",
+        "bullet_camera_ptz": "带云台的枪机",
         "door_ipc": "门禁视频",
         "fire_ipc": "消防视频",
-        "body_snap_ipc": "人体抓拍相机",
         "pulse_fence": "脉冲电子围栏",
         "rfid_detected": "RFID",
         "cover_sensor": "井盖",
@@ -977,8 +974,23 @@
     "ServerType": {
         "GT_DOOR_HK": "海康门禁服务",
         "GT_DOOR_DH": "大华门禁服务",
-        "GT_VIDEO_HK": "大华视频服务",
-        "GT_VIDEO_DH": "海康视频服务"
+        "GT_VIDEO_HK": "海康视频服务",
+        "GT_VIDEO_DH": "大华视频服务",
+        "GT_UPLOAD_POLICE1400": "公安1400上传服务"
+    },
+    "face_lib_type": {
+        "systemFaceLib": "系统人员库",
+        "captureFaceLib": "抓拍库",
+        "dynamicFaceLib": "动态库",
+        "staticFaceLib": "静态库"
+    },
+    "face_h5_lib_group_type": {
+        "systemFaceLib,staticFaceLib,dynamicFaceLib": "人脸库",
+        "captureFaceLib": "抓拍库"
+    },
+    "face_report_type": {
+        "faceDailyReport": "月报表",
+        "faceMonthlyReport": "日报表"
     },
     "onoffline": {
         "online": "在线",
@@ -1109,5 +1121,14 @@
         "leave_overtime": "签离超时",
         "leaved": "到访已签离",
         "ineffective": "未生效"
+    },
+    "glasses_s": {
+        "normal": "普通眼镜",
+        "sunglasses": "墨镜",
+        "none": "不戴"
+    },
+    "mask_s": {
+        "normal": "戴口罩",
+        "none": "不戴"
     }
 }
