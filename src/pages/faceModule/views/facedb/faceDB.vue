@@ -389,7 +389,11 @@ export default {
         this.$message.error(`不可以删除${this.libraryName}数据`);
         return;
       }
-      this.row = [row.faceUuid];
+      if (row.faceLibraryUuid) {
+        this.row = row.faceLibraryUuid;
+      } else {
+        this.row = [row.faceUuid];
+      }
       this.dialogVisible = true;
       this.deleteWay = way;
     },
@@ -509,11 +513,10 @@ export default {
     // 删除人脸库
     deletefaceLib() {
       api
-        .deleteFaceLib({ faceLibraryUuid: this.selectLibRow.faceLibraryUuid })
+        .deleteFaceLib({ faceLibraryUuid: this.row })
         .then(res => {
-          if (res.data.status === 0) {
+          if (res.data.success) {
             this.$message.success("删除成功！");
-            this.getStaffLibStaffData();
             this.getStaffLibList();
           }
         });
@@ -707,6 +710,7 @@ export default {
           if (res.data.success && res.data.data) {
             this.staffDetail = res.data.data;
             this.staffDetail.faceLibraryUuid = faceLibraryUuid;
+            this.staffDetail.faceLibraryName = this.libraryName;
             this.faceDBDialogAddVisible = true;
           } else {
             this.$message.error("获取数据为空!");
@@ -730,9 +734,8 @@ export default {
       }
       var uuids = this.row;
       api.deleteStaff({ faceUuid: uuids }).then(res => {
-        if (res.data.status === 0) {
+        if (res.data.success) {
           this.$message.success("删除成功！");
-          this.getStaffLibStaffData();
           this.getStaffLibList();
         }
       });

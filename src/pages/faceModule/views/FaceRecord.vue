@@ -337,11 +337,11 @@ export default {
         });
     },
     searchImageToFace(o, index, routeName) {
-      var url = this.imageHeader + o.faceCapturePhotoUrl;
-      this.$common.imageToBase64(url, base64 => {
-        o.imageBase64 = base64;
-        this.$router.push({ path: routeName, query: { imgObj: o } });
-      });
+    //   var url = this.imageHeader + o.faceCapturePhotoUrl;
+    //   this.$common.imageToBase64(url, base64 => {
+    //      o.imageBase64 = base64;
+      this.$router.push({ path: routeName, query: { imgObj: o } });
+    //   });
     },
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
