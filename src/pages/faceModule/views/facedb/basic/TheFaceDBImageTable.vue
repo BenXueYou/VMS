@@ -130,7 +130,7 @@ export default {
       }
     },
     editface(row) {
-      console.log(row);
+      console.log(row.staffName);
       this.$emit("getFaceDetail", row.faceUuid, row.faceLibraryUuid);
     },
     deleteface(row) {
@@ -167,12 +167,10 @@ export default {
       });
     },
     async preloadImage() {
-      var url = "";
+    //   var url = "";
       for (var i = 0; i < this.imageTableData.length; i++) {
-        url = this.imageTableData[i].photoUri;
-        var result = await this.downloadImage(url);
-        console.log(result);
-        this.preload[i] = this.imageHeader + url;
+        let url = this.imageTableData[i].facePhotoUrl;
+        this.preload[i] = url;
         this.preload.splice(i, 1, url);
       }
     }

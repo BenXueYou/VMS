@@ -121,6 +121,8 @@ export default {
       "SET_CARDOPTIONS",
       this.$common.getEnumByGroupStr("card_u")
     );
+
+    this.initWebSocket();
   },
   activated() {
     console.log(this.$store);
@@ -129,6 +131,7 @@ export default {
     // 建立websocket通知
     initWebSocket() {
       if (this.webSocket) return;
+      if (this.stompClient) return;
       /* eslint-disable */
 			let url = window.config.protocolHeader + window.config.socketIP;
 			this.webSocket = new SockJS(url);
@@ -185,13 +188,18 @@ export default {
     },
     handleSubscribeCapture(data) {
       let CapturePhotoArr = this.$store.state.home.CapturePhotoArr;
+
+      let his = data.captureDatetime.split(" ")[1];
+      let ymd = data.captureDatetime.split(" ")[0];
+      let mdy = ymd.split('-')[1] + '-' + ymd.split('-')[2] + '-' + ymd.split('-')[0];
+      data.captureDatetime = his + " " + mdy;
       CapturePhotoArr.push(data);
-      this.$store.dispatch("SET_CAPTURE_PHOTO_ARR", CapturePhotoArr);
+      this.$store.dispatch("setCapturePhotoArr", CapturePhotoArr);
     },
     handleSubscribeRecognization(data) {
       let RecognizationArr = this.$store.state.home.RecognizationArr;
       RecognizationArr.push(data);
-      this.$store.dispatch("SET_RECOGNIZATION_ARR", RecognizationArr);
+      this.$store.dispatch("setRecognizationArr", RecognizationArr);
     },
     handleSubscribeMonitorAlarm(data) {
       this.GlobalAlarmList.push(data);

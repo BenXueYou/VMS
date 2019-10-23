@@ -6,7 +6,12 @@ import { Message } from 'element-ui';
 let FaceModuleApi = RestApi.api.faceModuleAPi;
 
 export function getFaceDeviceList(data) {
-  if (data) { data.projectUuid = store.state.home.projectUuid; }
+  if (data) {
+    data.projectUuid = store.state.home.projectUuid;
+    data.orgType = 'device';
+    // data.needType = 'device';
+  }
+
   let url = FaceModuleApi.getFaceDeviceList(store.state.home.projectUuid);
   return Axios({
     method: 'GET',
@@ -209,9 +214,9 @@ export function getStaffList(data) {
 export function getStaffDetail(data) {
   let url = FaceModuleApi.faceDBApi.getStaffDetailUrl(store.state.home.projectUuid);
   return Axios({
-    method: 'POST',
+    method: 'GET',
     url,
-    data
+    params: data
   });
 }
 // 删除人员

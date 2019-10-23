@@ -269,7 +269,7 @@ export default {
       dialogVisible: false, // 删除的弹窗。
       deleteWay: "",
       row: "",
-      faceLibraryUuid: '',
+      faceLibraryUuid: "",
       uploadstatusZnarr: [],
       defaultHeader: require("@/assets/user.png"),
       listTableColumns: [], // 右边表格，显示哪些数据
@@ -289,8 +289,8 @@ export default {
       },
       get() {
         return this.selectLibRow.faceLibraryName;
-      },
-    },
+      }
+    }
     // faceLibraryUuid() {
     //   return this.selectLibRow.faceLibraryUuid;
     // }
@@ -299,6 +299,7 @@ export default {
     selectLibRow: {
       handler(newVal, oldVal) {
         this.faceLibraryUuid = newVal.faceLibraryUuid;
+        console.log(newVal, "this.selectLibRow====", this.selectLibRow);
       },
       deep: true
     },
@@ -420,42 +421,46 @@ export default {
         .getStaffList(params)
         .then(res => {
           this.listtableloadding = false;
-          if (res.data.success || !res.data.data || !res.data.data.list) {
+          let staffTableData = [];
+          if (
+            !res.data.success ||
+						!res.data.data ||
+						!res.data.data.list.length
+          ) {
             this.$message.success(this.libraryName + "没有数据");
-            return;
+          } else {
+            let arr = res.data.data.list;
+            for (let i = 0; i < arr.length; i++) {
+              let tmpItem = arr[i];
+              tmpItem.checked = false;
+              tmpItem.faceLibraryName = this.selectLibRow.faceLibraryName;
+              tmpItem.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
+              // 翻译 性别 人员类型 证件类型
+              tmpItem["gender"] = this.$common.getEnumItemName(
+                "gender",
+                tmpItem.gender
+              );
+              tmpItem["staffType"] = this.$common.getEnumItemName(
+                "staff_t",
+                tmpItem.staffType
+              );
+              tmpItem["credentialType"] = this.$common.getEnumItemName(
+                "cred",
+                tmpItem.credentialType
+              );
+              // 照片设置默认图片
+              if (!tmpItem.facePhotoUrl || tmpItem.isshow === false) {
+                tmpItem.facePhotoUrl = this.defaultHeader;
+              }
+              staffTableData.push(tmpItem);
+            }
           }
-          let arr = res.data.data.list;
-          for (let i = 0; i < arr.length; i++) {
-            let tmpItem = arr[i];
-            tmpItem.checked = false;
-            tmpItem.faceLibraryName = this.selectLibRow.faceLibraryName;
-            tmpItem.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
-            // 翻译 性别 人员类型 证件类型
-            tmpItem["gender"] = this.$common.getEnumItemName(
-              "gender",
-              tmpItem.gender
-            );
-            tmpItem["staffType"] = this.$common.getEnumItemName(
-              "staff_t",
-              tmpItem.staffType
-            );
-            tmpItem["credentialType"] = this.$common.getEnumItemName(
-              "cred",
-              tmpItem.credentialType
-            );
-            // 照片设置默认图片
-            if (!tmpItem.photoUrl || tmpItem.isshow === false) {
-              tmpItem.photoUrl = this.defaultHeader;
-            }
-            if (this.typeradio === "TheFaceDBListTable") {
-              this.listTableData = [];
-              this.listPageCount = res.data.data.total;
-              this.listTableData.push(tmpItem);
-            } else {
-              this.imageTableData = [];
-              this.imagePageCount = res.data.data.total;
-              this.imageTableData.push(tmpItem);
-            }
+          if (this.typeradio === "TheFaceDBListTable") {
+            this.listTableData = staffTableData;
+            this.listPageCount = res.data.data.total;
+          } else {
+            this.imageTableData = staffTableData;
+            this.imagePageCount = res.data.data.total;
           }
         })
         .catch(err => {
@@ -512,14 +517,12 @@ export default {
     },
     // 删除人脸库
     deletefaceLib() {
-      api
-        .deleteFaceLib({ faceLibraryUuid: this.row })
-        .then(res => {
-          if (res.data.success) {
-            this.$message.success("删除成功！");
-            this.getStaffLibList();
-          }
-        });
+      api.deleteFaceLib({ faceLibraryUuid: this.row }).then(res => {
+        if (res.data.success) {
+          this.$message.success("删除成功！");
+          this.getStaffLibList();
+        }
+      });
     },
     // 添加样式
     currentRowStyle(index) {
@@ -593,11 +596,15 @@ export default {
       this.faceDBDialogDKVisible = !this.faceDBDialogDKVisible;
     },
     faceLibUpdateRecord() {
-      this.faceDBDialogUpdateHistoryVisible = !this.faceDBDialogUpdateHistoryVisible;
+      this.faceDBDialogUpdateHistoryVisible = !this
+        .faceDBDialogUpdateHistoryVisible;
     },
     addfile() {
       if (this.selectLibRow.addFaceByUser) {
         this.isUpdate = false;
+        this.staffDetail = {};
+        this.staffDetail.faceLibraryName = this.selectLibRow.faceLibraryName;
+        this.staffDetail.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
         this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;
       } else {
         this.$message.warning(
@@ -607,7 +614,7 @@ export default {
     },
     exportfile() {},
     deletefile() {
-      if (this.selectLibRow.deletable) {
+      if (!this.selectLibRow.deletable) {
         this.$message.error(`${this.selectLibRow.faceLibraryName}不可以删除`);
         return;
       }
@@ -638,7 +645,7 @@ export default {
       }
       api.addDaoKuTask(data).then(res => {
         console.log(res);
-        if (res.data.result === 0) {
+        if (res.data.success) {
           this.taskNum.push({
             time: time,
             num: num,
@@ -681,6 +688,8 @@ export default {
     selectedRow(row, event, column) {
       // 当点击左边的列表，右边进行更新
       this.selectLibRow = row;
+      this.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
+      this.libraryName = this.selectLibRow.faceLibraryName;
       this.currentRowStyle(this.selectLibRow.index);
       this.selectall = false;
       this.resetall();
@@ -701,7 +710,6 @@ export default {
         return;
       }
       this.addtitle = "修改人脸";
-      this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;
       api
         .getStaffDetail({
           faceUuid: uuid
@@ -711,7 +719,7 @@ export default {
             this.staffDetail = res.data.data;
             this.staffDetail.faceLibraryUuid = faceLibraryUuid;
             this.staffDetail.faceLibraryName = this.libraryName;
-            this.faceDBDialogAddVisible = true;
+            this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;
           } else {
             this.$message.error("获取数据为空!");
           }
@@ -729,16 +737,19 @@ export default {
     },
     deleteviprealy() {
       if (!this.row.length) {
-        this.$message.warning('没有选中的faceUuid');
+        this.$message.warning("没有选中的faceUuid");
         return;
       }
       var uuids = this.row;
-      api.deleteStaff({ faceUuid: uuids }).then(res => {
-        if (res.data.success) {
-          this.$message.success("删除成功！");
-          this.getStaffLibList();
-        }
-      });
+      api
+        .deleteStaff({ faceUuid: uuids, faceLibraryUuid: this.faceLibraryUuid })
+        .then(res => {
+          if (res.data.success) {
+            this.$message.success("删除成功！");
+            this.getStaffLibList();
+            this.getStaffLibStaffData();
+          }
+        });
     },
     // 查询人员库
     getStaffLibList(flag = false) {
@@ -850,11 +861,11 @@ export default {
   mounted() {
     // this.templatetypearr = window.face.kutemplate;
     this.$nextTick(function() {
-      var el = this.$refs.dataWrap;
-      var w = el.offsetWidth;
-      var h = el.offsetHeight;
-      this.imagePageSize = 4 * Math.floor(w / 150);
-      this.listPageSize = Math.floor((h - 50) / 43);
+      // var el = this.$refs.dataWrap;
+      // var w = el.offsetWidth;
+      // var h = el.offsetHeight;
+      // this.imagePageSize = 4 * Math.floor(w / 150);
+      // this.listPageSize = 15;
     });
   },
   activated() {
@@ -887,6 +898,16 @@ export default {
 #noteaacx {
 	.el-checkbox__label {
 		color: rgba(255, 255, 255, 0.8);
+	}
+	.el-checkbox__inner::after {
+    box-sizing: content-box;
+    border: 1px solid #26D39D;
+    border-left: 0;
+    border-top: 0;
+    height: 7px;
+    left: 4px;
+    position: absolute;
+    top: 1px;
 	}
 	.DeleteDialogClass {
 		.mydelete {

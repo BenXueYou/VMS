@@ -182,11 +182,10 @@ export default {
     },
     tryListenBtnAct(tag) {
       // 试听
-      var audio = document.createElement("audio");
+      let audio = document.createElement("audio");
       audio.autoplay = "autoplay";
-      audio.src = tag.url;
+      audio.src = tag.soundUrl;
       audio.play();
-      console.log(audio);
     },
     uploadBtnAct() {
       var input = document.createElement("input");

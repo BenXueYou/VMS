@@ -12,7 +12,7 @@
 	>
 		<el-row class="popverTreeParentBox">
 			<el-row
-				style="overflow:auto; width:35%;border-right:1px solid rgb(104,103,102);background: #202124;"
+				style="overflow:auto; width:25%;min-width:245px;border-right:1px solid rgb(104,103,102);background: #202124;"
 			>
 				<el-tree
 					ref="deviceTree"
@@ -182,17 +182,6 @@ export default {
       this.checkedChannel = [];
       this.checkedChannelName = "";
     },
-    // 递归确定默认设备列表
-    getInitChannelInfoList(data) {
-      if (!data || data.length === 0) {
-        return "";
-      }
-      if (data[0] && data[0].children === null) {
-        return data;
-      } else {
-        return this.getInitChannelInfoList(data[0].children);
-      }
-    },
     // 去掉树节点的叶子
     hasChildren(data) {
       if (!data && data.length === 0) {
@@ -210,33 +199,35 @@ export default {
     // 弹窗展开的回调
     show() {
       console.log("--------show-------");
-      this.treeData = JSON.parse(JSON.stringify(this.channelInfoList));
-      this.handleNodeClick(this.treeData[0]);
-      // 若设置了默认选中的节点
-      if (this.checkedChannelKeys && this.checkedChannelKeys.length) {
-        this.checkedChannel = [];
-        this.checkedChannelName = "";
-        for (let i = 0; i < this.checkedChannelKeys.length; i++) {
-          for (let j = 0; j < this.channels.length; j++) {
-            if (this.checkedChannelKeys[i] === this.channels[j].id) {
-              this.checkedChannel.push(this.channels[j]);
-              this.checkedChannelName += this.channels[i].label;
-              this.checkedChannelName += ",";
-            }
-          }
-        }
-      } else {
-        // 默认展示所有节点
-        if (this.checkedChannel && this.checkedChannel.length) {
-          return;
-        }
-        if (this.boxType !== "radio") {
-          this.channels = [];
-          this.handleNodeClick(this.channelInfoList[0]);
-          this.checkedChannel = this.channels;
-        }
-      }
+      // this.treeData = JSON.parse(JSON.stringify(this.channelInfoList));
+      // this.handleNodeClick(this.treeData[0]);
+      // // 若设置了默认选中的节点
+      // if (this.checkedChannelKeys && this.checkedChannelKeys.length) {
+      //   this.checkedChannel = [];
+      //   this.checkedChannelName = "";
+      //   for (let i = 0; i < this.checkedChannelKeys.length; i++) {
+      //     for (let j = 0; j < this.channels.length; j++) {
+      //       if (this.checkedChannelKeys[i] === this.channels[j].id) {
+      //         this.checkedChannel.push(this.channels[j]);
+      //         this.checkedChannelName += this.channels[i].label;
+      //         this.checkedChannelName += ",";
+      //       }
+      //     }
+      //   }
+      // } else {
+      //   // 默认展示所有节点
+      //   if (this.checkedChannel && this.checkedChannel.length) {
+      //     return;
+      //   }
+      //   if (this.boxType !== "radio") {
+      //     this.channels = [];
+      //     this.handleNodeClick(this.channelInfoList[0]);
+      //     this.checkedChannel = this.channels;
+      //   }
+      // }
     },
+    // 获取所有设备
+
     // 弹窗关闭的回调
     hide() {
       this.$emit("transferCheckedChannel", this.checkedChannel);
