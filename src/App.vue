@@ -66,11 +66,11 @@ export default {
       if (newVal === "/user") {
         this.$router.push(this.userRoute);
       }
-      // 回复门禁控制的上一次的操作路径
+      // 恢复门禁控制的上一次的操作路径
       if (newVal.indexOf("/DoorControl") !== -1) {
         this.doorRoute = newVal;
       }
-      // 回复访客管理的上一次的操作路径
+      // 恢复访客管理的上一次的操作路径
       if (newVal.toLocaleLowerCase().indexOf("/vistormange") !== -1) {
         this.vistorRoute = newVal;
       }
