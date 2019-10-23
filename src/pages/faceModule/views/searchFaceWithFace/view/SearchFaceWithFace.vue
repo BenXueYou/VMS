@@ -68,14 +68,10 @@
           <template v-for="(item, index) in faceList">
             <div :key="index"
                  class="list-item">
-              <img :src="item.faceCapturePhotoUrl"
+              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
                    height="100%"
                    width="40%"
                    class="img-fill">
-              <!-- <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
-                   height="100%"
-                   width="40%"
-                   class="img-fill"> -->
               <div class="item-info">
                 <div class="info-name"
                      v-if="libraryType !== 'captureFaceLib'">
@@ -115,7 +111,8 @@
                   <img src="@/assets/images/faceModule/now_dect.png">
                   <span class="elem-title">临时布控</span>
                 </div>
-                <div class="menu-elem">
+                <div class="menu-elem"
+                     @click="downloadImage(item)">
                   <img src="@/assets/images/faceModule/export_pic.png">
                   <span class="elem-title">导出图片</span>
                 </div>
@@ -161,34 +158,7 @@ export default {
         pageSize: 12,
         currentPage: 1
       },
-      faceList: [
-        {
-          recognizeUuid: "string",
-          faceCapturePhotoUrl: require("@/assets/images/faceModule/face_search.png"),
-          panoramaCapturePhotoUrl: require("@/assets/images/faceModule/face_search.png"),
-          channelName: "string",
-          channelUuid: "string",
-          genderCapture: "string",
-          similarity: 82,
-          staffName: "string",
-          faceUuid: "string",
-          faceLibraryName: "string",
-          captureDatetime: "string",
-        },
-        {
-          recognizeUuid: "string",
-          faceCapturePhotoUrl: require("@/assets/images/faceModule/look_allview.png"),
-          panoramaCapturePhotoUrl: require("@/assets/images/faceModule/look_allview.png"),
-          channelName: "string",
-          channelUuid: "string",
-          genderCapture: "string",
-          similarity: 82,
-          staffName: "string",
-          faceUuid: "string",
-          faceLibraryName: "string",
-          captureDatetime: "string",
-        }
-      ],
+      faceList: [],
       deviceList: [],
       faceRecordPopoverClass: "faceRecordPopoverClass",
       checkedChannelKeys: [],
@@ -203,21 +173,38 @@ export default {
   },
   created() {},
   activated() {
-    // if (this.$route.query.imgObj) {
-    //   this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
-    // } else {
-    //   this.imageUrl = "";
-    // }
+    if (this.$route.query.imgObj) {
+      this.imageList = [];
+      this.imageList.push({
+        key: this.genModelIndex(),
+        picBaseUrl: "",
+        imageUrl: this.$route.query.imgObj.faceCapturePhotoUrl
+      });
+      this.imageList.push({
+        key: this.genModelIndex(),
+        picBaseUrl: "",
+        imageUrl: ""
+      });
+      this.defaultSelect();
+      this.getFaceList();
+    }
   },
   mounted() {
-    this.imageList.push({
-      key: this.genModelIndex(),
-      picBaseUrl: "",
-      imageUrl: ""
-    });
-    this.libraryTypeOption = this.$common.getEnumByGroupStr("face_h5_lib_group_type");
+    this.initData();
   },
   methods: {
+    initData() {
+      this.startTime = this.$common.formatDate(
+        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+      );
+      this.endTime = this.$common.formatDate(new Date());
+      this.imageList.push({
+        key: this.genModelIndex(),
+        picBaseUrl: "",
+        imageUrl: ""
+      });
+      this.libraryTypeOption = this.$common.getEnumByGroupStr("face_h5_lib_group_type");
+    },
     // 用js维护一套产生不重复id的机制
     genModelIndex() {
       let idStr = Date.now().toString(36);
@@ -300,26 +287,26 @@ export default {
     popverHidden() {},
     getFaceList() {
       this.getImg();
-      // this.isLoading = true;
-      // this.$searchFaceHttp
-      //   .searchFace({
-      //     limit: this.pageInfo.pageSize,
-      //     page: this.pageInfo.currentPage,
-      //     imageBase64: this.imageBase64,
-      //     channelUuids: this.channelUuids,
-      //     libraryType: this.libraryType,
-      //     similarity: this.similarity,
-      //     captureTimeStart: this.startTime,
-      //     captureTimeEnd: this.endTime,
-      //   })
-      //   .then(res => {
-      //     let body = res.data;
-      //     this.searchFaceSuccess(body);
-      //     this.isLoading = false;
-      //   })
-      //   .catch(() => {
-      //     this.isLoading = false;
-      //   });
+      this.isLoading = true;
+      this.$searchFaceHttp
+        .searchFace({
+          limit: this.pageInfo.pageSize,
+          page: this.pageInfo.currentPage,
+          imageBase64: this.imageBase64,
+          channelUuids: this.channelUuids,
+          libraryType: this.libraryType,
+          similarity: this.similarity,
+          captureTimeStart: this.startTime,
+          captureTimeEnd: this.endTime,
+        })
+        .then(res => {
+          let body = res.data;
+          this.searchFaceSuccess(body);
+          this.isLoading = false;
+        })
+        .catch(() => {
+          this.isLoading = false;
+        });
     },
     searchFaceSuccess(body) {
       this.faceList = body.data.list;
@@ -361,6 +348,10 @@ export default {
     },
     onCancelAllView() {
       this.isShowAllView = false;
+    },
+    downloadImage(item) {
+      // this.$common.downloadImage(item.faceCapturePhotoUrl);
+      this.$common.downloadImage(this.$common.setPictureShow(item.faceCapturePhotoUrl));
     },
   },
   watch: {},
