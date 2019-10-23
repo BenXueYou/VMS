@@ -477,7 +477,15 @@ export var COMMON = {
     idStr += Math.random().toString(36).substr(3);
     return idStr;
   },
-};
+  downloadImage(src) {
+    const $a = document.createElement('a');
+    $a.setAttribute("href", src);
+    $a.setAttribute("download", "");
+
+    const event = new MouseEvent('click');
+    $a.dispatchEvent(event);
+  },
+}
 function install(Vue) {
   Vue.prototype.$common = COMMON;
 }

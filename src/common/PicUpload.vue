@@ -4,15 +4,29 @@
              :action="fileUrl"
              :show-file-list="false"
              :auto-upload="true"
-             :disabled="isDisabled"
+             :disabled="imageUrl ? true : isDisabled"
              :before-upload="beforeAvatarUpload"
              :http-request='httpRequest'>
-    <div v-if="imageFile"
+    <div v-if="imageUrl"
+         class="avatar"
+         @mouseenter="showDelete(true)"
+         @mouseleave="showDelete(false)">
+      <img :src="imageUrl"
+           :width="`${width}`"
+           @click="selectImg"
+           :height="`${height}`"
+           style="object-fit: fill;min-height: 120px;">
+      <i class="el-icon-delete clearImageIcon"
+         @click.stop="deleteUpdateImage()"
+         v-if="isShowDelButton"></i>
+    </div>
+    <div v-if="!imageUrl && imageFile"
          class="avatar"
          @mouseenter="showDelete(true)"
          @mouseleave="showDelete(false)">
       <img :src="imageFile"
            :width="`${width}`"
+           @click="selectImg"
            :height="`${height}`"
            style="object-fit: fill;min-height: 120px;">
       <i class="el-icon-delete clearImageIcon"
@@ -20,7 +34,7 @@
          v-if="isShowDelButton"></i>
     </div>
     <div class="avatar"
-         v-else>
+         v-if="!imageUrl && !imageFile">
       <img src="@/assets/images/addImg2.png"
            class="ovo-card-img add-icon">
       <i class="el-icon-circle-plus-outline font-color">添加图片</i>
@@ -43,6 +57,10 @@ export default {
     enableEdit: {
       type: Boolean,
       default: false
+    },
+    imageUrl: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -104,9 +122,13 @@ export default {
       } else {
         this.isShowDelButton = false;
       }
+    },
+    selectImg() {
+      this.$emit("selectImg");
     }
   },
-  watch: {},
+  watch: {
+  },
   destroyed() {}
 };
 </script>
