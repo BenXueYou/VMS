@@ -61,6 +61,8 @@ export default {
   // @fengyawen
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
   getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
+  getModelDev: `${URLHeader}/${projectUuid}/IntelligentModel/channel/list`,
+  getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list`,
   getModelList: `${URLHeader}/${projectUuid}/modelStatistics/list`,
   getFaceCaptureAll: `${URLHeader}/${projectUuid}/snapshotStatistics/all/list`,
   getFaceCaptureOne: `${URLHeader}/${projectUuid}/snapshotStatistics/one/list`,

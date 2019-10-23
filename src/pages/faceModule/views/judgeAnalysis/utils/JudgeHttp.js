@@ -2,9 +2,6 @@ import axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 
 export var JudgeHttp = {
-  /**
-   * 初始化小区
-   */
   getJudgeList(holder) {
     let api = `${RestApi.api.faceModuleAPi.getJudgeList}`;
     let data = {};
@@ -13,6 +10,22 @@ export var JudgeHttp = {
     }
     return axios.get(api, { params: data });
   },
+  getModelDev(holder) {
+    let api = `${RestApi.api.faceModuleAPi.getModelDev}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.get(api, { params: data });
+  },
+  getJudgeDetails(holder) {
+    let api = `${RestApi.api.faceModuleAPi.getJudgeDetails}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.get(api, { params: data });
+  }
 };
 
 function install(Vue) {

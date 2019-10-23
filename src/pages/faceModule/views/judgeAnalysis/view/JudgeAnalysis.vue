@@ -1,6 +1,7 @@
 <template>
   <div class="main-block">
     <judge-details :isShow="isShowDetail"
+                   ref="judgeDetails"
                    @onCancel="onCancelDetail"
                    @onConfirm="onConfirmDetail" />
     <div class="main-container">
@@ -69,7 +70,7 @@
                 <div class="other-span">{{item.analysisResultDescribe}}</div>
                 <div class="other-span">{{item.staffName}}&nbsp;&nbsp;{{item.faceLibraryName}}</div>
                 <div class="other-span"
-                     style="color:#FD545E">{{item.status}}</div>
+                     style="color:#FD545E">{{item.status ? '已处理' : '未处理'}}</div>
               </div>
             </div>
           </template>
@@ -101,6 +102,9 @@
             </el-table-column>
             <el-table-column prop="status"
                              label="状态">
+              <template slot-scope="scope">
+                {{scope.row.status ? '已处理' : '未处理'}}
+              </template>
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
@@ -162,7 +166,20 @@ export default {
     this.init();
   },
   mounted() {
-    this.statusOptions = this.$common.getEnumByGroupStr("alarm_r");
+    this.statusOptions = [
+      {
+        typeName: "未处理",
+        typeStr: 0
+      },
+      {
+        typeName: "已处理",
+        typeStr: 1
+      },
+      {
+        typeName: "全部",
+        typeStr: ""
+      },
+    ];
     this.init();
   },
   methods: {
@@ -272,7 +289,9 @@ export default {
       this.getJudgeList();
     },
     lookDetail(row) {
+      this.$refs.judgeDetails.modelItem = this.$common.copyObject(row, this.$refs.judgeDetails.modelItem);
       this.isShowDetail = true;
+      this.$refs.judgeDetails.getModelDev();
     },
     onConfirmDetail() {
       this.isShowDetail = false;

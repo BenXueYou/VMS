@@ -7,10 +7,10 @@
              :close-on-click-modal="false">
     <div class="dialog-content">
       <!--内容-->
-      <div class="content-title">
+      <!-- <div class="content-title">
         <img src="@/assets/images/faceModule/alarm_t.png">
         <span style="margin-left: 10px;">报警类型：{{"疑是黄牛"}}</span>
-      </div>
+      </div> -->
       <div class="content-device">
         <span>设备：</span>
         <el-checkbox :indeterminate="isIndeterminate"
@@ -20,9 +20,9 @@
         <el-checkbox-group v-model="checkedDevices"
                            @change="handleCheckedDevChange">
           <el-checkbox v-for="dev in devices"
-                       :label="dev"
-                       :key="dev">
-            {{dev}}
+                       :label="dev.channelName"
+                       :key="dev.channelUuid">
+            {{dev.channelName}}
             <div class="device-dot"
                  style="background: #F6C620;"></div>
           </el-checkbox>
@@ -31,30 +31,31 @@
       <div class="content-list">
         <template v-for="(item, index) in infoList">
           <div :key="index"
-               class="list-item">
+               class="list-item"
+               v-loading="isLoading">
             <div class="item-left">
               <div class="item-arrow">
-                {{item.time ? item.time.substr(5, 5) : ""}}
+                {{item.captureDatetime ? item.captureDatetime.substr(5, 5) : ""}}
               </div>
             </div>
             <div class="dot"
                  style="background: #F6C620;"></div>
             <div class="item-right">
               <div class="right-item">
-                <img :src="$common.setPictureShow(item.photoUrl)"
+                <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
                      width="67.7px"
                      height="67.6px"
                      style="margin-left: 6px"
                      class="img-fill">
-                <img :src="$common.setPictureShow(item.photoAllUrl)"
+                <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl)"
                      width="120.9px"
                      style="margin-left: 6px"
                      height="67.6px"
                      class="img-fill">
                 <div class="info-other">
-                  <div class="other-span">{{item.time}}</div>
-                  <div class="other-span">{{item.address}}</div>
-                  <div class="other-span">{{item.details}}</div>
+                  <div class="other-span">{{item.captureDatetime}}</div>
+                  <div class="other-span">{{item.channelName}}</div>
+                  <div class="other-span">{{item.age + "岁" +$common.getEnumItemName("gender", item.gender)}} {{item.mask ? "戴口罩" : "不戴口罩"}}</div>
                 </div>
               </div>
             </div>
@@ -119,66 +120,19 @@ export default {
   },
   data() {
     return {
+      modelItem: {},
       isCurrentShow: false,
       typeRadio: 0,
       dataBaseOptions: [],
       dataBase: "",
       remark: "",
-      checkAll: false,
-      checkedDevices: ["设备1", "设备3"],
-      devices: ["设备1", "设备2", "设备3", "设备4"],
+      checkAll: true,
+      checkedDevices: [],
+      devices: [],
       isIndeterminate: true,
-      infoList: [
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        }
-      ]
+      infoList: [],
+      channelUuids: [],
+      isLoading: false,
     };
   },
   created() {},
@@ -193,13 +147,52 @@ export default {
     handleCheckAllChange(val) {
       this.checkedDevices = val ? this.devices : [];
       this.isIndeterminate = false;
+      this.getJudgeDetails();
     },
     handleCheckedDevChange(value) {
       let checkedCount = value.length;
       this.checkAll = checkedCount === this.devices.length;
       this.isIndeterminate =
         checkedCount > 0 && checkedCount < this.devices.length;
-    }
+      this.getJudgeDetails();
+    },
+    getModelDev() {
+      this.$judgeHttp
+        .getModelDev({
+          modelUuid: this.modelItem.faceModelUuid,
+        })
+        .then(res => {
+          let body = res.data;
+          this.getModelDevSuccess(body);
+        });
+    },
+    getModelDevSuccess(body) {
+      this.devices = body.data.list;
+      this.getJudgeDetails();
+    },
+    getJudgeDetails() {
+      this.channelUuids = [];
+      this.checkedDevices.forEach(v => {
+        this.channelUuids.push(v.channelUuid);
+      });
+      this.isLoading = true;
+      this.$judgeHttp
+        .getJudgeDetails({
+          faceModelAnalysisResultUuid: this.modelItem.faceModelUuid,
+          channelUuids: this.channelUuids
+        })
+        .then(res => {
+          let body = res.data;
+          this.getJudgeDetailsSuccess(body);
+          this.isLoading = false;
+        })
+        .catch(() => {
+          this.isLoading = false;
+        });
+    },
+    getJudgeDetailsSuccess(body) {
+      this.infoList = body.data.list;
+    },
   },
   watch: {
     isShow(val) {
