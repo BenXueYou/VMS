@@ -11,7 +11,7 @@ export var SearchFaceHttp = {
     for (let k in holder) {
       data[k] = holder[k];
     }
-    return axios.get(api, { params: data });
+    return axios.post(api, data);
   },
 };
 
