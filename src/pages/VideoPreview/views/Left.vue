@@ -161,9 +161,9 @@
         <el-select v-model="yuzhi"
                    placeholder="请选择">
           <el-option v-for="item in yuzhiOptions"
-                     :key="item.presetPoisition"
-                     :label="item.presetPositionUuid"
-                     :value="item.presetPoisition">
+                     :key="item.presetPositionUuid"
+                     :label="item.presetName"
+                     :value="item.presetPositionUuid">
           </el-option>
         </el-select>
       </div>
