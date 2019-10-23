@@ -33,22 +33,19 @@ export default {
   mounted() {
     console.log(this.$route);
     if (
-      this.$route.fullPath.toLocaleLowerCase().indexOf("/DoorControl") !== -1
+      this.$route.fullPath.indexOf("/DoorControl") !== -1
     ) {
       this.doorRoute = this.$route.fullPath;
     }
     if (
-      this.$route.fullPath.toLocaleLowerCase().indexOf("/vistormange") !== -1
+      this.$route.fullPath.indexOf("/VistorMange") !== -1
     ) {
       this.vistorRoute = this.$route.fullPath;
     }
-    if (
-      this.$route.fullPath.toLocaleLowerCase().indexOf("/log") !== -1 &&
-      this.$route.fullPath.toLocaleLowerCase() !== "/login"
-    ) {
+    if (this.$route.fullPath.indexOf("/log") !== -1) {
       this.logRoute = this.$route.fullPath;
     }
-    if (this.$route.fullPath.toLocaleLowerCase().indexOf("/user") !== -1) {
+    if (this.$route.fullPath.indexOf("/user") !== -1) {
       this.userRoute = this.$route.fullPath;
     }
   },
@@ -68,23 +65,6 @@ export default {
       }
       if (newVal === "/user") {
         this.$router.push(this.userRoute);
-      }
-      // 回复门禁控制的上一次的操作路径
-      if (newVal.indexOf("/DoorControl") !== -1) {
-        this.doorRoute = newVal;
-      }
-      // 回复访客管理的上一次的操作路径
-      if (newVal.toLocaleLowerCase().indexOf("/vistormange") !== -1) {
-        this.vistorRoute = newVal;
-      }
-      if (
-        newVal.toLocaleLowerCase().indexOf("/log") !== -1 &&
-        newVal.toLocaleLowerCase() !== "/login"
-      ) {
-        this.logRoute = newVal;
-      }
-      if (newVal.toLocaleLowerCase().indexOf("/user") !== -1) {
-        this.userRoute = newVal;
       }
     }
   }
