@@ -43,6 +43,13 @@ export function updatePreset(data) {
     data
   });
 }
+export function deletePreset(presetPositionUuid) {
+  let url = vUrl.deletePresetUrl + `?presetPositionUuid=${presetPositionUuid}`;
+  return axios({
+    method: "delete",
+    url
+  });
+}
 export function cruize(data) {
   let url = vUrl.cruizeUrl;
   return axios({

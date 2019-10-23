@@ -22,6 +22,8 @@ export default {
   getPresetUrl: `${urlPrefix}/video/preset/position`,
   // 更新预置点
   updatePresetUrl: `${urlPrefix}/video/preset/position`,
+  // 删除预置点
+  deletePresetUrl: `${urlPrefix}/video/preset/position`,
   //  云台巡航操作
   cruizeUrl: `${urlPrefix}/video/ptz/preset`,
   // 录像查询

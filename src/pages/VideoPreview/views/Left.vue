@@ -140,7 +140,7 @@
           步长
         </label>
         <el-slider class='slide'
-                   :max="10"
+                   :max="maxStepLength"
                    v-model="steplen"></el-slider>
         <span class="num">
           {{steplen}}
@@ -159,6 +159,7 @@
       <div class='yuzhi'
            v-show="value==='yuzhi'">
         <el-select v-model="yuzhi"
+                   @change="changeYuZhi"
                    placeholder="请选择">
           <el-option v-for="item in yuzhiOptions"
                      :key="item.presetPositionUuid"
@@ -395,7 +396,8 @@ export default {
         //   viewName: "一级 3"
         // }
       ],
-      channelUuid: ""
+      channelUuid: "",
+      maxStepLength: 10
     };
   },
   mounted() {
@@ -415,6 +417,20 @@ export default {
     })
   },
   methods: {
+    changeYuZhi() {
+      //
+      for (let i = 0; i < this.yuzhiOptions.length; i++) {
+        if (this.yuzhiOptions[i].presetPositionUuid === this.yuzhi) {
+          console.log(this.yuzhiOptions[i]);
+          this.maxStepLength = Math.max(
+            this.maxStepLength,
+            this.yuzhiOptions[i].stepLength
+          );
+          this.steplen = this.yuzhiOptions[i].stepLength;
+          break;
+        }
+      }
+    },
     getPreset() {
       api2.getPreset({ presetPositionUuid: "" }).then(res => {
         console.log(res);
@@ -539,17 +555,23 @@ export default {
       this.isChoose = false;
     },
     setYZ() {
-      this.VideoOprName = this.yuzhi;
+      for (let i = 0; i < this.yuzhiOptions.length; i++) {
+        if (this.yuzhiOptions[i].presetPositionUuid === this.yuzhi) {
+          this.VideoOprName = this.yuzhiOptions[i].presetName;
+          break;
+        }
+      }
       this.isChoose = true;
     },
     chooseIcno() {
       if (this.value === "yuzhi") {
         console.log(this.yuzhi);
-        for (let i = 0; i < this.yuzhiOptions.length; i++) {
-          if (this.yuzhiOptions[i].presetPositionUuid === this.yuzhi) {
-            this.yuzhiOptions[i].presetName = this.VideoOprName;
-            this.yuzhiOptions[i].stepLength = this.steplen;
-            this.$emit("preset", this.yuzhiOptions[i]);
+        let data = this.yuzhiOptions;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].presetPositionUuid === this.yuzhi) {
+            data[i].presetName = this.VideoOprName;
+            data[i].stepLength = this.steplen;
+            this.$emit("updatePreset", data[i]);
             break;
           }
         }
@@ -566,11 +588,16 @@ export default {
     deleteChoose() {
       // 清空预置点
       this.isChoose = false;
-      this.$emit("updatePreset", "clear_preset", this.yuzhi);
+      this.$emit("deletePreset", this.yuzhi);
     },
     cloundControl(name, index) {
       console.log(name, index);
-      if (name === "fangda" || name === "centerbig" || name === "quan") {
+      if (
+        name === "fangda" ||
+        name === "centerbig" ||
+        name === "quan" ||
+        name === "center"
+      ) {
         return;
       }
       let action = "";

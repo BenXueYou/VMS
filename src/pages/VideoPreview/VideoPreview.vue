@@ -10,6 +10,8 @@
                   @ctrl="ctrl"
                   @openView="openView"
                   @preset="preset"
+                  @updatePreset="updatePreset"
+                  @deletePreset="deletePreset"
                   @changetab="changetab"
                   @clickNode="clickNode"
                   @switchLuxiang="switchLuxiang"
@@ -277,7 +279,20 @@ export default {
         .then(() => {});
     },
     updatePreset(data) {
-      api2.updatePreset(data);
+      api2.updatePreset(data).then(res => {
+        if (res.data.success) {
+          this.$message.success("预置点修改成功！");
+        }
+        this.$refs.leftTree.getPreset();
+      });
+    },
+    deletePreset(presetPositionUuid) {
+      api2.deletePreset(presetPositionUuid).then(res => {
+        if (res.data.success) {
+          this.$message.success("预置点删除成功！");
+        }
+        this.$refs.leftTree.getPreset();
+      });
     },
     playRtsp(channelUuid, streamType = "string", operator = -1) {
       // 请求码流地址从而进行播放
