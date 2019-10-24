@@ -176,7 +176,7 @@ export default {
 }
 .asidListRowFooter.imgTxtClass .cursorClass img {
 	vertical-align: middle;
-	margin: 2px 0 0 10px;
+	margin: 2px 0 0 5px;
 }
 .RecognizeCardClass .asidRowProgress {
 	margin: auto;

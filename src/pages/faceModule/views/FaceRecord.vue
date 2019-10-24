@@ -337,19 +337,20 @@ export default {
         });
     },
     searchImageToFace(o, index, routeName) {
-    //   var url = this.imageHeader + o.faceCapturePhotoUrl;
-    //   this.$common.imageToBase64(url, base64 => {
-    //      o.imageBase64 = base64;
+      //   var url = this.imageHeader + o.faceCapturePhotoUrl;
+      //   this.$common.imageToBase64(url, base64 => {
+      //      o.imageBase64 = base64;
       this.$router.push({ path: routeName, query: { imgObj: o } });
-    //   });
+      //   });
     },
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
       console.log(checkedChannel);
       this.checkedChannelsUuidList = [];
       for (var i = 0; i < checkedChannel.length; i++) {
-        this.checkedChannelsUuidList.push(checkedChannel[i].id);
+        this.checkedChannelsUuidList.push(checkedChannel[i].channelUuid);
       }
+      console.log(this.checkedChannelsUuidList);
     },
     // 下载导出图片
     downloadImg(o, index) {

@@ -863,6 +863,7 @@ export default {
 	justify-content: center;
 	background: rgba(36, 39, 42, 1);
 	box-sizing: border-box;
+	padding-left: 17px;
 }
 .textclipClass {
 	display: inline-block;

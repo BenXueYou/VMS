@@ -52,7 +52,7 @@
 							v-for="item in channels"
 							:key="item.channelUuid"
 							:label="item.channelName"
-						>{{item.channelName}}</el-radio>
+						>{{item.nickName}}</el-radio>
 					</el-radio-group>
 					<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
 				</template>
@@ -65,10 +65,10 @@
 					>
 						<el-checkbox
 							class="checkBoxClass"
-							v-for="item in channels"
-							:key="item.channelUuid"
-							:label="item.channelName"
-						>{{item.channelName}}</el-checkbox>
+							v-for="(item,index) in channels"
+							:key="index"
+							:label="item"
+						>{{item.nickName}}</el-checkbox>
 					</el-checkbox-group>
 					<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
 				</template>
@@ -86,9 +86,6 @@
 	</el-popover>
 </template>
 <script type="text/javascript">
-// import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
-// import BigImg from "./BigImg.vue";
-// var cityOptions = [];
 import * as api from "@/pages/faceModule/api.js";
 export default {
   name: "elPopverTree",
@@ -132,8 +129,8 @@ export default {
           return false;
         }
       },
-      checkAll: false,
-      isIndeterminate: true,
+      checkAll: true,
+      isIndeterminate: false,
       visible_popver: false,
       treeData: [],
       channels: [],
@@ -142,124 +139,47 @@ export default {
     };
   },
   watch: {
-    channelList: function() {
-      this.channels = this.channelList;
-    },
-    channelInfoList(val) {
-      // 若单选框则默认设置第一阶段的叶子
-      if (this.boxType === "radio") {
-        this.treeData = JSON.parse(JSON.stringify(this.channelInfoList));
-        this.handleNodeClick(this.treeData[0]);
-        this.checkedChannel = this.channels[0];
-        this.checkedChannelName = this.channels[0].label;
-        this.$emit("getRadioDefaultData", this.checkedChannel);
-      } else {
-        if (this.checkedChannelKeys && this.checkedChannelKeys.length) {
-          this.channels = [];
-          this.checkedChannel = [];
-          this.channels = this.checkedChannelKeys;
-          this.checkedChannel = this.channels;
-          this.checkedChannelName = "";
-          for (let i = 0; i < this.checkedChannel.length; i++) {
-            this.checkedChannelName += this.checkedChannel[i].label;
-            this.checkedChannelName += ",";
-          }
-        } else {
-          this.channels = [];
-          this.handleNodeClick(this.channelInfoList[0]);
-          this.checkedChannel = this.channels;
-        }
+    checkedChannel(val) {
+      if (!val) val = [];
+      if (val.length === this.channels.length) {
+        this.checkedChannelName = '全部';
+        this.isIndeterminate = false;
+        this.checkAll = true;
+        return;
       }
-    }
+      let str = '';
+      val.forEach(item => {
+        str += item.nickName;
+        str += '，';
+      });
+      this.checkedChannelName = str.substr(0, str.length - 1);
+    },
+    channels(val) {
+      if (!val && !val.length) {
+        this.isIndeterminate = false;
+        this.checkAll = false;
+      }
+    },
   },
-
   mounted: function(e) {},
-  activated: function() {
-    console.log("刷新页面");
-  },
+  activated: function() {},
   methods: {
     clearAction() {
       this.checkedChannel = [];
       this.checkedChannelName = "";
     },
-    // 去掉树节点的叶子
-    hasChildren(data) {
-      if (!data && data.length === 0) {
-        return;
-      }
-      for (let index = 0; index < data.length; index++) {
-        if (data[index].children === null) {
-          data.splice(index, 1);
-          index = index - 1;
-        } else {
-          this.hasChildren(data[index].children);
-        }
-      }
-    },
     // 弹窗展开的回调
-    show() {
-      console.log("--------show-------");
-      // this.treeData = JSON.parse(JSON.stringify(this.channelInfoList));
-      // this.handleNodeClick(this.treeData[0]);
-      // // 若设置了默认选中的节点
-      // if (this.checkedChannelKeys && this.checkedChannelKeys.length) {
-      //   this.checkedChannel = [];
-      //   this.checkedChannelName = "";
-      //   for (let i = 0; i < this.checkedChannelKeys.length; i++) {
-      //     for (let j = 0; j < this.channels.length; j++) {
-      //       if (this.checkedChannelKeys[i] === this.channels[j].id) {
-      //         this.checkedChannel.push(this.channels[j]);
-      //         this.checkedChannelName += this.channels[i].label;
-      //         this.checkedChannelName += ",";
-      //       }
-      //     }
-      //   }
-      // } else {
-      //   // 默认展示所有节点
-      //   if (this.checkedChannel && this.checkedChannel.length) {
-      //     return;
-      //   }
-      //   if (this.boxType !== "radio") {
-      //     this.channels = [];
-      //     this.handleNodeClick(this.channelInfoList[0]);
-      //     this.checkedChannel = this.channels;
-      //   }
-      // }
-    },
-    // 获取所有设备
-
+    show() {},
     // 弹窗关闭的回调
-    hide() {
-      this.$emit("transferCheckedChannel", this.checkedChannel);
-      this.checkedChannelName = "";
-      if (
-        this.checkedChannel &&
-				Object.prototype.toString.call(this.checkedChannel) !== "[object Array]"
-      ) {
-        this.checkedChannelName = this.checkedChannel.label;
-      } else if (this.checkedChannel && this.checkedChannel.length) {
-        this.checkedChannelName = "";
-        for (let i = 0; i < this.checkedChannel.length; i++) {
-          this.checkedChannelName += this.checkedChannel[i].label;
-          this.checkedChannelName += ",";
-        }
-      } else {
-        this.checkedChannelName = "全部";
-        if (this.boxType !== "radio") {
-          this.channels = [];
-          this.handleNodeClick(this.channelInfoList[0]);
-          this.checkedChannel = this.channels;
-        }
-      }
-      console.log("--------hide-------");
-    },
+    hide() {},
     // 全选的回调
     handleCheckAllChange(val) {
       console.log(val);
       this.checkedChannel = val ? this.channels : [];
       this.isIndeterminate = false;
+      console.log(this.checkedChannel);
     },
-    // 点击复选框事件
+    // 点击全选复选框事件
     handleCheckedChange(value, data) {
       console.log(value);
       if (this.boxType === "radio") {
@@ -270,6 +190,7 @@ export default {
         this.isIndeterminate =
 					checkedCount > 0 && checkedCount < this.channels.length;
       }
+      this.$emit("transferCheckedChannel", value);
     },
     loadNode(node, resolve) {
       api
@@ -282,6 +203,9 @@ export default {
                 data[i].isLeaf = true;
                 this.$set(data[i], "isLeaf", true);
               }
+            }
+            if (!this.channels.length) {
+              this.handleNodeClick(data[0]);
             }
             resolve(data);
           } else {
@@ -306,54 +230,16 @@ export default {
         .then(res => {
           if (res.data.success && res.data.data) {
             this.channels = res.data.data;
+            this.checkedChannel = this.channels;
           } else {
             console.log(res.data.data);
             this.$message({ type: "warning", message: "查询数据为空" });
           }
         })
         .catch(() => {});
-    },
+    }
   }
 };
-// const ArrayObj = [
-//   { label: "shanghai", id: "1" },
-//   { label: "上海", id: "2" },
-//   { label: "北京", id: "3" },
-//   { label: "广东方饭店州", id: "4" },
-//   { label: "深是分三圳", id: "5" },
-//   { label: "武汉", id: "6" },
-//   { label: "重庆", id: "7" },
-//   { label: "南京", id: "8" },
-//   { label: "江苏", id: "9" },
-//   { label: "河北", id: "10" },
-//   { label: "山东", id: "12" },
-//   { label: "青粉色发海", id: "13" },
-//   { label: " 安防额", id: "14" },
-//   { label: "安徽", id: "15" },
-//   { label: "湖北", id: "16" },
-//   { label: "湖北", id: "17" },
-//   { label: "湖北", id: "18" },
-//   {
-//     label: "湖北",
-//     id: "19"
-//   },
-//   {
-//     label: "湖北",
-//     id: "20"
-//   },
-//   {
-//     label: "湖北",
-//     id: "21"
-//   },
-//   {
-//     label: "湖北",
-//     id: "22"
-//   },
-//   {
-//     label: "湖北",
-//     id: "23"
-//   }
-// ];
 </script>
 <style>
 .checkBoxClass {
@@ -377,18 +263,6 @@ export default {
 	width: 100%;
 	overflow: auto;
 }
-.iframeClass {
-	position: absolute;
-	visibility: inherit;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	border: 0;
-	background: transparent;
-	filter: "Alpha(style=0,opacity=0)";
-}
-
 .popverTreeParent {
 	width: 50%;
 	height: 100%;
@@ -407,7 +281,6 @@ export default {
 	justify-content: flex-start;
 	background: #202124;
 }
-
 .el-checkbox + .el-checkbox {
 	margin-left: 15px !important;
 }
