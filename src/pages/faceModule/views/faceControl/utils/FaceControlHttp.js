@@ -64,6 +64,10 @@ export var FaceControlHttp = {
     let api = `${RestApi.api.faceModuleAPi.deleteMonitoringTask(holder.taskUuid)}`;
     return axios.delete(api);
   },
+  getFacedbList() {
+    let api = `${RestApi.api.faceModuleAPi.getFacedbList}`;
+    return axios.get(api);
+  }
 };
 
 function install(Vue) {

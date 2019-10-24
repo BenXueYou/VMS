@@ -4,6 +4,10 @@
                  ref="selectFace"
                  @onCancel="cancelAddFaceDB"
                  @onConfirm="confirmAddFaceDB" />
+    <select-video :isShow="isShowAddVideoSrc"
+                 ref="selectVideo"
+                 @onCancel="cancelAddVideoSrc"
+                 @onConfirm="confirmAddVideoSrc" />
     <div class="access-main">
       <div class="dialog-title">
         <div class="title-text">{{isAdd ? "新建" : "编辑"}}布控</div>
@@ -38,11 +42,32 @@
             <div class="item-select">
               <template v-for="(item, index) in faceDBSelectedList">
                 <div :key="index"
-                     class="select-item">
+                     class="select-item"
+                     v-if="item.faceLibraryType && item.faceLibraryType === 'systemFaceLib'">
                   <img src="@/assets/images/person_g.png"
                        width="11px"
                        height="11px">
-                  <span style="margin-left: 4px">{{item.faceDBName}}</span>
+                  <span style="margin-left: 4px; width: 80px">{{item.faceLibraryName}}</span>
+                  <template v-for="(item, index) in staffTypeOption">
+                    <div :key="index"
+                         class="system-select">
+                      <el-checkbox v-model="item.checked">{{item.typeName}}</el-checkbox>
+                    </div>
+                  </template>
+                  <div class="del-image"
+                       @click="deleteItem(item)">
+                    <img src="@/assets/images/delete_x.png"
+                         width="13px"
+                         height="13px">
+                  </div>
+                </div>
+                <div :key="index"
+                     class="select-item"
+                     v-else>
+                  <img src="@/assets/images/person_g.png"
+                       width="11px"
+                       height="11px">
+                  <span style="margin-left: 4px">{{item.faceLibraryName}}</span>
                   <div class="del-image"
                        @click="deleteItem(item)">
                     <img src="@/assets/images/delete_x.png"
@@ -60,7 +85,23 @@
               <img src="@/assets/images/faceModule/add.png">
               <span>添加</span>
             </div>
-            <div></div>
+            <div class="item-select">
+              <template v-for="(item, index) in videoSrcSelectedList">
+                <div :key="index"
+                     class="select-item">
+                  <img src="@/assets/images/person_g.png"
+                       width="11px"
+                       height="11px">
+                  <span style="margin-left: 4px">{{item.label}}</span>
+                  <div class="del-image"
+                       @click="deleteVideoItem(item)">
+                    <img src="@/assets/images/delete_x.png"
+                         width="13px"
+                         height="13px">
+                  </div>
+                </div>
+              </template>
+            </div>
           </el-form-item>
           <el-form-item label="相似度不低于："
                         prop="faceSimilarityThreshold">
@@ -145,11 +186,13 @@
 <script>
 import PicQulitySelect from "@/common/PicQulitySelect";
 import SelectFace from "@/common/SelectFaceDB";
+import SelectVideo from "@/common/SelectVideoSource";
 
 export default {
   components: {
     PicQulitySelect,
-    SelectFace
+    SelectFace,
+    SelectVideo
   },
   props: {
     isAdd: {
@@ -182,16 +225,22 @@ export default {
         ]
       },
       isShowAddFaceDB: false,
-      faceDBSelectedList: []
+      isShowAddVideoSrc: false,
+      faceDBSelectedList: [],
+      videoSrcSelectedList: [],
+      staffTypeOption: []
     };
   },
   created() {},
   mounted() {
-    // this.initData();
+    this.initData();
   },
   methods: {
     initData() {
-      // this.houseTypeOptions = this.$common.getEnumByGroupStr("house_t");
+      this.staffTypeOption = this.$common.getEnumByGroupStr("staff_t");
+      this.staffTypeOption.forEach((v) => {
+        this.$set(v, "checked", false);
+      });
     },
     resetFormData() {
       this.formLabelAlign = {
@@ -249,13 +298,28 @@ export default {
       this.isShowAddFaceDB = true;
     },
     confirmAddFaceDB(val) {
-      this.faceDBSelectedList = this.$common.copyArray(val, this.faceDBSelectedList);
+      this.faceDBSelectedList = this.$common.copyArray(
+        val,
+        this.faceDBSelectedList
+      );
       this.isShowAddFaceDB = false;
     },
     cancelAddFaceDB() {
       this.isShowAddFaceDB = false;
     },
-    addVideoSource() {},
+    addVideoSource() {
+      this.isShowAddVideoSrc = true;
+    },
+    confirmAddVideoSrc(val) {
+      this.videoSrcSelectedList = this.$common.copyArray(
+        val,
+        this.videoSrcSelectedList
+      );
+      this.isShowAddVideoSrc = false;
+    },
+    cancelAddVideoSrc() {
+      this.isShowAddVideoSrc = false;
+    },
     deleteItem(item) {
       for (let [i, v] of this.faceDBSelectedList.entries()) {
         if (v.id === item.id) {
@@ -263,6 +327,14 @@ export default {
         }
       }
       this.$refs.selectFace.deleteItem(item);
+    },
+    deleteVideoItem(item) {
+      for (let [i, v] of this.videoSrcSelectedList.entries()) {
+        if (v.id === item.id) {
+          this.videoSrcSelectedList.splice(i, 1);
+        }
+      }
+      this.$refs.selectVideo.deleteItem(item);
     }
   },
   watch: {},
@@ -388,6 +460,19 @@ export default {
         top: -16px;
         right: -5px;
         cursor: pointer;
+      }
+      .system-select {
+        height: 100%;
+        border: {
+          width: 0 0 0 1px;
+          style: solid;
+          color: rgba($color: #ffffff, $alpha: 0.1);
+        }
+        margin-left: 10px;
+        padding-left: 10px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
       }
     }
   }

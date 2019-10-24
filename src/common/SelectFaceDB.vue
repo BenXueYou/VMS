@@ -26,7 +26,7 @@
                 <img src="@/assets/images/person_g.png"
                      width="11px"
                      height="11px">
-                <div class="item-faceDB text-show text-style">{{item.faceDBName}}</div>
+                <div class="item-faceDB text-show text-style">{{item.faceLibraryName}}</div>
                 <!-- <div class="item-name text-show text-style">{{item.staffName}}</div> -->
                 <img class="check-img"
                      v-if="item.checked"
@@ -51,7 +51,7 @@
                        width="11px"
                        height="11px">
                   <span class="title-text text-show"
-                        style="margin-left: 4px">{{item.faceDBName}}</span>
+                        style="margin-left: 4px">{{item.faceLibraryName}}</span>
                 </div>
                 <div class="del-img"
                      @click="deleteItem(item)"
@@ -91,68 +91,13 @@ export default {
     return {
       isCurrentShow: false,
       titleText: "",
-      faceDBList: [
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        },
-        {
-          faceDBName: "系统人员库"
-        }
-      ],
+      faceDBList: [],
       selectedList: []
     };
   },
   created() {},
   mounted() {
-    this.formatData();
+    this.getFacedbList();
   },
   methods: {
     formatData() {
@@ -163,6 +108,18 @@ export default {
         this.$set(item, "checked", false);
         this.$set(item, "id", this.$common.genLocalId());
       }
+    },
+    getFacedbList() {
+      this.$faceControlHttp
+        .getFacedbList()
+        .then(res => {
+          let body = res.data;
+          this.getFacedbListSuccess(body);
+        })
+    },
+    getFacedbListSuccess(body) {
+      this.faceDBList = body.data;
+      this.formatData();
     },
     onClickConfirm() {
       this.$emit("onConfirm", this.selectedList);
@@ -251,7 +208,7 @@ export default {
       .faceDB-list {
         width: 100%;
         height: 90%;
-        margin-top: 30px;
+        margin-top: 20px;
         overflow-y: auto;
         overflow-x: hidden;
         .faceDB-item {
