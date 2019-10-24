@@ -8,12 +8,23 @@
              :visible.sync="TreechangeNameDialogVisible">
     <div class='c'>
       <el-tree :data="data"
-               node-key="id"
+               node-key="featureUuid"
+               :props="props"
                default-expand-all
                :expand-on-click-node="false">
         <span class="custom-tree-node"
               slot-scope="{ node, data }">
-          <span>{{ node.label }}</span>
+          <div class='labelName'>{{ node.label }}
+          </div>
+          <!-- <div class='groupButton'>
+            <el-checkbox-group v-model="checkedCities"
+                               v-if="data.Auth.length"
+                               @change="handleCheckedCitiesChange">
+              <el-checkbox v-for="city in data.Auth"
+                           :label="city.nodeName"
+                           :key="city.nodeName">{{city.nodeName}}</el-checkbox>
+            </el-checkbox-group>
+          </div> -->
           <span>
             <el-button type="text"
                        size="mini"
@@ -32,9 +43,11 @@
     <div class="ss">
       <el-button type="primary"
                  class="butttt"
+                 @click="confirm"
                  size="small">取消</el-button>
       <el-button type="primary"
                  class="butttt"
+                 @click="close"
                  size="small">确定</el-button>
     </div>
   </el-dialog>
@@ -42,6 +55,84 @@
 
 <script>
 let id = 1000;
+let string = "string",
+  int = "int";
+let data = [
+  {
+    featureUuid: "string1",
+    // 功能uuid
+    parentUuid: string,
+    // 父节点uuid
+    nodeName: "门禁管理",
+    // 节点名称
+    nodeType: string,
+    // 节点类型
+    nodeNo: int,
+    // 节点序号
+    auth: [
+      // 非叶子节点时，此数组size为0
+    ],
+    childNodes: [
+      {
+        featureUuid: "string2",
+        // 功能uuid
+        parentUuid: string,
+        // 父节点uuid
+        nodeName: "权限组",
+        // 节点名称
+        nodeType: string,
+        // 节点类型
+        nodeNo: int,
+        // 节点序号
+        auth: [],
+        childNodes: [
+          {
+            featureUuid: "string3",
+            // 功能uuid
+            parentUuid: string,
+            // 父节点uuid
+            nodeName: "权限组",
+            // 节点名称
+            nodeType: string,
+            // 节点类型
+            nodeNo: int,
+            // 节点序号
+            auth: [],
+            childNodes: []
+          },
+          {
+            featureUuid: "string4",
+            // 功能uuid
+            parentUuid: string,
+            // 父节点uuid
+            nodeName: "通行时间段",
+            // 节点名称
+            nodeType: string,
+            // 节点类型
+            nodeNo: int,
+            // 节点序号
+            auth: [],
+            childNodes: []
+          },
+          {
+            featureUuid: "string5",
+            // 功能uuid
+            parentUuid: string,
+            // 父节点uuid
+            nodeName: "特殊日期",
+            // 节点名称
+            nodeType: string,
+            // 节点类型
+            nodeNo: int,
+            // 节点序号
+            auth: [],
+            childNodes: []
+          }
+        ]
+      }
+    ]
+  }
+];
 export default {
   name: "TreeChangeNameDialog.vue",
   props: {
@@ -80,56 +171,11 @@ export default {
   data() {
     return {
       TreechangeNameDialogVisible: false,
-      data: [
-        {
-          id: 1,
-          label: "一级 1",
-          children: [
-            {
-              id: 4,
-              label: "二级 1-1",
-              children: [
-                {
-                  id: 9,
-                  label: "三级 1-1-1"
-                },
-                {
-                  id: 10,
-                  label: "三级 1-1-2"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: "一级 2",
-          children: [
-            {
-              id: 5,
-              label: "二级 2-1"
-            },
-            {
-              id: 6,
-              label: "二级 2-2"
-            }
-          ]
-        },
-        {
-          id: 3,
-          label: "一级 3",
-          children: [
-            {
-              id: 7,
-              label: "二级 3-1"
-            },
-            {
-              id: 8,
-              label: "二级 3-2"
-            }
-          ]
-        }
-      ]
+      data: data,
+      props: {
+        label: "nodeName",
+        children: "childNodes"
+      }
     };
   },
   mounted() {
@@ -137,6 +183,7 @@ export default {
     this.name = this.value;
   },
   methods: {
+    handleCheckedCitiesChange() {},
     append(data) {
       const newChild = { id: id++, label: "testtest", children: [] };
       if (!data.children) {
@@ -146,6 +193,7 @@ export default {
     },
 
     remove(node, data) {
+      console.log(node, data);
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
@@ -181,6 +229,16 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
+.custom-tree-node {
+  display: flex;
+  .labelName {
+    width: 300px;
+  }
+  .groupButton {
+    width: calc(100% - 300px);
+  }
+}
+
 $labelwidth: 5em;
 .ss {
   padding: 15px;
