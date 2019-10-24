@@ -291,29 +291,29 @@ export default {
   methods: {
     serviceList() {
       this.localService = [];
-      api
-        .serviceList(this.viewType)
-        .then(res => {
-          console.log(res);
-          if (res.data.success) {
-            // this.localService = [
-            //   {
-            //     belongServiceName: "测试服务名称",
-            //     belongServiceUuid: "iotas_vd_serviceuuid_001"
-            //   }
-            // ].concat(res.data.data || []);
-            let num = (res.data.data || []).map(item => {
-              item.belongServiceName = item.serviceName;
-              item.belongServiceUuid = item.serviceUuid;
-              return item;
-            });
-            this.localService = num;
-          }
-          this.$emit("serverList", this.localService, this.viewType);
-        })
-        .catch(() => {
-          this.$emit("serverList", this.localService, this.viewType);
-        });
+      // api
+      //   .serviceList(this.viewType)
+      //   .then(res => {
+      //     console.log(res);
+      //     if (res.data.success) {
+      // this.localService = [
+      //   {
+      //     belongServiceName: "测试服务名称",
+      //     belongServiceUuid: "iotas_vd_serviceuuid_001"
+      //   }
+      // ].concat(res.data.data || []);
+      //     let num = (res.data.data || []).map(item => {
+      //       item.belongServiceName = item.serviceName;
+      //       item.belongServiceUuid = item.serviceUuid;
+      //       return item;
+      //     });
+      //     this.localService = num;
+      //   }
+      //   this.$emit("serverList", this.localService, this.viewType);
+      // })
+      // .catch(() => {
+      //   this.$emit("serverList", this.localService, this.viewType);
+      // });
     },
     DType() {
       this.deviceTypeArr = [];
@@ -480,7 +480,7 @@ export default {
       this.updateDialogVisible = true;
     },
     manualAdd() {
-      this.serviceList(this.viewType);
+      // this.serviceList(this.viewType);
       this.DType(this.viewType);
       this.manualAddVisible = true;
     },
@@ -525,7 +525,7 @@ export default {
         num = this.vistor;
       }
       this.viewType = arr[index];
-      this.serviceList(this.viewType);
+      // this.serviceList(this.viewType);
       console.log(num);
       // this.deviceTypeArr = num;
       // this.deviceType = num.reduce((sum, val, index) => {
@@ -541,7 +541,7 @@ export default {
     },
     editEquipment(row) {
       if (row.extInfo.source === "local") {
-        this.serviceList(this.viewType);
+        // this.serviceList(this.viewType);
         this.DType(this.viewType);
       }
       this.$emit("showEdit", row.deviceUuid, row.netStatus);
@@ -584,7 +584,7 @@ export default {
     //   });
     // }
     this.getTableData();
-    this.serviceList(this.viewType);
+    // this.serviceList(this.viewType);
   },
   watch: {
     orgUuid(val) {
