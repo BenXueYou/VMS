@@ -20,6 +20,7 @@ export default {
   presetUrl: `${urlPrefix}/video/ptz/preset`,
   // 获取预置点
   getPresetUrl: `${urlPrefix}/video/preset/position`,
+  getCloundUrl: `${urlPrefix}/video/ptz/info`,
   // 更新预置点
   updatePresetUrl: `${urlPrefix}/video/preset/position`,
   // 删除预置点

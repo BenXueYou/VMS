@@ -1,5 +1,6 @@
 <template>
   <div class='displayWrap'
+       ref="displayWrap"
        @contextmenu="contextmenu"
        @click="ClickViDeoA"
        @dragstart="dragstart"
@@ -33,10 +34,10 @@
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                  alt="">
           </span>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu slot="dropdown"
+                            @click='clickMenu(index)'>
             <el-dropdown-item v-for="(item,index) in menuData"
-                              :key='index'
-                              @click='clickMenu(index)'>{{item.name}}</el-dropdown-item>
+                              :key='index'>{{item.name}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -165,10 +166,11 @@ export default {
       if (this.width && this.canvas) {
         this.canvas.width = this.width;
       }
-      if (this.canvas) {
-        this.stopVideo();
-        this.playVideo();
-      }
+      // 宽度和高度变化，不需要重新播放
+      // if (this.canvas) {
+      //   this.stopVideo();
+      //   this.playVideo();
+      // }
     },
     height(val) {
       if (this.height && this.canvas) {
@@ -189,6 +191,15 @@ export default {
     }
   },
   methods: {
+    record() {
+      this.video_mgr.record(this.video);
+    },
+    stopRecord() {
+      this.video_mgr.stopRecord(this.video);
+    },
+    getCanvas() {
+      return this.canvas || this.$refs.displayWrap;
+    },
     drag(start) {
       // 时间跳转
       console.log(start);
@@ -202,15 +213,37 @@ export default {
       this.canvas.width = this.width;
       this.canvas.height = this.height;
       let ip = "192.168.9.21";
+      let jSignal = {
+        srcUuid: "signal_channel",
+        routeType: "location",
+        param: { location: { protocol: "icc-ws", port: "4400" } }
+      };
+      jSignal.param.location.ip = ip;
+      let jMedia = {
+        srcUuid: "media_channel",
+        routeType: "location",
+        param: { location: { protocol: "icc-ws", port: "4401" } }
+      };
+      jMedia.param.location.ip = ip;
       this.video = this.video_mgr.play(
-        `{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4400"}}}`,
-        `{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4401"}}}`,
+        JSON.stringify(jSignal),
+        JSON.stringify(jMedia),
         this.rtspUrl,
         "rtsp",
         this.action,
+        1,
         this.canvas,
         this.streamType
       );
+      // this.video = this.video_mgr.play(
+      //   `{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4400"}}}`,
+      //   `{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4401"}}}`,
+      //   this.rtspUrl,
+      //   "rtsp",
+      //   this.action,
+      //   this.canvas,
+      //   this.streamType
+      // );
       this.$refs.canvasRefs.appendChild(this.canvas);
     },
     stopVideo() {

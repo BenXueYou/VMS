@@ -7,7 +7,6 @@ function CDecoder(canvas, streamType) {
 
 CDecoder.prototype.play = function() {
   var w, h;
-
   if (this.streamType === "main") {
     w = 1920;
     h = 1080;

@@ -128,8 +128,8 @@
           <div class="button"
                v-for='(item,index) in btnGroup2'
                @mousedown="cloundControl(item,index)"
+               @mouseup="cloundControl2(item,index)"
                :key="index">
-            <!-- @mouseup="cloundControl2(item,index)"" -->
             <img :src="icons[item]"
                  alt="">
           </div>
@@ -431,11 +431,14 @@ export default {
         }
       }
     },
-    getPreset() {
+    getPreset(resetYuzhi = false) {
       api2.getPreset({ presetPositionUuid: "" }).then(res => {
         console.log(res);
         let data = res.data.data;
         let list = (data && data.list) || [];
+        if (resetYuzhi) {
+          this.yuzhi = "";
+        }
         this.yuzhiOptions = list;
       });
     },
@@ -549,7 +552,7 @@ export default {
     },
     chooseItem() {
       // 选定预置点，这边进行一个跳转
-      this.$emit("preset", "goto_preset", this.yuzhi);
+      this.$emit("preset", "goto_preset", 1);
     },
     setback() {
       this.isChoose = false;
@@ -607,7 +610,7 @@ export default {
           action = "zoom_in";
         } else if (index === 3) {
           action = "focus_near";
-        } else if (index === 5) {
+        } else if (index === 6) {
           action = "iris_open";
         }
       } else if (name === "zoom_out") {
@@ -626,18 +629,31 @@ export default {
     cloundControl2(name, index) {
       console.log(name, index);
       let action = "";
+      if (
+        name === "fangda" ||
+        name === "centerbig" ||
+        name === "quan" ||
+        name === "center"
+      ) {
+        return;
+      }
       if (name === "zoom_in") {
         action = "zoom_in";
+        if (index === 0) {
+          action = "zoom_in";
+        } else if (index === 3) {
+          action = "focus_near";
+        } else if (index === 6) {
+          action = "iris_open";
+        }
       } else if (name === "zoom_out") {
-        action = "zoom_out";
-      } else if (name === "fangda") {
-        action = "focus_near";
-      } else if (name === "quan") {
-        action = "focus_far";
-      } else if (name === "centerbig") {
-        action = "iris_close";
-      } else if (name === "center") {
-        action = "iris_open";
+        if (index === 2) {
+          action = "zoom_out";
+        } else if (index === 5) {
+          action = "focus_far";
+        } else if (index === 8) {
+          action = "iris_close";
+        }
       } else {
         action = name;
       }

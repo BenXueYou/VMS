@@ -207,7 +207,12 @@ export default {
       this.initWrapDom();
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
-      this.videoArr = data.elements;
+      let elements = data.elements.map((item, index) => {
+        item.position = index;
+        return item;
+      });
+      console.log(elements);
+      this.videoArr = elements;
     },
     updateView(viewData) {
       console.log(viewData);
@@ -223,7 +228,12 @@ export default {
     },
     addView(name) {
       // 保存视图
-      let elements = this.videoArr.map(item => {
+      // 这里需要将数组按照position重新排序一下，这样打开才会是正确的
+      let dataArr = JSON.parse(JSON.stringify(this.videoArr));
+      dataArr.sort((a, b) => {
+        return a.position - b.position;
+      });
+      let elements = dataArr.map(item => {
         return {
           position: {
             // 元素位置
@@ -279,11 +289,29 @@ export default {
         .then(() => {});
     },
     updatePreset(data) {
+      console.log(this.operatorIndex);
+      console.log(this.videoArr);
+      if (!this.videoArr[this.operatorIndex].channelUuid) {
+        this.$emit("该视频分路没有通道");
+        return;
+      }
+      api2
+        .getClound(this.videoArr[this.operatorIndex].channelUuid)
+        .then(res => {
+          console.log(res);
+          let rotationAngle = res.data.data.rotationAngle;
+          data.rotationAngle = rotationAngle;
+          this.updatePeraaaaaa(data);
+        });
+    },
+    updatePeraaaaaa(data) {
+      console.log(data);
       api2.updatePreset(data).then(res => {
         if (res.data.success) {
           this.$message.success("预置点修改成功！");
         }
         this.$refs.leftTree.getPreset();
+        this.$refs.leftTree.isChoose = false;
       });
     },
     deletePreset(presetPositionUuid) {
@@ -291,7 +319,7 @@ export default {
         if (res.data.success) {
           this.$message.success("预置点删除成功！");
         }
-        this.$refs.leftTree.getPreset();
+        this.$refs.leftTree.getPreset(true);
       });
     },
     playRtsp(channelUuid, streamType = "string", operator = -1) {
@@ -436,12 +464,17 @@ export default {
         case "关闭窗口":
           // 清空rtspUrl，则触发video组件stop事件
           this.videoArr[this.operatorIndex].rtspUrl = "";
+          this.videoArr[this.operatorIndex].streamType = "";
+          this.videoArr[this.operatorIndex].channelUuid = "";
           this.videoArr.concat();
           break;
         case "关闭所有窗口":
           // 把所有分路的rtspUrl都清空
-          this.videoArr = this.videoArr.map(item => {
+          this.videoArr = this.videoArr.map((item, index) => {
             item.rtspUrl = "";
+            item.position = index;
+            item.streamType = "";
+            item.channelUuid = "";
             return item;
           });
           break;
@@ -471,13 +504,46 @@ export default {
           }
           break;
         case "全屏":
-          this.setFullScreen(this.$refs["video" + this.operatorIndex][0].$el);
+          this.setFullScreen(
+            this.$refs["video" + this.operatorIndex][0].getCanvas()
+          );
           break;
         case "图像调节":
           this.imageAdjustVisible = true;
           break;
         case "开始录像":
-          this.jumpToPlayback(this.videoArr[this.operatorIndex].channelUuid);
+          // this.jumpToPlayback();
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有播放的视频");
+            return;
+          }
+          this.menuData = this.menuData.map(item => {
+            if (item.label === "开始录像") {
+              return {
+                value: "停止录像",
+                label: "停止录像"
+              };
+            }
+            return item;
+          });
+          this.$refs["video" + this.operatorIndex][0].record();
+          break;
+        case "停止录像":
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有播放的视频");
+            return;
+          }
+          // this.jumpToPlayback(this.videoArr[this.operatorIndex].channelUuid);
+          this.menuData = this.menuData.map(item => {
+            if (item.label === "停止录像") {
+              return {
+                value: "开始录像",
+                label: "开始录像"
+              };
+            }
+            return item;
+          });
+          this.$refs["video" + this.operatorIndex][0].stopRecord();
           break;
         case "主码流":
           this.switchMaLiu(this.operatorIndex, "main");
@@ -514,10 +580,10 @@ export default {
       }
     },
     jumpToPlayback(channelUuid) {
-      this.$router.push({
-        name: "VideoPlayback",
-        params: { channelUuid: "channelUuid" }
-      });
+      // this.$router.push({
+      //   name: "VideoPlayback",
+      //   params: { channelUuid: "channelUuid" }
+      // });
     },
     switchMaLiu(index, streamType) {
       if (!this.videoArr[index].rtspUrl) {

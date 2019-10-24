@@ -44,7 +44,6 @@ export default {
       this.left = this.event.clientX + 20 - rectInfo.width * 0.6;
       this.top = this.event.clientY + 20;
       let win_h = window.innerHeight;
-      // alert(win_h + " -- " + (this.top + rectInfo.height));
       if (this.top + rectInfo.height > win_h) {
         this.top = win_h - rectInfo.height - 20;
       }

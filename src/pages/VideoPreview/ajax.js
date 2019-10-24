@@ -19,6 +19,13 @@ export function ctrl(deviceUuid, data) {
     data
   });
 }
+export function getClound(channelUuid) {
+  let url = vUrl.getCloundUrl + "?channelUuid=" + channelUuid;
+  return axios({
+    method: "GET",
+    url
+  });
+}
 export function preset(uuid, data) {
   let url = vUrl.presetUrl + `?channelUuid=${uuid}`;
   return axios({
