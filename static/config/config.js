@@ -11,21 +11,12 @@ if (DEBUG == "DEBUG") {
   // ip = '180.167.210.2:51880';
   ip = "192.168.9.190:15000";
   websocketIp = "192.168.9.190:15007";
-  imageUrl =
-    protocolHeader +
-    "//" +
-    ip +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  // ip = "192.168.9.44:15000";
+  // ip = "192.168.6.191:15000";
   ip = 'www.guangtuo.com';
-  websocketIp = "192.168.9.44:15007";
-  imageUrl =
-    protocolHeader +
-    "//" +
-    ip +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
+  // websocketIp = "192.168.9.44:15007";
+  websocketIp = "192.168.6.191:15007";
 } else {
   // 部署环境
   if (protocolHeader === "https:") {
@@ -35,10 +26,6 @@ if (DEBUG == "DEBUG") {
     ip = hostname + ":51880";
     websocketIp = "180.167.210.2:51881";
   }
-  var imgUrlStr = protocolHeader + "//" + ip;
-  imageUrl =
-    imgUrlStr +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
 
 window.config = {
@@ -58,7 +45,7 @@ window.config = {
   orgType: "device",
   tagType: "device",
   protocolHeader: protocolHeader + "//",
-  imageUrl: imageUrl,
+  imageUrl: protocolHeader + '//' + ip + '/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=',
   forbidBtnArr: ["uncome", "unleave"],
   signOffBtnArr: ["unleave", "leave_overtime"],
   alinkArr: [
