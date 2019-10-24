@@ -46,7 +46,7 @@ Decoder.prototype.initDecoder = function () {
     this.logger.logInfo("this.videoCallback: " + this.videoCallback  + ".");
     var paramCount = 7, paramSize = 4;
     var paramByteBuffer = Module._malloc(paramCount * paramSize);
-    var ret = Module._initDecoder(this.videoWidth, this.videoHeight, this.videoCallback);
+    // var ret = Module._initDecoder(this.videoWidth, this.videoHeight, this.videoCallback);
     this.logger.logInfo("initDecoder return " + ret + ".");
     if (0 == ret) {
         /*

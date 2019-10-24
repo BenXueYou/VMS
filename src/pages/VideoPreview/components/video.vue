@@ -225,6 +225,18 @@ export default {
         param: { location: { protocol: "icc-ws", port: "4401" } }
       };
       jMedia.param.location.ip = ip;
+      let w, h;
+      if (this.streamType === "main") {
+        w = 1920;
+        h = 1080;
+      } else if (this.streamType === "sub") {
+        w = 704;
+        h = 576;
+      } else {
+        w = 2560;
+        h = 1440;
+      }
+      console.log(w, h);
       this.video = this.video_mgr.play(
         JSON.stringify(jSignal),
         JSON.stringify(jMedia),
@@ -233,17 +245,9 @@ export default {
         this.action,
         1,
         this.canvas,
-        this.streamType
+        w,
+        h
       );
-      // this.video = this.video_mgr.play(
-      //   `{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4400"}}}`,
-      //   `{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4401"}}}`,
-      //   this.rtspUrl,
-      //   "rtsp",
-      //   this.action,
-      //   this.canvas,
-      //   this.streamType
-      // );
       this.$refs.canvasRefs.appendChild(this.canvas);
     },
     stopVideo() {
