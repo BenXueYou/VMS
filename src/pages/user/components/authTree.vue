@@ -16,27 +16,20 @@
               slot-scope="{ node, data }">
           <div class='labelName'>{{ node.label }}
           </div>
-          <!-- <div class='groupButton'>
-            <el-checkbox-group v-model="checkedCities"
-                               v-if="data.Auth.length"
-                               @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="city in data.Auth"
-                           :label="city.nodeName"
-                           :key="city.nodeName">{{city.nodeName}}</el-checkbox>
+          <div class='groupButton'>
+            <el-checkbox :indeterminate="data.isIndeterminate"
+                         v-model="data.checkAll"
+                         style="float:left;"
+                         @change="handleCheckAllChange(node,data)">全选</el-checkbox>
+            <el-checkbox-group v-model="data.checkedCities"
+                               v-if="data.auth.length"
+                               style="float:left;"
+                               @change="handleCheckedCitiesChange(node,data)">
+              <el-checkbox v-for="city in data.auth"
+                           :label="city.authName"
+                           :key="city.authName">{{city.authName}}</el-checkbox>
             </el-checkbox-group>
-          </div> -->
-          <span>
-            <el-button type="text"
-                       size="mini"
-                       @click="() => append(data)">
-              Append
-            </el-button>
-            <el-button type="text"
-                       size="mini"
-                       @click="() => remove(node, data)">
-              Delete
-            </el-button>
-          </span>
+          </div>
         </span>
       </el-tree>
     </div>
@@ -57,6 +50,60 @@
 let id = 1000;
 let string = "string",
   int = "int";
+let auth = [
+  {
+    authUuid: "a1",
+    authName: "新增",
+    authNo: int,
+    isOwn: 1
+  },
+  {
+    authUuid: "a2",
+    authName: "修改",
+    authNo: int,
+    isOwn: 1
+  },
+  {
+    authUuid: "a3",
+    // 功能权限uuid
+    authName: "删除",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a4",
+    // 功能权限uuid
+    authName: "查看",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a5",
+    // 功能权限uuid
+    authName: "导入",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a6",
+    // 功能权限uuid
+    authName: "导出",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  }
+];
 let data = [
   {
     featureUuid: "string1",
@@ -68,6 +115,7 @@ let data = [
     nodeType: string,
     // 节点类型
     nodeNo: int,
+    checkedCities: [],
     // 节点序号
     auth: [
       // 非叶子节点时，此数组size为0
@@ -83,6 +131,7 @@ let data = [
         nodeType: string,
         // 节点类型
         nodeNo: int,
+        checkedCities: [],
         // 节点序号
         auth: [],
         childNodes: [
@@ -94,10 +143,11 @@ let data = [
             nodeName: "权限组",
             // 节点名称
             nodeType: string,
+            checkedCities: [],
             // 节点类型
             nodeNo: int,
             // 节点序号
-            auth: [],
+            auth: auth,
             childNodes: []
           },
           {
@@ -108,10 +158,64 @@ let data = [
             nodeName: "通行时间段",
             // 节点名称
             nodeType: string,
+            checkedCities: [],
             // 节点类型
             nodeNo: int,
             // 节点序号
-            auth: [],
+            auth: [
+              {
+                authUuid: "a1",
+                authName: "新增",
+                authNo: int,
+                isOwn: 0
+              },
+              {
+                authUuid: "a2",
+                authName: "修改",
+                authNo: int,
+                isOwn: 0
+              },
+              {
+                authUuid: "a3",
+                // 功能权限uuid
+                authName: "删除",
+                // 功能权限名称
+                authNo: int,
+                // 权限序号
+                isOwn: 0
+                // 是否拥有该权限0无，1有
+              },
+              {
+                authUuid: "a4",
+                // 功能权限uuid
+                authName: "查看",
+                // 功能权限名称
+                authNo: int,
+                // 权限序号
+                isOwn: 0
+                // 是否拥有该权限0无，1有
+              },
+              {
+                authUuid: "a5",
+                // 功能权限uuid
+                authName: "导入",
+                // 功能权限名称
+                authNo: int,
+                // 权限序号
+                isOwn: 1
+                // 是否拥有该权限0无，1有
+              },
+              {
+                authUuid: "a6",
+                // 功能权限uuid
+                authName: "导出",
+                // 功能权限名称
+                authNo: int,
+                // 权限序号
+                isOwn: 1
+                // 是否拥有该权限0无，1有
+              }
+            ],
             childNodes: []
           },
           {
@@ -122,10 +226,64 @@ let data = [
             nodeName: "特殊日期",
             // 节点名称
             nodeType: string,
+            checkedCities: [],
             // 节点类型
             nodeNo: int,
             // 节点序号
-            auth: [],
+            auth: [
+              {
+                authUuid: "a1",
+                authName: "新增",
+                authNo: int,
+                isOwn: 0
+              },
+              {
+                authUuid: "a2",
+                authName: "修改",
+                authNo: int,
+                isOwn: 1
+              },
+              {
+                authUuid: "a3",
+                // 功能权限uuid
+                authName: "删除",
+                // 功能权限名称
+                authNo: int,
+                // 权限序号
+                isOwn: 1
+                // 是否拥有该权限0无，1有
+              },
+              {
+                authUuid: "a4",
+                // 功能权限uuid
+                authName: "查看",
+                // 功能权限名称
+                authNo: int,
+                // 权限序号
+                isOwn: 1
+                // 是否拥有该权限0无，1有
+              },
+              {
+                authUuid: "a5",
+                // 功能权限uuid
+                authName: "导入",
+                // 功能权限名称
+                authNo: int,
+                // 权限序号
+                isOwn: 1
+                // 是否拥有该权限0无，1有
+              },
+              {
+                authUuid: "a6",
+                // 功能权限uuid
+                authName: "导出",
+                // 功能权限名称
+                authNo: int,
+                // 权限序号
+                isOwn: 1
+                // 是否拥有该权限0无，1有
+              }
+            ],
             childNodes: []
           }
         ]
@@ -167,7 +325,6 @@ export default {
       }
     }
   },
-
   data() {
     return {
       TreechangeNameDialogVisible: false,
@@ -175,15 +332,104 @@ export default {
       props: {
         label: "nodeName",
         children: "childNodes"
-      }
+      },
+      allData: ["新增", "修改", "删除", "查看", "导入", "导出"]
     };
   },
   mounted() {
     this.TreechangeNameDialogVisible = this.visible;
     this.name = this.value;
+    let d = JSON.parse(JSON.stringify(this.data));
+    this.dpTree(d);
+    this.data = JSON.parse(JSON.stringify(d));
   },
   methods: {
-    handleCheckedCitiesChange() {},
+    handleCheckAllChange(node, data) {
+      // 点击全选按钮
+      console.log(node);
+      console.log(data);
+      if (data.checkAll) {
+        data.checkedCities = this.allData;
+      } else {
+        data.checkedCities = [];
+      }
+      data.isIndeterminate = false;
+      if (node.childNodes.length) {
+        this.dealParentOperator(node.childNodes, data.checkedCities);
+      }
+    },
+    dealParentOperator(data, checkedCities) {
+      for (let i = 0, len = data.length; i < len; i++) {
+        data[i].data.checkedCities = checkedCities;
+        data[i].data.checkAll = checkedCities.length === auth.length;
+        data[i].data.isIndeterminate =
+          checkedCities.length > 0 && checkedCities.length < auth.length;
+        if (data[i].childNodes.length) {
+          this.dealParentOperator(data[i].childNodes, checkedCities);
+        }
+      }
+    },
+    handleCheckedCitiesChange(node, data) {
+      console.log(node);
+      console.log(data);
+      data.checkAll = data.checkedCities.length === data.auth.length;
+      console.log(data.checkedCities.length);
+      console.log(
+        data.checkedCities.length > 0 &&
+          data.checkedCities.length < data.auth.length
+      );
+      data.isIndeterminate =
+        data.checkedCities.length > 0 &&
+        data.checkedCities.length < data.auth.length;
+    },
+    getCheckedNodes(data) {
+      let arr = [];
+      for (let i = 0, len = data.length; i < len; i++) {
+        if (data[i].isOwn === 1) {
+          arr.push(data[i].authName);
+        }
+      }
+      return arr;
+    },
+    // 循环遍历，判断是否有全选按钮
+    dpTree(data) {
+      let checkedCities = [],
+        arr = [];
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].childNodes) {
+          checkedCities = this.dpTree(data[i].childNodes);
+          console.log(data[i].nodeName);
+        }
+        // 表示这个是叶子节点了F
+        if (data[i].auth.length) {
+          data[i].checkedCities = this.getCheckedNodes(data[i].auth);
+          data[i].checkAll =
+            data[i].checkedCities.length === data[i].auth.length;
+          data[i].isIndeterminate =
+            data[i].checkedCities.length > 0 &&
+            data[i].checkedCities.length < data[i].auth.length;
+        } else {
+          console.log(checkedCities);
+          data[i].auth = auth;
+          data[i].checkedCities = checkedCities;
+          data[i].checkAll = checkedCities.length === data[i].auth.length;
+          data[i].isIndeterminate =
+            checkedCities.length > 0 &&
+            checkedCities.length < data[i].auth.length;
+        }
+        if (!arr.length) {
+          arr = data[i].checkedCities;
+        } else {
+          arr = this.concat(arr, data[i].checkedCities);
+        }
+      }
+      return arr;
+    },
+    concat(target, num) {
+      return num.filter(item => {
+        return target.indexOf(item) !== -1;
+      });
+    },
     append(data) {
       const newChild = { id: id++, label: "testtest", children: [] };
       if (!data.children) {
@@ -193,7 +439,8 @@ export default {
     },
 
     remove(node, data) {
-      console.log(node, data);
+      console.log(node);
+      console.log(data);
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
@@ -232,10 +479,10 @@ export default {
 .custom-tree-node {
   display: flex;
   .labelName {
-    width: 300px;
+    width: 200px;
   }
   .groupButton {
-    width: calc(100% - 300px);
+    width: calc(100% - 200px);
   }
 }
 
@@ -256,7 +503,7 @@ $labelwidth: 5em;
   overflow: auto;
   max-height: 65vh;
   min-height: 30vh;
-  padding: 10px 40px;
+  padding: 10px 20px;
   .body {
     max-width: 300px;
     width: 80%;
