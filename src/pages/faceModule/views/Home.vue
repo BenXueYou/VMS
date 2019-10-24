@@ -8,13 +8,10 @@
 						popper-class="elPopoverClass"
 						:visible-arrow="false"
 						:value="visible_popver"
-						@show="popverShow"
-						@hide="popverHidden"
 						placement="right"
 						trigger="click"
 					>
 						<!-- 以下iframe标签是为了VLC播放的遮挡 -->
-						<iframe class="iframeClass" style="allowTransparency=true;filter='Alpha(style=0,opacity=0)';"></iframe>
 						<el-row class="taskParentBox">
 							<el-row class="taskParent taskParentPopoverBox">
 								<el-tree
@@ -49,9 +46,9 @@
 									<el-radio
 										class="el-radio-myclass"
 										v-for="channelItem in channelInfoList"
-										:label="channelItem"
-										:key="channelItem.id"
-									>{{channelItem.label}}</el-radio>
+										:label="channelItem.channelName"
+										:key="channelItem.channelUuid"
+									>{{channelItem.nickName}}</el-radio>
 								</el-radio-group>
 								<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
 							</el-row>
@@ -272,7 +269,8 @@ export default {
       imgSrc: "",
       defaultProps: {
         children: "children",
-        label: "label"
+        label: "label",
+        isLeaf: 'isLeaf'
       },
       checkedTaskUUidList: [],
       checkedNodes: [],
@@ -324,6 +322,8 @@ export default {
     });
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
+    this.getPhotoList();
+    this.getDeviceList();
   },
 
   destroyed: function() {
@@ -331,22 +331,25 @@ export default {
     if (this.websocket) {
       this.websocket.close();
     }
+    this.stompClient = null;
     this.websocket = null;
     clearInterval(this.timer);
-    // this.timer = null;
-    // var player = document.getElementById("player");
-    // if (player) {
-    //   player.innerHTML = null;
-    // }
   },
   watch: {
     CapturePhotoArr(val) {
       console.log(val);
-      this.shootPhotoList = val;
+      if (val && val.length > 11) {
+        this.todayShootCount += 1;
+        val.shift();
+      }
+      this.photoList = val;
     },
     RecognizationArr(val) {
       console.log(val);
       this.comparePhotoList = val;
+      if (this.comparePhotoList && this.comparePhotoList.length > 6) {
+        this.comparePhotoList.shift();
+      }
     }
   },
   methods: {
@@ -385,6 +388,7 @@ export default {
         .then(res => {
           if (res.data.success && res.data.data) {
             this.channelInfoList = res.data.data;
+            this.getRtspInChannelUuid(this.channelInfoList[0].channelUuid);
           } else {
             console.log(res.data.data);
             this.$message({type: 'warning', message: '查询数据为空'});
@@ -403,10 +407,12 @@ export default {
             .getFaceDeviceList(data)
             .then(res => {
               if (res.data.success && res.data.data) {
-                this.deviceTreeList = [];
-                this.deviceTreeList.push(res.data.data);
+                this.deviceTreeList = res.data.data;
+                // this.deviceTreeList.push(res.data.data);
                 this.defaultExpandedKeys = [];
                 this.defaultExpandedKeys.push(this.deviceTreeList[0].id);
+                this.getPhotoList();
+                this.handleNodeClick(this.deviceTreeList[0]);
               } else {
               }
             })
@@ -504,33 +510,6 @@ export default {
         }
       }
       this.visible_popver = false;
-    },
-
-    // 组建通道树
-    initChannelInfoList(channelInfoList, isBool) {
-      this.channelUuidList = [];
-      for (let j = 0; j < channelInfoList.length; j++) {
-        // 默认的全部通道的id list
-        this.channelUuidList.push(this.channelInfoList[j].id);
-      }
-      if (this.checkedChannel === "") {
-        this.checkedChannelsUuidList = this.channelUuidList;
-        this.checkAll = false;
-      } else {
-        this.checkAll = true;
-        this.initCheckedChannel();
-      }
-
-      // 获取抓拍数据
-      this.todayShootCount = 0;
-      this.getPhotoList();
-      if (!this.timer) {
-        this.getShootPhotoNum();
-      }
-      if (this.footerLiftType === true) {
-        // 获取人脸统计
-        this.getPhotoStaticList();
-      }
     },
     // 布控任务通道ID获取码流参数
     getRtspInChannelUuid(channelUuid, isBool) {},
@@ -642,7 +621,7 @@ export default {
         this.$refs.tree.setCheckedKeys(this.checkedTaskUUidList);
         return;
       } else {
-        this.initCheckedChannel();
+        // this.initCheckedChannel();
       }
       this.visible_popver = true;
     },
@@ -679,7 +658,7 @@ export default {
         // 预防在接口返回结果前，websocket就有推送数据
         this.todayCompareCount = 0;
         this.getRecongizeList();
-        this.getCompareNum();
+        // this.getCompareNum();
         return;
       }
       this.visible_popver = false;
@@ -896,9 +875,8 @@ export default {
 }
 .radioGroup {
 	text-align: left;
-	margin-left: -225px;
-	margin-top: 25px;
-	width: 140%;
+	width: 95%;
+  height: 90%;
 	overflow: auto;
 }
 .checkBoxClass {
@@ -948,6 +926,7 @@ iframe html {
 }
 .elPopoverClass .el-tree {
 	background: #202124;
+  overflow: auto;
 }
 .elPopoverClass .el-tree-node:focus > .el-tree-node__content {
 	background: #202124;
@@ -1086,7 +1065,7 @@ iframe html {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	/* padding-top: 15px; */
+  text-align: left;
 }
 
 .elPopoverClass .el-input__prefix,
@@ -1121,8 +1100,6 @@ iframe html {
 	margin-left: 0px;
 }
 .taskParent {
-	width: 50%;
-	height: 100%;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -1132,6 +1109,7 @@ iframe html {
 }
 .taskParentBgClass {
 	background: rgba(32, 33, 36, 0.1);
+  width: calc(100% - 245px);
 }
 .taskParentPopoverBox {
 	width: 245px;

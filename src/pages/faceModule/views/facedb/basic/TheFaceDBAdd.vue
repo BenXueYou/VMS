@@ -144,7 +144,7 @@
 		<div class="dialogFooter">
 			<div class="dialogHeaderBtn">
 				<el-button @click="cancelAct">返回</el-button>
-				<el-button @click="confirmAct">确认</el-button>
+				<el-button :loading="isloading" @click="confirmAct">确认</el-button>
 				<el-button @click="cancelAct">取消</el-button>
 			</div>
 		</div>
@@ -175,6 +175,7 @@ export default {
   components: { snapShootPhoto },
   data() {
     return {
+      isloading: false,
       detailShow: false,
       diglogvisible: false,
       imageUrl: false,
@@ -212,8 +213,7 @@ export default {
       this.diglogvisible = val;
       if (val) {
         Object.assign(this.staffInfo, this.staffDetail);
-        this.staffInfo.facePhotoUrl = this.staffInfo.photoUrl;
-        this.staffInfo.maritalState = this.staffInfo.maritalStatus;
+        console.log(this.staffInfo);
       } else {
         this.staffInfo = {
           faceUuid: null, // 人脸uuid
@@ -258,9 +258,11 @@ export default {
       }
     },
     addStaff(data) {
+      this.isloading = !this.isloading;
       api
         .addStaffInfo(data)
         .then(res => {
+          this.isloading = !this.isloading;
           if (res.data.success) {
             this.$message.success(res.data.msg);
             this.$emit("closeAddAct", true);
@@ -268,12 +270,16 @@ export default {
             this.$message.warning(res.data.msg);
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          this.isloading = !this.isloading;
+        });
     },
     updateStaff(data) {
+      this.isloading = !this.isloading;
       api
         .updateStaff(data)
         .then(res => {
+          this.isloading = !this.isloading;
           if (res.data.success) {
             this.$message.success(res.data.msg);
             this.$emit("closeAddAct", true);
@@ -281,7 +287,9 @@ export default {
             this.$message.warning(res.data.msg);
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          this.isloading = !this.isloading;
+        });
     },
     cancelAct() {
       this.$emit("closeAddAct");

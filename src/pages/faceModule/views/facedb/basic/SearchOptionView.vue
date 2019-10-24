@@ -61,39 +61,43 @@ export default {
   },
   data() {
     return {
-      gender: "",
-      phoneNo: "",
-      credentialNo: "",
-      staffType: "",
-      createTime: "",
+      gender: null,
+      phoneNo: null,
+      credentialNo: null,
+      staffType: null,
+      createTime: null,
       genderOptions: [],
       staffTypeOptions: []
     };
   },
   mounted() {
     this.staffTypeOptions = this.$common.getEnumByGroupStr("staff_t");
-    this.staffType = this.staffTypeOptions[0].typeStr;
     this.genderOptions = this.$common.getEnumByGroupStr("gender");
-    this.genderOptions.unshift({typeStr: null, typeName: '全部'});
+    this.genderOptions.unshift({ typeStr: null, typeName: "全部" });
+    this.staffTypeOptions.unshift({ typeStr: null, typeName: "全部" });
+    this.staffType = this.staffTypeOptions[0].typeStr;
   },
   methods: {
     query() {
       console.log("注册时间：", this.createTime);
+      if (this.createTime) {
+        this.createTime = this.createTime.split(" ")[0];
+      }
       var data = {
         credentialNo: this.credentialNo,
         phoneNo: this.phoneNo,
-        createTime: this.createTime.split(' ')[0],
+        createTime: this.createTime,
         gender: this.gender,
         staffType: this.staffType
       };
       this.$emit("query", data);
     },
     resetValue() {
-      this.gender = "";
-      this.phoneNo = "";
-      this.credentialNo = "";
+      this.gender = null;
+      this.phoneNo = null;
+      this.credentialNo = null;
       this.staffType = this.staffTypeOptions[0].typeStr;
-      this.createTime = "";
+      this.createTime = null;
     }
   }
 };

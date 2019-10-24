@@ -41,7 +41,7 @@ export default {
 		visible(val) {
 			this.shootPhotoDialogVisible = val;
 			if (val) {
-				// this.shootPhoto();
+				this.shootPhoto();
 			}
 		}
 	},
