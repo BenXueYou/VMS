@@ -237,7 +237,7 @@ export default {
       viewTimeRange: "", // 有效期
       imageUrl: RestApi.api.imageUrl,
       viewFontPhoto: "",
-      WIamgeurl: window.config.imageUrl
+      WIamgeurl: RestApi.api.imageUrl
     };
   },
   mounted() {
