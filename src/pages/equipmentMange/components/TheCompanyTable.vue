@@ -20,8 +20,8 @@
       <div class="btn-group">
         <el-button type="primary"
                    @click='addEquipMent'>搜索设备</el-button>
-        <el-button type="primary"
-                   @click='manualAdd'>手动添加</el-button>
+        <!-- <el-button type="primary"
+                   @click='manualAdd'>手动添加</el-button> -->
         <el-button type="primary"
                    @click="deletetableData">删除</el-button>
         <el-button type="primary"

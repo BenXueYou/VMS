@@ -1,5 +1,6 @@
 // GatoCloud_V1.1_h5_iac_Build(5730)
-var protocolHeader = window.location.protocol;
+// var protocolHeader = window.location.protocol;
+var protocolHeader = 'https:';
 var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
@@ -13,7 +14,7 @@ if (DEBUG == "DEBUG") {
 } else if (DEBUG == "TEST") {
   // 提测环境
   ip = "192.168.9.94:15000";
-  // ip = '192.168.6.191:51880';
+  // ip = 'www.guangtuo.com';
   websocketIp = "192.168.9.94:15007";
   imageUrl =
     protocolHeader +
