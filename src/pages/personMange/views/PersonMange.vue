@@ -4889,6 +4889,7 @@ export default {
 	float: left;
 	margin-right: 1.22%;
 	margin-bottom: 30px;
+	overflow: hidden;
 }
 .personMange
 	.rightmenu
