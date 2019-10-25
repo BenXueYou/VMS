@@ -42,6 +42,14 @@ export function getPreset(params) {
     params
   });
 }
+export function addPreset(data) {
+  let url = vUrl.addPresetUrl;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
 export function updatePreset(data) {
   let url = vUrl.updatePresetUrl;
   return axios({

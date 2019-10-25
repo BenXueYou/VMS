@@ -10,12 +10,14 @@
                   @ctrl="ctrl"
                   @openView="openView"
                   @preset="preset"
+                  @addPreset="addPreset"
                   @updatePreset="updatePreset"
                   @deletePreset="deletePreset"
                   @changetab="changetab"
                   @clickNode="clickNode"
                   @switchLuxiang="switchLuxiang"
-                  :deviceUuid="deviceUuid"></left-content>
+                  :showCloudControl="showCloudControl"
+                  :channelUuid="operatorChannelUuid"></left-content>
     <div class='right'
          ref='rigth'>
       <div class='vedioWrap'
@@ -101,6 +103,7 @@ export default {
   },
   data() {
     return {
+      showCloudControl: false,
       videoinfo: {},
       appendViewVisible: false,
       deviceUuid: "", // 正在操作的通道设备的uuid
@@ -118,6 +121,7 @@ export default {
       fenlu: [1, 4, 9, 16, 25, 36],
       fenluIndex: 0,
       operatorIndex: 0,
+      operatorChannelUuid: "",
       videoWidth: 0,
       videoHeight: 0,
       menuData: [
@@ -198,7 +202,11 @@ export default {
         this.$route.params.channelUuid &&
         this.$route.path === "/VideoPreview"
       ) {
-        this.playRtsp(this.$route.params.channelUuid, "main");
+        this.playRtsp(
+          this.$route.params.channelUuid,
+          "main",
+          this.$route.params.data
+        );
       }
     },
     openView(data) {
@@ -288,21 +296,38 @@ export default {
         })
         .then(() => {});
     },
+    addPreset(data) {
+      api2.addPreset(data).then(res => {
+        if (res.data.success) {
+          this.$message.success("新增预置点成功！");
+          // 新增完，
+          this.preset("set_preset", data.presetPoisition);
+        }
+      });
+    },
     updatePreset(data) {
       console.log(this.operatorIndex);
       console.log(this.videoArr);
-      if (!this.videoArr[this.operatorIndex].channelUuid) {
-        this.$emit("该视频分路没有通道");
-        return;
-      }
-      api2
-        .getClound(this.videoArr[this.operatorIndex].channelUuid)
-        .then(res => {
-          console.log(res);
-          let rotationAngle = res.data.data.rotationAngle;
-          data.rotationAngle = rotationAngle;
-          this.updatePeraaaaaa(data);
-        });
+      api2.updatePreset(data).then(res => {
+        if (res.data.success) {
+          this.$message.success("预置点修改成功！");
+        }
+        this.$refs.leftTree.getPreset();
+        this.$refs.leftTree.isChoose = false;
+        this.preset("set_preset", data.presetPoisition);
+      });
+      // if (!this.videoArr[this.operatorIndex].channelUuid) {
+      //   this.$emit("该视频分路没有通道");
+      //   return;
+      // }
+      // api2
+      //   .getClound(this.videoArr[this.operatorIndex].channelUuid)
+      //   .then(res => {
+      //     console.log(res);
+      //     let rotationAngle = res.data.data.rotationAngle;
+      //     data.rotationAngle = rotationAngle;
+      //     this.updatePeraaaaaa(data);
+      //   });
     },
     updatePeraaaaaa(data) {
       console.log(data);
@@ -322,7 +347,7 @@ export default {
         this.$refs.leftTree.getPreset(true);
       });
     },
-    playRtsp(channelUuid, streamType = "string", operator = -1) {
+    playRtsp(channelUuid, streamType = "string", adata, operator = -1) {
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
       api2
@@ -335,7 +360,7 @@ export default {
           let data = res.data.data;
           // 这里会得到rtsp的码流地址，然后进行一些操作,默认是主码流
           if (operator === -1) {
-            this.playVideo(data.rtspUrl, channelUuid, streamType);
+            this.playVideo(data.rtspUrl, channelUuid, streamType, adata);
           } else {
             this.videoArr[operator].rtspUrl = data.rtspUrl;
             this.videoArr[operator].streamType = streamType;
@@ -346,14 +371,16 @@ export default {
           console.log(err);
         });
     },
-    playVideo(rtspUrl, channelUuid, streamType) {
+    playVideo(rtspUrl, channelUuid, streamType, data) {
       // 根据通道获取到了视频流地址，从而进行播放
       // 遍历videoArr数组，看哪个分路的rtspUrl为空，则在上面播放
       for (let i = 0; i < this.videoArr.length; i++) {
         if (!this.videoArr[i].rtspUrl) {
+          this.videoArr[i].operatorData = data;
           this.videoArr[i].rtspUrl = rtspUrl;
           this.videoArr[i].channelUuid = channelUuid;
           this.videoArr[i].streamType = streamType;
+          this.operatorIndex = i;
           // 左边的树添加到右边去播放
           break;
         }
@@ -442,6 +469,8 @@ export default {
     ClickViDeoA(index) {
       // 选中哪个视频块
       this.operatorIndex = index;
+      this.showCloudControl = this.updateCloud();
+      this.getChannleUuid();
     },
     showMenu(e, index) {
       console.log(e);
@@ -590,7 +619,7 @@ export default {
         this.$message.error("该分路没有视频在播放，切换失败！");
         return;
       }
-      this.playRtsp(this.videoArr[index].channelUuid, streamType, index);
+      this.playRtsp(this.videoArr[index].channelUuid, streamType, {}, index);
     },
     PreviewAreafullScreen() {
       this.setFullScreen(this.$refs.vedioWrap);
@@ -608,9 +637,29 @@ export default {
       if (target.msRequestFullscreen) {
         target.msRequestFullscreen();
       }
+    },
+    getChannleUuid() {
+      // eslint-disable-next-line
+      this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
+    },
+    updateCloud() {
+      if (!this.videoArr[this.operatorIndex].operatorData) {
+        return false;
+      }
+      return (
+        ["bullet_camera_ptz", "bullet_camera"].indexOf(
+          this.videoArr[this.operatorIndex].operatorData.relType
+        ) !== -1
+      );
     }
   },
   watch: {
+    operatorIndex(val) {
+      this.showCloudControl = this.updateCloud();
+    },
+    videoArr(val) {
+      this.showCloudControl = this.updateCloud();
+    },
     "$route.path": function(newVal, oldVal) {
       // 监听路由，查看params是否携带参数rtsp，从而判断是否跳转播放码流
       this.jugdeJump();

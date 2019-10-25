@@ -107,7 +107,8 @@
       </el-tab-pane>
     </el-tabs>
 
-    <div class="cloundControlPannel">
+    <div class="cloundControlPannel"
+         v-show="showCloudControl">
       <div class="h">
         <img :src="icons.control"
              alt="">
@@ -140,7 +141,8 @@
           步长
         </label>
         <el-slider class='slide'
-                   :max="maxStepLength"
+                   :max="10"
+                   :min="1"
                    v-model="steplen"></el-slider>
         <span class="num">
           {{steplen}}
@@ -269,13 +271,19 @@ export default {
     ConfirmDialog
   },
   props: {
+    showCloudControl: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     orgType: {
       type: String,
       default() {
         return window.config.orgType;
       }
     },
-    deviceUuid: {
+    channelUuid: {
       type: String,
       default() {
         return "";
@@ -396,7 +404,6 @@ export default {
         //   viewName: "一级 3"
         // }
       ],
-      channelUuid: "",
       maxStepLength: 10
     };
   },
@@ -406,7 +413,6 @@ export default {
     this.parentOrgUuid = "";
     this.Treeparent = "";
     // this.getOrgTree(true);
-    this.getPreset();
   },
   activated() {},
   computed: {
@@ -418,28 +424,41 @@ export default {
   },
   methods: {
     changeYuZhi() {
-      //
-      for (let i = 0; i < this.yuzhiOptions.length; i++) {
-        if (this.yuzhiOptions[i].presetPositionUuid === this.yuzhi) {
-          console.log(this.yuzhiOptions[i]);
-          this.maxStepLength = Math.max(
-            this.maxStepLength,
-            this.yuzhiOptions[i].stepLength
-          );
-          this.steplen = this.yuzhiOptions[i].stepLength;
-          break;
-        }
-      }
+      // 下拉列表修改预置点，暂且不需要什么操作
+      // for (let i = 0; i < this.yuzhiOptions.length; i++) {
+      //   if (this.yuzhiOptions[i].presetPositionUuid === this.yuzhi) {
+      //     console.log(this.yuzhiOptions[i]);
+      //     this.maxStepLength = Math.max(
+      //       this.maxStepLength,
+      //       this.yuzhiOptions[i].stepLength
+      //     );
+      //     this.steplen = this.yuzhiOptions[i].stepLength;
+      //     break;
+      //   }
+      // }
     },
     getPreset(resetYuzhi = false) {
-      api2.getPreset({ presetPositionUuid: "" }).then(res => {
-        console.log(res);
+      api2.getPreset({ channelUuid: this.channelUuid }).then(res => {
         let data = res.data.data;
         let list = (data && data.list) || [];
-        if (resetYuzhi) {
-          this.yuzhi = "";
+        let presetPosCount = data.presetPosCount;
+        let num = Array.form(
+          { length: presetPosCount || 256 },
+          (item, index) => {
+            return {
+              presetPositionUuid: index, // 预置点uuid
+              presetPoisition: index, // 预置点位置
+              presetName: index + 1, // 预置点名称
+              presetNo: index // 预置点编号}
+            };
+          }
+        );
+        for (let i = 0, len = list.length; i < len; i++) {
+          num[list[i].presetNo] = list[i];
         }
-        this.yuzhiOptions = list;
+        console.log(num);
+        this.yuzhi = "";
+        this.yuzhiOptions = num;
       });
     },
     viewhandleCheckChange() {
@@ -454,7 +473,7 @@ export default {
       console.log(this.operatorData);
       if (command === "video") {
         // 打开视频操作
-        this.getPreviewInfo(this.operatorData.id);
+        this.getPreviewInfo(this.operatorData.id, this.operatorData);
       } else if (command === "playback") {
         this.$emit("switchLuxiang", this.operatorData.id);
       } else if (command === "view") {
@@ -466,8 +485,8 @@ export default {
         this.isDeleteVisible = true;
       }
     },
-    getPreviewInfo(channelUuid) {
-      this.$emit("playRtsp", channelUuid, "main");
+    getPreviewInfo(channelUuid, data) {
+      this.$emit("playRtsp", channelUuid, "main", data);
     },
     handleNodeClick() {
       // 点击展开
@@ -567,16 +586,30 @@ export default {
       this.isChoose = true;
     },
     chooseIcno() {
+      // 点击了勾
       if (this.value === "yuzhi") {
+        // 判断presetPositionUuid是不是空的，用来判断是新增还是更新
         console.log(this.yuzhi);
         let data = this.yuzhiOptions;
+        // 用于判断是否找到了预置点列表中的之前数据
+        let flag = false;
         for (let i = 0; i < data.length; i++) {
           if (data[i].presetPositionUuid === this.yuzhi) {
             data[i].presetName = this.VideoOprName;
-            data[i].stepLength = this.steplen;
+            flag = true;
             this.$emit("updatePreset", data[i]);
-            break;
           }
+        }
+        if (!flag) {
+          // 表示没找到，那就是新增预置点
+          //
+          let data = {
+            presetPoisition: this.yuzhi + 1, // 预置点位置
+            presetName: this.VideoOprName, // 预置点名称
+            presetNo: this.yuzhi, // 预置点编号
+            channelUuid: this.channelUuid // 通道uuid
+          };
+          this.$emit("addPreset", data);
         }
       } else {
         api2
@@ -591,7 +624,17 @@ export default {
     deleteChoose() {
       // 清空预置点
       this.isChoose = false;
-      this.$emit("deletePreset", this.yuzhi);
+      let flag = false;
+      for (let i = 0; i < this.yuzhiOptions.length; i++) {
+        if (this.yuzhiOptions[i].presetPositionUuid === this.yuzhi) {
+          flag = true;
+          this.$emit("deletePreset", this.yuzhiOptions[i].presetPositionUuid);
+          break;
+        }
+      }
+      if (!flag) {
+        this.$message.error("该预置点没有被设置过");
+      }
     },
     cloundControl(name, index) {
       console.log(name, index);
@@ -624,7 +667,7 @@ export default {
       } else {
         action = name;
       }
-      this.$emit("ctrl", action, true, 1);
+      this.$emit("ctrl", action, true, this.steplen);
     },
     cloundControl2(name, index) {
       console.log(name, index);
@@ -657,7 +700,7 @@ export default {
       } else {
         action = name;
       }
-      this.$emit("ctrl", action, false, 1);
+      this.$emit("ctrl", action, false, this.steplen);
     },
 
     getViewTree() {
@@ -1284,6 +1327,11 @@ export default {
     }
   },
   watch: {
+    channelUuid() {
+      // 监听channelUuid改变，然后去获取云台控制列表
+      // 重新获取
+      this.getPreset();
+    },
     searchText(val) {
       this.$refs[this.treeName].filter(this.searchText);
     },
