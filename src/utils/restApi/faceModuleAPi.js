@@ -6,6 +6,7 @@ let ip = window.config.ip,
 let URLHeader = `${protocolHeader}${ip}/faceconfig-v1/project`;
 let URLHeaderFaceLog = `${protocolHeader}${ip}/facelog-v1/project`;
 let URLHeaderFaceServer = `${protocolHeader}${ip}/faceserver-v1/project`;
+let URLHeaderVideoServer = `${protocolHeader}${ip}/video/project`;
 export default {
   // @pengxueyou
 
@@ -17,6 +18,9 @@ export default {
     getTaskDetailChannelAndLibs: (projectUuid, taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
     // 获取布控任务
     getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
+
+    // 根据通道ID获取rtspUrl
+    getRtspUrlByChannelUuidApi:projectUuid =>`${URLHeaderVideoServer}/${projectUuid}/video/previewInfo`,
   },
 
   baseConfigApi: {

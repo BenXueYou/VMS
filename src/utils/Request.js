@@ -22,6 +22,11 @@ service.interceptors.request.use(
     let projectUuid = store.state.home.projectUuid;
     config.headers["Authorization"] = Authorization;
     config.headers["projectUuid"] = projectUuid;
+    if (config.method === 'get') {
+      config.data = true;
+      config.headers['Content-type'] = 'application/json';
+    }
+    // config.headers['H-TOKEN'] = '111'
     return config;
   },
   error => {

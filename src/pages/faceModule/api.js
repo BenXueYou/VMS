@@ -5,6 +5,7 @@ import { Message } from 'element-ui';
 
 let FaceModuleApi = RestApi.api.faceModuleAPi;
 
+/** ******************************************* 人脸预览 ************************************** */
 export function getFaceDeviceList(data) {
   if (data) {
     data.projectUuid = store.state.home.projectUuid;
@@ -26,7 +27,6 @@ export function getDeviceChannelList(data) {
     params: data
   });
 }
-
 export function getFaceUuidByFaceCaptureUuid(data) {
   let url = FaceModuleApi.searchLogApi.getFaceUuidByFaceCaptureUuid(store.state.home.projectUuid);
   return Axios({
@@ -35,7 +35,15 @@ export function getFaceUuidByFaceCaptureUuid(data) {
     params: data
   });
 }
-
+export function getRtspUrlByChannelUuidApi(data) {
+  let url = FaceModuleApi.baseDataApi.getRtspUrlByChannelUuidApi(store.state.home.projectUuid);
+  return Axios({
+    method: "GET",
+    url,
+    data: data
+  });
+}
+/** ******************************************* 基础设置 ************************************** */
 // 基础设置接口
 export function getFaceModuleConfig() {
   let url = FaceModuleApi.baseConfigApi.getFaceModuleConfigApi(store.state.home.projectUuid);
@@ -68,6 +76,7 @@ export function deleteAudio(xhr) {
     data: xhr
   });
 }
+/** ******************************************* 检索 ************************************** */
 // 根据布控任务查询关联的设备以及人脸库
 export function getTaskDeatailChannelAndLib(uuid) {
   let url = FaceModuleApi.baseDataApi.getTaskDetailChannelAndLibs(store.state.home.projectUuid, uuid);
@@ -85,7 +94,7 @@ export function getTaskList(enabled) {
   return Axios({
     method: 'get',
     url,
-    params: { enabled: enabled }
+    params: enabled
   });
 }
 // 1V1对比
@@ -134,7 +143,7 @@ export function getAlarmList(data) {
   });
 }
 
-// 人脸库管理
+/** *******************************************人脸库管理 ************************************** */
 // 增
 export function addFaceLid(data) {
   let url = FaceModuleApi.faceDBApi.addFaceLibUrl(store.state.home.projectUuid);
