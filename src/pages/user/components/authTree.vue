@@ -21,7 +21,7 @@
                          v-model="data.checkAll"
                          style="float:left;"
                          @change="handleCheckAllChange(node,data)">全选</el-checkbox>
-            <el-checkbox-group v-model="data.checkedCities"
+            <el-checkbox-group v-model="data.checkAuth"
                                v-if="data.auth.length"
                                style="float:left;"
                                @change="handleCheckedCitiesChange(node,data)">
@@ -36,11 +36,11 @@
     <div class="ss">
       <el-button type="primary"
                  class="butttt"
-                 @click="confirm"
+                 @click="close"
                  size="small">取消</el-button>
       <el-button type="primary"
                  class="butttt"
-                 @click="close"
+                 @click="confirm"
                  size="small">确定</el-button>
     </div>
   </el-dialog>
@@ -104,6 +104,114 @@ let auth = [
     // 是否拥有该权限0无，1有
   }
 ];
+let auth2 = [
+  {
+    authUuid: "a1",
+    authName: "新增",
+    authNo: int,
+    isOwn: 0
+  },
+  {
+    authUuid: "a2",
+    authName: "修改",
+    authNo: int,
+    isOwn: 0
+  },
+  {
+    authUuid: "a3",
+    // 功能权限uuid
+    authName: "删除",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 0
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a4",
+    // 功能权限uuid
+    authName: "查看",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 0
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a5",
+    // 功能权限uuid
+    authName: "导入",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a6",
+    // 功能权限uuid
+    authName: "导出",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  }
+];
+let auth3 = [
+  {
+    authUuid: "a1",
+    authName: "新增",
+    authNo: int,
+    isOwn: 0
+  },
+  {
+    authUuid: "a2",
+    authName: "修改",
+    authNo: int,
+    isOwn: 1
+  },
+  {
+    authUuid: "a3",
+    // 功能权限uuid
+    authName: "删除",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a4",
+    // 功能权限uuid
+    authName: "查看",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a5",
+    // 功能权限uuid
+    authName: "导入",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  },
+  {
+    authUuid: "a6",
+    // 功能权限uuid
+    authName: "导出",
+    // 功能权限名称
+    authNo: int,
+    // 权限序号
+    isOwn: 1
+    // 是否拥有该权限0无，1有
+  }
+];
 let data = [
   {
     featureUuid: "string1",
@@ -115,7 +223,7 @@ let data = [
     nodeType: string,
     // 节点类型
     nodeNo: int,
-    checkedCities: [],
+    checkAuth: [],
     // 节点序号
     auth: [
       // 非叶子节点时，此数组size为0
@@ -131,7 +239,7 @@ let data = [
         nodeType: string,
         // 节点类型
         nodeNo: int,
-        checkedCities: [],
+        checkAuth: [],
         // 节点序号
         auth: [],
         childNodes: [
@@ -143,7 +251,7 @@ let data = [
             nodeName: "权限组",
             // 节点名称
             nodeType: string,
-            checkedCities: [],
+            checkAuth: [],
             // 节点类型
             nodeNo: int,
             // 节点序号
@@ -158,64 +266,11 @@ let data = [
             nodeName: "通行时间段",
             // 节点名称
             nodeType: string,
-            checkedCities: [],
+            checkAuth: [],
             // 节点类型
             nodeNo: int,
             // 节点序号
-            auth: [
-              {
-                authUuid: "a1",
-                authName: "新增",
-                authNo: int,
-                isOwn: 0
-              },
-              {
-                authUuid: "a2",
-                authName: "修改",
-                authNo: int,
-                isOwn: 0
-              },
-              {
-                authUuid: "a3",
-                // 功能权限uuid
-                authName: "删除",
-                // 功能权限名称
-                authNo: int,
-                // 权限序号
-                isOwn: 0
-                // 是否拥有该权限0无，1有
-              },
-              {
-                authUuid: "a4",
-                // 功能权限uuid
-                authName: "查看",
-                // 功能权限名称
-                authNo: int,
-                // 权限序号
-                isOwn: 0
-                // 是否拥有该权限0无，1有
-              },
-              {
-                authUuid: "a5",
-                // 功能权限uuid
-                authName: "导入",
-                // 功能权限名称
-                authNo: int,
-                // 权限序号
-                isOwn: 1
-                // 是否拥有该权限0无，1有
-              },
-              {
-                authUuid: "a6",
-                // 功能权限uuid
-                authName: "导出",
-                // 功能权限名称
-                authNo: int,
-                // 权限序号
-                isOwn: 1
-                // 是否拥有该权限0无，1有
-              }
-            ],
+            auth: auth2,
             childNodes: []
           },
           {
@@ -226,64 +281,87 @@ let data = [
             nodeName: "特殊日期",
             // 节点名称
             nodeType: string,
-            checkedCities: [],
+            checkAuth: [],
             // 节点类型
             nodeNo: int,
             // 节点序号
-            auth: [
-              {
-                authUuid: "a1",
-                authName: "新增",
-                authNo: int,
-                isOwn: 0
-              },
-              {
-                authUuid: "a2",
-                authName: "修改",
-                authNo: int,
-                isOwn: 1
-              },
-              {
-                authUuid: "a3",
-                // 功能权限uuid
-                authName: "删除",
-                // 功能权限名称
-                authNo: int,
-                // 权限序号
-                isOwn: 1
-                // 是否拥有该权限0无，1有
-              },
-              {
-                authUuid: "a4",
-                // 功能权限uuid
-                authName: "查看",
-                // 功能权限名称
-                authNo: int,
-                // 权限序号
-                isOwn: 1
-                // 是否拥有该权限0无，1有
-              },
-              {
-                authUuid: "a5",
-                // 功能权限uuid
-                authName: "导入",
-                // 功能权限名称
-                authNo: int,
-                // 权限序号
-                isOwn: 1
-                // 是否拥有该权限0无，1有
-              },
-              {
-                authUuid: "a6",
-                // 功能权限uuid
-                authName: "导出",
-                // 功能权限名称
-                authNo: int,
-                // 权限序号
-                isOwn: 1
-                // 是否拥有该权限0无，1有
-              }
-            ],
+            auth: auth3,
+            childNodes: []
+          }
+        ]
+      },
+      {
+        featureUuid: "string11",
+        // 功能uuid
+        parentUuid: string,
+        // 父节点uuid
+        nodeName: "高级配置",
+        // 节点名称
+        nodeType: string,
+        // 节点类型
+        nodeNo: int,
+        checkAuth: [],
+        // 节点序号
+        auth: [],
+        childNodes: [
+          {
+            featureUuid: "string13",
+            // 功能uuid
+            parentUuid: string,
+            // 父节点uuid
+            nodeName: "互锁",
+            // 节点名称
+            nodeType: string,
+            checkAuth: [],
+            // 节点类型
+            nodeNo: int,
+            // 节点序号
+            auth: auth,
+            childNodes: []
+          },
+          {
+            featureUuid: "string14",
+            // 功能uuid
+            parentUuid: string,
+            // 父节点uuid
+            nodeName: "反潜回",
+            // 节点名称
+            nodeType: string,
+            checkAuth: [],
+            // 节点类型
+            nodeNo: int,
+            // 节点序号
+            auth: auth2,
+            childNodes: []
+          },
+          {
+            featureUuid: "string15",
+            // 功能uuid
+            parentUuid: string,
+            // 父节点uuid
+            nodeName: "首卡开门",
+            // 节点名称
+            nodeType: string,
+            checkAuth: [],
+            // 节点类型
+            nodeNo: int,
+            // 节点序号
+            auth: auth3,
+            childNodes: []
+          },
+          {
+            featureUuid: "string35",
+            // 功能uuid
+            parentUuid: string,
+            // 父节点uuid
+            nodeName: "多人组合开门",
+            // 节点名称
+            nodeType: string,
+            checkAuth: [],
+            // 节点类型
+            nodeNo: int,
+            // 节点序号
+            auth: auth3,
             childNodes: []
           }
         ]
@@ -333,54 +411,133 @@ export default {
         label: "nodeName",
         children: "childNodes"
       },
-      allData: ["新增", "修改", "删除", "查看", "导入", "导出"]
+      allData: ["新增", "修改", "删除", "查看", "导入", "导出"],
+      checkedNum: []
     };
   },
   mounted() {
     this.TreechangeNameDialogVisible = this.visible;
     this.name = this.value;
-    let d = JSON.parse(JSON.stringify(this.data));
-    this.dpTree(d);
-    this.data = JSON.parse(JSON.stringify(d));
+    this.initData();
   },
   methods: {
+    initData() {
+      let d = JSON.parse(JSON.stringify(this.data));
+      this.dpTree(d);
+      this.data = JSON.parse(JSON.stringify(d));
+    },
     handleCheckAllChange(node, data) {
       // 点击全选按钮
-      console.log(node);
-      console.log(data);
+      // console.log(node);
+      // console.log(data);
       if (data.checkAll) {
-        data.checkedCities = this.allData;
+        data.checkAuth = this.allData;
       } else {
-        data.checkedCities = [];
+        data.checkAuth = [];
       }
+      data.lastCheckCities = data.checkAuth;
       data.isIndeterminate = false;
+      // 点击全选不是叶子节点的情况
       if (node.childNodes.length) {
-        this.dealParentOperator(node.childNodes, data.checkedCities);
+        this.dealParentOperator(node.childNodes, data.checkAuth);
+        //
+      }
+      this.traverseUpwrad(node, data.checkAuth);
+    },
+    traverseUpwrad(node, checkAuth) {
+      node.data.checkAuth = checkAuth;
+      node.data.checkAll = checkAuth.length === auth.length;
+      node.data.isIndeterminate =
+        checkAuth.length > 0 && checkAuth.length < auth.length;
+      let arr = checkAuth;
+      let last = node;
+      let previous = node;
+      while (1) {
+        if (!last && !previous) {
+          break;
+        }
+        if (last) {
+          arr = this.concat(arr, last.data.checkAuth);
+          last = last.nextSibling;
+        }
+        if (previous) {
+          arr = this.concat(arr, previous.data.checkAuth);
+          previous = previous.previousSibling;
+        }
+      }
+      // console.log(arr);
+      if (node.parent) {
+        this.traverseUpwrad(node.parent, arr);
       }
     },
-    dealParentOperator(data, checkedCities) {
+    dealParentOperator(data, checkAuth) {
       for (let i = 0, len = data.length; i < len; i++) {
-        data[i].data.checkedCities = checkedCities;
-        data[i].data.checkAll = checkedCities.length === auth.length;
+        data[i].data.checkAuth = checkAuth;
+        data[i].data.checkAll = checkAuth.length === auth.length;
         data[i].data.isIndeterminate =
-          checkedCities.length > 0 && checkedCities.length < auth.length;
+          checkAuth.length > 0 && checkAuth.length < auth.length;
         if (data[i].childNodes.length) {
-          this.dealParentOperator(data[i].childNodes, checkedCities);
+          this.dealParentOperator(data[i].childNodes, checkAuth);
         }
       }
     },
     handleCheckedCitiesChange(node, data) {
-      console.log(node);
-      console.log(data);
-      data.checkAll = data.checkedCities.length === data.auth.length;
-      console.log(data.checkedCities.length);
-      console.log(
-        data.checkedCities.length > 0 &&
-          data.checkedCities.length < data.auth.length
-      );
+      // console.log(node);
+      data.checkAll = data.checkAuth.length === data.auth.length;
       data.isIndeterminate =
-        data.checkedCities.length > 0 &&
-        data.checkedCities.length < data.auth.length;
+        data.checkAuth.length > 0 && data.checkAuth.length < data.auth.length;
+      // 点击选项不是叶子点击的情况
+      if (node.childNodes.length) {
+        let xxx = this.getDifferent(data.checkAuth, data.lastCheckCities);
+        // console.log(xxx);
+        // lastCheckCities的作用记录修改的是哪个按钮的状态，这个按钮是被选中了还是取消了
+        data.lastCheckCities = data.checkAuth;
+        // 这里的函数名字起的比较随意
+        this.dealParentOperator222(node.childNodes, xxx.name, xxx.isAdd);
+      }
+      this.traverseUpwrad(node, data.checkAuth);
+    },
+    dealParentOperator222(data, name, isAdd) {
+      for (let i = 0, len = data.length; i < len; i++) {
+        let checkAuth = data[i].data.checkAuth;
+        if (isAdd) {
+          if (checkAuth.indexOf(name) === -1) {
+            checkAuth.push(name);
+          }
+        } else {
+          let index = checkAuth.indexOf(name);
+          if (index !== -1) {
+            checkAuth.splice(index, 1);
+          }
+        }
+        // console.log(checkAuth);
+        data[i].data.checkAuth = checkAuth;
+        data[i].data.checkAll = checkAuth.length === auth.length;
+        data[i].data.isIndeterminate =
+          checkAuth.length > 0 && checkAuth.length < auth.length;
+        if (data[i].childNodes.length) {
+          this.dealParentOperator222(data[i].childNodes, name, isAdd);
+        }
+      }
+    },
+    getDifferent(target, num) {
+      let newArr = target.filter(item => {
+        return num.indexOf(item) === -1;
+      });
+      let newArr2 = num.filter(item => {
+        return target.indexOf(item) === -1;
+      });
+      if (newArr.length) {
+        return {
+          name: newArr[0],
+          isAdd: true
+        };
+      } else {
+        return {
+          name: newArr2[0],
+          isAdd: false
+        };
+      }
     },
     getCheckedNodes(data) {
       let arr = [];
@@ -393,35 +550,42 @@ export default {
     },
     // 循环遍历，判断是否有全选按钮
     dpTree(data) {
-      let checkedCities = [],
+      let checkAuth = [],
         arr = [];
       for (let i = 0; i < data.length; i++) {
         if (data[i].childNodes) {
-          checkedCities = this.dpTree(data[i].childNodes);
-          console.log(data[i].nodeName);
+          if (data[i].childNodes.length) {
+            data[i].auth = [];
+            data[i].checkAuth = [];
+            data[i].lastCheckCities = [];
+            data[i].checkAll = false;
+            data[i].isIndeterminate = false;
+            checkAuth = this.dpTree(data[i].childNodes);
+          }
+          // console.log(data[i].nodeName);
         }
         // 表示这个是叶子节点了F
         if (data[i].auth.length) {
-          data[i].checkedCities = this.getCheckedNodes(data[i].auth);
-          data[i].checkAll =
-            data[i].checkedCities.length === data[i].auth.length;
+          data[i].checkAuth = this.getCheckedNodes(data[i].auth);
+          data[i].checkAll = data[i].checkAuth.length === data[i].auth.length;
           data[i].isIndeterminate =
-            data[i].checkedCities.length > 0 &&
-            data[i].checkedCities.length < data[i].auth.length;
+            data[i].checkAuth.length > 0 &&
+            data[i].checkAuth.length < data[i].auth.length;
         } else {
-          console.log(checkedCities);
+          // console.log(checkAuth);
           data[i].auth = auth;
-          data[i].checkedCities = checkedCities;
-          data[i].checkAll = checkedCities.length === data[i].auth.length;
+          data[i].checkAuth = checkAuth;
+          data[i].lastCheckCities = checkAuth;
+          data[i].checkAll = checkAuth.length === data[i].auth.length;
           data[i].isIndeterminate =
-            checkedCities.length > 0 &&
-            checkedCities.length < data[i].auth.length;
+            checkAuth.length > 0 && checkAuth.length < data[i].auth.length;
         }
         if (!arr.length) {
-          arr = data[i].checkedCities;
+          arr = data[i].checkAuth;
         } else {
-          arr = this.concat(arr, data[i].checkedCities);
+          arr = this.concat(arr, data[i].checkAuth);
         }
+        // console.log(arr);
       }
       return arr;
     },
@@ -439,16 +603,41 @@ export default {
     },
 
     remove(node, data) {
-      console.log(node);
-      console.log(data);
+      // console.log(node);
+      // console.log(data);
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
       children.splice(index, 1);
     },
+    getUuid(auth, chekcedNum) {
+      return auth
+        .filter(item => {
+          return chekcedNum.indexOf(item.authName) !== -1;
+        })
+        .map(item => {
+          return item.authUuid;
+        });
+    },
+    getAllCheckedLeafUuid(data) {
+      // 遍历数据
+      for (let i = 0, len = data.length; i < len; i++) {
+        // 判断是不是叶子节点
+        if (!data[i].childNodes.length) {
+          let num = this.getUuid(data[i].auth, data[i].checkAuth);
+          this.checkedNum.push(...num);
+        } else {
+          this.getAllCheckedLeafUuid(data[i].childNodes);
+        }
+      }
+    },
     confirm() {
-      this.$emit("confirm", this.name);
-      this.$emit("update:visible", false);
+      // 获取所有的叶子节点被选中的uuid
+      this.checkedNum = [];
+      this.getAllCheckedLeafUuid(this.data);
+      // console.log(this.checkedNum);
+      // this.$emit("confirm", this.name);
+      // this.$emit("update:visible", false);
     },
     close() {
       this.$emit("update:visible", false);
