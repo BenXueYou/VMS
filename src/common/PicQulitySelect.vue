@@ -21,6 +21,10 @@ export default {
     selectedButtons: {
       type: Array,
       default: () => []
+    },
+    isShowLower: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -40,11 +44,6 @@ export default {
           value: "LOW",
           text: "低",
           selected: false
-        },
-        {
-          value: "LOWER",
-          text: "无效",
-          selected: false
         }
       ],
       selectedButtonsLocal: [],
@@ -58,6 +57,15 @@ export default {
   },
   methods: {
     initButton() {
+      if (this.isShowLower) {
+        this.picQultButtons.push(
+          {
+            value: "LOWER",
+            text: "无效",
+            selected: false
+          }
+        );
+      }
       this.setButtonsSelect(this.selectedButtons);
       this.updateFlag = 1;
     },

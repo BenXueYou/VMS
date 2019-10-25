@@ -33,7 +33,7 @@
                       v-model="formLabelAlign.faceMonitorName"></el-input>
           </el-form-item>
           <el-form-item label="人脸库："
-                        prop="libraryList">
+                        prop="faceLibraryUuids">
             <div class="add-item"
                  @click="addFaceDB">
               <img src="@/assets/images/faceModule/add.png">
@@ -79,7 +79,7 @@
             </div>
           </el-form-item>
           <el-form-item label="视频源："
-                        prop="channelList">
+                        prop="channelUuids">
             <div class="add-item"
                  @click="addVideoSource">
               <img src="@/assets/images/faceModule/add.png">
@@ -114,7 +114,8 @@
           <el-form-item label="抓拍图片需达到的质量："
                         prop="faceCapturePhotoQualities">
             <pic-qulity-select :selectedButtons.sync="formLabelAlign.faceCapturePhotoQualities"
-                               class="left-space" />
+                               class="left-space"
+                               :isShowLower="false" />
           </el-form-item>
           <el-form-item label="目标人列表："
                         prop="reservedCount">
@@ -165,7 +166,9 @@
             <el-switch v-model="formLabelAlign.enabled"
                        class="left-space"
                        active-color="rgba(32,204,150,0.2)"
-                       inactive-color="rgba(255,255,255,0.2)"></el-switch>
+                       inactive-color="rgba(255,255,255,0.2)"
+                       :active-value="1"
+                       :inactive-value="0"></el-switch>
           </el-form-item>
         </el-form>
       </div>
@@ -204,8 +207,8 @@ export default {
     return {
       formLabelAlign: {
         faceMonitorName: "",
-        libraryList: [],
-        channelList: [],
+        faceLibraryUuids: [],
+        channelUuids: [],
         faceSimilarityThreshold: 0,
         faceCapturePhotoQualities: [],
         reservedCount: 0,
@@ -214,7 +217,8 @@ export default {
         alarmSoundName: "",
         alarmSoundUrl: "",
         taskColour: "",
-        enabled: 0
+        enabled: 1,
+        systemStaffLibraryTypes: []
       },
       vioceOptions: [],
       rules: {
@@ -245,8 +249,8 @@ export default {
     resetFormData() {
       this.formLabelAlign = {
         faceMonitorName: "",
-        libraryList: [],
-        channelList: [],
+        faceLibraryUuids: [],
+        channelUuids: [],
         faceSimilarityThreshold: 0,
         faceCapturePhotoQualities: [],
         reservedCount: 0,
@@ -255,7 +259,8 @@ export default {
         alarmSoundName: "",
         alarmSoundUrl: "",
         taskColour: "",
-        enabled: 0
+        enabled: 1,
+        systemStaffLibraryTypes: []
       };
     },
     onClickConfirm() {
@@ -275,7 +280,22 @@ export default {
       this.resetFormData();
       this.$emit("onCancel");
     },
+    formatData() {
+      this.formLabelAlign.faceLibraryUuids = [];
+      this.faceDBSelectedList.forEach((v) => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+        if (v.faceLibraryType === 'systemFaceLib') {
+          this.staffTypeOption.forEach(v => {
+            if (v.checked) {
+              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
+            }
+          });
+        }
+      });
+      this.formLabelAlign.channelUuids = ["4A61F4F2C2B16240AF4C4FED90D50334"];
+    },
     addMonitoringTask() {
+      this.formatData();
       this.$faceControlHttp.addMonitoringTask(this.formLabelAlign).then(res => {
         let body = res.data;
         this.monitoringTaskSuccess(body);

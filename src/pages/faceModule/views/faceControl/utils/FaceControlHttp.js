@@ -18,11 +18,7 @@ export var FaceControlHttp = {
    */
   getMonitoringTaskDetails(holder) {
     let api = `${RestApi.api.faceModuleAPi.getMonitoringTaskDetails(holder.taskUuid)}`;
-    let data = {};
-    for (let k in holder) {
-      data[k] = holder[k];
-    }
-    return axios.get(api, { params: data });
+    return axios.get(api);
   },
   /**
    * 报警列表查询
@@ -40,6 +36,17 @@ export var FaceControlHttp = {
    */
   editMonitoringTask(holder) {
     let api = `${RestApi.api.faceModuleAPi.editMonitoringTask}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.put(api, data);
+  },
+  /**
+   * 修改布控任务
+   */
+  editMonitoringTaskStatus(holder) {
+    let api = `${RestApi.api.faceModuleAPi.editMonitoringTaskStatus}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -67,6 +74,30 @@ export var FaceControlHttp = {
   getFacedbList() {
     let api = `${RestApi.api.faceModuleAPi.getFacedbList}`;
     return axios.get(api);
+  },
+  getDevList(holder) {
+    let api = `${RestApi.api.faceModuleAPi.getDevList}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.get(api, { params: data });
+  },
+  getTagList(holder) {
+    let api = `${RestApi.api.faceModuleAPi.getTagList}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.get(api, { params: data });
+  },
+  getTagDev(holder) {
+    let api = `${RestApi.api.faceModuleAPi.getTagDev}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.get(api, { params: data });
   }
 };
 

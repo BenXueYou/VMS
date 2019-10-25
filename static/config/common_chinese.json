@@ -789,10 +789,10 @@
         "fire_fighting": "消防"
     },
     "face_quality": {
-        "high": "高",
-        "middle": "中",
-        "low": "低",
-        "invalid": "无效"
+        "HIGH": "高",
+        "NORMAL": "中",
+        "LOW": "低",
+        "LOWER": "无效"
     },
     "model_analisis_s": {
         "everyday": "每天",

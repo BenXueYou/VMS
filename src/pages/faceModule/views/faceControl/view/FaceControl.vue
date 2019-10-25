@@ -53,10 +53,12 @@
            @click="clickRight">
       <div class="button">
         <div class="button-right">
-          <el-switch v-model="switchTask"
+          <el-switch v-model="faceMonitorObj.enabled"
                      active-color="rgba(32,204,150,0.2)"
                      inactive-color="rgba(255,255,255,0.2)"
-                     @change="switchChange"></el-switch>
+                     @change="switchChange"
+                     :active-value="1"
+                     :inactive-value="0"></el-switch>
           <span>状态</span>
           <div class="status"
                @click="editTaskInit">
@@ -80,20 +82,20 @@
           <div class="info-block block-line"
                style="width: 23%">名称：{{faceMonitorObj.faceMonitorName}} </div>
           <div class="info-block block-line"
-               style="width: 23%">创建人：{{faceMonitorObj.createUser}} </div>
+               style="width: 23%">创建人：{{faceMonitorObj.createUserName}} </div>
           <div class="info-block block-line"
                style="width: 23%">创建时间：{{faceMonitorObj.createTime}} </div>
           <div class="info-block block-line"
                style="width: 23%; background: transparent;"></div>
         </div>
-        <source-show-more :title="`人脸库： 共${faceMonitorObj.libraryList.length}个人脸库`"
+        <source-show-more :title="`人脸库： 共${faceMonitorObj.libraryList ? faceMonitorObj.libraryList.length : 0}个人脸库`"
                           blockHeight="80px"
                           :itemIcon="require('@/assets/images/faceModule/crime_db.png')"
                           :dataList="faceDBItemList"
                           :lineLimit="1"
                           ref="faceDB"
                           containerId="faceDB" />
-        <source-show-more :title="`视频源： 共${faceMonitorObj.channelList.length}个摄像头`"
+        <source-show-more :title="`视频源： 共${faceMonitorObj.channelList ? faceMonitorObj.channelList.length : 0}个摄像头`"
                           blockHeight="120px"
                           :itemIcon="require('@/assets/images/faceModule/camera.png')"
                           :dataList="cameraItemList"
@@ -119,7 +121,7 @@
           <div class="info-block block-line"
                style="width: 13%">目标人列表：{{faceMonitorObj.reservedCount}} </div>
           <div class="info-block block-line"
-               style="width: 20%">人脸抓拍图片需达到的质量：{{faceMonitorObj.faceCapturePhotoQualities}} </div>
+               style="width: 20%">人脸抓拍图片需达到的质量：{{faceMonitorObj.faceCapturePhotoQualities ? $common.getEnumItemName("face_quality", faceMonitorObj.faceCapturePhotoQualities[faceMonitorObj.faceCapturePhotoQualities.length-1]) : ""}} </div>
         </div>
         <div class="list-title">
           <img src="@/assets/images/faceModule/alarm.png">
@@ -194,7 +196,6 @@ export default {
         }
       ],
       menuList: [],
-      switchTask: true,
       deleteDiglogvisible: false,
       faceList: [],
       cameraList: [],
@@ -222,9 +223,10 @@ export default {
         alarmSoundName: "",
         alarmSoundUrl: "",
         taskColour: "",
-        enabled: "",
+        enabled: 1,
         createTime: "",
-        createUser: ""
+        createUser: "",
+        systemStaffLibraryTypes: []
       },
       isAlarmLoading: false,
       faceMonitorUuid: ""
@@ -291,9 +293,9 @@ export default {
     },
     switchChange(val) {
       if (val) {
-        this.editMonitoringTask(this.faceMonitorUuid, 1);
+        this.editMonitoringTaskStatus(this.faceMonitorUuid, 1);
       } else {
-        this.editMonitoringTask(this.faceMonitorUuid, 0);
+        this.editMonitoringTaskStatus(this.faceMonitorUuid, 0);
       }
     },
     editTaskInit() {
@@ -302,6 +304,8 @@ export default {
       this.isShowMain = false;
     },
     formatObj() {
+      this.faceDBItemList = [];
+      this.cameraItemList = [];
       if (this.faceMonitorObj.libraryList) {
         this.faceMonitorObj.libraryList.forEach(v => {
           this.faceDBItemList.push({
@@ -315,11 +319,6 @@ export default {
             name: v.channelName
           });
         });
-      }
-      if (this.faceMonitorObj.enabled) {
-        this.switchTask = true;
-      } else {
-        this.switchTask = false;
       }
     },
     queryAct() {
@@ -426,21 +425,39 @@ export default {
     },
     deleteMonitoringTaskSuccess(body) {
       this.$cToast.success(body.msg);
+      this.faceMonitorObj = {
+        faceMonitorUuid: "",
+        faceMonitorName: "",
+        libraryList: [],
+        channelList: [],
+        faceSimilarityThreshold: "",
+        faceCapturePhotoQualities: "",
+        reservedCount: "",
+        alarmed: "",
+        popup: "",
+        alarmSoundName: "",
+        alarmSoundUrl: "",
+        taskColour: "",
+        enabled: 1,
+        createTime: "",
+        createUser: "",
+        systemStaffLibraryTypes: []
+      };
       this.faceMonitorUuid = "";
       this.getMonitoringTaskList();
     },
-    editMonitoringTask(faceMonitorUuid, enabled) {
+    editMonitoringTaskStatus(faceMonitorUuid, enabled) {
       this.$faceControlHttp
-        .editMonitoringTask({
+        .editMonitoringTaskStatus({
           faceMonitorUuid,
           enabled
         })
         .then(res => {
           let body = res.data;
-          this.editMonitoringTaskSuccess(body);
+          this.editMonitoringTaskStatusSuccess(body);
         });
     },
-    editMonitoringTaskSuccess(body) {
+    editMonitoringTaskStatusSuccess(body) {
       this.$cToast.success(body.msg);
       this.getMonitoringTaskList();
     }

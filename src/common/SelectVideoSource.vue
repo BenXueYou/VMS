@@ -22,11 +22,12 @@
             <el-tabs v-model="activeName">
               <el-tab-pane label="设备树"
                            name="dev">
-                <el-tree :data="treeData"
-                         :props="defaultProps"
+                <el-tree :props="defaultProps"
                          node-key="id"
                          :indent="10"
                          ref="elTree"
+                         lazy
+                         :load="loadNode"
                          :default-expanded-keys="defaultExpKeys"
                          :highlight-current="true"
                          :expand-on-click-node="false"
@@ -47,19 +48,29 @@
               </el-tab-pane>
               <el-tab-pane label="标签"
                            name="tag">
-                <template v-for="(item, index) in tagList">
-                  <div :key="index"
-                       class="videoSrc-item"
-                       @click="onClickItem(item)">
-                    <img src="@/assets/images/equipment/sign.png"
-                         width="16px"
-                         height="8px">
-                    <div class="item-videoSrc text-show text-style">{{item.name}}</div>
-                    <img class="check-img"
-                         v-if="item.checked"
-                         src="@/assets/images/checked_icon.png">
+                <el-tree :props="defaultProps"
+                         node-key="id"
+                         :indent="10"
+                         ref="elTreeTag"
+                         lazy
+                         :load="loadNodeTag"
+                         :default-expanded-keys="defaultExpKeysTag"
+                         :highlight-current="true"
+                         :expand-on-click-node="false"
+                         @node-click="handleNodeClick">
+                  <div class="i-tree-item"
+                       slot-scope="{ node, data }">
+                    <div class="i-tree-item-icon">
+                      <span class="text-show">{{node.label}}</span>
+                      <div class="action-icon">
+                        <img src="@/assets/images/checked_icon.png"
+                             width="10.9px"
+                             v-if="data.checked"
+                             height="9px">
+                      </div>
+                    </div>
                   </div>
-                </template>
+                </el-tree>
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -122,105 +133,76 @@ export default {
       titleText: "",
       selectedList: [],
       defaultExpKeys: [],
+      defaultExpKeysTag: [],
       activeName: "dev",
-      treeData: [
-        {
-          id: "1",
-          label: "一级 1",
-          children: [
-            {
-              id: "2",
-              label: "二级 1-1",
-              children: [
-                {
-                  id: "3",
-                  label: "三级 1-1-1"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: "一级 2",
-          id: "4",
-          children: [
-            {
-              label: "二级 2-1",
-              id: "5",
-              children: [
-                {
-                  label: "三级 2-1-1",
-                  id: "6"
-                }
-              ]
-            },
-            {
-              label: "二级 2-2",
-              id: "7",
-              children: [
-                {
-                  label: "三级 2-2-1",
-                  id: "8"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: "一级 3",
-          id: "9",
-          children: [
-            {
-              label: "二级 3-1",
-              id: "10",
-              children: [
-                {
-                  label: "三级 3-1-1",
-                  id: "11"
-                }
-              ]
-            },
-            {
-              label: "二级 3-2",
-              id: "12",
-              children: [
-                {
-                  id: "13",
-                  label: "三级 3-2-1"
-                }
-              ]
-            }
-          ]
-        }
-      ],
       defaultProps: {
         children: "children",
-        label: "label"
+        label: "label",
       },
-      tagList: [
-        {
-          id: "we",
-          name: "标签一"
-        },
-        {
-          id: "wew",
-          name: "标签二"
-        },
-      ]
     };
   },
   created() {},
   mounted() {
-    this.formatData();
   },
   methods: {
-    formatData() {
-      if (!this.tagList) {
-        return;
+    loadNode(node, resolve) {
+      let parentOrgUuid = "";
+      if (node.data) {
+        parentOrgUuid = node.data.id;
       }
-      for (let item of this.tagList) {
-        this.$set(item, "checked", false);
-        // this.$set(item, "id", this.$common.genLocalId());
+      this.$faceControlHttp
+        .getDevList({
+          needType: "orgAndVideoDev",
+          orgType: "device",
+          parentOrgUuid,
+        })
+        .then(res => {
+          if (!res.data.data) {
+            resolve([]);
+          } else {
+            for (let item of res.data.data) {
+              this.$set(item, "isLeaf", true);
+              if (item.nextCount !== 0) {
+                this.$set(item, "isLeaf", false);
+              }
+            }
+            resolve(res.data.data);
+          }
+        });
+    },
+    loadNodeTag(node, resolve) {
+      if (node.level === 0) {
+        this.$faceControlHttp
+          .getTagList({})
+          .then(res => {
+            if (!res.data.data) {
+              resolve([]);
+            } else {
+              resolve(res.data.data);
+            }
+          });
+      } else if (node.data) {
+        this.$faceControlHttp
+          .getTagDev({
+            limit: 9999,
+            page: 1,
+            tagUuid: node.data.id,
+            viewType: "video"
+          })
+          .then(res => {
+            if (!res.data.data) {
+              resolve([]);
+            } else {
+              let dataList = [];
+              res.data.list.forEach(v => {
+                dataList.push({
+                  id: v.channelUuid,
+                  label: v.channelName
+                })
+              });
+              resolve([dataList]);
+            }
+          });
       }
     },
     onClickConfirm() {
@@ -232,48 +214,16 @@ export default {
       this.$emit("onCancel");
     },
     resetFormData() {},
-    onClickItem(item) {
-      for (let item2 of this.tagList) {
-        if (item2.id === item.id) {
-          this.$set(item2, "checked", !item2.checked);
-          if (item2.checked) {
-            this.selectedList.push({
-              id: item2.id,
-              label: item2.name
-            });
-          } else {
-            for (let [i, v] of this.selectedList.entries()) {
-              if (v.id === item2.id) {
-                this.selectedList.splice(i, 1);
-              }
-            }
-          }
-        }
-      }
-    },
     deleteItem(item) {
       for (let [i, v] of this.selectedList.entries()) {
         if (v.id === item.id) {
           this.selectedList.splice(i, 1);
         }
       }
-      this.changeTreeDataStatus(this.treeData, item.id);
+      this.$set(item, "checked", false);
       for (let item2 of this.tagList) {
         if (item2.id === item.id) {
           this.$set(item2, "checked", false);
-        }
-      }
-    },
-    changeTreeDataStatus(arr, id) {
-      if (!arr) {
-        return;
-      }
-      for (let item of arr) {
-        if (item.id === id) {
-          this.$set(item, "checked", false);
-          break;
-        } else {
-          this.changeTreeDataStatus(item.children, id);
         }
       }
     },
@@ -289,7 +239,7 @@ export default {
           }
         }
       }
-    }
+    },
   },
   watch: {
     isShow(val) {
