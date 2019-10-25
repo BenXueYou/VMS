@@ -46,9 +46,9 @@
                    placeholder="请选择"
                    class='dev-select'>
           <el-option v-for="item in conditionArr"
-                     :key="item.value"
-                     :label="item.label"
-                     :value="item.value">
+                     :key="item.typeStr"
+                     :label="item.typeName"
+                     :value="item.typeStr">
           </el-option>
         </el-select>
         <el-input v-model="interalVal"
@@ -64,6 +64,7 @@
         <el-scrollbar style="height: 92%;transition:0.2s">
           <el-table :data="tableData"
                     border
+                    v-loading="isLoading"
                     style="width: 100%">
             <el-table-column type="index"
                              label="序号"
@@ -145,47 +146,8 @@ export default {
       startTime: "",
       endTime: "",
       interalVal: 10,
-      devicearr: [
-        {
-          label: "全部",
-          vlaue: ""
-        },
-        {
-          label: "1",
-          value: "1"
-        },
-        {
-          label: "2",
-          value: "2"
-        },
-        {
-          label: "3",
-          value: "3"
-        }
-      ],
       conditionVal: ">",
-      conditionArr: [
-        {
-          label: "大于",
-          value: ">"
-        },
-        {
-          label: "大于等于",
-          value: ">="
-        },
-        {
-          label: "等于",
-          value: "="
-        },
-        {
-          label: "小于",
-          value: "<"
-        },
-        {
-          label: "小于等于",
-          value: "<="
-        }
-      ],
+      conditionArr: [],
       multipleSelection: [],
       isShow: false,
       deviceList: [],
@@ -207,15 +169,16 @@ export default {
   methods: {
     initData() {
       this.startTime = this.$common.formatDate(
-        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+        new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
       );
       this.endTime = this.$common.formatDate(new Date());
+      this.conditionArr = this.$common.getEnumByGroupStr("compare_r");
     },
     getFaceAnalysisTable() {
       this.isLoading = true;
       this.$factTragicHttp
         .getFaceAnalysisTable({
-          channelUuids: this.checkedChannelsUuidList.toString(),
+          channelUuids: this.checkedChannelsUuidList,
           startTime: this.startTime,
           endTime: this.endTime,
           logic: this.conditionVal,

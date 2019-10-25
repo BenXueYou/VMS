@@ -1,11 +1,11 @@
 <template>
   <el-dialog width="760px"
-             title="请选择人脸库"
+             title="请选择视频源"
              :visible.sync="isCurrentShow"
              :before-close="onClickCancel"
              :append-to-body="true"
              :close-on-click-modal="false">
-    <div class="dialog-content">
+    <div class="dialog-content-video">
       <!--内容-->
       <div class="content-left">
         <div class="block-left">
@@ -14,25 +14,54 @@
                     size="small"
                     clearable
                     @change="onChangeInput"
-                    placeholder="搜索人脸库">
+                    placeholder="搜索设备/标签">
             <img slot="prefix"
                  src="@/assets/images/search_s.png">
           </el-input>
-          <div class="faceDB-list">
-            <template v-for="(item, index) in faceDBList">
-              <div :key="index"
-                   class="faceDB-item"
-                   @click="onClickItem(item)">
-                <img src="@/assets/images/person_g.png"
-                     width="11px"
-                     height="11px">
-                <div class="item-faceDB text-show text-style">{{item.faceLibraryName}}</div>
-                <!-- <div class="item-name text-show text-style">{{item.staffName}}</div> -->
-                <img class="check-img"
-                     v-if="item.checked"
-                     src="@/assets/images/checked_icon.png">
-              </div>
-            </template>
+          <div class="videoSrc-list">
+            <el-tabs v-model="activeName">
+              <el-tab-pane label="设备树"
+                           name="dev">
+                <el-tree :data="treeData"
+                         :props="defaultProps"
+                         node-key="id"
+                         :indent="10"
+                         ref="elTree"
+                         :default-expanded-keys="defaultExpKeys"
+                         :highlight-current="true"
+                         :expand-on-click-node="false"
+                         @node-click="handleNodeClick">
+                  <div class="i-tree-item"
+                       slot-scope="{ node, data }">
+                    <div class="i-tree-item-icon">
+                      <span class="text-show">{{node.label}}</span>
+                      <div class="action-icon">
+                        <img src="@/assets/images/checked_icon.png"
+                             width="10.9px"
+                             v-if="data.checked"
+                             height="9px">
+                      </div>
+                    </div>
+                  </div>
+                </el-tree>
+              </el-tab-pane>
+              <el-tab-pane label="标签"
+                           name="tag">
+                <template v-for="(item, index) in tagList">
+                  <div :key="index"
+                       class="videoSrc-item"
+                       @click="onClickItem(item)">
+                    <img src="@/assets/images/equipment/sign.png"
+                         width="16px"
+                         height="8px">
+                    <div class="item-videoSrc text-show text-style">{{item.name}}</div>
+                    <img class="check-img"
+                         v-if="item.checked"
+                         src="@/assets/images/checked_icon.png">
+                  </div>
+                </template>
+              </el-tab-pane>
+            </el-tabs>
           </div>
         </div>
       </div>
@@ -40,18 +69,18 @@
         <div class="block-right">
           <div class="title-line">
             <div class="spot"></div>
-            <div class="title title-text">已选的人脸库</div>
+            <div class="title title-text">已选的视频源库</div>
           </div>
-          <div class="selected-faceDB">
+          <div class="selected-videoSrc">
             <template v-for="(item, index) in selectedList">
               <div :key="index"
-                   class="faceDB-select-item">
-                <div class="item-faceDB">
+                   class="videoSrc-select-item">
+                <div class="item-videoSrc">
                   <img src="@/assets/images/person_g.png"
                        width="11px"
                        height="11px">
                   <span class="title-text text-show"
-                        style="margin-left: 4px">{{item.faceLibraryName}}</span>
+                        style="margin-left: 4px">{{item.label}}</span>
                 </div>
                 <div class="del-img"
                      @click="deleteItem(item)"
@@ -91,35 +120,108 @@ export default {
     return {
       isCurrentShow: false,
       titleText: "",
-      faceDBList: [],
-      selectedList: []
+      selectedList: [],
+      defaultExpKeys: [],
+      activeName: "dev",
+      treeData: [
+        {
+          id: "1",
+          label: "一级 1",
+          children: [
+            {
+              id: "2",
+              label: "二级 1-1",
+              children: [
+                {
+                  id: "3",
+                  label: "三级 1-1-1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: "一级 2",
+          id: "4",
+          children: [
+            {
+              label: "二级 2-1",
+              id: "5",
+              children: [
+                {
+                  label: "三级 2-1-1",
+                  id: "6"
+                }
+              ]
+            },
+            {
+              label: "二级 2-2",
+              id: "7",
+              children: [
+                {
+                  label: "三级 2-2-1",
+                  id: "8"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: "一级 3",
+          id: "9",
+          children: [
+            {
+              label: "二级 3-1",
+              id: "10",
+              children: [
+                {
+                  label: "三级 3-1-1",
+                  id: "11"
+                }
+              ]
+            },
+            {
+              label: "二级 3-2",
+              id: "12",
+              children: [
+                {
+                  id: "13",
+                  label: "三级 3-2-1"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
+      tagList: [
+        {
+          id: "we",
+          name: "标签一"
+        },
+        {
+          id: "wew",
+          name: "标签二"
+        },
+      ]
     };
   },
   created() {},
   mounted() {
-    this.getFacedbList();
+    this.formatData();
   },
   methods: {
     formatData() {
-      if (!this.faceDBList) {
+      if (!this.tagList) {
         return;
       }
-      for (let item of this.faceDBList) {
+      for (let item of this.tagList) {
         this.$set(item, "checked", false);
-        this.$set(item, "id", this.$common.genLocalId());
+        // this.$set(item, "id", this.$common.genLocalId());
       }
-    },
-    getFacedbList() {
-      this.$faceControlHttp
-        .getFacedbList()
-        .then(res => {
-          let body = res.data;
-          this.getFacedbListSuccess(body);
-        })
-    },
-    getFacedbListSuccess(body) {
-      this.faceDBList = body.data;
-      this.formatData();
     },
     onClickConfirm() {
       this.$emit("onConfirm", this.selectedList);
@@ -131,11 +233,14 @@ export default {
     },
     resetFormData() {},
     onClickItem(item) {
-      for (let item2 of this.faceDBList) {
+      for (let item2 of this.tagList) {
         if (item2.id === item.id) {
           this.$set(item2, "checked", !item2.checked);
           if (item2.checked) {
-            this.selectedList.push(item2);
+            this.selectedList.push({
+              id: item2.id,
+              label: item2.name
+            });
           } else {
             for (let [i, v] of this.selectedList.entries()) {
               if (v.id === item2.id) {
@@ -152,13 +257,39 @@ export default {
           this.selectedList.splice(i, 1);
         }
       }
-      for (let item2 of this.faceDBList) {
+      this.changeTreeDataStatus(this.treeData, item.id);
+      for (let item2 of this.tagList) {
         if (item2.id === item.id) {
           this.$set(item2, "checked", false);
         }
       }
     },
-    onChangeInput() {}
+    changeTreeDataStatus(arr, id) {
+      if (!arr) {
+        return;
+      }
+      for (let item of arr) {
+        if (item.id === id) {
+          this.$set(item, "checked", false);
+          break;
+        } else {
+          this.changeTreeDataStatus(item.children, id);
+        }
+      }
+    },
+    onChangeInput() {},
+    handleNodeClick(obj, node, component) {
+      this.$set(obj, "checked", !obj.checked);
+      if (obj.checked) {
+        this.selectedList.push(obj);
+      } else {
+        for (let [i, v] of this.selectedList.entries()) {
+          if (v.id === obj.id) {
+            this.selectedList.splice(i, 1);
+          }
+        }
+      }
+    }
   },
   watch: {
     isShow(val) {
@@ -178,10 +309,13 @@ export default {
   .el-input--prefix .el-input__inner {
     padding-left: 28px;
   }
+  .el-tree {
+    background: #25292d;
+  }
 }
 </style>
 <style lang="scss" scoped>
-.dialog-content {
+.dialog-content-video {
   padding: 0 4% 4% 4%;
   height: 500px;
   width: 100%;
@@ -195,7 +329,7 @@ export default {
       style: solid;
       color: rgba($color: #ffffff, $alpha: 0.06);
     }
-    padding: 35px 20px;
+    padding: 20px 15px;
     box-sizing: border-box;
     .block-left {
       width: 100%;
@@ -205,13 +339,13 @@ export default {
       .search-input {
         width: 95%;
       }
-      .faceDB-list {
+      .videoSrc-list {
         width: 100%;
         height: 90%;
         margin-top: 20px;
         overflow-y: auto;
         overflow-x: hidden;
-        .faceDB-item {
+        .videoSrc-item {
           height: 32px;
           display: flex;
           flex-flow: row nowrap;
@@ -221,7 +355,7 @@ export default {
           &:hover {
             background: rgba($color: #26d39d, $alpha: 0.15);
           }
-          .item-faceDB {
+          .item-videoSrc {
             width: 34%;
             margin-left: 18px;
             text-align: left;
@@ -272,7 +406,7 @@ export default {
           margin-left: 6px;
         }
       }
-      .selected-faceDB {
+      .selected-videoSrc {
         width: 100%;
         height: 95%;
         padding: 8px 0;
@@ -284,7 +418,7 @@ export default {
         display: flex;
         flex-flow: row wrap;
         align-content: flex-start;
-        .faceDB-select-item {
+        .videoSrc-select-item {
           height: 36px;
           display: flex;
           flex-flow: row nowrap;
@@ -296,7 +430,7 @@ export default {
           margin-bottom: 10px;
           margin-right: 10px;
           position: relative;
-          .item-faceDB {
+          .item-videoSrc {
             text-align: left;
           }
           .item-name {
@@ -322,5 +456,16 @@ export default {
 .dialog-footer {
   padding: 0 4% 4% 0;
   box-sizing: border-box;
+}
+.i-tree-item {
+  width: 100%;
+  .i-tree-item-icon {
+    display: flex;
+    align-items: center;
+    .action-icon {
+      margin-left: auto;
+      margin-right: 18px;
+    }
+  }
 }
 </style>

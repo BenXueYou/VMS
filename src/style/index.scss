@@ -909,11 +909,17 @@ input::-webkit-input-placeholder {
   background-color: transparent;
 }
 .el-input--prefix .el-input__inner {
-  padding-left: 10px;
+  padding-left: 30px;
 }
 .img-fill {
   object-fit: fill;
 }
 .img-contain {
   object-fit: contain;
+}
+.el-tabs__item {
+  color: #868686;
+}
+.el-tabs__nav-wrap::after {
+  background-color: #3F4244;
 }

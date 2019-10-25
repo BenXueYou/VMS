@@ -290,8 +290,7 @@
         "residentServer": "住户服务",
         "courier": "快递人员",
         "take-out": "外卖人员",
-        "other": "其他人员",
-        "": ""
+        "other": "其他人员"
     },
     "cred": {
         "id_card": "身份证",

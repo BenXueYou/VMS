@@ -68,6 +68,8 @@ export default {
   },
   // @fengyawen
   getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
+  getModelDev: `${URLHeader}/${projectUuid}/IntelligentModel/channel/list`,
+  getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list`,
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
   getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
   getModelList: `${URLHeader}/${projectUuid}/modelStatistics/list`,
@@ -76,7 +78,7 @@ export default {
   getCompareAll: `${URLHeader}/${projectUuid}/recognizeStatistics/all/list`,
   getCompareOne: `${URLHeader}/${projectUuid}/recognizeStatistics/one/list`,
   getCompanionList: `${URLHeader}/${projectUuid}/staff/travelTogether/list`,
-  getFaceAnalysisTable: `${URLHeader}/${projectUuid}/staffFrequency/list`,
+  getFaceAnalysisTable: `${URLHeaderFaceLog}/${projectUuid}/staffFrequency/list?asgName=${projectUuid}`,
   getMonitoringTaskList: `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
   getMonitoringTaskDetails: (taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
   deleteMonitoringTask: (taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
@@ -88,4 +90,5 @@ export default {
   deleteIntelModel: (modelUuid) => `${URLHeader}/${projectUuid}/IntelligentModel/info/${modelUuid}`,
   addIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
   editIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
+  getFacedbList: `${URLHeader}/${projectUuid}/faceLib/list`,
 };
