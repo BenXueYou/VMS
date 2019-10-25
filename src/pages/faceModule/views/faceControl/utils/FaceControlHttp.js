@@ -98,7 +98,15 @@ export var FaceControlHttp = {
       data[k] = holder[k];
     }
     return axios.get(api, { params: data });
-  }
+  },
+  getDevChannelList(deviceUuid, holder) {
+    let api = `${RestApi.api.faceModuleAPi.getDevChannelList(deviceUuid)}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.get(api, { params: data });
+  },
 };
 
 function install(Vue) {

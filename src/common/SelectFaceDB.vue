@@ -85,6 +85,10 @@ export default {
     isShow: {
       type: Boolean,
       default: false
+    },
+    initSelectData: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -96,9 +100,7 @@ export default {
     };
   },
   created() {},
-  mounted() {
-    this.getFacedbList();
-  },
+  mounted() {},
   methods: {
     formatData() {
       if (!this.faceDBList) {
@@ -120,16 +122,18 @@ export default {
     getFacedbListSuccess(body) {
       this.faceDBList = body.data;
       this.formatData();
+      this.setInitSelect();
     },
-    onClickConfirm() {
-      this.$emit("onConfirm", this.selectedList);
-      this.$emit("onCancel");
+    setInitSelect() {
+      this.initSelectData.forEach(v => {
+        this.faceDBList.forEach(v2 => {
+          if (v2.faceLibraryUuid === v.faceLibraryUuid) {
+            v2.checked = true;
+          }
+        });
+        this.selectedList.push(v);
+      });
     },
-    onClickCancel() {
-      this.resetFormData();
-      this.$emit("onCancel");
-    },
-    resetFormData() {},
     onClickItem(item) {
       for (let item2 of this.faceDBList) {
         if (item2.id === item.id) {
@@ -158,11 +162,27 @@ export default {
         }
       }
     },
+    onClickConfirm() {
+      this.$emit("onConfirm", this.selectedList);
+      this.resetFormData();
+      this.$emit("onCancel");
+    },
+    onClickCancel() {
+      this.resetFormData();
+      this.$emit("onCancel");
+    },
+    resetFormData() {
+      this.faceDBList = [];
+      this.selectedList = [];
+    },
     onChangeInput() {}
   },
   watch: {
     isShow(val) {
       this.isCurrentShow = val;
+      if (val) {
+        this.getFacedbList();
+      }
     }
   }
 };

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog width="760px"
+  <el-dialog width="820px"
              title="请选择视频源"
              :visible.sync="isCurrentShow"
              :before-close="onClickCancel"
@@ -25,12 +25,12 @@
                 <el-tree :props="defaultProps"
                          node-key="id"
                          :indent="10"
+                         :data="treeData"
                          ref="elTree"
                          lazy
                          :load="loadNode"
                          :default-expanded-keys="defaultExpKeys"
                          :highlight-current="true"
-                         :expand-on-click-node="false"
                          @node-click="handleNodeClick">
                   <div class="i-tree-item"
                        slot-scope="{ node, data }">
@@ -53,10 +53,10 @@
                          :indent="10"
                          ref="elTreeTag"
                          lazy
+                         :data="treeDataTag"
                          :load="loadNodeTag"
                          :default-expanded-keys="defaultExpKeysTag"
                          :highlight-current="true"
-                         :expand-on-click-node="false"
                          @node-click="handleNodeClick">
                   <div class="i-tree-item"
                        slot-scope="{ node, data }">
@@ -125,6 +125,10 @@ export default {
     isShow: {
       type: Boolean,
       default: false
+    },
+    initSelectData: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -138,71 +142,151 @@ export default {
       defaultProps: {
         children: "children",
         label: "label",
+        isLeaf: "leaf"
       },
+      treeData: [],
+      treeDataTag: [],
     };
   },
   created() {},
   mounted() {
   },
   methods: {
-    loadNode(node, resolve) {
-      let parentOrgUuid = "";
-      if (node.data) {
-        parentOrgUuid = node.data.id;
-      }
+    getFirstData() {
       this.$faceControlHttp
         .getDevList({
           needType: "orgAndVideoDev",
           orgType: "device",
-          parentOrgUuid,
+          parentOrgUuid: ""
         })
         .then(res => {
-          if (!res.data.data) {
-            resolve([]);
-          } else {
-            for (let item of res.data.data) {
-              this.$set(item, "isLeaf", true);
-              if (item.nextCount !== 0) {
-                this.$set(item, "isLeaf", false);
-              }
-            }
-            resolve(res.data.data);
+          if (res.data.data) {
+            this.treeData = res.data.data;
           }
         });
+      this.$faceControlHttp
+        .getTagList({
+          tagType: "device"
+        })
+        .then(res => {
+          if (res.data.data) {
+            this.treeDataTag = res.data.data.list;
+          }
+        });
+      this.selectedList = this.$common.copyArray(this.initSelectData, this.selectedList);
+    },
+    loadNode(node, resolve) {
+      if (node.level !== 0) {
+        if (node.data.type === "organization") {
+          this.$faceControlHttp
+            .getDevList({
+              needType: "orgAndVideoDev",
+              orgType: "device",
+              parentOrgUuid: node.data.id
+            })
+            .then(res => {
+              if (!res.data.data) {
+                resolve([]);
+              } else {
+                for (let item of res.data.data) {
+                  this.$set(item, "leaf", true);
+                  if (item.nextCount !== 0) {
+                    this.$set(item, "leaf", false);
+                  }
+                }
+                resolve(res.data.data);
+              }
+            });
+        } else if (node.data.hasOwnProperty("deviceType")) {
+          this.$faceControlHttp
+            .getDevChannelList(node.data.id, {
+              viewType: "video",
+            })
+            .then(res => {
+              if (!res.data.data) {
+                resolve([]);
+              } else {
+                for (let item of res.data.data) {
+                  this.$set(item, "leaf", true);
+                }
+                this.selectedList.forEach(v => {
+                  res.data.data.forEach(v2 => {
+                    if (v2.id === v.id) {
+                      this.$set(v2, "checked", true);
+                    }
+                  });
+                });
+                resolve(res.data.data);
+              }
+            });
+        } else if (node.data.hasOwnProperty("channelType")) {
+          resolve([]);
+        }
+      }
     },
     loadNodeTag(node, resolve) {
-      if (node.level === 0) {
-        this.$faceControlHttp
-          .getTagList({})
-          .then(res => {
-            if (!res.data.data) {
-              resolve([]);
-            } else {
-              resolve(res.data.data);
+      if (node.level !== 0) {
+        if (node.data) {
+          this.$faceControlHttp
+            .getTagDev({
+              limit: 9999,
+              page: 1,
+              tagUuid: node.data.id,
+              viewType: "video"
+            })
+            .then(res => {
+              if (!res.data.data) {
+                resolve([]);
+              } else {
+                let dataList = [];
+                res.data.data.list.forEach(v => {
+                  dataList.push({
+                    id: v.channelUuid,
+                    label: v.channelName,
+                    channelType: v.channelType
+                  })
+                });
+                this.selectedList.forEach(v => {
+                  dataList.forEach(v2 => {
+                    if (v2.id === v.id) {
+                      this.$set(v2, "checked", true);
+                    }
+                  });
+                });
+                for (let item of dataList) {
+                  this.$set(item, "leaf", true);
+                }
+                resolve(dataList);
+              }
+            });
+        }
+      }
+    },
+    deleteItem(item) {
+      for (let [i, v] of this.selectedList.entries()) {
+        if (v.id === item.id) {
+          if (this.$refs.elTree.getNode(v.id)) {
+            this.$set(this.$refs.elTree.getNode(v.id).data, "checked", false);
+          }
+          if (this.$refs.elTreeTag.getNode(v.id)) {
+            this.$set(this.$refs.elTreeTag.getNode(v.id).data, "checked", false);
+          }
+          this.selectedList.splice(i, 1);
+        }
+      }
+    },
+    handleNodeClick(obj, node, component) {
+      if (obj.hasOwnProperty("channelType")) {
+        this.$set(obj, "checked", !obj.checked);
+        if (obj.checked) {
+          this.selectedList.push(obj);
+        } else {
+          for (let [i, v] of this.selectedList.entries()) {
+            if (v.id === obj.id) {
+              this.selectedList.splice(i, 1);
             }
-          });
-      } else if (node.data) {
-        this.$faceControlHttp
-          .getTagDev({
-            limit: 9999,
-            page: 1,
-            tagUuid: node.data.id,
-            viewType: "video"
-          })
-          .then(res => {
-            if (!res.data.data) {
-              resolve([]);
-            } else {
-              let dataList = [];
-              res.data.list.forEach(v => {
-                dataList.push({
-                  id: v.channelUuid,
-                  label: v.channelName
-                })
-              });
-              resolve([dataList]);
-            }
-          });
+          }
+        }
       }
     },
     onClickConfirm() {
@@ -214,36 +298,18 @@ export default {
       this.$emit("onCancel");
     },
     resetFormData() {},
-    deleteItem(item) {
-      for (let [i, v] of this.selectedList.entries()) {
-        if (v.id === item.id) {
-          this.selectedList.splice(i, 1);
-        }
-      }
-      this.$set(item, "checked", false);
-      for (let item2 of this.tagList) {
-        if (item2.id === item.id) {
-          this.$set(item2, "checked", false);
-        }
-      }
-    },
     onChangeInput() {},
-    handleNodeClick(obj, node, component) {
-      this.$set(obj, "checked", !obj.checked);
-      if (obj.checked) {
-        this.selectedList.push(obj);
-      } else {
-        for (let [i, v] of this.selectedList.entries()) {
-          if (v.id === obj.id) {
-            this.selectedList.splice(i, 1);
-          }
-        }
-      }
-    },
   },
   watch: {
     isShow(val) {
       this.isCurrentShow = val;
+      if (val) {
+        this.getFirstData();
+      } else {
+        this.treeData = [];
+        this.treeDataTag = [];
+        this.selectedList = [];
+      }
     }
   }
 };

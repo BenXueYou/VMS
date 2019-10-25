@@ -2,12 +2,14 @@
   <div class="control-main-add">
     <select-face :isShow="isShowAddFaceDB"
                  ref="selectFace"
+                 :initSelectData="initSelectFaceData"
                  @onCancel="cancelAddFaceDB"
                  @onConfirm="confirmAddFaceDB" />
     <select-video :isShow="isShowAddVideoSrc"
-                 ref="selectVideo"
-                 @onCancel="cancelAddVideoSrc"
-                 @onConfirm="confirmAddVideoSrc" />
+                  ref="selectVideo"
+                  :initSelectData="initSelectVideoData"
+                  @onCancel="cancelAddVideoSrc"
+                  @onConfirm="confirmAddVideoSrc" />
     <div class="access-main">
       <div class="dialog-title">
         <div class="title-text">{{isAdd ? "新建" : "编辑"}}布控</div>
@@ -34,10 +36,12 @@
           </el-form-item>
           <el-form-item label="人脸库："
                         prop="faceLibraryUuids">
-            <div class="add-item"
-                 @click="addFaceDB">
-              <img src="@/assets/images/faceModule/add.png">
-              <span>添加</span>
+            <div class="add-item">
+              <img src="@/assets/images/faceModule/add.png"
+                   style="cursor: pointer;"
+                   @click="addFaceDB">
+              <span style="cursor: pointer;"
+                    @click="addFaceDB">添加</span>
             </div>
             <div class="item-select">
               <template v-for="(item, index) in faceDBSelectedList">
@@ -80,10 +84,12 @@
           </el-form-item>
           <el-form-item label="视频源："
                         prop="channelUuids">
-            <div class="add-item"
-                 @click="addVideoSource">
-              <img src="@/assets/images/faceModule/add.png">
-              <span>添加</span>
+            <div class="add-item">
+              <img src="@/assets/images/faceModule/add.png"
+                   style="cursor: pointer;"
+                   @click="addVideoSource">
+              <span style="cursor: pointer;"
+                    @click="addVideoSource">添加</span>
             </div>
             <div class="item-select">
               <template v-for="(item, index) in videoSrcSelectedList">
@@ -195,7 +201,7 @@ export default {
   components: {
     PicQulitySelect,
     SelectFace,
-    SelectVideo
+    SelectVideo,
   },
   props: {
     isAdd: {
@@ -232,7 +238,9 @@ export default {
       isShowAddVideoSrc: false,
       faceDBSelectedList: [],
       videoSrcSelectedList: [],
-      staffTypeOption: []
+      staffTypeOption: [],
+      initSelectFaceData: [],
+      initSelectVideoData: [],
     };
   },
   created() {},
@@ -242,7 +250,7 @@ export default {
   methods: {
     initData() {
       this.staffTypeOption = this.$common.getEnumByGroupStr("staff_t");
-      this.staffTypeOption.forEach((v) => {
+      this.staffTypeOption.forEach(v => {
         this.$set(v, "checked", false);
       });
     },
@@ -282,9 +290,9 @@ export default {
     },
     formatData() {
       this.formLabelAlign.faceLibraryUuids = [];
-      this.faceDBSelectedList.forEach((v) => {
+      this.faceDBSelectedList.forEach(v => {
         this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
-        if (v.faceLibraryType === 'systemFaceLib') {
+        if (v.faceLibraryType === "systemFaceLib") {
           this.staffTypeOption.forEach(v => {
             if (v.checked) {
               this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
@@ -315,6 +323,7 @@ export default {
         });
     },
     addFaceDB() {
+      this.initSelectFaceData = this.$common.copyArray(this.faceDBSelectedList, this.initSelectFaceData);
       this.isShowAddFaceDB = true;
     },
     confirmAddFaceDB(val) {
@@ -328,6 +337,7 @@ export default {
       this.isShowAddFaceDB = false;
     },
     addVideoSource() {
+      this.initSelectVideoData = this.$common.copyArray(this.videoSrcSelectedList, this.initSelectVideoData);
       this.isShowAddVideoSrc = true;
     },
     confirmAddVideoSrc(val) {
@@ -454,7 +464,6 @@ export default {
     font-family: PingFangSC-Regular;
     font-size: 13px;
     color: #26d39d;
-    cursor: pointer;
     margin-left: 8px;
   }
   .item-select {
