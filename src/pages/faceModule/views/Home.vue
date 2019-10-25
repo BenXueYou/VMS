@@ -11,7 +11,6 @@
 						placement="right"
 						trigger="click"
 					>
-						<!-- 以下iframe标签是为了VLC播放的遮挡 -->
 						<el-row class="taskParentBox">
 							<el-row class="taskParent taskParentPopoverBox">
 								<el-tree
@@ -33,7 +32,7 @@
 								<div class="checkBoxTitle">
 									<el-checkbox
 										class="checkBoxClass"
-										v-model="checkAll"
+										v-model="notCheckAll"
 										@change="handleCheckAllChange"
 									>只呈现单路摄像机</el-checkbox>
 								</div>
@@ -45,9 +44,9 @@
 								>
 									<el-radio
 										class="el-radio-myclass"
-										v-for="channelItem in channelInfoList"
-										:label="channelItem.channelName"
-										:key="channelItem.channelUuid"
+										v-for="(channelItem,index) in channelInfoList"
+										:label="channelItem"
+										:key="index"
 									>{{channelItem.nickName}}</el-radio>
 								</el-radio-group>
 								<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
@@ -68,7 +67,7 @@
 						element-loading-background="rgba(0, 0, 0, 0.8)"
 					>
 						<div id="poster_img"></div>
-						<div id="player"></div>
+						<div ref="canvasRefs" id="player"></div>
 					</div>
 				</el-main>
 				<!-- 底部人脸抓拍记录图片list -->
@@ -139,9 +138,9 @@
 							>全选</el-checkbox>
 							<el-tree
 								ref="tree"
-								:data="JSON.parse(JSON.stringify(taskList))"
+								:data="taskList"
 								show-checkbox
-								node-key="taskuuid"
+								node-key="faceMonitorUuid"
 								:props="defaultTreeProps"
 								default-expand-all
 								@check="checkChanges"
@@ -231,19 +230,14 @@ export default {
       asideWidth: "60px",
       asidDropdownMednu: "全部任务", // 选中的任务
       deviceTreeList: [], // 设备树
-      deviceDataList: [], // 设备树的数据源
-      visible_tree_popver: false,
       dialogVisible: false, // 彈窗顯示標記
-      dialogParama: "弹窗视图的参数",
+      dialogParama: null,
       footerLiftType: false, // 抓拍記錄與車流量統計的切換
       taskList: [],
-      taskItem: null, // 当前任务
       visible_popver: false, // task弹窗是否弹出，默认隐藏
       rtspAddress: "",
       channelInfoList: [], // 所有通道名称和ID的二元list
-      checkedRtspList: [], // 选中的轮询通道Rtsp地址
-      channelUuidList: [],
-      checkAll: false, // 通道勾选的list的长度
+      notCheckAll: true, // 通道勾选的list的长度
       checkTaskAll: true,
       checkedChannelsUuidList: [], // 当前勾选的通道Id的list
       checkedChannel: "",
@@ -255,7 +249,12 @@ export default {
       socketIP: this.$store.state.socketIP, //
       todayShootCount: 0, // 今日抓拍次数
       todayCompareCount: 0, // 今日对比次数
-      streamType: "main_stream",
+      streamType: "main",
+      streamTypeOptions: [
+        { typeStr: "main", typeName: "主码流" },
+        { typeStr: "sub", typeName: "辅码流" },
+        { typeStr: "thrid", typeName: "三码流" }
+      ],
       fullscreenLoading: false, // 局部遮罩是否显示
       mainVideoScreenLoading: false, // 视频遮罩是否显示
       checkTimeConst: 3600000, // 轮询时间1小时获取一次数据统计分布图 3600000
@@ -263,26 +262,21 @@ export default {
       endTime: "",
       shootPhotoList: [],
       defaultTreeProps: {
-        label: "taskname"
+        label: "faceMonitorName",
+        id: "faceMonitorUuid"
       },
       showImg: false,
-      imgSrc: "",
       defaultProps: {
         children: "children",
         label: "label",
-        isLeaf: 'isLeaf'
+        isLeaf: "isLeaf"
       },
       checkedTaskUUidList: [],
       checkedNodes: [],
-      vlcObj: this.$store.state.vlcObj,
-      flag: false,
-      timer: null,
-      timeOuter: null,
-      vlc: null,
-      options: new Array("rtsp-tcp"),
       dialogfullscreenLoading: false,
       stompClient: null,
-      defaultExpandedKeys: []
+      defaultExpandedKeys: [],
+      video_mgr: null,
     };
   },
   computed: {
@@ -324,6 +318,7 @@ export default {
     this.endTime = this.$common.getCurrentTime();
     this.getPhotoList();
     this.getDeviceList();
+    this.getTaskList();
   },
 
   destroyed: function() {
@@ -333,7 +328,6 @@ export default {
     }
     this.stompClient = null;
     this.websocket = null;
-    clearInterval(this.timer);
   },
   watch: {
     CapturePhotoArr(val) {
@@ -388,10 +382,11 @@ export default {
         .then(res => {
           if (res.data.success && res.data.data) {
             this.channelInfoList = res.data.data;
+            this.checkedChannel = this.channelInfoList[0];
             this.getRtspInChannelUuid(this.channelInfoList[0].channelUuid);
           } else {
             console.log(res.data.data);
-            this.$message({type: 'warning', message: '查询数据为空'});
+            this.$message({ type: "warning", message: "查询数据为空" });
           }
         })
         .catch(() => {});
@@ -428,12 +423,11 @@ export default {
         .getTaskList({ enabled: 1 })
         .then(res => {
           if (res.data.success) {
-            var taskList = res.data.enable;
+            var taskList = res.data.data;
             this.taskList = taskList;
-            for (var i = 0; i < taskList.length; i++) {
-              var temp = taskList[i];
-              this.checkedTaskUUidList.push(temp.taskuuid);
-            }
+            taskList.forEach(item => {
+              this.checkedTaskUUidList.push(item.faceMonitorUuid);
+            });
             this.todayCompareCount = 0;
             this.getRecongizeList();
           } else {
@@ -467,71 +461,96 @@ export default {
     // 只呈现单路摄像机
     handleCheckAllChange(val) {
       console.log("默认勾选单路摄像机，改变对比列表数据以及抓拍数据", val);
-      this.checkAll = val;
+      this.notCheckAll = val;
       if (val) {
         // 勾了单选
         this.checkedChannelsUuidList = [];
-        this.checkedChannelsUuidList[0] = this.checkedChannel.id;
-        this.$store.commit("setCheckedChannel", this.checkedChannel);
+        this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
       } else {
         // 去掉单选
-        this.checkedChannelsUuidList = this.channelUuidList;
+        this.checkedChannelsUuidList = [];
+        this.channelInfoList.forEach(item => {
+          this.checkedChannelsUuidList.push(item.channelUuid);
+        });
       }
       // 更新抓拍数据和统计数据
       this.todayShootCount = 0;
       this.getPhotoList();
-      if (this.footerLiftType === true) {
+      if (this.footerLiftType) {
         // 获取人脸统计
         this.getPhotoStaticList();
-      }
-      if (!this.timer) {
-        this.getShootPhotoNum();
       }
     },
     // 选中某通道
     handleCheckedCitiesChange(value) {
       console.log("选中某通道------", this.checkedChannel);
-      this.$store.commit("setCheckedChannel", this.checkedChannel);
-      if (this.checkAll) {
+      // 获取rtspUlrl
+      this.getRtspInChannelUuid(this.checkedChannel.channelUuid, true);
+      // 更新抓拍总数
+      if (this.notCheckAll) {
         this.checkedChannelsUuidList = [];
-        this.checkedChannelsUuidList[0] = this.checkedChannel.id;
-      }
-      this.checkedChannelsUuid = this.checkedChannel.id;
-      this.getRtspInChannelUuid(this.checkedChannelsUuid, true);
-      if (this.checkAll) {
+        this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
         this.todayShootCount = 0;
         this.getPhotoList();
-        if (this.footerLiftType === true) {
+        if (this.footerLiftType) {
           // 获取人脸统计
           this.getPhotoStaticList();
-        }
-        if (!this.timer) {
-          this.getShootPhotoNum();
         }
       }
       this.visible_popver = false;
     },
     // 布控任务通道ID获取码流参数
-    getRtspInChannelUuid(channelUuid, isBool) {},
-    /** *********************************弹窗事件***********************************/
-    // 关闭弹窗的回调，得到子组件的参数
+    getRtspInChannelUuid(channelUuid, isBool) {
+      // let data = {
+      //   channelUuid: channelUuid,
+      //   streamType: this.streamType
+      // };
+      // api
+      //   .getRtspUrlByChannelUuidApi(data)
+      //   .then(res => {
+      //     if (res.data.success) {
+      //       let data = res.data.data;
+      //       Object.assign(this.checkedChannel, data);
+      //       this.loadVideo(data);
+      //     }
+      //   })
+      //   .catch(() => {});
+    },
+    loadVideo(data) {
+      data.localId = "192.168.9.21";
+      // eslint-disable-next-line
+      this.video_mgr = new CVideoMgrSdk();
+      this.canvas = document.createElement("canvas");
+      this.canvas.width = this.WIDTH() * 2 / 3 - 120;
+      this.canvas.height = this.HEIGHT() * 6 / 10 - 100;
+      let ip = data.localId;
+      this.video = this.video_mgr.play(
+        `{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4400"}}}`,
+        `{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4401"}}}`,
+        data.rtspUrl,
+        "rtsp",
+        'preview',
+        this.canvas,
+        this.streamType
+      );
+      this.$refs.canvasRefs.appendChild(this.canvas);
+    },
+
+    // 弹窗事件 关闭弹窗的回调，得到子组件的参数
     closeDialog(e) {
       this.showImg = false;
       this.dialogVisible = e;
     },
-    /** *************************************抓拍事件*******************************/
     // 获取抓拍记录
     getPhotoList(currentPage = 1, pageSize = 9) {
       this.photoList = []; // 清除记录
       var data = {
         page: 1,
         limit: 9,
+        channelUuids: this.checkedChannelsUuidList.toString(),
         snapshotTimeStart: this.$common.getStartTime(),
         snapshotTimeEnd: this.$common.getCurrentTime()
       };
-      if (this.checkedChannelsUuidList) {
-        data.channelUuids = this.checkedChannelsUuidList;
-      }
       api.getSnapshotList(data).then(res => {
         if (res.data.success && res.data.data) {
           this.photoList = res.data.data.list;
@@ -577,91 +596,22 @@ export default {
     getPhotoStaticList() {
       this.fullscreenLoading = true;
     },
-    initWebSocket() {
-      // 初始化weosocket
-      if (this.websocket) {
-        return;
-      }
-      /* eslint-disable */
-			this.websocket = new SockJS(
-				window.config.protocolHeader + window.config.socketIP
-			);
-			this.stompClient = Stomp.over(this.websocket);
-			this.stompClient.connect(
-				{ projectUuid: this.$store.state.home.projectUuid },
-				frame => {
-					console.log("connect success: ", frame);
-					this.stompClient.subscribe("/user/topic/face/capture", greeting => {
-						console.log("subscribe success: ", greeting);
-						this.handleSubscribe(JSON.parse(greeting.body));
-					});
-				},
-				err => {
-					console.log("error, errMsg: ", err);
-				}
-			);
-			/* eslint-enable */
-    },
-    disConnectSocket() {
-      if (this.stompClient != null) {
-        this.stompClient.disconnect();
-        console.log("Disconnected");
-      }
-    },
-    // 抓拍消息通知处理
-    handleSubscribe(data) {
-      this.photoList.push(data);
-    },
-    loadVideo(url) {},
-
     // 视频选择框显示，右侧按钮显示
     popverShow(e) {
-      // debugger;
-      if (e === "tree") {
-        this.$refs.tree.setCheckedKeys(this.checkedTaskUUidList);
-        return;
-      } else {
-        // this.initCheckedChannel();
-      }
-      this.visible_popver = true;
-    },
-    // 初始化是否已经有过操作
-    initCheckedChannel() {
-      if (this.checkedChannel === "") {
-        // 默认通道
-        this.checkedChannel = this.channelInfoList[0];
-        // 默认的码流地址
-        this.checkedChannelsUuid = this.channelInfoList[0].id;
-      } else {
-        for (var i = 0; i < this.channelInfoList.length; i++) {
-          if (this.channelInfoList[i].id === this.checkedChannel.id) {
-            this.checkedChannel = this.channelInfoList[i];
-            break;
-          } else {
-          }
-        }
-        this.checkedChannelsUuidList = [];
-        this.checkedChannelsUuidList[0] = this.checkedChannel.id;
-        this.checkedChannelsUuid = this.checkedChannel.id;
-      }
+      this.$refs.tree.setCheckedKeys(this.checkedTaskUUidList);
     },
     // 视频选择框隐藏,左侧按钮显示
     popverHidden(e) {
-      if (e === "tree") {
-        if (this.checkedNodes && this.checkedNodes.length) {
-          this.asidDropdownMednu = "";
-          for (var i = 0; i < this.checkedNodes.length; i++) {
-            this.asidDropdownMednu += this.checkedNodes[i].taskname;
-            this.asidDropdownMednu += ",";
-          }
+      if (this.checkedNodes && this.checkedNodes.length) {
+        this.asidDropdownMednu = "";
+        for (var i = 0; i < this.checkedNodes.length; i++) {
+          this.asidDropdownMednu += this.checkedNodes[i].faceMonitorName;
+          this.asidDropdownMednu += ",";
         }
-        // 预防在接口返回结果前，websocket就有推送数据
-        this.todayCompareCount = 0;
-        this.getRecongizeList();
-        // this.getCompareNum();
-        return;
       }
-      this.visible_popver = false;
+      // 预防在接口返回结果前，websocket就有推送数据
+      this.todayCompareCount = 0;
+      this.getRecongizeList();
     },
     doRecoginizeDetail(e) {
       console.log("右侧的弹窗事件index", e);
@@ -876,7 +826,7 @@ export default {
 .radioGroup {
 	text-align: left;
 	width: 95%;
-  height: 90%;
+	height: 90%;
 	overflow: auto;
 }
 .checkBoxClass {
@@ -926,7 +876,7 @@ iframe html {
 }
 .elPopoverClass .el-tree {
 	background: #202124;
-  overflow: auto;
+	overflow: auto;
 }
 .elPopoverClass .el-tree-node:focus > .el-tree-node__content {
 	background: #202124;
@@ -1065,7 +1015,7 @@ iframe html {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-  text-align: left;
+	text-align: left;
 }
 
 .elPopoverClass .el-input__prefix,
@@ -1109,7 +1059,7 @@ iframe html {
 }
 .taskParentBgClass {
 	background: rgba(32, 33, 36, 0.1);
-  width: calc(100% - 245px);
+	width: calc(100% - 245px);
 }
 .taskParentPopoverBox {
 	width: 245px;
