@@ -130,13 +130,13 @@
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="alarmDatetimeBegin"
                             type="datetime"
-                            style="width: 180px"
+                            style="width: 190px"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <span class="timeText">—</span>
             <el-date-picker v-model="alarmDatetimeEnd"
                             type="datetime"
-                            style="width: 180px; margin-right: 49px;"
+                            style="width: 190px; margin-right: 49px;"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <el-button @click="queryAct"
@@ -235,9 +235,16 @@ export default {
   created() {},
   activated() {},
   mounted() {
+    this.init();
     this.getMonitoringTaskList();
   },
   methods: {
+    init() {
+      this.alarmDatetimeBegin = this.$common.formatDate(
+        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+      );
+      this.alarmDatetimeEnd = this.$common.formatDate(new Date());
+    },
     clickLeft() {
       this.isShowDrag = !this.isShowDrag;
       this.width = "100%";
@@ -379,6 +386,8 @@ export default {
       this.isAlarmLoading = true;
       this.$faceControlHttp
         .getAlarmList({
+          limit: 9999,
+          page: 1,
           faceMonitorUuid,
           alarmDatetimeBegin: this.alarmDatetimeBegin,
           alarmDatetimeEnd: this.alarmDatetimeEnd

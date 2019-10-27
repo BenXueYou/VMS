@@ -35,7 +35,8 @@
                       v-model="formLabelAlign.faceMonitorName"></el-input>
           </el-form-item>
           <el-form-item label="人脸库："
-                        prop="faceLibraryUuids">
+                        prop="faceLibraryUuids"
+                        required>
             <div class="add-item">
               <img src="@/assets/images/faceModule/add.png"
                    style="cursor: pointer;"
@@ -83,7 +84,8 @@
             </div>
           </el-form-item>
           <el-form-item label="视频源："
-                        prop="channelUuids">
+                        prop="channelUuids"
+                        required>
             <div class="add-item">
               <img src="@/assets/images/faceModule/add.png"
                    style="cursor: pointer;"
@@ -168,7 +170,8 @@
                              style="margin-top: 7px;margin-left: 8px;"></el-color-picker>
           </el-form-item>
           <el-form-item label="布控状态："
-                        prop="enabled">
+                        prop="enabled"
+                        required>
             <el-switch v-model="formLabelAlign.enabled"
                        class="left-space"
                        active-color="rgba(32,204,150,0.2)"
@@ -216,9 +219,9 @@ export default {
         faceLibraryUuids: [],
         channelUuids: [],
         faceSimilarityThreshold: 0,
-        faceCapturePhotoQualities: [],
+        faceCapturePhotoQualities: ["HIGH", "NORMAL", "LOW"],
         reservedCount: 0,
-        alarmed: 0,
+        alarmed: 1,
         popup: 0,
         alarmSoundName: "",
         alarmSoundUrl: "",
@@ -232,7 +235,31 @@ export default {
           { required: true, message: "名称不能为空", trigger: "blur" },
           { whitespace: true, message: "不允许输入空格", trigger: "blur" },
           { min: 1, max: 32, message: "长度在 1 到 32 个字符", trigger: "blur" }
-        ]
+        ],
+        faceSimilarityThreshold: [
+          { required: true, message: "相似度不能为空", trigger: "blur" },
+        ],
+        reservedCount: [
+          { required: true, message: "目标人列表不能为空", trigger: "blur" },
+        ],
+        alarmed: [
+          { required: true, message: '请选择是否报警', trigger: 'change' },
+        ],
+        popup: [
+          { required: true, message: '请选择是否报警弹窗', trigger: 'change' },
+        ],
+        taskColour: [
+          { required: true, message: '请选择布控颜色', trigger: 'change' },
+        ],
+        faceCapturePhotoQualities: [
+          { type: 'array', required: true, message: '请选择图片需达到的质量', trigger: 'change' },
+        ],
+        faceLibraryUuids: [
+          { type: 'array', required: true, message: '请选择人脸库', trigger: 'change' },
+        ],
+        channelUuids: [
+          { type: 'array', required: true, message: '请选择视频源', trigger: 'change' },
+        ],
       },
       isShowAddFaceDB: false,
       isShowAddVideoSrc: false,
@@ -260,9 +287,9 @@ export default {
         faceLibraryUuids: [],
         channelUuids: [],
         faceSimilarityThreshold: 0,
-        faceCapturePhotoQualities: [],
+        faceCapturePhotoQualities: ["HIGH", "NORMAL", "LOW"],
         reservedCount: 0,
-        alarmed: 0,
+        alarmed: 1,
         popup: 0,
         alarmSoundName: "",
         alarmSoundUrl: "",
@@ -270,6 +297,9 @@ export default {
         enabled: 1,
         systemStaffLibraryTypes: []
       };
+      this.faceDBSelectedList = [];
+      this.videoSrcSelectedList = [];
+      this.$refs.monitorForm.resetFields();
     },
     onClickConfirm() {
       this.$refs.monitorForm.validate(valid => {
@@ -288,22 +318,7 @@ export default {
       this.resetFormData();
       this.$emit("onCancel");
     },
-    formatData() {
-      this.formLabelAlign.faceLibraryUuids = [];
-      this.faceDBSelectedList.forEach(v => {
-        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
-        if (v.faceLibraryType === "systemFaceLib") {
-          this.staffTypeOption.forEach(v => {
-            if (v.checked) {
-              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
-            }
-          });
-        }
-      });
-      this.formLabelAlign.channelUuids = ["4A61F4F2C2B16240AF4C4FED90D50334"];
-    },
     addMonitoringTask() {
-      this.formatData();
       this.$faceControlHttp.addMonitoringTask(this.formLabelAlign).then(res => {
         let body = res.data;
         this.monitoringTaskSuccess(body);
@@ -332,6 +347,18 @@ export default {
         this.faceDBSelectedList
       );
       this.isShowAddFaceDB = false;
+      this.formLabelAlign.faceLibraryUuids = [];
+      this.faceDBSelectedList.forEach(v => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+        if (v.faceLibraryType === "systemFaceLib") {
+          this.staffTypeOption.forEach(v => {
+            if (v.checked) {
+              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
+            }
+          });
+        }
+      });
+      this.$refs.monitorForm.validateField('faceLibraryUuids');
     },
     cancelAddFaceDB() {
       this.isShowAddFaceDB = false;
@@ -346,6 +373,11 @@ export default {
         this.videoSrcSelectedList
       );
       this.isShowAddVideoSrc = false;
+      this.formLabelAlign.channelUuids = [];
+      this.videoSrcSelectedList.forEach(v => {
+        this.formLabelAlign.channelUuids.push(v.channelUuid);
+      });
+      this.$refs.monitorForm.validateField('channelUuids');
     },
     cancelAddVideoSrc() {
       this.isShowAddVideoSrc = false;
@@ -367,7 +399,14 @@ export default {
       this.$refs.selectVideo.deleteItem(item);
     }
   },
-  watch: {},
+  watch: {
+    "formLabelAlign.faceCapturePhotoQualities": {
+      handler(val) {
+        this.$refs.monitorForm.validateField('faceCapturePhotoQualities');
+      },
+      deep: true
+    }
+  },
   destroyed() {}
 };
 </script>

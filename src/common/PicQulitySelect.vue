@@ -162,11 +162,6 @@ export default {
           value: "LOW",
           text: "低",
           selected: false
-        },
-        {
-          value: "LOWER",
-          text: "无效",
-          selected: false
         }
       ];
     }
