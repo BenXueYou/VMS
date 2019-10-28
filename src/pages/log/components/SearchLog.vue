@@ -1,15 +1,15 @@
 <template>
 	<div class="SearchLog">
 		<div class="form-item">
-			<label for>门名称：</label>
+			<label for>账号：</label>
 			<el-input class="input" v-model="SearchObj.deviceName"></el-input>
 		</div>
 		<div class="form-item">
-			<label for>验证类型：</label>
+			<label for>模块：</label>
 			<!-- <el-input class="input" v-model="gender"></el-input> -->
-			<el-select v-model="SearchObj.recognitionMode" placeholder="请选择验证">
+			<el-select v-model="SearchObj.modelUuid" placeholder="请选择验证">
 				<el-option
-					v-for="item in recognitionModeOptions"
+					v-for="item in modelUuidOptions"
 					:key="item.typeStr"
 					:label="item.typeName"
 					:value="item.typeStr"
@@ -17,10 +17,10 @@
 			</el-select>
 		</div>
 		<div class="form-item">
-			<label for>访客类型：</label>
-			<el-select v-model="SearchObj.reservationType" placeholder="请选择访客类型">
+			<label for>类型：</label>
+			<el-select v-model="SearchObj.eventType" placeholder="请选择事件类型">
 				<el-option
-					v-for="item in reservationTypeOptions"
+					v-for="item in eventTypeOptions"
 					:key="item.typeStr"
 					:label="item.typeName"
 					:value="item.typeStr"
@@ -28,28 +28,9 @@
 			</el-select>
 		</div>
 		<div class="form-item">
-			<label for>验证结果：</label>
-			<el-select v-model="SearchObj.verifyResult" placeholder="请选择验证结果">
-				<el-option
-					v-for="item in resultOptions"
-					:key="item.typeStr"
-					:label="item.typeName"
-					:value="item.typeStr"
-				></el-option>
-			</el-select>
+			<label for>IP：</label>
+			<el-input class="input" v-model="SearchObj.deviceName"></el-input>
 		</div>
-		<div class="form-item">
-			<label for>开门结果：</label>
-			<el-select v-model="SearchObj.openDoorResult" placeholder="请选择开门结果">
-				<el-option
-					v-for="item in resultOptions"
-					:key="item.typeStr"
-					:label="item.typeName"
-					:value="item.typeStr"
-				></el-option>
-			</el-select>
-		</div>
-
 		<div class="btn-group">
 			<!-- <el-button type="primary" size="small" @click="query">查询</el-button> -->
 			<span class="btn-text" @click="query">查询</span>
@@ -74,8 +55,8 @@ export default {
       phone: "",
       address: "",
       registerTime: "",
-      recognitionModeOptions: [],
-      reservationTypeOptions: [],
+      modelUuidOptions: [],
+      eventTypeOptions: [],
       resultOptions: [
         { typeName: "全部", typeStr: null },
         { typeName: "成功", typeStr: 0 },
@@ -83,8 +64,8 @@ export default {
       ],
       SearchObj: {
         deviceName: null,
-        recognitionMode: null,
-        reservationType: null,
+        modelUuid: null,
+        eventType: null,
         openDoorResult: null,
         verifyResult: null
       }
@@ -93,14 +74,14 @@ export default {
   mounted() {
     this.SearchObj.verifyResult = this.resultOptions[0].typeStr;
     this.SearchObj.openDoorResult = this.resultOptions[0].typeStr;
-    this.recognitionModeOptions = this.$common.getEnumByGroupStr("pass");
-    this.recognitionModeOptions.unshift({ typeName: "全部", typeStr: null });
-    this.SearchObj.recognitionMode = this.recognitionModeOptions[0].typeStr;
-    this.reservationTypeOptions = this.$common.getEnumByGroupStr(
+    this.modelUuidOptions = this.$common.getEnumByGroupStr("pass");
+    this.modelUuidOptions.unshift({ typeName: "全部", typeStr: null });
+    this.SearchObj.modelUuid = this.modelUuidOptions[0].typeStr;
+    this.eventTypeOptions = this.$common.getEnumByGroupStr(
       "visitor_type"
     );
-    this.reservationTypeOptions.unshift({ typeName: "全部", typeStr: null });
-    this.SearchObj.reservationType = this.reservationTypeOptions[0].typeStr;
+    this.eventTypeOptions.unshift({ typeName: "全部", typeStr: null });
+    this.SearchObj.eventType = this.eventTypeOptions[0].typeStr;
   },
   methods: {
     query() {
@@ -110,8 +91,8 @@ export default {
     resetValue() {
       this.SearchObj = {
         deviceName: null,
-        recognitionMode: this.recognitionModeOptions[0].typeStr,
-        reservationType: this.reservationTypeOptions[0].typeStr,
+        modelUuid: this.modelUuidOptions[0].typeStr,
+        eventType: this.eventTypeOptions[0].typeStr,
         verifyResult: this.resultOptions[0].typeStr,
         openDoorResult: this.resultOptions[0].typeStr
       };
