@@ -323,6 +323,7 @@ export default {
       api
         .getRecognizeList(data)
         .then(res => {
+          this.mainScreenLoading = !this.mainScreenLoading;
           if (res.data.success && res.data.data && res.data.data.list) {
             this.totalCompareItemList = res.data.data.list;
             this.total = res.data.data.total;
@@ -330,7 +331,9 @@ export default {
             this.$message.warning(res.data.msg);
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          this.mainScreenLoading = !this.mainScreenLoading;
+        });
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

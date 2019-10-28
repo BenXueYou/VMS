@@ -1,7 +1,7 @@
 <template>
 	<div id="FaceManage">
 		<left-menu></left-menu>
-		<el-row style="width:calc(100% - 200px);height:100%;">
+		<el-row class="FaceRightBox">
 			<keep-alive>
 				<router-view v-if="$route.meta.keepAlive"></router-view>
 			</keep-alive>
@@ -51,5 +51,10 @@ body {
 .el-progress-circle__track {
 	stroke: rgb(61, 65, 71);
 	fill: none;
+}
+.FaceRightBox {
+	width: calc(100% - 200px);
+	height: 100%;
+	/* padding: 40px 30px 40px 30px; */
 }
 </style>

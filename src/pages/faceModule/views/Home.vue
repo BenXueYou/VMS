@@ -276,7 +276,7 @@ export default {
       dialogfullscreenLoading: false,
       stompClient: null,
       defaultExpandedKeys: [],
-      video_mgr: null,
+      video_mgr: null
     };
   },
   computed: {
@@ -519,17 +519,17 @@ export default {
     loadVideo(data) {
       data.localId = "192.168.9.21";
       // eslint-disable-next-line
-      this.video_mgr = new CVideoMgrSdk();
+			this.video_mgr = new CVideoMgrSdk();
       this.canvas = document.createElement("canvas");
-      this.canvas.width = this.WIDTH() * 2 / 3 - 120;
-      this.canvas.height = this.HEIGHT() * 6 / 10 - 100;
+      this.canvas.width = (this.WIDTH() * 2) / 3 - 120;
+      this.canvas.height = (this.HEIGHT() * 6) / 10 - 100;
       let ip = data.localId;
       this.video = this.video_mgr.play(
         `{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4400"}}}`,
         `{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4401"}}}`,
         data.rtspUrl,
         "rtsp",
-        'preview',
+        "preview",
         this.canvas,
         this.streamType
       );
@@ -826,7 +826,7 @@ export default {
 .radioGroup {
 	text-align: left;
 	width: 95%;
-	height: 90%;
+	height: 89%;
 	overflow: auto;
 }
 .checkBoxClass {
