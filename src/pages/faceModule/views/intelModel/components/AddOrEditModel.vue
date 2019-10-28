@@ -2,6 +2,7 @@
   <div class="control-main-add">
     <select-face :isShow="isShowAddFaceDB"
                  ref="selectFace"
+                 :initSelectData="initSelectFaceData"
                  @onCancel="cancelAddFaceDB"
                  @onConfirm="confirmAddFaceDB" />
     <div class="access-main">
@@ -29,7 +30,7 @@
                       v-model="formLabelAlign.faceModelName"></el-input>
           </el-form-item>
           <el-form-item label="人脸库："
-                        prop="name">
+                        prop="faceLibraryUuids">
             <div class="add-item"
                  @click="addFaceDB">
               <img src="@/assets/images/faceModule/add.png">
@@ -38,11 +39,32 @@
             <div class="item-select">
               <template v-for="(item, index) in faceDBSelectedList">
                 <div :key="index"
-                     class="select-item">
+                     class="select-item"
+                     v-if="item.faceLibraryType && item.faceLibraryType === 'systemFaceLib'">
                   <img src="@/assets/images/person_g.png"
                        width="11px"
                        height="11px">
-                  <span style="margin-left: 4px">{{item.faceDBName}}</span>
+                  <span style="margin-left: 4px; width: 80px">{{item.faceLibraryName}}</span>
+                  <template v-for="(item, index) in staffTypeOption">
+                    <div :key="index"
+                         class="system-select">
+                      <el-checkbox v-model="item.checked">{{item.typeName}}</el-checkbox>
+                    </div>
+                  </template>
+                  <div class="del-image"
+                       @click="deleteItem(item)">
+                    <img src="@/assets/images/delete_x.png"
+                         width="13px"
+                         height="13px">
+                  </div>
+                </div>
+                <div :key="index"
+                     class="select-item"
+                     v-else>
+                  <img src="@/assets/images/person_g.png"
+                       width="11px"
+                       height="11px">
+                  <span style="margin-left: 4px">{{item.faceLibraryName}}</span>
                   <div class="del-image"
                        @click="deleteItem(item)">
                     <img src="@/assets/images/delete_x.png"
@@ -56,12 +78,16 @@
           <el-form-item label="相似度不低于："
                         prop="faceSimilarityThreshold">
             <el-input class="time-interal left-space"
+                      style="width: 60px"
+                      type="number"
                       v-model="formLabelAlign.faceSimilarityThreshold"></el-input>
+            <span class="unit">%</span>
           </el-form-item>
           <el-form-item label="抓拍图片需达到的质量："
                         prop="faceCapturePhotoQualities">
             <pic-qulity-select :selectedButtons.sync="formLabelAlign.faceCapturePhotoQualities"
-                               class="left-space" />
+                               class="left-space"
+                               :isShowLower="false" />
           </el-form-item>
           <el-form-item label="时间段：">
             <div class="left-space time-select">
@@ -206,12 +232,23 @@
               </div>
             </div>
           </el-form-item>
+          <el-form-item label="两次抓拍间隔时间："
+                        prop="faceSimilarityThreshold">
+            <el-input class="time-interal left-space"
+                      style="width: 60px"
+                      type="number"
+                      v-model="formLabelAlign.faceSimilarityThreshold"></el-input>
+            <span class="unit">%</span>
+          </el-form-item>
           <el-form-item label="模型状态："
-                        prop="enabled">
+                        prop="enabled"
+                        required>
             <el-switch v-model="formLabelAlign.enabled"
                        class="left-space"
                        active-color="rgba(32,204,150,0.2)"
-                       inactive-color="rgba(255,255,255,0.2)"></el-switch>
+                       inactive-color="rgba(255,255,255,0.2)"
+                       :active-value="1"
+                       :inactive-value="0"></el-switch>
           </el-form-item>
           <el-form-item label="备注："
                         prop="remark">
@@ -255,8 +292,8 @@ export default {
       formLabelAlign: {
         faceModelName: "",
         faceLibraryUuids: [],
-        faceSimilarityThreshold: 0,
-        faceCapturePhotoQualities: [],
+        faceSimilarityThreshold: 80,
+        faceCapturePhotoQualities: ["HIGH", "NORMAL", "LOW"],
         timeList: [
           {
             startTime: "",
@@ -270,11 +307,26 @@ export default {
         notInVideoSource: [],
         notInlibrary: "",
         captureInterval: "",
-        enabled: "",
+        enabled: 1,
         remarks: ""
       },
       numOptions: [],
-      rules: {},
+      rules: {
+        faceModelName: [
+          { required: true, message: "名称不能为空", trigger: "blur" },
+          { whitespace: true, message: "不允许输入空格", trigger: "blur" },
+          { min: 1, max: 32, message: "长度在 1 到 32 个字符", trigger: "blur" }
+        ],
+        faceLibraryUuids: [
+          { type: 'array', required: true, message: '请选择人脸库', trigger: 'change' },
+        ],
+        faceSimilarityThreshold: [
+          { required: true, message: "相似度不能为空", trigger: "blur" },
+        ],
+        faceCapturePhotoQualities: [
+          { type: 'array', required: true, message: '请选择图片需达到的质量', trigger: 'change' },
+        ],
+      },
       faceDBSelectedList: [],
       isShowAddFaceDB: false,
       allVideoSource: [
@@ -285,7 +337,8 @@ export default {
           frequency: 0,
           leastNumberOfChannel: 0,
         }
-      ]
+      ],
+      initSelectFaceData: []
     };
   },
   created() {},
@@ -300,8 +353,8 @@ export default {
       this.formLabelAlign = {
         faceModelName: "",
         faceLibraryUuids: [],
-        faceSimilarityThreshold: 0,
-        faceCapturePhotoQualities: [],
+        faceSimilarityThreshold: 80,
+        faceCapturePhotoQualities: ["HIGH", "NORMAL", "LOW"],
         timeList: [
           {
             startTime: "",
@@ -315,7 +368,7 @@ export default {
         notInVideoSource: [],
         notInlibrary: "",
         captureInterval: "",
-        enabled: "",
+        enabled: 1,
         remarks: ""
       };
     },
@@ -374,11 +427,27 @@ export default {
       this.allVideoSource.splice(index, 1);
     },
     addFaceDB() {
+      this.initSelectFaceData = this.$common.copyArray(this.faceDBSelectedList, this.initSelectFaceData);
       this.isShowAddFaceDB = true;
     },
     confirmAddFaceDB(val) {
-      this.faceDBSelectedList = this.$common.copyArray(val, this.faceDBSelectedList);
+      this.faceDBSelectedList = this.$common.copyArray(
+        val,
+        this.faceDBSelectedList
+      );
       this.isShowAddFaceDB = false;
+      this.formLabelAlign.faceLibraryUuids = [];
+      this.faceDBSelectedList.forEach(v => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+        if (v.faceLibraryType === "systemFaceLib") {
+          this.staffTypeOption.forEach(v => {
+            if (v.checked) {
+              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
+            }
+          });
+        }
+      });
+      this.$refs.modelForm.validateField('faceLibraryUuids');
     },
     cancelAddFaceDB() {
       this.isShowAddFaceDB = false;
@@ -392,7 +461,14 @@ export default {
       this.$refs.selectFace.deleteItem(item);
     }
   },
-  watch: {},
+  watch: {
+    "formLabelAlign.faceCapturePhotoQualities": {
+      handler(val) {
+        this.$refs.modelForm.validateField('faceCapturePhotoQualities');
+      },
+      deep: true
+    }
+  },
   destroyed() {}
 };
 </script>
@@ -472,6 +548,11 @@ export default {
       }
     }
   }
+  .unit {
+    font-family: PingFangSC-Regular;
+    font-size: 12px;
+    color: #dddddd;
+  }
   .footer {
     position: absolute;
     bottom: 0px;
@@ -519,6 +600,19 @@ export default {
         top: -16px;
         right: -5px;
         cursor: pointer;
+      }
+      .system-select {
+        height: 100%;
+        border: {
+          width: 0 0 0 1px;
+          style: solid;
+          color: rgba($color: #ffffff, $alpha: 0.1);
+        }
+        margin-left: 10px;
+        padding-left: 10px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
       }
     }
   }

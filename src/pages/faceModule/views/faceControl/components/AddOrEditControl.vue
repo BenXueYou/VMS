@@ -150,16 +150,17 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="请选择报警声音："
-                        prop="alarmSoundName">
+                        prop="alarmSoundUrl">
             <el-select class="time-interal left-space"
-                       v-model="formLabelAlign.alarmSoundName"
+                       v-model="formLabelAlign.alarmSoundUrl"
                        size="small"
+                       @change="alarmSelect"
                        clearable
                        placeholder="请选择">
-              <el-option v-for="item in vioceOptions"
-                         :key="item.typeStr"
-                         :label="item.typeName"
-                         :value="item.typeStr">
+              <el-option v-for="item in alarmSoundOption"
+                         :key="item.soundUrl"
+                         :label="item.soundName"
+                         :value="item.soundUrl">
               </el-option>
             </el-select>
           </el-form-item>
@@ -218,9 +219,9 @@ export default {
         faceMonitorName: "",
         faceLibraryUuids: [],
         channelUuids: [],
-        faceSimilarityThreshold: 0,
+        faceSimilarityThreshold: 80,
         faceCapturePhotoQualities: ["HIGH", "NORMAL", "LOW"],
-        reservedCount: 0,
+        reservedCount: 20,
         alarmed: 1,
         popup: 0,
         alarmSoundName: "",
@@ -260,6 +261,9 @@ export default {
         channelUuids: [
           { type: 'array', required: true, message: '请选择视频源', trigger: 'change' },
         ],
+        alarmSoundUrl: [
+          { required: true, message: '请选择报警声音', trigger: 'change' },
+        ]
       },
       isShowAddFaceDB: false,
       isShowAddVideoSrc: false,
@@ -268,11 +272,13 @@ export default {
       staffTypeOption: [],
       initSelectFaceData: [],
       initSelectVideoData: [],
+      alarmSoundOption: []
     };
   },
   created() {},
   mounted() {
     this.initData();
+    this.getAlarmSound();
   },
   methods: {
     initData() {
@@ -286,9 +292,9 @@ export default {
         faceMonitorName: "",
         faceLibraryUuids: [],
         channelUuids: [],
-        faceSimilarityThreshold: 0,
+        faceSimilarityThreshold: 80,
         faceCapturePhotoQualities: ["HIGH", "NORMAL", "LOW"],
-        reservedCount: 0,
+        reservedCount: 20,
         alarmed: 1,
         popup: 0,
         alarmSoundName: "",
@@ -299,6 +305,7 @@ export default {
       };
       this.faceDBSelectedList = [];
       this.videoSrcSelectedList = [];
+      this.initData();
       this.$refs.monitorForm.resetFields();
     },
     onClickConfirm() {
@@ -318,7 +325,19 @@ export default {
       this.resetFormData();
       this.$emit("onCancel");
     },
+    formatParams() {
+      this.faceDBSelectedList.forEach(v => {
+        if (v.faceLibraryType === "systemFaceLib") {
+          this.staffTypeOption.forEach(v => {
+            if (v.checked) {
+              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
+            }
+          });
+        }
+      });
+    },
     addMonitoringTask() {
+      this.formatParams();
       this.$faceControlHttp.addMonitoringTask(this.formLabelAlign).then(res => {
         let body = res.data;
         this.monitoringTaskSuccess(body);
@@ -330,6 +349,7 @@ export default {
       this.$emit("onConfirm");
     },
     editMonitoringTask() {
+      this.formatParams();
       this.$faceControlHttp
         .editMonitoringTask(this.formLabelAlign)
         .then(res => {
@@ -350,13 +370,6 @@ export default {
       this.formLabelAlign.faceLibraryUuids = [];
       this.faceDBSelectedList.forEach(v => {
         this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
-        if (v.faceLibraryType === "systemFaceLib") {
-          this.staffTypeOption.forEach(v => {
-            if (v.checked) {
-              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
-            }
-          });
-        }
       });
       this.$refs.monitorForm.validateField('faceLibraryUuids');
     },
@@ -397,6 +410,51 @@ export default {
         }
       }
       this.$refs.selectVideo.deleteItem(item);
+    },
+    setFromDataForEdit(detailData) {
+      this.faceDBSelectedList = [];
+      this.videoSrcSelectedList = [];
+      this.formLabelAlign = this.$common.copyObject(detailData, this.formLabelAlign);
+      this.$set(this.formLabelAlign, "faceLibraryUuids", []);
+      this.$set(this.formLabelAlign, "channelUuids", []);
+      this.formLabelAlign.libraryList.forEach(v => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+        this.faceDBSelectedList.push(v);
+      });
+      this.formLabelAlign.channelList.forEach(v => {
+        this.formLabelAlign.channelUuids.push(v.channelUuid);
+        this.videoSrcSelectedList.push({
+          id: v.channelUuid,
+          label: v.channelName,
+          channelUuid: v.channelUuid,
+          channelName: v.channelName
+        });
+      });
+      this.formLabelAlign.systemStaffLibraryTypes.forEach(v => {
+        this.staffTypeOption.forEach(v2 => {
+          if (v2.typeStr === v) {
+            v2.checked = true;
+          }
+        });
+      });
+    },
+    getAlarmSound() {
+      this.$faceControlHttp.getAlarmSound().then(res => {
+        let body = res.data;
+        this.getAlarmSoundSuccess(body);
+      });
+    },
+    getAlarmSoundSuccess(body) {
+      this.alarmSoundOption = body.data;
+      this.alarmSoundOption.forEach(v => {
+        if (v.defaulted) {
+          this.formLabelAlign.alarmSoundName = v.soundName;
+          this.formLabelAlign.alarmSoundUrl = v.soundUrl;
+        }
+      });
+    },
+    alarmSelect(item) {
+      this.formLabelAlign.alarmSoundName = item.soundName;
     }
   },
   watch: {
