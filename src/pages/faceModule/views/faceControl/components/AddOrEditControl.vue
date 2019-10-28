@@ -326,6 +326,7 @@ export default {
       this.$emit("onCancel");
     },
     formatParams() {
+      this.formLabelAlign.systemStaffLibraryTypes = [];
       this.faceDBSelectedList.forEach(v => {
         if (v.faceLibraryType === "systemFaceLib") {
           this.staffTypeOption.forEach(v => {
