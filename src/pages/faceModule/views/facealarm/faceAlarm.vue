@@ -144,7 +144,7 @@ import alPopverTree from "@/pages/faceModule/components/AlElTree.vue";
 import TheFaceAlarmDialog from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmDialog.vue";
 import faceAlarmTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmTable.vue";
 import theFaceAlarmImageTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmImageTable.vue";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 import RestApi from "@/utils/RestApi.js";
 export default {
   name: "facealarm",
@@ -235,7 +235,7 @@ export default {
   activated() {
     const _this = this;
     // 获取布控任务
-    api.getbukongrenwu().then(res => {
+    api.getTaskList().then(res => {
       console.log(res);
       var num = [];
       if (res.data.data) {

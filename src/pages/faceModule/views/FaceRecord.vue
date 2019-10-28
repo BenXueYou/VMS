@@ -169,7 +169,7 @@ import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import AlTree from "@/pages/faceModule/components/AlElTree.vue";
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 import PicQulitySelect from "@/common/PicQulitySelect";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 import RestApi from "@/utils/RestApi.js";
 export default {
   components: { elPopverTree, AlTree, PicQulitySelect },
@@ -359,39 +359,6 @@ export default {
       this.dialogPhotoImgUrl = this.imageHeader + o.faceCapturePhotoUrl;
       this.dialogPanoramaImgUrl = this.imageHeader + o.panoramaCapturePhotoUrl;
       this.titleTxt = o.channelName;
-    },
-    getStartTime() {
-      //   var new111 = new Date();
-      //   var hours = new111.getHours();
-      //   if (hours > 1) {
-      //     return (
-      //       new111.getFullYear() +
-      // 				"-" +
-      // 				addZero(new111.getMonth() + 1) +
-      // 				"-" +
-      // 				addZero(new111.getDate()) +
-      // 				" " +
-      // 				addZero(hours - 1) +
-      // 				":" +
-      // 				addZero(new111.getMinutes()) +
-      // 				":" +
-      // 				addZero(new111.getSeconds())
-      //     );
-      //   } else {
-      //     return (
-      //       new111.getFullYear() +
-      // 				"-" +
-      // 				addZero(new111.getMonth() + 1) +
-      // 				"-" +
-      // 				addZero(new111.getDate()) +
-      // 				" " +
-      // 				"00:00:00"
-      //     );
-      //   }
-      //   function addZero(num) {
-      //     if (num < 10) return "0" + num;
-      //     return num;
-      //   }
     },
     detailToDesc() {
       // this.dialogVisible = !this.dialogVisible;

@@ -109,7 +109,7 @@
 <script type="text/javascript">
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
   name: "ovo",
   props: {

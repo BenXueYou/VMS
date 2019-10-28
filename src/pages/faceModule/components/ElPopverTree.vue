@@ -85,7 +85,7 @@
 	</el-popover>
 </template>
 <script type="text/javascript">
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/homeBaseHttp.js";
 export default {
   name: "elPopverTree",
   props: {

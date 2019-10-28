@@ -155,7 +155,7 @@
 <script>
 // import { uploadbase64, deletepic } from "@/pages/faceModule/api";
 import snapShootPhoto from "@/common/baseComponent/SnapShootPhoto.vue";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/faceDBHttp.js";
 export default {
   name: "TheFaceDBDialog",
   props: {

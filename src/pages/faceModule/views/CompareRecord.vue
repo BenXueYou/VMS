@@ -146,7 +146,7 @@ import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import alPopverTree from "@/pages/faceModule/components/AlElTree.vue";
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
   components: { dialogview, elPopverTree, alPopverTree, RecoginizeCard },
   mounted: function() {

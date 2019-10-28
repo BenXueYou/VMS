@@ -210,7 +210,8 @@ import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import ImgCard from "@/pages/faceModule/components/ImgCard.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/homeBaseHttp.js";
+import * as logApi from "@/pages/faceModule/http/logSearchHttp.js";
 import { mapState } from "vuex";
 export default {
   name: "home",
@@ -419,7 +420,7 @@ export default {
     getTaskList() {
       this.taskList = [];
       this.checkedTaskUUidList = [];
-      api
+      logApi
         .getTaskList({ enabled: 1 })
         .then(res => {
           if (res.data.success) {
@@ -551,7 +552,7 @@ export default {
         snapshotTimeStart: this.$common.getStartTime(),
         snapshotTimeEnd: this.$common.getCurrentTime()
       };
-      api.getSnapshotList(data).then(res => {
+      logApi.getSnapshotList(data).then(res => {
         if (res.data.success && res.data.data) {
           this.photoList = res.data.data.list;
           this.todayShootCount = res.data.data.total;
@@ -575,7 +576,7 @@ export default {
         snapshotTimeEnd: this.$common.getCurrentTime()
       };
       this.comparePhotoList = [];
-      api
+      logApi
         .getRecognizeList(data)
         .then(res => {
           this.mainScreenLoading = false;
@@ -632,7 +633,7 @@ export default {
         page: 1
       };
       this.dialogfullscreenLoading = true;
-      api
+      logApi
         .getRecognizeInfo(data)
         .then(res => {
           if (res.data.success) {

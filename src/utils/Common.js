@@ -2,6 +2,40 @@ import store from "@/store/store.js";
 import { callbackify } from "util";
 export var COMMON = {
 
+  // 获取当前一小时前的时间
+  getBeforeTimeOneHour() {
+      var new111 = new Date();
+      var hours = new111.getHours();
+      if (hours > 1) {
+        return (
+          new111.getFullYear() +
+    				"-" +
+    				addZero(new111.getMonth() + 1) +
+    				"-" +
+    				addZero(new111.getDate()) +
+    				" " +
+    				addZero(hours - 1) +
+    				":" +
+    				addZero(new111.getMinutes()) +
+    				":" +
+    				addZero(new111.getSeconds())
+        );
+      } else {
+        return (
+          new111.getFullYear() +
+    				"-" +
+    				addZero(new111.getMonth() + 1) +
+    				"-" +
+    				addZero(new111.getDate()) +
+    				" " +
+    				"00:00:00"
+        );
+      }
+      function addZero(num) {
+        if (num < 10) return "0" + num;
+        return num;
+      }
+  },
   /**
    * image url 转 base64
    * @param {imageUrl }  
@@ -271,15 +305,6 @@ export var COMMON = {
 
   // 一维大数组，等分为多个二维数组
   getSubArrayFromArray(data, arrSize) {
-    // data = [3, 6, 4, 5, 6, 99, 55, 45, 33, 22, 90, 12, 54, 23, 33, 243, 2324, 12, 335, 23, 21, 22, 22];
-    // arrSize = 12;
-    // var dataArr = new Array(Math.ceil(data.length / arrSize));
-    // for (let i = 0; i < dataArr.length; i++) {
-    //   dataArr[i] = new Array();
-    // }
-    // for (let i = 0; i < data.length; i++) {
-    //   dataArr[parseInt(i / arrSize)][i % arrSize] = data[i];
-    // }
     let len = Math.ceil(data.length / arrSize);
     return [...Array(len).keys()].map((v, i) => {
       return data.slice(i * arrSize, (i + 1) * arrSize);
