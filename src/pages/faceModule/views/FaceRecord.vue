@@ -280,19 +280,20 @@ export default {
     // 临时布控
     tempCtrlTask(o, index) {
       console.log(o.faceCapturePhotoUrl);
-      this.$store.dispatch("tempCtrlTask", o.faceCapturePhotoUrl).then(res => {
-        console.log(res);
-        if (res.result === 0) {
-          this.$message({
-            message: res.data,
-            type: "success"
-          });
-        } else {
-          this.$message({
-            message: "布控失败，请稍后再试",
-            type: "warning"
-          });
-        }
+      this.$common.imageToBase64(o.faceCapturePhotoUrl, base64 => {
+        api.addTempContrlTask({imageBase64: base64}).then(res => {
+          if (res.result === 0) {
+            this.$message({
+              message: res.data,
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: "布控失败，请稍后再试",
+              type: "warning"
+            });
+          }
+        });
       });
     },
     // 是否有人员轨迹

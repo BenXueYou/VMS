@@ -654,6 +654,7 @@ $tablehoverColor: rgba(
 .el-table th.is-leaf,
 .el-table td {
   border-color: #2d2f31;
+  padding: 9px 0px;
 }
 
 .el-table--enable-row-hover .el-table__body tr:hover > td {

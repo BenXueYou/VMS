@@ -46,76 +46,80 @@
     border: 1px solid rgba(40, 255, 187, 0.6);
   }
 }
-
-.facealarm {
+.faceAlarmBg {
   width: 100%;
   height: 100%;
   background: rgb(27, 28, 31);
   padding: 40px 30px 40px 30px;
   box-sizing: border-box;
-  text-align: left;
-  .facealarm-table {
+  .facealarm {
     width: 100%;
-    padding:0 30px 20px;
+    height: 100%;
+    background: #202326;
+    // padding: 40px 30px 40px 30px;
     box-sizing: border-box;
-    background-color: rgb(32, 35, 38);
-    overflow: auto;
-  }
-
-  .facealarm-header {
-    //   width: 1700px;
-    width: 100%;
-    height: 160px;
-    background-color: rgb(32, 35, 38);
-    padding: 30px;
-    box-sizing: border-box;
-
-    .header-line {
-      height: 40px;
+    text-align: left;
+    .facealarm-table {
       width: 100%;
-      overflow: hidden;
+      padding: 0 30px 20px;
+      box-sizing: border-box;
+      background-color: rgb(32, 35, 38);
+      overflow: auto;
+    }
 
-      &:not(&:first-child) {
-        margin-bottom: 20px;
-      }
+    .facealarm-header {
+      //   width: 1700px;
+      width: 100%;
+      height: 160px;
+      background-color: rgb(32, 35, 38);
+      padding: 30px;
+      box-sizing: border-box;
 
-      .header-line-label {
-        text-align: right;
-        display: inline-block;
-        // min-width: 40px;
-        @include basicfont2;
-      }
+      .header-line {
+        height: 40px;
+        width: 100%;
+        overflow: hidden;
 
-      .header-line-input {
-        display: inline-block;
-        width: 8%;
-        max-width: 200px;
-        // margin-right: 30px;
-      }
+        &:not(&:first-child) {
+          margin-bottom: 20px;
+        }
 
-      .addwidth {
-        width: 220px;
-      }
+        .header-line-label {
+          text-align: right;
+          display: inline-block;
+          // min-width: 40px;
+          @include basicfont2;
+        }
 
-      .header-line-time-label {
-        text-align: center;
-        display: inline-block;
-        width: 20px;
-        @include basicfont2;
-      }
+        .header-line-input {
+          display: inline-block;
+          width: 8%;
+          max-width: 200px;
+          // margin-right: 30px;
+        }
 
-      .header-line-time {
-        display: inline-block;
-        width: 14%;
+        .addwidth {
+          width: 220px;
+        }
 
-      }
+        .header-line-time-label {
+          text-align: center;
+          display: inline-block;
+          width: 20px;
+          @include basicfont2;
+        }
 
+        .header-line-time {
+          display: inline-block;
+          width: 14%;
+        }
 
-      .search {
-        float: right;
+        .search {
+          float: right;
 
-        span {
-          @include basicfont;
+          span {
+            @include basicfont;
+          }
         }
       }
     }

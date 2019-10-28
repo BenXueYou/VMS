@@ -78,3 +78,13 @@ export function getFaceUuidByFaceCaptureUuid(data) {
     params: data
   });
 }
+
+// 临时布控
+export function addTempContrlTask(data) {
+  let url = FaceModuleApi.searchLogApi.addTempContrlTask(store.state.home.projectUuid);
+  return Axios({
+    method: 'POST',
+    url,
+    data
+  });
+}

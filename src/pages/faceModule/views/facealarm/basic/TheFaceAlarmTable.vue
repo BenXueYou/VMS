@@ -146,7 +146,7 @@ export default {
 }
 .footer {
 	position: relative;
-	margin: 30px 0px;
+	margin: 30px 0px 20px;
 	.totalpagetitle {
 		font-size: 14px;
 		color: #fff;

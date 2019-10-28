@@ -178,6 +178,7 @@ export default {
     });
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
+    this.getTaskList();
   },
   activated: function() {
     this.deactivated = false;
@@ -257,17 +258,17 @@ export default {
       this.showImg = flag;
     },
     // 根据任务id获取设备树和人脸库
-    getFaceLibsAndDeviceList(taskuuidList) {
-      if (!taskuuidList.length) {
+    getFaceLibsAndDeviceList(faceMonitorUuidList) {
+      if (!faceMonitorUuidList.length) {
         for (var i = 0; i < this.taskItemList.length; i++) {
           var tempTask = this.taskItemList[i];
-          taskuuidList.push(tempTask.taskuuid);
+          faceMonitorUuidList.push(tempTask.faceMonitorUuid);
         }
       }
       this.faceDBList = [];
       this.DeviceTreeList = [];
-      taskuuidList.forEach(item => {
-        this.getMonitoringTaskDetails(item.faceMonitorUuid);
+      faceMonitorUuidList.forEach(faceMonitorUuid => {
+        this.getMonitoringTaskDetails(faceMonitorUuid);
       });
     },
     // 查询布控任务详情
@@ -388,7 +389,7 @@ export default {
             this.taskItemList = res.data.data;
             for (var i = 0; i < this.taskItemList.length; i++) {
               var tempTask = this.taskItemList[i];
-              this.checkedTaskUuidList.push(tempTask.taskuuid);
+              this.checkedTaskUuidList.push(tempTask.faceMonitorUuid);
             }
             this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
             if (isTrue) {

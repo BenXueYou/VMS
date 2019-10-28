@@ -20,10 +20,7 @@ export default {
     getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
 
     // 根据通道ID获取rtspUrl
-    getRtspUrlByChannelUuidApi:projectUuid =>`${URLHeaderVideoServer}/${projectUuid}/video/previewInfo`,
-    
-    // 临时布控
-    addTempContrlTask:projectUuid=>`${URLHeader}/${projectUuid}/monitoringTask/temp/info`
+    getRtspUrlByChannelUuidApi: projectUuid => `${URLHeaderVideoServer}/${projectUuid}/video/previewInfo`,
   },
 
   baseConfigApi: {
@@ -67,7 +64,8 @@ export default {
     getAlarmInfoList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/alarm/list?asgName=${projectUuid}`,
     // 根据抓拍的UUid查找人脸ID 判断的是是否有人员轨迹
     getFaceUuidByFaceCaptureUuid: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/search_faceUuid`,
-        
+    // 临时布控
+    addTempContrlTask: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/temp/info`
   },
   // @fengyawen
   getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
