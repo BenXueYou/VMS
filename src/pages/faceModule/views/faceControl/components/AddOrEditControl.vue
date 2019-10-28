@@ -155,7 +155,6 @@
                        v-model="formLabelAlign.alarmSoundUrl"
                        size="small"
                        @change="alarmSelect"
-                       clearable
                        placeholder="请选择">
               <el-option v-for="item in alarmSoundOption"
                          :key="item.soundUrl"
@@ -272,7 +271,7 @@ export default {
       staffTypeOption: [],
       initSelectFaceData: [],
       initSelectVideoData: [],
-      alarmSoundOption: []
+      alarmSoundOption: [],
     };
   },
   created() {},
@@ -455,7 +454,11 @@ export default {
       });
     },
     alarmSelect(item) {
-      this.formLabelAlign.alarmSoundName = item.soundName;
+      this.alarmSoundOption.forEach(v => {
+        if (v.soundUrl === item) {
+          this.formLabelAlign.alarmSoundName = v.soundName;
+        }
+      });
     }
   },
   watch: {
