@@ -127,7 +127,7 @@
 								@mouseover="mymouseover"
 								@mouseout="mymouseout"
 								@mousemove="mymousemove"
-							>{{o.time?o.time:'---- --:--:--'}}</div>
+							>{{o.captureDatetime?o.captureDatetime:'---- --:--:--'}}</div>
 							<div
 								class="textclipClass recordCellFooterTxt"
 								@mouseover="mymouseover"
@@ -169,7 +169,7 @@ import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import AlTree from "@/pages/faceModule/components/AlElTree.vue";
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 import PicQulitySelect from "@/common/PicQulitySelect";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 import RestApi from "@/utils/RestApi.js";
 export default {
   components: { elPopverTree, AlTree, PicQulitySelect },
@@ -203,7 +203,8 @@ export default {
       that.cellwidth = w / 10 - 40;
       that.$refs.faceRecordHeight.$el.style.height = h + "px";
     }
-    // this.getDeviceList(true);
+    this.startTime = this.$common.getStartTime();
+    this.endTime = this.$common.getCurrentTime();
   },
   watch: {
     filterText(val) {
@@ -213,8 +214,6 @@ export default {
   activated: function() {
     console.log("抓拍记录刷新页面");
     this.checkNameString = "";
-    this.startTime = this.getStartTime();
-    this.endTime = this.$common.getCurrentTime();
     // this.getDeviceList(false);
   },
   methods: {
@@ -337,11 +336,7 @@ export default {
         });
     },
     searchImageToFace(o, index, routeName) {
-      //   var url = this.imageHeader + o.faceCapturePhotoUrl;
-      //   this.$common.imageToBase64(url, base64 => {
-      //      o.imageBase64 = base64;
       this.$router.push({ path: routeName, query: { imgObj: o } });
-      //   });
     },
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
@@ -364,39 +359,6 @@ export default {
       this.dialogPhotoImgUrl = this.imageHeader + o.faceCapturePhotoUrl;
       this.dialogPanoramaImgUrl = this.imageHeader + o.panoramaCapturePhotoUrl;
       this.titleTxt = o.channelName;
-    },
-    getStartTime() {
-      var new111 = new Date();
-      var hours = new111.getHours();
-      if (hours > 1) {
-        return (
-          new111.getFullYear() +
-					"-" +
-					addZero(new111.getMonth() + 1) +
-					"-" +
-					addZero(new111.getDate()) +
-					" " +
-					addZero(hours - 1) +
-					":" +
-					addZero(new111.getMinutes()) +
-					":" +
-					addZero(new111.getSeconds())
-        );
-      } else {
-        return (
-          new111.getFullYear() +
-					"-" +
-					addZero(new111.getMonth() + 1) +
-					"-" +
-					addZero(new111.getDate()) +
-					" " +
-					"00:00:00"
-        );
-      }
-      function addZero(num) {
-        if (num < 10) return "0" + num;
-        return num;
-      }
     },
     detailToDesc() {
       // this.dialogVisible = !this.dialogVisible;
@@ -441,10 +403,10 @@ export default {
 			var data = {
 				page: this.currentPage,
 				limit: this.pageSize,
-				channelUuids: this.checkedChannelsUuidList,
+				channelUuids: this.checkedChannelsUuidList.toString(),
 				snapshotTimeStart: this.startTime,
 				snapshotTimeEnd: this.endTime,
-				faceCapturePhotoQuality: this.qualityOption,
+				faceCapturePhotoQuality: this.qualityOption.toString(),
 				genderCapture: this.genderOption
 			};
 			// 此处处理参数，入参的key值随页面变量的变化而变化
@@ -965,7 +927,7 @@ export default {
 	flex-direction: column;
 	justify-content: flex-start;
 	background: rgb(28, 29, 32);
-	padding: 1.5% 2% 1.5%;
+	padding: 1.5% 2% 1%;
 	box-sizing: border-box;
 }
 .bottomBox {

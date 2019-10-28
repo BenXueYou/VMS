@@ -21,6 +21,9 @@ export default {
 
     // 根据通道ID获取rtspUrl
     getRtspUrlByChannelUuidApi:projectUuid =>`${URLHeaderVideoServer}/${projectUuid}/video/previewInfo`,
+    
+    // 临时布控
+    addTempContrlTask:projectUuid=>`${URLHeader}/${projectUuid}/monitoringTask/temp/info`
   },
 
   baseConfigApi: {

@@ -88,7 +88,7 @@
 	</div>
 </template>
 <script>
-import * as api from "@/pages/faceModule/api.js";
+import api from "@/pages/faceModule/api.js";
 export default {
   components: {},
   props: {},
@@ -121,7 +121,7 @@ export default {
   methods: {
     initData() {
       api
-        .getFaceModuleConfig()
+        .baseConfigHttp.getFaceModuleConfig()
         .then(res => {
           if (res.data.success) {
             this.queryBody = res.data.data;

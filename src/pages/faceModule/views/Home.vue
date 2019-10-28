@@ -210,7 +210,8 @@ import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import ImgCard from "@/pages/faceModule/components/ImgCard.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/homeBaseHttp.js";
+import * as logApi from "@/pages/faceModule/http/logSearchHttp.js";
 import { mapState } from "vuex";
 export default {
   name: "home",
@@ -276,7 +277,7 @@ export default {
       dialogfullscreenLoading: false,
       stompClient: null,
       defaultExpandedKeys: [],
-      video_mgr: null,
+      video_mgr: null
     };
   },
   computed: {
@@ -419,7 +420,7 @@ export default {
     getTaskList() {
       this.taskList = [];
       this.checkedTaskUUidList = [];
-      api
+      logApi
         .getTaskList({ enabled: 1 })
         .then(res => {
           if (res.data.success) {
@@ -519,17 +520,17 @@ export default {
     loadVideo(data) {
       data.localId = "192.168.9.21";
       // eslint-disable-next-line
-      this.video_mgr = new CVideoMgrSdk();
+			this.video_mgr = new CVideoMgrSdk();
       this.canvas = document.createElement("canvas");
-      this.canvas.width = this.WIDTH() * 2 / 3 - 120;
-      this.canvas.height = this.HEIGHT() * 6 / 10 - 100;
+      this.canvas.width = (this.WIDTH() * 2) / 3 - 120;
+      this.canvas.height = (this.HEIGHT() * 6) / 10 - 100;
       let ip = data.localId;
       this.video = this.video_mgr.play(
         `{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4400"}}}`,
         `{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4401"}}}`,
         data.rtspUrl,
         "rtsp",
-        'preview',
+        "preview",
         this.canvas,
         this.streamType
       );
@@ -551,7 +552,7 @@ export default {
         snapshotTimeStart: this.$common.getStartTime(),
         snapshotTimeEnd: this.$common.getCurrentTime()
       };
-      api.getSnapshotList(data).then(res => {
+      logApi.getSnapshotList(data).then(res => {
         if (res.data.success && res.data.data) {
           this.photoList = res.data.data.list;
           this.todayShootCount = res.data.data.total;
@@ -575,7 +576,7 @@ export default {
         snapshotTimeEnd: this.$common.getCurrentTime()
       };
       this.comparePhotoList = [];
-      api
+      logApi
         .getRecognizeList(data)
         .then(res => {
           this.mainScreenLoading = false;
@@ -632,7 +633,7 @@ export default {
         page: 1
       };
       this.dialogfullscreenLoading = true;
-      api
+      logApi
         .getRecognizeInfo(data)
         .then(res => {
           if (res.data.success) {
@@ -826,7 +827,7 @@ export default {
 .radioGroup {
 	text-align: left;
 	width: 95%;
-	height: 90%;
+	height: 89%;
 	overflow: auto;
 }
 .checkBoxClass {

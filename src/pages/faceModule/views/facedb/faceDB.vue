@@ -213,6 +213,7 @@ import TheFaceDBUpdateHistoryDialog from "@/pages/faceModule/views/facedb/basic/
 import TheFaceDBAdd from "@/pages/faceModule/views/facedb/basic/TheFaceDBAdd";
 import SearchOptionView from "./basic/SearchOptionView";
 import * as api from "@/pages/faceModule/api.js";
+import * as faceApi from "@/pages/faceModule/http/faceDBHttp.js";
 export default {
   name: "faceDB",
   components: {
@@ -417,7 +418,7 @@ export default {
         limit: this.pageSize
       };
       Object.assign(params, data);
-      api
+      faceApi
         .getStaffList(params)
         .then(res => {
           this.listtableloadding = false;
@@ -502,7 +503,7 @@ export default {
         this.$message.error(`不可以编辑${this.libraryName}数据`);
         return;
       }
-      api
+      faceApi
         .getFaceLibDetail({
           faceLibraryUuid: row.faceLibraryUuid,
           projectUuid: this.$store.state.home.projectUuid
@@ -517,7 +518,7 @@ export default {
     },
     // 删除人脸库
     deletefaceLib() {
-      api.deleteFaceLib({ faceLibraryUuid: this.row }).then(res => {
+      faceApi.deleteFaceLib({ faceLibraryUuid: this.row }).then(res => {
         if (res.data.success) {
           this.$message.success("删除成功！");
           this.getStaffLibList();
@@ -710,7 +711,7 @@ export default {
         return;
       }
       this.addtitle = "修改人脸";
-      api
+      faceApi
         .getStaffDetail({
           faceUuid: uuid
         })
@@ -741,7 +742,7 @@ export default {
         return;
       }
       var uuids = this.row;
-      api
+      faceApi
         .deleteStaff({ faceUuid: uuids, faceLibraryUuid: this.faceLibraryUuid })
         .then(res => {
           if (res.data.success) {
@@ -754,7 +755,7 @@ export default {
     // 查询人员库
     getStaffLibList(flag = false) {
       this.loadding = true;
-      api
+      faceApi
         .getFaceLib()
         .then(res => {
           this.loadding = false;

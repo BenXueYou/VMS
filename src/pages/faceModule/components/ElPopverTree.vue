@@ -85,7 +85,7 @@
 	</el-popover>
 </template>
 <script type="text/javascript">
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/homeBaseHttp.js";
 export default {
   name: "elPopverTree",
   props: {
@@ -166,6 +166,7 @@ export default {
     clearAction() {
       this.checkedChannel = [];
       this.checkedChannelName = "";
+      this.checkAll = false;
     },
     // 弹窗展开的回调
     show() {},
@@ -177,6 +178,7 @@ export default {
       this.checkedChannel = val ? this.channels : [];
       this.isIndeterminate = false;
       console.log(this.checkedChannel);
+      this.$emit("transferCheckedChannel", this.checkedChannel);
     },
     // 点击全选复选框事件
     handleCheckedChange(value, data) {

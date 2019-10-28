@@ -30,7 +30,7 @@
 
 <script>
 import PicQulitySelect from "@/common/PicQulitySelect";
-import * as api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/faceDBHttp.js";
 const RULES = {
   faceLibraryName: [
     { required: true, message: "人脸库名称不能为空", trigger: "change" }
