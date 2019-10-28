@@ -107,6 +107,10 @@ export var FaceControlHttp = {
     }
     return axios.get(api, { params: data });
   },
+  getAlarmSound() {
+    let api = `${RestApi.api.faceModuleAPi.getAlarmSound}`;
+    return axios.get(api);
+  },
 };
 
 function install(Vue) {

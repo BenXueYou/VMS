@@ -290,10 +290,12 @@ export default {
       this.getMonitoringTaskList();
     },
     check(item) {
+      this.resetData();
       this.menuList.forEach(v => {
         v.selected = false;
       });
       item.selected = true;
+      // this.resetData();
       this.faceMonitorUuid = item.faceMonitorUuid;
       this.getMonitoringTaskDetails(this.faceMonitorUuid);
       this.getAlarmList(this.faceMonitorUuid);
@@ -307,7 +309,7 @@ export default {
     },
     editTaskInit() {
       this.isAdd = false;
-      this.$refs.addOrEditControl.formLabelAlign = this.$common.copyObject(this.faceMonitorObj, this.$refs.addOrEditControl.formLabelAlign);
+      this.$refs.addOrEditControl.setFromDataForEdit(this.faceMonitorObj);
       this.isShowMain = false;
     },
     formatObj() {
@@ -316,7 +318,7 @@ export default {
       if (this.faceMonitorObj.libraryList) {
         this.faceMonitorObj.libraryList.forEach(v => {
           this.faceDBItemList.push({
-            name: v.libraryName
+            name: v.faceLibraryName
           });
         });
       }
@@ -402,7 +404,7 @@ export default {
         });
     },
     getAlarmListSuccess(body) {
-      this.compareList = body.data.list;
+      this.compareList = body.data.list ? body.data.list : [];
     },
     deleteCon() {
       this.$confirm(
@@ -432,8 +434,10 @@ export default {
           }
         });
     },
-    deleteMonitoringTaskSuccess(body) {
-      this.$cToast.success(body.msg);
+    resetData() {
+      this.faceDBItemList = [];
+      this.cameraItemList = [];
+      this.faceMonitorUuid = "";
       this.faceMonitorObj = {
         faceMonitorUuid: "",
         faceMonitorName: "",
@@ -452,7 +456,10 @@ export default {
         createUser: "",
         systemStaffLibraryTypes: []
       };
-      this.faceMonitorUuid = "";
+    },
+    deleteMonitoringTaskSuccess(body) {
+      this.$cToast.success(body.msg);
+      this.resetData();
       this.getMonitoringTaskList();
     },
     editMonitoringTaskStatus(faceMonitorUuid, enabled) {

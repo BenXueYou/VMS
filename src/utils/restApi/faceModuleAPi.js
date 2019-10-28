@@ -96,4 +96,5 @@ export default {
   getTagList: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/tag/list`,
   getTagDev: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/tagElement/channelList`,
   getDevChannelList: (deviceUuid) => `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/deviceChannelTypeList/${deviceUuid}`,
+  getAlarmSound: `${URLHeader}/${projectUuid}/face/config/alarmSound`,
 };
