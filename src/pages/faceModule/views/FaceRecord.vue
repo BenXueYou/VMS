@@ -33,11 +33,10 @@
 				抓拍设备：
 				<elPopverTree
 					:channelInfoList="deviceList"
-					:elPopoverClass="faceRecordPopoverClass"
+					:elPopoverClass="fRPopoverClass"
 					@transferCheckedChannel="transferCheckedChannel"
 					inputWidth="75%"
-					@show="popverShow"
-					@hide="popverHidden"
+					:defaultCheckedChannel="defaultCheckedChannel"
 				></elPopverTree>
 			</div>
 			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
@@ -215,6 +214,17 @@ export default {
     console.log("抓拍记录刷新页面");
     this.checkNameString = "";
     // this.getDeviceList(false);
+    // this.$nextTick(() => {
+    //   this.defaultCheckedChannel = [
+    //     {
+    //       channelName: "device_001_c1",
+    //       channelType: "bullet_camera",
+    //       channelUuid: "49D2B7299EAAA3AF295E33F03B982D32",
+    //       deviceUuid: "8e264e8653a94eecaa2ce2a2d1ac268d",
+    //       nickName: "192.168.9.198-通道1"
+    //     }
+    //   ];
+    // });
   },
   methods: {
     selectDateAct(dateStr) {
@@ -281,7 +291,7 @@ export default {
     tempCtrlTask(o, index) {
       console.log(o.faceCapturePhotoUrl);
       this.$common.imageToBase64(o.faceCapturePhotoUrl, base64 => {
-        api.addTempContrlTask({imageBase64: base64}).then(res => {
+        api.addTempContrlTask({ imageBase64: base64 }).then(res => {
           if (res.result === 0) {
             this.$message({
               message: res.data,
@@ -342,6 +352,7 @@ export default {
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
       console.log(checkedChannel);
+      //   this.defaultCheckedChannel = checkedChannel;
       this.checkedChannelsUuidList = [];
       for (var i = 0; i < checkedChannel.length; i++) {
         this.checkedChannelsUuidList.push(checkedChannel[i].channelUuid);
@@ -363,10 +374,6 @@ export default {
     },
     detailToDesc() {
       // this.dialogVisible = !this.dialogVisible;
-    },
-    popverHidden() {},
-    popverShow() {
-      console.log("展开------");
     },
     checkBoxAction(data, node) {
       console.log(node.checkedNodes);
@@ -478,7 +485,7 @@ export default {
 			inputPlaceholder: "高，中",
 			checkedUuid: ["HIGH", "NORMAL"],
 			dialogPanoramaImgUrl: false,
-			faceRecordPopoverClass: "faceRecordPopoverClass",
+			fRPopoverClass: "fRPopoverClass",
 			totalPhotoItems: 40,
 			dialogPhotoImgUrl: false,
 			dialogVisible: false, // 彈窗顯示標記
@@ -512,7 +519,8 @@ export default {
 			carFellowDetailList: [],
 			isShow: false,
 			size: 20,
-			cellwidth: 80
+			cellwidth: 80,
+			defaultCheckedChannel: []
 		};
 	}
 };
@@ -555,7 +563,7 @@ export default {
 	padding: 4px 12px;
 	font-size: 10px;
 }
-.faceRecordPopoverClass {
+.fRPopoverClass {
 	width: 50%;
 	height: 45%;
 	position: absolute;
