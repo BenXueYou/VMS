@@ -27,13 +27,21 @@
                     :key="index"
                     :index="index"
                     :isActive="operatorIndex===index"
-                    :width="videoWidth"
-                    :height="videoHeight"
+                    :width="item.width"
+                    :height="item.height"
                     :rtspUrl="item.rtspUrl"
                     :streamType="item.streamType"
                     :IsShowMenu="!!item.rtspUrl"
                     :position="item.position"
+                    :isRecord="!!item.isRecord"
                     :fenlu="fenluIndex+1"
+                    :isAutoScreen="isAutoScreen===index"
+                    @dblclickhandler="dblclickhandler"
+                    @closeVideo="closeVideo"
+                    @startRecord="startRecord"
+                    @stopRecord="stopRecord"
+                    @openVideoVoice="openVideoVoice"
+                    @screenShot="screenShot"
                     @dragstart="dragstart(index)"
                     @drop="drop(index)"
                     @contextmenu="showMenu"
@@ -63,7 +71,7 @@
       </div>
     </div>
     <video-info-Dialog title="摄像机信息"
-                       :info="videoinfo"
+                       :videoinfo="videoinfo"
                        :visible.sync="videoInfoVisible"></video-info-Dialog>
     <image-adjust-dialog title="画面调节"
                          :visible.sync="imageAdjustVisible">
@@ -110,6 +118,7 @@ export default {
       screenShotVisible: false,
       videoInfoVisible: false,
       imageAdjustVisible: false,
+      isAutoScreen: -1,
       videoArr: [
         {
           position: 0, // 表示视频的位置，初始化的时候是从0-n的按顺序的，拖动之后position就会变化
@@ -197,6 +206,20 @@ export default {
   },
   destroyed() {},
   methods: {
+    dblclickhandler(index) {
+      if (this.isAutoScreen === index) {
+        // 已经满屏则退出满屏
+        this.isAutoScreen = -1;
+        this.videoArr[index].width = this.videoWidth;
+        this.videoArr[index].height = this.videoHeight;
+      } else {
+        // 设置满屏
+        this.isAutoScreen = index;
+        this.videoArr[index].width = this.videoWidth * (this.fenluIndex + 1);
+        this.videoArr[index].height = this.videoHeight * (this.fenluIndex + 1);
+      }
+      this.videoArr.concat();
+    },
     jugdeJump() {
       if (
         this.$route.params.channelUuid &&
@@ -223,8 +246,10 @@ export default {
       this.videoArr = elements;
     },
     updateView(viewData) {
-      console.log(viewData);
-      api2.updateView(viewData).then(res => {
+      console.log();
+      let data = JSON.parse(JSON.stringify(viewData));
+      delete data.viewName;
+      api2.updateView(data).then(res => {
         if (res.data.success) {
           this.$message.success("保存成功！");
         } else {
@@ -302,6 +327,8 @@ export default {
           this.$message.success("新增预置点成功！");
           // 新增完，
           this.preset("set_preset", data.presetPoisition);
+          this.$refs.leftTree.getPreset();
+          this.$refs.leftTree.isChoose = false;
         }
       });
     },
@@ -430,18 +457,30 @@ export default {
       let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
       this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
       this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
+      this.videoArr = this.videoArr.map(item => {
+        item.width = this.videoWidth;
+        item.height = this.videoHeight;
+        return item;
+      });
     },
     chooseFenlu(index) {
       this.fenluIndex = index;
+      this.isAutoScreen = -1;
       this.initWrapDom();
       // 切换分路，还需要保留之前已经打开的视频画面
 
       let num = Array.from(
         { length: this.fenlu[this.fenluIndex] },
         (item, index) => {
-          item = { rtspUrl: "", position: index };
+          item = {
+            width: this.videoWidth,
+            height: this.videoHeight,
+            rtspUrl: "",
+            position: index
+          };
           if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
             item = this.videoArr[index];
+            item.position = index;
           }
           return item;
         }
@@ -486,15 +525,19 @@ export default {
         }
       });
     },
+    closeVideo(index) {
+      this.videoArr[index].rtspUrl = "";
+      this.videoArr[index].streamType = "";
+      this.videoArr[index].channelUuid = "";
+    },
     // 处理
     dealContextMenu(value) {
       console.log(value);
       switch (value) {
         case "关闭窗口":
           // 清空rtspUrl，则触发video组件stop事件
-          this.videoArr[this.operatorIndex].rtspUrl = "";
-          this.videoArr[this.operatorIndex].streamType = "";
-          this.videoArr[this.operatorIndex].channelUuid = "";
+          this.closeVideo(this.operatorIndex);
+
           this.videoArr.concat();
           break;
         case "关闭所有窗口":
@@ -511,19 +554,26 @@ export default {
           if (!this.videoArr[this.operatorIndex].channelUuid) {
             this.$message.error("该分路上没有通道！");
           } else {
-            this.videoInfoVisible = true;
             api2
               .getCameraInfo({
                 channelUuid: this.videoArr[this.operatorIndex].channelUuid
               })
               .then(res => {
-                this.videoinfo = res.data.data;
+                /* eslint-disable */
+                let data = res.data.data || {};
+                let channelTyepCN =
+                  JSON.parse(localStorage.getItem("localEnums"))["chn"][
+                    data.channelType
+                  ] || data.channelType;
+                data.channelType = channelTyepCN;
+                this.videoinfo = data;
+                this.videoInfoVisible = true;
+                /* eslint-disable */
               });
           }
-
           break;
         case "抓图":
-          this.screenShot(this.videoArr[this.operatorIndex].channelUuid);
+          this.screenShot(this.operatorIndex);
           break;
         case "切换至录像":
           if (!this.videoArr[this.operatorIndex].channelUuid) {
@@ -542,37 +592,10 @@ export default {
           break;
         case "开始录像":
           // this.jumpToPlayback();
-          if (!this.videoArr[this.operatorIndex].channelUuid) {
-            this.$message.error("该分路上没有播放的视频");
-            return;
-          }
-          this.menuData = this.menuData.map(item => {
-            if (item.label === "开始录像") {
-              return {
-                value: "停止录像",
-                label: "停止录像"
-              };
-            }
-            return item;
-          });
-          this.$refs["video" + this.operatorIndex][0].record();
+          this.startRecord(this.operatorIndex);
           break;
         case "停止录像":
-          if (!this.videoArr[this.operatorIndex].channelUuid) {
-            this.$message.error("该分路上没有播放的视频");
-            return;
-          }
-          // this.jumpToPlayback(this.videoArr[this.operatorIndex].channelUuid);
-          this.menuData = this.menuData.map(item => {
-            if (item.label === "停止录像") {
-              return {
-                value: "开始录像",
-                label: "开始录像"
-              };
-            }
-            return item;
-          });
-          this.$refs["video" + this.operatorIndex][0].stopRecord();
+          this.stopRecord(this.operatorIndex);
           break;
         case "主码流":
           this.switchMaLiu(this.operatorIndex, "main");
@@ -583,9 +606,50 @@ export default {
         case "三码流":
           this.switchMaLiu(this.operatorIndex, "thrid");
           break;
+        case "打开音频":
+          this.openVideoVoice(this.operatorIndex);
+          break;
         default:
           break;
       }
+    },
+    openVideoVoice(index) {},
+    startRecord(index) {
+      if (!this.videoArr[index].channelUuid) {
+        this.$message.error("该分路上没有播放的视频");
+        return;
+      }
+      this.menuData = this.menuData.map(item => {
+        if (item.label === "开始录像") {
+          return {
+            value: "停止录像",
+            label: "停止录像"
+          };
+        }
+        return item;
+      });
+      this.videoArr[index].isRecord = true;
+      this.videoArr.concat();
+      this.$refs["video" + index][0].record();
+    },
+    stopRecord(index) {
+      if (!this.videoArr[index].channelUuid) {
+        this.$message.error("该分路上没有播放的视频");
+        return;
+      }
+      this.menuData = this.menuData.map(item => {
+        if (item.label === "停止录像") {
+          return {
+            value: "开始录像",
+            label: "开始录像"
+          };
+        }
+        return item;
+      });
+
+      this.videoArr[index].isRecord = false;
+      this.videoArr.concat();
+      this.$refs["video" + index][0].stopRecord();
     },
     switchLuxiang(channelUuid) {
       this.$router.push({
@@ -593,10 +657,10 @@ export default {
         params: { channelUuid }
       });
     },
-    screenShot() {
+    screenShot(index) {
       // 抓图
       // 判断该分路有没有canvas,从而是否显示弹窗
-      let canvas = this.$refs["video" + this.operatorIndex][0].canvas;
+      let canvas = this.$refs["video" + index][0].canvas;
       if (canvas) {
         // 抓图由webplay控制
         // this.screenShotVisible = true;

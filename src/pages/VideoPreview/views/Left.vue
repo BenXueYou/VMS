@@ -385,10 +385,7 @@ export default {
           label: "预置点"
         }
       ],
-      yuzhiOptions: Array.from({ length: 256 }, (v, i) => ({
-        presetPoisition: i + 1,
-        presetPositionUuid: "预置点" + (i + 1)
-      })),
+      yuzhiOptions: [],
       xunhangOptions: [],
       viewProps: {
         label: "viewName"
@@ -439,22 +436,21 @@ export default {
     },
     getPreset(resetYuzhi = false) {
       api2.getPreset({ channelUuid: this.channelUuid }).then(res => {
-        let data = res.data.data;
+        let data = res.data.data || {};
         let list = (data && data.list) || [];
-        let presetPosCount = data.presetPosCount;
-        let num = Array.form(
-          { length: presetPosCount || 256 },
-          (item, index) => {
-            return {
-              presetPositionUuid: index, // 预置点uuid
-              presetPoisition: index, // 预置点位置
-              presetName: index + 1, // 预置点名称
-              presetNo: index // 预置点编号}
-            };
-          }
-        );
+        let presetPosCount = data.presetPosCount || 256;
+        let num = Array.from({ length: presetPosCount }, (item, index) => {
+          return {
+            isNew: true, // 表示是否没被设置过的预置点
+            presetPositionUuid: index, // 预置点uuid
+            presetPoisition: index, // 预置点位置
+            presetName: index + 1, // 预置点名称
+            presetNo: index // 预置点编号}
+          };
+        });
         for (let i = 0, len = list.length; i < len; i++) {
           num[list[i].presetNo] = list[i];
+          num[list[i].presetNo].isNew = false;
         }
         console.log(num);
         this.yuzhi = "";
@@ -571,7 +567,25 @@ export default {
     },
     chooseItem() {
       // 选定预置点，这边进行一个跳转
-      this.$emit("preset", "goto_preset", 1);
+      let flag = false;
+      for (let i = 0; i < this.yuzhiOptions.length; i++) {
+        if (
+          this.yuzhiOptions[i].presetPositionUuid === this.yuzhi &&
+          this.yuzhiOptions[i].isNew === false
+        ) {
+          this.VideoOprName = this.yuzhiOptions[i].presetName;
+          flag = true;
+          this.$emit(
+            "preset",
+            "goto_preset",
+            this.yuzhiOptions[i].presetPoisition
+          );
+          break;
+        }
+      }
+      if (!flag) {
+        this.$message.error("该预置点没有进行过设置，不能跳转");
+      }
     },
     setback() {
       this.isChoose = false;
@@ -594,7 +608,10 @@ export default {
         // 用于判断是否找到了预置点列表中的之前数据
         let flag = false;
         for (let i = 0; i < data.length; i++) {
-          if (data[i].presetPositionUuid === this.yuzhi) {
+          if (
+            data[i].presetPositionUuid === this.yuzhi &&
+            data[i].isNew === false
+          ) {
             data[i].presetName = this.VideoOprName;
             flag = true;
             this.$emit("updatePreset", data[i]);

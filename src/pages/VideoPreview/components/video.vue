@@ -6,8 +6,9 @@
        @dragstart="dragstart"
        @drop="drop"
        @dragover="dragover"
+       @dblclick="dblclickhandler"
        draggable="true"
-       :class="{'VideoActive':isActive}"
+       :class="{'VideoActive':isActive,'isAutoScreen':isAutoScreen}"
        :style="{height:height+'px',width:width+'px',left:left+'px',top:top+'px'}">
     <!-- 视频信息展示菜单 -->
     <div class="header"
@@ -19,7 +20,7 @@
            v-if="width>500">
         <ul>
           <li v-for="(item,index) in menuData"
-              @click='clickMenu(index)'
+              @click.stop='clickMenu(index)'
               :key='index'>
             <img :src="icons[item.icon]"
                  alt="">
@@ -35,7 +36,7 @@
                  alt="">
           </span>
           <el-dropdown-menu slot="dropdown"
-                            @click='clickMenu(index)'>
+                            @click.stop='clickMenu(index)'>
             <el-dropdown-item v-for="(item,index) in menuData"
                               :key='index'>{{item.name}}</el-dropdown-item>
           </el-dropdown-menu>
@@ -83,6 +84,18 @@ export default {
       type: Boolean
     },
     IsShowMenu: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    isAutoScreen: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    isRecord: {
       type: Boolean,
       default() {
         return false;
@@ -137,9 +150,15 @@ export default {
   computed: {
     left() {
       // console.log((this.index % this.fenlu) * this.width);
+      if (this.isAutoScreen) {
+        return 0;
+      }
       return (this.position % this.fenlu) * this.width;
     },
     top() {
+      if (this.isAutoScreen) {
+        return 0;
+      }
       // console.log((this.index % this.fenlu) * this.height);
       return Math.floor(this.position / this.fenlu) * this.height;
     }
@@ -154,6 +173,47 @@ export default {
     }
   },
   watch: {
+    isRecord(val) {
+      if (val) {
+        this.menuData = [
+          {
+            icon: "voice",
+            name: "声音"
+          },
+          {
+            icon: "video",
+            name: "停止录像"
+          },
+          {
+            icon: "screenshot",
+            name: "抓图"
+          },
+          {
+            icon: "close",
+            name: "关闭"
+          }
+        ];
+      } else {
+        this.menuData = [
+          {
+            icon: "voice",
+            name: "声音"
+          },
+          {
+            icon: "video",
+            name: "录像"
+          },
+          {
+            icon: "screenshot",
+            name: "抓图"
+          },
+          {
+            icon: "close",
+            name: "关闭"
+          }
+        ];
+      }
+    },
     position(val) {
       console.log(val);
     },
@@ -167,10 +227,6 @@ export default {
         this.canvas.width = this.width;
       }
       // 宽度和高度变化，不需要重新播放
-      // if (this.canvas) {
-      //   this.stopVideo();
-      //   this.playVideo();
-      // }
     },
     height(val) {
       if (this.height && this.canvas) {
@@ -191,6 +247,9 @@ export default {
     }
   },
   methods: {
+    dblclickhandler() {
+      this.$emit("dblclickhandler", this.index);
+    },
     record() {
       this.video_mgr.record(this.video);
     },
@@ -270,6 +329,23 @@ export default {
     clickMenu(index) {
       console.log(index);
       console.log(this.menuData[index].name);
+      if (index === 0) {
+        // 声音
+        this.$emit("openVideoVoice");
+      } else if (index === 1) {
+        // 录像
+        if (!this.isRecord) {
+          this.$emit("startRecord", this.index);
+        } else {
+          this.$emit("stopRecord", this.index);
+        }
+      } else if (index === 2) {
+        // 抓图
+        this.$emit("screenShot", this.index);
+      } else if (index === 3) {
+        // 关闭
+        this.$emit("closeVideo", this.index);
+      }
     },
     contextmenu(e) {
       this.$emit("contextmenu", e, this.index);
@@ -289,6 +365,7 @@ export default {
   border: 2px solid #1b1b1b;
   box-sizing: border-box;
   overflow: hidden;
+  z-index: 1;
   #canvasWrap {
     position: absolute;
     width: 100%;
@@ -352,6 +429,11 @@ export default {
         top: 50%;
         transform: translateY(-50%);
       }
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      /* width: 46px; */
+      max-width: 80%;
     }
   }
 
@@ -368,5 +450,8 @@ export default {
 }
 .VideoActive {
   border: 2px solid rgba(38, 211, 157, 0.5);
+}
+.isAutoScreen {
+  z-index: 100;
 }
 </style>

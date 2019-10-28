@@ -25,12 +25,12 @@
       </div>
       <div class="body form-item">
         <label class="label"
-               for>经度</label>
+               for>经度：</label>
         <span class='name'>{{jd}}</span>
       </div>
       <div class="body form-item">
         <label class="label"
-               for>纬度</label>
+               for>纬度：</label>
         <span class='name'>{{wd}}</span>
       </div>
 
@@ -110,6 +110,7 @@ export default {
   watch: {
     visible(val) {
       if (val) {
+        console.log(this.videoinfo);
         this.devName = this.videoinfo.deviceName;
         this.channelName = this.videoinfo.channelName;
         this.channelType = this.videoinfo.channelType;
