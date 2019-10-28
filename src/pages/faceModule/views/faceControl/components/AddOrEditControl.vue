@@ -325,7 +325,19 @@ export default {
       this.resetFormData();
       this.$emit("onCancel");
     },
+    formatParams() {
+      this.faceDBSelectedList.forEach(v => {
+        if (v.faceLibraryType === "systemFaceLib") {
+          this.staffTypeOption.forEach(v => {
+            if (v.checked) {
+              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
+            }
+          });
+        }
+      });
+    },
     addMonitoringTask() {
+      this.formatParams();
       this.$faceControlHttp.addMonitoringTask(this.formLabelAlign).then(res => {
         let body = res.data;
         this.monitoringTaskSuccess(body);
@@ -337,6 +349,7 @@ export default {
       this.$emit("onConfirm");
     },
     editMonitoringTask() {
+      this.formatParams();
       this.$faceControlHttp
         .editMonitoringTask(this.formLabelAlign)
         .then(res => {
@@ -357,13 +370,6 @@ export default {
       this.formLabelAlign.faceLibraryUuids = [];
       this.faceDBSelectedList.forEach(v => {
         this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
-        if (v.faceLibraryType === "systemFaceLib") {
-          this.staffTypeOption.forEach(v => {
-            if (v.checked) {
-              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
-            }
-          });
-        }
       });
       this.$refs.monitorForm.validateField('faceLibraryUuids');
     },

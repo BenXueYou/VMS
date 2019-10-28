@@ -456,6 +456,7 @@ export default {
         createUser: "",
         systemStaffLibraryTypes: []
       };
+      this.compareList = [];
     },
     deleteMonitoringTaskSuccess(body) {
       this.$cToast.success(body.msg);

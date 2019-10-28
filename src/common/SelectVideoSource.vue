@@ -239,20 +239,22 @@ export default {
                 resolve([]);
               } else {
                 let dataList = [];
-                res.data.data.list.forEach(v => {
-                  dataList.push({
-                    id: v.channelUuid,
-                    label: v.channelName,
-                    channelType: v.channelType
-                  })
-                });
-                this.selectedList.forEach(v => {
-                  dataList.forEach(v2 => {
-                    if (v2.id === v.id) {
-                      this.$set(v2, "checked", true);
-                    }
+                if (res.data.data.list) {
+                  res.data.data.list.forEach(v => {
+                    dataList.push({
+                      id: v.channelUuid,
+                      label: v.channelName,
+                      channelType: v.channelType
+                    })
                   });
-                });
+                  this.selectedList.forEach(v => {
+                    dataList.forEach(v2 => {
+                      if (v2.id === v.id) {
+                        this.$set(v2, "checked", true);
+                      }
+                    });
+                  });
+                }
                 for (let item of dataList) {
                   this.$set(item, "leaf", true);
                 }
