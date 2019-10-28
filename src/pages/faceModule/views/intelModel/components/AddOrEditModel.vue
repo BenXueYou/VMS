@@ -233,12 +233,12 @@
             </div>
           </el-form-item>
           <el-form-item label="两次抓拍间隔时间："
-                        prop="faceSimilarityThreshold">
+                        prop="captureInterval">
             <el-input class="time-interal left-space"
                       style="width: 60px"
                       type="number"
-                      v-model="formLabelAlign.faceSimilarityThreshold"></el-input>
-            <span class="unit">%</span>
+                      v-model="formLabelAlign.captureInterval"></el-input>
+            <span class="unit">秒</span>
           </el-form-item>
           <el-form-item label="模型状态："
                         prop="enabled"
@@ -306,7 +306,7 @@ export default {
         otherVideoSource: [],
         notInVideoSource: [],
         notInlibrary: "",
-        captureInterval: "",
+        captureInterval: 5,
         enabled: 1,
         remarks: ""
       },
@@ -367,7 +367,7 @@ export default {
         otherVideoSource: [],
         notInVideoSource: [],
         notInlibrary: "",
-        captureInterval: "",
+        captureInterval: 5,
         enabled: 1,
         remarks: ""
       };
