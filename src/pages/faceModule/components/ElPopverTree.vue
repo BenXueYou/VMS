@@ -226,7 +226,8 @@ export default {
           checkedChannelArr.push(element);
         });
       }
-      this.checkedChannel = checkedChannelArr;
+      this.checkedChannel = checkedChannelUuidArr;
+      console.log(this.checkedChannel);
       this.isIndeterminate = false;
       this.$emit("transferCheckedChannel", checkedChannelArr);
     },
