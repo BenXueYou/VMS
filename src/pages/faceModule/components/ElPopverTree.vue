@@ -65,9 +65,9 @@
 					>
 						<el-checkbox
 							class="checkBoxClass"
-							v-for="item in channels"
-							:key="item.channelUuid"
-							:label="item"
+							v-for="(item,index) in channels"
+							:key="index"
+							:label="item.channelUuid"
 						>{{item.nickName}}</el-checkbox>
 					</el-checkbox-group>
 					<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
@@ -112,6 +112,12 @@ export default {
     inputWidth: {
       type: String,
       default: "50%"
+    },
+    defaultCheckedChannel: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   components: {},
@@ -128,7 +134,7 @@ export default {
           return false;
         }
       },
-      checkAll: true,
+      checkAll: false,
       isIndeterminate: false,
       visible_popver: false,
       treeData: [],
@@ -138,27 +144,36 @@ export default {
     };
   },
   watch: {
+    defaultCheckedChannel(val) {
+      let arr = [];
+      val.forEach(element => {
+        arr.push(element.channelUuid);
+      });
+      this.checkedChannel = arr;
+    },
     checkedChannel(val) {
       if (!val) val = [];
       if (val.length === this.channels.length) {
-        this.checkedChannelName = '全部';
+        this.checkedChannelName = "全部";
         this.isIndeterminate = false;
         this.checkAll = true;
         return;
       }
-      let str = '';
-      val.forEach(item => {
-        str += item.nickName;
-        str += '，';
+      let str = "";
+      this.channels.forEach(item => {
+        if (val.indexOf(item.channelUuid) !== -1) {
+          str += item.nickName;
+          str += "，";
+        }
       });
       this.checkedChannelName = str.substr(0, str.length - 1);
     },
     channels(val) {
-      if (!val && !val.length) {
+      if (val && !val.length) {
         this.isIndeterminate = false;
         this.checkAll = false;
       }
-    },
+    }
   },
   mounted: function(e) {},
   activated: function() {},
@@ -175,10 +190,17 @@ export default {
     // 全选的回调
     handleCheckAllChange(val) {
       console.log(val);
-      this.checkedChannel = val ? this.channels : [];
+      let checkedChannelArr = [];
+      if (val) {
+        val.forEach(element => {
+          checkedChannelArr.push(element.channelUuid);
+        });
+        this.checkedChannel = checkedChannelArr;
+      } else {
+        this.checkedChannel = [];
+      }
       this.isIndeterminate = false;
-      console.log(this.checkedChannel);
-      this.$emit("transferCheckedChannel", this.checkedChannel);
+      this.$emit("transferCheckedChannel", checkedChannelArr);
     },
     // 点击全选复选框事件
     handleCheckedChange(value, data) {
@@ -191,7 +213,13 @@ export default {
         this.isIndeterminate =
 					checkedCount > 0 && checkedCount < this.channels.length;
       }
-      this.$emit("transferCheckedChannel", value);
+      let checkedChannelArr = [];
+      this.channels.forEach(element => {
+        if (value.indexOf(element.channelUuid) !== -1) {
+          checkedChannelArr.push(element);
+        }
+      });
+      this.$emit("transferCheckedChannel", checkedChannelArr);
     },
     loadNode(node, resolve) {
       api
@@ -231,9 +259,18 @@ export default {
         .then(res => {
           if (res.data.success && res.data.data) {
             this.channels = res.data.data;
-            this.checkedChannel = this.channels;
+            if (
+              !this.defaultCheckedChannel.length
+            ) {
+              let checkedChannelUuidArr = [];
+              this.channels.forEach(element => {
+                checkedChannelUuidArr.push(element.channelUuid);
+              });
+              this.checkedChannel = checkedChannelUuidArr;
+            }
           } else {
             console.log(res.data.data);
+            this.checkAll = false;
             this.$message({ type: "warning", message: "查询数据为空" });
           }
         })

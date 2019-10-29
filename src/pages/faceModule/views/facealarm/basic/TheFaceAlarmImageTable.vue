@@ -188,7 +188,7 @@ export default {
 		height: 100%;
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-around;
+		justify-content: flex-start;
 		align-content: space-between;
 		overflow: auto;
 		.item {

@@ -1,129 +1,124 @@
 <template>
-	<div class="facealarm">
-		<el-row class="topBox" type="flex" justify="space-between">
-			<div class="topBoxDiv topTitleTxt topBoxTaskBox">
-				任务：
-				<alPopverTree
-					:treeDataList="taskItemList"
-					:alPopoverClass="facealarmPopoverClass"
-					:defaultProps="defaultProps"
-					nodeKey="faceMonitorUuid"
-					inputWidth="160px"
-					@transferAct="transferTaskAct"
-				></alPopverTree>
-			</div>
-			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
-				抓拍设备：
-				<!-- <elPopverTree
-					:channelInfoList="DeviceTreeList"
-					:elPopoverClass="facealarmPopoverClass"
-					@transferCheckedChannel="transferCheckedChannel"
-					inputWidth="160px"
-				></elPopverTree>-->
-				<alPopverTree
-					:treeDataList="DeviceTreeList"
-					:alPopoverClass="facealarmPopoverClass"
-					:defaultProps="defaultDeviceProps"
-					nodeKey="channelUuid"
-					inputWidth="160px"
-					@transferAct="transferCheckedChannel"
-				></alPopverTree>
-			</div>
-			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
-				所属库：
-				<alPopverTree
-					:treeDataList="faceDBList"
-					:alPopoverClass="facealarmPopoverClass"
-					:defaultProps="faceDBDefaultProps"
-					nodeKey="faceLibraryUuid"
-					inputWidth="160px"
-					@transferAct="handleLibCheckAllChange"
-				></alPopverTree>
-			</div>
-			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
-				姓名：
-				<el-input placeholder v-model="staffName" />
-			</div>
-			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
-				证件号：
-				<el-input placeholder v-model="credentialNo" />
-			</div>
-			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
-				<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
-				<el-radio-group v-model="genderOption">
-					<el-radio-button label>不限</el-radio-button>
-					<el-radio-button label="male">男</el-radio-button>
-					<el-radio-button label="female">女</el-radio-button>
+	<div class="faceAlarmBg">
+		<div class="facealarm">
+			<el-row class="topBox" type="flex" justify="space-between">
+				<div class="topBoxDiv topTitleTxt topBoxTaskBox">
+					任务：
+					<alPopverTree
+						:treeDataList="taskItemList"
+						:alPopoverClass="facealarmPopoverClass"
+						:defaultProps="defaultProps"
+						nodeKey="faceMonitorUuid"
+						inputWidth="160px"
+						@transferAct="transferTaskAct"
+					></alPopverTree>
+				</div>
+				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
+					抓拍设备：
+					<alPopverTree
+						:treeDataList="DeviceTreeList"
+						:alPopoverClass="facealarmPopoverClass"
+						:defaultProps="defaultDeviceProps"
+						nodeKey="channelUuid"
+						inputWidth="160px"
+						@transferAct="transferCheckedChannel"
+					></alPopverTree>
+				</div>
+				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
+					所属库：
+					<alPopverTree
+						:treeDataList="faceDBList"
+						:alPopoverClass="facealarmPopoverClass"
+						:defaultProps="faceDBDefaultProps"
+						nodeKey="faceLibraryUuid"
+						inputWidth="160px"
+						@transferAct="transferCheckedFaceDB"
+					></alPopverTree>
+				</div>
+				<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
+					姓名：
+					<el-input placeholder v-model="staffName" />
+				</div>
+				<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
+					证件号：
+					<el-input placeholder v-model="credentialNo" />
+				</div>
+				<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
+					<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
+					<el-radio-group v-model="genderOption">
+						<el-radio-button label>不限</el-radio-button>
+						<el-radio-button label="male">男</el-radio-button>
+						<el-radio-button label="female">女</el-radio-button>
+					</el-radio-group>
+				</div>
+				<div class="topBoxDiv topBoxDateTimeBox">
+					<span class="topTitleTxt" style="margin-right:15px;">时段：</span>
+					<el-date-picker
+						class="left-space"
+						value-format="yyyy-MM-dd HH:mm:ss"
+						v-model="startTime"
+						type="datetime"
+						placeholder="选择日期"
+						@change="changeDate"
+					></el-date-picker>
+					<span class="facealarmTxt">至</span>
+					<el-date-picker
+						class="left-space"
+						value-format="yyyy-MM-dd HH:mm:ss"
+						v-model="endTime"
+						type="datetime"
+						placeholder="选择日期"
+						@change="changeDate"
+					></el-date-picker>
+				</div>
+				<div class="topBoxDiv topBoxDateRadioBtnBox">
+					<el-radio-group style="margin-right:0px" v-model="selectDate" @change="selectDateAct">
+						<el-radio-button label="today">今天</el-radio-button>
+						<el-radio-button label="lastday">昨天</el-radio-button>
+						<el-radio-button label="thisWeek">本周</el-radio-button>
+						<el-radio-button label="thisMonth">本月</el-radio-button>
+					</el-radio-group>
+				</div>
+				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
+					状态：
+					<el-select
+						v-model="status"
+						filterable
+						@visible-change="selectvisiblechange"
+						@change="selectChange"
+						collapse-tags
+						placeholder="全部"
+						class="header-line-input"
+					>
+						<el-option
+							v-for="item in statusOptions"
+							:key="item.typeStr"
+							:label="item.typeName"
+							:value="item.typeStr"
+						></el-option>
+					</el-select>
+				</div>
+				<div :span="2" style="margin-top:-15px;">
+					<el-button icon="el-icon-search" class="search-btn" @click="queryBtnAct" type="primary">查询</el-button>
+					<el-button class="search-btn" @click="resetData" type="primary">重置</el-button>
+				</div>
+			</el-row>
+			<div class="facealarm-table">
+				<el-radio-group class="switchBtn" v-model="showindex" @change="changeIndex">
+					<el-radio label="0">图片</el-radio>
+					<el-radio label="1">列表</el-radio>
 				</el-radio-group>
-			</div>
-			<div class="topBoxDiv topBoxDateTimeBox">
-				<span class="topTitleTxt" style="margin-right:15px;">时段：</span>
-				<el-date-picker
-					class="left-space"
-					value-format="yyyy-MM-dd HH:mm:ss"
-					v-model="startTime"
-					type="datetime"
-					placeholder="选择日期"
-					@change="changeDate"
-				></el-date-picker>
-				<span class="facealarmTxt">至</span>
-				<el-date-picker
-					class="left-space"
-					value-format="yyyy-MM-dd HH:mm:ss"
-					v-model="endTime"
-					type="datetime"
-					placeholder="选择日期"
-					@change="changeDate"
-				></el-date-picker>
-			</div>
-			<div class="topBoxDiv topBoxDateRadioBtnBox">
-				<el-radio-group style="margin-right:0px" v-model="selectDate" @change="selectDateAct">
-					<el-radio-button label="today">今天</el-radio-button>
-					<el-radio-button label="lastday">昨天</el-radio-button>
-					<el-radio-button label="thisWeek">本周</el-radio-button>
-					<el-radio-button label="thisMonth">本月</el-radio-button>
-				</el-radio-group>
-			</div>
-			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
-				状态：
-				<el-select
-					v-model="status"
-					filterable
-					@visible-change="selectvisiblechange"
-					@change="selectChange"
-					collapse-tags
-					placeholder="全部"
-					class="header-line-input"
-				>
-					<el-option
-						v-for="item in statusOptions"
-						:key="item.typeStr"
-						:label="item.typeName"
-						:value="item.typeStr"
-					></el-option>
-				</el-select>
-			</div>
-			<div :span="2" style="margin-top:-15px;">
-				<el-button icon="el-icon-search" class="search-btn" @click="queryBtnAct" type="primary">查询</el-button>
-				<el-button class="search-btn" @click="resetData" type="primary">重置</el-button>
-			</div>
-		</el-row>
-		<div class="facealarm-table">
-			<el-radio-group class="switchBtn" v-model="showindex" @change="changeIndex">
-				<el-radio label="0">图片</el-radio>
-				<el-radio label="1">列表</el-radio>
-			</el-radio-group>
-			<component
-				:is="['theFaceAlarmImageTable','faceAlarmTable'][showindex]"
-				:pageSize="pageSize"
-				:pageNow="pageNow"
-				:pageCount="pageCount"
-				:tableData="tableData"
-				:isloading="isloading"
-				@lookAlarmDetail="lookAlarmDetail"
-				@pagechange="pagechange"
-			></component>
-			<!-- <the-face-alarm-dialog
+				<component
+					:is="['theFaceAlarmImageTable','faceAlarmTable'][showindex]"
+					:pageSize="pageSize"
+					:pageNow="pageNow"
+					:pageCount="pageCount"
+					:tableData="tableData"
+					:isloading="isloading"
+					@lookAlarmDetail="lookAlarmDetail"
+					@pagechange="pagechange"
+				></component>
+				<!-- <the-face-alarm-dialog
 				title="报警详情"
 				:detail="detail"
 				:detail2="detail2"
@@ -131,8 +126,9 @@
 				:alarminfoid="alarminfoid"
 				:faceDBDialogVisible="facealarmvisible"
 				@close="facealarmvisible=false"
-			></the-face-alarm-dialog>-->
-			<face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" />
+				></the-face-alarm-dialog>-->
+				<face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" />
+			</div>
 		</div>
 	</div>
 </template>
@@ -165,7 +161,7 @@ export default {
       checkLibAll: true,
       facealarmPopoverClass: "facealarmPopoverClass",
       faceDBDefaultProps: {
-        label: "libraryName"
+        label: "faceLibraryName"
       },
       defaultProps: {
         label: "faceMonitorName"
@@ -178,7 +174,6 @@ export default {
       endTime: "",
       devicearr: [],
       devicename: [],
-      alarmtypearr: [],
       alarmtype: [],
       belongtoarr: [],
       belongto: [],
@@ -233,38 +228,18 @@ export default {
   },
   fiters: {},
   activated() {
-    const _this = this;
-    // 获取布控任务
-    api.getTaskList().then(res => {
-      console.log(res);
-      var num = [];
-      if (res.data.data) {
-        var diaabled = res.data.data.disable;
-        var enableed = res.data.data.enable;
-        num = num.concat(diaabled);
-        num = num.concat(enableed);
-      }
-      _this.alarmtypearr = num;
-
-      var test = [];
-      for (let i = 0; i < num.length; i++) {
-        var tempTask = num[i];
-        test.push(tempTask.taskuuid);
-      }
-
-      // this.getFaceLibsAndDeviceList(test);
-    });
+    console.log("activated");
   },
   mounted() {
-    // 调用翻译
-    // ----------------
+    console.log("mounted");
     this.startTime = this.getStartTime();
     this.endTime = this.$common.getCurrentTime();
     this.statusOptions = this.$common.getEnumByGroupStr("alarm_r");
+    this.getTaskList(false);
   },
   watch: {
     checkedTaskUuidList: function(newVal, oldVal) {
-      this.checkTaskAll = newVal.length === this.alarmtypearr.length;
+      this.checkTaskAll = newVal.length === this.taskItemList.length;
     },
     checkedFaceUuidList: function(newVal, oldVal) {
       this.checkLibAll = newVal.length === this.faceDBList.length;
@@ -274,16 +249,17 @@ export default {
     // 获取布控任务
     getTaskList(isTrue) {
       api
-        .getTaskList({ enabled: 1 })
+        .getTaskList()
         .then(res => {
           if (res.data.success) {
             this.taskItemList = res.data.data;
+            this.checkedTaskUuidList = [];
             for (var i = 0; i < this.taskItemList.length; i++) {
               var tempTask = this.taskItemList[i];
-              this.checkedTaskUuidList.push(tempTask.taskuuid);
+              this.checkedTaskUuidList.push(tempTask.faceMonitorUuid);
             }
             this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
-            if (isTrue) {
+            if (!isTrue) {
               this.currentPage = 1;
               this.totalCompareItemList = [];
               this.queryAct(true);
@@ -355,61 +331,46 @@ export default {
       }
       console.log(this.startTime, "-----", this.endTime);
     },
-    handleLibCheckAllChange(val) {
-      this.checkedFaceUuidList = [];
-      if (val) {
-        this.checkedFaceLibObj = this.faceDBList;
-        for (let i = 0; i < this.faceDBList.length; i++) {
-          var temp = this.faceDBList[i];
-          this.checkedFaceUuidList.push(temp.libraryuuid);
-        }
-      } else {
-        this.checkedFaceLibObj = [];
-      }
-      console.log("***************");
-      console.log(this.checkedFaceUuidList);
-      this.$refs.tree3.setCheckedKeys(this.checkedFaceUuidList);
-      this.isIndeterminate = false;
+    transferCheckedFaceDB(val) {
+      console.log('人脸库：', val);
+      this.checkedFaceUuidList = val;
     },
     transferTaskAct(val) {
-      this.checkedTaskUuidList = [];
-      if (val) {
-        this.checkedTaskObj = this.alarmtypearr;
-        for (let i = 0; i < this.alarmtypearr.length; i++) {
-          var temp = this.alarmtypearr[i];
-          this.checkedTaskUuidList.push(temp.taskuuid);
-        }
-      } else {
-        this.checkedTaskObj = [];
-      }
-      this.$refs.tree1.setCheckedKeys(this.checkedTaskUuidList);
-      this.isIndeterminate = false;
+      console.log('布控任务：', val);
+      this.checkedTaskUuidList = val;
+      this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
     },
     transferCheckedChannel(checkedChannel) {
+      console.log('设备列表：', checkedChannel);
       this.checkedChannelsUuidList = checkedChannel;
     },
     getFaceLibsAndDeviceList(taskuuidList) {
+      console.log(taskuuidList);
       if (!taskuuidList.length) {
         for (var i = 0; i < this.taskItemList.length; i++) {
           var tempTask = this.taskItemList[i];
-          taskuuidList.push(tempTask.taskuuid);
+          taskuuidList.push(tempTask.faceMonitorUuid);
         }
       }
       this.faceDBList = [];
       this.DeviceTreeList = [];
       taskuuidList.forEach(item => {
-        this.getMonitoringTaskDetails(item.faceMonitorUuid);
+        console.log('------', item);
+        this.getMonitoringTaskDetails(item);
       });
     },
     // 查询布控任务详情
-    getMonitoringTaskDetails(taskUuid) {
+    getMonitoringTaskDetails(faceMonitorUuid) {
       api
-        .getTaskDeatailChannelAndLib(taskUuid)
+        .getTaskDeatailChannelAndLib(faceMonitorUuid)
         .then(res => {
           if (res.data.success && res.data.data) {
+            console.log(res.data.data);
             this.faceDBList.push(...res.data.data.libraryList);
             this.DeviceTreeList.push(...res.data.data.channelList);
           }
+          console.log(this.faceDBList);
+          console.log(this.DeviceTreeList);
         })
         .catch(() => {});
     },
@@ -453,7 +414,8 @@ export default {
     },
     lookAlarmDetail(detail) {
       detail.dialogPhotoImgUrl = this.imageHeader + detail.faceCapturePhotoUrl;
-      detail.dialogPanoramaImgUrl = this.imageHeader + detail.panoramaCapturePhotoUrl;
+      detail.dialogPanoramaImgUrl =
+				this.imageHeader + detail.panoramaCapturePhotoUrl;
       this.detail = detail;
       this.faceImgDialogVisible = !this.faceImgDialogVisible;
       // this.facealarmvisible = true;
