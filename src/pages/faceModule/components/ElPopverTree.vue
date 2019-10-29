@@ -137,13 +137,12 @@ export default {
       visible_popver: false,
       treeData: [],
       channels: [],
-      checkedChannelName: "全部",
+      // checkedChannelName: "全部",
       isFlag: false
     };
   },
   watch: {
     defaultCheckedChannel(val) {
-      console.log("defaultCheckedChannel: ", val);
       let arr = [];
       val.forEach(element => {
         arr.push(element.channelUuid);
@@ -151,26 +150,56 @@ export default {
       this.checkedChannel = arr;
     },
     checkedChannel(val) {
-      if (!val) val = [];
-      if (val.length && val.length === this.channels.length) {
-        this.checkedChannelName = "全部";
-        this.isIndeterminate = false;
-        this.checkAll = true;
-        return;
-      }
-      let str = "";
-      this.channels.forEach(item => {
-        if (val.indexOf(item.channelUuid) !== -1) {
-          str += item.nickName;
-          str += "，";
-        }
-      });
-      this.checkedChannelName = str.substr(0, str.length - 1);
+      // if (!val) val = [];
+      // if (val.length && val.length === this.channels.length) {
+      //   this.checkedChannelName = "全部";
+      //   this.isIndeterminate = false;
+      //   this.checkAll = true;
+      //   return;
+      // }
+      // let str = "";
+      // this.channels.forEach(item => {
+      //   if (val.indexOf(item.channelUuid) !== -1) {
+      //     str += item.nickName;
+      //     str += "，";
+      //   }
+      // });
+      // this.checkedChannelName = str.substr(0, str.length - 1);
     },
     channels(val) {
       if (val && !val.length) {
         this.isIndeterminate = false;
         this.checkAll = false;
+      }
+    }
+  },
+  computed: {
+    checkedChannelName: {
+      get: function() {
+        if (
+          this.checkedChannel &&
+					this.checkedChannel.length === this.channels.length
+        ) {
+          return "全部";
+        } else {
+          let str = "";
+          this.channels.forEach(item => {
+            if (this.checkedChannel.indexOf(item.channelUuid) !== -1) {
+              str += item.nickName;
+              str += "，";
+            }
+          });
+          return str.substr(0, str.length - 1);
+        }
+      },
+      set: function(newVal) {
+        if (newVal === "全部") {
+          this.isIndeterminate = false;
+          this.checkAll = true;
+        } else {
+          this.isIndeterminate = true;
+          this.checkAll = false;
+        }
       }
     }
   },
@@ -183,13 +212,7 @@ export default {
       this.checkAll = false;
     },
     // 弹窗展开的回调
-    show() {
-      // let arr = [];
-      // this.defaultCheckedChannel.forEach(element => {
-      //   arr.push(element.channelUuid);
-      // });
-      // this.checkedChannel = arr;
-    },
+    show() {},
     // 弹窗关闭的回调
     hide() {},
     // 全选的回调
