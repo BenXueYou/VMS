@@ -434,6 +434,7 @@ export default {
       this.$emit("onConfirm");
     },
     editIntelModel() {
+      this.formatParams();
       this.$intelModelHttp.editIntelModel(this.formLabelAlign).then(res => {
         let body = res.data;
         this.modelSuccess(body);
