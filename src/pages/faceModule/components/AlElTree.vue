@@ -43,18 +43,18 @@ export default {
     },
     nodeKey: {
       type: String,
-      default: 'id'
+      default: "id"
     },
     inputWidth: {
       type: String,
-      default: '50%'
+      default: "50%"
     },
     defaultProps: {
       type: Object,
       default: () => {
         return {
-          children: 'children',
-          label: 'label'
+          children: "children",
+          label: "label"
         };
       }
     },
@@ -64,9 +64,8 @@ export default {
     },
     inputPlaceholder: {
       type: String,
-      default: '全部'
+      default: "全部"
     }
-
   },
   watch: {
     checkedUuid: {
@@ -78,26 +77,30 @@ export default {
     },
     treeDataList: function() {
       this.checkedUuidList = [];
+    },
+    checkedUuidList(val) {
+      if (val && val.length) {
+        this.checkedNameString = this.getCheckedNameString();
+      } else {
+        this.checkedNameString = "全部";
+      }
     }
   },
   data: function() {
     return {
       checkAll: true,
-      checkedNameString: '',
+      checkedNameString: "",
       checkedUuidList: [],
       checkedObj: [],
       isIndeterminate: false
     };
   },
-  mounted: function() {
-
-  },
+  mounted: function() {},
   methods: {
     popverShow() {
       if (!this.checkedUuidList.length) {
         this.checkedUuidList = this.getAllUuidList();
         this.checkedObj = this.treeDataList;
-
         this.checkAll = true;
       } else if (this.checkedUuidList.length === this.treeDataList.length) {
         this.checkAll = true;
@@ -107,17 +110,10 @@ export default {
       this.$refs.treeRef.setCheckedKeys(this.checkedUuidList);
       this.checkedNameString = this.getCheckedNameString();
     },
-    popverHidden() {
-      if (this.checkedUuidList.length > 0) {
-        this.checkedNameString = this.getCheckedNameString();
-      } else {
-        this.checkedNameString = '全部';
-      }
-      this.$emit("transferAct", this.checkedUuidList);
-    },
+    popverHidden() {},
     clearAction() {
       this.checkAll = false;
-      this.checkedNameString = '';
+      this.checkedNameString = "";
       this.checkedUuidList = [];
     },
     // 点击复选框
@@ -141,22 +137,19 @@ export default {
     // getAllUuidList
     getAllUuidList() {
       var tempArr = [];
-      for (var i = 0; i < this.treeDataList.length; i++) {
-        var temp = this.treeDataList[i];
-        tempArr.push(temp[this.nodeKey]);
-      }
+      this.treeDataList.forEach(element => {
+        tempArr.push(element[this.nodeKey]);
+      });
       return tempArr;
     },
-    // getCheckedNameString
     getCheckedNameString() {
-      var string = '';
+      var string = "";
       var name = this.defaultProps.label;
-      for (var i = 0; i < this.checkedObj.length; i++) {
-        var temp = this.checkedObj[i];
-        string += temp[name];
-        if (i === this.checkedObj.length - 1) return string;
-        string += ',';
-      }
+      this.checkedObj.forEach(element => {
+        string += element[name];
+        string += ",";
+      });
+      string.substr(0, string.length - 1);
       return string;
     }
   }

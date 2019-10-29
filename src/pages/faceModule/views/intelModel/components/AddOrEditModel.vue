@@ -79,14 +79,15 @@
                                   format="HH:mm"
                                   :picker-options="{
                                     selectableRange: '00:00:00 - 23:59:59'
-                                  }">
-                  </el-time-picker>
-                  <span style="margin: 0 5px">至</span>
-                  <el-time-picker v-model="item.endTime"
-                                  style="width: 100px"
-                                  value-format="HH:mm:ss"
-                                  format="HH:mm"
-                                  :picker-options="{
+                                  }"
+									></el-time-picker>
+									<span style="margin: 0 5px">至</span>
+									<el-time-picker
+										v-model="item.endTime"
+										style="width: 100px"
+										value-format="HH:mm:ss"
+										format="HH:mm"
+										:picker-options="{
                                     selectableRange: `${item.startTime ? item.startTime : '00:00:00'} - 23:59:59`,
                                   }">
                   </el-time-picker>
@@ -409,7 +410,10 @@ export default {
       this.formLabelAlign.notInVideoSource = [];
       this.allVideoSource.forEach(v => {
         if (v.localType === "videoSource") {
-          this.formLabelAlign.videoSource = this.$common.copyObject(v, this.formLabelAlign.videoSource);
+          this.formLabelAlign.videoSource = this.$common.copyObject(
+            v,
+            this.formLabelAlign.videoSource
+          );
         } else if (v.localType === "conform") {
           this.formLabelAlign.otherVideoSource.push(v);
         } else if (v.localType === "inconformity") {
@@ -574,164 +578,164 @@ export default {
 </script>
 <style lang="scss">
 .control-main-add {
-  .el-form-item__label {
-    font-family: PingFangSC-Regular;
-    font-size: 12px !important;
-    color: #dddddd;
-  }
+	.el-form-item__label {
+		font-family: PingFangSC-Regular;
+		font-size: 12px !important;
+		color: #dddddd;
+	}
 }
 .popverClass {
-  width: 500px;
-  height: 200px;
-  position: absolute;
-  background: #202127;
-  border: 1px solid #ebeef5;
-  padding: 12px;
-  z-index: 2000;
-  color: #606266;
-  line-height: 1.4;
-  text-align: justify;
-  font-size: 14px;
-  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  max-height: 80%;
-  overflow: auto;
+	width: 500px;
+	height: 200px;
+	position: absolute;
+	background: #202127;
+	border: 1px solid #ebeef5;
+	padding: 12px;
+	z-index: 2000;
+	color: #606266;
+	line-height: 1.4;
+	text-align: justify;
+	font-size: 14px;
+	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+	max-height: 80%;
+	overflow: auto;
 }
 </style>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .control-main-add {
-  width: 100%;
-  height: 100%;
-  padding: 1.2% 1.5%;
-  box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	padding: 1.2% 1.5%;
+	box-sizing: border-box;
 }
 .access-main {
-  width: 1000px;
-  height: 100%;
-  background: #212325;
-  padding: 0 1.5%;
-  box-sizing: border-box;
-  position: relative;
-  .dialog-title {
-    height: 75px;
-    border: {
-      width: 0 0 1px 0;
-      color: rgba(255, 255, 255, 0.1);
-      style: dashed;
-    }
-    display: flex;
-    align-items: center;
-    .title-text {
-      height: 20px;
-      line-height: 20px !important;
-      font-family: " PingFangSC-Regular";
-      font-size: 14px;
-      color: #ffffff;
-      padding-left: 10px;
-      line-height: 50px;
-      border-left: 3px solid #20cc96;
-    }
-    .title-button {
-      margin-left: auto;
-      margin-right: 0;
-    }
-  }
-  .form {
-    height: calc(100% - 190px);
-    overflow-y: auto;
-    padding: 12px 0;
-    .info-form {
-      .el-form-item {
-        margin-bottom: 10px;
-      }
-      padding: 1% 2%;
-      box-sizing: border-box;
-      .left-space {
-        margin-left: 13px;
-      }
-      .time-select {
-        font-family: PingFangSC-Regular;
-        font-size: 13px;
-        color: #dddddd;
-        .time-item {
-          display: flex;
-          align-items: center;
-        }
-      }
-      .time-interal {
-        width: 250px;
-      }
-    }
-  }
-  .unit {
-    font-family: PingFangSC-Regular;
-    font-size: 12px;
-    color: #dddddd;
-  }
-  .footer {
-    position: absolute;
-    bottom: 0px;
-    left: 20px;
-    width: 96%;
-    height: 75px;
-    border: {
-      width: 1px 0 0 0;
-      color: rgba(255, 255, 255, 0.1);
-      style: dashed;
-    }
-    .bottom-button {
-      position: absolute;
-      right: 0px;
-      top: 18px;
-    }
-  }
-  .add-item {
-    font-family: PingFangSC-Regular;
-    font-size: 13px;
-    color: #26d39d;
-    cursor: pointer;
-    margin-left: 8px;
-  }
-  .item-select {
-    display: flex;
-    align-content: flex-start;
-    flex-flow: row wrap;
-    .select-item {
-      height: 32px;
-      padding: 0 12px;
-      box-sizing: border-box;
-      position: relative;
-      display: flex;
-      align-items: center;
-      font-family: PingFangSC-Regular;
-      font-size: 13px;
-      color: #dddddd;
-      background: rgba($color: #ffffff, $alpha: 0.05);
-      border-radius: 3px;
-      margin-bottom: 10px;
-      margin-right: 15px;
-      .del-image {
-        position: absolute;
-        top: -16px;
-        right: -5px;
-        cursor: pointer;
-      }
-      .system-select {
-        height: 100%;
-        border: {
-          width: 0 0 0 1px;
-          style: solid;
-          color: rgba($color: #ffffff, $alpha: 0.1);
-        }
-        margin-left: 10px;
-        padding-left: 10px;
-        box-sizing: border-box;
-        display: flex;
-        align-items: center;
-      }
-    }
-  }
+	width: 1000px;
+	height: 100%;
+	background: #212325;
+	padding: 0 1.5%;
+	box-sizing: border-box;
+	position: relative;
+	.dialog-title {
+		height: 75px;
+		border: {
+			width: 0 0 1px 0;
+			color: rgba(255, 255, 255, 0.1);
+			style: dashed;
+		}
+		display: flex;
+		align-items: center;
+		.title-text {
+			height: 20px;
+			line-height: 20px !important;
+			font-family: " PingFangSC-Regular";
+			font-size: 14px;
+			color: #ffffff;
+			padding-left: 10px;
+			line-height: 50px;
+			border-left: 3px solid #20cc96;
+		}
+		.title-button {
+			margin-left: auto;
+			margin-right: 0;
+		}
+	}
+	.form {
+		height: calc(100% - 190px);
+		overflow-y: auto;
+		padding: 12px 0;
+		.info-form {
+			.el-form-item {
+				margin-bottom: 10px;
+			}
+			padding: 1% 2%;
+			box-sizing: border-box;
+			.left-space {
+				margin-left: 13px;
+			}
+			.time-select {
+				font-family: PingFangSC-Regular;
+				font-size: 13px;
+				color: #dddddd;
+				.time-item {
+					display: flex;
+					align-items: center;
+				}
+			}
+			.time-interal {
+				width: 250px;
+			}
+		}
+	}
+	.unit {
+		font-family: PingFangSC-Regular;
+		font-size: 12px;
+		color: #dddddd;
+	}
+	.footer {
+		position: absolute;
+		bottom: 0px;
+		left: 20px;
+		width: 96%;
+		height: 75px;
+		border: {
+			width: 1px 0 0 0;
+			color: rgba(255, 255, 255, 0.1);
+			style: dashed;
+		}
+		.bottom-button {
+			position: absolute;
+			right: 0px;
+			top: 18px;
+		}
+	}
+	.add-item {
+		font-family: PingFangSC-Regular;
+		font-size: 13px;
+		color: #26d39d;
+		cursor: pointer;
+		margin-left: 8px;
+	}
+	.item-select {
+		display: flex;
+		align-content: flex-start;
+		flex-flow: row wrap;
+		.select-item {
+			height: 32px;
+			padding: 0 12px;
+			box-sizing: border-box;
+			position: relative;
+			display: flex;
+			align-items: center;
+			font-family: PingFangSC-Regular;
+			font-size: 13px;
+			color: #dddddd;
+			background: rgba($color: #ffffff, $alpha: 0.05);
+			border-radius: 3px;
+			margin-bottom: 10px;
+			margin-right: 15px;
+			.del-image {
+				position: absolute;
+				top: -16px;
+				right: -5px;
+				cursor: pointer;
+			}
+			.system-select {
+				height: 100%;
+				border: {
+					width: 0 0 0 1px;
+					style: solid;
+					color: rgba($color: #ffffff, $alpha: 0.1);
+				}
+				margin-left: 10px;
+				padding-left: 10px;
+				box-sizing: border-box;
+				display: flex;
+				align-items: center;
+			}
+		}
+	}
 }
 </style>

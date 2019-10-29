@@ -1,20 +1,18 @@
 <template>
 	<div id="noteaacx" class="wrap">
+    <transition name="slide-fade">
 		<div class="left" :style="{'margin-left':(issuoxiao?-470:0)+'px'}">
 			<div class="rightarrow" @click="suoxiao">
 				<img :src="rightarrow" :style="{'transform':(issuoxiao?'rotate(180deg)':'rotate(0deg)')}" alt />
 			</div>
-
 			<div class="leftHeader">
 				<img src="@/assets/images/faceModule/twopeople.png" alt />
 				人脸库
 			</div>
-
 			<div class="title button-div">
 				<el-button type="primary" icon="el-icon-plus" class="addnewdb" @click="addfacedb">新建人像库</el-button>
 				<span class="tips">人像库总数：{{tableData.length}} &nbsp;&nbsp;&nbsp;&nbsp; 总人脸数：{{totalrenshu}}</span>
 			</div>
-
 			<div class="leftasda">
 				<!-- :current-row-key="selectLibRow.index" -->
 				<el-table
@@ -49,6 +47,7 @@
 				</el-table>
 			</div>
 		</div>
+    </transition>
 		<div class="right" :style="{'width': 'calc(100% - '+(issuoxiao?30:500)+'px)'}">
 			<div v-show="!faceDBDialogAddVisible" class="rightheader">
 				<ul>

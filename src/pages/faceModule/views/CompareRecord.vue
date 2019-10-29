@@ -277,8 +277,21 @@ export default {
         .getTaskDeatailChannelAndLib(taskUuid)
         .then(res => {
           if (res.data.success && res.data.data) {
-            this.faceDBList.push(...res.data.data.libraryList);
-            this.DeviceTreeList.push(...res.data.data.channelList);
+            let arr = res.data.data;
+            this.faceDBList.push(
+              ...arr.libraryList.filter(item => {
+                return !this.faceDBList.some(i => {
+                  return i.faceLibraryUuid === item.faceLibraryUuid;
+                });
+              })
+            );
+            this.DeviceTreeList.push(
+              ...arr.channelList.filter(item => {
+                return !this.DeviceTreeList.some(im => {
+                  return im.channelUuid === item.channelUuid;
+                });
+              })
+            );
           }
         })
         .catch(() => {});
@@ -312,9 +325,9 @@ export default {
       var data = {
         limit: this.pageSize, // int每页显示行数是
         page: this.currentPage, // int第几页是
-        channelUuids: this.checkedChannelsUuidList, // string[]抓拍设备否
-        faceMonitorUuids: this.checkedTaskUuidList, // string[]布控任务否
-        faceLibraryUuids: this.checkedFaceUuidList, // string[]人脸库否
+        channelUuids: this.checkedChannelsUuidList.toString(), // string[]抓拍设备否
+        faceMonitorUuids: this.checkedTaskUuidList.toString(), // string[]布控任务否
+        faceLibraryUuids: this.checkedFaceUuidList.toString(), // string[]人脸库否
         staffName: this.staffName, // string人员姓名否
         credentialNo: this.certificateNum, // string证件号码否
         genderCapture: this.genderOption, // string抓拍性别否
@@ -383,7 +396,7 @@ export default {
     getTaskList(isTrue = true) {
       this.checkedTaskUuidList = [];
       api
-        .getTaskList({ enabled: 1 })
+        .getTaskList()
         .then(res => {
           if (res.data.success) {
             this.taskItemList = res.data.data;
@@ -436,7 +449,7 @@ export default {
         label: "faceMonitorName"
       },
       faceDBDefaultProps: {
-        label: "libraryname"
+        label: "faceLibraryName"
       },
       defaultDeviceProps: {
         label: "channelName"

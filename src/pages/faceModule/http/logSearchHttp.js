@@ -28,9 +28,9 @@ export function getTaskList(enabled) {
 export function faceComparison1v1(data) {
   let url = FaceModuleApi.searchLogApi.faceComparison1v1(store.state.home.projectUuid);
   return Axios({
-    method: "get",
+    method: "POST",
     url,
-    params: data
+    data
   });
 }
 // 抓拍列表
