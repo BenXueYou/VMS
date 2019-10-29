@@ -151,7 +151,7 @@ export default {
     },
     checkedChannel(val) {
       if (!val) val = [];
-      if (val.length === this.channels.length) {
+      if (val.length && (val.length === this.channels.length)) {
         this.checkedChannelName = "全部";
         this.isIndeterminate = false;
         this.checkAll = true;
