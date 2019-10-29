@@ -43,7 +43,7 @@
                   <img src="@/assets/images/person_g.png"
                        width="11px"
                        height="11px">
-                  <span style="margin-left: 4px">{{item.faceLibraryName}}</span>
+                  <span style="margin-left: 4px">{{item.libraryName || item.faceLibraryName}}</span>
                   <div class="del-image"
                        @click="deleteItem(item)">
                     <img src="@/assets/images/delete_x.png"
@@ -126,6 +126,7 @@
                     <div v-if="index === 0">
                       <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                                     @transferCheckedChannel="transferCheckedChannel($event, item)"
+                                    :defaultCheckedChannel="item.checkedChannel"
                                     inputWidth="180px"></elPopverTree>
                       <el-select v-model="item.logic"
                                  size="small"
@@ -163,6 +164,7 @@
                       </el-select>
                       <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                                     @transferCheckedChannel="transferCheckedChannel($event, item)"
+                                    :defaultCheckedChannel="item.checkedChannel"
                                     inputWidth="180px"></elPopverTree>
                       <el-select v-model="item.logic"
                                  size="small"
@@ -322,7 +324,8 @@ export default {
         {
           localType: "videoSource",
           channelList: [],
-          logic: "",
+          checkedChannel: [],
+          logic: ">=",
           frequency: 0,
           leastNumberOfChannel: 0
         }
@@ -380,6 +383,8 @@ export default {
         enabled: 1,
         remarks: ""
       };
+      this.allVideoSource = [];
+      this.faceDBSelectedList = [];
     },
     onClickConfirm() {
       this.$refs.modelForm.validate(valid => {
@@ -443,7 +448,8 @@ export default {
       this.allVideoSource.splice(index + 1, 0, {
         localType: "",
         channelList: [],
-        logic: "",
+        checkedChannel: [],
+        logic: ">=",
         frequency: 0
       });
     },
@@ -482,12 +488,78 @@ export default {
     },
     transferCheckedChannel(checkedChannel, item) {
       item.channelList = [];
+      item.checkedChannel = this.$common.copyArray(checkedChannel, item.checkedChannel);
       for (let i = 0; i < checkedChannel.length; i++) {
         item.channelList.push(checkedChannel[i].channelUuid);
       }
     },
     popverHidden() {},
-    popverShow() {}
+    popverShow() {},
+    setFromDataForEdit(detailData) {
+      this.formLabelAlign = this.$common.copyObject(detailData, this.formLabelAlign);
+      this.faceDBSelectedList = [];
+      this.$set(this.formLabelAlign, "notInlibrary", []);
+      if (detailData.notInlibrary) {
+        detailData.notInlibrary.forEach(v => {
+          this.formLabelAlign.notInlibrary.push(v.faceLibraryUuid);
+        });
+      }
+      this.$set(this.formLabelAlign, "faceLibraryUuids", []);
+      this.formLabelAlign.faceLibraryList.forEach(v => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+        this.faceDBSelectedList.push(v);
+      });
+      this.allVideoSource = [];
+      this.allVideoSource.push({
+        localType: "videoSource",
+        channelList: [],
+        checkedChannel: [],
+        logic: ">=",
+        frequency: 0,
+        leastNumberOfChannel: 0
+      });
+      if (this.formLabelAlign.videoSource) {
+        this.setCheckChannel(this.formLabelAlign.videoSource, this.allVideoSource[0]);
+      }
+      if (this.formLabelAlign.otherVideoSource) {
+        this.formLabelAlign.otherVideoSource.forEach(v => {
+          this.allVideoSource.push({
+            localType: "conform",
+            channelList: [],
+            checkedChannel: [],
+            logic: ">=",
+            frequency: 0
+          });
+          this.setCheckChannel(v, this.allVideoSource[this.allVideoSource.length - 1]);
+        });
+      }
+      if (this.formLabelAlign.notInVideoSource) {
+        this.formLabelAlign.notInVideoSource.forEach(v => {
+          this.allVideoSource.push({
+            localType: "inconformity",
+            channelList: [],
+            checkedChannel: [],
+            logic: ">=",
+            frequency: 0
+          });
+          this.setCheckChannel(v, this.allVideoSource[this.allVideoSource.length - 1]);
+        });
+      }
+    },
+    setCheckChannel(source, allSourceItem) {
+      source.channelList.forEach(v => {
+        allSourceItem.channelList.push(v.channelUuid);
+      });
+      // this.$set(allSourceItem, "checkedChannel", source.channelList);
+      this.$nextTick(() => {
+        this.$set(allSourceItem, "checkedChannel", source.channelList);
+      });
+      allSourceItem.logic = source.logic;
+      allSourceItem.frequency = source.frequency;
+      if (source.leastNumberOfChannel) {
+        allSourceItem.leastNumberOfChannel = source.leastNumberOfChannel;
+      }
+    }
   },
   watch: {
     "formLabelAlign.qualities": {

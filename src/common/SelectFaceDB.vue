@@ -26,7 +26,7 @@
                 <img src="@/assets/images/person_g.png"
                      width="11px"
                      height="11px">
-                <div class="item-faceDB text-show text-style">{{item.faceLibraryName}}</div>
+                <div class="item-faceDB text-show text-style">{{item.faceLibraryName || item.libraryName}}</div>
                 <!-- <div class="item-name text-show text-style">{{item.staffName}}</div> -->
                 <img class="check-img"
                      v-if="item.checked"
@@ -51,7 +51,7 @@
                        width="11px"
                        height="11px">
                   <span class="title-text text-show"
-                        style="margin-left: 4px">{{item.faceLibraryName}}</span>
+                        style="margin-left: 4px">{{item.faceLibraryName || item.libraryName}}</span>
                 </div>
                 <div class="del-img"
                      @click="deleteItem(item)"

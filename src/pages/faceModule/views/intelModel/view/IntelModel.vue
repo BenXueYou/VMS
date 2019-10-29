@@ -53,7 +53,7 @@
           <el-switch v-model="intelModelObj.enabled"
                      active-color="rgba(32,204,150,0.2)"
                      inactive-color="rgba(255,255,255,0.2)"
-                     @change="switchChange()"
+                     @change="switchChange"
                      :active-value="1"
                      :inactive-value="0"></el-switch>
           <span>状态</span>
@@ -83,9 +83,9 @@
           <div class="info-block block-line"
                style="width: 23%">创建时间：{{intelModelObj.createTime}} </div>
           <div class="info-block block-line"
-               style="width: 23%">模型描述：{{intelModelObj.remarks}} </div>
+               style="width: 23%;background: transparent"></div>
         </div>
-        <source-show-more :title="`人脸库： 共${intelModelObj.libraryList ? intelModelObj.libraryList.length : 0}个人脸库`"
+        <source-show-more :title="`人脸库： 共${intelModelObj.faceLibraryList ? intelModelObj.faceLibraryList.length : 0}个人脸库`"
                           blockHeight="80px"
                           :itemIcon="require('@/assets/images/faceModule/crime_db.png')"
                           :dataList="faceDBItemList"
@@ -103,12 +103,12 @@
           <div class="block-line">时间段：
             <template v-for="(item, index) in intelModelObj.timeList">
               <span :key="index">
-                {{item.startTime}}至{{item.endTime}}&nbsp;&nbsp;
+                {{item.startTime}}至{{item.endTime}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </span>
             </template>
           </div>
           <div class="block-camera">
-            <span>最近{{intelModelObj.recentDays}}，{{intelModelObj.statisticType}}满足</span>
+            <span>最近{{intelModelObj.recentDays}}天，{{$common.getEnumItemName("model_analisis_s", intelModelObj.statisticType)}}满足</span>
             <camera-show-more blockHeight="37px"
                               :itemIcon="require('@/assets/images/faceModule/camera.png')"
                               :dataList="intelModelObj.videoSource.channelList"
@@ -138,10 +138,10 @@
                               ref="camera1"
                               containerId="camera1" />
           </div>
-          <div class="block-line">排除人脸库:
+          <div class="block-line">排除人脸库：&nbsp;&nbsp;&nbsp;&nbsp;
             <template v-for="(item, index) in intelModelObj.notInlibrary">
               <span :key="index">
-                {{index === 0 ? item : `；${item}`}}
+                {{index === 0 ? item.libraryName : `；&nbsp;&nbsp;${item.libraryName}`}}
               </span>
             </template>
           </div>
@@ -234,7 +234,7 @@ export default {
       intelModelObj: {
         faceModelUuid: "",
         faceModelName: "",
-        libraryList: [],
+        faceLibraryList: [],
         faceSimilarityThreshold: "",
         qualities: "",
         timeList: [],
@@ -262,9 +262,16 @@ export default {
   created() {},
   activated() {},
   mounted() {
+    this.initData();
     this.getIntelModelList();
   },
   methods: {
+    initData() {
+      this.createTimeStart = this.$common.formatDate(
+        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+      );
+      this.createTimeEnd = this.$common.formatDate(new Date());
+    },
     clickLeft() {
       this.isShowDrag = !this.isShowDrag;
       this.width = "100%";
@@ -310,8 +317,34 @@ export default {
       this.getIntelModelList();
     },
     resetData() {
+      this.faceModelUuid = "";
+      this.otherVideoSourceList = [];
+      this.notInVideoSourceList = [];
+      this.intelModelObj = {
+        faceModelUuid: "",
+        faceModelName: "",
+        faceLibraryList: [],
+        faceSimilarityThreshold: "",
+        qualities: "",
+        timeList: [],
+        recentDays: "",
+        statisticType: "",
+        videoSource: {
+          channelList: [],
+          logic: "",
+          frequency: 0,
+          leastNumberOfChannel: "",
+        },
+        otherVideoSource: [],
+        notInVideoSource: [],
+        notInlibrary: [],
+        captureInterval: "",
+        enabled: 1,
+        remarks: "",
+      };
     },
     check(item) {
+      this.resetData();
       this.menuList.forEach(v => {
         v.selected = false;
       });
@@ -329,11 +362,15 @@ export default {
     },
     editTaskInit() {
       this.isAdd = false;
+      this.$refs.addOrEditModel.setFromDataForEdit(this.intelModelObj);
       this.isShowMain = false;
     },
     formatObj() {
-      if (this.intelModelObj.libraryList) {
-        this.intelModelObj.libraryList.forEach(v => {
+      this.faceDBItemList = [];
+      this.otherVideoSourceList = [];
+      this.notInVideoSourceList = [];
+      if (this.intelModelObj.faceLibraryList) {
+        this.intelModelObj.faceLibraryList.forEach(v => {
           this.faceDBItemList.push({
             name: v.libraryName
           });
@@ -345,7 +382,7 @@ export default {
             if (!this.otherVideoSourceList.some(v3 => v3.channelUuid === v2.channelUuid)) {
               this.otherVideoSourceList.push({
                 channelUuid: v2.channelUuid,
-                name: v2.channelName
+                channelName: v2.channelName
               });
             }
           });
@@ -357,7 +394,7 @@ export default {
             if (!this.notInVideoSourceList.some(v3 => v3.channelUuid === v2.channelUuid)) {
               this.notInVideoSourceList.push({
                 channelUuid: v2.channelUuid,
-                name: v2.channelName
+                channelName: v2.channelName
               });
             }
           });
@@ -470,7 +507,7 @@ export default {
     },
     deleteIntelModelSuccess(body) {
       this.$cToast.success(body.msg);
-      this.faceModelUuid = "";
+      this.resetData();
       this.getIntelModelList();
     },
     editIntelModelStatus(faceModelUuid, enabled) {

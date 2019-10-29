@@ -143,6 +143,7 @@ export default {
   },
   watch: {
     defaultCheckedChannel(val) {
+      console.log("defaultCheckedChannel: ", val);
       let arr = [];
       val.forEach(element => {
         arr.push(element.channelUuid);
