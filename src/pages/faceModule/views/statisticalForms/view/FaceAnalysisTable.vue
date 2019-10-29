@@ -147,8 +147,6 @@ export default {
   },
   created() {},
   mounted() {
-    this.initData();
-    this.getFaceAnalysisTable();
   },
   methods: {
     initData() {
@@ -254,6 +252,8 @@ export default {
   watch: {},
   destroyed() {},
   activated() {
+    this.initData();
+    this.getFaceAnalysisTable();
   }
 };
 </script>

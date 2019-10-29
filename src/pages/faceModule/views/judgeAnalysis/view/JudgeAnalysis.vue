@@ -180,7 +180,6 @@ export default {
         typeStr: ""
       },
     ];
-    this.init();
   },
   methods: {
     init() {
