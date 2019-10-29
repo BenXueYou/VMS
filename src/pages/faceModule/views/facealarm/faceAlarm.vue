@@ -366,11 +366,17 @@ export default {
         .then(res => {
           if (res.data.success && res.data.data) {
             console.log(res.data.data);
-            this.faceDBList.push(...res.data.data.libraryList);
-            this.DeviceTreeList.push(...res.data.data.channelList);
+            this.faceDBList.push(...res.data.data.libraryList.filter(item => {
+              return !this.faceDBList.some(iObj => {
+                return iObj.faceLibraryUuid === item.faceLibraryUuid;
+              });
+            }));
+            this.DeviceTreeList.push(...res.data.data.channelList.filter(item => {
+              return !this.DeviceTreeList.some(iObj => {
+                return iObj.channelUuid === item.channelUuid;
+              });
+            }));
           }
-          console.log(this.faceDBList);
-          console.log(this.DeviceTreeList);
         })
         .catch(() => {});
     },

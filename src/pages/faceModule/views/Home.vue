@@ -827,8 +827,9 @@ export default {
 .radioGroup {
 	text-align: left;
 	width: 95%;
-	height: 89%;
+	height: calc(100% - 55px);
 	overflow: auto;
+	box-sizing: border-box;
 }
 .checkBoxClass {
 	padding-left: 15px;

@@ -85,7 +85,10 @@
 					>{{(recoginizeItem)&&(recoginizeItem.captureDatetime)?recoginizeItem.captureDatetime.split(" ")[1]:'抓拍时间：-- --'}}</div>
 				</div>
 			</div>
-			<div v-if="alarmState" class="alarmStateTxt">{{alarmState?$common.getEnumItemName("alarm_r",alarmState):'已处理'}}</div>
+			<div
+				v-if="alarmState"
+				class="alarmStateTxt"
+			>{{alarmState?$common.getEnumItemName("alarm_r",alarmState):'已处理'}}</div>
 		</div>
 	</transition>
 </template>
@@ -102,7 +105,7 @@ export default {
     },
     imgWidth: {
       type: String,
-      default: '95'
+      default: "95"
     },
     alarmState: {
       type: Boolean,
@@ -151,6 +154,7 @@ export default {
 	padding-bottom: 8px;
 	background: rgba(0, 0, 0, 0.13);
 	border: 1px solid rgba(255, 255, 255, 0.1);
+	/* overflow: auto; */
 }
 .RecognizeCardClass .progressBox {
 	display: flex;
@@ -211,6 +215,7 @@ export default {
 	box-sizing: border-box;
 	display: flex;
 	justify-content: flex-start;
+	overflow: auto;
 }
 .RecognizeCardClass .asidListRowHeader {
 	height: 35px;
@@ -260,8 +265,9 @@ export default {
 	top: 0px;
 	left: 0px;
 	width: 100%;
-	height: 35px;
+	height: 34px;
 	z-index: 10;
 	pointer-events: none;
+	/* overflow-x: auto; */
 }
 </style>

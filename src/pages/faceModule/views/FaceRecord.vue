@@ -213,19 +213,6 @@ export default {
   activated: function() {
     console.log("抓拍记录刷新页面");
     this.checkNameString = "";
-    // this.getDeviceList(false);
-    // this.$nextTick(() => {
-    //   this.defaultCheckedChannel = [
-    //     {
-    //       channelName: "device_001_c1",
-    //       channelType: "bullet_camera",
-    //       channelUuid: "49D2B7299EAAA3AF295E33F03B982D32",
-    //       deviceUuid: "8e264e8653a94eecaa2ce2a2d1ac268d",
-    //       nickName: "192.168.9.198-通道1"
-    //     }
-    //   ];
-    // });
-    this.defaultCheckedChannel = [];
   },
   methods: {
     selectDateAct(dateStr) {
