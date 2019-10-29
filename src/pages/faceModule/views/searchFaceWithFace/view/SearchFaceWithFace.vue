@@ -107,7 +107,9 @@
                   <img src="@/assets/images/faceModule/look_allview.png">
                   <span class="elem-title">查看全景图</span>
                 </div>
-                <div class="menu-elem" v-if="libraryType === 'captureFaceLib'">
+                <div class="menu-elem"
+                     v-if="libraryType === 'captureFaceLib'"
+                     @click="tempMonitor(item)">
                   <img src="@/assets/images/faceModule/now_dect.png">
                   <span class="elem-title">临时布控</span>
                 </div>
@@ -352,6 +354,23 @@ export default {
     downloadImage(item) {
       // this.$common.downloadImage(item.faceCapturePhotoUrl);
       this.$common.downloadImage(this.$common.setPictureShow(item.faceCapturePhotoUrl));
+    },
+    tempMonitor(item) {
+      let imageBase64 = "";
+      this.$common.imageToBase64(item.faceCapturePhotoUrl, base64 => {
+        imageBase64 = base64;
+      });
+      this.$searchFaceHttp
+        .tempMonitor({
+          imageBase64,
+        })
+        .then(res => {
+          let body = res.data;
+          this.tempMonitorSuccess(body);
+        });
+    },
+    tempMonitorSuccess(body) {
+      this.$cToast.success(body.msg);
     },
   },
   watch: {},
