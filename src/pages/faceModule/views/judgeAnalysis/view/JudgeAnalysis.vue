@@ -9,13 +9,13 @@
         <span>研判时段：</span>
         <el-date-picker v-model="startTime"
                         type="datetime"
-                        style="width: 12%; margin-left: 5px"
+                        style="width: 200px; margin-left: 5px"
                         placeholder="选择日期"
                         value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
         <span class="line">—</span>
         <el-date-picker v-model="endTime"
                         type="datetime"
-                        style="width: 12%"
+                        style="width: 200px;"
                         placeholder="选择日期"
                         value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
         <el-radio-group v-model="selectDate"

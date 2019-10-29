@@ -6,25 +6,9 @@
     <div class="main-container">
       <div class="face-select">
         <div class="title-text">抓拍设备：</div>
-        <!-- <el-select v-model="devicename"
-                  filterable
-                  collapse-tags
-                  placeholder="请选择"
-                  class='dev-select'>
-          <el-option v-for="item in devicearr"
-                    :key="item.channeluuid"
-                    :label="item.channelName"
-                    :value="item.channeluuid">
-
-          </el-option>
-        </el-select> -->
-        <elPopverTree :channelInfoList="deviceList"
-                      :elPopoverClass="faceRecordPopoverClass"
-                      @transferCheckedChannel="transferCheckedChannel"
-                      @show="popverShow"
-                      inputWidth="200px"
-                      @hide="popverHidden">
-        </elPopverTree>
+        <elPopverTree :elPopoverClass="faceRecordPopoverClass"
+                        @transferCheckedChannel="transferCheckedChannel"
+                        inputWidth="230px"></elPopverTree>
         <div class="title-text left-space">抓拍时段：</div>
         <el-date-picker v-model="startTime"
                         type="datetime"
@@ -151,8 +135,8 @@ export default {
       multipleSelection: [],
       isShow: false,
       deviceList: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
-      checkedChannelsUuidList: [],
+      faceRecordPopoverClass: "faceAnaPopoverClass",
+      channelUuids: [],
       staffUuid: "",
       tableData: [],
       detailsData: [],
@@ -178,7 +162,7 @@ export default {
       this.isLoading = true;
       this.$factTragicHttp
         .getFaceAnalysisTable({
-          channelUuids: this.checkedChannelsUuidList,
+          channelUuids: this.channelUuids,
           startTime: this.startTime,
           endTime: this.endTime,
           logic: this.conditionVal,
@@ -198,14 +182,14 @@ export default {
     getFaceAnalysisTableSuccess(data) {
       this.isLoading = false;
       this.idListForDetail = this.$common.copyArray(
-        this.checkedChannelsUuidList,
+        this.channelUuids,
         this.idListForDetail
       );
       this.tableData = [];
       this.tableData = data.body.data.list;
       for (let item of this.tableData) {
         item.channelName = "";
-        if (this.checkedChannelsUuidList.length === 0) {
+        if (this.channelUuids.length === 0) {
           item.channelName = "全部";
         } else {
           for (let item2 of this.checkedChannel) {
@@ -260,33 +244,24 @@ export default {
     onCancelDialog() {
       this.isShow = false;
     },
-    // 获取任务列表
-    getDeviceList() {
-      var deviceList = this.$store.getters.getDeviceList;
-      this.deviceList = deviceList;
-    },
     transferCheckedChannel(checkedChannel) {
-      this.checkedChannel = checkedChannel;
-      this.checkedChannelsUuidList = [];
-      for (var i = 0; i < checkedChannel.length; i++) {
-        this.checkedChannelsUuidList.push(checkedChannel[i].id);
+      this.channelUuids = [];
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    popverShow() {},
-    popverHidden() {}
   },
   watch: {},
   destroyed() {},
   activated() {
-    this.getDeviceList();
   }
 };
 </script>
 
 <style>
-.faceRecordPopoverClass {
-  width: 50%;
-  height: 45%;
+.faceAnaPopoverClass {
+  width: 500px;
+  height: 230px;
   position: absolute;
   background: #202127;
   min-width: 150px;

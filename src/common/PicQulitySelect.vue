@@ -164,6 +164,15 @@ export default {
           selected: false
         }
       ];
+      if (this.isShowLower) {
+        this.picQultButtons.push(
+          {
+            value: "LOWER",
+            text: "无效",
+            selected: false
+          }
+        );
+      }
     }
   },
   watch: {

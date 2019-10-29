@@ -31,13 +31,9 @@
                           placeholder="选择日期"
                           value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
           <span style="margin-left: 4%">抓拍设备：</span>
-          <elPopverTree :channelInfoList="deviceList"
-                        :elPopoverClass="faceRecordPopoverClass"
-                        :checkedChannelKeys="checkedChannelKeys"
+          <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                         @transferCheckedChannel="transferCheckedChannel"
-                        inputWidth="230px"
-                        @show="popverShow"
-                        @hide="popverHidden"></elPopverTree>
+                        inputWidth="230px"></elPopverTree>
           <span style="margin-left: 4%">对比库：</span>
           <el-radio-group v-model="libraryType"
                           @change="handleTypeChange"
@@ -162,7 +158,7 @@ export default {
       },
       faceList: [],
       deviceList: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
+      faceRecordPopoverClass: "popoverClass",
       checkedChannelKeys: [],
       channelUuids: [],
       isLoading: false,
@@ -274,19 +270,12 @@ export default {
     handleTypeChange() {
       this.getFaceList();
     },
-    getChannelUuids() {},
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
-      if (!checkedChannel || checkedChannel.length === 0) {
-        this.getChannelUuids(this.deviceList);
-      } else {
-        for (var i = 0; i < checkedChannel.length; i++) {
-          this.channelUuids.push(checkedChannel[i].id);
-        }
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    popverShow() {},
-    popverHidden() {},
     getFaceList() {
       this.getImg();
       this.isLoading = true;
@@ -380,8 +369,8 @@ export default {
 </script>
 
 <style>
-.faceRecordPopoverClass {
-  width: 380px;
+.popoverClass {
+  width: 500px;
   height: 230px;
   position: absolute;
   background: #202127;
