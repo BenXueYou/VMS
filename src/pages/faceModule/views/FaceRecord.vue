@@ -36,7 +36,7 @@
 					:elPopoverClass="fRPopoverClass"
 					@transferCheckedChannel="transferCheckedChannel"
 					inputWidth="75%"
-					:defaultCheckedChannel="defaultCheckedChannel"
+					:isCheckedAll="true"
 				></elPopverTree>
 			</div>
 			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
@@ -225,6 +225,7 @@ export default {
     //     }
     //   ];
     // });
+    this.defaultCheckedChannel = [];
   },
   methods: {
     selectDateAct(dateStr) {

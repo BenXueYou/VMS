@@ -89,11 +89,9 @@ import * as api from "@/pages/faceModule/http/homeBaseHttp.js";
 export default {
   name: "elPopverTree",
   props: {
-    checkedChannelKeys: {
-      type: Array,
-      default() {
-        return [];
-      }
+    isCheckedAll: {
+      type: Boolean,
+      default: false
     },
     channelInfoList: {
       type: Array,
@@ -259,9 +257,7 @@ export default {
         .then(res => {
           if (res.data.success && res.data.data) {
             this.channels = res.data.data;
-            if (
-              !this.defaultCheckedChannel.length
-            ) {
+            if (this.isCheckedAll) {
               let checkedChannelUuidArr = [];
               this.channels.forEach(element => {
                 checkedChannelUuidArr.push(element.channelUuid);
