@@ -92,8 +92,8 @@
         <div class='window'>
           <div class="windowItem"
                v-for="(item,index)  in controlData"
-               :key="index">{{item.fileName}}
-            {{item.fileName?(item.fileName):('窗口'+(index+1))}}
+               :key="index">
+            {{item.rtspUrl?(item.fileName):('窗口'+(index+1))}}&nbsp;
           </div>
         </div>
       </div>
@@ -270,10 +270,12 @@ export default {
           line-height: 34px;
           margin: 3px;
           box-sizing: border-box;
-          text-indent: 20px;
+          text-indent: 0px;
+          text-align: center;
           font-family: "PingFangSC-Regular";
           font-size: 12px;
           color: #dddddd;
+          overflow: auto;
         }
       }
       .mmm {

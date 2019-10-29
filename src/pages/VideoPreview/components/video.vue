@@ -296,7 +296,7 @@ export default {
         h = 1440;
       }
       console.log(w, h);
-      this.video = this.video_mgr.play(
+      this.video = this.video_mgr.setup(
         JSON.stringify(jSignal),
         JSON.stringify(jMedia),
         this.rtspUrl,
@@ -307,6 +307,7 @@ export default {
         w,
         h
       );
+      this.video_mgr.play(this.video);
       this.$refs.canvasRefs.appendChild(this.canvas);
     },
     stopVideo() {

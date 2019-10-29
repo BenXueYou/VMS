@@ -16,7 +16,7 @@ function CSession(jSignal, jMedia, url, protocol, action, speed, observer)
     this.m_connected    = false;
 };
 
-CSession.prototype.play = function()
+CSession.prototype.setup = function()
 {
     // 1. 解析json_signal
     var tmpThis = this;
@@ -31,14 +31,14 @@ CSession.prototype.play = function()
             this.m_wsSignal.onopen = function(){
                 // 信令通道连接成功
                 // 3. 发送播放请求
-                //var playReq = '{"msgType": "playReq", "context": 123456, "url": "rtsp://admin:admin@192.168.9.121:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif", "protocol": "rtsp", "action": "preview"}';
-                let playReq = {"msgType": "playReq"};
-                playReq.context = tmpThis.m_context;
-                playReq.url = tmpThis.m_url;
-                playReq.protocol = tmpThis.m_protocol;
-                playReq.action = tmpThis.m_action;
-                playReq.speed = tmpThis.m_speed;
-                tmpThis.m_wsSignal.send(JSON.stringify(playReq));
+                //var setupReq = '{"msgType": "setupReq", "context": 123456, "url": "rtsp://admin:admin@192.168.9.121:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif", "protocol": "rtsp", "action": "preview"}';
+                let setupReq = {"msgType": "setupReq"};
+                setupReq.context = tmpThis.m_context;
+                setupReq.url = tmpThis.m_url;
+                setupReq.protocol = tmpThis.m_protocol;
+                setupReq.action = tmpThis.m_action;
+                setupReq.speed = tmpThis.m_speed;
+                tmpThis.m_wsSignal.send(JSON.stringify(setupReq));
             }
             this.m_wsSignal.onclose = function(){
                 // 信令通道连接失败
@@ -50,19 +50,23 @@ CSession.prototype.play = function()
                 let msg = JSON.parse(s);
                 switch (msg.msgType)
                 {
-                    case "playRsp":
+                    case "setupRsp":
                         {
                             if (msg.context == tmpThis.m_context && msg.errCode == 0)
                             {
                                 // 4. 创建websocket_media
                                 tmpThis.m_sessionId = msg.data.sessionId;
-                                let ret = tmpThis.createWsMedia();
                                 tmpThis.m_observer.onSdp(msg.data.sdp);
+                                let ret = tmpThis.createWsMedia();
                             }
                             else
                             {
                                 // fix: print
                             }
+                            break;
+                        }
+                    case "playRsp":
+                        {
                             break;
                         }
                     case "pauseRsp":
@@ -126,6 +130,28 @@ CSession.prototype.createWsMedia = function()
         }
     }
     return ret;
+}
+
+CSession.prototype.play = function()
+{
+    var playReq = {"msgType": "playReq"};
+    if (this.m_connected == true)
+    {
+        this.m_wsSignal.send(JSON.stringify(playReq));
+    }
+    else
+    {
+        var tmpThis = this;
+        var tmpInterval = setInterval(function(){
+            if (tmpThis.m_connected)
+            {
+                playReq.context = tmpThis.m_context;
+                playReq.sessionId = tmpThis.m_sessionId;
+                tmpThis.m_wsSignal.send(JSON.stringify(playReq));
+                clearInterval(tmpInterval);
+            }
+        }, 0);
+    }
 }
 
 CSession.prototype.stop = function()

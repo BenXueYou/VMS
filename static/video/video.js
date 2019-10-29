@@ -11,22 +11,32 @@ function CVideo(observer)
     this.m_height       = null;
 }
 
-CVideo.prototype.play = function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
+CVideo.prototype.setup = function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
 {
     this.m_canvas = canvas;
     this.m_session = new CSession(jSignal, jMedia, url, protocol, action, speed, this);
-    this.m_session.play();
+    this.m_session.setup();
     this.m_action = action;
     this.m_speed = speed;
     this.m_width = w;
     this.m_height = h;
-    if (action === "preview" || action === "playback")
+}
+
+CVideo.prototype.play = function()
+{
+    this.m_session.play();
+    //this.m_decoder.play();
+}
+
+CVideo.prototype.onSdp = function(sdp)
+{
+    if (this.m_action === "preview" || this.m_action === "playback")
     {
         // fix: 要等sdp到了之后才能play
-        //this.m_decoder = new CDecoder(canvas);
-        //this.m_decoder.play();
+        this.m_decoder = new CDecoder(this.m_canvas);
+        this.m_decoder.setup(sdp, this.m_width, this.m_height);
     }
-    else if (action === "download")
+    else if (this.m_action === "download")
     {
         // 下载需要下载模块
         // fix: 下载模块暂未实现
@@ -36,12 +46,6 @@ CVideo.prototype.play = function(jSignal, jMedia, url, protocol, action, speed, 
     {
         // fix: 其他模式暂不支持
     }
-}
-
-CVideo.prototype.onSdp = function(sdp)
-{
-    this.m_decoder = new CDecoder(this.m_canvas);
-    this.m_decoder.play(sdp, this.m_width, this.m_height);
 }
 
 CVideo.prototype.onMedia = function(data)
@@ -137,42 +141,3 @@ CVideo.prototype.stopRecord = function()
         this.m_download = null;
     }
 }
-
-/*
-function CVideo()
-{
-    this.m_session          = null;
-    this.m_decoderWorker    = null;
-};
-
-CVideo.prototype.play = function(jSignal, jMedia, url, protocol, action, canvas)
-{
-    this.m_session = new CSession(jSignal, jMedia, url, protocol, action, this.onMedia);
-    if (action == "preview" || action == "playback")
-    {
-        // fix: 创建解码模块(解码模块单独一个线程)
-        this.m_decoderWorker = new Worker("");
-    }
-    else if (action == "download")
-    {
-        // 下载需要下载模块
-        // fix: 下载模块暂未实现
-    }
-    else
-    {
-        // fix: 其他模式暂不支持
-    }
-}
-
-CVideo.prototype.onMedia = function(data)
-{
-    // 1. 检查是否入缓存
-    if (this.m_decoderWorker != null)
-    {
-        this.m_decoderWorker.postMessage(data);
-    }
-
-    // 2. 如果有下载模块 写入下载模块
-    // fix: 下载模块暂未实现
-}
-*/

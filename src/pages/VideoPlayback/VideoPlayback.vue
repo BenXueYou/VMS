@@ -15,8 +15,8 @@
                     :isActive="operatorIndex===index"
                     :width="videoWidth"
                     :height="videoHeight"
-                    :IsShowMenu="!!item.url"
-                    :rtspUrl="item.url"
+                    :IsShowMenu="!!item.rtspUrl"
+                    :rtspUrl="item.rtspUrl"
                     :streamType="item.streamType"
                     action="playback"
                     :position="item.position"
@@ -37,6 +37,7 @@
       </div>
     </div>
     <video-info-Dialog title="摄像机信息"
+                       :videoinfo="videoinfo"
                        :visible.sync="videoInfoVisible"></video-info-Dialog>
     <image-adjust-dialog title="画面调节"
                          :visible.sync="imageAdjustVisible">
@@ -51,6 +52,7 @@
                             labelName="视图名称"
                             :visible.sync="appendViewVisible"></tree-append-tag-dialog>
     <download-dialog :visible.sync="downloadVisible"></download-dialog>
+    <set-play-time-dialog :visible.sync="setTimeVisible"></set-play-time-dialog>
   </div>
 </template>
 
@@ -64,6 +66,7 @@ import imageAdjustDialog from "@/pages/VideoPreview/components/imageAdjustDialog
 import screenshotDialog from "@/pages/VideoPreview/components/screenshotDialog";
 import downloadDialog from "@/pages/VideoPlayback/components/downloadDialog";
 import localBroadcastDialog from "@/pages/VideoPlayback/components/localBroadcastDialog";
+import setPlayTimeDialog from "@/pages/VideoPlayback/components/setPlayTimeDialog";
 
 import icons from "@/common/icon.js";
 import * as api2 from "@/pages/VideoPreview/ajax.js";
@@ -79,11 +82,14 @@ export default {
     screenshotDialog,
     ControlPanel,
     downloadDialog,
+    setPlayTimeDialog,
     localBroadcastDialog
   },
   data() {
     return {
+      videoinfo: {},
       appendViewVisible: false,
+      setTimeVisible: false,
       controlData: new Array(4).fill({
         fileName: "",
         timeData: []
@@ -200,7 +206,11 @@ export default {
     // 录像播放跳转时间
     choosetime(index, chooseTime) {
       this.videoArr[index].rtspUrl = this.controlData[index].rtspUrl;
-      this.$refs["video" + index][0].drag(chooseTime);
+      this.videoArr.concat();
+      this.$refs["video" + index][0].drag(
+        this.videoArr[index].ymd.replace(/-/g, "") +
+          chooseTime.replace(/:/g, "")
+      );
     },
     updateView(viewData) {
       api2.updateView(viewData).then(res => {
@@ -288,36 +298,42 @@ export default {
       //           ]
       //   }
       // 处理数据
-      let videos = data.videos;
+      console.log(data);
+      let videos = data.videos || [];
       let timeData = videos.map(item => {
+        let startTime = item.startTime.split(" ")[1];
+        let endTime = item.endTime.split(" ")[1];
+        if (sd.split(" ")[0] !== item.startTime.split(" ")[0]) {
+          // 返回来的第一个时间为前一天
+          startTime = "00:00:00";
+        }
+        if (ed.split(" ")[0] !== item.endTime.split(" ")[0]) {
+          // 返回来的第一个时间为前一天
+          endTime = "24:00:00";
+        }
         return {
-          date: item.startTime.split(" ")[0],
-          startTime: item.startTime.split(" ")[1],
-          endTime: item.endTime.split(" ")[1]
+          startTime,
+          endTime,
+          videoType: item.videoType,
+          fileName: item.fileName
         };
       });
-      console.log(timeData);
+      // console.log(timeData);
+      // if(timeData.length){
+      //   // 如果没有时间段，则表示没有录像
+      //   this.$messge.error('该通道')
+      //   return ;
+      // }
       // 模拟数据
       videos = {
-        fileName: "string", // 文件名
-        videoType: "string", // 录像类型，必填
-        streamType: "string", // 码流类型
-        rtspUrl: "",
-        ymd: "", // 用于记录年月日
-        timeData: [
-          {
-            startTime: "00:00:00",
-            endTime: "02:00:00"
-          },
-          {
-            startTime: "11:00:00",
-            endTime: "13:00:00"
-          },
-          {
-            startTime: "22:00:00",
-            endTime: "24:00:00"
-          }
-        ]
+        fileName: timeData.length ? timeData[0].fileName : "", // 文件名
+        videoType: videoType, // 录像类型，必填
+        streamType: streamType, // 码流类型
+        rtspUrl: data.rtspUrl,
+        ymd: sd.split(" ")[0], // 用于记录年月日
+        date: sd.split(" ")[0],
+        channelUuid: id,
+        timeData
       };
       for (let i = 0; i < this.videoArr.length; i++) {
         // 如果controlData哪个没有数据则找到它添加他
@@ -360,7 +376,7 @@ export default {
           })
           .then(res => {
             let data = res.data.data;
-            resolve(data.rtspUrl);
+            resolve(data);
           });
       });
     },
@@ -423,16 +439,32 @@ export default {
           });
           break;
         case "加速":
-          this.videoSpeedUp();
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.videoSpeedUp();
+          }
           break;
         case "减速":
-          this.videoSpeedDown();
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.videoSpeedDown();
+          }
           break;
         case "单帧":
-          this.videoSingleFrame();
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.videoSingleFrame();
+          }
           break;
-        case "设置回访时间":
-          this.setVideoTime();
+        case "设置回放时间":
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.setVideoTime();
+          }
           break;
         case "切换至实时":
           if (!this.videoArr[this.operatorIndex].channelUuid) {
@@ -442,16 +474,38 @@ export default {
           }
           break;
         case "摄像机信息":
-          this.videoInfoVisible = true;
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            api2
+              .getCameraInfo({
+                channelUuid: this.videoArr[this.operatorIndex].channelUuid
+              })
+              .then(res => {
+                /* eslint-disable */
+                let data = res.data.data || {};
+                let channelTyepCN =
+                  JSON.parse(localStorage.getItem("localEnums"))["chn"][
+                    data.channelType
+                  ] || data.channelType;
+                data.channelType = channelTyepCN;
+                this.videoinfo = data;
+                this.videoInfoVisible = true;
+                /* eslint-disable */
+              });
+          }
           break;
         case "抓图":
-          this.screenShotVisible = true;
+          // this.screenShotVisible = true;
           break;
         case "下载":
           this.download();
           break;
+
         case "全屏":
-          this.setFullScreen(this.$refs["video" + this.operatorIndex][0].$el);
+          this.setFullScreen(
+            this.$refs["video" + this.operatorIndex][0].getCanvas()
+          );
           break;
         case "图像调节":
           this.imageAdjustVisible = true;
@@ -461,7 +515,9 @@ export default {
     videoSpeedUp() {},
     videoSpeedDown() {},
     videoSingleFrame() {},
-    setVideoTime() {},
+    setVideoTime() {
+      this.setTimeVisible = true;
+    },
     swithlive(channelUuid) {
       this.$router.push({
         name: "VideoPreview",
@@ -472,7 +528,7 @@ export default {
       this.downloadVisible = true;
     },
     switchMaLiu(index, streamType) {
-      if (!this.videoArr[index].url) {
+      if (!this.videoArr[index].rtspUrl) {
         this.$message.error("该分路没有视频在播放，切换失败！");
         return;
       }

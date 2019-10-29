@@ -391,11 +391,20 @@ export default {
       this.$emit(
         "playRtsp",
         treeData,
-        this.startDate,
-        this.endDate,
+        this.dealTime(this.startDate),
+        this.dealTime(this.endDate),
         "normal_vod",
         "main"
       );
+    },
+    dealTime(a) {
+      let d = new Date(a);
+      let fz = z => {
+        return ("0" + z).slice(-2);
+      };
+      return `${d.getFullYear()}-${fz(d.getMonth())}-${fz(d.getDate())} ${fz(
+        d.getHours()
+      )}:${fz(d.getMinutes())}:${fz(d.getSeconds())}`;
     },
     showAddChildrenDialog() {}
   }

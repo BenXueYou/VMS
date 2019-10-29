@@ -4,12 +4,26 @@ function CVideoMgrSdk(observer)
     this.m_observer     = observer;
 }
 
-CVideoMgrSdk.prototype.play = function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
+CVideoMgrSdk.prototype.setup = function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
 {
     var video = new CVideo(this);
-    video.play(jSignal, jMedia, url, protocol, action, speed, canvas, w, h);
+    video.setup(jSignal, jMedia, url, protocol, action, speed, canvas, w, h);
     this.m_videoList[this.m_videoList.length] = video;
     return video;
+}
+
+CVideoMgrSdk.prototype.play = function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            video.play();
+            return true;
+        }
+    }
+    return false;
 }
 
 CVideoMgrSdk.prototype.stop = function(video)

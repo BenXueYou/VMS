@@ -5,16 +5,23 @@ function CDecoder(canvas)
     this.m_cache    = new CDeque;
 };
 
-CDecoder.prototype.play = function(sdp, w, h)
+CDecoder.prototype.setup = function(sdp, w, h)
 {
     this.m_player = new Player(w, h);  // fix: 分辨率先保留
     this.m_player.setCanvas(this.m_canvas);
 }
 
+CDecoder.prototype.play = function()
+{
+    // fix: do nothing
+}
+
 CDecoder.prototype.stop = function()
 {
     delete this.m_player;
+    this.m_player = null;
     delete this.m_cache;
+    this.m_cache = null;
 }
 
 CDecoder.prototype.pause = function()
