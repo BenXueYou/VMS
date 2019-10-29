@@ -28,13 +28,13 @@
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
             <span>{{ node.label }}</span>
+            <!-- v-if="data.h5Type==='channel'" -->
             <el-dropdown trigger="click"
-                         v-if="data.h5Type==='channel'"
                          @command="handleCommand"
                          placement="bottom"
                          class='threelinemenu'>
               <span class="el-dropdown-link"
-                    @click="saveClickData(node, data)">
+                    @click.stop="saveClickData(node, data)">
                 <img class="checked-img"
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                      style="margin-right: 20%;">
@@ -60,7 +60,6 @@
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
-                         v-if="data.hasOwnProperty('channelType')"
                          class='threelinemenu'>
               <span class="el-dropdown-link"
                     @click="saveClickData(node, data)">
@@ -469,7 +468,33 @@ export default {
       console.log(this.operatorData);
       if (command === "video") {
         // 打开视频操作
-        this.getPreviewInfo(this.operatorData.id, this.operatorData);
+        if (this.operatorData.h5Type === "channel") {
+          this.getPreviewInfo(this.operatorData.id, this.operatorData);
+        } else if (this.operatorData.h5Type === "organization") {
+          // 根据组织来获取通道
+          api
+            .getTDByOrgUuid(this.operatorData.id, { viewType: "video" })
+            .then(res => {
+              console.log(res);
+              let data = res.data.data;
+              // 这里获取到通道UUid
+              for (let i = 0; i < data.length; i++) {
+                data[i].relType = data[i].type;
+                this.getPreviewInfo(data[i].id, data[i]);
+              }
+            });
+        } else if (this.operatorData.hasOwnProperty("channelType")) {
+          this.getPreviewInfo(this.operatorData.channelUuid, this.operatorData);
+        } else if (this.operatorData.hasOwnProperty("tagType")) {
+          this.getChannelByNode(this.operatorData.id).then(res => {
+            console.log(res);
+            let data = res || [];
+            for (let i = 0; i < data.length; i++) {
+              data[i].relType = data[i].channelType;
+              this.getPreviewInfo(data[i].channelUuid, data[i]);
+            }
+          });
+        }
       } else if (command === "playback") {
         this.$emit("switchLuxiang", this.operatorData.id);
       } else if (command === "view") {

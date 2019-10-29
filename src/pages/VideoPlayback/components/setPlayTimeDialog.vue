@@ -60,7 +60,9 @@ export default {
   },
   mounted() {},
   methods: {
-    confirm() {},
+    confirm() {
+      this.$emit("confirm", this.startDate, this.endDate);
+    },
     close() {
       this.$emit("update:visible", false);
     }

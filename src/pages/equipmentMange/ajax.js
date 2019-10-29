@@ -185,11 +185,12 @@ export function getTDByDUuid(uuid) {
   });
 }
 // 根据组织拿到通道
-export function getTDByOrgUuid(uuid) {
+export function getTDByOrgUuid(uuid, params = {}) {
   let url = sbUrl.getTDByOrgUuidUrl(uuid);
   return axios({
     method: "get",
-    url
+    url,
+    params
   });
 }
 // 获取设备列表的详情
