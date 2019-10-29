@@ -143,7 +143,6 @@ export default {
   },
   watch: {
     defaultCheckedChannel(val) {
-      console.log("defaultCheckedChannel: ", val);
       let arr = [];
       val.forEach(element => {
         arr.push(element.channelUuid);
@@ -152,7 +151,7 @@ export default {
     },
     checkedChannel(val) {
       if (!val) val = [];
-      if (val.length && val.length === this.channels.length) {
+      if (val.length && (val.length === this.channels.length)) {
         this.checkedChannelName = "全部";
         this.isIndeterminate = false;
         this.checkAll = true;
@@ -183,13 +182,7 @@ export default {
       this.checkAll = false;
     },
     // 弹窗展开的回调
-    show() {
-      // let arr = [];
-      // this.defaultCheckedChannel.forEach(element => {
-      //   arr.push(element.channelUuid);
-      // });
-      // this.checkedChannel = arr;
-    },
+    show() {},
     // 弹窗关闭的回调
     hide() {},
     // 全选的回调
