@@ -13,6 +13,17 @@ export var SearchFaceHttp = {
     }
     return axios.post(api, data);
   },
+  /**
+   * 临时布控
+   */
+  tempMonitor(holder) {
+    let api = `${RestApi.api.faceModuleAPi.tempMonitor}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.post(api, data);
+  },
 };
 
 function install(Vue) {

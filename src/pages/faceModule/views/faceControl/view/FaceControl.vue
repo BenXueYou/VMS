@@ -613,6 +613,8 @@ export default {
       color: #dddddd;
       overflow: hidden;
       transition: 0.5s all;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .block-line {
       height: 36px;

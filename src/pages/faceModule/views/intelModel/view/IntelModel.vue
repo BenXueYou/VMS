@@ -666,6 +666,8 @@ export default {
       font-size: 13px;
       color: #dddddd;
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       transition: 0.5s all;
       .block-camera {
         width: 100%;
