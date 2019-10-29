@@ -32,7 +32,7 @@
                :style="`${item.selected ? 'background: #24282C;' : ''};`">
             <img src="@/assets/images/faceModule/useing_mis.png"
                  style="margin-right: 10px;">
-            {{item.title}}
+            {{item.faceModelName}}
           </div>
         </template>
       </div>
@@ -50,10 +50,12 @@
            @click="clickRight">
       <div class="button">
         <div class="button-right">
-          <el-switch v-model="switchTask"
+          <el-switch v-model="intelModelObj.enabled"
                      active-color="rgba(32,204,150,0.2)"
                      inactive-color="rgba(255,255,255,0.2)"
-                     @change="switchChange()"></el-switch>
+                     @change="switchChange()"
+                     :active-value="1"
+                     :inactive-value="0"></el-switch>
           <span>状态</span>
           <div class="status"
                @click="editTaskInit">
@@ -77,13 +79,13 @@
           <div class="info-block block-line"
                style="width: 23%">名称：{{intelModelObj.faceModelName}} </div>
           <div class="info-block block-line"
-               style="width: 23%">创建人：{{intelModelObj.faceModelName}} </div>
+               style="width: 23%">创建人：{{intelModelObj.createUserName}} </div>
           <div class="info-block block-line"
-               style="width: 23%">创建时间：{{intelModelObj.faceModelName}} </div>
+               style="width: 23%">创建时间：{{intelModelObj.createTime}} </div>
           <div class="info-block block-line"
-               style="width: 23%">布控原因：{{intelModelObj.faceModelName}} </div>
+               style="width: 23%">模型描述：{{intelModelObj.remarks}} </div>
         </div>
-        <source-show-more :title="`人脸库： 共${intelModelObj.libraryList.length}个人脸库`"
+        <source-show-more :title="`人脸库： 共${intelModelObj.libraryList ? intelModelObj.libraryList.length : 0}个人脸库`"
                           blockHeight="80px"
                           :itemIcon="require('@/assets/images/faceModule/crime_db.png')"
                           :dataList="faceDBItemList"
@@ -95,7 +97,7 @@
           <div class="info-block block-line"
                style="width: 10%; margin-right: 30px;">阈值：{{intelModelObj.faceSimilarityThreshold}}% </div>
           <div class="info-block block-line"
-               style="width: 20%">人脸抓拍图片需达到的质量：{{intelModelObj.faceCapturePhotoQualities}} </div>
+               style="width: 20%">人脸抓拍图片需达到的质量：{{intelModelObj.qualities ? $common.getEnumItemName("face_quality", intelModelObj.qualities[intelModelObj.qualities.length-1]) : ""}} </div>
         </div>
         <div class="info-block">
           <div class="block-line">时间段：
@@ -120,7 +122,7 @@
             <span>同时符合：</span>
             <camera-show-more blockHeight="74px"
                               :itemIcon="require('@/assets/images/faceModule/camera.png')"
-                              :dataList="intelModelObj.otherVideoSource.channelList"
+                              :dataList="otherVideoSourceList"
                               :lineLimit="2"
                               style="width: 60%; margin-left: 40px;"
                               ref="camera1"
@@ -130,7 +132,7 @@
             <span>同时不符合：</span>
             <camera-show-more blockHeight="74px"
                               :itemIcon="require('@/assets/images/faceModule/camera.png')"
-                              :dataList="intelModelObj.notInVideoSource.channelList"
+                              :dataList="notInVideoSourceList"
                               :lineLimit="2"
                               style="width: 60%; margin-left: 28px;"
                               ref="camera1"
@@ -148,7 +150,7 @@
         </div>
         <div class="list-title">
           <img src="@/assets/images/faceModule/alarm.png">
-          <span class="alarm-num">共{{"23"}}个感知报警</span>
+          <span class="alarm-num">共{{compareList ? compareList.length : 0}}个感知报警</span>
           <div class="title-right">
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="createTimeStart"
@@ -218,11 +220,7 @@ export default {
         }
       ],
       menuList: [],
-      switchTask: true,
       deleteDiglogvisible: false,
-      faceList: [],
-      cameraList: [],
-      cameraItemList: [],
       faceDBItemList: [],
       createTimeStart: "",
       createTimeEnd: "",
@@ -238,7 +236,7 @@ export default {
         faceModelName: "",
         libraryList: [],
         faceSimilarityThreshold: "",
-        faceCapturePhotoQualities: "",
+        qualities: "",
         timeList: [],
         recentDays: "",
         statisticType: "",
@@ -248,28 +246,23 @@ export default {
           frequency: 0,
           leastNumberOfChannel: "",
         },
-        otherVideoSource: {
-          channelList: [],
-          logic: "",
-          frequency: 0,
-        },
-        notInVideoSource: {
-          channelList: [],
-          logic: "",
-          frequency: 0,
-        },
+        otherVideoSource: [],
+        notInVideoSource: [],
         notInlibrary: [],
         captureInterval: "",
-        enabled: "",
+        enabled: 1,
         remarks: "",
       },
       isJudgeLoading: false,
-      faceModelUuid: ""
+      faceModelUuid: "",
+      otherVideoSourceList: [],
+      notInVideoSourceList: [],
     };
   },
   created() {},
   activated() {},
   mounted() {
+    this.getIntelModelList();
   },
   methods: {
     clickLeft() {
@@ -294,6 +287,7 @@ export default {
     },
     onConfirmEditOrAddModel() {
       this.isShowMain = true;
+      this.getIntelModelList();
     },
     onCancelEditOrAddModel() {
       this.isShowMain = true;
@@ -315,6 +309,8 @@ export default {
       }
       this.getIntelModelList();
     },
+    resetData() {
+    },
     check(item) {
       this.menuList.forEach(v => {
         v.selected = false;
@@ -326,9 +322,9 @@ export default {
     },
     switchChange(val) {
       if (val) {
-        this.editIntelModel(this.faceModelUuid, 1);
+        this.editIntelModelStatus(this.faceModelUuid, 1);
       } else {
-        this.editIntelModel(this.faceModelUuid, 0);
+        this.editIntelModelStatus(this.faceModelUuid, 0);
       }
     },
     editTaskInit() {
@@ -343,17 +339,29 @@ export default {
           });
         });
       }
-      if (this.intelModelObj.channelList) {
-        this.intelModelObj.channelList.forEach(v => {
-          this.cameraItemList.push({
-            name: v.channelName
+      if (this.intelModelObj.otherVideoSource) {
+        this.intelModelObj.otherVideoSource.forEach(v => {
+          v.channelList.forEach(v2 => {
+            if (!this.otherVideoSourceList.some(v3 => v3.channelUuid === v2.channelUuid)) {
+              this.otherVideoSourceList.push({
+                channelUuid: v2.channelUuid,
+                name: v2.channelName
+              });
+            }
           });
         });
       }
-      if (this.intelModelObj.enabled) {
-        this.switchTask = true;
-      } else {
-        this.switchTask = false;
+      if (this.intelModelObj.notInVideoSource) {
+        this.intelModelObj.notInVideoSource.forEach(v => {
+          v.channelList.forEach(v2 => {
+            if (!this.notInVideoSourceList.some(v3 => v3.channelUuid === v2.channelUuid)) {
+              this.notInVideoSourceList.push({
+                channelUuid: v2.channelUuid,
+                name: v2.channelName
+              });
+            }
+          });
+        });
       }
     },
     queryAct() {
@@ -465,18 +473,18 @@ export default {
       this.faceModelUuid = "";
       this.getIntelModelList();
     },
-    editIntelModel(faceModelUuid, enabled) {
+    editIntelModelStatus(faceModelUuid, enabled) {
       this.$intelModelHttp
-        .editIntelModel({
+        .editIntelModelStatus({
           faceModelUuid,
           enabled
         })
         .then(res => {
           let body = res.data;
-          this.editIntelModelSuccess(body);
+          this.editIntelModelStatusSuccess(body);
         });
     },
-    editIntelModelSuccess(body) {
+    editIntelModelStatusSuccess(body) {
       this.$cToast.success(body.msg);
       this.getIntelModelList();
     }

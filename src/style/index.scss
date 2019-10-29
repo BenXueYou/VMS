@@ -924,3 +924,18 @@ input::-webkit-input-placeholder {
 .el-tabs__nav-wrap::after {
   background-color: #3F4244;
 }
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+  color: #26D39D;
+}
+.el-select .el-tag {
+  background-color: rgba($color: #26D39D, $alpha: 0.1);
+}
+.el-tag.el-tag--info {
+  border-color: rgba($color: #e9e9eb, $alpha: 0.1);
+}
+.el-tag.el-tag--info .el-tag__close {
+  color: #3E4145;
+}
+.el-select .el-tag__close.el-icon-close {
+  background-color: #B8B9BA;
+}

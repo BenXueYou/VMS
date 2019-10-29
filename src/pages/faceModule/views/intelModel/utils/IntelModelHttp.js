@@ -46,6 +46,14 @@ export var IntelModelHttp = {
     }
     return axios.put(api, data);
   },
+  editIntelModelStatus(holder) {
+    let api = `${RestApi.api.faceModuleAPi.editIntelModelStatus}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.put(api, data);
+  },
   /**
    * 新增智能模型
    */
