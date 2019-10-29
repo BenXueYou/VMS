@@ -191,14 +191,14 @@ export default {
     handleCheckAllChange(val) {
       console.log(val);
       let checkedChannelArr = [];
+      let checkedChannelUuidArr = [];
       if (val) {
-        val.forEach(element => {
-          checkedChannelArr.push(element.channelUuid);
+        this.channels.forEach(element => {
+          checkedChannelUuidArr.push(element.channelUuid);
+          checkedChannelArr.push(element);
         });
-        this.checkedChannel = checkedChannelArr;
-      } else {
-        this.checkedChannel = [];
       }
+      this.checkedChannel = checkedChannelArr;
       this.isIndeterminate = false;
       this.$emit("transferCheckedChannel", checkedChannelArr);
     },
