@@ -65,8 +65,8 @@
 					>
 						<el-checkbox
 							class="checkBoxClass"
-							v-for="(item,index) in channels"
-							:key="index"
+							v-for="item in channels"
+							:key="item.channelUuid"
 							:label="item"
 						>{{item.nickName}}</el-checkbox>
 					</el-checkbox-group>

@@ -94,6 +94,7 @@ export default {
   deleteIntelModel: (modelUuid) => `${URLHeader}/${projectUuid}/IntelligentModel/info/${modelUuid}`,
   addIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
   editIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
+  editIntelModelStatus: `${URLHeader}/${projectUuid}/IntelligentModel/status`,
   getFacedbList: `${URLHeader}/${projectUuid}/faceLib/list`,
   getDevList: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/organization/children`,
   getTagList: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/tag/list`,

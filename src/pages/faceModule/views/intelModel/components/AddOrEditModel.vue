@@ -39,28 +39,7 @@
             <div class="item-select">
               <template v-for="(item, index) in faceDBSelectedList">
                 <div :key="index"
-                     class="select-item"
-                     v-if="item.faceLibraryType && item.faceLibraryType === 'systemFaceLib'">
-                  <img src="@/assets/images/person_g.png"
-                       width="11px"
-                       height="11px">
-                  <span style="margin-left: 4px; width: 80px">{{item.faceLibraryName}}</span>
-                  <template v-for="(item, index) in staffTypeOption">
-                    <div :key="index"
-                         class="system-select">
-                      <el-checkbox v-model="item.checked">{{item.typeName}}</el-checkbox>
-                    </div>
-                  </template>
-                  <div class="del-image"
-                       @click="deleteItem(item)">
-                    <img src="@/assets/images/delete_x.png"
-                         width="13px"
-                         height="13px">
-                  </div>
-                </div>
-                <div :key="index"
-                     class="select-item"
-                     v-else>
+                     class="select-item">
                   <img src="@/assets/images/person_g.png"
                        width="11px"
                        height="11px">
@@ -84,8 +63,8 @@
             <span class="unit">%</span>
           </el-form-item>
           <el-form-item label="抓拍图片需达到的质量："
-                        prop="faceCapturePhotoQualities">
-            <pic-qulity-select :selectedButtons.sync="formLabelAlign.faceCapturePhotoQualities"
+                        prop="qualities">
+            <pic-qulity-select :selectedButtons.sync="formLabelAlign.qualities"
                                class="left-space"
                                :isShowLower="false" />
           </el-form-item>
@@ -125,7 +104,7 @@
                 </div>
               </template>
               <div>
-                <span>最近</span>
+                <span style="padding: 0 8px; box-sizing: border-box">最近</span>
                 <el-input style="width: 60px;"
                           v-model="formLabelAlign.recentDays"></el-input>
                 <span>天</span>
@@ -133,7 +112,7 @@
                            size="small"
                            style="width: 80px; margin-left: 40px;"
                            placeholder=" ">
-                  <el-option v-for="item in numOptions"
+                  <el-option v-for="item in statisticTypeOpt"
                              :key="item.typeStr"
                              :label="item.typeName"
                              :value="item.typeStr">
@@ -145,23 +124,15 @@
                 <template v-for="(item, index) in allVideoSource">
                   <div :key="index">
                     <div v-if="index === 0">
+                      <elPopverTree :elPopoverClass="faceRecordPopoverClass"
+                                    @transferCheckedChannel="transferCheckedChannel($event, item)"
+                                    inputWidth="180px"></elPopverTree>
                       <el-select v-model="item.logic"
                                  size="small"
-                                 style="width: 180px;"
-                                 placeholder="请选择视频源">
-                        <el-option v-for="item in numOptions"
+                                 style="width: 64px; margin-left: 20px;">
+                        <el-option v-for="item in logicOptions"
                                    :key="item.typeStr"
-                                   :label="item.typeName"
-                                   :value="item.typeStr">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="item.logic"
-                                 size="small"
-                                 style="width: 64px; margin-left: 20px;"
-                                 placeholder="≧">
-                        <el-option v-for="item in numOptions"
-                                   :key="item.typeStr"
-                                   :label="item.typeName"
+                                   :label="item.typeStr"
                                    :value="item.typeStr">
                         </el-option>
                       </el-select>
@@ -183,31 +154,22 @@
                     <div v-if="index !== 0">
                       <el-select v-model="item.localType"
                                  size="small"
-                                 style="width: 120px;"
-                                 placeholder="同时符合">
-                        <el-option v-for="item in numOptions"
+                                 style="width: 120px;">
+                        <el-option v-for="item in localTypeOpt"
                                    :key="item.typeStr"
                                    :label="item.typeName"
                                    :value="item.typeStr">
                         </el-option>
                       </el-select>
+                      <elPopverTree :elPopoverClass="faceRecordPopoverClass"
+                                    @transferCheckedChannel="transferCheckedChannel($event, item)"
+                                    inputWidth="180px"></elPopverTree>
                       <el-select v-model="item.logic"
                                  size="small"
-                                 style="width: 180px; margin-left: 15px;"
-                                 placeholder="请选择视频源">
-                        <el-option v-for="item in numOptions"
+                                 style="width: 64px; margin-left: 20px;">
+                        <el-option v-for="item in logicOptions"
                                    :key="item.typeStr"
-                                   :label="item.typeName"
-                                   :value="item.typeStr">
-                        </el-option>
-                      </el-select>
-                      <el-select v-model="item.logic"
-                                 size="small"
-                                 style="width: 64px; margin-left: 15px;"
-                                 placeholder="≧">
-                        <el-option v-for="item in numOptions"
-                                   :key="item.typeStr"
-                                   :label="item.typeName"
+                                   :label="item.typeStr"
                                    :value="item.typeStr">
                         </el-option>
                       </el-select>
@@ -230,6 +192,21 @@
                   </div>
                 </template>
               </div>
+              <div>
+                <span style="padding: 0 8px; box-sizing: border-box">排除</span>
+                <el-select v-model="formLabelAlign.notInlibrary"
+                           size="small"
+                           multiple
+                           clearable
+                           collapse-tags
+                           placeholder="请选择人脸库">
+                  <el-option v-for="item in libraryOptions"
+                             :key="item.faceLibraryUuid"
+                             :label="item.faceLibraryName"
+                             :value="item.faceLibraryUuid">
+                  </el-option>
+                </el-select>
+              </div>
             </div>
           </el-form-item>
           <el-form-item label="两次抓拍间隔时间："
@@ -251,9 +228,9 @@
                        :inactive-value="0"></el-switch>
           </el-form-item>
           <el-form-item label="备注："
-                        prop="remark">
+                        prop="remarks">
             <el-input class="time-interal left-space"
-                      v-model="formLabelAlign.remark"
+                      v-model="formLabelAlign.remarks"
                       style="width: 630px"></el-input>
           </el-form-item>
         </el-form>
@@ -275,11 +252,13 @@
 <script>
 import PicQulitySelect from "@/common/PicQulitySelect";
 import SelectFace from "@/common/SelectFaceDB";
+import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 
 export default {
   components: {
     PicQulitySelect,
-    SelectFace
+    SelectFace,
+    elPopverTree
   },
   props: {
     isAdd: {
@@ -293,7 +272,7 @@ export default {
         faceModelName: "",
         faceLibraryUuids: [],
         faceSimilarityThreshold: 80,
-        faceCapturePhotoQualities: ["HIGH", "NORMAL", "LOW"],
+        qualities: ["HIGH", "NORMAL", "LOW"],
         timeList: [
           {
             startTime: "",
@@ -301,11 +280,11 @@ export default {
           }
         ],
         recentDays: 0,
-        statisticType: "",
+        statisticType: "everyday",
         videoSource: {},
         otherVideoSource: [],
         notInVideoSource: [],
-        notInlibrary: "",
+        notInlibrary: [],
         captureInterval: 5,
         enabled: 1,
         remarks: ""
@@ -318,14 +297,24 @@ export default {
           { min: 1, max: 32, message: "长度在 1 到 32 个字符", trigger: "blur" }
         ],
         faceLibraryUuids: [
-          { type: 'array', required: true, message: '请选择人脸库', trigger: 'change' },
+          {
+            type: "array",
+            required: true,
+            message: "请选择人脸库",
+            trigger: "change"
+          }
         ],
         faceSimilarityThreshold: [
-          { required: true, message: "相似度不能为空", trigger: "blur" },
+          { required: true, message: "相似度不能为空", trigger: "blur" }
         ],
-        faceCapturePhotoQualities: [
-          { type: 'array', required: true, message: '请选择图片需达到的质量', trigger: 'change' },
-        ],
+        qualities: [
+          {
+            type: "array",
+            required: true,
+            message: "请选择图片需达到的质量",
+            trigger: "change"
+          }
+        ]
       },
       faceDBSelectedList: [],
       isShowAddFaceDB: false,
@@ -335,26 +324,46 @@ export default {
           channelList: [],
           logic: "",
           frequency: 0,
-          leastNumberOfChannel: 0,
+          leastNumberOfChannel: 0
         }
       ],
-      initSelectFaceData: []
+      initSelectFaceData: [],
+      libraryOptions: [],
+      statisticTypeOpt: [],
+      logicOptions: [],
+      localTypeOpt: [],
+      deviceList: [],
+      faceRecordPopoverClass: "popverClass"
     };
   },
   created() {},
   mounted() {
-    // this.initData();
+    this.initData();
   },
   methods: {
     initData() {
-      // this.houseTypeOptions = this.$common.getEnumByGroupStr("house_t");
+      this.statisticTypeOpt = this.$common.getEnumByGroupStr(
+        "model_analisis_s"
+      );
+      this.logicOptions = this.$common.getEnumByGroupStr("compare_r");
+      this.localTypeOpt = this.$common.getEnumByGroupStr("face_decision");
+      this.getLibrarys();
+    },
+    getLibrarys() {
+      this.$faceControlHttp.getFacedbList().then(res => {
+        let body = res.data;
+        this.getFacedbListSuccess(body);
+      });
+    },
+    getFacedbListSuccess(body) {
+      this.libraryOptions = body.data;
     },
     resetFormData() {
       this.formLabelAlign = {
         faceModelName: "",
         faceLibraryUuids: [],
         faceSimilarityThreshold: 80,
-        faceCapturePhotoQualities: ["HIGH", "NORMAL", "LOW"],
+        qualities: ["HIGH", "NORMAL", "LOW"],
         timeList: [
           {
             startTime: "",
@@ -362,11 +371,11 @@ export default {
           }
         ],
         recentDays: 0,
-        statisticType: "",
+        statisticType: "everyday",
         videoSource: {},
         otherVideoSource: [],
         notInVideoSource: [],
-        notInlibrary: "",
+        notInlibrary: [],
         captureInterval: 5,
         enabled: 1,
         remarks: ""
@@ -389,7 +398,22 @@ export default {
       this.resetFormData();
       this.$emit("onCancel");
     },
+    formatParams() {
+      this.formLabelAlign.videoSource = {};
+      this.formLabelAlign.otherVideoSource = [];
+      this.formLabelAlign.notInVideoSource = [];
+      this.allVideoSource.forEach(v => {
+        if (v.localType === "videoSource") {
+          this.formLabelAlign.videoSource = this.$common.copyObject(v, this.formLabelAlign.videoSource);
+        } else if (v.localType === "conform") {
+          this.formLabelAlign.otherVideoSource.push(v);
+        } else if (v.localType === "inconformity") {
+          this.formLabelAlign.notInVideoSource.push(v);
+        }
+      });
+    },
     addIntelModel() {
+      this.formatParams();
       this.$intelModelHttp.addIntelModel(this.formLabelAlign).then(res => {
         let body = res.data;
         this.modelSuccess(body);
@@ -420,14 +444,17 @@ export default {
         localType: "",
         channelList: [],
         logic: "",
-        frequency: 0,
+        frequency: 0
       });
     },
     reduceDevRes(index) {
       this.allVideoSource.splice(index, 1);
     },
     addFaceDB() {
-      this.initSelectFaceData = this.$common.copyArray(this.faceDBSelectedList, this.initSelectFaceData);
+      this.initSelectFaceData = this.$common.copyArray(
+        this.faceDBSelectedList,
+        this.initSelectFaceData
+      );
       this.isShowAddFaceDB = true;
     },
     confirmAddFaceDB(val) {
@@ -439,15 +466,8 @@ export default {
       this.formLabelAlign.faceLibraryUuids = [];
       this.faceDBSelectedList.forEach(v => {
         this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
-        if (v.faceLibraryType === "systemFaceLib") {
-          this.staffTypeOption.forEach(v => {
-            if (v.checked) {
-              this.formLabelAlign.systemStaffLibraryTypes.push(v.typeStr);
-            }
-          });
-        }
       });
-      this.$refs.modelForm.validateField('faceLibraryUuids');
+      this.$refs.modelForm.validateField("faceLibraryUuids");
     },
     cancelAddFaceDB() {
       this.isShowAddFaceDB = false;
@@ -459,12 +479,20 @@ export default {
         }
       }
       this.$refs.selectFace.deleteItem(item);
-    }
+    },
+    transferCheckedChannel(checkedChannel, item) {
+      item.channelList = [];
+      for (let i = 0; i < checkedChannel.length; i++) {
+        item.channelList.push(checkedChannel[i].channelUuid);
+      }
+    },
+    popverHidden() {},
+    popverShow() {}
   },
   watch: {
-    "formLabelAlign.faceCapturePhotoQualities": {
+    "formLabelAlign.qualities": {
       handler(val) {
-        this.$refs.modelForm.validateField('faceCapturePhotoQualities');
+        this.$refs.modelForm.validateField("qualities");
       },
       deep: true
     }
@@ -479,6 +507,23 @@ export default {
     font-size: 12px !important;
     color: #dddddd;
   }
+}
+.popverClass {
+  width: 500px;
+  height: 200px;
+  position: absolute;
+  background: #202127;
+  border: 1px solid #ebeef5;
+  padding: 12px;
+  z-index: 2000;
+  color: #606266;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: 14px;
+  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  max-height: 80%;
+  overflow: auto;
 }
 </style>
 
