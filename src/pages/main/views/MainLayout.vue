@@ -129,50 +129,7 @@ export default {
   },
   methods: {
     // 建立websocket通知
-    initWebSocket() {
-      if (this.webSocket) return;
-      if (this.stompClient) return;
-      /* eslint-disable */
-			let url = window.config.protocolHeader + window.config.socketIP;
-			this.webSocket = new SockJS(url);
-			this.stompClient = Stomp.over(this.webSocket);
-			/* eslint-enable */
-      this.stompClient.connect(
-        { projectUuid: this.$store.state.home.projectUuid },
-        frame => {
-          console.log("connect success:", frame);
-          // 订阅通知
-          const subCaptureApi = "/user/topic/face-1.3/client/capture";
-          const subRecognizationApi =
-						"/user/topic/face-1.3/client/recognization";
-          const subMonitorAlarmApi = "/user/topic/face-1.3/client/monitorAlarm";
-          this.subCapture = this.stompClient.subscribe(
-            subCaptureApi,
-            greeting => {
-              console.log("收到抓拍通知：", greeting);
-              this.handleSubscribeCapture(JSON.parse(greeting.body));
-            }
-          );
-          this.subRecognization = this.stompClient.subscribe(
-            subRecognizationApi,
-            greeting => {
-              console.log("收到识别通知：", greeting);
-              this.handleSubscribeRecognization(JSON.parse(greeting.body));
-            }
-          );
-          this.subMonitorAlarm = this.stompClient.subscribe(
-            subMonitorAlarmApi,
-            greeting => {
-              console.log("收到报警通知：", greeting);
-              this.handleSubscribeMonitorAlarm(JSON.parse(greeting.body));
-            }
-          );
-        },
-        err => {
-          console.log("error,errMsg:", err);
-        }
-      );
-    },
+    initWebSocket() {},
     // 断开链接
     disConnectSocket() {
       if (this.stompClient != null) {
@@ -188,23 +145,17 @@ export default {
     },
     handleSubscribeCapture(data) {
       let CapturePhotoArr = this.$store.state.home.CapturePhotoArr;
+
       let his = data.captureDatetime.split(" ")[1];
       let ymd = data.captureDatetime.split(" ")[0];
-      let mdy =
-				ymd.split("-")[1] + "-" + ymd.split("-")[2] + "-" + ymd.split("-")[0];
+      let mdy = ymd.split('-')[1] + '-' + ymd.split('-')[2] + '-' + ymd.split('-')[0];
       data.captureDatetime = his + " " + mdy;
       CapturePhotoArr.push(data);
-      if (CapturePhotoArr && CapturePhotoArr.length > 10) {
-        CapturePhotoArr.shift();
-      }
       this.$store.dispatch("setCapturePhotoArr", CapturePhotoArr);
     },
     handleSubscribeRecognization(data) {
       let RecognizationArr = this.$store.state.home.RecognizationArr;
       RecognizationArr.push(data);
-      if (RecognizationArr && RecognizationArr.length > 5) {
-        RecognizationArr.shift();
-      }
       this.$store.dispatch("setRecognizationArr", RecognizationArr);
     },
     handleSubscribeMonitorAlarm(data) {

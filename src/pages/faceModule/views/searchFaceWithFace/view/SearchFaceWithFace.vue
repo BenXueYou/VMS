@@ -184,7 +184,6 @@ export default {
         imageUrl: ""
       });
       this.defaultSelect();
-      this.getFaceList();
     }
   },
   mounted() {
@@ -196,12 +195,12 @@ export default {
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       );
       this.endTime = this.$common.formatDate(new Date());
+      this.libraryTypeOption = this.$common.getEnumByGroupStr("face_h5_lib_group_type");
       this.imageList.push({
         key: this.genModelIndex(),
         picBaseUrl: "",
         imageUrl: ""
       });
-      this.libraryTypeOption = this.$common.getEnumByGroupStr("face_h5_lib_group_type");
     },
     // 用js维护一套产生不重复id的机制
     genModelIndex() {
@@ -256,13 +255,13 @@ export default {
     getImg() {
       this.imageList.forEach((v, i) => {
         if (v.selected && v.imageUrl) {
+          console.log(v);
           this.$common.imageToBase64(v.imageUrl, base64 => {
             this.imageBase64 = base64;
             console.log("this.imageBase64: ", base64);
           });
         } else if (v.selected && !v.imageUrl) {
           this.imageBase64 = v.picBaseUrl;
-          console.log("this.imageBase64666666666666: ", this.imageBase64);
         }
       });
     },
@@ -291,6 +290,7 @@ export default {
           similarity: this.similarity,
           captureTimeStart: this.startTime,
           captureTimeEnd: this.endTime,
+          projectUuid: this.$store.state.home.projectUuid
         })
         .then(res => {
           let body = res.data;

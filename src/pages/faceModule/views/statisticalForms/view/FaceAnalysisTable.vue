@@ -54,7 +54,7 @@
                              label="序号"
                              width="90">
             </el-table-column>
-            <el-table-column prop="channelNames"
+            <el-table-column prop="channelName"
                              label="设备名称"
                              width="280">
             </el-table-column>
@@ -178,31 +178,10 @@ export default {
           this.isLoading = false;
         });
     },
-    getFaceAnalysisTableSuccess(data) {
+    getFaceAnalysisTableSuccess(body) {
       this.isLoading = false;
-      this.idListForDetail = this.$common.copyArray(
-        this.channelUuids,
-        this.idListForDetail
-      );
-      this.tableData = [];
-      this.tableData = data.body.data.list;
-      for (let item of this.tableData) {
-        item.channelName = "";
-        if (this.channelUuids.length === 0) {
-          item.channelName = "全部";
-        } else {
-          for (let item2 of this.checkedChannel) {
-            if (this.checkedChannel.length === 1) {
-              item.channelName = item2.label;
-            } else {
-              item.channelName = `${item.channelName}${
-                item.channelName ? "," : ""
-              }${item2.label}`;
-            }
-          }
-        }
-      }
-      this.handlePageInfo(data.body.data);
+      this.tableData = body.data.list;
+      this.handlePageInfo(body.data);
     },
     handlePageInfo(data) {
       let total = 0;
@@ -248,6 +227,7 @@ export default {
       for (let i = 0; i < checkedChannel.length; i++) {
         this.channelUuids.push(checkedChannel[i].channelUuid);
       }
+      console.log("this.channelUuids: ", this.channelUuids, checkedChannel);
     },
   },
   watch: {},
