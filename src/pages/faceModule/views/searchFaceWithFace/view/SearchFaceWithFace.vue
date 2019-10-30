@@ -258,9 +258,11 @@ export default {
         if (v.selected && v.imageUrl) {
           this.$common.imageToBase64(v.imageUrl, base64 => {
             this.imageBase64 = base64;
+            console.log("this.imageBase64: ", base64);
           });
         } else if (v.selected && !v.imageUrl) {
           this.imageBase64 = v.picBaseUrl;
+          console.log("this.imageBase64666666666666: ", this.imageBase64);
         }
       });
     },
