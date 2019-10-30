@@ -333,7 +333,7 @@ export default {
   watch: {
     CapturePhotoArr(val) {
       console.log(val);
-      if (val && val.length > 11) {
+      if (val && val.length > 10) {
         this.todayShootCount += 1;
         val.shift();
       }
@@ -342,7 +342,7 @@ export default {
     RecognizationArr(val) {
       console.log(val);
       this.comparePhotoList = val;
-      if (this.comparePhotoList && this.comparePhotoList.length > 6) {
+      if (this.comparePhotoList && this.comparePhotoList.length > 5) {
         this.comparePhotoList.shift();
       }
     }
@@ -356,6 +356,7 @@ export default {
             let data = res.data.data;
             for (let i = 0, len = data.length; i < len; i++) {
               if (parseInt(data[i].nextCount) === 0) {
+                debugger;
                 data[i].isLeaf = true;
                 this.$set(data[i], "isLeaf", true);
               }

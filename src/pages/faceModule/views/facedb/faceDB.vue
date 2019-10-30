@@ -751,7 +751,7 @@ export default {
           }
         });
     },
-    // 查询人员库
+    // 查询人员库列表
     getStaffLibList(flag = false) {
       this.loadding = true;
       faceApi
@@ -760,10 +760,11 @@ export default {
           this.loadding = false;
           if (res.data.success && res.data.data) {
             this.tableData = res.data.data;
-            if (this.faceLibraryUuid) return;
+            if (this.tableData && !this.tableData.length) return;
             this.selectLibRow = this.tableData[0];
             this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
             this.libraryName = res.data.data[0].faceLibraryName;
+            this.$refs.multipleTable.setCurrentRow(this.selectLibRow);
             this.getStaffLibStaffData();
           } else {
             this.$message.warning(res.data.msg);
