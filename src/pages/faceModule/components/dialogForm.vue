@@ -8,7 +8,7 @@
 					<el-col :span="10">
 						<img
 							class="xydialog-card-img"
-							:src="taskInfo.faceCapturePhotoUrl?imageHeader+taskInfo.faceCapturePhotoUrl:require('@/assets/user.png')"
+							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
 						/>
 					</el-col>
 					<el-col :span="14">
@@ -67,19 +67,23 @@
 					<el-row class="cardBoxHeader" type="flex" justify="center" :gutter="15">
 						<el-col class="facePhoto" :span="9">
 							<img
-								:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?imageHeader+dialogParama.faceCapturePhotoUrl:require('@/assets/user.png')"
+								:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 							/>
 						</el-col>
 						<el-col class="panoramaPhoto" :span="17">
 							<img
-								:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?imageHeader+dialogParama.panoramaCapturePhotoUrl:require('@/assets/user.png')"
+								:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 							/>
 						</el-col>
 					</el-row>
 					<div class="cardBoxFooter">
 						<el-row type="flex" justify="space-between">
-							<el-col :span="12">{{shootPhotoList[index]&&shootPhotoList[index].channelName?shootPhotoList[index].channelName:"通道名称"}}</el-col>
-							<el-col :span="12">{{shootPhotoList[index]&&shootPhotoList[index].captureDatetime?shootPhotoList[index].captureDatetime:"抓拍时间"}}</el-col>
+							<el-col
+								:span="12"
+							>{{shootPhotoList[index]&&shootPhotoList[index].channelName?shootPhotoList[index].channelName:"通道名称"}}</el-col>
+							<el-col
+								:span="12"
+							>{{shootPhotoList[index]&&shootPhotoList[index].captureDatetime?shootPhotoList[index].captureDatetime:"抓拍时间"}}</el-col>
 						</el-row>
 						<el-row type="flex" justify="space-around">
 							<span>特征：{{shootPhotoList[index]&&shootPhotoList[index].sunglasses?'戴墨镜 ':" "}} {{shootPhotoList[index]&&shootPhotoList[index].mask?'戴口罩':""}}</span>
@@ -113,7 +117,8 @@ export default {
       taskInfo: {},
       showImgs: false,
       imgSrc: "",
-      imageHeader: RestApi.api.imageUrl
+      imageHeader: RestApi.api.imageUrl,
+      PicSourceType: window.config.PicSourceType
     };
   },
   watch: {

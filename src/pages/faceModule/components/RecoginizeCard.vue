@@ -32,7 +32,7 @@
 					<div class="asidCompareImgBox" :style="`width:${imgWidth}px;height:${imgWidth}px`">
 						<img
 							class="asidCardImg"
-							:src="recoginizeItem.faceCapturePhotoUrl?imageHeader+recoginizeItem.faceCapturePhotoUrl:require('@/assets/user.png')"
+							:src="$common.setPictureShow(recoginizeItem.faceCapturePhotoUrl,PicSourceType)"
 						/>
 					</div>
 					<div class="asidFontClass">抓拍照</div>
@@ -114,7 +114,8 @@ export default {
   },
   data() {
     return {
-      imageHeader: RestApi.api.imageUrl
+      imageHeader: RestApi.api.imageUrl,
+      PicSourceType: window.config.PicSourceType
     };
   },
   methods: {

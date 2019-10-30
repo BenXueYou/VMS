@@ -61,6 +61,7 @@ window.config = {
   imageUrl: imageUrl,
   forbidBtnArr: ["uncome", "unleave"],
   signOffBtnArr: ["unleave", "leave_overtime"],
+  PicSourceType: "facelog",
   alinkArr: [
     {
       strName: "关于广拓",

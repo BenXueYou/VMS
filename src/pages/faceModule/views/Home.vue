@@ -356,7 +356,6 @@ export default {
             let data = res.data.data;
             for (let i = 0, len = data.length; i < len; i++) {
               if (parseInt(data[i].nextCount) === 0) {
-                debugger;
                 data[i].isLeaf = true;
                 this.$set(data[i], "isLeaf", true);
               }

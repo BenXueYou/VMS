@@ -1,10 +1,7 @@
 <template>
 	<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
 		<div class="leftImgBox">
-			<img
-				:src="faceImgDialogData.faceCapturePhotoUrl?faceImgDialogData.dialogPhotoImgUrl:require('@/assets/user.png')"
-				alt
-			/>
+			<img :src="$common.setPictureShow(faceImgDialogData.faceCapturePhotoUrl,PicSourceType)" alt />
 			<p>{{faceImgDialogData.channelName||'抓拍相机'}}</p>
 		</div>
 		<div class="rightImgBox">
@@ -43,14 +40,15 @@ export default {
     },
     titleTxt: {
       type: String,
-      default: '详情'
+      default: "详情"
     }
   },
   data() {
     return {
       dialogVisible: false,
       dialogPhotoImgUrl: "",
-      dialogPanoramaImgUrl: ""
+      dialogPanoramaImgUrl: "",
+      PicSourceType: window.config.PicSourceType
     };
   },
   methods: {

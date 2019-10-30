@@ -334,6 +334,10 @@ export default {
         snapshotTimeStart: this.startTime, // string抓拍时间启否
         snapshotTimeEnd: this.endTime
       };
+      // 过滤空字符串
+      if (!data.channelUuids) data.channelUuids = null;
+      if (!data.faceMonitorUuids) data.faceMonitorUuids = null;
+      if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
       api
         .getRecognizeList(data)
         .then(res => {

@@ -88,3 +88,13 @@ export function addTempContrlTask(data) {
     data
   });
 }
+
+// 根据抓拍id查询人脸ID
+export function photoRecordToAnalysis(data) {
+  let url = FaceModuleApi.searchLogApi.photoRecordToAnalysis(store.state.home.projectUuid);
+  return Axios({
+    method: 'GET',
+    url,
+    data
+  });
+}
