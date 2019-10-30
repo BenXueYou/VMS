@@ -210,6 +210,7 @@ export default {
       this.checkedChannel = [];
       this.checkedChannelName = "";
       this.checkAll = false;
+      this.$emit("transferCheckedChannel", []);
     },
     // 弹窗展开的回调
     show() {},
