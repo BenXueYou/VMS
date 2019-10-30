@@ -211,6 +211,7 @@ export default {
     }
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
+    this.queryAct();
   },
   watch: {
     filterText(val) {
@@ -348,7 +349,6 @@ export default {
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
       console.log(checkedChannel);
-      //   this.defaultCheckedChannel = checkedChannel;
       this.checkedChannelsUuidList = [];
       for (var i = 0; i < checkedChannel.length; i++) {
         this.checkedChannelsUuidList.push(checkedChannel[i].channelUuid);
@@ -368,162 +368,148 @@ export default {
       this.dialogPanoramaImgUrl = this.imageHeader + o.panoramaCapturePhotoUrl;
       this.titleTxt = o.channelName;
     },
-    detailToDesc() {
-      // this.dialogVisible = !this.dialogVisible;
-    },
-    checkBoxAction(data, node) {
-      console.log(node.checkedNodes);
-      for (var i = 0; i < node.checkedNodes.length; i++) {}
-    },
-    checkChanges(node, e2) {
-      this.checkedChannelsUuidList = this.$refs.tree.getCheckedKeys();
-    },
-    clearAction() {
-      console.log("清除----");
-      this.checkNameString = "";
-    },
-
     queryAct() {
-      /* eslint-disable */
-			if (this.startTime && this.endTime) {
+      if (this.startTime && this.endTime) {
+        /* eslint-disable */
 				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
 				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
-				if (d1 >= d2) {
-					this.$message({
-						message: "开始时间必须小于结束时间！",
-						type: "warning"
-					});
-					return;
-				}
-			}
-			this.currentPage = 1;
-			this.total = 0;
-			this.getPhotoRecordList();
-		},
-		// 按照时间查询抓拍记录
-		getPhotoRecordList() {
-			this.mainScreenLoading = true;
-			this.totalPhotoItems = []; //清除记录
-			console.log(this.checkedChannelsUuidList)
-			var data = {
-				page: this.currentPage,
-				limit: this.pageSize,
-				channelUuids: this.checkedChannelsUuidList.toString(),
-				snapshotTimeStart: this.startTime,
-				snapshotTimeEnd: this.endTime,
-				faceCapturePhotoQuality: this.qualityOption.toString(),
-				genderCapture: this.genderOption
-			};
-			if (!data.channelUuids) data.channelUuids = null;
-			if (!data.faceCapturePhotoQuality) data.faceCapturePhotoQuality = null;
-			// 此处处理参数，入参的key值随页面变量的变化而变化
-			if (this.propertyOption) {
-				data[this.propertyOption] = this.propertyOption;
-				data[this.propertyOption] = Number(Boolean(data[this.propertyOption]));
-			}
-			console.log(data);
-			api
-				.getSnapshotList(data)
-				.then(res => {
-					this.mainScreenLoading = false;
-					if (res.data.success) {
-						if (res.data.data && res.data.data.list) {
-							this.totalPhotoItems = res.data.data.list;
-							this.total = res.data.data.total;
-						} else {
-							this.$message.warning("查询结果为空");
-						}
-					} else {
-						this.$message.warning(res.data.msg);
-					}
-				})
-				.catch(() => {
-					this.mainScreenLoading = false;
-				});
-		},
-		handleSizeChange(val) {
-			console.log(`每页 ${val} 条`);
-		},
-		handleCurrentChange(val) {
-			console.log(`点击当前页: ${val}`);
-			this.currentPage = val;
-			this.getPhotoRecordList(false);
-		},
-		// 获取任务列表
-		getDeviceList(isTrue) {
-			this.$store.dispatch("getDeviceList", false).then(res => {
-				if (res.result === 0) {
-					this.deviceList = res.data;
-					if (isTrue) {
-						this.getPhotoRecordList();
-					}
-				} else {
-					this.$message({ message: "更新设备列表失败", type: "warning" });
-				}
-			});
-		},
-		filterNode(value, data) {
-			if (!value) return true;
-			return data.label.indexOf(value) !== -1;
-		},
-		// 鼠标划过覆盖的hover弹窗事件
-		mymouseover: event => {
-			mouseover(event);
-		},
-		mymouseout(event) {
-			mouseout(event);
-		},
-		mymousemove(event) {
-			mousemove(event);
-		}
-	},
-	data() {
-		return {
-			PicSourceType: window.config.PicSourceType,
-			imageHeader: RestApi.api.imageUrl,
-			propertyOption: null,
-			selectDate: null,
-			inputPlaceholder: "高，中",
-			checkedUuid: ["HIGH", "NORMAL"],
-			dialogPanoramaImgUrl: false,
-			fRPopoverClass: "fRPopoverClass",
-			totalPhotoItems: 40,
-			dialogPhotoImgUrl: false,
-			dialogVisible: false, // 彈窗顯示標記
-			checkedChannelsNameList: [], // 当前勾选的通道名称list
-			checkedChannelsUuidList: [], // 当前勾选的通道Id的list
-			channelNameList: [], // 当前任务显示的通道名list称
-			channelInfoList: [], // 所有通道名称和ID的二元list
-			deviceList: [], // 布控任務列表
-			mainScreenLoading: false, // 局部遮罩是否显示
-			pageSize: 40,
-			total: 0,
-			currentPage: 1,
-			startTime: "",
-			endTime: "",
-			checkList: [],
-			filterText: "",
-			HEIGHT: 0,
-			WIDTH: 0,
-			defaultProps: {
-				children: "children",
-				label: "label"
-			},
-			checkNameString: "全部任务",
-			allChannelUuid: [],
-			genderOption: null,
-			qualityOption: ["HIGH", "NORMAL"],
-			titleTxt: "抓拍设备",
-			defaultQualityProps: {
-				label: "label"
-			},
-			carFellowDetailList: [],
-			isShow: false,
-			size: 20,
-			cellwidth: 80,
-			defaultCheckedChannel: []
-		};
-	}
+		/* eslint-enable */
+        if (d1 >= d2) {
+          this.$message({
+            message: "开始时间必须小于结束时间！",
+            type: "warning"
+          });
+          return;
+        }
+      }
+      this.currentPage = 1;
+      this.total = 0;
+      this.getPhotoRecordList();
+    },
+    // 按照时间查询抓拍记录
+    getPhotoRecordList() {
+      this.mainScreenLoading = true;
+      this.totalPhotoItems = []; // 清除记录
+      console.log(this.checkedChannelsUuidList);
+      var data = {
+        page: this.currentPage,
+        limit: this.pageSize,
+        channelUuids: this.checkedChannelsUuidList.toString(),
+        snapshotTimeStart: this.startTime,
+        snapshotTimeEnd: this.endTime,
+        faceCapturePhotoQuality: this.qualityOption.toString(),
+        genderCapture: this.genderOption
+      };
+      if (!data.channelUuids) data.channelUuids = null;
+      if (!data.faceCapturePhotoQuality) data.faceCapturePhotoQuality = null;
+      // 此处处理参数，入参的key值随页面变量的变化而变化
+      if (this.propertyOption) {
+        data[this.propertyOption] = this.propertyOption;
+        data[this.propertyOption] = Number(Boolean(data[this.propertyOption]));
+      }
+      console.log(data);
+      api
+        .getSnapshotList(data)
+        .then(res => {
+          this.mainScreenLoading = false;
+          if (res.data.success) {
+            if (res.data.data && res.data.data.list) {
+              this.totalPhotoItems = res.data.data.list;
+              this.total = res.data.data.total;
+            } else {
+              this.$message.warning("查询结果为空");
+            }
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {
+          this.mainScreenLoading = false;
+        });
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`点击当前页: ${val}`);
+      this.currentPage = val;
+      this.getPhotoRecordList(false);
+    },
+    // 获取任务列表
+    getDeviceList(isTrue) {
+      this.$store.dispatch("getDeviceList", false).then(res => {
+        if (res.result === 0) {
+          this.deviceList = res.data;
+          if (isTrue) {
+            this.getPhotoRecordList();
+          }
+        } else {
+          this.$message({ message: "更新设备列表失败", type: "warning" });
+        }
+      });
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    // 鼠标划过覆盖的hover弹窗事件
+    mymouseover: event => {
+      mouseover(event);
+    },
+    mymouseout(event) {
+      mouseout(event);
+    },
+    mymousemove(event) {
+      mousemove(event);
+    }
+  },
+  data() {
+    return {
+      PicSourceType: window.config.PicSourceType,
+      imageHeader: RestApi.api.imageUrl,
+      propertyOption: null,
+      selectDate: null,
+      inputPlaceholder: "高，中",
+      checkedUuid: ["HIGH", "NORMAL"],
+      dialogPanoramaImgUrl: false,
+      fRPopoverClass: "fRPopoverClass",
+      totalPhotoItems: 40,
+      dialogPhotoImgUrl: false,
+      dialogVisible: false, // 彈窗顯示標記
+      checkedChannelsNameList: [], // 当前勾选的通道名称list
+      checkedChannelsUuidList: [], // 当前勾选的通道Id的list
+      channelNameList: [], // 当前任务显示的通道名list称
+      channelInfoList: [], // 所有通道名称和ID的二元list
+      deviceList: [], // 布控任務列表
+      mainScreenLoading: false, // 局部遮罩是否显示
+      pageSize: 40,
+      total: 0,
+      currentPage: 1,
+      startTime: "",
+      endTime: "",
+      checkList: [],
+      filterText: "",
+      HEIGHT: 0,
+      WIDTH: 0,
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
+      checkNameString: "全部任务",
+      allChannelUuid: [],
+      genderOption: null,
+      qualityOption: ["HIGH", "NORMAL"],
+      titleTxt: "抓拍设备",
+      defaultQualityProps: {
+        label: "label"
+      },
+      carFellowDetailList: [],
+      isShow: false,
+      size: 20,
+      cellwidth: 80,
+      defaultCheckedChannel: []
+    };
+  }
 };
 </script>
 <style>

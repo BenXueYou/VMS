@@ -188,17 +188,22 @@ export default {
     },
     handleSubscribeCapture(data) {
       let CapturePhotoArr = this.$store.state.home.CapturePhotoArr;
-
       let his = data.captureDatetime.split(" ")[1];
       let ymd = data.captureDatetime.split(" ")[0];
       let mdy = ymd.split('-')[1] + '-' + ymd.split('-')[2] + '-' + ymd.split('-')[0];
       data.captureDatetime = his + " " + mdy;
       CapturePhotoArr.push(data);
+      if (CapturePhotoArr && CapturePhotoArr.length > 10) {
+        CapturePhotoArr.unshift();
+      }
       this.$store.dispatch("setCapturePhotoArr", CapturePhotoArr);
     },
     handleSubscribeRecognization(data) {
       let RecognizationArr = this.$store.state.home.RecognizationArr;
       RecognizationArr.push(data);
+      if (RecognizationArr && RecognizationArr.length > 6) {
+        RecognizationArr.unshift();
+      }
       this.$store.dispatch("setRecognizationArr", RecognizationArr);
     },
     handleSubscribeMonitorAlarm(data) {
