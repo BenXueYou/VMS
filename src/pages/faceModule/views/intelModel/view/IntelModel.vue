@@ -677,8 +677,8 @@ export default {
     }
     .block-line {
       height: 37px;
-      display: flex;
-      align-items: center;
+      // display: flex;
+      // align-items: center;
     }
     .info-container {
       display: flex;

@@ -618,8 +618,8 @@ export default {
     }
     .block-line {
       height: 36px;
-      display: flex;
-      align-items: center;
+      /* display: flex;
+      align-items: center; */
     }
     .info-container {
       display: flex;

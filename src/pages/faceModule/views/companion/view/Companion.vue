@@ -12,7 +12,7 @@
               <i v-if="!$route.query.imgObj"
                  class="el-icon-circle-plus-outline font-color">添加图片</i>
               <img v-if="$route.query.imgObj"
-                   :src="$common.setPictureShow($route.query.imgObj.photouri)"
+                   :src="$common.setPictureShow($route.query.imgObj.photouri, 'facelog')"
                    style="width: 100%; height: 100%" />
             </div>
           </div>

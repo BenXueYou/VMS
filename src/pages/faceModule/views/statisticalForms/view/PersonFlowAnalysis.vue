@@ -10,16 +10,10 @@
         </el-radio-group>
         <span class="left-space"
               v-if="formType === 'one'">抓拍设备：</span>
-        <elPopverTree :channelInfoList="deviceList"
-                      :elPopoverClass="faceRecordPopoverClass"
-                      @transferCheckedChannel="transferCheckedChannel"
-                      @show="popverShow"
-                      @getRadioDefaultData="getRadioDefaultData"
-                      boxType="radio"
+        <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                       v-if="formType === 'one'"
-                      inputWidth="200px"
-                      @hide="popverHidden">
-        </elPopverTree>
+                      @transferCheckedChannel="transferCheckedChannel"
+                      inputWidth="230px"></elPopverTree>
         <span class="left-space">图片质量：</span>
         <pic-qulity-select :selectedButtons.sync="selectedButtons"/>
         <img src="@/assets/images/sort.png"
@@ -119,13 +113,11 @@ export default {
       dataZoom: [],
       myChart: null,
       flag: 0,
-      faceCapturePhotoQuality: [],
       xAxisData: [],
       photoStaticList: [],
-      deviceList: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
+      faceRecordPopoverClass: "staticsPopoverClass",
       checkedChannelsUuid: "",
-      selectedButtons: ["high", "normal", "low"]
+      selectedButtons: ["HIGH", "NORMAL", "LOW"]
     };
   },
   created() {},
@@ -348,9 +340,9 @@ export default {
       this.$statisticHttp
         .getFaceCaptureAll({
           sort: this.sort,
-          faceCapturePhotoQuality: this.faceCapturePhotoQuality,
+          faceCapturePhotoQuality: this.selectedButtons.toString(),
           reportType,
-          searchDate: `${this.dateValue} ${date}`
+          searchDate: `${date}`
         })
         .then(res => {
           let body = res.data;
@@ -402,7 +394,7 @@ export default {
         .getFaceCaptureOne({
           channelUuid: this.checkedChannelsUuid,
           reportType,
-          faceCapturePhotoQuality: this.faceCapturePhotoQuality,
+          faceCapturePhotoQuality: this.selectedButtons.toString(),
           searchDate: `${this.dateValue}`
         })
         .then(res => {
@@ -670,20 +662,9 @@ export default {
         });
       }
     },
-    // 获取任务列表
-    getDeviceList() {
-      // var deviceList = this.$store.getters.getDeviceList;
-      // this.deviceList = deviceList;
-    },
     transferCheckedChannel(checkedChannel) {
       this.checkedChannelsUuid = checkedChannel.id;
     },
-    popverShow() {},
-    popverHidden() {},
-    getRadioDefaultData(checkedChannel) {
-      this.checkedChannelsUuid = checkedChannel.id;
-      this.searchData();
-    }
   },
   watch: {
     nowHour(val) {
@@ -702,9 +683,6 @@ export default {
       this.myChart.clear();
       this.drawLine();
     },
-    selectedButtons(val) {
-      console.log("29879879879: ", val);
-    }
   },
   deactivated() {},
   destroyed() {}
@@ -712,9 +690,9 @@ export default {
 </script>
 
 <style>
-.faceRecordPopoverClass {
-  width: 50%;
-  height: 45%;
+.staticsPopoverClass {
+  width: 500px;
+  height: 230px;
   position: absolute;
   background: #202127;
   min-width: 150px;
