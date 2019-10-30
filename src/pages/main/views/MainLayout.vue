@@ -149,7 +149,7 @@ export default {
           this.subCapture = this.stompClient.subscribe(
             subCaptureApi,
             greeting => {
-              console.log("收到抓拍通知：", greeting);
+              // console.log("收到抓拍通知：", greeting);
               this.handleSubscribeCapture(JSON.parse(greeting.body));
             }
           );
