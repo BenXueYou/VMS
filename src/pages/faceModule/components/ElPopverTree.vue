@@ -298,12 +298,13 @@ export default {
                 checkedChannelUuidArr.push(element.channelUuid);
               });
               this.checkedChannel = checkedChannelUuidArr;
+              this.$emit("transferCheckedChannel", this.channels);
             }
             // 处理单选逻辑
             if (this.boxType === "radio") {
               this.checkedChannel = this.channels[0].channelUuid;
+              this.$emit("transferCheckedChannel", this.checkedChannel);
             }
-            this.$emit("transferCheckedChannel", this.checkedChannel);
           } else {
             console.log(res.data.data);
             this.checkAll = false;
