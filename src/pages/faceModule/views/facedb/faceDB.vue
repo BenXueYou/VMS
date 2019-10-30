@@ -387,7 +387,7 @@ export default {
     },
     openDeleteDialog(way, row) {
       if (!row.deletable) {
-        this.$message.error(`不可以删除${this.libraryName}数据`);
+        this.$message.error(`不可以删除${row.faceLibraryName}数据`);
         return;
       }
       if (row.faceLibraryUuid) {
@@ -499,7 +499,7 @@ export default {
     // 编辑人脸库
     editFaceLib(row) {
       if (!row.editabled) {
-        this.$message.error(`不可以编辑${this.libraryName}数据`);
+        this.$message.error(`不可以编辑${row.faceLibraryName}数据`);
         return;
       }
       faceApi

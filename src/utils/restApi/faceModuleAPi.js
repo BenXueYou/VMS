@@ -65,7 +65,10 @@ export default {
     // 根据抓拍的UUid查找人脸ID 判断的是是否有人员轨迹
     getFaceUuidByFaceCaptureUuid: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/search_faceUuid`,
     // 临时布控
-    addTempContrlTask: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/temp/info`
+    addTempContrlTask: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/temp/info`,
+
+    // /facelog-v1/project/{projectUuid}/faceUuid/faceCaptureRecord
+    photoRecordToAnalysis:projectUuid =>`${URLHeader}/${projectUuid}/faceUuid/faceCaptureRecord`
   },
   // @fengyawen
   getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,

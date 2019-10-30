@@ -193,11 +193,31 @@ export default {
     httpRequest2(e2) {
       console.log(e2, "---", e2.file, "---", e2.file.raw);
       this.fileList[1] = e2.file;
+      let reader2 = new FileReader();
+
+      reader2.readAsDataURL(this.fileList[1]);
+
+      var _this = this;
+      reader2.onload = function(e) {
+        _this.imageBase642 = this.result
+          .replace("data:image/jpeg;base64,", "jpeg:")
+          .replace("data:image/png;base64,", "png:")
+          .replace("data:image/jpg;base64,", "jpg:");
+      };
       this.imageUrl2 = URL.createObjectURL(e2.file);
     },
     httpRequest1(e1) {
       console.log(e1, "---", e1.file, "---", e1.file.raw);
       this.fileList[0] = e1.file;
+      let reader1 = new FileReader();
+      reader1.readAsDataURL(this.fileList[0]);
+      var _this = this;
+      reader1.onload = function(e) {
+        _this.imageBase641 = this.result
+          .replace("data:image/jpeg;base64,", "jpeg:")
+          .replace("data:image/png;base64,", "png:")
+          .replace("data:image/jpg;base64,", "jpg:");
+      };
       this.imageUrl1 = URL.createObjectURL(e1.file);
     },
     submitUpload() {
@@ -219,27 +239,8 @@ export default {
     // 开始对比
     compareTwoFacePhoto() {
       this.scores = 0;
-      if (this.imageUrl1 && this.imageUrl2) {
+      if (this.imageBase641 && this.imageBase642) {
         this.compareBtnLoad = true;
-        console.log(this.fileList);
-        let reader1 = new FileReader();
-        let reader2 = new FileReader();
-        reader1.readAsDataURL(this.fileList[0]);
-        reader2.readAsDataURL(this.fileList[1]);
-
-        var _this = this;
-        reader1.onload = function(e) {
-          _this.imageBase641 = this.result
-            .replace("data:image/jpeg;base64,", "jpeg:")
-            .replace("data:image/png;base64,", "png:")
-            .replace("data:image/jpg;base64,", "jpg:");
-        };
-        reader2.onload = function(e) {
-          _this.imageBase642 = this.result
-            .replace("data:image/jpeg;base64,", "jpeg:")
-            .replace("data:image/png;base64,", "png:")
-            .replace("data:image/jpg;base64,", "jpg:");
-        };
         this.sendFileImgToServer();
       } else {
         this.$message({ message: "请上传图片", type: "warning" });
@@ -419,12 +420,12 @@ export default {
 }
 .clearImageIcon {
 	position: absolute;
-	right: 10px;
-	top: 10px;
+	right: 5px;
+	top: 5px;
 	z-index: 99;
 	color: #efefef;
-	width: 38px;
-	height: 38px;
+	width: 35px;
+	height: 35px;
 	background-color: rgba(17, 17, 17, 0.6);
 	padding-top: 10px;
 	box-sizing: border-box;
@@ -450,7 +451,7 @@ export default {
 	border: 1px solid rgba(32, 50, 49, 1);
 	position: relative;
 	background-color: rgb(27, 30, 33);
-	padding: 12px;
+	padding: 3px 5px;
 	box-sizing: border-box;
 }
 .OVO .el-upload {
