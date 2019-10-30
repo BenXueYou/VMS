@@ -12,6 +12,7 @@
               v-if="formType === 'one'">抓拍设备：</span>
         <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                       v-if="formType === 'one'"
+                      boxType="radio"
                       @transferCheckedChannel="transferCheckedChannel"
                       inputWidth="230px"></elPopverTree>
         <span class="left-space">图片质量：</span>
@@ -663,6 +664,7 @@ export default {
       }
     },
     transferCheckedChannel(checkedChannel) {
+      console.log("checkedChannel: ", checkedChannel);
       this.checkedChannelsUuid = checkedChannel.id;
     },
   },
