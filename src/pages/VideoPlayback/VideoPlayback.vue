@@ -324,12 +324,18 @@ export default {
       //   this.$messge.error('该通道')
       //   return ;
       // }
+      // 回放码流地址后面需要添加开始时间
+      let rtspUrl = data.rtspUrl;
+      // if(rtspUrl.indexOf("?"))
+      // if (timeData.length) {
+      //   rtspUrl += "?starttime=" + sd.split(" ")[0] + timeData[0].startTime;
+      // }
       // 模拟数据
       videos = {
         fileName: timeData.length ? timeData[0].fileName : "", // 文件名
         videoType: videoType, // 录像类型，必填
-        streamType: streamType, // 码流类型
-        rtspUrl: data.rtspUrl,
+        streamType: "third", // 码流类型
+        rtspUrl,
         ymd: sd.split(" ")[0], // 用于记录年月日
         date: sd.split(" ")[0],
         channelUuid: id,
