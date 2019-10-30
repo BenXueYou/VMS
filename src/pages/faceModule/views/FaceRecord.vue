@@ -99,10 +99,7 @@
 							<img src="@/assets/images/faceModule/2.png" />
 							以脸搜脸
 						</el-col>
-						<el-col
-							class="FRelPopoverCol"
-							@click.native="analysisAct(o,index,'/FaceManage/Companion')"
-						>
+						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'/FaceManage/Companion')">
 							<img src="@/assets/images/faceModule/2.png" />
 							同行人分析
 						</el-col>
@@ -125,7 +122,10 @@
 					</el-row>
 					<el-row slot="reference" class="recordCellImgBox">
 						<div class="imgBox">
-							<img :src="$common.setPictureShow(o.faceCapturePhotoUrl,PicSourceType)" class="recordCellImg" />
+							<img
+								:src="$common.setPictureShow(o.faceCapturePhotoUrl,PicSourceType)"
+								class="recordCellImg"
+							/>
 						</div>
 						<el-col class="recordCellFooter">
 							<div
@@ -286,6 +286,7 @@ export default {
     tempCtrlTask(o, index) {
       console.log(o.faceCapturePhotoUrl);
       this.$common.imageToBase64(o.faceCapturePhotoUrl, base64 => {
+        console.log(base64);
         api.addTempContrlTask({ imageBase64: base64 }).then(res => {
           if (res.result === 0) {
             this.$message({
@@ -325,19 +326,21 @@ export default {
     // 是否有同行人分析
     analysisAct(o, index, routeName) {
       this.mainScreenLoading = true;
-      api.photoRecordToAnalysis({faceCaptureRecordUuid: o.faceCaptureUuid}).then(res => {
-        console.log(res);
-        this.mainScreenLoading = false;
-        if (res.data.success) {
-          o.faceUuid = res.data.data;
-          this.$router.push({ path: routeName, query: { imgObj: o } });
-        } else {
-          this.$message({
-            message: "未找到分析记录",
-            type: "warning"
-          });
-        }
-      });
+      api
+        .photoRecordToAnalysis({ faceCaptureRecordUuid: o.faceCaptureUuid })
+        .then(res => {
+          console.log(res);
+          this.mainScreenLoading = false;
+          if (res.data.success) {
+            o.faceUuid = res.data.data;
+            this.$router.push({ path: routeName, query: { imgObj: o } });
+          } else {
+            this.$message({
+              message: "未找到分析记录",
+              type: "warning"
+            });
+          }
+        });
     },
     searchImageToFace(o, index, routeName) {
       this.$router.push({ path: routeName, query: { imgObj: o } });
@@ -410,8 +413,8 @@ export default {
 				faceCapturePhotoQuality: this.qualityOption.toString(),
 				genderCapture: this.genderOption
 			};
-			if(!data.channelUuids)data.channelUuids=null;
-			if(!data.faceCapturePhotoQuality)data.faceCapturePhotoQuality=null;
+			if (!data.channelUuids) data.channelUuids = null;
+			if (!data.faceCapturePhotoQuality) data.faceCapturePhotoQuality = null;
 			// 此处处理参数，入参的key值随页面变量的变化而变化
 			if (this.propertyOption) {
 				data[this.propertyOption] = this.propertyOption;
@@ -475,7 +478,7 @@ export default {
 	},
 	data() {
 		return {
-			PicSourceType:window.config.PicSourceType,
+			PicSourceType: window.config.PicSourceType,
 			imageHeader: RestApi.api.imageUrl,
 			propertyOption: null,
 			selectDate: null,
