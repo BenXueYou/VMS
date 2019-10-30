@@ -36,10 +36,10 @@
           <div>
             <gt-button class='sbtn'
                        @close="delteDBitem(index)"
-                       v-for="(item,index) in faceDBArr"
+                       v-for="(item,index) in initSelectData"
                        :key="index"
                        :icon="icons.door">
-              {{item.label}}
+              {{item.libraryName}}
             </gt-button>
           </div>
         </el-form-item>
@@ -51,9 +51,10 @@
                     type="number">
           </el-input>
           <span class='timetips'>
-            小时
+            h
           </span>
           <el-button type="primary"
+                     @click="nowSync"
                      size="middle">立即同步</el-button>
         </el-form-item>
 
@@ -67,6 +68,7 @@
           取消
         </el-button>
         <select-face-d-b :isShow.sync="isShow"
+                         :initSelectData="initSelectData"
                          @onConfirm="onConfirm"
                          @onCancel="onCancel"></select-face-d-b>
       </el-form>
@@ -119,7 +121,6 @@ export default {
     };
     return {
       isShow: false,
-      faceDBArr: [],
       icons,
       editEquipmentDialogVisible: false,
       options: [
@@ -146,17 +147,62 @@ export default {
         serverAddress: "",
         interval: "",
         isvideoset: true
-      }
+      },
+      initSelectData: []
     };
   },
   mounted() {
     this.getData();
   },
   methods: {
+    getData() {
+      return {
+        // 填写需要更新的字段即可
+        enable: this.data.isvideoset, // 是否启动人脸识别
+        librarys: this.initSelectData.map(i => {
+          i.libraryUuid = i.faceLibraryUuid;
+          return i;
+        }),
+        autoSyncIntervalMin: this.data.interval // 自动同步间隔(单位：分钟)
+      };
+    },
+    nowSync() {
+      let data = this.getData();
+      api.setImmediateSyncSettingl(this.deviceUuid, data).then(res => {
+        console.log(res);
+        if (res.data.success) {
+          this.$message.success("立即同步成功！");
+        }
+      });
+    },
+    getVideoDeviceSetting() {
+      api.getVideoDeviceSetting(this.deviceUuid).then(res => {
+        console.log(res);
+        if (res.data.success) {
+          let data = res.data.data;
+          this.data = {
+            isvideoset: data.enable,
+            interval: data.autoSyncIntervalMin
+          };
+          this.initSelectData = (data.librarys || []).map(i => {
+            i.faceLibraryUuid = i.libraryUuid;
+            return i;
+          });
+        }
+      });
+    },
+    onConfirm(list) {
+      console.log(list);
+    },
+    onCancel() {
+      this.isShow = false;
+    },
     openDB() {
       this.isShow = true;
     },
-    delteDBitem(item) {},
+    delteDBitem(index) {
+      this.initSelectData.splice(index, 1);
+    },
     close() {
       this.$emit("update:visible", false);
     },
@@ -171,35 +217,13 @@ export default {
         }
       });
     },
-    getData() {
-      api.getJiaoXiao(this.deviceUuid).then(res => {
+    submit() {
+      let data = this.getData();
+      api.setDelaySyncSetting(this.deviceUuid, data).then(res => {
         console.log(res);
         if (res.data.success) {
-          let data = res.data.data;
-          this.data = {
-            way: data.type,
-            port: "",
-            serverAddress: data.ntp,
-            interval: data.intervals,
-            isvideoset: data.enable === 1
-          };
-        }
-      });
-    },
-    submit() {
-      if (!this.data.interval) {
-        this.$message.error("请填写校时间隔!");
-        return;
-      }
-      let data = {
-        enable: this.data.isvideoset ? 1 : 0,
-        intervals: this.data.interval.toString(),
-        ntp: this.data.serverAddress,
-        type: this.data.way
-      };
-      api.setJiaoXiao(data, this.deviceUuid).then(res => {
-        if (res.data.success) {
-          this.$message.success("保存成功！");
+          this.$message.success("更新成功！");
+          this.close();
         }
       });
     }
@@ -207,6 +231,7 @@ export default {
   watch: {
     visible(val) {
       if (val) {
+        this.getVideoDeviceSetting();
       } else {
       }
       this.editEquipmentDialogVisible = this.visible;
