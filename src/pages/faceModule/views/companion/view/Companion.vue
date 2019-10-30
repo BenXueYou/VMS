@@ -33,13 +33,9 @@
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <span class="topTitleTxt left-space">抓拍设备：</span>
-            <elPopverTree :channelInfoList="deviceList"
-                          :elPopoverClass="faceRecordPopoverClass"
-                          :checkedChannelKeys="checkedChannelKeys"
+            <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                           @transferCheckedChannel="transferCheckedChannel"
-                          inputWidth="200px"
-                          @show="popverShow"
-                          @hide="popverHidden"></elPopverTree>
+                          inputWidth="230px"></elPopverTree>
             <span class="topTitleTxt left-space">抓拍时间间隔：</span>
             <el-input v-model="captureInterval"
                       style="width: 60px"
@@ -110,7 +106,7 @@ export default {
       deviceList: [],
       faceUuid: "",
       fellowItemData: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
+      faceRecordPopoverClass: "companionPopoverClass",
       channelUuids: null,
       captureInterval: 10,
       travelTogetherFrequency: 1,
@@ -140,40 +136,14 @@ export default {
       }
     },
     onClickTurnToGetFace() {
-      this.$router.push("/FaceRecord");
-    },
-    getDeviceList() {
-      // var deviceList = this.$store.getters.getDeviceList;
-      // this.deviceList = deviceList;
-      this.$store.dispatch("getDeviceList", false).then(res => {
-        if (res.result === 0) {
-          this.deviceList = res.data;
-        } else {
-          this.$message({ message: "更新设备列表失败", type: "warning" });
-        }
-      });
+      this.$router.push("/FaceManage/FaceRecord");
     },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
-      if (!checkedChannel || checkedChannel.length === 0) {
-        this.getChannelUuids(this.deviceList);
-      } else {
-        for (var i = 0; i < checkedChannel.length; i++) {
-          this.channelUuids.push(checkedChannel[i].id);
-        }
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    getChannelUuids(data) {
-      if (!data) {
-        return;
-      }
-      for (let item of data) {
-        this.channelUuids.push(item.id);
-        this.getChannelUuids(item.children);
-      }
-    },
-    popverShow() {},
-    popverHidden() {},
     getCompanionList() {
       this.isLoading = true;
       this.$factTragicHttp
@@ -209,25 +179,22 @@ export default {
   watch: {},
   destroyed() {},
   activated() {
-    this.getDeviceList();
     this.resetData();
-    this.checkedChannelKeys = [];
-    this.channelUuids = [];
-    if (this.$route.query.imgObj) {
-      this.checkedChannelKeys.push(this.$route.query.imgObj.channeluuid);
-      this.channelUuids = this.$common.copyArray(
-        this.checkedChannelKeys,
-        this.channelUuids
-      );
-    }
+    // if (this.$route.query.imgObj) {
+    //   this.checkedChannelKeys.push(this.$route.query.imgObj.channeluuid);
+    //   this.channelUuids = this.$common.copyArray(
+    //     this.checkedChannelKeys,
+    //     this.channelUuids
+    //   );
+    // }
   }
 };
 </script>
 
 <style>
-.faceRecordPopoverClass {
-  width: 50%;
-  height: 45%;
+.companionPopoverClass {
+  width: 500px;
+  height: 230px;
   position: absolute;
   background: #202127;
   min-width: 150px;
@@ -258,7 +225,7 @@ export default {
     width: 100%;
     height: 100%;
     .select-box {
-      height: 20%;
+      height: 158px;
       border: {
         width: 0 0 1px 0;
         style: dashed;
@@ -315,7 +282,7 @@ export default {
       }
     }
     .content-box {
-      height: 80%;
+      height: calc(100% - 158px);
       border-radius: 3px;
       .title {
         display: flex;

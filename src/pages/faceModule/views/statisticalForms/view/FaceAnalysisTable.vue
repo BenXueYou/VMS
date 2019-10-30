@@ -158,16 +158,17 @@ export default {
     },
     getFaceAnalysisTable() {
       this.isLoading = true;
+      let xhr = {
+        channelUuids: this.channelUuids,
+        startTime: this.startTime,
+        endTime: this.endTime,
+        logic: this.conditionVal,
+        frequency: this.interalVal,
+        page: this.pageInfo.currentPage,
+        limit: this.pageInfo.pageSize
+      };
       this.$factTragicHttp
-        .getFaceAnalysisTable({
-          channelUuids: this.channelUuids,
-          startTime: this.startTime,
-          endTime: this.endTime,
-          logic: this.conditionVal,
-          frequency: this.interalVal,
-          page: this.pageInfo.currentPage,
-          limit: this.pageInfo.pageSize
-        })
+        .getFaceAnalysisTable(xhr)
         .then(res => {
           let body = res.data;
           this.getFaceAnalysisTableSuccess(body);

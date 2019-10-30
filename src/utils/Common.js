@@ -255,10 +255,18 @@ export var COMMON = {
   },
 
   // 设置图片显示，若无则显示 默认图片
-  setPictureShow(imgUrl) {
+  setPictureShow(imgUrl, picType) {
     let imgUrlReturn;
     if (imgUrl == null || !imgUrl || imgUrl === "" || imgUrl === undefined) {
       imgUrlReturn = require("@/assets/images/user.png");
+    } else if (picType === 'facelog') {
+      imgUrlReturn =
+        window.config.protocolHeader +
+        window.config.ip +
+        `/fileforward-server-v1/project/${
+        store.state.home.projectUuid
+        }/fileforward/fileByUrl?asgName=${store.state.home.projectUuid}&fileUrl=` +
+        imgUrl;
     } else {
       imgUrlReturn =
         window.config.protocolHeader +
