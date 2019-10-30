@@ -4,7 +4,7 @@
 		<div class="ImgCardClass" style="width:100%;height:100%">
 			<div class="footerImgBox">
 				<img
-					:src="photoItem.faceCapturePhotoUrl?imageHeader+photoItem.faceCapturePhotoUrl:require('@/assets/user.png')"
+					:src="$common.setPictureShow(photoItem.faceCapturePhotoUrl,PicSourceType)"
 					class="image footerCardImg"
 				/>
 			</div>
@@ -44,7 +44,8 @@ export default {
   },
   data() {
     return {
-      imageHeader: RestApi.api.imageUrl
+      imageHeader: RestApi.api.imageUrl,
+      PicSourceType: window.config.PicSourceType
     };
   },
   methods: {

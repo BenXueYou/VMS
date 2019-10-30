@@ -65,7 +65,10 @@ export default {
     // 根据抓拍的UUid查找人脸ID 判断的是是否有人员轨迹
     getFaceUuidByFaceCaptureUuid: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/search_faceUuid`,
     // 临时布控
-    addTempContrlTask: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/temp/info`
+    addTempContrlTask: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/temp/info`,
+
+    // /facelog-v1/project/{projectUuid}/faceUuid/faceCaptureRecord
+    photoRecordToAnalysis:projectUuid =>`${URLHeader}/${projectUuid}/faceUuid/faceCaptureRecord`
   },
   // @fengyawen
   getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
@@ -74,11 +77,11 @@ export default {
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
   getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
   getModelList: `${URLHeader}/${projectUuid}/modelStatistics/list`,
-  getFaceCaptureAll: `${URLHeader}/${projectUuid}/snapshotStatistics/all/list`,
-  getFaceCaptureOne: `${URLHeader}/${projectUuid}/snapshotStatistics/one/list`,
-  getCompareAll: `${URLHeader}/${projectUuid}/recognizeStatistics/all/list`,
-  getCompareOne: `${URLHeader}/${projectUuid}/recognizeStatistics/one/list`,
-  getCompanionList: `${URLHeader}/${projectUuid}/staff/travelTogether/list`,
+  getFaceCaptureAll: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/all/list?asgName=${projectUuid}`,
+  getFaceCaptureOne: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/one/list?asgName=${projectUuid}`,
+  getCompareAll: `${URLHeaderFaceLog}/${projectUuid}/recognizeStatistics/all/list?asgName=${projectUuid}`,
+  getCompareOne: `${URLHeaderFaceLog}/${projectUuid}/recognizeStatistics/one/list?asgName=${projectUuid}`,
+  getCompanionList: `${URLHeaderFaceLog}/${projectUuid}/staff/travelTogether/list?asgName=${projectUuid}`,
   getFaceAnalysisTable: `${URLHeaderFaceLog}/${projectUuid}/staffFrequency/list?asgName=${projectUuid}`,
   getMonitoringTaskList: `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
   getMonitoringTaskDetails: (taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,

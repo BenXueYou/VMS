@@ -4,43 +4,50 @@ export var COMMON = {
 
   // 获取当前一小时前的时间
   getBeforeTimeOneHour() {
-      var new111 = new Date();
-      var hours = new111.getHours();
-      if (hours > 1) {
-        return (
-          new111.getFullYear() +
-    				"-" +
-    				addZero(new111.getMonth() + 1) +
-    				"-" +
-    				addZero(new111.getDate()) +
-    				" " +
-    				addZero(hours - 1) +
-    				":" +
-    				addZero(new111.getMinutes()) +
-    				":" +
-    				addZero(new111.getSeconds())
-        );
-      } else {
-        return (
-          new111.getFullYear() +
-    				"-" +
-    				addZero(new111.getMonth() + 1) +
-    				"-" +
-    				addZero(new111.getDate()) +
-    				" " +
-    				"00:00:00"
-        );
-      }
-      function addZero(num) {
-        if (num < 10) return "0" + num;
-        return num;
-      }
+    var new111 = new Date();
+    var hours = new111.getHours();
+    if (hours > 1) {
+      return (
+        new111.getFullYear() +
+        "-" +
+        addZero(new111.getMonth() + 1) +
+        "-" +
+        addZero(new111.getDate()) +
+        " " +
+        addZero(hours - 1) +
+        ":" +
+        addZero(new111.getMinutes()) +
+        ":" +
+        addZero(new111.getSeconds())
+      );
+    } else {
+      return (
+        new111.getFullYear() +
+        "-" +
+        addZero(new111.getMonth() + 1) +
+        "-" +
+        addZero(new111.getDate()) +
+        " " +
+        "00:00:00"
+      );
+    }
+    function addZero(num) {
+      if (num < 10) return "0" + num;
+      return num;
+    }
   },
   /**
    * image url 转 base64
    * @param {imageUrl }  
    */
-  imageToBase64(url,callback) {
+  imageToBase64(url, callback) {
+    url = window.config.protocolHeader +
+      window.config.ip +
+      `/fileforward-server-v1/project/${
+      store.state.home.projectUuid
+      }/fileforward/fileByUrl?asgName=${store.state.home.projectUuid}&fileUrl=` +
+      url;
+
     let httpRequest = null;
     if (window.XMLHttpRequest) {
       // 除了IE外的其它浏览器
@@ -57,16 +64,40 @@ export var COMMON = {
           reader.readAsDataURL(value);
           reader.onloadend = function () {
             var base64data = reader.result;
+            console.log(this.result);
             callback(base64data);
           };
-        }else{
+        } else {
           callback();
         }
       }
     };
     httpRequest.open("GET", url, true);
-    httpRequest.setRequestHeader("token", store.state.home.Authorization);
+    httpRequest.setRequestHeader('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
     httpRequest.send(null);
+    // this.getJSON(url).then(function (data) {
+    //   console.log(data);
+    // },
+    //   function (status) {
+    //     alert('Something went wrong.');
+    //     console.log(status);
+    //   })
+  },
+  getJSON(url) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', url, true);
+      xhr.setRequestHeader('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
+      xhr.onload = function () {
+        var status = xhr.status;
+        if (status == 200) {
+          resolve(xhr.response);
+        } else {
+          reject(status);
+        }
+      };
+      xhr.send();
+    });
   },
   /**
    * 判断 object 的所有属性是不是全部为空
@@ -255,10 +286,18 @@ export var COMMON = {
   },
 
   // 设置图片显示，若无则显示 默认图片
-  setPictureShow(imgUrl) {
+  setPictureShow(imgUrl, picType) {
     let imgUrlReturn;
     if (imgUrl == null || !imgUrl || imgUrl === "" || imgUrl === undefined) {
       imgUrlReturn = require("@/assets/images/user.png");
+    } else if (picType === 'facelog') {
+      imgUrlReturn =
+        window.config.protocolHeader +
+        window.config.ip +
+        `/fileforward-server-v1/project/${
+        store.state.home.projectUuid
+        }/fileforward/fileByUrl?asgName=${store.state.home.projectUuid}&fileUrl=` +
+        imgUrl;
     } else {
       imgUrlReturn =
         window.config.protocolHeader +
