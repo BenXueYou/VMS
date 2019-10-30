@@ -404,6 +404,7 @@ export default {
 		getPhotoRecordList() {
 			this.mainScreenLoading = true;
 			this.totalPhotoItems = []; //清除记录
+			console.log(this.checkedChannelsUuidList)
 			var data = {
 				page: this.currentPage,
 				limit: this.pageSize,
