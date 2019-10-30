@@ -64,7 +64,10 @@ export var COMMON = {
           reader.readAsDataURL(value);
           reader.onloadend = function () {
             var base64data = reader.result;
-            console.log(this.result);
+            base64data = base64data
+              .replace("data:image/jpeg;base64,", "jpeg:")
+              .replace("data:image/png;base64,", "png:")
+              .replace("data:image/jpg;base64,", "jpg:");
             callback(base64data);
           };
         } else {
@@ -73,7 +76,7 @@ export var COMMON = {
       }
     };
     httpRequest.open("GET", url, true);
-    httpRequest.setRequestHeader('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
+    httpRequest.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
     httpRequest.send(null);
     // this.getJSON(url).then(function (data) {
     //   console.log(data);
@@ -87,7 +90,7 @@ export var COMMON = {
     return new Promise(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open('get', url, true);
-      xhr.setRequestHeader('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
+      xhr.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
       xhr.onload = function () {
         var status = xhr.status;
         if (status == 200) {
