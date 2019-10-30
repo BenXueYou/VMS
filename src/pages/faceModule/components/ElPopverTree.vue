@@ -51,7 +51,7 @@
 							style="margin:10px 15px 9px;font-family: PingFangSC-Regular;font-size: 14px;color: #AAAAAA;letter-spacing: 0;"
 							v-for="item in channels"
 							:key="item.channelUuid"
-							:label="item.channelName"
+							:label="item.channelUuid"
 						>{{item.nickName}}</el-radio>
 					</el-radio-group>
 					<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
@@ -237,6 +237,8 @@ export default {
       console.log(value);
       if (this.boxType === "radio") {
         this.checkedChannel = value;
+        this.$emit("transferCheckedChannel", value);
+        return;
       } else {
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.channels.length;
@@ -289,6 +291,7 @@ export default {
         .then(res => {
           if (res.data.success && res.data.data) {
             this.channels = res.data.data;
+            // 判断是否全选
             if (this.isCheckedAll) {
               let checkedChannelUuidArr = [];
               this.channels.forEach(element => {
@@ -296,6 +299,11 @@ export default {
               });
               this.checkedChannel = checkedChannelUuidArr;
             }
+            // 处理单选逻辑
+            if (this.boxType === "radio") {
+              this.checkedChannel = this.channels[0].channelUuid;
+            }
+            this.$emit("transferCheckedChannel", this.checkedChannel);
           } else {
             console.log(res.data.data);
             this.checkAll = false;
