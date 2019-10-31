@@ -11,7 +11,7 @@
         <span class="left-space"
               v-if="formType === 'one'">抓拍设备：</span>
         <elPopverTree :elPopoverClass="faceRecordPopoverClass"
-                      v-if="formType === 'one'"
+                      v-show="formType === 'one'"
                       boxType="radio"
                       @transferCheckedChannel="transferCheckedChannel"
                       inputWidth="230px"></elPopverTree>
@@ -211,7 +211,7 @@ export default {
     setTableData() {
       this.resetData();
       this.tableData.forEach((v, i) => {
-        if (i === this.timeValue - 3) {
+        if ((this.typeRadio === 1 && this.timeValue !== 0 && i === this.timeValue - 1) || (this.typeRadio === 2 && i === this.timeValue)) {
           for (let item of v) {
             this.channelName.push(item.channelName);
             this.snapshotTotal.push(item.snapshotTotal);
@@ -240,7 +240,6 @@ export default {
           }
         }
       });
-      console.log(this.channelName, this.snapshotTotal, this.totalNum);
     },
     handleSliderChange(val) {
       clearInterval(this.timer1);
@@ -283,10 +282,10 @@ export default {
               clearInterval(this.timer1);
             }
           }
-          this.searchData();
+          this.setTableData();
+          this.drawLine();
         }, 2000);
       }
-      // this.searchData();
     },
     changeCommon() {
       let nowDateVal = "";
@@ -319,6 +318,7 @@ export default {
     onChangeDate() {
       let nowDateVal = this.changeCommon();
       this.timeValue = nowDateVal;
+      this.searchData();
       this.handleSliderChange(this.timeValue);
       if (this.typeRadio === 2) {
         this.xAxisData = [];
@@ -371,7 +371,7 @@ export default {
     getFaceCaptureSumByMonth() {
       let timeValueFake = this.timeValue + 1;
       let date = this.changeNum(timeValueFake);
-      date = `${this.dateValue}-${date}`;
+      date = `${this.dateValue}-01`;
       let reportType = "faceMonthlyReport";
       this.getFaceCaptureAll(date, reportType);
     },
@@ -397,11 +397,11 @@ export default {
       this.drawLine();
     },
     getSingleFaceCapSumByDay() {
-      let reportType = "day";
+      let reportType = "faceDailyReport";
       this.getFaceCaptureOne(reportType);
     },
     getSingleFaceCapSumByMonth() {
-      let reportType = "month";
+      let reportType = "faceMonthlyReport";
       this.getFaceCaptureOne(reportType);
     },
     getFaceCaptureOne(reportType) {
@@ -424,15 +424,9 @@ export default {
           for (let i = 0; i < 25; i++) {
             this.photoStaticList.push(0);
           }
-          for (let index in this.photoStaticList) {
-            for (let item of body.data) {
-              if (
-                parseInt(item.currenttime.substr(11, 2)) === parseInt(index)
-              ) {
-                this.photoStaticList[index] = item.snapshotTotal;
-              }
-            }
-          }
+          body.data.forEach((v, i) => {
+            this.photoStaticList[i + 1] = v;
+          });
         } else if (this.typeRadio === 2) {
           this.xAxisData = [];
           let day = this.$common.getDaysByMonth(
@@ -445,16 +439,19 @@ export default {
           for (let i = 0; i < this.xAxisData.length; i++) {
             this.photoStaticList.push(0);
           }
-          for (let index in this.photoStaticList) {
-            for (let item of body.data) {
-              if (
-                parseInt(item.currentdate.substr(8, 2)) ===
-                parseInt(index) + 1
-              ) {
-                this.photoStaticList[index] = item.snapshotTotal;
-              }
-            }
-          }
+          body.data.forEach((v, i) => {
+            this.photoStaticList[i + 1] = v;
+          });
+          // for (let index in this.photoStaticList) {
+          //   for (let item of body.data) {
+          //     if (
+          //       parseInt(item.currentdate.substr(8, 2)) ===
+          //       parseInt(index) + 1
+          //     ) {
+          //       this.photoStaticList[index] = item.snapshotTotal;
+          //     }
+          //   }
+          // }
         }
       }
       this.drawLine();
