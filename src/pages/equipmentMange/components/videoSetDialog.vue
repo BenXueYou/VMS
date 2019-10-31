@@ -4,6 +4,7 @@
              :width="width"
              :class="{'dialogCenter':center}"
              :close-on-click-modal="false"
+             :modal="false"
              :append-to-body="true"
              class="editEquip"
              :visible.sync="editEquipmentDialogVisible">
@@ -32,14 +33,14 @@
                  alt="">
             添加
           </el-button>
-          <span>共2个</span>
+          <span>共{{initSelectData.length}}个</span>
           <div>
             <gt-button class='sbtn'
                        @close="delteDBitem(index)"
                        v-for="(item,index) in initSelectData"
                        :key="index"
                        :icon="icons.door">
-              {{item.libraryName}}
+              {{item.libraryName||item.faceLibraryName}}
             </gt-button>
           </div>
         </el-form-item>
@@ -163,7 +164,7 @@ export default {
           i.libraryUuid = i.faceLibraryUuid;
           return i;
         }),
-        autoSyncIntervalMin: this.data.interval // 自动同步间隔(单位：分钟)
+        autoSyncIntervalMin: this.data.interval * 60 // 自动同步间隔(单位：分钟)
       };
     },
     nowSync() {
@@ -176,23 +177,31 @@ export default {
       });
     },
     getVideoDeviceSetting() {
-      api.getVideoDeviceSetting(this.deviceUuid).then(res => {
-        console.log(res);
-        if (res.data.success) {
-          let data = res.data.data;
-          this.data = {
-            isvideoset: data.enable,
-            interval: data.autoSyncIntervalMin
-          };
-          this.initSelectData = (data.librarys || []).map(i => {
-            i.faceLibraryUuid = i.libraryUuid;
-            return i;
-          });
-        }
-      });
+      api
+        .getVideoDeviceSetting(this.deviceUuid)
+        .then(res => {
+          console.log(res);
+          if (res.data.success) {
+            let data = res.data.data;
+            this.data = {
+              isvideoset: data.enable || false,
+              interval: (data.autoSyncIntervalMin || 0) / 60
+            };
+            this.initSelectData = (data.librarys || []).map(i => {
+              i.faceLibraryUuid = i.libraryUuid;
+              return i;
+            });
+          } else {
+          }
+        })
+        .catch(() => {
+          // 如果没有获取到数据，则关闭这个弹窗
+          this.close();
+        });
     },
     onConfirm(list) {
       console.log(list);
+      this.initSelectData = list;
     },
     onCancel() {
       this.isShow = false;
@@ -304,6 +313,9 @@ export default {
     width: 90%;
     max-width: 400px;
     margin: 0 auto;
+    .sbtn {
+      margin: 5px;
+    }
     .timetips {
       display: inline-block;
       padding-left: 10px;
