@@ -53,7 +53,13 @@
     </div>
     <div class="dash-line"></div>
     <div class="k-form">
-      <label for="">关联的功能模块：</label>
+      <div class="label">
+        <span class="adasaaaaF">
+          <img src="../../../assets/images/auth/auth.png"
+               alt="">
+          权限信息</span>
+        <label for="">关联的功能模块：</label>
+      </div>
       <div class="aa">
         <el-button type="text"
                    style='margin-bottom:20px;'
@@ -82,14 +88,53 @@
                    icon="el-icon-circle-plus-outline">新增</el-button>
       </div>
     </div>
+    <div class="dash-line"></div>
+    <div class="k-form">
+      <div class="label">
+        <span class="adasaaaaF">
+          <img src="../../../assets/images/auth/shouquan.png"
+               alt="">
+          授权账号</span>
+        <label for="">授权账号：</label>
+      </div>
+      <div class="aa">
+        <el-button type="text"
+                   style='margin-bottom:20px;'
+                   size="small"
+                   @click="addAccout"
+                   icon="el-icon-circle-plus-outline">新增</el-button>
+      </div>
+    </div>
+    <div class="dash-line"></div>
+    <div class="headera">
+      <div class="buttongroup">
+        <el-button @click="saveAndAdd"
+                   size="small"
+                   type="primary">保存并继续添加</el-button>
+        <el-button @click="confirm"
+                   class="button"
+                   size="small"
+                   type="primary">确认</el-button>
+        <el-button @click="close"
+                   class="button"
+                   size="small"
+                   type="primary">取消</el-button>
+      </div>
+    </div>
+    <tree-panel-dialog :isShow.sync="showtreeadad"></tree-panel-dialog>
   </div>
 </template>
 
 <script>
+import treePanelDialog from "@/pages/user/components/treePanelDialog";
 export default {
   name: "accountAdd",
+  components: {
+    treePanelDialog
+  },
   data() {
     return {
+      showtreeadad: false,
       status: "enable",
       time: "forever",
       username: "",
@@ -97,6 +142,9 @@ export default {
     };
   },
   methods: {
+    addAccout() {
+      this.showtreeadad = true;
+    },
     addFunction() {},
     saveAndAdd() {},
     confirm() {},
@@ -116,6 +164,7 @@ export default {
   .k-form {
     display: flex;
     margin: 15px 0px;
+    .label,
     label {
       flex: 1;
       text-align: right;
@@ -124,6 +173,14 @@ export default {
       font-size: 12px;
       color: #dddddd;
       line-height: 30px;
+      .adasaaaaF {
+        float: left;
+        padding-left: 50px;
+        img {
+          vertical-align: middle;
+          margin: 0px 20px;
+        }
+      }
     }
     .aa {
       flex: 2;
