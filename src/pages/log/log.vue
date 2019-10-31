@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       menuTitle: "1",
-      defaultActive: ""
+      defaultActive: "1"
     };
   },
   created() {},
