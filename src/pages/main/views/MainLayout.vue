@@ -195,8 +195,7 @@ export default {
       data.captureDatetime = his + " " + mdy;
       CapturePhotoArr.push(data);
       if (CapturePhotoArr && CapturePhotoArr.length > 10) {
-        CapturePhotoArr.unshift();
-        console.log('-----------', CapturePhotoArr.length);
+        CapturePhotoArr.shift();
       }
       this.$store.dispatch("setCapturePhotoArr", CapturePhotoArr);
     },
@@ -204,7 +203,7 @@ export default {
       let RecognizationArr = this.$store.state.home.RecognizationArr;
       RecognizationArr.push(data);
       if (RecognizationArr && RecognizationArr.length > 5) {
-        RecognizationArr.unshift();
+        RecognizationArr.shift();
       }
       this.$store.dispatch("setRecognizationArr", RecognizationArr);
     },
