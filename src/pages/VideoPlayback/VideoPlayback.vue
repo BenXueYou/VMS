@@ -21,6 +21,13 @@
                     action="playback"
                     :position="item.position"
                     :fenlu="fenluIndex+1"
+                    @closeVideo="closeVideo"
+                    @startRecord="startRecord"
+                    @stopRecord="stopRecord"
+                    @openVideoVoice="openVideoVoice"
+                    @screenShot="screenShot"
+                    @dragstart="dragstart(index)"
+                    @drop="drop(index)"
                     @contextmenu="showMenu"
                     @click="ClickViDeoA(index)">
         </video-wrap>
@@ -181,6 +188,55 @@ export default {
   },
   destroyed() {},
   methods: {
+    closeVideo() {},
+    startRecord() {},
+    stopRecord() {},
+    openVideo() {},
+    screenShot(index) {
+      // 抓图
+      // 判断该分路有没有canvas,从而是否显示弹窗
+      let canvas = this.$refs["video" + index][0].canvas;
+      if (canvas) {
+        // 抓图由webplay控制
+        // this.screenShotVisible = true;
+        // console.log(canvas);
+        // var dataURL = canvas.toDataURL("image/png");
+        // console.log(dataURL);
+        // this.src = dataURL;
+      } else {
+        this.$message.error("该分路没有视频在播放，请先添加视频！");
+      }
+    },
+    dragstart(index, e) {
+      // 拖拽开始
+
+      console.log("dragstart:" + index);
+      this.dragStartIndex = index;
+    },
+    drop(index, e) {
+      // 拖拽结束
+      console.log("drop:" + index);
+      this.dragEndIndex = index;
+
+      // 这里用于切换两个视频的拖拽交换逻辑,dragstart记录拖拽的是哪个,drop用于记录放在哪个上面
+      // 这里直接修改数组中的url来达到视频交换的效果。这样会重新停止并且重新播放视频
+      // 优化，每个video的位置应该是fixed，这样交换两个video的postiion就可以了。
+      // [this.videoArr[this.dragStartIndex], this.videoArr[this.dragEndIndex]] = [
+      //   this.videoArr[this.dragEndIndex],
+      //   this.videoArr[this.dragStartIndex]
+      // ];
+      // 优化之后的写法
+      [
+        this.videoArr[this.dragStartIndex].position,
+        this.videoArr[this.dragEndIndex].position
+      ] = [
+        this.videoArr[this.dragEndIndex].position,
+        this.videoArr[this.dragStartIndex].position
+      ];
+      this.videoArr = this.videoArr;
+      this.dragStartIndex = -1;
+      console.log(this.videoArr);
+    },
     jugdeJump() {
       console.log(this.$route);
       // 判断$route有没有channelUuid，有表示是跳转过来播放视频的
@@ -513,11 +569,15 @@ export default {
             this.$refs["video" + this.operatorIndex][0].getCanvas()
           );
           break;
+        case "打开音频":
+          this.openVideoVoice(this.operatorIndex);
+          break;
         case "图像调节":
           this.imageAdjustVisible = true;
           break;
       }
     },
+    openVideoVoice(index) {},
     videoSpeedUp() {},
     videoSpeedDown() {},
     videoSingleFrame() {},
