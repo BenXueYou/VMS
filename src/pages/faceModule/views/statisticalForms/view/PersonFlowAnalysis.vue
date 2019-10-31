@@ -398,19 +398,19 @@ export default {
     },
     getSingleFaceCapSumByDay() {
       let reportType = "faceDailyReport";
-      this.getFaceCaptureOne(reportType);
+      this.getFaceCaptureOne(this.dateValue, reportType);
     },
     getSingleFaceCapSumByMonth() {
       let reportType = "faceMonthlyReport";
-      this.getFaceCaptureOne(reportType);
+      this.getFaceCaptureOne(`${this.dateValue}-01`, reportType);
     },
-    getFaceCaptureOne(reportType) {
+    getFaceCaptureOne(date, reportType) {
       this.$statisticHttp
         .getFaceCaptureOne({
           channelUuid: this.checkedChannelsUuid,
           reportType,
           faceCapturePhotoQuality: this.selectedButtons.toString(),
-          searchDate: `${this.dateValue}`
+          searchDate: date
         })
         .then(res => {
           let body = res.data;
