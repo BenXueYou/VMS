@@ -168,6 +168,7 @@ export default {
   }
   .editDiv {
     height: 100%;
+    background: #212325;
   }
   .title {
     position: relative;
