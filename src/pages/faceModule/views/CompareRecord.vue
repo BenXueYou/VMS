@@ -97,7 +97,7 @@
 		>
 			<div class="elCardBoxClass" v-for="(item, index) in pageSize" :key="index">
 				<recoginize-card
-					imgWidth="95"
+					imgWidth="90"
 					:recoginizeItem="totalCompareItemList[index]"
 					@detailClick="doComparethis(index)"
 				/>
@@ -787,13 +787,6 @@ export default {
 	/*margin-left: 10px;*/
 	line-height: 1;
 }
-.CompareRecord .elCardBoxClass {
-	margin: 16px 17px 0 0;
-	color: #ffffff;
-	box-sizing: border-box;
-	border-radius: 2px;
-	overflow: hidden;
-}
 .CompareRecord .el-select-dropdown__item {
 	font-size: 14px;
 	padding: 0 20px;
@@ -887,17 +880,23 @@ export default {
 	box-sizing: border-box;
 	padding-left: 17px;
 }
-
-.CompareRecord .reccordBoxClass::after {
+.CompareRecord .elCardBoxClass {
+	margin: 16px 0px 0 0;
+	color: #ffffff;
+	box-sizing: border-box;
+	border-radius: 2px;
+	overflow: hidden;
+}
+/* .CompareRecord .reccordBoxClass::after {
 	content: "";
-	/* flex: auto; */
+	flex: auto;
 }
 .CompareRecord .reccordBoxClass > *:first-child {
 	margin-right: auto;
 }
 .CompareRecord .reccordBoxClass > *:nth-child(2) {
 	margin-right: auto;
-}
+} */
 .textclipClass {
 	display: inline-block;
 	white-space: nowrap;
