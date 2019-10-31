@@ -76,7 +76,7 @@ export default {
   getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list`,
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
   getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
-  getModelList: `${URLHeader}/${projectUuid}/modelStatistics/list`,
+  getModelList: `${URLHeaderFaceLog}/${projectUuid}/modelStatistics/list?asgName=${projectUuid}`,
   getFaceCaptureAll: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/all/list?asgName=${projectUuid}`,
   getFaceCaptureOne: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/one/list?asgName=${projectUuid}`,
   getCompareAll: `${URLHeaderFaceLog}/${projectUuid}/recognizeStatistics/all/list?asgName=${projectUuid}`,
