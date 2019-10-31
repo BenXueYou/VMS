@@ -234,7 +234,7 @@ export default {
       }
     },
     rtspUrl(val) {
-      console.log(val);
+      console.log("码流的视频url改变了：   " + val);
       if (val) {
         // 播放之前判断是否已经在播放了，如果有则删除掉
         if (this.canvas) {
@@ -261,10 +261,12 @@ export default {
     },
     drag(start) {
       // 时间跳转
-      console.log(start);
-      if (!this.canvas) {
-        this.playVideo();
-      }
+      // console.log(start);
+      // if (!this.canvas) {
+      //   this.playVideo();
+      // }
+      console.log(this.rtspUrl);
+      console.log(this.drag);
       this.video_mgr.drag(this.video, start);
     },
     playVideo() {

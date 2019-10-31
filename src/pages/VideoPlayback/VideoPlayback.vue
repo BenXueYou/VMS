@@ -205,8 +205,8 @@ export default {
     },
     // 录像播放跳转时间
     choosetime(index, chooseTime) {
-      this.videoArr[index].rtspUrl = this.controlData[index].rtspUrl;
-      this.videoArr.concat();
+      // this.videoArr[index].rtspUrl = this.controlData[index].rtspUrl;
+      // this.videoArr.concat();
       this.$refs["video" + index][0].drag(
         this.videoArr[index].ymd.replace(/-/g, "") +
           chooseTime.replace(/:/g, "")
