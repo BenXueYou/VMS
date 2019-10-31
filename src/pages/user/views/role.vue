@@ -126,7 +126,7 @@ export default {
       pageSize: 11,
       dataTotal: 100,
       roleName: "",
-      visible: false,
+      visible: true,
       isShowEdit: true,
       tableData: Array(11).fill({
         roleUuid: "string", // 角色uuid
