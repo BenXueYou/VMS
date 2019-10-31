@@ -988,8 +988,8 @@
         "captureFaceLib": "抓拍库"
     },
     "face_report_type": {
-        "faceDailyReport": "月报表",
-        "faceMonthlyReport": "日报表"
+        "faceDailyReport": "日报表",
+        "faceMonthlyReport": "月报表"
     },
     "onoffline": {
         "online": "在线",

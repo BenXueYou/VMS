@@ -118,7 +118,8 @@ export default {
       photoStaticList: [],
       faceRecordPopoverClass: "staticsPopoverClass",
       checkedChannelsUuid: "",
-      selectedButtons: ["HIGH", "NORMAL", "LOW"]
+      selectedButtons: ["HIGH", "NORMAL", "LOW"],
+      tableData: [],
     };
   },
   created() {},
@@ -207,8 +208,44 @@ export default {
         this.xAxisData.push(i);
       }
     },
+    setTableData() {
+      this.resetData();
+      this.tableData.forEach((v, i) => {
+        if (i === this.timeValue - 3) {
+          for (let item of v) {
+            this.channelName.push(item.channelName);
+            this.snapshotTotal.push(item.snapshotTotal);
+            this.totalNum = this.totalNum + item.snapshotTotal;
+          }
+          if (v.length <= 20) {
+            this.dataZoom = [];
+            this.flag = 0;
+          } else {
+            this.dataZoom = [
+              {
+                type: "slider",
+                show: true, // flase直接隐藏图形
+                yAxisIndex: [0],
+                width: "15px",
+                handleSize: 0,
+                top: 50, // 滚动条靠左侧的百分比
+                bottom: 50,
+                start: 30, // 滚动条的起始位置
+                end: 100, // 滚动条的截止位置（按比例分割你的柱状图x轴长度）
+                zoomOnMouseWheel: true, // 如何触发缩放。可选值为：true：表示不按任何功能键，鼠标滚轮能触发缩放。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标滚轮能触发缩放。'ctrl'：表示按住 ctrl 和鼠标滚轮能触发缩放。'alt'：表示按住 alt 和鼠标滚轮能触发缩放。
+                moveOnMouseMove: true // 如何触发数据窗口平移。true：表示不按任何功能键，鼠标移动能触发数据窗口平移。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标移动能触发数据窗口平移。'ctrl'：表示按住 ctrl 和鼠标移动能触发数据窗口平移。'alt'：表示按住 alt 和鼠标移动能触发数据窗口平移。
+              }
+            ];
+            this.flag = 1;
+          }
+        }
+      });
+      console.log(this.channelName, this.snapshotTotal, this.totalNum);
+    },
     handleSliderChange(val) {
       clearInterval(this.timer1);
+      this.setTableData();
+      this.drawLine();
       let nowDateVal = this.changeCommon();
       if (
         this.dateValue === this.$common.formatDate(new Date()).substr(0, 10) ||
@@ -220,7 +257,8 @@ export default {
           this.timer1 = setInterval(() => {
             if (this.timeValue < nowDateVal) {
               this.timeValue++;
-              this.searchData();
+              this.setTableData();
+              this.drawLine();
             } else {
               clearInterval(this.timer1);
             }
@@ -248,7 +286,7 @@ export default {
           this.searchData();
         }, 2000);
       }
-      this.searchData();
+      // this.searchData();
     },
     changeCommon() {
       let nowDateVal = "";
@@ -326,15 +364,15 @@ export default {
       }
       let date = this.changeNum(this.timeValue);
       date = date + ":00:00";
-      date = `${this.dateValue} ${date}`;
-      let reportType = "day";
+      date = `${this.dateValue}`;
+      let reportType = "faceDailyReport";
       this.getFaceCaptureAll(date, reportType);
     },
     getFaceCaptureSumByMonth() {
       let timeValueFake = this.timeValue + 1;
       let date = this.changeNum(timeValueFake);
-      date = `${this.dateValue}-${date} 23:59:59`;
-      let reportType = "month";
+      date = `${this.dateValue}-${date}`;
+      let reportType = "faceMonthlyReport";
       this.getFaceCaptureAll(date, reportType);
     },
     getFaceCaptureAll(date, reportType) {
@@ -353,32 +391,8 @@ export default {
     getFaceCaptureAllSuccess(body) {
       this.resetData();
       if (body.data) {
-        for (let item of body.data) {
-          this.channelName.push(item.channelName);
-          this.snapshotTotal.push(item.snapshotTotal);
-          this.totalNum = this.totalNum + item.snapshotTotal;
-        }
-      }
-      if (body.data.length <= 20) {
-        this.dataZoom = [];
-        this.flag = 0;
-      } else {
-        this.dataZoom = [
-          {
-            type: "slider",
-            show: true, // flase直接隐藏图形
-            yAxisIndex: [0],
-            width: "15px",
-            handleSize: 0,
-            top: 50, // 滚动条靠左侧的百分比
-            bottom: 50,
-            start: 30, // 滚动条的起始位置
-            end: 100, // 滚动条的截止位置（按比例分割你的柱状图x轴长度）
-            zoomOnMouseWheel: true, // 如何触发缩放。可选值为：true：表示不按任何功能键，鼠标滚轮能触发缩放。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标滚轮能触发缩放。'ctrl'：表示按住 ctrl 和鼠标滚轮能触发缩放。'alt'：表示按住 alt 和鼠标滚轮能触发缩放。
-            moveOnMouseMove: true // 如何触发数据窗口平移。true：表示不按任何功能键，鼠标移动能触发数据窗口平移。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标移动能触发数据窗口平移。'ctrl'：表示按住 ctrl 和鼠标移动能触发数据窗口平移。'alt'：表示按住 alt 和鼠标移动能触发数据窗口平移。
-          }
-        ];
-        this.flag = 1;
+        this.tableData = body.data;
+        this.setTableData();
       }
       this.drawLine();
     },
@@ -664,8 +678,7 @@ export default {
       }
     },
     transferCheckedChannel(checkedChannel) {
-      console.log("checkedChannel: ", checkedChannel);
-      this.checkedChannelsUuid = checkedChannel.id;
+      this.checkedChannelsUuid = checkedChannel;
     },
   },
   watch: {
