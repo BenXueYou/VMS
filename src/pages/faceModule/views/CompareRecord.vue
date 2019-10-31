@@ -14,12 +14,6 @@
 			</div>
 			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
 				抓拍设备：
-				<!-- <elPopverTree
-					:channelInfoList="DeviceTreeList"
-					:elPopoverClass="CompareRecordPopoverClass"
-					@transferCheckedChannel="transferCheckedChannel"
-					inputWidth="160px"
-				></elPopverTree>-->
 				<alPopverTree
 					:treeDataList="DeviceTreeList"
 					:alPopoverClass="CRTaskPopoverClass"
@@ -89,7 +83,7 @@
 				<el-button class="search-btn" @click="queryAct" type="primary">重置</el-button>
 			</div>
 		</el-row>
-		<el-row
+		<div
 			ref="compareMiddleHeight"
 			v-loading="mainScreenLoading"
 			element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -102,7 +96,7 @@
 					@detailClick="doComparethis(index)"
 				/>
 			</div>
-		</el-row>
+		</div>
 		<!-- ======================================================= 弹 窗 ========================================================== -->
 		<el-dialog class="dialogClass" :visible.sync="dialogVisible" @close="closeDialog">
 			<el-row>
