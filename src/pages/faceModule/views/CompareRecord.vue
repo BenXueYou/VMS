@@ -881,10 +881,18 @@ export default {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	justify-content: center;
+	justify-content: space-between;
 	background: rgba(36, 39, 42, 1);
 	box-sizing: border-box;
 	padding-left: 17px;
+}
+.CompareRecord .reccordBoxClass::after {
+    content: '';
+    flex: auto;
+}
+.CompareRecord .reccordBoxClass::before {
+    content: '';
+    /* flex: auto; */
 }
 .textclipClass {
 	display: inline-block;
