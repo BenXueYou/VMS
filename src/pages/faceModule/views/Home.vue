@@ -82,7 +82,6 @@
 							<span v-if="!footerLiftType">{{todayShootCount}}张</span>
 						</el-col>
 						<el-col :span="16" class="asidFontColor asidHeaderTxt">
-							<!-- 今日次数:<span>{{todayShootCount}}</span>张 -->
 							<router-link style="padding:0px 6px 0 30px;font-size:16px" class="fontTheme" to="FaceRecord">
 								更多
 								<img style="margin-left:6px" src="@/assets/icon/more.png" alt="更多" />
