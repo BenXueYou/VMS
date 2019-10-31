@@ -879,20 +879,23 @@ export default {
 	height: 100%;
 	overflow: auto;
 	display: flex;
-	flex-direction: row;
 	flex-wrap: wrap;
+	flex-direction: row;
 	justify-content: space-between;
 	background: rgba(36, 39, 42, 1);
 	box-sizing: border-box;
 	padding-left: 17px;
 }
+
 .CompareRecord .reccordBoxClass::after {
     content: '';
-    flex: auto;
-}
-.CompareRecord .reccordBoxClass::before {
-    content: '';
     /* flex: auto; */
+}
+.CompareRecord .reccordBoxClass>*:first-child {
+    margin-right: auto;
+}
+.CompareRecord .reccordBoxClass>*:nth-child(2) {
+    margin-right: auto;
 }
 .textclipClass {
 	display: inline-block;
