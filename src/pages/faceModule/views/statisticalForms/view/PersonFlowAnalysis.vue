@@ -425,7 +425,7 @@ export default {
             this.photoStaticList.push(0);
           }
           body.data.forEach((v, i) => {
-            this.photoStaticList[i + 1] = v;
+            this.photoStaticList[i] = v;
           });
         } else if (this.typeRadio === 2) {
           this.xAxisData = [];
@@ -440,7 +440,7 @@ export default {
             this.photoStaticList.push(0);
           }
           body.data.forEach((v, i) => {
-            this.photoStaticList[i + 1] = v;
+            this.photoStaticList[i] = v;
           });
           // for (let index in this.photoStaticList) {
           //   for (let item of body.data) {
