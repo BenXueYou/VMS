@@ -122,19 +122,25 @@
       </div>
     </div>
     <tree-panel-dialog :isShow.sync="showtreeadad"></tree-panel-dialog>
+    <auth-tree :visible.sync="authTreeVisible">
+
+    </auth-tree>
   </div>
 </template>
 
 <script>
 import treePanelDialog from "@/pages/user/components/treePanelDialog";
+import authTree from "@/pages/user/components/authTree";
 export default {
   name: "accountAdd",
   components: {
-    treePanelDialog
+    treePanelDialog,
+    authTree
   },
   data() {
     return {
       showtreeadad: false,
+      authTreeVisible: false,
       status: "enable",
       time: "forever",
       username: "",
@@ -145,7 +151,9 @@ export default {
     addAccout() {
       this.showtreeadad = true;
     },
-    addFunction() {},
+    addFunction() {
+      this.authTreeVisible = true;
+    },
     saveAndAdd() {},
     confirm() {},
     close() {}

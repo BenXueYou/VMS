@@ -104,21 +104,15 @@
                 v-show="isShowEdit">
 
     </accout-add>
-    <auth-tree :visible.sync="
-                visible">
-
-    </auth-tree>
   </div>
 </template>
 
 <script>
-import authTree from "@/pages/user/components/authTree";
 import accoutAdd from "@/pages/user/views/accoutAdd";
 export default {
   name: "role",
   components: {
-    accoutAdd,
-    authTree
+    accoutAdd
   },
   data() {
     return {
