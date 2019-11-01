@@ -1,133 +1,157 @@
-function CVideoMgrSdk(observer) {
-  this.m_videoList = new Array();
-  this.m_observer = observer;
+function CVideoMgrSdk(observer)
+{
+    this.m_videoList    = new Array;
+    this.m_observer     = observer;
 }
 
-CVideoMgrSdk.prototype.play = function(
-  jSignal,
-  jMedia,
-  url,
-  protocol,
-  action,
-  speed,
-  canvas,
-  streamType
-) {
-  var video = new CVideo(this);
-  video.play(jSignal, jMedia, url, protocol, action, speed, canvas, streamType);
-  this.m_videoList[this.m_videoList.length] = video;
-  return video;
-};
-
-CVideoMgrSdk.prototype.stop = function(video) {
-  var i = 0;
-  for (i = 0; i < this.m_videoList.length; ++i) {
-    if (video === this.m_videoList[i]) {
-      break;
+CVideoMgrSdk.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
+{
+    var video = new CVideo(this);
+    let ret = await video.setup(jSignal, jMedia, url, protocol, action, speed, canvas, w, h);
+    if (ret)
+    {
+        this.m_videoList[this.m_videoList.length] = video;
     }
-  }
-  if (i != this.m_videoList.length) {
-    video.stopRecord();
-    video.stop();
-    delete video;
-    this.m_videoList.splice(i, 1);
-  } else {
-  }
-};
-
-CVideoMgrSdk.prototype.pause = function(video) {
-  var i = 0;
-  for (i = 0; i < this.m_videoList.length; ++i) {
-    if (video === this.m_videoList[i]) {
-      break;
+    else
+    {
+        this.stop(video);
+        delete video;
+        video = null;
     }
-  }
-  if (i != this.m_videoList.length) {
-    video.pause();
-  } else {
-  }
-};
+    return video;
+}
 
-CVideoMgrSdk.prototype.resume = function(video) {
-  var i = 0;
-  for (i = 0; i < this.m_videoList.length; ++i) {
-    if (video === this.m_videoList[i]) {
-      break;
+CVideoMgrSdk.prototype.play = async function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            return await video.play();
+        }
     }
-  }
-  if (i != this.m_videoList.length) {
-    video.resume();
-  } else {
-  }
-};
+    return false;
+}
 
-CVideoMgrSdk.prototype.speedControl = function(video, speed) {
-  var i = 0;
-  for (i = 0; i < this.m_videoList.length; ++i) {
-    if (video === this.m_videoList[i]) {
-      break;
+CVideoMgrSdk.prototype.stop = async function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            video.stopRecord();
+            await video.stop();
+            delete video;
+            this.m_videoList.splice(i, 1);
+            return true;
+        }
     }
-  }
-  if (i != this.m_videoList.length) {
-    video.speedControl(speed);
-  } else {
-  }
-};
+}
 
-CVideoMgrSdk.prototype.drag = function(video, position) {
-  var i = 0;
-  for (i = 0; i < this.m_videoList.length; ++i) {
-    if (video === this.m_videoList[i]) {
-      break;
+CVideoMgrSdk.prototype.pause = async function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            return await video.pause();
+        }
     }
-  }
-  if (i != this.m_videoList.length) {
-    video.drag(position);
-  } else {
-  }
-};
+}
 
-CVideoMgrSdk.prototype.record = function(video) {
-  var i = 0;
-  for (i = 0; i < this.m_videoList.length; ++i) {
-    if (video === this.m_videoList[i]) {
-      video.record();
-      return true;
+CVideoMgrSdk.prototype.resume = async function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            return await video.resume();
+        }
     }
-  }
-  return false;
-};
+}
 
-CVideoMgrSdk.prototype.stopRecord = function(video) {
-  var i = 0;
-  for (i = 0; i < this.m_videoList.length; ++i) {
-    if (video === this.m_videoList[i]) {
-      video.stopRecord();
-      return true;
+CVideoMgrSdk.prototype.speedControl = async function(video, speed)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            return await video.speedControl(speed);
+        }
     }
-  }
-  return false;
-};
+}
 
-CVideoMgrSdk.prototype.onStreamBreak = function(video) {
-  this.m_observer(video);
-};
-
-CVideoMgrSdk.prototype.findVideo = function(canvas) {
-  for (let i = 0; i < this.m_videoList.length; ++i) {
-    if (this.m_videoList[i].m_canvas === canvas) {
-      return this.m_videoList[i];
+CVideoMgrSdk.prototype.drag = async function(video, position)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            return await video.drag(position);
+        }
     }
-  }
-  return undefined;
-};
+}
 
-CVideoMgrSdk.prototype.stopByCanvas = function(canvas) {
-  for (let i = 0; i < this.m_videoList.length; ++i) {
-    if (this.m_videoList[i].m_canvas === canvas) {
-      let video = this.m_videoList[i];
-      this.stop(video);
-      break;
+CVideoMgrSdk.prototype.record = function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            video.record();
+            return true;
+        }
     }
-  }
-};
+    return false;
+}
+
+CVideoMgrSdk.prototype.stopRecord = function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (video === this.m_videoList[i])
+        {
+            video.stopRecord();
+            return true;
+        }
+    }
+    return false;
+}
+
+CVideoMgrSdk.prototype.onStreamBreak = function(video)
+{
+    this.m_observer(video);
+}
+
+CVideoMgrSdk.prototype.findVideo = function(canvas)
+{
+    for (let i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (this.m_videoList[i].m_canvas === canvas)
+        {
+            return this.m_videoList[i];
+        }
+    }
+    return undefined;
+}
+
+CVideoMgrSdk.prototype.stopByCanvas = function(canvas)
+{
+    for (let i = 0; i < this.m_videoList.length; ++i)
+    {
+        if (this.m_videoList[i].m_canvas === canvas)
+        {
+            let video = this.m_videoList[i];
+            this.stop(video);
+            break;
+        }
+    }
+}
