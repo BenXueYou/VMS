@@ -1,11 +1,10 @@
 <template>
 	<div class="accout">
-		<div class="title">账户管理</div>
-
-		<div class="content">
+		<div class="title" v-show='!addDialogVisible'>账户管理</div>
+		<div class="content" v-show='!addDialogVisible'>
 			<div class="topBox">
 				<div class="topBoxLeft">
-					<el-button>新增</el-button>
+					<el-button @click="addDialogVisible=!addDialogVisible">新增</el-button>
 					<el-button>删除</el-button>
 					<el-button>启用</el-button>
 					<el-button>禁用</el-button>
@@ -23,7 +22,7 @@
 							:value="item.typeStr"
 						></el-option>
 					</el-select>
-					<el-button>检索</el-button>
+					<el-button icon="el-icon-search">检索</el-button>
 				</div>
 			</div>
 			<el-table
@@ -69,11 +68,14 @@
 				></el-pagination>
 			</div>
 		</div>
+		<account-add v-show="addDialogVisible" @close='close'/>
 	</div>
 </template>
 <script>
+import AccountAdd from "../components/accountAdd.vue";
 export default {
   name: "accout",
+  components: { AccountAdd },
   mounted() {},
   data() {
     return {
@@ -83,7 +85,8 @@ export default {
       total: 0,
       staffName: null,
       onlineStatus: null,
-      onlineStatusOptions: []
+      onlineStatusOptions: [],
+      addDialogVisible: false
     };
   },
   watch: {},
@@ -100,6 +103,9 @@ export default {
     handleSelectionChange() {},
     handleCurrentChange() {},
     handleSizeChange() {},
+    close() {
+      this.addDialogVisible = !this.addDialogVisible;
+    },
     tableIndex(val) {
       val += 1;
       return val < 10 ? "0" + val : val;
@@ -135,20 +141,56 @@ export default {
 		.topBox {
 			display: flex;
 			justify-content: space-between;
+			margin-bottom: 20px;
+			font-family: "PingFangSC-Regular";
+			font-size: 13px;
+			color: #ffffff;
 			.topBoxLeft {
+				width: 450px;
 				.el-button {
 					background: rgba(40, 255, 187, 0.08);
 					border: 1px solid rgba(38, 211, 157, 0.64);
 					border-radius: 2px;
 					height: 32px;
 					line-height: 32px;
-					padding:0 5%;
-					font-family: 'PingFangSC-Regular';
+					padding: 0 5%;
+					font-family: "PingFangSC-Regular";
 					font-size: 13px;
 					color: #ffffff;
 					text-align: justify;
 				}
 			}
+			.topBoxRight {
+				width: 550px;
+				.staffNameInput {
+					margin-right: 30px;
+				}
+				.el-select {
+					margin-right: 15px;
+				}
+				.el-select,
+				.staffNameInput {
+					width: 140px;
+				}
+				.el-button {
+					background: rgba(40, 255, 187, 0.08);
+					border: 1px solid rgba(38, 211, 157, 0.64);
+					border-radius: 2px;
+					height: 32px;
+					line-height: 32px;
+					padding: 0 3%;
+					font-family: "PingFangSC-Regular";
+					font-size: 13px;
+					color: #ffffff;
+					text-align: justify;
+				}
+			}
+		}
+		.tableBoxClass {
+			height: calc(100% - 100px);
+		}
+		.footer {
+			text-align: right;
 		}
 	}
 }
