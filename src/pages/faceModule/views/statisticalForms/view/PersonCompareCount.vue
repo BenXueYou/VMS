@@ -432,7 +432,7 @@ export default {
             this.photoStaticList.push(0);
           }
           body.data.forEach((v, i) => {
-            this.photoStaticList[i] = v;
+            this.photoStaticList[i + 1] = v;
           });
         } else if (this.typeRadio === 2) {
           this.xAxisData = [];
