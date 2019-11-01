@@ -4,119 +4,98 @@ function CVideoMgrSdk(observer)
     this.m_observer     = observer;
 }
 
-CVideoMgrSdk.prototype.setup = function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
+CVideoMgrSdk.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
 {
     var video = new CVideo(this);
-    video.setup(jSignal, jMedia, url, protocol, action, speed, canvas, w, h);
-    this.m_videoList[this.m_videoList.length] = video;
+    let ret = await video.setup(jSignal, jMedia, url, protocol, action, speed, canvas, w, h);
+    if (ret)
+    {
+        this.m_videoList[this.m_videoList.length] = video;
+    }
+    else
+    {
+        this.stop(video);
+        delete video;
+        video = null;
+    }
     return video;
 }
 
-CVideoMgrSdk.prototype.play = function(video)
+CVideoMgrSdk.prototype.play = async function(video)
 {
     var i = 0;
     for (i = 0; i < this.m_videoList.length; ++i)
     {
         if (video === this.m_videoList[i])
         {
-            video.play();
-            return true;
+            return await video.play();
         }
     }
     return false;
 }
 
-CVideoMgrSdk.prototype.stop = function(video)
+CVideoMgrSdk.prototype.stop = async function(video)
 {
     var i = 0;
     for (i = 0; i < this.m_videoList.length; ++i)
     {
         if (video === this.m_videoList[i])
         {
-            break;
+            video.stopRecord();
+            await video.stop();
+            delete video;
+            this.m_videoList.splice(i, 1);
+            return true;
         }
     }
-    if (i != this.m_videoList.length)
-    {
-        video.stopRecord();
-        video.stop();
-        delete video;
-        this.m_videoList.splice(i, 1);
-    }
-    else
-    {}
 }
 
-CVideoMgrSdk.prototype.pause = function(video)
+CVideoMgrSdk.prototype.pause = async function(video)
 {
     var i = 0;
     for (i = 0; i < this.m_videoList.length; ++i)
     {
         if (video === this.m_videoList[i])
         {
-            break;
+            return await video.pause();
         }
     }
-    if (i != this.m_videoList.length)
-    {
-        video.pause();
-    }
-    else
-    {}
 }
 
-CVideoMgrSdk.prototype.resume = function(video)
+CVideoMgrSdk.prototype.resume = async function(video)
 {
     var i = 0;
     for (i = 0; i < this.m_videoList.length; ++i)
     {
         if (video === this.m_videoList[i])
         {
-            break;
+            return await video.resume();
         }
     }
-    if (i != this.m_videoList.length)
-    {
-        video.resume();
-    }
-    else
-    {}
 }
 
-CVideoMgrSdk.prototype.speedControl = function(video, speed)
+CVideoMgrSdk.prototype.speedControl = async function(video, speed)
 {
     var i = 0;
     for (i = 0; i < this.m_videoList.length; ++i)
     {
         if (video === this.m_videoList[i])
         {
-            break;
+            return await video.speedControl(speed);
         }
     }
-    if (i != this.m_videoList.length)
-    {
-        video.speedControl(speed);
-    }
-    else
-    {}
 }
 
-CVideoMgrSdk.prototype.drag = function(video, position)
+CVideoMgrSdk.prototype.drag = async function(video, position)
 {
     var i = 0;
     for (i = 0; i < this.m_videoList.length; ++i)
     {
         if (video === this.m_videoList[i])
         {
-            break;
+            return await video.drag(position);
         }
     }
-    if (i != this.m_videoList.length)
-    {
-        video.drag(position);
-    }
-    else
-    {}
 }
 
 CVideoMgrSdk.prototype.record = function(video)

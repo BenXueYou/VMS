@@ -269,7 +269,7 @@ export default {
       console.log(this.drag);
       this.video_mgr.drag(this.video, start);
     },
-    playVideo() {
+    async playVideo() {
       this.canvas = document.createElement("canvas");
       this.canvas.width = this.width;
       this.canvas.height = this.height;
@@ -300,7 +300,7 @@ export default {
       console.log(w, h);
       console.log("播放的url" + this.rtspUrl);
       console.log(this.action);
-      this.video = this.video_mgr.setup(
+      this.video = await this.video_mgr.setup(
         JSON.stringify(jSignal),
         JSON.stringify(jMedia),
         this.rtspUrl,
@@ -311,7 +311,9 @@ export default {
         w,
         h
       );
-      this.video_mgr.play(this.video);
+      if (this.video) {
+        await this.video_mgr.play(this.video);
+      }
       this.$refs.canvasRefs.appendChild(this.canvas);
     },
     stopVideo() {

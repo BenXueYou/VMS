@@ -11,20 +11,22 @@ function CVideo(observer)
     this.m_height       = null;
 }
 
-CVideo.prototype.setup = function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
+CVideo.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
 {
     this.m_canvas = canvas;
-    this.m_session = new CSession(jSignal, jMedia, url, protocol, action, speed, this);
-    this.m_session.setup();
     this.m_action = action;
     this.m_speed = speed;
     this.m_width = w;
     this.m_height = h;
+    this.m_session = new CSession(jSignal, jMedia, url, protocol, action, speed, this);
+    let ret = await this.m_session.setup();
+
+    return ret;
 }
 
-CVideo.prototype.play = function()
+CVideo.prototype.play = async function()
 {
-    this.m_session.play();
+    return await this.m_session.play();
     //this.m_decoder.play();
 }
 
@@ -76,7 +78,7 @@ CVideo.prototype.onStreamBreak = function()
     this.m_observer.onStreamBreak(this);
 }
 
-CVideo.prototype.stop = function()
+CVideo.prototype.stop = async function()
 {
     // fix: 1. 停止解码模块
     if (this.m_decoder != null)
@@ -89,7 +91,7 @@ CVideo.prototype.stop = function()
     // 2. 停止session
     if (this.m_session != null)
     {
-        this.m_session.stop();
+        await this.m_session.stop();
         delete this.m_session;
         this.m_session = null;
     }
@@ -103,28 +105,28 @@ CVideo.prototype.stop = function()
     }
 }
 
-CVideo.prototype.pause = function()
+CVideo.prototype.pause = async function()
 {
     this.m_decoder.pause();
-    this.m_session.pause();
+    return await this.m_session.pause();
 }
 
-CVideo.prototype.resume = function()
+CVideo.prototype.resume = async function()
 {
     this.m_decoder.resume();
-    this.m_session.resume();
+    return await this.m_session.resume();
 }
 
-CVideo.prototype.speedControl = function(speed)
+CVideo.prototype.speedControl = async function(speed)
 {
     this.m_decoder.speedControl(speed);
-    this.m_session.speedControl(speed);
+    return await this.m_session.speedControl(speed);
 }
 
-CVideo.prototype.drag = function(position)
+CVideo.prototype.drag = async function(position)
 {
     this.m_decoder.drag(position);
-    this.m_session.drag(position);
+    return await this.m_session.drag(position);
 }
 
 CVideo.prototype.record = function()
