@@ -7,8 +7,8 @@
       <div class="face-select">
         <div class="title-text">抓拍设备：</div>
         <elPopverTree :elPopoverClass="faceRecordPopoverClass"
-                        @transferCheckedChannel="transferCheckedChannel"
-                        inputWidth="230px"></elPopverTree>
+                      @transferCheckedChannel="transferCheckedChannel"
+                      inputWidth="230px"></elPopverTree>
         <div class="title-text left-space">抓拍时段：</div>
         <el-date-picker v-model="startTime"
                         type="datetime"
@@ -124,7 +124,7 @@ export default {
     return {
       pageInfo: {
         total: 0,
-        pageSize: 13,
+        pageSize: 10,
         currentPage: 1
       },
       startTime: "",
@@ -137,7 +137,7 @@ export default {
       deviceList: [],
       faceRecordPopoverClass: "faceAnaPopoverClass",
       channelUuids: [],
-      staffUuid: "",
+      faceUuid: "",
       tableData: [],
       detailsData: [],
       checkedChannel: [],
@@ -146,8 +146,7 @@ export default {
     };
   },
   created() {},
-  mounted() {
-  },
+  mounted() {},
   methods: {
     initData() {
       this.startTime = this.$common.formatDate(
@@ -198,26 +197,24 @@ export default {
       this.getFaceAnalysisTable();
     },
     lookface(row) {
-      this.staffUuid = row.vstaffuuid;
+      this.faceUuid = row.faceUuid;
       this.getFaceAnalysisDetail();
       this.isShow = true;
     },
     getFaceAnalysisDetail() {
-      this.$statisticRequest.getFaceAnalysisDetail({
-        channelNameList: this.idListForDetail.toString(),
-        staffUuid: this.staffUuid,
-        // staffUuid: "da1c3c6ecf88413e8925c92e5630dba3",
-        onResult: (isSuccess, data) => {
-          if (isSuccess && data) {
-            this.handleGetFaceAnalysisDetailSuccessResponse(data);
-          } else {
-            console.log("获取人脸频率分析详情统计失败！");
-          }
-        }
+      this.$factTragicHttp.getCompareDetail({
+        limit: 9999,
+        page: 1,
+        faceUuid: this.faceUuid,
+        snapshotTimeStart: this.startTime,
+        snapshotTimeEnd: this.endTime,
+      }).then(res => {
+        let body = res.data;
+        this.getCompareDetailSuccess(body);
       });
     },
-    handleGetFaceAnalysisDetailSuccessResponse(data) {
-      this.detailsData = data.body.data;
+    getCompareDetailSuccess(body) {
+      this.detailsData = body.data.list;
     },
     onCancelDialog() {
       this.isShow = false;
@@ -228,7 +225,7 @@ export default {
         this.channelUuids.push(checkedChannel[i].channelUuid);
       }
       console.log("this.channelUuids: ", this.channelUuids, checkedChannel);
-    },
+    }
   },
   watch: {},
   destroyed() {},
@@ -291,7 +288,7 @@ export default {
       }
     }
     .face-table {
-      height: 84.5%;
+      height: 90%;
       border-radius: 3px;
       padding: 2% 2%;
       box-sizing: border-box;

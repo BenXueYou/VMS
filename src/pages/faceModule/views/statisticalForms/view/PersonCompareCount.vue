@@ -156,6 +156,9 @@ export default {
     },
     getMonitoringTaskListSuccess(body) {
       this.missionArr = body.data;
+      if (this.missionArr) {
+        this.faceMonitorUuid = this.missionArr[0].faceMonitorUuid;
+      }
     },
     changeNum(t) {
       if (t < 10) {

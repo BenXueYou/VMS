@@ -24,6 +24,14 @@ export var FactTragicHttp = {
     }
     return axios.post(api, data);
   },
+  getCompareDetail(holder) {
+    let api = `${RestApi.api.faceModuleAPi.getCompareDetail}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.get(api, { params: data });
+  },
 };
 
 function install(Vue) {

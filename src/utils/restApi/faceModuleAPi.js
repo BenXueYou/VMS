@@ -100,4 +100,5 @@ export default {
   getDevChannelList: (deviceUuid) => `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/deviceChannelTypeList/${deviceUuid}`,
   getAlarmSound: `${URLHeader}/${projectUuid}/face/config/alarmSound`,
   tempMonitor: `${URLHeader}/${projectUuid}/monitoringTask/temp/info`,
+  getCompareDetail: `${URLHeaderFaceLog}/${projectUuid}/recognize/info?asgName=${projectUuid}`,
 };

@@ -1,42 +1,36 @@
 <template>
-  <el-dialog width="57.5%"
+  <el-dialog width="935px"
              title="人脸频率详情"
              :visible.sync="isCurrentShow"
              :before-close="onClickCancel"
              :close-on-click-modal="false">
-    <div style="height: 570px;">
-      <el-scrollbar style="height: 95%; margin-top: 16px;">
-        <div class="dialog-content">
-          <!--内容-->
-          <template v-for="(item, index) in detailsData">
-            <div class="details-item"
-                 :key="index">
-              <div class="item-picture">
-                <img :src="JSON.parse(item.detectedinfo).photouri"
-                     width="34.7%"
-                     height="104px">
-                <img :src="JSON.parse(item.detectedinfo).panoramauri"
-                     width="61%"
-                     height="104px">
-              </div>
-              <div class="item-position">
-                <div class="item-position-time">
-                  <img src="@/assets/images/time2.png"
-                       width="12px"
-                       height="12px">
-                  <span>{{item.time}}</span>
-                </div>
-                <div class="item-position-place">
-                  <img src="@/assets/images/place.png"
-                       width="12px"
-                       height="12px">
-                  <span>{{JSON.parse(item.detectedinfo).channelinfo.channelName}}</span>
-                </div>
+    <div class="dialog-content">
+      <!--内容-->
+      <template v-for="(item, index) in detailsData">
+        <div :key="index"
+             class="face-item">
+          <div>
+            <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                 style="margin-right: 10px;"
+                 width="139px"
+                 height="139px">
+            <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')"
+                 width="248px"
+                 height="139px">
+          </div>
+          <div class="item-info">
+            <div class="info-one">
+              <div>{{item.channelName}}</div>
+              <div>{{item.captureDatetime}}</div>
+            </div>
+            <div class="info-two">
+              <div>
+                特征： &nbsp;&nbsp;&nbsp;性别：{{$common.getEnumItemName("gender", item.genderCapture)}} &nbsp;&nbsp;&nbsp;年龄：{{item.age}} &nbsp;&nbsp;&nbsp;眼镜：{{item.sunglasses ? "是" : "否"}}
               </div>
             </div>
-          </template>
+          </div>
         </div>
-      </el-scrollbar>
+      </template>
     </div>
   </el-dialog>
 </template>
@@ -56,7 +50,7 @@ export default {
   },
   data() {
     return {
-      isCurrentShow: false,
+      isCurrentShow: false
     };
   },
   created() {},
@@ -81,40 +75,33 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .dialog-content {
-  padding: 1.8% 4%;
+  height: 500px;
+  padding: 24px 37px 24px 22px;
   box-sizing: border-box;
   display: flex;
-  justify-content: flex-start;
-  height: 570px;
-  width: 100%;
   flex-flow: row wrap;
-  .details-item {
-    margin-right: 1.2%;
-    width: 32%;
-    height: 160px;
-    border: 1px solid #253e3a;
-    border-radius: 3px;
-    background: #1f2124;
-    padding: 1.5% 1.4%;
+  align-content: flex-start;
+  overflow-y: auto;
+  .face-item {
+    width: 420px;
+    height: 210px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba($color: #212325, $alpha: 0.8);
+    padding: 8px;
     box-sizing: border-box;
+    margin-left: 15px;
     margin-bottom: 15px;
-    .item-picture {
-      display: flex;
-      justify-content: space-between;
-      flex-flow: row nowrap;
-    }
-    .item-position {
-      display: flex;
-      height: 35px;
-      flex-flow: row nowrap;
-      align-items: center;
-      opacity: 0.6;
+    .item-info {
       font-family: PingFangSC-Regular;
       font-size: 12px;
-      color: #ffffff;
+      color: #bbbbbb;
       letter-spacing: 0;
-      .item-position-time {
-        margin-right: 5%;
+      margin-top: 10px;
+      .info-one {
+        display: flex;
+        margin-bottom: 5px;
+        align-items: center;
+        justify-content: space-between;
       }
     }
   }
