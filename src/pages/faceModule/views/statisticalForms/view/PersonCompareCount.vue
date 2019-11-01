@@ -505,7 +505,7 @@ export default {
           ],
           series: [
             {
-              name: "人流量",
+              name: "比对数量",
               type: "bar",
               stack: "总量",
               barWidth: 24,
