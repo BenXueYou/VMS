@@ -23,15 +23,15 @@
         </el-radio-group>
         <span v-if="formType === 'one'"
               class="left-space">布控任务：</span>
-        <el-select v-model="missionName"
+        <el-select v-model="faceMonitorUuid"
                    filterable
-                   v-if="formType === 'one'"
+                   v-show="formType === 'one'"
                    collapse-tags
                    placeholder="请选择">
           <el-option v-for="item in missionArr"
-                     :key="item.taskuuid"
-                     :label="item.taskname"
-                     :value="item.taskuuid">
+                     :key="item.faceMonitorUuid"
+                     :label="item.faceMonitorName"
+                     :value="item.faceMonitorUuid">
           </el-option>
         </el-select>
         <img src="@/assets/images/report_type.png"
@@ -114,9 +114,9 @@ export default {
       flag: 0,
       xAxisData: [],
       photoStaticList: [],
-      missionName: "",
+      faceMonitorUuid: "",
       missionArr: [],
-      faceMonitorUuid: ""
+      tableData: [],
     };
   },
   created() {},
@@ -144,6 +144,18 @@ export default {
         this.xAxisData.push(i);
       }
       this.myChart = this.$echarts.init(document.getElementById("myChart"));
+      this.getMonitorList();
+    },
+    getMonitorList() {
+      this.$faceControlHttp
+        .getMonitoringTaskList({})
+        .then(res => {
+          let body = res.data;
+          this.getMonitoringTaskListSuccess(body);
+        });
+    },
+    getMonitoringTaskListSuccess(body) {
+      this.missionArr = body.data;
     },
     changeNum(t) {
       if (t < 10) {
@@ -207,6 +219,8 @@ export default {
     },
     handleSliderChange(val) {
       clearInterval(this.timer1);
+      this.setTableData();
+      this.drawLine();
       let nowDateVal = this.changeCommon();
       if (
         this.dateValue === this.$common.formatDate(new Date()).substr(0, 10) ||
@@ -218,7 +232,8 @@ export default {
           this.timer1 = setInterval(() => {
             if (this.timeValue < nowDateVal) {
               this.timeValue++;
-              this.searchData();
+              this.setTableData();
+              this.drawLine();
             } else {
               clearInterval(this.timer1);
             }
@@ -243,10 +258,10 @@ export default {
               clearInterval(this.timer1);
             }
           }
-          this.searchData();
+          this.setTableData();
+          this.drawLine();
         }, 2000);
       }
-      this.searchData();
     },
     changeCommon() {
       let nowDateVal = "";
@@ -279,6 +294,7 @@ export default {
     onChangeDate() {
       let nowDateVal = this.changeCommon();
       this.timeValue = nowDateVal;
+      this.searchData();
       this.handleSliderChange(this.timeValue);
       if (this.typeRadio === 2) {
         this.xAxisData = [];
@@ -316,6 +332,39 @@ export default {
       this.totalNum = 0;
       this.dataZoom = [];
     },
+    setTableData() {
+      this.resetData();
+      this.tableData.forEach((v, i) => {
+        if ((this.typeRadio === 1 && this.timeValue !== 0 && i === this.timeValue - 1) || (this.typeRadio === 2 && i === this.timeValue)) {
+          for (let item of v) {
+            this.faceMonitorName.push(item.faceMonitorName);
+            this.faceCaptureRecordTotal.push(item.faceCaptureRecordTotal);
+            this.totalNum = this.totalNum + item.faceCaptureRecordTotal;
+          }
+          if (v.length <= 20) {
+            this.dataZoom = [];
+            this.flag = 0;
+          } else {
+            this.dataZoom = [
+              {
+                type: "slider",
+                show: true, // flase直接隐藏图形
+                yAxisIndex: [0],
+                width: "15px",
+                handleSize: 0,
+                top: 50, // 滚动条靠左侧的百分比
+                bottom: 50,
+                start: 30, // 滚动条的起始位置
+                end: 100, // 滚动条的截止位置（按比例分割你的柱状图x轴长度）
+                zoomOnMouseWheel: true, // 如何触发缩放。可选值为：true：表示不按任何功能键，鼠标滚轮能触发缩放。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标滚轮能触发缩放。'ctrl'：表示按住 ctrl 和鼠标滚轮能触发缩放。'alt'：表示按住 alt 和鼠标滚轮能触发缩放。
+                moveOnMouseMove: true // 如何触发数据窗口平移。true：表示不按任何功能键，鼠标移动能触发数据窗口平移。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标移动能触发数据窗口平移。'ctrl'：表示按住 ctrl 和鼠标移动能触发数据窗口平移。'alt'：表示按住 alt 和鼠标移动能触发数据窗口平移。
+              }
+            ];
+            this.flag = 1;
+          }
+        }
+      });
+    },
     getFaceCaptureSumByDay() {
       if (this.timeValue === 0) {
         this.resetData();
@@ -324,15 +373,15 @@ export default {
       }
       let date = this.changeNum(this.timeValue);
       date = date + ":00:00";
-      date = `${this.dateValue} ${date}`;
-      let reportType = "day";
+      date = `${this.dateValue}`;
+      let reportType = "faceDailyReport";
       this.getFaceCaptureAll(date, reportType);
     },
     getFaceCaptureSumByMonth() {
       let timeValueFake = this.timeValue + 1;
       let date = this.changeNum(timeValueFake);
-      date = `${this.dateValue}-${date} 23:59:59`;
-      let reportType = "month";
+      date = `${this.dateValue}-01`;
+      let reportType = "faceMonthlyReport";
       this.getFaceCaptureAll(date, reportType);
     },
     getFaceCaptureAll(date, reportType) {
@@ -340,7 +389,7 @@ export default {
         .getCompareAll({
           sort: this.sort,
           reportType,
-          searchDate: `${this.dateValue} ${date}`
+          searchDate: `${date}`
         })
         .then(res => {
           let body = res.data;
@@ -350,49 +399,25 @@ export default {
     getFaceCaptureAllSuccess(body) {
       this.resetData();
       if (body.data) {
-        for (let item of body.data) {
-          this.faceMonitorName.push(item.faceMonitorName);
-          this.faceCaptureRecordTotal.push(item.faceCaptureRecordTotal);
-          this.totalNum = this.totalNum + item.faceCaptureRecordTotal;
-        }
-      }
-      if (body.data.length <= 20) {
-        this.dataZoom = [];
-        this.flag = 0;
-      } else {
-        this.dataZoom = [
-          {
-            type: "slider",
-            show: true, // flase直接隐藏图形
-            yAxisIndex: [0],
-            width: "15px",
-            handleSize: 0,
-            top: 50, // 滚动条靠左侧的百分比
-            bottom: 50,
-            start: 30, // 滚动条的起始位置
-            end: 100, // 滚动条的截止位置（按比例分割你的柱状图x轴长度）
-            zoomOnMouseWheel: true, // 如何触发缩放。可选值为：true：表示不按任何功能键，鼠标滚轮能触发缩放。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标滚轮能触发缩放。'ctrl'：表示按住 ctrl 和鼠标滚轮能触发缩放。'alt'：表示按住 alt 和鼠标滚轮能触发缩放。
-            moveOnMouseMove: true // 如何触发数据窗口平移。true：表示不按任何功能键，鼠标移动能触发数据窗口平移。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标移动能触发数据窗口平移。'ctrl'：表示按住 ctrl 和鼠标移动能触发数据窗口平移。'alt'：表示按住 alt 和鼠标移动能触发数据窗口平移。
-          }
-        ];
-        this.flag = 1;
+        this.tableData = body.data;
+        this.setTableData();
       }
       this.drawLine();
     },
     getSingleFaceCapSumByDay() {
-      let reportType = "day";
-      this.getFaceCaptureOne(reportType);
+      let reportType = "faceDailyReport";
+      this.getFaceCaptureOne(this.dateValue, reportType);
     },
     getSingleFaceCapSumByMonth() {
-      let reportType = "month";
-      this.getFaceCaptureOne(reportType);
+      let reportType = "faceMonthlyReport";
+      this.getFaceCaptureOne(`${this.dateValue}-01`, reportType);
     },
-    getFaceCaptureOne(reportType) {
+    getFaceCaptureOne(date, reportType) {
       this.$statisticHttp
         .getCompareOne({
           faceMonitorUuid: this.faceMonitorUuid,
           reportType,
-          searchDate: `${this.dateValue}`
+          searchDate: date
         })
         .then(res => {
           let body = res.data;
@@ -406,15 +431,9 @@ export default {
           for (let i = 0; i < 25; i++) {
             this.photoStaticList.push(0);
           }
-          for (let index in this.photoStaticList) {
-            for (let item of body.data) {
-              if (
-                parseInt(item.currenttime.substr(11, 2)) === parseInt(index)
-              ) {
-                this.photoStaticList[index] = item.faceCaptureRecordTotal;
-              }
-            }
-          }
+          body.data.forEach((v, i) => {
+            this.photoStaticList[i + 1] = v;
+          });
         } else if (this.typeRadio === 2) {
           this.xAxisData = [];
           let day = this.$common.getDaysByMonth(
@@ -427,16 +446,9 @@ export default {
           for (let i = 0; i < this.xAxisData.length; i++) {
             this.photoStaticList.push(0);
           }
-          for (let index in this.photoStaticList) {
-            for (let item of body.data) {
-              if (
-                parseInt(item.currentdate.substr(8, 2)) ===
-                parseInt(index) + 1
-              ) {
-                this.photoStaticList[index] = item.faceCaptureRecordTotal;
-              }
-            }
-          }
+          body.data.forEach((v, i) => {
+            this.photoStaticList[i + 1] = v;
+          });
         }
       }
       this.drawLine();

@@ -9,7 +9,6 @@ let URLHeaderFaceServer = `${protocolHeader}${ip}/faceserver-v1/project`;
 let URLHeaderVideoServer = `${protocolHeader}${ip}/video/project`;
 export default {
   // @pengxueyou
-
   baseDataApi: {
     // 获取人脸设备
     getFaceDeviceList: projectUuid => `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/organization/children`,
@@ -18,7 +17,6 @@ export default {
     getTaskDetailChannelAndLibs: (projectUuid, taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
     // 获取布控任务
     getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
-
     // 根据通道ID获取rtspUrl
     getRtspUrlByChannelUuidApi: projectUuid => `${URLHeaderVideoServer}/${projectUuid}/video/previewInfo`,
   },
@@ -66,8 +64,7 @@ export default {
     getFaceUuidByFaceCaptureUuid: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/search_faceUuid`,
     // 临时布控
     addTempContrlTask: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/temp/info`,
-
-    // /facelog-v1/project/{projectUuid}/faceUuid/faceCaptureRecord
+    // 抓拍到同行人分析
     photoRecordToAnalysis:projectUuid =>`${URLHeader}/${projectUuid}/faceUuid/faceCaptureRecord`
   },
   // @fengyawen
@@ -76,7 +73,7 @@ export default {
   getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list`,
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
   getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
-  getModelList: `${URLHeader}/${projectUuid}/modelStatistics/list`,
+  getModelList: `${URLHeaderFaceLog}/${projectUuid}/modelStatistics/list?asgName=${projectUuid}`,
   getFaceCaptureAll: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/all/list?asgName=${projectUuid}`,
   getFaceCaptureOne: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/one/list?asgName=${projectUuid}`,
   getCompareAll: `${URLHeaderFaceLog}/${projectUuid}/recognizeStatistics/all/list?asgName=${projectUuid}`,

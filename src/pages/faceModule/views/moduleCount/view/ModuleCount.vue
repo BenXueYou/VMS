@@ -7,22 +7,21 @@
       <div class="search">
         <div class="search-input">
           <span>抓拍设备：</span>
-          <elPopverTree :channelInfoList="deviceList"
-                        :elPopoverClass="faceRecordPopoverClass"
-                        :checkedChannelKeys="checkedChannelKeys"
+          <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                         @transferCheckedChannel="transferCheckedChannel"
-                        inputWidth="220px"
-                        @show="popverShow"
-                        @hide="popverHidden"></elPopverTree>
+                        inputWidth="230px"></elPopverTree>
           <span class="left-space">人脸库：</span>
-          <el-select style="width: 160px;"
-                     v-model="faceLibraryList"
+          <el-select v-model="faceLibraryList"
+                     size="small"
+                     multiple
+                     style="width: 160px;"
                      clearable
-                     size="small">
-            <el-option v-for="item in faceDataBaseOptions"
-                       :key="item.typeStr"
-                       :label="item.typeName"
-                       :value="item.typeStr">
+                     collapse-tags
+                     placeholder="请选择人脸库">
+            <el-option v-for="item in libraryOptions"
+                       :key="item.faceLibraryUuid"
+                       :label="item.faceLibraryName"
+                       :value="item.faceLibraryUuid">
             </el-option>
           </el-select>
           <span class="left-space">相似度不低于：</span>
@@ -44,13 +43,13 @@
         </div>
         <div class="search-input">
           <span>抓拍总数：</span>
-          <el-select style="width: 60px;"
+          <el-select style="width: 65px;"
                      v-model="logic"
                      clearable
                      size="small">
             <el-option v-for="item in logicOptions"
                        :key="item.typeStr"
-                       :label="item.typeName"
+                       :label="item.typeStr"
                        :value="item.typeStr">
             </el-option>
           </el-select>
@@ -66,7 +65,7 @@
           <span class="left-space">人脸抓拍图片质量：</span>
           <pic-qulity-select :selectedButtons.sync="similarity"/>
           <span class="left-space">抓拍间隔时间：</span>
-          <el-input v-model="num"
+          <el-input v-model="captureInterval"
                     type="number"
                     style="width: 60px;margin: 0 8px;"></el-input>
           <span>秒</span>
@@ -186,8 +185,8 @@ export default {
       startTime: "",
       endTime: "",
       faceLibraryList: [],
-      faceDataBaseOptions: [],
-      logic: "",
+      libraryOptions: [],
+      logic: ">=",
       frequency: 10,
       logicOptions: [],
       threshold: 80,
@@ -198,15 +197,14 @@ export default {
         pageSize: 12,
         currentPage: 1
       },
-      deviceList: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
+      faceRecordPopoverClass: "popoverClass",
       checkedChannelKeys: [],
       channelUuids: [],
       isShowDetail: false,
       isLoading: false,
       leastNumberOfChannel: 5,
-      similarity: [],
-      num: 15,
+      similarity: ["HIGH", "NORMAL", "LOW"],
+      captureInterval: 15,
     };
   },
   created() {},
@@ -214,13 +212,14 @@ export default {
     this.init();
   },
   mounted() {
-    this.init();
   },
   methods: {
     init() {
       this.startTime = this.getStartTime();
       this.endTime = this.$common.getCurrentTime();
       this.getModelList();
+      this.getLibrarys();
+      this.logicOptions = this.$common.getEnumByGroupStr("compare_r");
     },
     getStartTime() {
       var new111 = new Date();
@@ -255,6 +254,15 @@ export default {
         return num;
       }
     },
+    getLibrarys() {
+      this.$faceControlHttp.getFacedbList().then(res => {
+        let body = res.data;
+        this.getFacedbListSuccess(body);
+      });
+    },
+    getFacedbListSuccess(body) {
+      this.libraryOptions = body.data;
+    },
     handleTypeChange(val) {
       if (this.typeRadio === "picture") {
         this.pageInfo.pageSize = 27;
@@ -263,19 +271,12 @@ export default {
       }
       this.getModelList();
     },
-    getChannelUuids() {},
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
-      if (!checkedChannel || checkedChannel.length === 0) {
-        this.getChannelUuids(this.deviceList);
-      } else {
-        for (var i = 0; i < checkedChannel.length; i++) {
-          this.channelUuids.push(checkedChannel[i].id);
-        }
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    popverShow() {},
-    popverHidden() {},
     queryAct() {
       this.getModelList();
     },
@@ -315,6 +316,7 @@ export default {
           frequency: this.frequency,
           leastNumberOfChannel: this.frequency,
           similarity: this.similarity,
+          captureInterval: this.captureInterval,
         })
         .then(res => {
           let body = res.data;
@@ -348,8 +350,8 @@ export default {
 </script>
 
 <style>
-.faceRecordPopoverClass {
-  width: 380px;
+.popoverClass {
+  width: 500px;
   height: 230px;
   position: absolute;
   background: #202127;

@@ -231,6 +231,7 @@ export default {
 	box-sizing: border-box;
 }
 .RecognizeCardClass .asidCompareTxtClass {
+	width: 36%;
 	text-align: left;
 	display: -webkit-box;
 	display: -ms-flexbox;
@@ -244,6 +245,7 @@ export default {
 	padding: 0px;
 	border-left: 1px dashed #333333;
 	margin-left: 10px;
+
 }
 @media screen and (max-width: 1400px) {
 	.RecognizeCardClass .asidCompareImgBox {
