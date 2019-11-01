@@ -95,6 +95,6 @@ export function photoRecordToAnalysis(data) {
   return Axios({
     method: 'GET',
     url,
-    data
+    params: data
   });
 }

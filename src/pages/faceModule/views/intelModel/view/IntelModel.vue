@@ -125,7 +125,7 @@
                               :dataList="otherVideoSourceList"
                               :lineLimit="2"
                               style="width: 60%; margin-left: 40px;"
-                              ref="camera1"
+                              ref="camera2"
                               containerId="camera1" />
           </div>
           <div class="block-camera">
@@ -135,7 +135,7 @@
                               :dataList="notInVideoSourceList"
                               :lineLimit="2"
                               style="width: 60%; margin-left: 28px;"
-                              ref="camera1"
+                              ref="camera3"
                               containerId="camera1" />
           </div>
           <div class="block-line">排除人脸库：&nbsp;&nbsp;&nbsp;&nbsp;
@@ -150,7 +150,7 @@
         </div>
         <div class="list-title">
           <img src="@/assets/images/faceModule/alarm.png">
-          <span class="alarm-num">共{{compareList ? compareList.length : 0}}个感知报警</span>
+          <span class="alarm-num">共{{judgeItemTotal}}个感知报警</span>
           <div class="title-right">
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="createTimeStart"
@@ -168,12 +168,12 @@
                        type="primary"
                        size="small"
                        icon="el-icon-search">查询</el-button>
-            <el-button @click="queryAct"
+            <el-button @click="turnToJudge"
                        type="primary"
                        size="small">
               <img src="@/assets/images/faceModule/turn_record.png"
                    height="10px">
-              跳转人脸比对记录
+              跳转研判记录
             </el-button>
           </div>
         </div>
@@ -257,6 +257,8 @@ export default {
       faceModelUuid: "",
       otherVideoSourceList: [],
       notInVideoSourceList: [],
+      limit: 8,
+      judgeItemTotal: 0,
     };
   },
   created() {},
@@ -277,7 +279,11 @@ export default {
       this.width = "100%";
       setTimeout(() => {
         this.$refs.faceDB.isShowMoreButton();
-        this.$refs.camera.isShowMoreButton();
+        this.$refs.camera1.isShowMoreButton();
+        this.$refs.camera2.isShowMoreButton();
+        this.$refs.camera3.isShowMoreButton();
+        this.limit = 14;
+        this.getJudgedList(this.faceModelUuid);
       }, 600);
     },
     clickRight() {
@@ -285,7 +291,11 @@ export default {
       this.width = "75%";
       setTimeout(() => {
         this.$refs.faceDB.isShowMoreButton();
-        this.$refs.camera.isShowMoreButton();
+        this.$refs.camera1.isShowMoreButton();
+        this.$refs.camera2.isShowMoreButton();
+        this.$refs.camera3.isShowMoreButton();
+        this.limit = 8;
+        this.getJudgedList(this.faceModelUuid);
       }, 600);
     },
     addNewMission() {
@@ -460,7 +470,7 @@ export default {
       this.$intelModelHttp
         .getJudgedList({
           page: 1,
-          limit: 1000,
+          limit: this.limit,
           modelUuid: faceModelUuid,
           createTimeStart: this.createTimeStart,
           createTimeEnd: this.createTimeEnd
@@ -476,6 +486,7 @@ export default {
     },
     getJudgedListSuccess(body) {
       this.compareList = body.data.list;
+      this.judgeItemTotal = body.data.total;
     },
     deleteIntel() {
       this.$confirm(
@@ -524,6 +535,9 @@ export default {
     editIntelModelStatusSuccess(body) {
       this.$cToast.success(body.msg);
       this.getIntelModelList();
+    },
+    turnToJudge() {
+      this.$router.push({ name: "judgeAnalysis" });
     }
   },
   watch: {},

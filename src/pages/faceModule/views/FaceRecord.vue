@@ -328,7 +328,10 @@ export default {
     analysisAct(o, index, routeName) {
       this.mainScreenLoading = true;
       api
-        .photoRecordToAnalysis({ faceCaptureRecordUuid: o.faceCaptureUuid })
+        .photoRecordToAnalysis({
+          faceCaptureRecordUuid: o.faceCaptureUuid,
+          captureDatetime: o.captureDatetime
+        })
         .then(res => {
           console.log(res);
           this.mainScreenLoading = false;

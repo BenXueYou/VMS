@@ -203,7 +203,7 @@ export default {
     },
     getFaceAnalysisDetail() {
       this.$factTragicHttp.getCompareDetail({
-        limit: 9999,
+        limit: 100,
         page: 1,
         faceUuid: this.faceUuid,
         snapshotTimeStart: this.startTime,

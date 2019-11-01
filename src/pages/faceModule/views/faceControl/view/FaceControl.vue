@@ -125,7 +125,7 @@
         </div>
         <div class="list-title">
           <img src="@/assets/images/faceModule/alarm.png">
-          <span class="alarm-num">共{{compareList.length}}个警报</span>
+          <span class="alarm-num">共{{alarmTotal}}个警报</span>
           <div class="title-right">
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="alarmDatetimeBegin"
@@ -143,12 +143,12 @@
                        type="primary"
                        size="small"
                        icon="el-icon-search">查询</el-button>
-            <el-button @click="queryAct"
+            <el-button @click="turnToAlarm"
                        type="primary"
                        size="small">
               <img src="@/assets/images/faceModule/turn_record.png"
                    height="10px">
-              跳转人脸比对记录
+              跳转人脸报警记录
             </el-button>
           </div>
         </div>
@@ -157,6 +157,7 @@
             <recoginize-card :key="index"
                              :recoginizeItem="item"
                              class="list-item"
+                             :style="`width: ${itemWidth}`"
                              @detailClick="openDetail(item)" />
           </template>
         </div>
@@ -229,7 +230,10 @@ export default {
         systemStaffLibraryTypes: []
       },
       isAlarmLoading: false,
-      faceMonitorUuid: ""
+      faceMonitorUuid: "",
+      alarmTotal: 0,
+      itemWidth: "31%",
+      limit: 9,
     };
   },
   created() {},
@@ -251,6 +255,9 @@ export default {
       setTimeout(() => {
         this.$refs.faceDB.isShowMoreButton();
         this.$refs.camera.isShowMoreButton();
+        this.limit = 12;
+        this.itemWidth = "23%";
+        this.getAlarmList(this.faceMonitorUuid);
       }, 600);
     },
     clickRight() {
@@ -259,6 +266,9 @@ export default {
       setTimeout(() => {
         this.$refs.faceDB.isShowMoreButton();
         this.$refs.camera.isShowMoreButton();
+        this.limit = 9;
+        this.itemWidth = "31%";
+        this.getAlarmList(this.faceMonitorUuid);
       }, 600);
     },
     addNewMission() {
@@ -388,7 +398,7 @@ export default {
       this.isAlarmLoading = true;
       this.$faceControlHttp
         .getAlarmList({
-          limit: 9999,
+          limit: this.limit,
           page: 1,
           faceMonitorUuid,
           alarmDatetimeBegin: this.alarmDatetimeBegin,
@@ -404,7 +414,10 @@ export default {
         });
     },
     getAlarmListSuccess(body) {
-      this.compareList = body.data.list ? body.data.list : [];
+      if (body.data) {
+        this.compareList = body.data.list ? body.data.list : [];
+        this.alarmTotal = body.data.total;
+      }
     },
     deleteCon() {
       this.$confirm(
@@ -477,6 +490,9 @@ export default {
     editMonitoringTaskStatusSuccess(body) {
       this.$cToast.success(body.msg);
       this.getMonitoringTaskList();
+    },
+    turnToAlarm() {
+      this.$router.push({ name: "faceAlarm" });
     }
   },
   watch: {},
@@ -662,6 +678,7 @@ export default {
     .items-list {
       display: flex;
       flex-flow: row wrap;
+      width: 100%;
       align-content: flex-start;
       margin-bottom: 10px;
       .list-item {
