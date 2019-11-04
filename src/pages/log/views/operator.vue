@@ -79,22 +79,14 @@
 
 <script>
 import SearchOptionView from "@/pages/log/components/SearchLog";
-// import operatorLogBoxDetail from "@/pages/vistorMange/components/operatorLogBox/operatorLogBoxDetail";
-import staffDetailDialog from "@/pages/personMange/components/staffDetailDialog.vue";
-import residentDetailDialog from "@/pages/residentManage/components/TheResidentDetailDialog.vue";
-import * as api from "../http/ajax";
+import * as api from "../http/logHttp";
 export default {
   components: {
     SearchOptionView,
-    // operatorLogBoxDetail,
-    staffDetailDialog,
-    residentDetailDialog
   },
   props: {},
   data() {
     return {
-      forbidBtnArr: window.config.forbidBtnArr,
-      signOffBtnArr: window.config.signOffBtnArr,
       tableData: [],
       selectDate: "",
       validateTimeStart: null,
@@ -107,13 +99,6 @@ export default {
       operatorLogBoxDetail: {},
       showloading: false,
       staffType: "staff",
-      tabMap: {
-        staff: "staffDetailDialog",
-        resident: "residentDetailDialog"
-      },
-      isStaffDetailShow: false,
-      residentDetail: {},
-      forbidBtnTxt: "回收通行权限",
       otherSearchData: {}
     };
   },
@@ -178,7 +163,7 @@ export default {
       this.showloading = !this.showloading;
       // 查询数据的接口函数
       api
-        .getoperatorLogBox(params)
+        .getLogList(params)
         .then(res => {
           this.showloading = false;
           if (res.data.success && res.data.data) {
@@ -214,7 +199,7 @@ export default {
       // 请求数据
       this.showloading = !this.showloading;
       api
-        .getoperatorLogBoxDetail({ recordUuid: rowData.recordUuid })
+        .getLogList({ recordUuid: rowData.recordUuid })
         .then(res => {
           this.showloading = false;
           if (res.data && res.data.success && res.data.data) {
@@ -237,48 +222,10 @@ export default {
     // 禁止通行
     forbidBtnAct(rowData) {
       console.log("禁止通信");
-      if (rowData.recordUuid) {
-        rowData.visitRecordUuid = rowData.recordUuid;
-      } else {
-        this.$message({ type: "error", message: "记录UUid为空" });
-        return;
-      }
-      this.showloading = !this.showloading;
-      api
-        .putVistorForBiddenUrl(rowData)
-        .then(res => {
-          this.showloading = false;
-          if (res.data.success && res.data.data) {
-            this.$message({ type: "success", message: "权限已经回收" });
-            this.initData();
-          } else {
-            this.$message({ type: "error", message: "权限回收失败" });
-          }
-        })
-        .catch(err => {
-          this.showloading = !this.showloading;
-          console.error(err);
-        });
     },
     // 签离
     signOffBtnAct(rowData) {
-      console.log("签离", rowData);
-      this.showloading = !this.showloading;
-      api
-        .putPlatformVistorSignOffUrl({ visitRecordUuid: rowData.recordUuid })
-        .then(res => {
-          this.showloading = false;
-          if (res.data.success && res.data.data) {
-            this.$message({ type: "success", message: "签离成功" });
-            this.initData();
-          } else {
-            this.$message({ type: "error", message: "签离失败" });
-          }
-        })
-        .catch(err => {
-          this.showloading = !this.showloading;
-          console.error(err);
-        });
+
     },
     // 检索按钮事件
     queryAct(value) {

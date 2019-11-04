@@ -79,22 +79,14 @@
 
 <script>
 import SearchOptionView from "@/pages/log/components/SearchLog";
-// import setLogBoxDetail from "@/pages/vistorMange/components/setLogBox/setLogBoxDetail";
-import staffDetailDialog from "@/pages/personMange/components/staffDetailDialog.vue";
-import residentDetailDialog from "@/pages/residentManage/components/TheResidentDetailDialog.vue";
-import * as api from "../http/ajax";
+import * as api from "../http/logHttp";
 export default {
   components: {
     SearchOptionView,
-    // setLogBoxDetail,
-    staffDetailDialog,
-    residentDetailDialog
   },
   props: {},
   data() {
     return {
-      forbidBtnArr: window.config.forbidBtnArr,
-      signOffBtnArr: window.config.signOffBtnArr,
       tableData: [],
       selectDate: "",
       validateTimeStart: null,
@@ -107,13 +99,7 @@ export default {
       setLogBoxDetail: {},
       showloading: false,
       staffType: "staff",
-      tabMap: {
-        staff: "staffDetailDialog",
-        resident: "residentDetailDialog"
-      },
       isStaffDetailShow: false,
-      residentDetail: {},
-      forbidBtnTxt: "回收通行权限",
       otherSearchData: {}
     };
   },
@@ -138,7 +124,7 @@ export default {
       that.pageSize = parseInt((h - 315) / 50) - 1;
       console.log(that.pageSize);
     });
-    // this.initData();
+    this.initData();
   },
   activated() {
     console.log(this.$route.params.data, "---------openDoor-------");
@@ -152,22 +138,6 @@ export default {
     // this.initData();
   },
   methods: {
-    justifyForbidBtnTxt(rowData) {
-      // rowData.validDatetimeEnd
-      let validDatetimeEnd = new Date(rowData.validDatetimeEnd).getTime();
-      let currentDateTime = new Date().getTime();
-      return currentDateTime < validDatetimeEnd;
-    },
-    showStaffDetail(type, data, isBool) {
-      console.log(type, data, isBool);
-      this.isStaffDetailShow = isBool;
-      this.staffType = type;
-      this.residentDetail = data;
-      this.residentDetail.addressString = data.address;
-    },
-    closeStaffDetail() {
-      this.isStaffDetailShow = false;
-    },
     initData() {
       var params = {
         limit: this.pageSize,
@@ -178,105 +148,18 @@ export default {
       this.showloading = !this.showloading;
       // 查询数据的接口函数
       api
-        .getsetLogBox(params)
+        .getLogList(params)
         .then(res => {
           this.showloading = false;
           if (res.data.success && res.data.data) {
             this.tableData = res.data.data.list;
-            for (let i = 0; i < this.tableData.length; i++) {
-              let item = this.tableData[i];
-              // 判断是否需要签离 处理已到访，超出有效期后 权限回收的问题
-              item.signOff =
-								item.manualSignOff &&
-								Boolean(this.signOffBtnArr.indexOf(item.visitState) !== -1);
-              let isOvertime = this.justifyForbidBtnTxt(item);
-              item.forbid =
-								Boolean(this.forbidBtnArr.indexOf(item.visitState) !== -1) ||
-								(Boolean(item.visitState === "comed") && isOvertime);
-            }
             this.total = res.data.data.total;
           } else {
-            this.$message({ type: "error", message: "没有找到相关访客记录" });
+            this.$message({ type: "error", message: "没有找到相关记录" });
           }
         })
         .catch(err => {
           this.showloading = false;
-          console.error(err);
-        });
-    },
-    closeDetail() {
-      this.isShow = !this.isShow;
-      this.isStaffDetailShow = false;
-    },
-    // 详情
-    detailBtnAct(rowData) {
-      console.log(rowData);
-      // 请求数据
-      this.showloading = !this.showloading;
-      api
-        .getsetLogBoxDetail({ recordUuid: rowData.recordUuid })
-        .then(res => {
-          this.showloading = false;
-          if (res.data && res.data.success && res.data.data) {
-            this.setLogBoxDetail = res.data.data;
-            this.setLogBoxDetail.vistorState = rowData.visitState;
-            this.setLogBoxDetail.recordUuid = rowData.recordUuid;
-            this.setLogBoxDetail.signOff = rowData.signOff;
-            this.setLogBoxDetail.forbid = rowData.forbid;
-            console.log(this.setLogBoxDetail);
-            this.isShow = !this.isShow;
-          } else {
-            this.$message({ type: "warning", message: "没有找到访客记录详情" });
-          }
-        })
-        .catch(err => {
-          this.showloading = !this.showloading;
-          console.error(err);
-        });
-    },
-    // 禁止通行
-    forbidBtnAct(rowData) {
-      console.log("禁止通信");
-      if (rowData.recordUuid) {
-        rowData.visitRecordUuid = rowData.recordUuid;
-      } else {
-        this.$message({ type: "error", message: "记录UUid为空" });
-        return;
-      }
-      this.showloading = !this.showloading;
-      api
-        .putVistorForBiddenUrl(rowData)
-        .then(res => {
-          this.showloading = false;
-          if (res.data.success && res.data.data) {
-            this.$message({ type: "success", message: "权限已经回收" });
-            this.initData();
-          } else {
-            this.$message({ type: "error", message: "权限回收失败" });
-          }
-        })
-        .catch(err => {
-          this.showloading = !this.showloading;
-          console.error(err);
-        });
-    },
-    // 签离
-    signOffBtnAct(rowData) {
-      console.log("签离", rowData);
-      this.showloading = !this.showloading;
-      api
-        .putPlatformVistorSignOffUrl({ visitRecordUuid: rowData.recordUuid })
-        .then(res => {
-          this.showloading = false;
-          if (res.data.success && res.data.data) {
-            this.$message({ type: "success", message: "签离成功" });
-            this.initData();
-          } else {
-            this.$message({ type: "error", message: "签离失败" });
-          }
-        })
-        .catch(err => {
-          this.showloading = !this.showloading;
           console.error(err);
         });
     },
