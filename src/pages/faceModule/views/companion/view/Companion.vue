@@ -149,7 +149,7 @@ export default {
       this.$factTragicHttp
         .getCompanionList({
           faceUuid: this.$route.query.imgObj.faceUuid,
-          channelUuids: this.channelUuids,
+          channelUuids: this.channelUuids.join(","),
           startTime: this.startTime,
           endTime: this.endTime,
           captureInterval: this.captureInterval,
