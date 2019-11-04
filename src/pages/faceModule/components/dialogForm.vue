@@ -44,15 +44,15 @@
 							<el-col :span="10" style="margin-right:8px">
 								<div>所属库：{{staffInfo?staffInfo.faceLibraryName:''}}</div>
 								<div>姓名：{{staffInfo?staffInfo.staffName:''}}</div>
-								<div>性别：{{staffInfo?staffInfo.gender:''}}</div>
-								<div>人员类型：{{staffInfo?staffInfo.staffType:''}}</div>
+								<div>性别：{{$common.getEnumItemName('gender',staffInfo.gender)}}</div>
+								<div>人员类型：{{$common.getEnumItemName('staff_t',staffInfo.staffType)}}</div>
 								<div>住户类型：{{staffInfo?staffInfo.householdType:''}}</div>
 								<div>户籍：{{staffInfo?staffInfo.householdRegister:''}}</div>
 							</el-col>
 							<el-col :span="14">
-								<div>民族：{{staffInfo?staffInfo.nation:''}}</div>
+								<div>民族：{{$common.getEnumItemName('nation',staffInfo.nation)}}</div>
 								<div>出生年月：{{staffInfo?staffInfo.birthday:''}}</div>
-								<div>证件类型：{{staffInfo?staffInfo.credentialType:''}}</div>
+								<div>证件类型：{{$common.getEnumItemName('cred',staffInfo.credentialType)}}</div>
 								<div>证件号码：{{staffInfo?staffInfo.credentialNo:''}}</div>
 								<div>住户地址：{{staffInfo?staffInfo.address:''}}</div>
 							</el-col>
@@ -87,7 +87,7 @@
 						</el-row>
 						<el-row type="flex" justify="space-around">
 							<span>特征：{{shootPhotoList[index]&&shootPhotoList[index].sunglasses?'戴墨镜 ':" "}} {{shootPhotoList[index]&&shootPhotoList[index].mask?'戴口罩':""}}</span>
-							<span>性别：{{shootPhotoList[index]&&shootPhotoList[index].genderCapture||''}}</span>
+							<span>性别：{{$common.getEnumItemName('gender',shootPhotoList[index]&&shootPhotoList[index].genderCapture)}}</span>
 							<span>年龄：{{shootPhotoList[index]&&shootPhotoList[index].age||''}}</span>
 							<span>眼镜：{{shootPhotoList[index]&&shootPhotoList[index].glasses?'戴眼镜 ':" "}}</span>
 						</el-row>
@@ -127,13 +127,17 @@ export default {
     },
     dialogParama: {
       handler: function(val, oldVal) {
+        console.log(val, oldVal);
         this.shootPhotoList = JSON.parse(JSON.stringify(val.list)) || [];
         this.staffInfo = val.staffInfoEntity || {};
         this.taskInfo = this.shootPhotoList[0] || {};
-        console.log(this.taskInfo);
-        this.taskInfo.taskName = this.taskInfo.list.join("，");
+        this.taskInfo.taskName = "";
+        this.taskInfo.list.map((item, index) => {
+          this.taskInfo.taskName += item.faceMonitorName + ",";
+        });
+        this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
       },
-      deep: true
+      deep: true,
     }
   },
 
@@ -217,7 +221,7 @@ export default {
 	white-space: nowrap;
 	overflow: hidden;
 	font-size: 12px;
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	color: rgba(255, 255, 255, 0.6);
 	letter-spacing: 0;
 }
@@ -300,7 +304,7 @@ export default {
 	width: 100%;
 	height: 100%;
 }
-.cardBox .xydialog-card-img {
+.xydialog .xydialog-card-img {
 	width: 121px;
 	height: 121px;
 	-webkit-background-size: cover;

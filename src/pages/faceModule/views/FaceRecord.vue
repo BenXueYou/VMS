@@ -887,7 +887,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	overflow: auto;
-	/* display: flex; */
+	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: flex-start;

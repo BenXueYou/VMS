@@ -107,16 +107,14 @@
 					</button>
 				</div>
 			</el-row>
-			<keep-alive>
-				<dialogview
-					v-loading="dialogfullscreenLoading"
-					element-loading-background="rgba(0, 0, 0, 0.8)"
-					:dialogParama="dialogParama"
-					:shootPhotoList="shootPhotoList"
-					:showImg="showImg"
-					@cs="changeShowStatus"
-				></dialogview>
-			</keep-alive>
+			<dialogview
+				v-loading="dialogfullscreenLoading"
+				element-loading-background="rgba(0, 0, 0, 0.8)"
+				:dialogParama="dialogParama"
+				:shootPhotoList="shootPhotoList"
+				:showImg="showImg"
+				@cs="changeShowStatus"
+			></dialogview>
 		</el-dialog>
 		<!-- ======================================================= 分页器 ========================================================== -->
 		<el-row ref="footerHeight" class="bottomBox" type="flex" justify="flex-end">
@@ -305,15 +303,7 @@ export default {
     },
     // 点击详情的事件
     doComparethis(e) {
-      console.log("------", e);
-      if (this.totalCompareItemList.length - e > 0) {
-        this.dialogParama = null;
-        this.dialogParama = this.totalCompareItemList[e];
-        this.dialogVisible = true;
-        this.dialogParama.showImg = false;
-        this.getAlarmShootPhotoList(this.totalCompareItemList[e]);
-      } else {
-      }
+      this.getAlarmShootPhotoList(this.totalCompareItemList[e]);
     },
     // 根据客户端的传的人员staffUuid查找抓拍图片
     getAlarmShootPhotoList(rowData, currentPage = 1, pageSize = 24) {
@@ -329,14 +319,16 @@ export default {
         .getRecognizeInfo(data)
         .then(res => {
           this.dialogfullscreenLoading = false;
-
           if (res.data.success) {
             console.log(res.data.data);
+            this.dialogParama.showImg = false;
             this.dialogParama = res.data.data;
+            this.dialogVisible = !this.dialogVisible;
           }
         })
         .catch(() => {
           this.dialogfullscreenLoading = false;
+          this.dialogVisible = !this.dialogVisible;
         });
     },
     // 获取任务列表
@@ -734,13 +726,11 @@ export default {
 	margin-left: 11px;
 }
 .CompareRecord .el-dialog {
-	width: 62.5%;
-	color: #fff;
-	height: 73.5%;
-	min-width: 1200px;
-	min-height: 760px;
+	width: 920px;
+	height: 760px;
 	position: relative;
 	margin: 0 auto 50px;
+	color: #fff;
 	background: #24272a;
 	border-radius: 3px;
 	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
