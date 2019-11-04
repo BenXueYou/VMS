@@ -108,7 +108,7 @@ export default {
       default: "95"
     },
     alarmState: {
-      type: Boolean,
+      type: undefined,
       default: false
     }
   },

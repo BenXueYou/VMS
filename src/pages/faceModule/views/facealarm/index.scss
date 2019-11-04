@@ -65,6 +65,7 @@
       box-sizing: border-box;
       background-color: rgb(32, 35, 38);
       overflow: auto;
+      height: calc(100% - 124px);
     }
 
     .facealarm-header {

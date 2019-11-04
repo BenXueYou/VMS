@@ -331,19 +331,26 @@ export default {
   },
   watch: {
     CapturePhotoArr(val) {
-      console.log(val);
-      if (val && val.length > 10) {
-        this.todayShootCount += 1;
-        val.shift();
-      }
-      this.photoList = val;
+    //   console.log(val);
+      let arr = [];
+      val.map(item => {
+        if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
+          arr.push(item);
+          this.todayShootCount += 1;
+        }
+      });
+      this.photoList = arr;
     },
     RecognizationArr(val) {
       console.log(val);
-      this.comparePhotoList = val;
-      if (this.comparePhotoList && this.comparePhotoList.length > 5) {
-        this.comparePhotoList.shift();
-      }
+      let arr = [];
+      val.map(item => {
+        if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
+          arr.push(item);
+          this.todayCompareCount += 1;
+        }
+      });
+      this.comparePhotoList = arr;
     }
   },
   methods: {
@@ -403,7 +410,6 @@ export default {
             .then(res => {
               if (res.data.success && res.data.data) {
                 this.deviceTreeList = res.data.data;
-                // this.deviceTreeList.push(res.data.data);
                 this.defaultExpandedKeys = [];
                 this.defaultExpandedKeys.push(this.deviceTreeList[0].id);
                 this.getPhotoList();
@@ -574,6 +580,8 @@ export default {
         snapshotTimeStart: this.$common.getStartTime(),
         snapshotTimeEnd: this.$common.getCurrentTime()
       };
+      // 过滤空字符串
+      if (!data.faceMonitorUuids) data.faceMonitorUuids = null;
       this.comparePhotoList = [];
       logApi
         .getRecognizeList(data)
@@ -591,7 +599,6 @@ export default {
         })
         .catch(() => {});
     },
-
     // 获取人流量分布统计
     getPhotoStaticList() {
       this.fullscreenLoading = true;

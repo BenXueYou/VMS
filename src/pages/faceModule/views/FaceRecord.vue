@@ -340,7 +340,8 @@ export default {
               type: "warning"
             });
           }
-        }).catch(() => {
+        })
+        .catch(() => {
           this.mainScreenLoading = false;
         });
     },
@@ -358,9 +359,7 @@ export default {
     },
     // 下载导出图片
     downloadImg(o, index) {
-      // var httpRequest = null;
-      var url = this.imageHeader + o.faceCapturePhotoUrl;
-      window.location.href = url;
+      this.$common.exportImageAct(o.faceCapturePhotoUrl, o);
     },
     // 查看大图
     shoWholeImgUrl(o, index) {
@@ -391,7 +390,6 @@ export default {
     getPhotoRecordList() {
       this.mainScreenLoading = true;
       this.totalPhotoItems = []; // 清除记录
-      console.log(this.checkedChannelsUuidList);
       var data = {
         page: this.currentPage,
         limit: this.pageSize,
@@ -409,8 +407,6 @@ export default {
         data[this.propertyOption] = Number(Boolean(data[this.propertyOption]));
       }
       if (!data.genderCapture) data.genderCapture = null;
-
-      console.log(data);
       api
         .getSnapshotList(data)
         .then(res => {
@@ -434,7 +430,6 @@ export default {
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
-      console.log(`点击当前页: ${val}`);
       this.currentPage = val;
       this.getPhotoRecordList(false);
     },
@@ -450,10 +445,6 @@ export default {
           this.$message({ message: "更新设备列表失败", type: "warning" });
         }
       });
-    },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
     },
     // 鼠标划过覆盖的hover弹窗事件
     mymouseover: event => {
@@ -500,7 +491,7 @@ export default {
       checkNameString: "全部任务",
       allChannelUuid: [],
       genderOption: null,
-      qualityOption: ["HIGH", "NORMAL"],
+      qualityOption: ["HIGH", "NORMAL", "LOW"],
       titleTxt: "抓拍设备",
       defaultQualityProps: {
         label: "label"
@@ -894,7 +885,7 @@ export default {
 	background: rgba(36, 39, 42, 1);
 	padding: 10px 0px 0px 10px;
 	box-sizing: border-box;
-	align-content: space-around;
+	align-content: flex-start;
 }
 .textclipClass {
 	display: inline-block;

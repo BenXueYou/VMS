@@ -11,7 +11,7 @@
         <!-- 抓拍图片 -->
         <div class='item'>
           <div class="headerimg">
-            <img :src="detail.zhuapaiurl"
+            <img :src="$common.setPictureShow(detail.zhuapaiurl,)"
                  @click='bigImage(detail.panoramaCapturePhotoUrl)'
                  alt="">
           </div>

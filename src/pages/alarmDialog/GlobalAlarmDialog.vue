@@ -1,21 +1,21 @@
 <template>
-	<el-dialog class="GlobalAlarmDialogClass" :visible.sync="dialogVisible" @close="closeDialog">
+	<el-dialog class="GlobalAlarmDialogClass" :visible.sync="dialogShow" @close="closeDialog">
 		<el-row>
 			<div class="global_el-dialog__header">
 				<span class="el-dialog__title">{{taskInfo.taskName||'布控报警'}}</span>
 				<button type="button" aria-label="Close" class="el-dialog__headerbtn">
-					<i class="el-dialog__close el-icon el-icon-close" @click="dialogVisible = false"></i>
+					<i class="el-dialog__close el-icon el-icon-close" @click="dialogShow = false"></i>
 				</button>
 			</div>
 		</el-row>
 		<div class="GlobalAlarmDialog">
-			<big-img v-if="showImgs" @clickit="viewImg" :imgSrc="imgSrc"></big-img>
+			<!-- <big-img v-if="showImgs" @clickit="viewImg" :imgSrc="imgSrc"></big-img> -->
 			<el-row type="flex" justify="flex-start" class="GlobalAlarmDialogBodyClass" :gutter="5">
 				<div>
 					<div class="leftColBg">
 						<img
 							class="GlobalAlarmDialog-card-img"
-							:src="taskInfo.faceCapturePhotoUrl?imageHeader+taskInfo.faceCapturePhotoUrl:require('@/assets/user.png')"
+							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
 						/>
 					</div>
 					<p>抓拍图片</p>
@@ -26,25 +26,25 @@
 					:stroke-width="2"
 					:width="55"
 					type="circle"
-					:percentage="taskInfo.similarity?parseInt(taskInfo.similarity.toFixed(0)):0"
+					:percentage="dialogParama.faceSimilarity?parseInt(dialogParama.faceSimilarity.toFixed(0)):0"
 				></el-progress>
 
 				<div class="rightBox">
 					<div class="leftColBg">
 						<img
 							class="GlobalAlarmDialog-card-img"
-							:src="staffInfo.facePhotoUrl?imageHeader+staffInfo.facePhotoUrl:require('@/assets/user.png')"
+							:src="dialogParama.facePhotoUrl?imageHeader+dialogParama.facePhotoUrl:require('@/assets/user.png')"
 						/>
 					</div>
 					<p>布控图片</p>
 				</div>
 				<div class="rightTxtBox">
-					<div>{{staffInfo.staffName||'姓名'}}</div>
-					<div>{{staffInfo.staffType||'人员类型'}}</div>
-					<div>{{staffInfo.faceLibraryName||'所属库'}}</div>
-					<!-- <div>{{staffInfo.householdType||'住户类型'}}</div> -->
-					<div>{{staffInfo.channelName||'抓拍通道'}}</div>
-					<div>{{taskInfo.captureDatetime||'抓拍时间'}}</div>
+					<div>{{dialogParama.staffName||'姓名'}}</div>
+					<div>{{dialogParama.staffType||'人员类型'}}</div>
+					<div>{{dialogParama.faceLibraryName||'所属库'}}</div>
+					<!-- <div>{{dialogParama.householdType||'住户类型'}}</div> -->
+					<div>{{dialogParama.channelName||'抓拍通道'}}</div>
+					<div>{{dialogParama.captureDatetime||'抓拍时间'}}</div>
 					<p style="visibility: hidden">抓拍图片</p>
 				</div>
 			</el-row>
@@ -98,14 +98,7 @@ import BigImg from "@/pages/faceModule/components/BigImg.vue";
 export default {
   name: "GlobalAlarmDialog",
   props: {
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    dialogParama: {},
-    showImg: {
-      type: Boolean
-    }
+    dialogParama: {}
   },
   components: { "big-img": BigImg },
   data: function() {
@@ -116,7 +109,8 @@ export default {
       showImgs: false,
       imgSrc: "",
       imageHeader: RestApi.api.imageUrl,
-      dialogVisible: false
+      dialogShow: true,
+      picSourceType: window.config.picSourceType
     };
   },
   watch: {
@@ -125,21 +119,33 @@ export default {
     },
     dialogParama: {
       handler: function(val, oldVal) {
-        this.shootPhotoList = JSON.parse(JSON.stringify(val.list)) || [];
-        this.staffInfo = val.staffInfo || {};
-        this.taskInfo = this.shootPhotoList[0] || {};
-        this.taskInfo.taskName = this.taskInfo.taskList.join("，");
+        console.log(val);
       },
       deep: true
-    },
-    visible(val) {
-      this.dialogVisible = val;
     }
   },
-
   mounted: function(e) {
     // 父組件向子組件傳值
-    console.log(this.dialogParama);
+    /**
+	 * captureDatetime: (...)
+		channelName: (...)
+		channelUuid: (...)
+		faceCapturePhotoUrl: (...)
+		faceCaptureRecordUuid: (...)
+		faceLibraryName: (...)
+		faceLibraryUuid: (...)
+		faceMonitorAlarmUuid: (...)
+		faceMonitorUuid: (...)
+		facePhotoUrl: (...)
+		facePhotoUuid: (...)
+		faceSimilarity: (...)
+		faceUuid: (...)
+		householdType: (...)
+		staffName: (...)
+		staffType: (...)
+	 */
+    console.log("-------------", this.dialogParama);
+    this.staffInfo = this.dialogParama || {};
   },
   activated: function() {
     console.log("刷新页面");
@@ -153,7 +159,6 @@ export default {
     viewImg() {
       this.$emit("cs", false);
     },
-
     // 鼠标划过覆盖的hover弹窗事件
     mymouseover: event => {
       mouseover(event);
@@ -165,7 +170,7 @@ export default {
       mousemove(event);
     },
     closeDialog() {
-      this.$emit("update:visible", false);
+      this.dialogShow = false;
     }
   }
 };
@@ -184,14 +189,14 @@ export default {
 .GlobalAlarmDialogBodyClass {
 	align-items: center;
 	box-sizing: border-box;
-    padding: 19px 20px 12px;
+	padding: 19px 20px 12px;
 	background: rgba(0, 0, 0, 0.21);
 	border-radius: 3px;
 }
 .GlobalAlarmDialogBodyClass p {
 	font-family: "PingFangSC-Regular";
 	font-size: 12px;
-	color: #BBBBBB;
+	color: #bbbbbb;
 }
 .GlobalAlarmDialogBodyClass .leftColBg {
 	background: rgba(33, 35, 37, 0.8);
@@ -220,6 +225,10 @@ export default {
 .global_el-dialog__header {
 	padding: 0 25px;
 	border-bottom: 1px solid rgba(40, 255, 187, 0.1);
+	background-color: rgba(255, 0, 0, 0.1);
+}
+.global_el-dialog__header .el-dialog__title {
+	border-left: 3px solid #fd545e;
 }
 .GlobalAlarmDialog .textclipsClass {
 	display: block;
@@ -363,7 +372,7 @@ export default {
 	color: #dddddd;
 	padding-left: 8px;
 }
-.GlobalAlarmDialogClass.el-dialog__wrapper{
-	overflow:auto;
+.GlobalAlarmDialogClass.el-dialog__wrapper {
+	overflow: auto;
 }
 </style>

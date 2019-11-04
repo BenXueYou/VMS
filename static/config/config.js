@@ -39,7 +39,6 @@ if (DEBUG == "DEBUG") {
     imgUrlStr +
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
-
 window.config = {
   DeBug:true,
   Authorization: Authorization,

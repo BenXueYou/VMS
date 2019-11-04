@@ -1,13 +1,13 @@
 <template>
-	<div class="tablelist" ref="tablelist">
-		<div class="aaaa" v-loading="isloading">
+	<div class="tableCellList" ref="tableCellList">
+		<div class="tableCellListBox" v-loading="isloading">
 			<div class="fater">
 				<div class="item" v-for="(item,index) in tableSourceData" :key="index">
 					<recoginize-card
 						:recoginizeItem="item"
 						@detailClick="openDialog(item)"
 						@click="openDialog(item)"
-						:alarmState="item.status"
+						:alarmState="item.dealState"
 					/>
 				</div>
 				<div class="item hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div>
@@ -122,12 +122,15 @@ export default {
   watch: {
     tableData(val) {
       if (val && val.length) {
-        this.tableSourceData = [];
-        val.forEach(item => {
-          item.captureDatetime = item.alarmDatetime;
-          this.tableSourceData.push(item);
+        let arr = [];
+        val.map(item => {
+          item.similarity = item.faceSimilarity;
+          //   item.dealState = Boolean(item.dealState);
+          arr.push(item);
         });
+        this.tableSourceData = arr;
       }
+      console.log(this.tableSourceData);
     }
   },
   mounted() {},
@@ -181,96 +184,100 @@ export default {
 	color: #aaaaaa;
 	letter-spacing: 0;
 }
-.aaaa {
-	height: calc(100% - 115px);
-	.fater {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: flex-start;
-		align-content: space-between;
+.tableCellList {
+	height: calc(100% - 69px);
+	.tableCellListBox {
+		height: calc(100% - 45px);
 		overflow: auto;
-		.item {
-			background-color: rgb(27, 30, 33);
-			box-sizing: border-box;
-			margin-bottom: 30px;
-			margin-left: 12px;
-			.content {
-				padding: 10px 12px;
+		.fater {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-content: flex-start;
+			overflow: auto;
+			.item {
+				background-color: rgb(27, 30, 33);
 				box-sizing: border-box;
-				overflow: hidden;
-				.aitem {
-					float: left;
-					width: 100%;
-
+				margin-bottom: 30px;
+				margin-left: 17px;
+				.content {
+					padding: 10px 12px;
+					box-sizing: border-box;
 					overflow: hidden;
-					.aitemp {
-						text-indent: 8px;
-						line-height: 30px;
-						@include fontsa;
-						p {
-							text-overflow: ellipsis;
-							overflow: hidden;
-							white-space: nowrap;
-						}
-					}
+					.aitem {
+						float: left;
+						width: 100%;
 
-					.aitemimg {
-						position: relative;
-						float: left;
-						width: 25%;
 						overflow: hidden;
-						padding-bottom: 25%;
-						// width:100px;
-						// height: 100px;
-						// background-color: #aaa;
-						img {
-							position: absolute;
-							top: 0px;
-							left: 0px;
-							width: 100%;
-							height: 100%;
+						.aitemp {
+							text-indent: 8px;
+							line-height: 30px;
+							@include fontsa;
+							p {
+								text-overflow: ellipsis;
+								overflow: hidden;
+								white-space: nowrap;
+							}
+						}
+
+						.aitemimg {
+							position: relative;
+							float: left;
+							width: 25%;
+							overflow: hidden;
+							padding-bottom: 25%;
+							// width:100px;
+							// height: 100px;
+							// background-color: #aaa;
+							img {
+								position: absolute;
+								top: 0px;
+								left: 0px;
+								width: 100%;
+								height: 100%;
+							}
+						}
+						.aitemprogress {
+							float: left;
+							width: 60px;
+							height: 100px;
 						}
 					}
-					.aitemprogress {
-						float: left;
-						width: 60px;
-						height: 100px;
-					}
 				}
-			}
-			.header1 {
-				width: 100%;
-				vertical-align: middle;
-				padding: 10px 12px;
-				box-sizing: border-box;
-				@include active;
-				border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-				margin-bottom: 10px;
-				.adadr {
-					display: inline-block;
+				.header1 {
+					width: 100%;
 					vertical-align: middle;
-				}
-				.aaac {
-					cursor: pointer;
-					float: right;
-					.xiangqing {
+					padding: 10px 12px;
+					box-sizing: border-box;
+					@include active;
+					border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+					margin-bottom: 10px;
+					.adadr {
 						display: inline-block;
 						vertical-align: middle;
-						// color: rgb(39, 150, 119);
-						color: #28ffbb;
+					}
+					.aaac {
+						cursor: pointer;
+						float: right;
+						.xiangqing {
+							display: inline-block;
+							vertical-align: middle;
+							// color: rgb(39, 150, 119);
+							color: #28ffbb;
+						}
+					}
+
+					img {
+						vertical-align: middle;
+						width: 16px;
 					}
 				}
-
-				img {
-					vertical-align: middle;
-					width: 16px;
-				}
 			}
-		}
-		.hiddenitem {
-			opacity: 0;
+			.hiddenitem {
+				opacity: 0;
+			}
 		}
 	}
 }

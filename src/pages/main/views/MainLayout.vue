@@ -37,18 +37,6 @@
 						</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
-				<!-- <div class="quit-btn">
-          <el-button type="text"
-                     size="mini"
-                     @click="onClickQuit">
-            <div class="quit-btn-icon">
-              <img src="@/assets/images/quit.png"
-                   width="14px"
-                   height="14px">
-              <div class="quit-btn-text">退出</div>
-            </div>
-          </el-button>
-				</div>-->
 			</el-header>
 			<el-main class="main-container-main">
 				<!-- <router-view></router-view> -->
@@ -58,11 +46,10 @@
 			</el-main>
 		</el-container>
 		<template v-for="(dialogParama,index) in GlobalAlarmList">
-			<global-alarm-dialog :key="index" :visible.sync="dialogVisible" :dialogParama="dialogParama" />
+			<global-alarm-dialog :key="index" :dialogParama="dialogParama" />
 		</template>
 	</div>
 </template>
-
 <script>
 import TheChangePassWord from "@/common/EditPasswordDialog";
 import TagView from "@/pages/main/views/TagView";
@@ -80,7 +67,7 @@ export default {
       GlobalAlarmList: [],
       local_enums: null,
       showPassWordDialogVisible: false,
-      dialogVisible: false,
+      dialogVisible: true,
       dialogParama: {},
       webSocket: null,
       stompClient: null,
@@ -149,14 +136,14 @@ export default {
           this.subCapture = this.stompClient.subscribe(
             subCaptureApi,
             greeting => {
-              console.log("收到抓拍通知：", greeting);
+              // console.log("收到抓拍通知：", greeting);
               this.handleSubscribeCapture(JSON.parse(greeting.body));
             }
           );
           this.subRecognization = this.stompClient.subscribe(
             subRecognizationApi,
             greeting => {
-              console.log("收到识别通知：", greeting);
+              // console.log("收到识别通知：", greeting);
               this.handleSubscribeRecognization(JSON.parse(greeting.body));
             }
           );
@@ -209,6 +196,9 @@ export default {
     },
     handleSubscribeMonitorAlarm(data) {
       this.GlobalAlarmList.push(data);
+      if (this.GlobalAlarmList && this.GlobalAlarmList.length > 3) {
+        this.GlobalAlarmList.shift();
+      }
     },
     // 退出，修改，切换项目账号，菜单选择事件
     handleCommand(command) {
@@ -253,7 +243,14 @@ export default {
     }),
     key() {
       return this.$route.fullPath;
-    }
+    },
+    // dialogVisible: {
+    //   get: function() {
+    //     console.log(Boolean(this.GlobalAlarmList.length));
+    //     return Boolean(this.GlobalAlarmList.length);
+    //   },
+    //   set: function(val) {}
+    // }
   }
 };
 </script>

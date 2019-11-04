@@ -1,7 +1,100 @@
 import store from "@/store/store.js";
 import { callbackify } from "util";
 export var COMMON = {
-
+  exportImageAct(dialogPanoramaImgUrl,itemData) {
+    if (!!window.ActiveXObject || "ActiveXObject" in window) {
+      this.aLinkDownload(dialogPanoramaImgUrl, itemData); // IE浏览器
+    } else if (navigator.userAgent.indexOf("Firefox") !== -1) {
+      this.imageCanvasAlink(dialogPanoramaImgUrl, itemData); // 火狐浏览器
+    } else if (navigator.userAgent.indexOf("Chrome") !== -1) {
+      this.fileUrlDownload(dialogPanoramaImgUrl, itemData); // Chrome内核浏览器
+    } else {
+      this.aLinkDownload(dialogPanoramaImgUrl, itemData);
+    }
+  },
+  // 下载图片的几种方式
+  // 接口返回文件刘 chrome 浏览器会识别不了类型
+  aLinkDownload(url, itemData) {
+    url = this.setPictureShow(url, window.config.PicSourceType);
+    console.log(url);
+    var a = document.createElement("a");
+    let event = new MouseEvent("click");
+    a.href = url;
+    if (itemData && itemData.staffName) {
+      a.download = itemData.staffName + ".jpg";
+    } else {
+      a.download = "xxx.jpg";
+    }
+    // a.click();火狐浏览器不触发
+    a.dispatchEvent(event);
+  },
+  // 下载文件流的方式 火狐浏览器会默认XML格式，无法定义文件类型
+  fileUrlDownload(url, itemData) {
+    url = this.setPictureShow(url, window.config.PicSourceType);
+    console.log(url, itemData);
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = "blob"; // 返回类型blob
+    xhr.onload = function () {
+      // 定义请求完成的处理函数
+      if (this.status === 200) {
+        var blob = this.response;
+        var reader = new FileReader();
+        reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签href
+        reader.onload = function (e) {
+          var str = e.target.result;
+          var type = str.substring(str.indexOf("/") + 1, str.indexOf(";"));
+          var a = document.createElement("a"); // 转换完成，创建一个a标签用于下载
+          let event = new MouseEvent("click");
+          if (itemData && itemData.staffName) {
+            a.download = itemData.staffName + "." + type;
+          } else {
+            a.download = "xxx.jpg";
+          }
+          a.href = e.target.result;
+          a.dispatchEvent(event);
+        };
+      } else if (this.status === 504) {
+        alert("导出失败，请求超时");
+      } else {
+        alert("导出失败");
+      }
+    };
+    xhr.open("get", url, true);
+    xhr.setRequestHeader(
+      "Accept",
+      "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
+    );
+    xhr.send();
+  },
+  // 通过canvas转换
+  imageCanvasAlink(src, itemData) {
+    src = this.setPictureShow(src, window.config.PicSourceType);
+    console.log(src);
+    // 通过Images对象
+    let image = new Image();
+    image.setAttribute("crossOrigin", "anonymous");
+    image.onload = function (e) {
+      let canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      let context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, image.width, image.height);
+      // window.navigator.msSaveBlob(canvas.msToBlob(), 'image.jpg');
+      let url = canvas.toDataURL("image/png");
+      let a = document.createElement("a");
+      let event = new MouseEvent("click");
+      if (itemData && itemData.staffName) {
+        a.download = itemData.staffInfo.staffName + ".jpg";
+      } else {
+        a.download = "xxx.jpg";
+      }
+      a.href = url;
+      // 触发a的单击事件
+      a.dispatchEvent(event);
+    };
+    // 获取img上的src值，赋值之后，完成之后会调用onload事件
+    image.src = src;
+  },
   // 获取当前一小时前的时间
   getBeforeTimeOneHour() {
     var new111 = new Date();

@@ -391,7 +391,7 @@ export default {
 .OVO .OVO-bg {
 	background-color: rgb(32, 35, 38);
 	box-sizing: border-box;
-	padding: 0 50px;
+	padding: 35px 50px 0;
 	height: 100%;
 }
 .OVO .font-color {
@@ -476,7 +476,7 @@ export default {
 	border: 1px solid rgba(32, 50, 49, 1);
 }
 .OVO .colRowBoxClass {
-	/* margin:10px auto; */
+	margin:25px auto 0;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -578,7 +578,7 @@ export default {
 }
 
 .OVO .OVOTitle {
-	padding: 35px 50px 17px 0px;
+	/* padding: 35px 50px 17px 0px; */
 	text-align: left;
 	font-family: "PingFangSC-Regular";
 	font-size: 18px;
@@ -604,9 +604,9 @@ export default {
 	text-align: center;
 	background-color: transparent;
 	width: 100%;
-	height: calc(100% - 40px);
+	height: 100%;
 	box-sizing: border-box;
-	padding: 20px 50px;
+	padding: 20px 30px;
 }
 .colBoxClass::-webkit-scrollbar {
 	display: none;

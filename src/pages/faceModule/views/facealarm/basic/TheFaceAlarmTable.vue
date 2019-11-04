@@ -1,12 +1,12 @@
 <template>
 	<div class="tablelist" ref="tablelist">
-		<div class="aaaa">
+		<div class="tableListBox">
 			<el-table :data="tableData" border v-loading="isloading" style="width: 100%">
 				<el-table-column prop="index" label="序号" width="60">
 					<template slot-scope="scope">{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</template>
 				</el-table-column>
 				<el-table-column prop="faceMonitorName" label="布控任务"></el-table-column>
-				<el-table-column prop="alarmDatetime" label="报警时间"></el-table-column>
+				<el-table-column prop="captureDatetime" label="报警时间"></el-table-column>
 				<el-table-column prop="channelName" label="抓拍摄像机"></el-table-column>
 				<el-table-column prop="staffName" label="人员姓名" width="100"></el-table-column>
 				<el-table-column prop="gender" label="性别" width="100">
@@ -21,11 +21,11 @@
 					>{{scope.row.staffType?$common.getEnumItemName("staff_t", scope.row.staffType):''}}</template>
 				</el-table-column>
 				<el-table-column prop="libraryName" label="所属库" width="120"></el-table-column>
-				<el-table-column prop="similarity" label="相似度" width="80"></el-table-column>
-				<el-table-column prop="status" label="状态">
+				<el-table-column prop="faceSimilarity" label="相似度" width="80"></el-table-column>
+				<el-table-column prop="dealState" label="状态">
 					<template
 						slot-scope="scope"
-					>{{scope.row.staffType?$common.getEnumItemName("alarm_r", scope.row.status):''}}</template>
+					>{{scope.row.dealState?$common.getEnumItemName("alarm_r", scope.row.dealState):''}}</template>
 				</el-table-column>
 				<el-table-column label="操作" width="112">
 					<template slot-scope="scope">
@@ -140,13 +140,16 @@ export default {
 </script>
 <style lang="scss" scoped>
 .tablelist {
-	height: 100%;
-	height: 100%;
+	height: calc(100% - 64px);
 	overflow: auto;
+	.tableListBox {
+		height: calc(100% - 45px);
+		overflow: auto;
+	}
 }
 .footer {
 	position: relative;
-	margin: 30px 0px 20px;
+	// margin: 30px 0px 20px;
 	.totalpagetitle {
 		font-size: 14px;
 		color: #fff;

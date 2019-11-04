@@ -5,10 +5,7 @@
 			<p>{{faceImgDialogData.channelName||'抓拍相机'}}</p>
 		</div>
 		<div class="rightImgBox">
-			<img
-				:src="faceImgDialogData.panoramaCapturePhotoUrl?faceImgDialogData.dialogPanoramaImgUrl:require('@/assets/user.png')"
-				alt
-			/>
+			<img :src="$common.setPictureShow(faceImgDialogData.panoramaCapturePhotoUrl,PicSourceType)" alt />
 			<div class="flexBox">
 				<p>
 					<span>特征识别：{{faceImgDialogData.sunglasses?'戴墨镜 ':" "}} {{faceImgDialogData.mask?'戴口罩':""}}</span>
@@ -53,101 +50,17 @@ export default {
   },
   methods: {
     exportBtnAct() {
-      var dialogPanoramaImgUrl = this.faceImgDialogData.dialogPanoramaImgUrl;
-      var dialogPhotoImgUrl = this.faceImgDialogData.dialogPhotoImgUrl;
+      var dialogPanoramaImgUrl = this.faceImgDialogData.panoramaCapturePhotoUrl;
+      var dialogPhotoImgUrl = this.faceImgDialogData.faceCapturePhotoUrl;
       var itemData = this.faceImgDialogData;
-      if (!!window.ActiveXObject || "ActiveXObject" in window) {
-        this.aLinkDownload(dialogPanoramaImgUrl, itemData); // IE浏览器
-        this.aLinkDownload(dialogPhotoImgUrl, itemData); // IE浏览器
-      } else if (navigator.userAgent.indexOf("Firefox") !== -1) {
-        this.imageCanvasAlink(dialogPanoramaImgUrl, itemData); // 火狐浏览器
-        this.imageCanvasAlink(dialogPhotoImgUrl, itemData); // 火狐浏览器
-      } else if (navigator.userAgent.indexOf("Chrome") !== -1) {
-        this.fileUrlDownload(dialogPanoramaImgUrl, itemData); // Chrome内核浏览器
-        this.fileUrlDownload(dialogPhotoImgUrl, itemData); // Chrome内核浏览器
-      } else {
-        this.aLinkDownload(dialogPanoramaImgUrl, itemData);
-        this.aLinkDownload(dialogPhotoImgUrl, itemData);
-      }
-    },
-    // 下载图片的几种方式
-    // 接口返回文件刘 chrome 浏览器会识别不了类型
-    aLinkDownload(url, itemData) {
-      var a = document.createElement("a");
-      let event = new MouseEvent("click");
-      a.href = url;
-      if (itemData && itemData.staffName) {
-        a.download = itemData.staffName + ".jpg";
-      } else {
-        a.download = "xxx.jpg";
-      }
-      // a.click();火狐浏览器不触发
-      a.dispatchEvent(event);
-    },
-    // 下载文件流的方式 火狐浏览器会默认XML格式，无法定义文件类型
-    fileUrlDownload(url, itemData) {
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = "blob"; // 返回类型blob
-      xhr.onload = function() {
-        // 定义请求完成的处理函数
-        if (this.status === 200) {
-          var blob = this.response;
-          var reader = new FileReader();
-          reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签href
-          reader.onload = function(e) {
-            var str = e.target.result;
-            var type = str.substring(str.indexOf("/") + 1, str.indexOf(";"));
-            var a = document.createElement("a"); // 转换完成，创建一个a标签用于下载
-            let event = new MouseEvent("click");
-            if (itemData && itemData.staffName) {
-              a.download = itemData.staffName + "." + type;
-            } else {
-              a.download = "xxx.jpg";
-            }
-            a.href = e.target.result;
-            a.dispatchEvent(event);
-          };
-        } else if (this.status === 504) {
-          alert("导出失败，请求超时");
-        } else {
-          alert("导出失败");
-        }
-      };
-      xhr.open("get", url, true);
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      xhr.send();
-    },
-    // 通过canvas转换
-    imageCanvasAlink(src, itemData) {
-      // 通过Images对象
-      let image = new Image();
-      image.setAttribute("crossOrigin", "anonymous");
-      image.onload = function(e) {
-        let canvas = document.createElement("canvas");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        let context = canvas.getContext("2d");
-        context.drawImage(image, 0, 0, image.width, image.height);
-        // window.navigator.msSaveBlob(canvas.msToBlob(), 'image.jpg');
-        let url = canvas.toDataURL("image/png");
-        let a = document.createElement("a");
-        let event = new MouseEvent("click");
-        if (itemData && itemData.staffName) {
-          a.download = itemData.staffInfo.staffName + ".jpg";
-        } else {
-          a.download = "xxx.jpg";
-        }
-        a.href = url;
-        // 触发a的单击事件
-        a.dispatchEvent(event);
-      };
-      // 获取img上的src值，赋值之后，完成之后会调用onload事件
-      image.src = src;
+      this.$common.exportImageAct(dialogPanoramaImgUrl, itemData);
+      this.$common.exportImageAct(dialogPhotoImgUrl, itemData);
     }
   },
   watch: {
     visible(val) {
       this.dialogVisible = val;
+      console.log(this.faceImgDialogData);
     }
   }
 };
@@ -200,12 +113,20 @@ export default {
 }
 .dialogPhotoClass .leftImgBox {
 	width: 35%;
+
 	height: 100%;
 }
-
+.dialogPhotoClass .leftImgBox img {
+	min-width: 249px;
+	min-height: 249px;
+}
 .dialogPhotoClass .rightImgBox {
 	width: 63%;
 	height: 100%;
 	margin-left: 2%;
+}
+.dialogPhotoClass .rightImgBox img {
+	width: 445px;
+	height: 250px;
 }
 </style>

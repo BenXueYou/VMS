@@ -170,16 +170,16 @@ export default {
         label: "channelName"
       },
       alarminfoid: "",
-      startTime: "",
-      endTime: "",
+      startTime: null,
+      endTime: null,
       devicearr: [],
       devicename: [],
       alarmtype: [],
       belongtoarr: [],
       belongto: [],
       statusarr: [],
-      status: "",
-      pageSize: 13,
+      status: null,
+      pageSize: 12,
       pageNow: 1,
       pageCount: 0,
       imagePageSize: 12,
@@ -187,27 +187,27 @@ export default {
       tableData: [],
       showindex: "0",
       statusOptions: [],
-      staffName: "",
-      credentialNo: "",
+      staffName: null,
+      credentialNo: null,
       isloading: false,
       facealarmvisible: false,
       genderOption: null,
       detail: {
-        zhuapaiurl: "",
-        zhuapaiaddress: "",
-        zhuapaitime: "",
-        tezheng: "",
-        taskName: "",
+        zhuapaiurl: null,
+        zhuapaiaddress: null,
+        zhuapaitime: null,
+        tezheng: null,
+        taskName: null,
         jindu: 80,
-        kuurl: "",
-        belong: "",
-        staffName: "",
-        sex: "",
-        huji: "",
-        minzu: "",
-        bir: "",
-        cardtype: "",
-        credentialNo: ""
+        kuurl: null,
+        belong: null,
+        staffName: null,
+        sex: null,
+        huji: null,
+        minzu: null,
+        bir: null,
+        cardtype: null,
+        credentialNo: null
       },
       detail2: {},
       defaultHeader: require("@/assets/user.png"),
@@ -229,6 +229,7 @@ export default {
   fiters: {},
   activated() {
     console.log("activated");
+    this.getTaskList();
   },
   mounted() {
     console.log("mounted");
@@ -261,8 +262,7 @@ export default {
             this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
             if (!isTrue) {
               this.currentPage = 1;
-              this.totalCompareItemList = [];
-              this.queryAct(true);
+              this.queryBtnAct(true);
             }
           } else {
             this.$message({ message: "请求布控任务列表错误", type: "warning" });
@@ -332,16 +332,16 @@ export default {
       console.log(this.startTime, "-----", this.endTime);
     },
     transferCheckedFaceDB(val) {
-      console.log('人脸库：', val);
+      console.log("人脸库：", val);
       this.checkedFaceUuidList = val;
     },
     transferTaskAct(val) {
-      console.log('布控任务：', val);
+      console.log("布控任务：", val);
       this.checkedTaskUuidList = val;
       this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
     },
     transferCheckedChannel(checkedChannel) {
-      console.log('设备列表：', checkedChannel);
+      console.log("设备列表：", checkedChannel);
       this.checkedChannelsUuidList = checkedChannel;
     },
     getFaceLibsAndDeviceList(taskuuidList) {
@@ -355,7 +355,7 @@ export default {
       this.faceDBList = [];
       this.DeviceTreeList = [];
       taskuuidList.forEach(item => {
-        console.log('------', item);
+        console.log("------", item);
         this.getMonitoringTaskDetails(item);
       });
     },
@@ -366,16 +366,20 @@ export default {
         .then(res => {
           if (res.data.success && res.data.data) {
             console.log(res.data.data);
-            this.faceDBList.push(...res.data.data.libraryList.filter(item => {
-              return !this.faceDBList.some(iObj => {
-                return iObj.faceLibraryUuid === item.faceLibraryUuid;
-              });
-            }));
-            this.DeviceTreeList.push(...res.data.data.channelList.filter(item => {
-              return !this.DeviceTreeList.some(iObj => {
-                return iObj.channelUuid === item.channelUuid;
-              });
-            }));
+            this.faceDBList.push(
+              ...res.data.data.libraryList.filter(item => {
+                return !this.faceDBList.some(iObj => {
+                  return iObj.faceLibraryUuid === item.faceLibraryUuid;
+                });
+              })
+            );
+            this.DeviceTreeList.push(
+              ...res.data.data.channelList.filter(item => {
+                return !this.DeviceTreeList.some(iObj => {
+                  return iObj.channelUuid === item.channelUuid;
+                });
+              })
+            );
           }
         })
         .catch(() => {});
@@ -419,9 +423,6 @@ export default {
       };
     },
     lookAlarmDetail(detail) {
-      detail.dialogPhotoImgUrl = this.imageHeader + detail.faceCapturePhotoUrl;
-      detail.dialogPanoramaImgUrl =
-				this.imageHeader + detail.panoramaCapturePhotoUrl;
       this.detail = detail;
       this.faceImgDialogVisible = !this.faceImgDialogVisible;
       // this.facealarmvisible = true;
@@ -431,36 +432,30 @@ export default {
       this.pageSize = index === "1" ? 13 : 12;
       this.ajaxdata();
     },
-    init() {
-      var _w =
-				window.innerWidth ||
-				document.documentElement.clientWidth ||
-				document.body.clientWidth;
-      var _h =
-				window.innerHeight ||
-				document.documentElement.clientHeight ||
-				document.body.clientHeight;
-      this.pageSize = Math.floor((_h - 410) / 43);
-      console.log(_w);
-      // this.ajaxdata();
-    },
+    init() {},
     ajaxdata() {
       this.isloading = true;
+      // 过滤空字符串
+      let data = {
+        staffName: this.staffName,
+        credentialNo: this.credentialNo,
+        dealState: this.status,
+        faceMonitorUuid: this.checkedTaskUuidList.toString(),
+        faceLibraryUuids: this.checkedFaceUuidList.toString(),
+        channelUuids: this.checkedChannelsUuidList.toString(),
+        alarmDatetimeBegin: this.startTime,
+        alarmDatetimeEnd: this.endTime,
+        page: this.pageNow,
+        limit: this.pageSize,
+        gender: this.genderOption,
+        credentialType: null
+      };
+      if (!data.channelUuids) data.channelUuids = null;
+      if (!data.faceMonitorUuid) data.faceMonitorUuid = null;
+      if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
+      if (!data.gender) data.gender = null;
       api
-        .getAlarmList({
-          staffName: this.staffName,
-          credentialNo: this.credentialNo,
-          dealState: this.status,
-          faceMonitorUuid: this.checkedTaskUuidList.toString(),
-          faceLibraryUuids: this.checkedFaceUuidList.toString(),
-          channelUuids: this.checkedChannelsUuidList.toString(),
-          alarmDatetimeBegin: this.startTime,
-          alarmDatetimeEnd: this.endTime,
-          page: this.pageNow,
-          limit: this.pageSize,
-          gender: this.genderOption,
-          credentialType: null
-        })
+        .getAlarmList(data)
         .then(res => {
           this.isloading = false;
           this.tableData = [];
@@ -472,19 +467,6 @@ export default {
         .catch(err => {
           console.log(err);
           this.isloading = false;
-          var num = [];
-          for (var i = 0; i < 12; i++) {
-            num.push({
-              index: ("0" + (i + 1)).slice(-2),
-              staffName: "王小虎",
-              gender: "male",
-              time: "2018-10-18 12:00:00",
-              credentialNo: "342626199411060399",
-              libraryName: "住户",
-              status: true
-            });
-          }
-          this.tableData = num;
         });
     },
     pagechange(index) {
