@@ -12,7 +12,7 @@
               <i v-if="!$route.query.imgObj"
                  class="el-icon-circle-plus-outline font-color">添加图片</i>
               <img v-if="$route.query.imgObj"
-                   :src="$common.setPictureShow($route.query.imgObj.photouri, 'facelog')"
+                   :src="$common.setPictureShow($route.query.imgObj.faceCapturePhotoUrl, 'facelog')"
                    style="width: 100%; height: 100%" />
             </div>
           </div>
@@ -108,9 +108,9 @@ export default {
       fellowItemData: [],
       faceRecordPopoverClass: "companionPopoverClass",
       channelUuids: null,
-      captureInterval: 10,
-      travelTogetherFrequency: 1,
-      travelTogetherChannel: 1,
+      captureInterval: 2,
+      travelTogetherFrequency: 2,
+      travelTogetherChannel: 2,
       isLoading: false,
       checkedChannelKeys: []
     };
@@ -180,6 +180,7 @@ export default {
   destroyed() {},
   activated() {
     this.resetData();
+    console.log("this.$route.query.imgObj: ", this.$route.query.imgObj);
     // if (this.$route.query.imgObj) {
     //   this.checkedChannelKeys.push(this.$route.query.imgObj.channeluuid);
     //   this.channelUuids = this.$common.copyArray(
