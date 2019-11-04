@@ -226,7 +226,7 @@ export default {
     width: 100%;
     height: 100%;
     .select-box {
-      height: 158px;
+      height: 165px;
       border: {
         width: 0 0 1px 0;
         style: dashed;
@@ -283,12 +283,12 @@ export default {
       }
     }
     .content-box {
-      height: calc(100% - 158px);
+      height: calc(100% - 165px);
       border-radius: 3px;
       .title {
         display: flex;
         align-items: center;
-        height: 8%;
+        height: 60px;
         .title-text {
           font-family: PingFangSC-Regular;
           font-size: 14px;
