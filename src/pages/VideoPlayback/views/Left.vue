@@ -333,7 +333,8 @@ export default {
           .getChannelByTag({
             tagUuid,
             page: 1,
-            limit: 11111
+            limit: 11111,
+            viewType: "video"
           })
           .then(res => {
             let list = (res.data.data.list || []).map(item => {

@@ -59,7 +59,8 @@
                             labelName="视图名称"
                             :visible.sync="appendViewVisible"></tree-append-tag-dialog>
     <download-dialog :visible.sync="downloadVisible"></download-dialog>
-    <set-play-time-dialog :visible.sync="setTimeVisible"></set-play-time-dialog>
+    <set-play-time-dialog :visible.sync="setTimeVisible"
+                          @confirm="setPlayTime"></set-play-time-dialog>
   </div>
 </template>
 
@@ -188,6 +189,13 @@ export default {
   },
   destroyed() {},
   methods: {
+    setPlayTime(startTime, endTime) {
+      // 设置回放时间
+      this.$refs["video" + this.operatorIndex][0].setPlayTime(
+        startTime,
+        endTime
+      );
+    },
     closeVideo() {},
     startRecord() {},
     stopRecord() {},

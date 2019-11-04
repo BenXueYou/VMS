@@ -234,8 +234,7 @@ export default {
     },
     openView(data) {
       // 打开视图
-      this.fenluIndex = data.colTotal - 1;
-      this.initWrapDom();
+
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
       let elements = data.elements.map((item, index) => {
@@ -244,6 +243,8 @@ export default {
       });
       console.log(elements);
       this.videoArr = elements;
+      this.fenluIndex = data.colTotal - 1;
+      this.initWrapDom();
     },
     updateView(viewData) {
       console.log();

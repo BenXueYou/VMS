@@ -16,7 +16,7 @@
                       prop="name">
           <el-date-picker v-model="startDate"
                           type="datetime"
-                          style='width:200px;'
+                          style='width:220px;'
                           placeholder="选择日期时间">
           </el-date-picker>
         </el-form-item>
@@ -24,7 +24,7 @@
                       prop="name">
           <el-date-picker v-model="endDate"
                           type="datetime"
-                          style='width:200px;'
+                          style='width:220px;'
                           placeholder="选择日期时间">
           </el-date-picker>
         </el-form-item>
@@ -62,6 +62,7 @@ export default {
   methods: {
     confirm() {
       this.$emit("confirm", this.startDate, this.endDate);
+      this.close();
     },
     close() {
       this.$emit("update:visible", false);

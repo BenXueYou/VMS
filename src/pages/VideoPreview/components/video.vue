@@ -247,6 +247,7 @@ export default {
     }
   },
   methods: {
+    setPlayTime(startTime, endTime) {},
     dblclickhandler() {
       this.$emit("dblclickhandler", this.index);
     },
