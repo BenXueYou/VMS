@@ -35,7 +35,6 @@
             <span class="topTitleTxt left-space">抓拍设备：</span>
             <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                           @transferCheckedChannel="transferCheckedChannel"
-                          :defaultCheckedChannel="checkedChannelKeys"
                           inputWidth="230px"></elPopverTree>
             <span class="topTitleTxt left-space">抓拍时间间隔：</span>
             <el-input v-model="captureInterval"
@@ -141,7 +140,6 @@ export default {
     },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
-      this.checkedChannelKeys = this.$common.copyArray(checkedChannel, this.checkedChannelKeys);
       for (let i = 0; i < checkedChannel.length; i++) {
         this.channelUuids.push(checkedChannel[i].channelUuid);
       }
@@ -151,7 +149,7 @@ export default {
       this.$factTragicHttp
         .getCompanionList({
           faceUuid: this.$route.query.imgObj.faceUuid,
-          channelUuids: this.channelUuids.join(","),
+          channelUuids: this.channelUuids ? this.channelUuids.join(",") : "",
           startTime: this.startTime,
           endTime: this.endTime,
           captureInterval: this.captureInterval,
@@ -182,10 +180,12 @@ export default {
   destroyed() {},
   activated() {
     this.resetData();
-    if (this.$route.query.imgObj) {
-      console.log(this.$route.query.imgObj.channelUuid);
-      this.checkedChannelKeys.push(this.$route.query.imgObj.channelUuid);
-    }
+    // if (this.$route.query.imgObj) {
+    //   this.$nextTick(() => {
+    //     this.checkedChannelKeys.push(this.$route.query.imgObj.channelUuid);
+    //     console.log("this.checkedChannelKeys: ", this.checkedChannelKeys);
+    //   });
+    // }
   }
 };
 </script>
