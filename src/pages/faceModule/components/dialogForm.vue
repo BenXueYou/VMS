@@ -128,9 +128,10 @@ export default {
     dialogParama: {
       handler: function(val, oldVal) {
         this.shootPhotoList = JSON.parse(JSON.stringify(val.list)) || [];
-        this.staffInfo = val.staffInfo || {};
+        this.staffInfo = val.staffInfoEntity || {};
         this.taskInfo = this.shootPhotoList[0] || {};
-        this.taskInfo.taskName = this.taskInfo.taskList.join("，");
+        console.log(this.taskInfo);
+        this.taskInfo.taskName = this.taskInfo.list.join("，");
       },
       deep: true
     }
