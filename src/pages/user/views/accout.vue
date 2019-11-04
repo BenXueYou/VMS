@@ -69,7 +69,7 @@
 			</div>
 		</div>
 		<account-add v-show="addDialogVisible" @close="close" @addRole="addRoleClick" />
-		<tree-panel-dialog :isShow.sync="showTreeAdd"></tree-panel-dialog>
+		<tree-panel-dialog :isShow.sync="showTreeAdd" title='分配角色' checkedText='已分配的角色'></tree-panel-dialog>
 	</div>
 </template>
 <script>

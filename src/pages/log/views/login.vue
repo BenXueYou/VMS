@@ -117,7 +117,7 @@ import SearchOptionView from "@/pages/log/components/SearchLog";
 // import loginLogBoxDetail from "@/pages/vistorMange/components/loginLogBox/loginLogBoxDetail";
 import staffDetailDialog from "@/pages/personMange/components/staffDetailDialog.vue";
 import residentDetailDialog from "@/pages/residentManage/components/TheResidentDetailDialog.vue";
-import * as api from "../ajax";
+import * as api from "../http/ajax";
 export default {
   components: {
     SearchOptionView,

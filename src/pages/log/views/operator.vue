@@ -82,7 +82,7 @@ import SearchOptionView from "@/pages/log/components/SearchLog";
 // import operatorLogBoxDetail from "@/pages/vistorMange/components/operatorLogBox/operatorLogBoxDetail";
 import staffDetailDialog from "@/pages/personMange/components/staffDetailDialog.vue";
 import residentDetailDialog from "@/pages/residentManage/components/TheResidentDetailDialog.vue";
-import * as api from "../ajax";
+import * as api from "../http/ajax";
 export default {
   components: {
     SearchOptionView,

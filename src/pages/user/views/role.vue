@@ -15,10 +15,10 @@
                      @click="deletea"
                      size="small">刪除</el-button>
           <el-button type="primary"
-                     @click="enable"
+                     @click="enable(1)"
                      size="small">启用</el-button>
           <el-button type="primary"
-                     @click="disabled"
+                     @click="enable(0)"
                      size="small">禁用</el-button>
           <el-button type="primary"
                      @click="resetPassword"
@@ -29,6 +29,7 @@
             <el-input style="width:130px;"
                       v-model="roleName"></el-input>
             <el-button type="primary"
+                       @click="serach"
                        size="small">检索</el-button>
           </div>
         </div>
@@ -71,17 +72,17 @@
                              show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-button type="text"
-                           @click="edit(scope.roe)"
+                           @click="edit(scope.row)"
                            size="small">编辑</el-button>
                 <el-button type="text"
-                           @click="ditribute(scope.roe)"
+                           @click="ditribute(scope.row)"
                            size="small">分配账号</el-button>
                 <el-button type="text"
-                           @click="enableRow(scope.roe)"
+                           @click="enableRow(scope.row)"
                            style='color:#FFBA22;'
                            size="small">禁用</el-button>
                 <el-button type="text"
-                           @click="deleteRow(scope.roe)"
+                           @click="deleteRow(scope.row)"
                            style='color: #FF5F5F;'
                            size="small">剔除</el-button>
               </template>
@@ -101,18 +102,34 @@
       </div>
     </div>
     <accout-add class='editDiv'
+                :roleUuid.sync="roleUuid"
+                :visible="isShowEdit"
+                @close="isShowEdit=false"
                 v-show="isShowEdit">
 
     </accout-add>
+    <reset-password :visible.sync="resetPasswordVisible"></reset-password>
+    <confirm-dialog :visible.sync="isConfirm"
+                    title="提示"
+                    confirmText="是否删除账号"
+                    @confirm="confirmDelete"></confirm-dialog>
+    <tree-panel-dialog :isShow.sync="showtreeadad"></tree-panel-dialog>
   </div>
 </template>
 
 <script>
+import * as api from "@/pages/user/http/ajax.js";
+import treePanelDialog from "@/pages/user/components/treePanelDialog";
+import ConfirmDialog from "@/common/ConfirmDialog";
 import accoutAdd from "@/pages/user/views/accoutAdd";
+import resetPassword from "@/pages/user/components/resetPassword";
 export default {
   name: "role",
   components: {
-    accoutAdd
+    accoutAdd,
+    resetPassword,
+    ConfirmDialog,
+    treePanelDialog
   },
   data() {
     return {
@@ -120,8 +137,13 @@ export default {
       pageSize: 11,
       dataTotal: 100,
       roleName: "",
+      roleUuid: "",
       visible: false,
-      isShowEdit: true,
+      isConfirm: false,
+      showtreeadad: false,
+      deleteData: [],
+      resetPasswordVisible: false,
+      isShowEdit: false,
       tableData: Array(11).fill({
         roleUuid: "string", // 角色uuid
         roleName: "string", // 角色名称
@@ -133,23 +155,110 @@ export default {
         // 角色创建时间
         description: "string", // 角色描述
         enable: 1 // 0禁用、1启用
-      })
+      }),
+      multipleSelection: []
     };
+  },
+  mounted() {
+    this.getData();
   },
   methods: {
     handleCurrentChange(val) {},
-    handleSelectionChange() {},
+    handleSelectionChange(val) {
+      // 获取选中的table数据的事件回调
+      this.multipleSelection = val;
+    },
     add() {
+      this.roleUuid = "";
       this.isShowEdit = true;
     },
-    deletea() {},
-    enable() {},
+    deletea() {
+      // 判断有没有选中的
+      if (!this.multipleSelection.length) {
+        this.$message.error("请选中要删除的数据！");
+        return;
+      }
+      this.deleteUser(
+        this.multipleSelection.map(i => {
+          return i.roleUuid;
+        })
+      );
+    },
+    enable(enable) {
+      // 判断有没有选中的
+      if (!this.multipleSelection.length) {
+        this.$message.error(`请选中要${enable ? "启用" : "禁用"}的数据！`);
+        return;
+      }
+      this.updateUserStatus({
+        roleUuids: this.multipleSelection.map(i => {
+          return i.roleUuid;
+        }),
+        enable
+      });
+    },
     disabled() {},
-    resetPassword() {},
-    edit(row) {},
-    ditribute(row) {},
-    enableRow(row) {},
-    deleteRow(row) {}
+    resetPassword() {
+      // 这里不知道要不要判断多账号的问题
+      this.resetPasswordVisible = true;
+    },
+    edit(row) {
+      console.log(row);
+      this.roleUuid = row.roleUuid;
+      this.isShowEdit = true;
+    },
+    ditribute(row) {
+      this.showtreeadad = true;
+    },
+    enableRow(row) {
+      this.updateUserStatus({
+        roleUuids: [row.roleUuid],
+        enalble: 0
+      });
+    },
+    deleteRow(row) {
+      this.deleteUser({
+        roleUuids: [row.roleUuid]
+      });
+    },
+    serach() {
+      this.getData();
+    },
+    getData() {
+      api
+        .getUserList({
+          limt: this.pageSize,
+          page: this.pageNow,
+          roleName: this.roleName || undefined
+        })
+        .then(res => {
+          if (res.data.success) {
+            let data = res.data.data || {};
+            this.dataTotal = data.total || 0;
+            this.tableData = data.list || [];
+          }
+        });
+    },
+    confirmDelete() {
+      api.deleteUser(this.deleteData).then(res => {
+        if (res.data.success) {
+          this.$message.success("删除成功！");
+          this.getData();
+        }
+      });
+    },
+    deleteUser(data) {
+      this.deleteData = data;
+      this.isConfirm = true;
+    },
+    updateUserStatus(data) {
+      api.deleteUser(data).then(res => {
+        if (res.data.success) {
+          this.$message.success("修改成功！");
+          this.getData();
+        }
+      });
+    }
   }
 };
 </script>
@@ -185,16 +294,20 @@ export default {
     margin-top: 20px;
     background: #212325;
     .roleHeader {
-      padding: 25px;
+      padding: 25px 40px;
     }
   }
 }
 .tableWarp {
   height: calc(100% - 140px);
+  padding: 0px 40px;
+  box-sizing: border-box;
   overflow: auto;
 }
 .fenye {
   margin-top: 10px;
+  padding: 0px 40px;
+  box-sizing: border-box;
   span {
     @include font-s;
     float: right;

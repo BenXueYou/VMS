@@ -5,7 +5,8 @@ let port = "15009";
 let version = "1.0";
 
 import sbUrl from "@/utils/restApi/equipment";
-import userUrl from "@/utils/restApi/equipment";
+import logAPi from "@/utils/restApi/logAPi";
+import userUrl from "@/utils/restApi/user";
 import pmUrl from "@/utils/restApi/permission";
 import vistorManageApi from "@/utils/restApi/vistorManageApi";
 import store from "@/store/store.js";
@@ -365,6 +366,7 @@ export default {
     sbUrl,
     userUrl,
     pmUrl,
+    logAPi,
     vistorManageApi,
     //人脸图片质量检测
     faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`
