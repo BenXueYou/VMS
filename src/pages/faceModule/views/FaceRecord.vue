@@ -213,11 +213,7 @@ export default {
     this.endTime = this.$common.getCurrentTime();
     this.queryAct();
   },
-  watch: {
-    filterText(val) {
-      this.$refs.tree2.filter(val);
-    }
-  },
+  watch: {},
   activated: function() {
     console.log("抓拍记录刷新页面");
     this.checkNameString = "";
@@ -344,6 +340,8 @@ export default {
               type: "warning"
             });
           }
+        }).catch(() => {
+          this.mainScreenLoading = false;
         });
     },
     searchImageToFace(o, index, routeName) {
@@ -376,7 +374,7 @@ export default {
         /* eslint-disable */
 				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
 				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
-		/* eslint-enable */
+				/* eslint-enable */
         if (d1 >= d2) {
           this.$message({
             message: "开始时间必须小于结束时间！",
@@ -410,6 +408,8 @@ export default {
         data[this.propertyOption] = this.propertyOption;
         data[this.propertyOption] = Number(Boolean(data[this.propertyOption]));
       }
+      if (!data.genderCapture) data.genderCapture = null;
+
       console.log(data);
       api
         .getSnapshotList(data)
@@ -491,7 +491,6 @@ export default {
       startTime: "",
       endTime: "",
       checkList: [],
-      filterText: "",
       HEIGHT: 0,
       WIDTH: 0,
       defaultProps: {

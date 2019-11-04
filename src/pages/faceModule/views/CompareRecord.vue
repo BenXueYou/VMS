@@ -274,6 +274,7 @@ export default {
       if (!data.channelUuids) data.channelUuids = null;
       if (!data.faceMonitorUuids) data.faceMonitorUuids = null;
       if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
+      if (!data.genderCapture) data.genderCapture = null;
       api
         .getRecognizeList(data)
         .then(res => {
@@ -319,18 +320,24 @@ export default {
       this.updatedFlag = true;
       var data = {
         faceUuid: rowData.faceUuid,
+        triggerFaceMonitor: 1,
         limit: 8,
         page: 1
       };
+      this.dialogfullscreenLoading = true;
       api
         .getRecognizeInfo(data)
         .then(res => {
+          this.dialogfullscreenLoading = false;
+
           if (res.data.success) {
+            console.log(res.data.data);
             this.dialogParama = res.data.data;
           }
         })
-        .catch(() => {});
-      this.dialogfullscreenLoading = true;
+        .catch(() => {
+          this.dialogfullscreenLoading = false;
+        });
     },
     // 获取任务列表
     getTaskList(isTrue = true) {
