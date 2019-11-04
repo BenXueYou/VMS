@@ -14,7 +14,7 @@
                     size="small"
                     clearable
                     @change="onChangeInput"
-                    placeholder="搜索人脸库">
+                    :placeholder="placeholder">
             <img slot="prefix"
                  src="@/assets/images/search_s.png">
           </el-input>
@@ -23,7 +23,7 @@
                  v-for="(item, index) in treeList"
                  class="faceDB-item"
                  @click="onClickItem(item,index)">
-              <img src="@/assets/images/person_g.png"
+              <img :src="itemicon"
                    width="11px"
                    height="11px">
               <div class="item-faceDB text-show text-style">{{item[props.label]}}</div>
@@ -39,14 +39,14 @@
         <div class="block-right">
           <div class="title-line">
             <div class="spot"></div>
-            <div class="title title-text">已选的人脸库</div>
+            <div class="title title-text">{{checkedText}}</div>
           </div>
           <div class="selected-faceDB">
             <template v-for="(item, index) in checkedTreeList">
               <div :key="index"
                    class="faceDB-select-item">
                 <div class="item-faceDB">
-                  <img src="@/assets/images/person_g.png"
+                  <img :src="itemicon"
                        width="11px"
                        height="11px">
                   <span class="title-text text-show"
@@ -94,10 +94,28 @@ export default {
         }
       ]
     },
+    itemicon: {
+      type: String,
+      default() {
+        return require("@/assets/images/person_g.png");
+      }
+    },
     title: {
       type: String,
       default() {
         return "请选择人脸库";
+      }
+    },
+    placeholder: {
+      type: String,
+      default() {
+        return "配置输入框的placeholder";
+      }
+    },
+    checkedText: {
+      type: String,
+      default() {
+        return "配置选中的文字";
       }
     },
     // 通过传进来id 和 label 方便共用

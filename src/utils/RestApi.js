@@ -5,7 +5,7 @@ let port = "15009";
 let version = "1.0";
 
 import sbUrl from "@/utils/restApi/equipment";
-import userUrl from "@/utils/restApi/equipment";
+import userUrl from "@/utils/restApi/user";
 import pmUrl from "@/utils/restApi/permission";
 import vistorManageApi from "@/utils/restApi/vistorManageApi";
 import store from "@/store/store.js";
