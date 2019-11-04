@@ -12,7 +12,7 @@
               <i v-if="!$route.query.imgObj"
                  class="el-icon-circle-plus-outline font-color">添加图片</i>
               <img v-if="$route.query.imgObj"
-                   :src="$common.setPictureShow($route.query.imgObj.photouri, 'facelog')"
+                   :src="$common.setPictureShow($route.query.imgObj.faceCapturePhotoUrl, 'facelog')"
                    style="width: 100%; height: 100%" />
             </div>
           </div>
@@ -108,9 +108,9 @@ export default {
       fellowItemData: [],
       faceRecordPopoverClass: "companionPopoverClass",
       channelUuids: null,
-      captureInterval: 10,
-      travelTogetherFrequency: 1,
-      travelTogetherChannel: 1,
+      captureInterval: 2,
+      travelTogetherFrequency: 2,
+      travelTogetherChannel: 2,
       isLoading: false,
       checkedChannelKeys: []
     };
@@ -149,7 +149,7 @@ export default {
       this.$factTragicHttp
         .getCompanionList({
           faceUuid: this.$route.query.imgObj.faceUuid,
-          channelUuids: this.channelUuids,
+          channelUuids: this.channelUuids.join(","),
           startTime: this.startTime,
           endTime: this.endTime,
           captureInterval: this.captureInterval,
@@ -180,6 +180,7 @@ export default {
   destroyed() {},
   activated() {
     this.resetData();
+    console.log("this.$route.query.imgObj: ", this.$route.query.imgObj);
     // if (this.$route.query.imgObj) {
     //   this.checkedChannelKeys.push(this.$route.query.imgObj.channeluuid);
     //   this.channelUuids = this.$common.copyArray(
@@ -225,7 +226,7 @@ export default {
     width: 100%;
     height: 100%;
     .select-box {
-      height: 158px;
+      height: 165px;
       border: {
         width: 0 0 1px 0;
         style: dashed;
@@ -282,12 +283,12 @@ export default {
       }
     }
     .content-box {
-      height: calc(100% - 158px);
+      height: calc(100% - 165px);
       border-radius: 3px;
       .title {
         display: flex;
         align-items: center;
-        height: 8%;
+        height: 60px;
         .title-text {
           font-family: PingFangSC-Regular;
           font-size: 14px;
