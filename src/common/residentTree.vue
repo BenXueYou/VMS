@@ -199,13 +199,14 @@ export default {
       // 判断：单选、节点类型、树类型 针对wang yi fei数据类型判断
       if (
         this.radio &&
+        this.treeNodeType !=='staff' &&
         data.nodeType !== "door" &&
         this.treeType === "resident"
       ) {
         checked = false;
       }
       //判断：单选、节点类型， 树类型 针对zhengyu 接口数据类型判断
-      if (this.radio && data.type !== "door" && this.treeType !== "person") {
+      if (this.radio && data.type !== "door" && this.treeNodeType !=='staff' && this.treeType !== "person") {
         checked = false;
       }
 

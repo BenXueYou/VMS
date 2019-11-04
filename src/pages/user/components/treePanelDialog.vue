@@ -14,7 +14,7 @@
                     size="small"
                     clearable
                     @change="onChangeInput"
-                    placeholder="搜索人脸库">
+                    :placeholder="placeholderStr">
             <img slot="prefix"
                  src="@/assets/images/search_s.png">
           </el-input>
@@ -106,6 +106,10 @@ export default {
       default() {
         return { label: "treeName", id: "treeId" };
       }
+    },
+    placeholderStr: {
+      type: String,
+      default: '搜索人脸库'
     }
   },
   data() {

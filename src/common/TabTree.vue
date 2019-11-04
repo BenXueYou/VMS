@@ -135,6 +135,8 @@ export default {
       this.$emit("update:isShow", false);
     },
     transferCheckedNodes(data, nodeBool, treeName) {
+      treeName = this.activeName;
+      console.log('iiiiiiiiiiiiiiii',treeName);
       this.$emit("transferCheckedNodes", data, nodeBool, treeName);
     },
     handleClick(val) {

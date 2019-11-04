@@ -1,7 +1,7 @@
 <template>
 	<div class="accout">
-		<div class="title" v-show='!addDialogVisible'>账户管理</div>
-		<div class="content" v-show='!addDialogVisible'>
+		<div class="title" v-show="!addDialogVisible">账户管理</div>
+		<div class="content" v-show="!addDialogVisible">
 			<div class="topBox">
 				<div class="topBoxLeft">
 					<el-button @click="addDialogVisible=!addDialogVisible">新增</el-button>
@@ -68,17 +68,20 @@
 				></el-pagination>
 			</div>
 		</div>
-		<account-add v-show="addDialogVisible" @close='close'/>
+		<account-add v-show="addDialogVisible" @close="close" @addRole="addRoleClick" />
+		<tree-panel-dialog :isShow.sync="showTreeAdd"></tree-panel-dialog>
 	</div>
 </template>
 <script>
 import AccountAdd from "../components/accountAdd.vue";
+import treePanelDialog from "@/pages/user/components/treePanelDialog";
 export default {
   name: "accout",
-  components: { AccountAdd },
+  components: { AccountAdd, treePanelDialog },
   mounted() {},
   data() {
     return {
+      showTreeAdd: false,
       tableData: [],
       currentPage: 1,
       pageSize: 13,
@@ -94,7 +97,9 @@ export default {
     // 编辑
     handleEditClick() {},
     // 分配角色
-    addRoleClick() {},
+    addRoleClick() {
+      this.showTreeAdd = !this.showTreeAdd;
+    },
     // 禁用
     forbidBtnClick() {},
     // 删除

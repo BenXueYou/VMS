@@ -48,8 +48,8 @@
 					</p>
 					<div>
 						<el-input v-model="queryBody.staffName"></el-input>
-						<span v-if="!queryBody.isRelativeSystem" @click="addSystemStaff">
-							<img class="img" src='@/assets/images/resident/modify_icon.png' alt srcset />请选择
+						<span class="cursorClass" v-if="queryBody.isRelativeSystem" @click="addSystemStaff">
+							<img class="img" src="@/assets/images/resident/modify_icon.png" alt srcset />请选择
 						</span>
 					</div>
 					<div>
@@ -86,7 +86,7 @@
 					</div>
 					<div>角色：</div>
 				</div>
-				<div class="bodyBoxDiv" @click="addRoleBtn">
+				<div class="bodyBoxDiv cursorClass" @click="addRoleBtn">
 					<img class="img" src="@/assets/images/add.png" alt srcset />新增
 				</div>
 			</div>
@@ -96,15 +96,48 @@
 				<el-button @click="close">取消</el-button>
 			</div>
 		</div>
+		<tab-tree-tag
+			title="请选择关联人员"
+			rightTxt="已选的人员"
+			:tabs="tabs"
+			:isShow="systemStaffDialogVisible"
+			@onCancel="onCancel"
+			@onConfirm="onConfirm"
+		></tab-tree-tag>
+		<!-- <tree-panel-dialog :isShow.sync="showTreeAdd" title='分配角色'></tree-panel-dialog> -->
 	</div>
 </template>
 <script>
 // import api from "@/pages/faceModule/api.js";
+import tabTreeTag from "@/common/TabTreeTag";
+import treePanelDialog from "@/pages/user/components/treePanelDialog";
 export default {
-  components: {},
+  components: { tabTreeTag, treePanelDialog },
   props: {},
   data() {
     return {
+      showTreeAdd: false,
+      systemStaffDialogVisible: false,
+      tabs: [
+        {
+          id: "1",
+          label: "组织架构",
+          treeType: "resident",
+          treeRef: "tree1",
+          nodeKey: "id",
+          treeNodeType: "staff",
+          selectSingleNode: "staff",
+          radio: true
+        },
+        {
+          id: "2",
+          label: "标签",
+          treeType: "resident",
+          treeRef: "tree2",
+          nodeKey: "tagUuid",
+          isTag: true
+        }
+      ],
       tags: [],
       queryBody: {
         accountName: null, // 用户账号
@@ -129,10 +162,25 @@ export default {
     this.initData();
   },
   methods: {
+    onCancel() {
+      this.systemStaffDialogVisible = !this.systemStaffDialogVisible;
+    },
+    onConfirm(arr) {
+      console.log(arr);
+      this.queryBody.staffUuid = arr[0].id;
+      this.queryBody.staffName = arr[0].label;
+      this.systemStaffDialogVisible = !this.systemStaffDialogVisible;
+    },
     // 选择系统人员
-    addSystemStaff() {},
+    addSystemStaff() {
+      this.systemStaffDialogVisible = !this.systemStaffDialogVisible;
+    },
     // 新增角色
-    addRoleBtn() {},
+    addRoleBtn() {
+      // 分配角色 向父组件传值
+      //   this.showTreeAdd = !this.showTreeAdd;
+      this.$emit('addRole');
+    },
     initData() {},
 
     close() {
@@ -160,7 +208,7 @@ export default {
 	border-radius: 2px;
 }
 .AccountAdd .el-textarea__inner {
-    width: 250px;
+	width: 250px;
 	background-color: transparent;
 	border: 1px solid rgba(255, 255, 255, 0.15);
 }
@@ -193,9 +241,9 @@ export default {
 	min-height: 100%;
 	padding: 30px;
 	box-sizing: border-box;
+	background-color: #212325;
 	.mainBox {
 		height: 100%;
-		background-color: #212325;
 		padding: 0 40px;
 		box-sizing: border-box;
 		overflow: auto;
