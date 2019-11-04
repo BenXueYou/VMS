@@ -1,5 +1,5 @@
 <template>
-	<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
+	<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt" @close="close">
 		<div class="leftImgBox">
 			<img :src="$common.setPictureShow(faceImgDialogData.faceCapturePhotoUrl,PicSourceType)" alt />
 			<p>{{faceImgDialogData.channelName||'抓拍相机'}}</p>
@@ -55,6 +55,9 @@ export default {
       var itemData = this.faceImgDialogData;
       this.$common.exportImageAct(dialogPanoramaImgUrl, itemData);
       this.$common.exportImageAct(dialogPhotoImgUrl, itemData);
+    },
+    close() {
+      this.$emit("update:visible", false);
     }
   },
   watch: {

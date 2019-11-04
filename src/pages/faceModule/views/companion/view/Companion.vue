@@ -35,6 +35,7 @@
             <span class="topTitleTxt left-space">抓拍设备：</span>
             <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                           @transferCheckedChannel="transferCheckedChannel"
+                          :defaultCheckedChannel="checkedChannelKeys"
                           inputWidth="230px"></elPopverTree>
             <span class="topTitleTxt left-space">抓拍时间间隔：</span>
             <el-input v-model="captureInterval"
@@ -140,6 +141,7 @@ export default {
     },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
+      this.checkedChannelKeys = this.$common.copyArray(checkedChannel, this.checkedChannelKeys);
       for (let i = 0; i < checkedChannel.length; i++) {
         this.channelUuids.push(checkedChannel[i].channelUuid);
       }
@@ -165,9 +167,9 @@ export default {
           this.isLoading = false;
         });
     },
-    getCompanionListSuccess(data) {
-      this.fellowItemData = data.body.data;
-      if (data.body.data.length === 0) {
+    getCompanionListSuccess(body) {
+      this.fellowItemData = body.data;
+      if (body.data.length === 0) {
         this.$cToast.success("暂无同行人分析记录！");
       }
     },
@@ -180,14 +182,10 @@ export default {
   destroyed() {},
   activated() {
     this.resetData();
-    console.log("this.$route.query.imgObj: ", this.$route.query.imgObj);
-    // if (this.$route.query.imgObj) {
-    //   this.checkedChannelKeys.push(this.$route.query.imgObj.channeluuid);
-    //   this.channelUuids = this.$common.copyArray(
-    //     this.checkedChannelKeys,
-    //     this.channelUuids
-    //   );
-    // }
+    if (this.$route.query.imgObj) {
+      console.log(this.$route.query.imgObj.channelUuid);
+      this.checkedChannelKeys.push(this.$route.query.imgObj.channelUuid);
+    }
   }
 };
 </script>
@@ -314,7 +312,7 @@ export default {
   margin-left: 5%;
 }
 .split-line {
-  width: 95%;
+  width: 100%;
   border-color: #303336;
   border-width: 0 0 2px 0;
   border-style: dashed;

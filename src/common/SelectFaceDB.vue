@@ -108,7 +108,6 @@ export default {
       }
       for (let item of this.faceDBList) {
         this.$set(item, "checked", false);
-        this.$set(item, "id", this.$common.genLocalId());
       }
     },
     getFacedbList() {
@@ -136,13 +135,13 @@ export default {
     },
     onClickItem(item) {
       for (let item2 of this.faceDBList) {
-        if (item2.id === item.id) {
+        if (item2.faceLibraryUuid === item.faceLibraryUuid) {
           this.$set(item2, "checked", !item2.checked);
           if (item2.checked) {
             this.selectedList.push(item2);
           } else {
             for (let [i, v] of this.selectedList.entries()) {
-              if (v.id === item2.id) {
+              if (v.faceLibraryUuid === item2.faceLibraryUuid) {
                 this.selectedList.splice(i, 1);
               }
             }
@@ -152,12 +151,12 @@ export default {
     },
     deleteItem(item) {
       for (let [i, v] of this.selectedList.entries()) {
-        if (v.id === item.id) {
+        if (v.faceLibraryUuid === item.faceLibraryUuid) {
           this.selectedList.splice(i, 1);
         }
       }
       for (let item2 of this.faceDBList) {
-        if (item2.id === item.id) {
+        if (item2.faceLibraryUuid === item.faceLibraryUuid) {
           this.$set(item2, "checked", false);
         }
       }

@@ -6,9 +6,10 @@
                          :isAdd="isAdd"
                          @onConfirm="onConfirmEditOrAddControl"
                          @onCancel="onCancelEditOrAddControl" />
-    <control-details :isShow="isShowDetailDialog"
+    <!-- <control-details :isShow="isShowDetailDialog"
                      @onCancel="onCancelDetailDialog"
-                     :dialogParama="dialogParama" />
+                     :dialogParama="dialogParama" /> -->
+    <face-img-dialog :visible.sync="isShowDetailDialog" :faceImgDialogData="dialogParama" />
     <div class="menu"
          v-show="isShowMain">
       <el-button @click="addNewMission"
@@ -169,15 +170,17 @@
 <script>
 import SourceShowMore from "@/pages/faceModule/views/faceControl/components/SourceShowMore";
 import AddOrEditControl from "@/pages/faceModule/views/faceControl/components/AddOrEditControl";
-import ControlDetails from "@/pages/faceModule/views/faceControl/components/ControlDetails";
+// import ControlDetails from "@/pages/faceModule/views/faceControl/components/ControlDetails";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
+import FaceImgDialog from "@/pages/faceModule/components/FaceImgDialog.vue";
 
 export default {
   components: {
     SourceShowMore,
     RecoginizeCard,
-    ControlDetails,
-    AddOrEditControl
+    // ControlDetails,
+    AddOrEditControl,
+    FaceImgDialog
   },
   props: {},
   data() {
@@ -207,7 +210,27 @@ export default {
       compareList: [],
       isShowMain: true,
       isShowDetailDialog: false,
-      dialogParama: null,
+      dialogParama: {
+        faceMonitorUuid: "",
+        faceMonitorName: "",
+        alarmDatetime: "",
+        channelName: "",
+        staffName: "",
+        gender: "",
+        facePhotoUrl: "",
+        credentialNo: "",
+        staffType: "",
+        libraryName: "",
+        similarity: 0,
+        status: "",
+        faceCapturePhotoUrl: "",
+        panoramaCapturePhotoUrl: "",
+        genderCapture: "",
+        glasses: 0,
+        sunglasses: 0,
+        mask: 0,
+        age: ""
+      },
       isAdd: true,
       enabled: 1,
       isLoading: false,
@@ -347,9 +370,9 @@ export default {
       this.dialogParama = this.$common.copyObject(item, this.dialogParama);
       this.isShowDetailDialog = true;
     },
-    onCancelDetailDialog() {
-      this.isShowDetailDialog = false;
-    },
+    // onCancelDetailDialog() {
+    //   this.isShowDetailDialog = false;
+    // },
     getMonitoringTaskList() {
       this.isLoading = true;
       this.$faceControlHttp

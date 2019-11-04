@@ -1,7 +1,7 @@
 <template>
 	<div class="fellow">
 		<div class="fellow-info">
-			<detail-item :item="item.staffInfo" />
+			<detail-item :item="item.travelTogetherStaffInfo" />
 		</div>
 		<div class="fellow-capture">
 			<template v-for="(detailItem, index) in item.list">
