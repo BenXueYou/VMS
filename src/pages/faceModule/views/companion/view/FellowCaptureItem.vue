@@ -1,7 +1,7 @@
 <template>
   <div class="fellow-capture-detail">
     <div class="fellow-info-detail-img">
-      <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
+      <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
            width="100%"
            height="100%">
     </div>
