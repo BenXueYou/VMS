@@ -280,26 +280,28 @@ export default {
     getFaceList() {
       this.getImg();
       this.isLoading = true;
-      this.$searchFaceHttp
-        .searchFace({
-          limit: this.pageInfo.pageSize,
-          page: this.pageInfo.currentPage,
-          imageBase64: this.imageBase64,
-          channelUuids: this.channelUuids,
-          libraryType: this.libraryType,
-          similarity: this.similarity,
-          captureTimeStart: this.startTime,
-          captureTimeEnd: this.endTime,
-          projectUuid: this.$store.state.home.projectUuid
-        })
-        .then(res => {
-          let body = res.data;
-          this.searchFaceSuccess(body);
-          this.isLoading = false;
-        })
-        .catch(() => {
-          this.isLoading = false;
-        });
+      setTimeout(() => {
+        this.$searchFaceHttp
+          .searchFace({
+            limit: this.pageInfo.pageSize,
+            page: this.pageInfo.currentPage,
+            imageBase64: this.imageBase64,
+            channelUuids: this.channelUuids,
+            libraryType: this.libraryType,
+            similarity: this.similarity,
+            captureTimeStart: this.startTime,
+            captureTimeEnd: this.endTime,
+            projectUuid: this.$store.state.home.projectUuid
+          })
+          .then(res => {
+            let body = res.data;
+            this.searchFaceSuccess(body);
+            this.isLoading = false;
+          })
+          .catch(() => {
+            this.isLoading = false;
+          });
+      }, 400);
     },
     searchFaceSuccess(body) {
       this.faceList = body.data.list;
