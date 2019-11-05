@@ -23,10 +23,7 @@ export default {
   deleteUserUrl: `${httpHeader}/role`,
   // 变更角色状态
   updateUserStatusUrl: `${httpHeader}/role/status`,
-  // 获取用户权限菜单
-  getAuthUrl: `${httpHeader}/role/feature/auth`,
-  // 获取账号首页菜单
-  getHomeMenuUrl: `${httpHeader}/account/menu`,
+
   accountApi: {
     addAccountApi: `${httpAccountHeader}`,
     getAccountListApi: `${httpAccountHeader}`,
@@ -34,7 +31,7 @@ export default {
     putAccountPWDApi: accountName =>
       `${httpAccountHeader}/updatePwd/${accountName}`,
     resetAccountPWDApi: `${httpAccountHeader}/resetPwd`,
-    deleteAccountPWDApi: `${httpAccountHeader}`,
+    deleteAccountApi: `${httpAccountHeader}`,
     switchAccountApi: `${httpAccountHeader}`
   }
 };
