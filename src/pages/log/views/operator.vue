@@ -91,14 +91,11 @@ export default {
       selectDate: "",
       validateTimeStart: null,
       validateTimeEnd: null,
-      staffName: null,
       currentPage: 1,
       pageSize: 14,
       total: 0,
       isShow: false,
-      operatorLogBoxDetail: {},
       showloading: false,
-      staffType: "staff",
       otherSearchData: {}
     };
   },
@@ -123,40 +120,24 @@ export default {
       that.pageSize = parseInt((h - 315) / 50) - 1;
       console.log(that.pageSize);
     });
-    // this.initData();
+    this.initData();
   },
   activated() {
-    console.log(this.$route.params.data, "---------openDoor-------");
-    var params = this.$route.params.data;
-    var data = {};
-    if (params && params.visitorUuid) {
-      data.visitorUuid = params.visitorUuid;
-    }
     this.currentPage = 1;
-    Object.assign(this.otherSearchData, data);
-    // this.initData();
+    this.initData();
   },
   methods: {
-    justifyForbidBtnTxt(rowData) {
-      // rowData.validDatetimeEnd
-      let validDatetimeEnd = new Date(rowData.validDatetimeEnd).getTime();
-      let currentDateTime = new Date().getTime();
-      return currentDateTime < validDatetimeEnd;
-    },
-    showStaffDetail(type, data, isBool) {
-      console.log(type, data, isBool);
-      this.isStaffDetailShow = isBool;
-      this.staffType = type;
-      this.residentDetail = data;
-      this.residentDetail.addressString = data.address;
-    },
-    closeStaffDetail() {
-      this.isStaffDetailShow = false;
-    },
     initData() {
       var params = {
-        limit: this.pageSize,
-        page: this.currentPage
+        beginTime: this.validateTimeStart,
+        endTime: this.validateTimeEnd,
+        pageSize: this.pageSize,
+        page: this.currentPage,
+        accountName: this.accountName,
+        logType: '',
+        IP: this.loginIp,
+        modelUuid: null,
+        eventType: this.eventType
       };
       Object.assign(params, this.otherSearchData);
       console.log(params);
@@ -168,86 +149,25 @@ export default {
           this.showloading = false;
           if (res.data.success && res.data.data) {
             this.tableData = res.data.data.list;
-            for (let i = 0; i < this.tableData.length; i++) {
-              let item = this.tableData[i];
-              // 判断是否需要签离 处理已到访，超出有效期后 权限回收的问题
-              item.signOff =
-								item.manualSignOff &&
-								Boolean(this.signOffBtnArr.indexOf(item.visitState) !== -1);
-              let isOvertime = this.justifyForbidBtnTxt(item);
-              item.forbid =
-								Boolean(this.forbidBtnArr.indexOf(item.visitState) !== -1) ||
-								(Boolean(item.visitState === "comed") && isOvertime);
-            }
             this.total = res.data.data.total;
           } else {
-            this.$message({ type: "error", message: "没有找到相关访客记录" });
+            this.$message({ type: "error", message: "没有找到相关记录" });
           }
         })
         .catch(err => {
           this.showloading = false;
           console.error(err);
         });
-    },
-    closeDetail() {
-      this.isShow = !this.isShow;
-      this.isStaffDetailShow = false;
-    },
-    // 详情
-    detailBtnAct(rowData) {
-      console.log(rowData);
-      // 请求数据
-      this.showloading = !this.showloading;
-      api
-        .getLogList({ recordUuid: rowData.recordUuid })
-        .then(res => {
-          this.showloading = false;
-          if (res.data && res.data.success && res.data.data) {
-            this.operatorLogBoxDetail = res.data.data;
-            this.operatorLogBoxDetail.vistorState = rowData.visitState;
-            this.operatorLogBoxDetail.recordUuid = rowData.recordUuid;
-            this.operatorLogBoxDetail.signOff = rowData.signOff;
-            this.operatorLogBoxDetail.forbid = rowData.forbid;
-            console.log(this.operatorLogBoxDetail);
-            this.isShow = !this.isShow;
-          } else {
-            this.$message({ type: "warning", message: "没有找到访客记录详情" });
-          }
-        })
-        .catch(err => {
-          this.showloading = !this.showloading;
-          console.error(err);
-        });
-    },
-    // 禁止通行
-    forbidBtnAct(rowData) {
-      console.log("禁止通信");
-    },
-    // 签离
-    signOffBtnAct(rowData) {
-
     },
     // 检索按钮事件
     queryAct(value) {
       console.log("接收其他检索条件", value);
       this.currentPage = 1;
-      value.visitorUuid = null;
       Object.assign(this.otherSearchData, value);
       this.initData();
     },
     queryBtnAct() {
-      var data = {};
-      if (this.selectDate === "otherDay") {
-        data.regDatetimeBegin = this.validateTimeStart;
-        data.regDatetimeEnd = this.validateTimeEnd;
-      } else {
-        this.selectDate = "";
-      }
-      if (this.staffName) {
-        data.visitorName = this.staffName;
-      }
       this.currentPage = 1;
-      Object.assign(this.otherSearchData, data);
       this.initData();
     },
     handleCurrentChange(val) {
@@ -269,9 +189,6 @@ export default {
     }
   },
   watch: {
-    staffName(val) {
-      this.otherSearchData.visitorName = val;
-    }
   },
   destroyed() {}
 };

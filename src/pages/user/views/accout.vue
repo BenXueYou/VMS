@@ -5,10 +5,10 @@
 			<div class="topBox">
 				<div class="topBoxLeft">
 					<el-button @click="addDialogVisible=!addDialogVisible">新增</el-button>
-					<el-button>删除</el-button>
-					<el-button>启用</el-button>
-					<el-button>禁用</el-button>
-					<el-button>密码重置</el-button>
+					<el-button @click="volumeDelete">删除</el-button>
+					<el-button @click="switchData(1)">启用</el-button>
+					<el-button @click="switchData(0)">禁用</el-button>
+					<el-button @click="resetPasswordVisible=true">密码重置</el-button>
 				</div>
 				<div class="topBoxRight">
 					<span class="tipsTxt">姓名：</span>
@@ -69,18 +69,22 @@
 			</div>
 		</div>
 		<account-add v-show="addDialogVisible" @close="close" @addRole="addRoleClick" />
-		<tree-panel-dialog :isShow.sync="showTreeAdd" title='分配角色' checkedText='已分配的角色'></tree-panel-dialog>
+		<tree-panel-dialog :isShow.sync="showTreeAdd" title="分配角色" checkedText="已分配的角色"></tree-panel-dialog>
+		<reset-password :visible.sync="resetPasswordVisible" @confirm="resetPWD"></reset-password>
 	</div>
 </template>
 <script>
 import AccountAdd from "../components/accountAdd.vue";
 import treePanelDialog from "@/pages/user/components/treePanelDialog";
+import * as api from "../http/ajax";
+import resetPassword from "@/pages/user/components/resetPassword";
 export default {
   name: "accout",
-  components: { AccountAdd, treePanelDialog },
+  components: { AccountAdd, treePanelDialog, resetPassword },
   mounted() {},
   data() {
     return {
+      resetPasswordVisible: false,
       showTreeAdd: false,
       tableData: [],
       currentPage: 1,
@@ -89,23 +93,100 @@ export default {
       staffName: null,
       onlineStatus: null,
       onlineStatusOptions: [],
-      addDialogVisible: false
+      addDialogVisible: false,
+      accountUuids: [],
+      accountNames: []
     };
   },
   watch: {},
   methods: {
+    initData() {
+      let data = {
+        staffName: this.staffName,
+        onlineStatus: this.onlineStatus,
+        page: this.currentPage,
+        limit: this.pageSize
+      };
+      api
+        .getAccountListApi(data)
+        .then(res => {
+          if (res.data.success) {
+            this.tableData = res.data.data.list;
+            this.total = res.data.data.total;
+          }
+        })
+        .catch(() => {});
+    },
     // 编辑
-    handleEditClick() {},
+    handleEditClick(rowData) {},
     // 分配角色
     addRoleClick() {
       this.showTreeAdd = !this.showTreeAdd;
     },
+    // 重置密码
+    resetPWD(data) {
+      console.log(data);
+      if (!this.accountNames) {
+        this.$message.warning("请选择充值密码的账户");
+        return;
+      }
+      api
+        .resetAccountPWDApi({
+          accountNames: this.accountNames.toString(),
+          password: data // 密码
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.$message({type: 'success', message: res.data.msg});
+          }
+        })
+        .catch(() => {});
+    },
     // 禁用
-    forbidBtnClick() {},
+    forbidBtnClick(rowData) {},
+    switchData(enable) {
+      api
+        .switchAccountApi({ accountUuids: this.accountUuids, enable: enable })
+        .then(res => {
+          if (res.data.success) {
+            this.$message({ type: "success", message: res.data.msg });
+            this.initData();
+          } else {
+            this.$message({ type: "warning", message: res.data.msg });
+          }
+        })
+        .catch(() => {});
+    },
+    // 批量删除
+    volumeDelete() {
+      this.deleteData(this.accountUuids);
+    },
     // 删除
-    deleteBtnClick() {},
+    deleteBtnClick(rowData) {
+      this.deleteData([rowData.accountUuid]);
+    },
+    deleteData(accountUuids) {
+      api
+        .deleteAccountApi({ accountUuids: accountUuids })
+        .then(res => {
+          if (res.data.success) {
+            this.$message({ type: "success", message: res.data.msg });
+            this.initData();
+          } else {
+            this.$message({ type: "warning", message: res.data.msg });
+          }
+        })
+        .catch(() => {});
+    },
     // 表格选择row
-    handleSelectionChange() {},
+    handleSelectionChange(selection) {
+      this.accountUuids = [];
+      this.accountNames = [];
+      selection.forEach(item => {
+        this.accountUuids.push(item.accountUuid);
+        this.accountNames.push(item.accountName);
+      });
+    },
     handleCurrentChange() {},
     handleSizeChange() {},
     close() {

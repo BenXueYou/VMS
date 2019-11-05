@@ -109,11 +109,15 @@ export default {
   },
   methods: {
     confirm() {
+      if (!this.password) {
+        this.$message.warning("请输入密码！");
+        return;
+      }
       if (this.password !== this.confirmPassword) {
         this.$message.error("两次密码不同！");
         return;
       }
-      this.$emit("confirm", this.name);
+      this.$emit("confirm", this.password);
       this.$emit("update:visible", false);
     },
     close() {

@@ -123,3 +123,13 @@ export function deleteAccountApi(data) {
     data
   });
 }
+
+// 启用账号
+export function switchAccountApi(data) {
+  let url = accountApi.switchAccountApi;
+  return axios({
+    method: 'POST',
+    url,
+    data
+  });
+}

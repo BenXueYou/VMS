@@ -117,26 +117,23 @@ import SearchOptionView from "@/pages/log/components/SearchLog";
 import * as api from "../http/logHttp";
 export default {
   components: {
-    SearchOptionView,
+    SearchOptionView
   },
   props: {},
   data() {
     return {
-      eventType: "",
+      eventType: null,
       eventTypeOptions: [],
-      accountName: "",
+      accountName: null,
       accountOptions: [],
-      loginIp: "",
+      loginIp: null,
       tableData: [],
-      selectDate: "",
       validateTimeStart: null,
       validateTimeEnd: null,
-      staffName: null,
       currentPage: 1,
       pageSize: 14,
       total: 0,
       isShow: false,
-      loginLogBoxDetail: {},
       showloading: false,
       otherSearchData: {}
     };
@@ -165,16 +162,21 @@ export default {
     // this.initData();
   },
   activated() {
-    var data = {};
     this.currentPage = 1;
-    Object.assign(this.otherSearchData, data);
-    // this.initData();
+    this.initData();
   },
   methods: {
     initData() {
       var params = {
-        limit: this.pageSize,
-        page: this.currentPage
+        beginTime: this.validateTimeStart,
+        endTime: this.validateTimeEnd,
+        pageSize: this.pageSize,
+        page: this.currentPage,
+        accountName: this.accountName,
+        logType: "",
+        IP: this.loginIp,
+        modelUuid: null,
+        eventType: this.eventType
       };
       Object.assign(params, this.otherSearchData);
       console.log(params);
@@ -204,23 +206,11 @@ export default {
     queryAct(value) {
       console.log("接收其他检索条件", value);
       this.currentPage = 1;
-      value.visitorUuid = null;
       Object.assign(this.otherSearchData, value);
       this.initData();
     },
     queryBtnAct() {
-      var data = {};
-      if (this.selectDate === "otherDay") {
-        data.regDatetimeBegin = this.validateTimeStart;
-        data.regDatetimeEnd = this.validateTimeEnd;
-      } else {
-        this.selectDate = "";
-      }
-      if (this.staffName) {
-        data.visitorName = this.staffName;
-      }
       this.currentPage = 1;
-      Object.assign(this.otherSearchData, data);
       this.initData();
     },
     handleCurrentChange(val) {
@@ -242,9 +232,6 @@ export default {
     }
   },
   watch: {
-    staffName(val) {
-      this.otherSearchData.visitorName = val;
-    }
   },
   destroyed() {}
 };

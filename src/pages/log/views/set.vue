@@ -91,7 +91,6 @@ export default {
       selectDate: "",
       validateTimeStart: null,
       validateTimeEnd: null,
-      staffName: null,
       currentPage: 1,
       pageSize: 14,
       total: 0,
@@ -140,8 +139,15 @@ export default {
   methods: {
     initData() {
       var params = {
-        limit: this.pageSize,
-        page: this.currentPage
+        beginTime: this.validateTimeStart,
+        endTime: this.validateTimeEnd,
+        pageSize: this.pageSize,
+        page: this.currentPage,
+        accountName: this.accountName,
+        logType: '',
+        IP: this.loginIp,
+        modelUuid: null,
+        eventType: this.eventType
       };
       Object.assign(params, this.otherSearchData);
       console.log(params);

@@ -2,7 +2,7 @@
 	<div class="SearchLog">
 		<div class="form-item">
 			<label for>账号：</label>
-			<el-input class="input" v-model="SearchObj.deviceName"></el-input>
+			<el-input class="input" v-model="SearchObj.IP"></el-input>
 		</div>
 		<div class="form-item">
 			<label for>模块：</label>
@@ -29,7 +29,7 @@
 		</div>
 		<div class="form-item">
 			<label for>IP：</label>
-			<el-input class="input" v-model="SearchObj.deviceName"></el-input>
+			<el-input class="input" v-model="SearchObj.IP"></el-input>
 		</div>
 		<div class="btn-group">
 			<!-- <el-button type="primary" size="small" @click="query">查询</el-button> -->
@@ -63,7 +63,7 @@ export default {
         { typeName: "失败", typeStr: 1 }
       ],
       SearchObj: {
-        deviceName: null,
+        IP: null,
         modelUuid: null,
         eventType: null,
         openDoorResult: null,
@@ -90,7 +90,7 @@ export default {
     },
     resetValue() {
       this.SearchObj = {
-        deviceName: null,
+        IP: null,
         modelUuid: this.modelUuidOptions[0].typeStr,
         eventType: this.eventTypeOptions[0].typeStr,
         verifyResult: this.resultOptions[0].typeStr,
