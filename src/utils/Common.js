@@ -23,7 +23,7 @@ export var COMMON = {
     if (itemData && itemData.staffName) {
       a.download = itemData.staffName + ".jpg";
     } else {
-      a.download = "xxx.jpg";
+      a.download = "down_load.jpg";
     }
     // a.click();火狐浏览器不触发
     a.dispatchEvent(event);
@@ -48,7 +48,7 @@ export var COMMON = {
           if (itemData && itemData.staffName) {
             a.download = itemData.staffName + "." + type;
           } else {
-            a.download = "xxx.jpg";
+            a.download = "down_load.jpg";
           }
           a.href = e.target.result;
           a.dispatchEvent(event);
@@ -86,7 +86,7 @@ export var COMMON = {
       if (itemData && itemData.staffName) {
         a.download = itemData.staffInfo.staffName + ".jpg";
       } else {
-        a.download = "xxx.jpg";
+        a.download = "down_load.jpg";
       }
       a.href = url;
       // 触发a的单击事件

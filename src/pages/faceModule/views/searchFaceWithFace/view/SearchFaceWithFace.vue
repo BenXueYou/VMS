@@ -75,7 +75,7 @@
                 </div>
                 <div class="info-other">
                   <div class="other-span">性别：{{$common.getEnumItemName("gender", item.genderCapture)}}</div>
-                  <div class="other-span">所属库：{{item.faceLibraryName}}</div>
+                  <div class="other-span">所属库：{{libraryType === 'captureFaceLib' ? '抓拍库' : '人脸库'}}</div>
                   <div class="other-span">{{item.captureDatetime}}</div>
                   <div class="other-span">{{item.channelName}}</div>
                 </div>
@@ -255,10 +255,8 @@ export default {
     getImg() {
       this.imageList.forEach((v, i) => {
         if (v.selected && v.imageUrl) {
-          console.log(v);
           this.$common.imageToBase64(v.imageUrl, base64 => {
             this.imageBase64 = base64;
-            console.log("this.imageBase64: ", base64);
           });
         } else if (v.selected && !v.imageUrl) {
           this.imageBase64 = v.picBaseUrl;
@@ -346,7 +344,7 @@ export default {
     },
     downloadImage(item) {
       // this.$common.downloadImage(item.faceCapturePhotoUrl);
-      this.$common.downloadImage(this.$common.setPictureShow(item.faceCapturePhotoUrl));
+      this.$common.exportImageAct(item.faceCapturePhotoUrl);
     },
     tempMonitor(item) {
       let imageBase64 = "";
