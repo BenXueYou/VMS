@@ -65,10 +65,10 @@
 				<div class="bodyBoxDiv">
 					<p class="warningTxt">注：缩短时间前期时间数据会消失</p>
 					<div>
-						<el-input type="number" v-model="queryBody.saveImageUriDay"></el-input>秒
+						<el-input type="number" v-model="queryBody.saveImageUriDay"></el-input>天
 					</div>
 					<div>
-						<el-input type="number" v-model="queryBody.savePanoramauriDay"></el-input>秒
+						<el-input type="number" v-model="queryBody.savePanoramauriDay"></el-input>天
 					</div>
 					<p>
 						<el-radio-group v-model="queryBody.saveAlarmImageType">
@@ -120,7 +120,8 @@ export default {
   },
   methods: {
     initData() {
-      api.getFaceModuleConfig()
+      api
+        .getFaceModuleConfig()
         .then(res => {
           if (res.data.success) {
             this.queryBody = res.data.data;
@@ -160,7 +161,7 @@ export default {
         this.$message.warning("该资源不允许删除");
         return;
       }
-      if (tag.url.indexOf("blob:http://") !== -1) {
+      if (tag.soundUrl.indexOf("blob:http://") !== -1) {
         this.tags.splice(this.tags.indexOf(tag), 1);
         return;
       }

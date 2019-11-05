@@ -632,7 +632,15 @@ export default {
           this.fullscreenLoading = !this.fullscreenLoading;
           let body = res.data;
           if (body.data) {
-            this.photoStaticList = body.data;
+            let arr = body.data;
+            let num = [];
+            arr.forEach((item, index) => {
+              num[index] = 0;
+              item.forEach(o => {
+                num[index] += o.snapshotTotal;
+              });
+            });
+            this.photoStaticList = num;
           }
           this.drawLine();
         })

@@ -33,6 +33,6 @@ export function deleteAudio(xhr) {
   return Axios({
     method: 'DELETE',
     url,
-    data: xhr
+    params: xhr
   });
 }
