@@ -6,8 +6,8 @@
              :close-on-click-modal="false">
     <div class="dialog-content">
       <!--内容-->
-      <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)" width="250px" height="250px" style="margin-right: 30px;">
-      <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl)" width="444px" height="250px">
+      <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')" width="250px" height="250px" style="margin-right: 30px;">
+      <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')" width="444px" height="250px">
     </div>
   </el-dialog>
 </template>
