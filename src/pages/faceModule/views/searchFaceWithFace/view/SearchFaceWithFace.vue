@@ -350,15 +350,15 @@ export default {
       let imageBase64 = "";
       this.$common.imageToBase64(item.faceCapturePhotoUrl, base64 => {
         imageBase64 = base64;
+        this.$searchFaceHttp
+          .tempMonitor({
+            imageBase64,
+          })
+          .then(res => {
+            let body = res.data;
+            this.tempMonitorSuccess(body);
+          });
       });
-      this.$searchFaceHttp
-        .tempMonitor({
-          imageBase64,
-        })
-        .then(res => {
-          let body = res.data;
-          this.tempMonitorSuccess(body);
-        });
     },
     tempMonitorSuccess(body) {
       this.$cToast.success(body.msg);
