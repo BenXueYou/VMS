@@ -316,7 +316,6 @@ export default {
     });
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    this.getPhotoList();
     this.getDeviceList();
     this.getTaskList();
   },
@@ -331,7 +330,7 @@ export default {
   },
   watch: {
     CapturePhotoArr(val) {
-      //   console.log(val);
+      console.log(val);
       let arr = [];
       val.map(item => {
         if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
@@ -401,6 +400,7 @@ export default {
                 this.checkedChannelsUuidList.push(item.channelUuid);
               });
             }
+            this.getPhotoList();
             this.getRtspInChannelUuid(this.channelInfoList[0].channelUuid);
           } else {
             console.log(res.data.data);
@@ -423,7 +423,6 @@ export default {
                 this.deviceTreeList = res.data.data;
                 this.defaultExpandedKeys = [];
                 this.defaultExpandedKeys.push(this.deviceTreeList[0].id);
-                this.getPhotoList();
                 this.handleNodeClick(this.deviceTreeList[0]);
               } else {
               }
@@ -568,6 +567,7 @@ export default {
         snapshotTimeStart: this.$common.getStartTime(),
         snapshotTimeEnd: this.$common.getCurrentTime()
       };
+      if (!data.channelUuids) data.channelUuids = null;
       logApi.getSnapshotList(data).then(res => {
         if (res.data.success && res.data.data) {
           this.photoList = res.data.data.list;

@@ -151,6 +151,8 @@ export default {
     console.log("刷新页面");
   },
   methods: {
+    // 查询识别记录
+
     clickImg(e) {
       this.$emit("cs", true);
       // 获取当前图片地址
