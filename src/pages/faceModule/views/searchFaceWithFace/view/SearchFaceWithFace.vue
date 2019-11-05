@@ -33,6 +33,7 @@
           <span style="margin-left: 4%">抓拍设备：</span>
           <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                         @transferCheckedChannel="transferCheckedChannel"
+                        :isCheckedAll="true"
                         inputWidth="230px"></elPopverTree>
           <span style="margin-left: 4%">对比库：</span>
           <el-radio-group v-model="libraryType"
@@ -105,6 +106,7 @@
                   <span class="elem-title">人员轨迹</span>
                 </div>
                 <div class="menu-elem"
+                     v-if="libraryType === 'captureFaceLib'"
                      @click="lookAllView(item)">
                   <img src="@/assets/images/faceModule/look_allview.png">
                   <span class="elem-title">查看全景图</span>
@@ -328,7 +330,8 @@ export default {
       this.imageList.push({
         key: this.genModelIndex(),
         picBaseUrl: "",
-        imageUrl: item.faceCapturePhotoUrl
+        imageUrl: item.faceCapturePhotoUrl,
+        selected: true,
       });
       this.imageList.push({
         key: this.genModelIndex(),

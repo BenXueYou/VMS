@@ -35,7 +35,7 @@
             <span class="topTitleTxt left-space">抓拍设备：</span>
             <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                           @transferCheckedChannel="transferCheckedChannel"
-                          :defaultCheckedChannel="checkedChannelKeys"
+                          :isCheckedAll="true"
                           inputWidth="230px"></elPopverTree>
             <span class="topTitleTxt left-space">抓拍时间间隔：</span>
             <el-input v-model="captureInterval"
@@ -113,7 +113,6 @@ export default {
       travelTogetherFrequency: 2,
       travelTogetherChannel: 2,
       isLoading: false,
-      checkedChannelKeys: []
     };
   },
   created() {},
@@ -181,10 +180,6 @@ export default {
       this.captureInterval = 2;
       this.travelTogetherFrequency = 2;
       this.travelTogetherChannel = 2;
-      this.$nextTick(() => {
-        this.channelUuids = [];
-        this.checkedChannelKeys = [];
-      });
     }
   },
   watch: {},
