@@ -331,7 +331,7 @@ export default {
   },
   watch: {
     CapturePhotoArr(val) {
-    //   console.log(val);
+      //   console.log(val);
       let arr = [];
       val.map(item => {
         if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
@@ -390,6 +390,17 @@ export default {
           if (res.data.success && res.data.data) {
             this.channelInfoList = res.data.data;
             this.checkedChannel = this.channelInfoList[0];
+            if (this.notCheckAll) {
+              // 勾了单选
+              this.checkedChannelsUuidList = [];
+              this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
+            } else {
+              // 去掉单选
+              this.checkedChannelsUuidList = [];
+              this.channelInfoList.forEach(item => {
+                this.checkedChannelsUuidList.push(item.channelUuid);
+              });
+            }
             this.getRtspInChannelUuid(this.channelInfoList[0].channelUuid);
           } else {
             console.log(res.data.data);
@@ -601,7 +612,62 @@ export default {
     },
     // 获取人流量分布统计
     getPhotoStaticList() {
-      this.fullscreenLoading = true;
+      if (!this.notCheckAll) {
+        this.getFaceCaptureSumByDay();
+      } else {
+        this.getSingleFaceCapSumByDay();
+      }
+    },
+    // 今日全部抓拍
+    getFaceCaptureSumByDay() {
+      this.fullscreenLoading = !this.fullscreenLoading;
+      this.$statisticHttp
+        .getFaceCaptureAll({
+          sort: "desc",
+          faceCapturePhotoQuality: ["HIGH", "NORMAL", "LOW"].toString(),
+          reportType: "faceDailyReport",
+          searchDate: this.$common.getCurrentTime()
+        })
+        .then(res => {
+          this.fullscreenLoading = !this.fullscreenLoading;
+          let body = res.data;
+          if (body.data) {
+            this.photoStaticList = body.data;
+          }
+          this.drawLine();
+        })
+        .catch(() => {
+          this.fullscreenLoading = !this.fullscreenLoading;
+        });
+    },
+    // 今日单一摄像头全部抓拍
+    getSingleFaceCapSumByDay() {
+      this.fullscreenLoading = !this.fullscreenLoading;
+
+      this.$statisticHttp
+        .getFaceCaptureOne({
+          channelUuid: this.checkedChannelsUuidList[0],
+          reportType: "faceDailyReport",
+          faceCapturePhotoQuality: ["HIGH", "NORMAL", "LOW"].toString(),
+          searchDate: this.$common.getCurrentTime()
+        })
+        .then(res => {
+          this.fullscreenLoading = !this.fullscreenLoading;
+          let body = res.data;
+          this.photoStaticList = [];
+          if (body.data) {
+            for (let i = 0; i < 25; i++) {
+              this.photoStaticList.push(0);
+            }
+            body.data.forEach((v, i) => {
+              this.photoStaticList[i + 1] = v;
+            });
+          }
+          this.drawLine();
+        })
+        .catch(() => {
+          this.fullscreenLoading = !this.fullscreenLoading;
+        });
     },
     // 视频选择框显示，右侧按钮显示
     popverShow(e) {
@@ -667,8 +733,8 @@ export default {
 				window.innerHeight ||
 				document.documentElement.clientHeight ||
 				document.body.clientHeight;
-      this.$refs.canvsWidth.$el.style.width = (w * 2) / 3 - 120 + "px";
-      this.$refs.canvsWidth.$el.style.height = (3 * h) / 10 - 80 + "px";
+      this.$refs.canvsWidth.$el.style.width = (w * 2) / 3 - 180 + "px";
+      this.$refs.canvsWidth.$el.style.height = (3 * h) / 10 - 100 + "px";
       console.log(this.$refs.canvsWidth.$el.style.width);
       if (!dom) {
         return;

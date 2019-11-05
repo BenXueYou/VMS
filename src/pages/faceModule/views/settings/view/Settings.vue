@@ -3,7 +3,7 @@
 		<div class="mainBox">
 			<el-header class="headerBox">
 				<div>基础配置</div>
-				<el-button>保存</el-button>
+				<el-button @click="postData">保存</el-button>
 			</el-header>
 			<div class="bodyBox">
 				<div class="bodyBoxDiv">
@@ -88,7 +88,7 @@
 	</div>
 </template>
 <script>
-import api from "@/pages/faceModule/api.js";
+import * as api from "@/pages/faceModule/http/baseConfigHttp.js";
 export default {
   components: {},
   props: {},
@@ -120,8 +120,7 @@ export default {
   },
   methods: {
     initData() {
-      api
-        .baseConfigHttp.getFaceModuleConfig()
+      api.getFaceModuleConfig()
         .then(res => {
           if (res.data.success) {
             this.queryBody = res.data.data;
@@ -310,7 +309,7 @@ export default {
 				font-size: 13px;
 				color: #ffffff;
 				text-align: justify;
-				padding: 7px 27px;
+				padding: 0px 27px;
 				margin-top: -13px;
 			}
 		}
@@ -379,7 +378,7 @@ export default {
 				font-size: 13px;
 				color: #ffffff;
 				text-align: justify;
-				padding: 7px 27px;
+				padding: 0px 27px;
 			}
 		}
 	}
