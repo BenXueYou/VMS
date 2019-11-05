@@ -33,6 +33,7 @@
           <span style="margin-left: 4%">抓拍设备：</span>
           <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                         @transferCheckedChannel="transferCheckedChannel"
+                        :isCheckedAll="true"
                         inputWidth="230px"></elPopverTree>
           <span style="margin-left: 4%">对比库：</span>
           <el-radio-group v-model="libraryType"
