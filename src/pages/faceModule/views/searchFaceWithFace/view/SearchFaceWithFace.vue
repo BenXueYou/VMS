@@ -64,9 +64,15 @@
           <template v-for="(item, index) in faceList">
             <div :key="index"
                  class="list-item">
+              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                   height="100%"
+                   width="40%"
+                   v-if="libraryType === 'captureFaceLib'"
+                   class="img-fill">
               <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
                    height="100%"
                    width="40%"
+                   v-else
                    class="img-fill">
               <div class="item-info">
                 <div class="info-name"
