@@ -145,7 +145,9 @@
       </div>
     </div>
     <tree-panel-dialog :isShow.sync="showtreeadad"></tree-panel-dialog>
-    <auth-tree :visible.sync="authTreeVisible">
+    <auth-tree :visible.sync="authTreeVisible"
+               :roleUuid="roleUuid"
+               @confirm="setFeatureData">
 
     </auth-tree>
   </div>
@@ -184,65 +186,18 @@ export default {
       invalidTime: "",
       roleName: "",
       description: "",
-      featureAuth: [
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        },
-        {
-          featureUuid: "string", // 功能uuid
-          featureName: "string" // 功能名称
-        }
-      ],
+      featureAuth: [],
       account: [],
-      resourceAuth: []
+      resourceAuth: [],
+      featureAuthUuids: []
     };
   },
   methods: {
+    setFeatureData(checkedUuidNums, showNum) {
+      // 设置获取到的数据
+      this.featureAuth = showNum;
+      this.featureAuthUuids = checkedUuidNums;
+    },
     deleteFeatureAuth(index) {
       this.featureAuth.splice(index, 1);
     },
@@ -270,7 +225,7 @@ export default {
     resetAddDialog() {
       // 清空数据
       this.roleName = "";
-      this.enable = false;
+      this.enable = "enable";
       this.time = "forever";
       this.description = "";
       this.account = [];
@@ -282,7 +237,7 @@ export default {
         roleName: this.roleName, // 角色名称
         invalidTime: this.invalidTime, // 到期时间，当类型为短期时传时间字符串，永久时传枚举值
         description: this.description, // 角色描述
-        enable: this.enable ? 1 : 0, // 0禁用、1启用
+        enable: this.enable === "enable" ? 1 : 0, // 0禁用、1启用
         featureAuthUuids: this.account.map(i => {
           return i.featureUuid;
         }),
@@ -358,17 +313,17 @@ export default {
           //   }
           // ]
           this.roleName = data.roleName;
-          this.enable = !!data.enable;
+          this.enable = parseInt(data.enable) === 1 ? "enable" : "disable";
           if (!data.invalidTime) {
             this.time = "forever";
           } else {
-            this.time = "shortTime";
+            this.time = "shorttime";
             this.invalidTime = data.invalidTime;
           }
           this.description = data.description;
-          this.account = data.account;
-          this.featureAuth = data.featureAuth;
-          this.resourceAuth = data.resourceAuth;
+          this.account = data.account || {};
+          this.featureAuth = data.featureAuth || [];
+          this.resourceAuth = data.resourceAuth || [];
         }
       });
     }

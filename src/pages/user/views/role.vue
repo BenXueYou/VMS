@@ -20,9 +20,9 @@
           <el-button type="primary"
                      @click="enable(0)"
                      size="small">禁用</el-button>
-          <el-button type="primary"
+          <!-- <el-button type="primary"
                      @click="resetPassword"
-                     size="small">密码重置</el-button>
+                     size="small">密码重置</el-button> -->
 
           <div style="float:right;">
             <label>角色名称：</label>
@@ -113,7 +113,13 @@
                     title="提示"
                     confirmText="是否删除账号"
                     @confirm="confirmDelete"></confirm-dialog>
-    <tree-panel-dialog :isShow.sync="showtreeadad"></tree-panel-dialog>
+    <tree-panel-dialog :isShow.sync="showtreeadad"
+                       :treeData="treeList"
+                       :initSelectData="initSelectData"
+                       :itemicon="require('@/assets/images/person_g.png')"
+                       title="分配账号"
+                       checkedText="已分配的账号"
+                       placeholder="搜索账号名或姓名"></tree-panel-dialog>
   </div>
 </template>
 
@@ -133,6 +139,11 @@ export default {
   },
   data() {
     return {
+      treeData: Array.from({ length: 0 }, (v, i) => ({
+        treeId: i + 1,
+        treeName: "测试数据" + (i + 1)
+      })),
+
       pageNow: 1,
       pageSize: 11,
       dataTotal: 100,
@@ -156,7 +167,27 @@ export default {
         description: "string", // 角色描述
         enable: 1 // 0禁用、1启用
       }),
-      multipleSelection: []
+      multipleSelection: [],
+      initSelectData: [
+        {
+          treeName: "测试数据1",
+          treeId: 1
+        }
+      ],
+      treeList: [
+        {
+          treeName: "测试数据1",
+          treeId: 1
+        },
+        {
+          treeName: "测试数据2",
+          treeId: 2
+        },
+        {
+          treeName: "测试数据3",
+          treeId: 3
+        }
+      ]
     };
   },
   mounted() {

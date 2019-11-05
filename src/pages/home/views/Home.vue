@@ -25,6 +25,7 @@
 <script>
 import { constantRouterMap } from "@/router";
 import MenuItem from "@/pages/home/components/MenuItem";
+import * as api from "@/pages/user/http/ajax.js";
 
 export default {
   components: {
@@ -49,6 +50,12 @@ export default {
         val => val.icon !== undefined
       );
       this.menuArr = constantRouterMap;
+      console.log(constantRouterMap[0].children);
+      api
+        .getHomeMenu({ accountUuid: window.localStorage.getItem("userUuid") })
+        .then(res => {
+          console.log(res);
+        });
     },
     onClickMenu(compomentItem) {
       this.$store.dispatch("addTagViewItem", compomentItem);
