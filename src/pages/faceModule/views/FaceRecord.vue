@@ -283,11 +283,10 @@ export default {
     tempCtrlTask(o, index) {
       console.log(o.faceCapturePhotoUrl);
       this.$common.imageToBase64(o.faceCapturePhotoUrl, base64 => {
-        console.log(base64);
         api.addTempContrlTask({ imageBase64: base64 }).then(res => {
-          if (res.result === 0) {
+          if (res.data.success) {
             this.$message({
-              message: res.data,
+              message: res.data.msg,
               type: "success"
             });
           } else {
