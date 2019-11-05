@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import * as api from "@/pages/user/http/ajax.js";
 let id = 1000;
 let string = "string",
   int = "int";
@@ -369,6 +370,7 @@ let data = [
     ]
   }
 ];
+console.log(data);
 export default {
   name: "TreeChangeNameDialog.vue",
   props: {
@@ -390,6 +392,12 @@ export default {
         return "";
       }
     },
+    roleUuid: {
+      type: String,
+      default() {
+        return "0c691cd5845b4b4a918cc710e10985ea";
+      }
+    },
     visible: {
       type: Boolean,
       default() {
@@ -406,19 +414,19 @@ export default {
   data() {
     return {
       TreechangeNameDialogVisible: false,
-      data: data,
+      data: [],
       props: {
         label: "nodeName",
         children: "childNodes"
       },
-      allData: ["新增", "修改", "删除", "查看", "导入", "导出"],
-      checkedNum: []
+      allData: ["新建", "修改", "删除", "查看", "导入", "导出"],
+      checkedNum: [],
+      showNum: []
     };
   },
   mounted() {
     this.TreechangeNameDialogVisible = this.visible;
     this.name = this.value;
-    this.initData();
   },
   methods: {
     initData() {
@@ -623,31 +631,52 @@ export default {
       // 遍历数据
       for (let i = 0, len = data.length; i < len; i++) {
         // 判断是不是叶子节点
-        if (!data[i].childNodes.length) {
+        if (data[i].childNodes && data[i].childNodes.length) {
+          this.getAllCheckedLeafUuid(data[i].childNodes);
+        } else {
           let num = this.getUuid(data[i].auth, data[i].checkAuth);
           this.checkedNum.push(...num);
-        } else {
-          this.getAllCheckedLeafUuid(data[i].childNodes);
+          if (num.length) {
+            // num有长度则表示要显示
+            this.showNum.push({
+              featureName: data[i].nodeName,
+              featureUuid: data[i].featureUuid
+            });
+          }
         }
       }
     },
     confirm() {
       // 获取所有的叶子节点被选中的uuid
       this.checkedNum = [];
+      this.showNum = [];
       this.getAllCheckedLeafUuid(this.data);
-      // console.log(this.checkedNum);
-      // this.$emit("confirm", this.name);
-      // this.$emit("update:visible", false);
+      console.log(this.checkedNum);
+      this.$emit("confirm", this.checkedNum, this.showNum);
+      this.close();
     },
     close() {
       this.$emit("update:visible", false);
       this.$emit("close");
+    },
+    getData() {
+      api
+        .getAuth({
+          roleUuid: this.roleUuid
+        })
+        .then(res => {
+          console.log(res);
+          let data = res.data.data || [];
+          this.data = data;
+          this.initData();
+        });
     }
   },
   watch: {
     visible(val) {
       if (val) {
         this.name = this.value;
+        this.getData();
       }
       this.TreechangeNameDialogVisible = this.visible;
     }

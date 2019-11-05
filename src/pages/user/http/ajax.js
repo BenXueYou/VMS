@@ -13,6 +13,22 @@ export function getAccout(params) {
     params
   });
 }
+export function getHomeMenu(params) {
+  let { getHomeMenuUrl: url } = userUrl;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+export function getAuth(params) {
+  let { getAuthUrl: url } = userUrl;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
 export function getUserList(params) {
   console.log(params);
   let { getUserListUrl: url } = userUrl;
@@ -68,7 +84,7 @@ export function updateUserStatus(data) {
 export function addAccountApi(data) {
   let url = accountApi.addAccountApi;
   return axios({
-    method: 'POST',
+    method: "POST",
     url,
     data
   });
@@ -78,7 +94,7 @@ export function addAccountApi(data) {
 export function getAccountListApi(data) {
   let url = accountApi.getAccountListApi;
   return axios({
-    method: 'GET',
+    method: "GET",
     url,
     data
   });
@@ -88,7 +104,7 @@ export function getAccountListApi(data) {
 export function putAccountApi(data) {
   let url = accountApi.putAccountApi(data.accountUuid);
   return axios({
-    method: 'PUT',
+    method: "PUT",
     url,
     data
   });
@@ -98,7 +114,7 @@ export function putAccountApi(data) {
 export function putAccountPWDApi(data) {
   let url = accountApi.putAccountPWDApi(data.accountName);
   return axios({
-    method: 'PUT',
+    method: "PUT",
     url,
     data
   });
@@ -108,7 +124,7 @@ export function putAccountPWDApi(data) {
 export function resetAccountPWDApi(data) {
   let url = accountApi.resetAccountPWDApi;
   return axios({
-    method: 'PUT',
+    method: "PUT",
     url,
     data
   });
@@ -118,7 +134,7 @@ export function resetAccountPWDApi(data) {
 export function deleteAccountApi(data) {
   let url = accountApi.deleteAccountApi;
   return axios({
-    method: 'DELETE',
+    method: "DELETE",
     url,
     data
   });

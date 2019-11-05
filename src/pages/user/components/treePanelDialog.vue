@@ -85,14 +85,15 @@ export default {
       type: Boolean,
       default: false
     },
+    treeData: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
     initSelectData: {
       type: Array,
-      default: () => [
-        {
-          treeId: 2,
-          treeName: "测试数据2"
-        }
-      ]
+      default: () => []
     },
     itemicon: {
       type: String,
@@ -103,7 +104,7 @@ export default {
     title: {
       type: String,
       default() {
-        return "请选择人脸库";
+        return "配置标题title";
       }
     },
     placeholder: {
@@ -115,39 +116,22 @@ export default {
     checkedText: {
       type: String,
       default() {
-        return "配置选中的文字";
+        return "配置选中的文字checkedText";
       }
     },
-    // 通过传进来id 和 label 方便共用
+    // 通过传进来id 和 label 对不同数据的字段方便使用
     props: {
       type: Object,
       default() {
         return { label: "treeName", id: "treeId" };
       }
-    },
-    placeholderStr: {
-      type: String,
-      default: '搜索人脸库'
     }
   },
   data() {
     return {
       isCurrentShow: false,
       titleText: "",
-      treeList: [
-        {
-          treeId: 1,
-          treeName: "测试数据1"
-        },
-        {
-          treeId: 2,
-          treeName: "测试数据2"
-        },
-        {
-          treeId: 3,
-          treeName: "测试数据3"
-        }
-      ]
+      treeList: []
     };
   },
   computed: {
@@ -164,18 +148,16 @@ export default {
       if (!this.treeList) {
         return;
       }
+      console.log(this.treeList);
+      console.log(this.initSelectData);
       let data = this.treeList.map(v => {
         v.checked = this.initSelectData.some(item => {
           return item[this.props.id] === v[this.props.id];
         });
         return v;
       });
+      console.log(data);
       this.treeList = data;
-    },
-    getFacedbList() {
-      // 这里请求数据
-      // 将得到的数据跟传进来的数据进行比较
-      this.formatData();
     },
     getFacedbListSuccess(body) {},
     onClickItem(item, index) {
@@ -209,7 +191,8 @@ export default {
     isShow(val) {
       this.isCurrentShow = val;
       if (val) {
-        this.getFacedbList();
+        this.treeList = this.treeData;
+        this.formatData();
       }
     }
   }
