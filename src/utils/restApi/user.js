@@ -29,7 +29,7 @@ export default {
     putAccountApi:(accountUuid)=>`${httpAccountHeader}/${accountUuid}`,
     putAccountPWDApi:(accountName)=>`${httpAccountHeader}/updatePwd/${accountName}`,
     resetAccountPWDApi:`${httpAccountHeader}/resetPwd`,
-    deleteAccountPWDApi:`${httpAccountHeader}`,
+    deleteAccountApi:`${httpAccountHeader}`,
     switchAccountApi:`${httpAccountHeader}`,
   }
 };
