@@ -69,7 +69,15 @@
 			</div>
 		</div>
 		<account-add v-show="addDialogVisible" @close="close" @addRole="addRoleClick" />
-		<tree-panel-dialog :isShow.sync="showTreeAdd" title="分配角色" checkedText="已分配的角色"></tree-panel-dialog>
+		<tree-panel-dialog
+			:treeData="roleDataList"
+			:initSelectData="defaultRoleData"
+			:props="defaultProps"
+			placeholder="请输入搜索的角色"
+			:isShow.sync="showTreeAdd"
+			title="分配角色"
+			checkedText="已分配的角色"
+		></tree-panel-dialog>
 		<reset-password :visible.sync="resetPasswordVisible" @confirm="resetPWD"></reset-password>
 	</div>
 </template>
@@ -95,7 +103,13 @@ export default {
       onlineStatusOptions: [],
       addDialogVisible: false,
       accountUuids: [],
-      accountNames: []
+      accountNames: [],
+      roleDataList: [],
+      defaultRoleData: [],
+      defaultProps: {
+        label: "roleName",
+        id: "roleUuid"
+      }
     };
   },
   watch: {},
@@ -122,6 +136,21 @@ export default {
     // 分配角色
     addRoleClick() {
       this.showTreeAdd = !this.showTreeAdd;
+      this.getRoleList();
+    },
+    // 获取分配角色弹窗内树列表数据
+    getRoleList() {
+      api
+        .getUserList({
+          limt: 10000000, // 不分页
+          page: 1
+        })
+        .then(res => {
+          if (res.data.success) {
+            let data = res.data.data || {};
+            this.roleDataList = data.list || [];
+          }
+        });
     },
     // 重置密码
     resetPWD(data) {
@@ -137,7 +166,7 @@ export default {
         })
         .then(res => {
           if (res.data.success) {
-            this.$message({type: 'success', message: res.data.msg});
+            this.$message({ type: "success", message: res.data.msg });
           }
         })
         .catch(() => {});
