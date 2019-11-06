@@ -177,379 +177,379 @@ import VideoSetDialog from "@/pages/equipmentMange/components/videoSetDialog";
 import * as api from "../ajax.js";
 import { mapState } from "vuex";
 export default {
-	name: "TheCompanyTable",
-	data() {
-		return {
-			viewType: "door",
-			deviceTypeArr: window.config.door_machine,
-			door: window.config.door_machine,
-			video: window.config.video,
-			alarm: window.config.alarm,
-			vistor: window.config.vistor,
-			upgradeVisible: false,
-			tableHeight: 0,
-			dataTotal: 0,
-			pageSize: 10,
-			pageNow: 1,
-			retrieveVisible: false,
-			devName: "",
-			addEquipMentDialgoVisible: false,
-			editEquipMentDialgoVisible: false,
-			manualAddVisible: false,
-			ConfirmDialogVisible: false,
-			deleteConfirmDialogVisible: false,
-			index: 0,
-			remoteControlDialogVisiable: false,
-			videoDialogVisiable: false,
-			updateDialogVisible: false,
-			tableData: [],
-			multipleSelection: [],
-			TheCompanyTableXiafaDialogVisible: false,
-			deviceUuid: "",
-			showloading: false,
-			upgradeConfirmDialogVisible: false,
-			deviceType: "door_machine",
-			productType: "",
-			deleteOneRow: null, // 用于记录删除单个记录
-			localService: [
-				{
-					belongServiceName: "测试服务名称",
-					belongServiceUuid: "iotas_vd_serviceuuid_001"
-				}
-			] // 本地服务列表
-		};
-	},
-	components: {
-		ManualAddDialog,
-		VideoSetDialog,
-		RemoteControlDialog,
-		ConfirmDialog,
-		TheCompanyAddEquipmentDialog,
-		InputRetrieve,
-		TheCompanyUpdateDialog,
-		TheCompanyUpgradingDialog,
-		TheCompanyTableXiafaDialog
-	},
-	computed: {
-		...mapState({
-			orgUuid: state => {
-				return state.equipment.orgUuid;
-			}
-		})
-	},
-	methods: {
-		serviceList() {
-			api
-				.serviceList(this.viewType)
-				.then(res => {
-					console.log(res);
-					if (res.data.success) {
-						// this.localService = [
-						//   {
-						//     belongServiceName: "测试服务名称",
-						//     belongServiceUuid: "iotas_vd_serviceuuid_001"
-						//   }
-						// ].concat(res.data.data || []);
-						let num = (res.data.data || []).map(item => {
-							item.belongServiceName = item.serviceName;
-							item.belongServiceUuid = item.serviceUuid;
-							return item;
-						});
-						this.localService = num;
-					}
-					this.$emit("serverList", this.localService);
-				})
-				.catch(() => {
-					this.$emit("serverList", this.localService);
-				});
-		},
-		DType() {
-			this.deviceTypeArr = [];
-			api
-				.DType(this.viewType)
-				.then(res => {
-					console.log(res);
-					if (res.data.success) {
-						// this.localService = [
-						//   {
-						//     belongServiceName: "测试服务名称",
-						//     belongServiceUuid: "iotas_vd_serviceuuid_001"
-						//   }
-						// ].concat(res.data.data || []);
-						let num = (res.data.data || []).map(item => {
-							item.label = item.value;
-							item.value = item.key;
-							return item;
-						});
-						this.deviceTypeArr = num;
-					}
-					// this.$emit("serverList", this.localService);
-					this.$emit("switch", this.deviceTypeArr);
-				})
-				.catch(() => {
-					this.$emit("switch", this.deviceTypeArr);
-				});
-		},
-		searchBytext() {
-			this.pageNow = 1;
-			this.getTableData();
-		},
-		addSuccess() {
-			// 设备添加成功回调
-			this.getTableData();
-		},
-		// 获取当前列表table数据
-		getTableData() {
-			this.showloading = true;
-			api
-				.getDevList({
-					orgUuid: this.orgUuid,
-					limit: this.pageSize,
-					page: this.pageNow,
-					nickName: this.devName,
-					deviceIp: this.deviceIp,
-					productType: this.productType,
-					viewType: this.viewType
-					// deviceType: this.deviceType
-				})
-				.then(res => {
-					this.showloading = false;
-					console.log(res);
-					let data = res.data.data;
-					this.tableData = [];
-					if (res.data.success && data.list && data.list.length) {
-						//  devName: "192.128.1." + (i + 1),
-						// ip: "192.128.1.1",
-						// devId: "123456789",
-						// devMode: "VB510F",
-						// doorCount: 1,
-						// netStatus: "online",
-						// time: "2018-10-08"
-						let list = data.list;
-						for (let i = 0, len = list.length; i < len; i++) {
-							// list[i].devName = list[i].nickName;
-							// 保持跟下发数据的设备名字一样，所以改成deviceName
-							list[i].devName = list[i].nickName;
-							list[i].ip = list[i].deviceIp;
-							list[i].devId = list[i].deviceSn;
-							list[i].devMode = list[i].productType;
-							list[i].doorCount = list[i].doorCount;
-							list[i].netStatus = list[i].deviceOnlineStatus;
-							list[i].createTime = list[i].createTime;
-						}
-						this.tableData = list;
-						this.dataTotal = data.total;
-					}
-					console.log(res);
-				})
-				.catch(() => {
-					this.showloading = false;
-				});
-		},
-		deletetableData() {
-			if (!this.multipleSelection.length) {
-				this.$message.error("未选中需要删除的数据！");
-			} else {
-				this.deleteOneRow = null;
-				this.deleteConfirmDialogVisible = true;
-			}
-		},
-		update() {
-			if (!this.multipleSelection.length) {
-				this.$message.error("未选中需要升级的设备！");
-			} else {
-				this.upgradeConfirmDialogVisible = true;
-			}
-		},
-		handleCurrentChange(val) {
-			this.pageNow = val;
-			this.getTableData();
-		},
-		updateIpAndType(ip, mode) {
-			this.deviceIp = ip;
-			this.productType = mode;
-		},
-		retrieve() {
-			this.getTableData();
-		},
-		sendData() {
-			if (!this.multipleSelection.length) {
-				this.$message.error("未选中需要下发的设备！");
-			} else {
-				// 判断选中的设备是不是可以下发
-				let data = {
-					deviceUuids: this.multipleSelection
-						.map(val => val.deviceUuid)
-						.toString()
-				};
-				console.log(data);
-				api.judgeTask(data).then(res => {
-					console.log(res);
-					let data = res.data.data || [];
-					// 用于测试，看是否有设备的时候是否可以取消选中状态！
-					// let data = this.multipleSelection.map(val => val.deviceUuid);
-					if (res.data.success) {
-						let arr = this.multipleSelection;
-						arr = arr.filter(val => {
-							return !data.some(v => v.name === val);
-						});
-						console.log(arr);
-						if (!data.length) {
-							this.ConfirmDialogVisible = true;
-						} else {
-							arr.forEach(row => {
-								this.$refs.multipleTable.toggleRowSelection(row);
-							});
-							this.$message.error("有设备正在处于下发中,已经自动取消!");
-						}
-					}
-				});
-			}
-		},
-		confirmxiafa() {
-			// this.upgradeVisible = true;
-			// 点击下发确定，获取选中了哪些数据
-			// this.multipleSelection
-			// console.log(this.multipleSelection);
-			// 修改:这边修改所有的数据
-			let num = this.multipleSelection.map(item => {
-				item.ipAddress = item.deviceIp || item.ip;
-				return item;
-			});
-			console.log(num);
-			api.setConfigIssue(num).then(res => {
-				console.log(res);
-				if (res.data.success) {
-					this.TheCompanyTableXiafaDialogVisible = true;
-				}
-			});
-		},
-		confirmUpgrade() {
-			this.updateDialogVisible = true;
-		},
-		manualAdd() {
-			// this.serviceList(this.viewType);
-			this.serviceList(this.viewType);
-			this.DType(this.viewType);
-			this.manualAddVisible = true;
-		},
-		addEquipMent() {
-			if (!this.orgUuid) {
-				this.$message.error("请选择设备树的节点！");
-				return;
-			}
-			this.addEquipMentDialgoVisible = true;
-		},
-		confirm() {
-			// 点击table里面的row删除设备
-			// 确认删除该设备
-			let num = null;
-			if (this.deleteOneRow) {
-				num = this.deleteOneRow.deviceUuid;
-			} else {
-				num = this.multipleSelection.reduce((sum, val, i) => {
-					return sum + (i === 0 ? "" : ",") + val.deviceUuid;
-				}, "");
-			}
+  name: "TheCompanyTable",
+  data() {
+    return {
+      viewType: "door",
+      deviceTypeArr: window.config.door_machine,
+      door: window.config.door_machine,
+      video: window.config.video,
+      alarm: window.config.alarm,
+      vistor: window.config.vistor,
+      upgradeVisible: false,
+      tableHeight: 0,
+      dataTotal: 0,
+      pageSize: 10,
+      pageNow: 1,
+      retrieveVisible: false,
+      devName: "",
+      addEquipMentDialgoVisible: false,
+      editEquipMentDialgoVisible: false,
+      manualAddVisible: false,
+      ConfirmDialogVisible: false,
+      deleteConfirmDialogVisible: false,
+      index: 0,
+      remoteControlDialogVisiable: false,
+      videoDialogVisiable: false,
+      updateDialogVisible: false,
+      tableData: [],
+      multipleSelection: [],
+      TheCompanyTableXiafaDialogVisible: false,
+      deviceUuid: "",
+      showloading: false,
+      upgradeConfirmDialogVisible: false,
+      deviceType: "door_machine",
+      productType: "",
+      deleteOneRow: null, // 用于记录删除单个记录
+      localService: [
+        {
+          belongServiceName: "测试服务名称",
+          belongServiceUuid: "iotas_vd_serviceuuid_001"
+        }
+      ] // 本地服务列表
+    };
+  },
+  components: {
+    ManualAddDialog,
+    VideoSetDialog,
+    RemoteControlDialog,
+    ConfirmDialog,
+    TheCompanyAddEquipmentDialog,
+    InputRetrieve,
+    TheCompanyUpdateDialog,
+    TheCompanyUpgradingDialog,
+    TheCompanyTableXiafaDialog
+  },
+  computed: {
+    ...mapState({
+      orgUuid: state => {
+        return state.equipment.orgUuid;
+      }
+    })
+  },
+  methods: {
+    serviceList() {
+      api
+        .serviceList(this.viewType)
+        .then(res => {
+          console.log(res);
+          if (res.data.success) {
+            // this.localService = [
+            //   {
+            //     belongServiceName: "测试服务名称",
+            //     belongServiceUuid: "iotas_vd_serviceuuid_001"
+            //   }
+            // ].concat(res.data.data || []);
+            let num = (res.data.data || []).map(item => {
+              item.belongServiceName = item.serviceName;
+              item.belongServiceUuid = item.serviceUuid;
+              return item;
+            });
+            this.localService = num;
+          }
+          this.$emit("serverList", this.localService, this.viewType);
+        })
+        .catch(() => {
+          this.$emit("serverList", this.localService, this.viewType);
+        });
+    },
+    DType() {
+      this.deviceTypeArr = [];
+      api
+        .DType(this.viewType)
+        .then(res => {
+          console.log(res);
+          if (res.data.success) {
+            // this.localService = [
+            //   {
+            //     belongServiceName: "测试服务名称",
+            //     belongServiceUuid: "iotas_vd_serviceuuid_001"
+            //   }
+            // ].concat(res.data.data || []);
+            let num = (res.data.data || []).map(item => {
+              item.label = item.value;
+              item.value = item.key;
+              return item;
+            });
+            this.deviceTypeArr = num;
+          }
+          // this.$emit("serverList", this.localService);
+          this.$emit("switch", this.deviceTypeArr);
+        })
+        .catch(() => {
+          this.$emit("switch", this.deviceTypeArr);
+        });
+    },
+    searchBytext() {
+      this.pageNow = 1;
+      this.getTableData();
+    },
+    addSuccess() {
+      // 设备添加成功回调
+      this.getTableData();
+    },
+    // 获取当前列表table数据
+    getTableData() {
+      this.showloading = true;
+      api
+        .getDevList({
+          orgUuid: this.orgUuid,
+          limit: this.pageSize,
+          page: this.pageNow,
+          nickName: this.devName,
+          deviceIp: this.deviceIp,
+          productType: this.productType,
+          viewType: this.viewType
+          // deviceType: this.deviceType
+        })
+        .then(res => {
+          this.showloading = false;
+          console.log(res);
+          let data = res.data.data;
+          this.tableData = [];
+          if (res.data.success && data.list && data.list.length) {
+            //  devName: "192.128.1." + (i + 1),
+            // ip: "192.128.1.1",
+            // devId: "123456789",
+            // devMode: "VB510F",
+            // doorCount: 1,
+            // netStatus: "online",
+            // time: "2018-10-08"
+            let list = data.list;
+            for (let i = 0, len = list.length; i < len; i++) {
+              // list[i].devName = list[i].nickName;
+              // 保持跟下发数据的设备名字一样，所以改成deviceName
+              list[i].devName = list[i].nickName;
+              list[i].ip = list[i].deviceIp;
+              list[i].devId = list[i].deviceSn;
+              list[i].devMode = list[i].productType;
+              list[i].doorCount = list[i].doorCount;
+              list[i].netStatus = list[i].deviceOnlineStatus;
+              list[i].createTime = list[i].createTime;
+            }
+            this.tableData = list;
+            this.dataTotal = data.total;
+          }
+          console.log(res);
+        })
+        .catch(() => {
+          this.showloading = false;
+        });
+    },
+    deletetableData() {
+      if (!this.multipleSelection.length) {
+        this.$message.error("未选中需要删除的数据！");
+      } else {
+        this.deleteOneRow = null;
+        this.deleteConfirmDialogVisible = true;
+      }
+    },
+    update() {
+      if (!this.multipleSelection.length) {
+        this.$message.error("未选中需要升级的设备！");
+      } else {
+        this.upgradeConfirmDialogVisible = true;
+      }
+    },
+    handleCurrentChange(val) {
+      this.pageNow = val;
+      this.getTableData();
+    },
+    updateIpAndType(ip, mode) {
+      this.deviceIp = ip;
+      this.productType = mode;
+    },
+    retrieve() {
+      this.getTableData();
+    },
+    sendData() {
+      if (!this.multipleSelection.length) {
+        this.$message.error("未选中需要下发的设备！");
+      } else {
+        // 判断选中的设备是不是可以下发
+        let data = {
+          deviceUuids: this.multipleSelection
+            .map(val => val.deviceUuid)
+            .toString()
+        };
+        console.log(data);
+        api.judgeTask(data).then(res => {
+          console.log(res);
+          let data = res.data.data || [];
+          // 用于测试，看是否有设备的时候是否可以取消选中状态！
+          // let data = this.multipleSelection.map(val => val.deviceUuid);
+          if (res.data.success) {
+            let arr = this.multipleSelection;
+            arr = arr.filter(val => {
+              return !data.some(v => v.name === val);
+            });
+            console.log(arr);
+            if (!data.length) {
+              this.ConfirmDialogVisible = true;
+            } else {
+              arr.forEach(row => {
+                this.$refs.multipleTable.toggleRowSelection(row);
+              });
+              this.$message.error("有设备正在处于下发中,已经自动取消!");
+            }
+          }
+        });
+      }
+    },
+    confirmxiafa() {
+      // this.upgradeVisible = true;
+      // 点击下发确定，获取选中了哪些数据
+      // this.multipleSelection
+      // console.log(this.multipleSelection);
+      // 修改:这边修改所有的数据
+      let num = this.multipleSelection.map(item => {
+        item.ipAddress = item.deviceIp || item.ip;
+        return item;
+      });
+      console.log(num);
+      api.setConfigIssue(num).then(res => {
+        console.log(res);
+        if (res.data.success) {
+          this.TheCompanyTableXiafaDialogVisible = true;
+        }
+      });
+    },
+    confirmUpgrade() {
+      this.updateDialogVisible = true;
+    },
+    manualAdd() {
+      // this.serviceList(this.viewType);
+      this.serviceList(this.viewType);
+      this.DType(this.viewType);
+      this.manualAddVisible = true;
+    },
+    addEquipMent() {
+      if (!this.orgUuid) {
+        this.$message.error("请选择设备树的节点！");
+        return;
+      }
+      this.addEquipMentDialgoVisible = true;
+    },
+    confirm() {
+      // 点击table里面的row删除设备
+      // 确认删除该设备
+      let num = null;
+      if (this.deleteOneRow) {
+        num = this.deleteOneRow.deviceUuid;
+      } else {
+        num = this.multipleSelection.reduce((sum, val, i) => {
+          return sum + (i === 0 ? "" : ",") + val.deviceUuid;
+        }, "");
+      }
 
-			// let data = { deviceUuid: num };
-			api.deleteDevice(num).then(res => {
-				if (res.data.success) {
-					this.$message.success("删除成功");
-				}
-				this.getTableData();
-			});
-		},
-		close() {},
-		switchType(index) {
-			var arr = ["door", "video", "alarm", "visitor"];
-			let num = [];
-			if (index === 0) {
-				num = this.door;
-			} else if (index === 1) {
-				num = this.video;
-			} else if (index === 2) {
-				num = this.alarm;
-			} else if (index === 3) {
-				num = this.vistor;
-			}
-			this.viewType = arr[index];
-			this.serviceList(this.viewType);
-			console.log(num);
-			// this.deviceTypeArr = num;
-			// this.deviceType = num.reduce((sum, val, index) => {
-			//   return sum + (index === 0 ? "" : ",") + val.value;
-			// }, "");
-			this.index = index;
-			this.getTableData();
-			// this.deviceUuid = "123";
-			// this.remoteControlDialogVisiable = true;
-		},
-		handleSelectionChange(val) {
-			this.multipleSelection = val;
-		},
-		editEquipment(row) {
-			if (row.extInfo.source === "local") {
-				// this.serviceList(this.viewType);
-				this.$emit("showEdit", row.deviceUuid, row.netStatus);
-				this.serviceList(this.viewType);
-				this.DType(this.viewType);
-			}
-			// this.editEquipMentDialgoVisible = true;
+      // let data = { deviceUuid: num };
+      api.deleteDevice(num).then(res => {
+        if (res.data.success) {
+          this.$message.success("删除成功");
+        }
+        this.getTableData();
+      });
+    },
+    close() {},
+    switchType(index) {
+      var arr = ["door", "video", "alarm", "visitor"];
+      let num = [];
+      if (index === 0) {
+        num = this.door;
+      } else if (index === 1) {
+        num = this.video;
+      } else if (index === 2) {
+        num = this.alarm;
+      } else if (index === 3) {
+        num = this.vistor;
+      }
+      this.viewType = arr[index];
+      this.serviceList(this.viewType);
+      console.log(num);
+      // this.deviceTypeArr = num;
+      // this.deviceType = num.reduce((sum, val, index) => {
+      //   return sum + (index === 0 ? "" : ",") + val.value;
+      // }, "");
+      this.index = index;
+      this.getTableData();
+      // this.deviceUuid = "123";
+      // this.remoteControlDialogVisiable = true;
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    editEquipment(row) {
+      if (row.extInfo.source === "local") {
+        // this.serviceList(this.viewType);
+        this.$emit("showEdit", row.deviceUuid, row.netStatus);
+        this.serviceList(this.viewType);
+        this.DType(this.viewType);
+      }
+      // this.editEquipMentDialgoVisible = true;
 
-			this.$emit("showEdit", row.deviceUuid);
-		},
-		deleteEquip(row) {
-			this.deleteOneRow = row;
-			let flag = false;
-			for (let i = 0, len = this.multipleSelection.length; i < len; i++) {
-				if (row.deviceUuid === this.multipleSelection[i].deviceUuid) {
-					flag = true;
-				}
-			}
-			if (!flag) {
-				this.$refs.multipleTable.toggleRowSelection(row);
-			}
-			this.deleteConfirmDialogVisible = true;
-		},
-		remoteControl(row) {
-			// debug
-			// let deviceUuid = "494F1F75B788464BB05AE87DAB1E8AF2";
-			// this.deviceUuid = deviceUuid;
+      this.$emit("showEdit", row.deviceUuid);
+    },
+    deleteEquip(row) {
+      this.deleteOneRow = row;
+      let flag = false;
+      for (let i = 0, len = this.multipleSelection.length; i < len; i++) {
+        if (row.deviceUuid === this.multipleSelection[i].deviceUuid) {
+          flag = true;
+        }
+      }
+      if (!flag) {
+        this.$refs.multipleTable.toggleRowSelection(row);
+      }
+      this.deleteConfirmDialogVisible = true;
+    },
+    remoteControl(row) {
+      // debug
+      // let deviceUuid = "494F1F75B788464BB05AE87DAB1E8AF2";
+      // this.deviceUuid = deviceUuid;
 
-			this.deviceUuid = row.deviceUuid;
-			this.remoteControlDialogVisiable = true;
-			this.deviceUuid = row.deviceUuid;
-			// eslint-disable-next-line
+      this.deviceUuid = row.deviceUuid;
+      this.remoteControlDialogVisiable = true;
+      this.deviceUuid = row.deviceUuid;
+      // eslint-disable-next-line
 			this[
-				this.index === 1 ? "videoDialogVisiable" : "remoteControlDialogVisiable"
-			] = true;
-		}
-	},
-	mounted() {
-		let info = this.$refs.tablecontent.getBoundingClientRect();
-		this.tableHeight = info.height - 30 - 60 - 40 - 50;
-		this.pageSize = ~~(this.tableHeight / 50);
-		// for (let i = 0; i < this.pageSize; i++) {
-		//   this.tableData.push({
-		//     devName: "192.128.1." + (i + 1),
-		//     ip: "192.128.1.1",
-		//     devId: "123456789",
-		//     devMode: "VB510F",
-		//     doorCount: 1,
-		//     netStatus: "online",
-		//     time: "2018-10-08"
-		//   });
-		// }
-		this.getTableData();
-		this.serviceList(this.viewType);
-	},
-	watch: {
-		orgUuid(val) {
-			// alert(val);
-			this.getTableData();
-		}
-	}
+        this.index === 1 ? "videoDialogVisiable" : "remoteControlDialogVisiable"
+      ] = true;
+    }
+  },
+  mounted() {
+    let info = this.$refs.tablecontent.getBoundingClientRect();
+    this.tableHeight = info.height - 30 - 60 - 40 - 50;
+    this.pageSize = ~~(this.tableHeight / 50);
+    // for (let i = 0; i < this.pageSize; i++) {
+    //   this.tableData.push({
+    //     devName: "192.128.1." + (i + 1),
+    //     ip: "192.128.1.1",
+    //     devId: "123456789",
+    //     devMode: "VB510F",
+    //     doorCount: 1,
+    //     netStatus: "online",
+    //     time: "2018-10-08"
+    //   });
+    // }
+    this.getTableData();
+    this.serviceList(this.viewType);
+  },
+  watch: {
+    orgUuid(val) {
+      // alert(val);
+      this.getTableData();
+    }
+  }
 };
 </script>
 <style lang='scss'>
