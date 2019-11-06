@@ -300,24 +300,25 @@ export default {
     },
     // 是否有人员轨迹
     judgeStaffTrace(item, routeName) {
-      let data = {
-        faceRecognitionRecordUuid: item.faceRecognitionRecordUuid,
-        captureDatetime: item.captureDatetime
-      };
-      api
-        .getFaceUuidByFaceCaptureUuid(data)
-        .then(res => {
-          if (res.data.success) {
-            let params = res.data.data;
-            this.$router.push({
-              path: routeName,
-              query: { faceUuid: params.faceUuid }
-            });
-          } else {
-            this.$message({ type: "warning", message: res.data.msg });
-          }
-        })
-        .catch(() => {});
+      this.$router.push({ path: routeName, query: { imgObj: item } });
+      //   let data = {
+      //     faceRecognitionRecordUuid: item.faceRecognitionRecordUuid,
+      //     captureDatetime: item.captureDatetime
+      //   };
+      //   api
+      //     .getFaceUuidByFaceCaptureUuid(data)
+      //     .then(res => {
+      //       if (res.data.success) {
+      //         let params = res.data.data;
+      //         this.$router.push({
+      //           path: routeName,
+      //           query: { faceUuid: params.faceUuid }
+      //         });
+      //       } else {
+      //         this.$message({ type: "warning", message: res.data.msg });
+      //       }
+      //     })
+      //     .catch(() => {});
     },
     // 是否有同行人分析
     analysisAct(o, index, routeName) {
