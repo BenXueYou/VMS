@@ -71,20 +71,23 @@
         <span>状态：</span>
         <el-radio-group v-model="typeRadio"
                         style="margin-left: 55px;">
-          <el-radio :label="1">已处理</el-radio>
-          <el-radio :label="0">未处理</el-radio>
+          <el-radio label="model_processed">已处理</el-radio>
+          <el-radio label="model_to_be_processed">未处理</el-radio>
         </el-radio-group>
       </div>
       <div class="content-status">
         <span>移至人脸库：</span>
-        <el-select style="width: 240px;margin-left: 20px;"
-                   v-model="dataBase"
+        <el-select v-model="dataBase"
+                   size="small"
+                   multiple
                    clearable
-                   size="small">
+                   collapse-tags
+                   placeholder="请选择人脸库"
+                   style="width: 240px;margin-left: 20px;">
           <el-option v-for="item in dataBaseOptions"
-                     :key="item.typeStr"
-                     :label="item.typeName"
-                     :value="item.typeStr">
+                     :key="item.faceLibraryUuid"
+                     :label="item.faceLibraryName"
+                     :value="item.faceLibraryUuid">
           </el-option>
         </el-select>
       </div>
@@ -124,14 +127,14 @@ export default {
       isCurrentShow: false,
       typeRadio: 0,
       dataBaseOptions: [],
-      dataBase: "",
+      dataBase: [],
       remark: "",
       checkAll: true,
       checkedDevices: [],
       devices: [],
       isIndeterminate: false,
       infoList: [],
-      isLoading: false,
+      isLoading: false
     };
   },
   created() {},
@@ -142,6 +145,15 @@ export default {
     },
     onClickConfirm() {
       this.$emit("onCancel");
+    },
+    getLibrarys() {
+      this.$faceControlHttp.getFacedbList().then(res => {
+        let body = res.data;
+        this.getFacedbListSuccess(body);
+      });
+    },
+    getFacedbListSuccess(body) {
+      this.dataBaseOptions = body.data;
     },
     handleCheckAllChange(val) {
       let devIdArr = [];
@@ -164,7 +176,7 @@ export default {
     getModelDev() {
       this.$judgeHttp
         .getModelDev({
-          modelUuid: this.modelItem.faceModelUuid,
+          modelUuid: this.modelItem.faceModelUuid
         })
         .then(res => {
           let body = res.data;
@@ -187,7 +199,7 @@ export default {
       this.$judgeHttp
         .getJudgeDetails({
           faceModelAnalysisResultUuid: this.modelItem.faceModelUuid,
-          channelUuids: this.checkedDevices ? this.checkedDevices.join(',') : ""
+          channelUuids: this.checkedDevices ? this.checkedDevices.join(",") : ""
         })
         .then(res => {
           let body = res.data;
@@ -200,14 +212,14 @@ export default {
     },
     getJudgeDetailsSuccess(body) {
       this.infoList = body.data.list;
-    },
+    }
   },
   watch: {
     isShow(val) {
       this.isCurrentShow = val;
-      // if (val) {
-      //   this.getModelDev();
-      // }
+      if (val) {
+        this.getLibrarys();
+      }
     }
   }
 };
@@ -300,7 +312,7 @@ export default {
         align-items: center;
         justify-content: center;
         .right-item {
-          background: rgba($color: #02000E, $alpha: 0.15);
+          background: rgba($color: #02000e, $alpha: 0.15);
           width: 460px;
           height: 80px;
           margin-left: 35px;
@@ -309,7 +321,7 @@ export default {
           .info-other {
             font-family: PingFangSC-Regular;
             font-size: 12px;
-            color: #DDDDDD;
+            color: #dddddd;
             letter-spacing: 0;
             display: flex;
             margin-left: 30px;
