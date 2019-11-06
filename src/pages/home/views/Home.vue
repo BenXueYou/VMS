@@ -48,6 +48,7 @@ export default {
       constantRouterMap[0].children = constantRouterMap[0].children.filter(
         val => val.icon !== undefined
       );
+      console.log(constantRouterMap);
       this.menuArr = constantRouterMap;
     },
     onClickMenu(compomentItem) {

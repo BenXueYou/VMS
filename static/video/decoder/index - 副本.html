@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<div class="canvasDiv">
+        <canvas id="playCanvas" width="1280" height="720"></canvas>
+		<canvas id="playCanvas2" width="1920" height="1080"></canvas>
+		<canvas id="playCanvas3" width="1920" height="1080"></canvas>
+		<canvas id="playCanvas4" width="1920" height="1080"></canvas>
+		<canvas id="playCanvas5" width="1920" height="1080"></canvas>
+		<canvas id="playCanvas6" width="1920" height="1080"></canvas>
+		<canvas id="playCanvas7" width="1920" height="1080"></canvas>
+		<canvas id="playCanvas8" width="1920" height="1080"></canvas>
+		<canvas id="playCanvas9" width="1920" height="1080"></canvas>
+    </div>  
+    <div id="messages"></div>   
+    <script type="text/javascript">   
+	window.onload = function () {
+		//Formated logger.
+        var logger = new Logger("Page");
+		//var uri = 'ws://localhost:9100/ws?url=rtsp://admin:admin@192.168.9.121:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif'
+		var uriSignal = 'ws://192.168.9.199:4400/signal_channel';
+		var uriMedia = 'ws://192.168.9.199:4401/media_channel';
+		var ws_signal =  new WebSocket(uriSignal); 
+		var ws_media =  new WebSocket(uriMedia); 
+		//ws_signal.binaryType = "blob";
+		//ws_media.binaryType = "blob";
+
+		ws_signal.onerror = function(event) {     
+			console.log("onError: " + event.data);			
+        };  
+		ws_media.onerror = function (event) {
+		    console.log("onError: " + event.data);
+		};
+				
+        ws_signal.onopen = function(event) {  
+			//ws_signal.send("Connection established. Hello server!"); // 向服务端发送消息   
+			console.log("onopen: " + event.data);
+        };
+        ws_media.onopen = function (event) {
+			console.log("onopen: " + event.data);
+        };
+
+        ws_signal.onmessage = function(event) {    
+        };
+		
+    };
+		
+		
+    </script>    
+</body>    
+</html>
+

@@ -124,7 +124,7 @@ const doorAccessMap =
   children: doorAccessSetting,
   icon: "doorControl",
   type: "app",
-  redirect: '/DoorControl/' //设置默认子路由
+  redirect: '/DoorControl/AccessGroupConfig' //设置默认子路由
 };
 
 export default doorAccessMap;

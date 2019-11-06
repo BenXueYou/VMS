@@ -543,6 +543,7 @@ export default {
 	.header {
 		height: 50px;
 		padding: 15px 40px;
+		box-sizing: border-box;
 		background: #212325;
 		div {
 			font-family: "PingFangSC-Regular";

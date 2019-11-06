@@ -22,6 +22,7 @@
                     class="i-tree-style">
         <el-tree :data="treeData"
                  :props="defaultProps"
+                 
                  node-key="id"
                  lazy
                  :load="loadNode"

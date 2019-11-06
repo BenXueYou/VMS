@@ -1,12 +1,11 @@
-// let projectUuid = window.config.projectUuid;
 let hostname = window.location.hostname;
-// let hostname = '127.0.0.1';
 let port = "15009";
 let version = "1.0";
 
 import sbUrl from "@/utils/restApi/equipment";
 import pmUrl from "@/utils/restApi/permission";
 import vistorManageApi from "@/utils/restApi/vistorManageApi";
+import faceModuleAPi from "@/utils/restApi/faceModuleAPi";
 import store from '@/store/store.js';
 import axios from "@/utils/Request";
 export default {
@@ -195,10 +194,22 @@ export default {
       updateUnits: `/basedata-v1/${store.state.home.projectUuid}/units/updateUnits`,
       selPeople: `/basedata-v1/${store.state.home.projectUuid}/units/selPeople`
     },
+
+    // 设备管理
     sbUrl,
+
+    // 权限组
     pmUrl,
+
+    // 访客管理
     vistorManageApi,
+    
     //人脸图片质量检测
-    faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`
+    faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`,
+
+    /**
+     * 人脸模块（fengyw）
+     */
+    faceModuleAPi,
   }
 };
