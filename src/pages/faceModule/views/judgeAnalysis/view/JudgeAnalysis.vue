@@ -59,7 +59,8 @@
              v-loading="isLoading">
           <template v-for="(item, index) in moduleList">
             <div :key="index"
-                 class="list-item">
+                 class="list-item"
+                 @click="lookDetail(item)">
               <img :src="$common.setPictureShow(item.facePhotoUrl, 'facelog')"
                    width="100%"
                    height="120px"
@@ -409,6 +410,7 @@ export default {
         .list-item {
           width: 150px;
           height: 230px;
+          cursor: pointer;
           background: rgba($color: #000000, $alpha: 0.1);
           border: 1px solid #2a2c2e;
           margin-right: 20px;

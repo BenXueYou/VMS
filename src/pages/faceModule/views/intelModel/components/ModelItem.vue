@@ -7,7 +7,7 @@
     </div>
     <div class="fellow-info-detail-line2">
       <div class="title">
-        {{item.channelName ? item.channelName : "暂无"}}
+        {{item.staffName}} &nbsp;&nbsp; {{item.faceLibraryName}}
       </div>
     </div>
     <div class="fellow-info-detail-line1">
@@ -63,6 +63,9 @@ export default {
     margin: 5px 2px 0 0;
     width: 100%;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .fellow-info-detail-line1 {
     display: flex;

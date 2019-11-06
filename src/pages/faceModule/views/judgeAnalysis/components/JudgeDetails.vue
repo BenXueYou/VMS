@@ -125,7 +125,7 @@ export default {
     return {
       modelItem: {},
       isCurrentShow: false,
-      typeRadio: 0,
+      typeRadio: "",
       dataBaseOptions: [],
       dataBase: [],
       remark: "",
@@ -142,9 +142,23 @@ export default {
   methods: {
     onClickCancel() {
       this.$emit("onCancel");
+      this.resetData();
     },
     onClickConfirm() {
       this.$emit("onCancel");
+      this.resetData();
+    },
+    resetData() {
+      this.modelItem = {};
+      this.typeRadio = "";
+      this.dataBaseOptions = [];
+      this.dataBase = [];
+      this.remark = "";
+      this.checkAll = true;
+      this.checkedDevices = [];
+      this.devices = [];
+      this.isIndeterminate = false;
+      this.infoList = [];
     },
     getLibrarys() {
       this.$faceControlHttp.getFacedbList().then(res => {
@@ -198,7 +212,7 @@ export default {
       this.isLoading = true;
       this.$judgeHttp
         .getJudgeDetails({
-          faceModelAnalysisResultUuid: this.modelItem.faceModelUuid,
+          faceModelAnalysisResultUuid: this.modelItem.faceModelAnalysisResultUuid,
           channelUuids: this.checkedDevices ? this.checkedDevices.join(",") : ""
         })
         .then(res => {
