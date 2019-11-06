@@ -21,12 +21,15 @@ export default {
   editUserDetailUrl: `${httpHeader}/role`,
   // 删除角色
   deleteUserUrl: `${httpHeader}/role`,
+  // 分配账号
+  distruiAccoutUrl: `${httpHeader}/account/role`,
   // 变更角色状态
   updateUserStatusUrl: `${httpHeader}/role/status`,
-
+  // 获取用户的菜单
+  getHomeMenuUrl: `${httpHeader}/account/menu`,
   accountApi: {
     addAccountApi: `${httpAccountHeader}`,
-    getAccountListApi: `${httpAccountHeader}`,
+    getAccountListApi: `${httpAccountHeader}/upms-v1/account`,
     putAccountApi: accountUuid => `${httpAccountHeader}/${accountUuid}`,
     putAccountPWDApi: accountName =>
       `${httpAccountHeader}/updatePwd/${accountName}`,

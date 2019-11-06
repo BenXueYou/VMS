@@ -23,9 +23,8 @@
 </template>
 
 <script>
-import { constantRouterMap } from "@/router";
+// import { constantRouterMap } from "@/router";
 import MenuItem from "@/pages/home/components/MenuItem";
-import * as api from "@/pages/user/http/ajax.js";
 
 export default {
   components: {
@@ -35,27 +34,29 @@ export default {
   data() {
     return {
       tagViewArr: [],
-      menuArr: []
+      menuArr: [{ children: [] }]
     };
   },
   created() {
-    this.initData();
+    // 请求菜单数据是延迟加载的，偷懒，先用setTimeout.
+    setTimeout(() => {
+      this.initData();
+    }, 0);
   },
   mounted() {},
   methods: {
     initData() {
       // 这里暂时将访客功能页面给注释掉
       // 解开只需要删掉val.name!=="VistorMange" 这个判断条件 && val.name !== "VistorMange"
-      constantRouterMap[0].children = constantRouterMap[0].children.filter(
-        val => val.icon !== undefined
-      );
-      this.menuArr = constantRouterMap;
-      console.log(constantRouterMap[0].children);
-      api
-        .getHomeMenu({ accountUuid: window.localStorage.getItem("userUuid") })
-        .then(res => {
-          console.log(res);
-        });
+      // console.log(this.$router);
+      // constantRouterMap[0].children = constantRouterMap[0].children.filter(
+      // val => val.icon !== undefined
+      // );
+      // this.menuArr = constantRouterMap;
+      // console.log(constantRouterMap[0].children);
+      // console.log(window.localStorage.getItem("useruuid"));
+      // console.log(this.$router);
+      this.menuArr = JSON.parse(window.localStorage.getItem("routerData"));
     },
     onClickMenu(compomentItem) {
       this.$store.dispatch("addTagViewItem", compomentItem);

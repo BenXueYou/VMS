@@ -117,6 +117,8 @@
                        :treeData="treeList"
                        :initSelectData="initSelectData"
                        :itemicon="require('@/assets/images/person_g.png')"
+                       :props="treeProps"
+                       @onConfirm="distur"
                        title="分配账号"
                        checkedText="已分配的账号"
                        placeholder="搜索账号名或姓名"></tree-panel-dialog>
@@ -143,7 +145,7 @@ export default {
         treeId: i + 1,
         treeName: "测试数据" + (i + 1)
       })),
-
+      treeProps: { id: "accountUuid", label: "accountName" },
       pageNow: 1,
       pageSize: 11,
       dataTotal: 100,
@@ -238,8 +240,58 @@ export default {
       this.roleUuid = row.roleUuid;
       this.isShowEdit = true;
     },
-    ditribute(row) {
+    getAllData() {
+      return new Promise((resolve, reject) => {
+        console.log(api);
+        api
+          .getAccountListApi({
+            limt: 12345679,
+            page: 1,
+            roleName: ""
+          })
+          .then(res => {
+            if (res.data.success) {
+              let data = res.data.data || {};
+              resolve(data.list || []);
+            }
+          })
+          .catch(() => {
+            resolve([]);
+          });
+      });
+    },
+    getHadAccout(roleUuid) {
+      return new Promise((resolve, reject) => {
+        api
+          .getUserDetail({ roleUuid: roleUuid })
+          .then(res => {
+            if (res.data.success) {
+              let data = res.data.data || {};
+              resolve(data.account || []);
+            }
+          })
+          .catch(() => {
+            resolve([]);
+          });
+      });
+    },
+    async ditribute(row) {
+      this.treeList = await this.getAllData();
+      this.roleUuid = row.roleUuid;
+      this.initSelectData = await this.getHadAccout(row.roleUuid);
       this.showtreeadad = true;
+    },
+    distur(data) {
+      // 选择好分配账号的回调函数
+      let formdata = {
+        roleUuid: this.roleUuid, // 角色uuid
+        accountUuids: data.map(i => i.accountUuid)
+      };
+      api.distruiAccout(formdata).then(res => {
+        if (res.data.success) {
+          this.$messge.success("分配账号成功！");
+        }
+      });
     },
     enableRow(row) {
       this.updateUserStatus({
@@ -283,7 +335,7 @@ export default {
       this.isConfirm = true;
     },
     updateUserStatus(data) {
-      api.deleteUser(data).then(res => {
+      api.updateUserStatus(data).then(res => {
         if (res.data.success) {
           this.$message.success("修改成功！");
           this.getData();

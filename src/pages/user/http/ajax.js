@@ -4,7 +4,7 @@ import RestApi from "@/utils/RestApi";
 // import store from "@/store/store.js";
 
 let userUrl = RestApi.api.userUrl;
-let accountApi = RestApi.api.accountApi;
+let accountApi = RestApi.api.userUrl.accountApi;
 export function getAccout(params) {
   let { getAccoutUrl: url } = userUrl;
   return axios({
@@ -49,6 +49,14 @@ export function getUserDetail(params) {
 }
 export function addUserDetailUrl(data) {
   let { addUserDetailUrl: url } = userUrl;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
+export function distruiAccout(data) {
+  let { distruiAccoutUrl: url } = userUrl;
   return axios({
     method: "POST",
     url,
@@ -144,7 +152,7 @@ export function deleteAccountApi(data) {
 export function switchAccountApi(data) {
   let url = accountApi.switchAccountApi;
   return axios({
-    method: 'POST',
+    method: "POST",
     url,
     data
   });
