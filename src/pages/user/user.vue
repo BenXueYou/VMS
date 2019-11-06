@@ -35,8 +35,8 @@ export default {
   props: {},
   data() {
     return {
-      menuTitle: "1",
-      defaultActive: ""
+      menuTitle: "user",
+      defaultActive: "/user/accout"
     };
   },
   created() {},
