@@ -4,6 +4,7 @@
       <div class="select-box">
         <pic-upload @addImage="addImage"
                     :imageUrl="imageUrl"
+                    @deleteImage="deleteImage"
                     height="125px" />
         <div class="input">
           <div class="line-one">
@@ -44,12 +45,12 @@
           </div>
           <div class="line-two">
             <span class="topTitleTxt">相似度不低于：</span>
-            <el-input v-model="travelTogetherFrequency"
+            <el-input v-model="similarity"
                       class="time-interal"
                       type="number"></el-input>
             <span class="timeText">%</span>
             <span class="topTitleTxt left-space">搜索结果显示前：</span>
-            <el-input v-model="travelTogetherChannel"
+            <el-input v-model="staffLimit"
                       class="time-interal"
                       type="number"></el-input>
             <span class="timeText">个</span>
@@ -58,7 +59,7 @@
                        size="small"
                        class="left-space"
                        icon="el-icon-search">开始搜索</el-button>
-            <el-button @click="queryAct"
+            <el-button @click="resetData"
                        type="primary"
                        size="small">重置</el-button>
           </div>
@@ -88,17 +89,15 @@ export default {
       selectDate: "",
       startTime: "",
       endTime: "",
-      faceUuid: "",
-      fellowItemData: [],
+      itemData: [],
       faceRecordPopoverClass: "companionPopoverClass",
-      channelUuids: "",
-      travelTogetherFrequency: 80,
-      travelTogetherChannel: 2,
-      isLoading: false,
-      checkedChannelKeys: [],
+      channelUuids: [],
+      similarity: 80,
+      staffLimit: 2,
       libraryType: "systemFaceLib,staticFaceLib,dynamicFaceLib",
       libraryTypeOption: [],
       imageUrl: "",
+      imageBase64: ""
     };
   },
   created() {},
@@ -108,7 +107,7 @@ export default {
   },
   methods: {
     addImage(picBaseUrl) {
-      console.log(picBaseUrl);
+      this.imageBase64 = picBaseUrl;
     },
     selectDateAct(dateStr) {
       let day = new Date();
@@ -180,14 +179,11 @@ export default {
       map.centerAndZoom("上海", 15);
     },
     queryAct() {
-      if (!this.$route.query.imgObj) {
+      if (!this.imageBase64) {
         this.$cToast.warn("请添加图片");
       } else {
-        this.getCompanionList();
+        this.getTragicList();
       }
-    },
-    onClickTurnToGetFace() {
-      this.$router.push("/FaceRecord");
     },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
@@ -195,46 +191,50 @@ export default {
         this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    getCompanionList() {
-      this.isLoading = true;
+    getTragicList() {
       this.$factTragicHttp
-        .getCompanionList({
-          faceUuid: this.$route.query.imgObj.faceUuid,
-          channelUuids: this.channelUuids,
+        .getTragicList({
+          imageBase64: this.imageBase64,
           startTime: this.startTime,
           endTime: this.endTime,
-          captureInterval: this.captureInterval,
-          travelTogetherFrequency: this.travelTogetherFrequency,
-          travelTogetherChannel: this.travelTogetherChannel
+          channelUuids: this.channelUuids,
+          libraryType: this.libraryType,
+          similarity: this.similarity,
+          staffLimit: this.staffLimit
         })
         .then(res => {
           let body = res.data;
-          this.getCompanionListSuccess(body);
-          this.isLoading = false;
-        })
-        .catch(() => {
-          this.isLoading = false;
+          this.getTragicListSuccess(body);
         });
     },
-    getCompanionListSuccess(data) {
-      this.fellowItemData = data.body.data;
+    getTragicListSuccess(data) {
+      this.itemData = data.body.data;
       if (data.body.data.length === 0) {
         this.$cToast.success("暂无同行人分析记录！");
       }
     },
     resetData() {
-      this.fellowItemData = [];
       this.initData();
+      this.itemData = [];
+      this.imageUrl = "";
+      this.imageBase64 = "";
+      this.similarity = 80;
+      this.staffLimit = 2;
+      this.libraryType = "systemFaceLib,staticFaceLib,dynamicFaceLib";
+    },
+    deleteImage() {
+      this.imageUrl = "";
+      this.imageBase64 = "";
     }
   },
   watch: {},
   destroyed() {},
   activated() {
-    this.resetData();
-    this.checkedChannelKeys = [];
-    this.channelUuids = [];
     if (this.$route.query.imgObj) {
       this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
+      this.$common.imageToBase64(this.imageUrl, base64 => {
+        this.imageBase64 = base64;
+      });
     }
   }
 };

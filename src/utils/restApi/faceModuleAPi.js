@@ -101,4 +101,5 @@ export default {
   getAlarmSound: `${URLHeader}/${projectUuid}/face/config/alarmSound`,
   tempMonitor: `${URLHeader}/${projectUuid}/monitoringTask/temp/info`,
   getCompareDetail: `${URLHeaderFaceLog}/${projectUuid}/recognize/info?asgName=${projectUuid}`,
+  getTragicList: `${URLHeaderFaceLog}/${projectUuid}/staffTrajectory/list?asgName=${projectUuid}`
 };

@@ -104,7 +104,7 @@
             <el-table-column prop="status"
                              label="状态">
               <template slot-scope="scope">
-                {{scope.row.status ? '已处理' : '未处理'}}
+                {{$common.getEnumItemName('model_analysis_s', scope.row.status)}}
               </template>
             </el-table-column>
             <el-table-column label="操作">
