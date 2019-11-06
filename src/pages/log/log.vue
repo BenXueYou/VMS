@@ -10,8 +10,8 @@
                text-color="#DDDDDD"
                :router="true"
                active-text-color="#26D39D">
-        <el-submenu index="1"
-                    :class="menuTitle === '1'? 'submenuActiveClass' : ''">
+        <el-submenu index="log"
+                    :class="menuTitle === 'log'? 'submenuActiveClass' : ''">
           <template slot="title">
             <img class="access_autn_select"
                  src="../../assets/images/log/sys_log_icon.png"
@@ -40,8 +40,8 @@ export default {
   props: {},
   data() {
     return {
-      menuTitle: "1",
-      defaultActive: "1"
+      menuTitle: "log",
+      defaultActive: "/log/setLog"
     };
   },
   created() {},
