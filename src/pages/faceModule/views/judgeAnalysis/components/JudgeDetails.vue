@@ -20,7 +20,7 @@
         <el-checkbox-group v-model="checkedDevices"
                            @change="handleCheckedDevChange">
           <el-checkbox v-for="dev in devices"
-                       :label="dev.channelName"
+                       :label="dev.channelUuid"
                        :key="dev.channelUuid">
             {{dev.channelName}}
             <div class="device-dot"
@@ -129,9 +129,8 @@ export default {
       checkAll: true,
       checkedDevices: [],
       devices: [],
-      isIndeterminate: true,
+      isIndeterminate: false,
       infoList: [],
-      channelUuids: [],
       isLoading: false,
     };
   },
@@ -145,7 +144,13 @@ export default {
       this.$emit("onCancel");
     },
     handleCheckAllChange(val) {
-      this.checkedDevices = val ? this.devices : [];
+      let devIdArr = [];
+      if (this.devices) {
+        this.devices.forEach(v => {
+          devIdArr.push(v.channelUuid);
+        });
+      }
+      this.checkedDevices = val ? devIdArr : [];
       this.isIndeterminate = false;
       this.getJudgeDetails();
     },
@@ -167,19 +172,22 @@ export default {
         });
     },
     getModelDevSuccess(body) {
-      this.devices = body.data.list;
+      this.devices = body.data;
+      let devIdArr = [];
+      if (this.devices) {
+        this.devices.forEach(v => {
+          devIdArr.push(v.channelUuid);
+        });
+      }
+      this.checkedDevices = devIdArr;
       this.getJudgeDetails();
     },
     getJudgeDetails() {
-      this.channelUuids = [];
-      this.checkedDevices.forEach(v => {
-        this.channelUuids.push(v.channelUuid);
-      });
       this.isLoading = true;
       this.$judgeHttp
         .getJudgeDetails({
           faceModelAnalysisResultUuid: this.modelItem.faceModelUuid,
-          channelUuids: this.channelUuids
+          channelUuids: this.checkedDevices ? this.checkedDevices.join(',') : ""
         })
         .then(res => {
           let body = res.data;
@@ -197,6 +205,9 @@ export default {
   watch: {
     isShow(val) {
       this.isCurrentShow = val;
+      // if (val) {
+      //   this.getModelDev();
+      // }
     }
   }
 };
