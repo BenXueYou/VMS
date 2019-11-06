@@ -1129,5 +1129,9 @@
     "mask_s": {
         "normal": "戴口罩",
         "none": "不戴"
+    },
+    "model_analysis_s": {
+      "model_to_be_processed": "待处理",
+      "model_processed": "已处理"
     }
 }

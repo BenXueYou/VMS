@@ -70,7 +70,7 @@ export default {
   // @fengyawen
   getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
   getModelDev: `${URLHeader}/${projectUuid}/IntelligentModel/channel/list`,
-  getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list`,
+  getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list?asgName=${projectUuid}`,
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
   getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
   getModelList: `${URLHeaderFaceLog}/${projectUuid}/modelStatistics/list?asgName=${projectUuid}`,

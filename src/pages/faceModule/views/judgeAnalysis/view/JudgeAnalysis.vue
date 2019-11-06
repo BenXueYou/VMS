@@ -60,17 +60,17 @@
           <template v-for="(item, index) in moduleList">
             <div :key="index"
                  class="list-item">
-              <img :src="$common.setPictureShow(item.facePhotoUrl)"
+              <img :src="$common.setPictureShow(item.facePhotoUrl, 'facelog')"
                    width="100%"
                    height="120px"
                    class="img-fill">
               <div class="info-other">
                 <div class="other-span">{{item.faceModelName}}</div>
                 <div class="other-span">{{item.createTime}}</div>
-                <div class="other-span">{{item.analysisResultDescribe}}</div>
+                <div class="other-span desc">{{item.analysisResultDescribe}}</div>
                 <div class="other-span">{{item.staffName}}&nbsp;&nbsp;{{item.faceLibraryName}}</div>
                 <div class="other-span"
-                     style="color:#FD545E">{{item.status ? '已处理' : '未处理'}}</div>
+                     :style="item.status === 'model_processed' ? 'color:#26D39D' : 'color:#FD545E'">{{$common.getEnumItemName('model_analysis_s', item.status)}}</div>
               </div>
             </div>
           </template>
@@ -158,7 +158,7 @@ export default {
       moduleList: [],
       typeRadio: "picture",
       isShowDetail: false,
-      isLoading: false,
+      isLoading: false
     };
   },
   created() {},
@@ -166,20 +166,7 @@ export default {
     this.init();
   },
   mounted() {
-    this.statusOptions = [
-      {
-        typeName: "未处理",
-        typeStr: 0
-      },
-      {
-        typeName: "已处理",
-        typeStr: 1
-      },
-      {
-        typeName: "全部",
-        typeStr: ""
-      },
-    ];
+    this.statusOptions = this.$common.getEnumByGroupStr("model_analysis_s");
   },
   methods: {
     init() {
@@ -288,7 +275,10 @@ export default {
       this.getJudgeList();
     },
     lookDetail(row) {
-      this.$refs.judgeDetails.modelItem = this.$common.copyObject(row, this.$refs.judgeDetails.modelItem);
+      this.$refs.judgeDetails.modelItem = this.$common.copyObject(
+        row,
+        this.$refs.judgeDetails.modelItem
+      );
       this.isShowDetail = true;
       this.$refs.judgeDetails.getModelDev();
     },
@@ -307,7 +297,7 @@ export default {
           modelName: this.modelName,
           status: this.status,
           createTimeStart: this.startTime,
-          createTimeEnd: this.endTime,
+          createTimeEnd: this.endTime
         })
         .then(res => {
           let body = res.data;
@@ -332,7 +322,7 @@ export default {
     handleCurrentChange(val) {
       this.pageInfo.currentPage = val;
       this.getJudgeList();
-    },
+    }
   },
   watch: {},
   deactivated() {},
@@ -420,7 +410,7 @@ export default {
           width: 150px;
           height: 230px;
           background: rgba($color: #000000, $alpha: 0.1);
-          border: 1px solid #2A2C2E;
+          border: 1px solid #2a2c2e;
           margin-right: 20px;
           margin-bottom: 10px;
           padding: 10px;
@@ -450,6 +440,12 @@ export default {
         justify-content: flex-end;
       }
     }
+  }
+  .desc {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 </style>
