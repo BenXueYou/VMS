@@ -60,12 +60,12 @@
 						<el-row class="cardBoxHeader" type="flex" justify="center" :gutter="15">
 							<el-col class="facePhoto" :span="9">
 								<img
-									:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?imageHeader+dialogParama.faceCapturePhotoUrl:require('@/assets/user.png')"
+									:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
 								/>
 							</el-col>
 							<el-col class="panoramaPhoto" :span="17">
 								<img
-									:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?imageHeader+dialogParama.panoramaCapturePhotoUrl:require('@/assets/user.png')"
+									:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
 								/>
 							</el-col>
 						</el-row>
@@ -95,6 +95,7 @@
 import RestApi from "@/utils/RestApi.js";
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
   name: "GlobalAlarmDialog",
   props: {
@@ -146,13 +147,30 @@ export default {
 	 */
     console.log("-------------", this.dialogParama);
     this.staffInfo = this.dialogParama || {};
+    this.getRecoginizedList();
   },
   activated: function() {
     console.log("刷新页面");
   },
   methods: {
     // 查询识别记录
-
+    getRecoginizedList() {
+      var data = {
+        limit: 1, // int每页显示行数是
+        page: 8, // int第几页是
+        faceUuid: this.dialogShow.faceUuid,
+        snapshotTimeStart: this.$common.getStartTime(), // string抓拍时间启否
+        snapshotTimeEnd: this.$common.getCurrentTime()
+      };
+      api
+        .getRecognizeList(data)
+        .then(res => {
+          if (res.data.success) {
+            this.shootPhotoList = res.data.data.list;
+          }
+        })
+        .catch(() => {});
+    },
     clickImg(e) {
       this.$emit("cs", true);
       // 获取当前图片地址
