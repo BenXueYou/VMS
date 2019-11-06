@@ -975,11 +975,12 @@ export default {
       this.$emit("showEdit", false);
     },
     getServiceList() {
-      api.serviceList().then(res => {
-        console.log(res);
-        if (res.data.success) {
-        }
-      });
+
+      // api.serviceList().then(res => {
+      //   console.log(res);
+      //   if (res.data.success) {
+      //   }
+      // });
     }
   },
   watch: {
