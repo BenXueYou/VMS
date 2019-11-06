@@ -159,8 +159,6 @@ export default {
         limit: 1, // int每页显示行数是
         page: 8, // int第几页是
         faceUuid: this.dialogParama.faceUuid,
-        capturetimeDatestart: this.$common.getStartTime(), // string抓拍时间启否
-        capturetimeDateEnd: this.$common.getCurrentTime()
       };
       api
         .getRecognizeInfo(data)
