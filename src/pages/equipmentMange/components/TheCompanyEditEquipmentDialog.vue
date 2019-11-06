@@ -1020,6 +1020,7 @@ export default {
               val.faceSnap = !!(val.extInfo.faceSnap === 1);
               val.vehicleSnap = !!(val.extInfo.vehicleSnap === 1);
               val.bodySnap = !!(val.extInfo.bodySnap === 1);
+              val.gBCode = val.extInfo.gBCode;
             }
             val.tagPOList = val.tagPOList || [];
             val.ability = [];

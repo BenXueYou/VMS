@@ -13,9 +13,9 @@ if (DEBUG == "DEBUG") {
   websocketIp = "192.168.9.190:15007";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  ip = "192.168.9.94:15000";
-  // ip = 'www.guangtuo.com';
-  websocketIp = "192.168.9.94:15007";
+  ip = "192.168.9.141:15000";
+  // ip = '192.168.6.191:51880';
+  websocketIp = "192.168.9.141:15007";
   imageUrl =
     protocolHeader +
     "//" +
