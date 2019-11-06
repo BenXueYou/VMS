@@ -3,6 +3,7 @@
     <div class="main-container">
       <div class="select-box">
         <pic-upload @addImage="addImage"
+                    :imageUrl="imageUrl"
                     height="125px" />
         <div class="input">
           <div class="line-one">
@@ -27,20 +28,18 @@
               <el-radio-button label="thisMonth">本月</el-radio-button>
             </el-radio-group>
             <span class="topTitleTxt left-space">抓拍设备：</span>
-            <elPopverTree :channelInfoList="deviceList"
-                          :elPopoverClass="faceRecordPopoverClass"
-                          :checkedChannelKeys="checkedChannelKeys"
+            <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                           @transferCheckedChannel="transferCheckedChannel"
-                          inputWidth="200px"
-                          @show="popverShow"
-                          @hide="popverHidden"></elPopverTree>
+                          :isCheckedAll="true"
+                          inputWidth="200px"></elPopverTree>
             <span class="topTitleTxt left-space">对比库：</span>
             <el-radio-group v-model="libraryType"
                             @change="handleTypeChange"
                             style="margin: 4px 0 0 0.5%;">
-              <el-radio label="face">人脸库</el-radio>
-              <el-radio label="capture"
-                        style="margin-left: -7px;">抓拍库</el-radio>
+              <template v-for="(item, index) in libraryTypeOption">
+                <el-radio :label="item.typeStr"
+                          :key="index">{{item.typeName}}</el-radio>
+              </template>
             </el-radio-group>
           </div>
           <div class="line-two">
@@ -65,7 +64,8 @@
           </div>
         </div>
       </div>
-      <div class="content-box" id="allmap">
+      <div class="content-box"
+           id="allmap">
       </div>
     </div>
   </div>
@@ -88,17 +88,17 @@ export default {
       selectDate: "",
       startTime: "",
       endTime: "",
-      deviceList: [],
       faceUuid: "",
       fellowItemData: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
-      channelUuids: null,
-      captureInterval: 10,
-      travelTogetherFrequency: 1,
-      travelTogetherChannel: 1,
+      faceRecordPopoverClass: "companionPopoverClass",
+      channelUuids: "",
+      travelTogetherFrequency: 80,
+      travelTogetherChannel: 2,
       isLoading: false,
       checkedChannelKeys: [],
-      libraryType: "face"
+      libraryType: "systemFaceLib,staticFaceLib,dynamicFaceLib",
+      libraryTypeOption: [],
+      imageUrl: "",
     };
   },
   created() {},
@@ -168,11 +168,13 @@ export default {
     },
     handleTypeChange() {},
     initData() {
-      // this.faceUuid = "752ca559f1cc4733a9e0b9da59764787";
       this.startTime = this.$common.formatDate(
         new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
       );
       this.endTime = this.$common.formatDate(new Date());
+      this.libraryTypeOption = this.$common.getEnumByGroupStr(
+        "face_h5_lib_group_type"
+      );
       // eslint-disable-next-line no-undef
       let map = new BMap.Map("allmap");
       map.centerAndZoom("上海", 15);
@@ -187,38 +189,12 @@ export default {
     onClickTurnToGetFace() {
       this.$router.push("/FaceRecord");
     },
-    getDeviceList() {
-      // var deviceList = this.$store.getters.getDeviceList;
-      // this.deviceList = deviceList;
-      // this.$store.dispatch("getDeviceList", false).then(res => {
-      //   if (res.result === 0) {
-      //     this.deviceList = res.data;
-      //   } else {
-      //     this.$message({ message: "更新设备列表失败", type: "warning" });
-      //   }
-      // });
-    },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
-      if (!checkedChannel || checkedChannel.length === 0) {
-        this.getChannelUuids(this.deviceList);
-      } else {
-        for (var i = 0; i < checkedChannel.length; i++) {
-          this.channelUuids.push(checkedChannel[i].id);
-        }
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    getChannelUuids(data) {
-      if (!data) {
-        return;
-      }
-      for (let item of data) {
-        this.channelUuids.push(item.id);
-        this.getChannelUuids(item.children);
-      }
-    },
-    popverShow() {},
-    popverHidden() {},
     getCompanionList() {
       this.isLoading = true;
       this.$factTragicHttp
@@ -254,25 +230,20 @@ export default {
   watch: {},
   destroyed() {},
   activated() {
-    this.getDeviceList();
     this.resetData();
     this.checkedChannelKeys = [];
     this.channelUuids = [];
     if (this.$route.query.imgObj) {
-      this.checkedChannelKeys.push(this.$route.query.imgObj.channeluuid);
-      this.channelUuids = this.$common.copyArray(
-        this.checkedChannelKeys,
-        this.channelUuids
-      );
+      this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
     }
   }
 };
 </script>
 
 <style lang="scss">
-.faceRecordPopoverClass {
-  width: 50%;
-  height: 45%;
+.companionPopoverClass {
+  width: 500px;
+  height: 230px;
   position: absolute;
   background: #202127;
   min-width: 150px;
@@ -322,7 +293,7 @@ export default {
     width: 100%;
     height: 100%;
     .select-box {
-      height: 20%;
+      height: 165px;
       padding: 1% 3%;
       box-sizing: border-box;
       display: flex;
@@ -376,7 +347,7 @@ export default {
       }
     }
     .content-box {
-      height: 80%;
+      height: calc(100% - 165px);
       border-radius: 3px;
       .title {
         display: flex;
