@@ -159,11 +159,11 @@ export default {
         limit: 1, // int每页显示行数是
         page: 8, // int第几页是
         faceUuid: this.dialogParama.faceUuid,
-        snapshotTimeStart: this.$common.getStartTime(), // string抓拍时间启否
-        snapshotTimeEnd: this.$common.getCurrentTime()
+        capturetimeDatestart: this.$common.getStartTime(), // string抓拍时间启否
+        capturetimeDateEnd: this.$common.getCurrentTime()
       };
       api
-        .getRecognizeList(data)
+        .getRecognizeInfo(data)
         .then(res => {
           if (res.data.success) {
             this.shootPhotoList = res.data.data.list;
