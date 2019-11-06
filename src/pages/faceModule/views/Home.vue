@@ -330,7 +330,7 @@ export default {
   },
   watch: {
     CapturePhotoArr(val) {
-      console.log(val);
+      // console.log(val);
       let arr = [];
       val.map(item => {
         if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
@@ -517,20 +517,20 @@ export default {
     },
     // 布控任务通道ID获取码流参数
     getRtspInChannelUuid(channelUuid, isBool) {
-      // let data = {
-      //   channelUuid: channelUuid,
-      //   streamType: this.streamType
-      // };
-      // api
-      //   .getRtspUrlByChannelUuidApi(data)
-      //   .then(res => {
-      //     if (res.data.success) {
-      //       let data = res.data.data;
-      //       Object.assign(this.checkedChannel, data);
-      //       this.loadVideo(data);
-      //     }
-      //   })
-      //   .catch(() => {});
+      let data = {
+        channelUuid: channelUuid,
+        streamType: this.streamType
+      };
+      api
+        .getRtspUrlByChannelUuidApi(data)
+        .then(res => {
+          if (res.data.success) {
+            let data = res.data.data;
+            Object.assign(this.checkedChannel, data);
+            this.loadVideo(data);
+          }
+        })
+        .catch(() => {});
     },
     loadVideo(data) {
       data.localId = "192.168.9.21";
@@ -696,7 +696,7 @@ export default {
     },
     doRecoginizeDetail(e) {
       console.log("右侧的弹窗事件index", e);
-      this.dialogVisible = true;
+
       if (e >= 0 && this.comparePhotoList[e]) {
         console.log(this.comparePhotoList[e]);
         this.dialogParama = this.comparePhotoList[e];
@@ -716,11 +716,15 @@ export default {
       logApi
         .getRecognizeInfo(data)
         .then(res => {
+          this.dialogfullscreenLoading = !this.dialogfullscreenLoading;
           if (res.data.success) {
+            this.dialogVisible = true;
             this.dialogParama = res.data.data;
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          this.dialogfullscreenLoading = !this.dialogfullscreenLoading;
+        });
     },
 
     // 左侧的底部的切换按钮,切换人脸抓拍与人流量统计的视图

@@ -196,7 +196,7 @@ export default {
     },
     handleSubscribeMonitorAlarm(data) {
       this.GlobalAlarmList.push(data);
-      if (this.GlobalAlarmList && this.GlobalAlarmList.length > 3) {
+      if (this.GlobalAlarmList && this.GlobalAlarmList.length > 10) {
         this.GlobalAlarmList.shift();
       }
     },
@@ -233,7 +233,13 @@ export default {
       this.$store.dispatch("setLocalEnums", this.local_enums);
     }
   },
-  watch: {},
+  watch: {
+    GlobalAlarmList: {
+      handler() {},
+      deep: true,
+      immediate: true
+    }
+  },
   destroyed() {},
   computed: {
     ...mapState({

@@ -158,7 +158,7 @@ export default {
       var data = {
         limit: 1, // int每页显示行数是
         page: 8, // int第几页是
-        faceUuid: this.dialogShow.faceUuid,
+        faceUuid: this.dialogParama.faceUuid,
         snapshotTimeStart: this.$common.getStartTime(), // string抓拍时间启否
         snapshotTimeEnd: this.$common.getCurrentTime()
       };

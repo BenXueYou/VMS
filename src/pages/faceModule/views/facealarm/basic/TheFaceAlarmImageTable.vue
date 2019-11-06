@@ -10,7 +10,7 @@
 						:alarmState="item.dealState"
 					/>
 				</div>
-				<div class="item hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div>
+				<!-- <div class="item hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
 			</div>
 		</div>
 		<div class="footer">

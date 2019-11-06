@@ -122,8 +122,8 @@ export default {
     };
   },
   watch: {
-    showImg: function() {
-      this.showImgs = this.showImg;
+    showImg: function(val) {
+      this.showImgs = val;
     },
     dialogParama: {
       handler: function(val, oldVal) {
@@ -144,6 +144,14 @@ export default {
   mounted: function(e) {
     // 父組件向子組件傳值
     console.log(this.dialogParama);
+    this.shootPhotoList = JSON.parse(JSON.stringify(this.dialogParama.list)) || [];
+    this.staffInfo = this.dialogParama.staffInfoEntity || {};
+    this.taskInfo = this.shootPhotoList[0] || {};
+    this.taskInfo.taskName = "";
+    this.taskInfo.list.map((item, index) => {
+      this.taskInfo.taskName += item.faceMonitorName + ",";
+    });
+    this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
   },
   activated: function() {
     console.log("刷新页面");
