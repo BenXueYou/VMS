@@ -696,14 +696,12 @@ export default {
     },
     doRecoginizeDetail(e) {
       console.log("右侧的弹窗事件index", e);
-
       if (e >= 0 && this.comparePhotoList[e]) {
         console.log(this.comparePhotoList[e]);
         this.dialogParama = this.comparePhotoList[e];
         this.getAlarmShootPhotoList(this.comparePhotoList[e]);
       }
     },
-
     // 根据客户端的传的人员staffUuid查找抓拍图片
     getAlarmShootPhotoList(rowData, currentPage = 1, pageSize = 24) {
       this.updatedFlag = true;

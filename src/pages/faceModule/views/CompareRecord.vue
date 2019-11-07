@@ -89,7 +89,7 @@
 			element-loading-background="rgba(0, 0, 0, 0.8)"
 			class="reccordBoxClass"
 		>
-			<div class="elCardBoxClass" v-for="(item, index) in pageSize" :key="index">
+			<div class="elCardBoxClass" v-for="(item, index) in totalCompareItemList" :key="index">
 				<recoginize-card
 					imgWidth="90"
 					:recoginizeItem="totalCompareItemList[index]"
@@ -97,16 +97,24 @@
 				/>
 			</div>
 		</div>
-		<!-- ======================================================= 弹 窗 ========================================================== -->
-		<el-dialog class="dialogClass" :visible.sync="dialogVisible" @close="closeDialog">
-			<el-row>
+		<!-- ==========				:close-on-click-modal="false"
+		v-dialogdrag============================================= 弹 窗 ==========================================================-->
+		<el-dialog
+			class="dialogClass"
+			:close-on-click-modal="false"
+			:visible.sync="dialogVisible"
+			@close="closeDialog"
+			v-dialogDrag
+			title="对比详情"
+		>
+			<!-- <el-row>
 				<div class="my_el-dialog__header">
 					<span class="el-dialog__title">对比详情</span>
 					<button type="button" aria-label="Close" class="el-dialog__headerbtn">
 						<i class="el-dialog__close el-icon el-icon-close" @click="dialogVisible = false"></i>
 					</button>
 				</div>
-			</el-row>
+			</el-row> -->
 			<dialogview
 				v-loading="dialogfullscreenLoading"
 				element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -315,6 +323,7 @@ export default {
         page: 1
       };
       this.dialogfullscreenLoading = true;
+      this.dialogVisible = !this.dialogVisible;
       api
         .getRecognizeInfo(data)
         .then(res => {
@@ -323,7 +332,6 @@ export default {
             console.log(res.data.data);
             this.dialogParama.showImg = false;
             this.dialogParama = res.data.data;
-            this.dialogVisible = !this.dialogVisible;
           }
         })
         .catch(() => {
@@ -759,7 +767,7 @@ export default {
 	cursor: pointer;
 }
 .CompareRecord .el-dialog__header {
-	display: none;
+	/* display: none; */
 	padding: 20px 20px 10px;
 }
 .CompareRecord .el-progress__text {
@@ -870,9 +878,10 @@ export default {
 	background: rgba(36, 39, 42, 1);
 	box-sizing: border-box;
 	padding-left: 17px;
+	/* padding-right: 15px; */
 }
 .CompareRecord .elCardBoxClass {
-	margin: 16px 0px 0 0;
+	margin: 16px auto 0 0;
 	color: #ffffff;
 	box-sizing: border-box;
 	border-radius: 2px;
