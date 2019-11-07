@@ -35,7 +35,6 @@
                           inputWidth="200px"></elPopverTree>
             <span class="topTitleTxt left-space">对比库：</span>
             <el-radio-group v-model="libraryType"
-                            @change="handleTypeChange"
                             style="margin: 4px 0 0 0.5%;">
               <template v-for="(item, index) in libraryTypeOption">
                 <el-radio :label="item.typeStr"
@@ -65,8 +64,24 @@
           </div>
         </div>
       </div>
-      <div class="content-box"
-           id="allmap">
+      <div class="content-box">
+        <div class="map-box"
+             id="allmap">
+        </div>
+        <div class="menu-list">
+          <div class="list-title">满足条件人员</div>
+          <template v-for="(item, index) in menuData">
+            <div :key="index"
+                 class="menu-item"
+                 @click="clickMenuList(item, index)"
+                 :style="item.checked ? 'background: rgba(0, 0, 0, 0.3);border: 1px solid rgba(38, 211, 157, 0.3);' : 'border: 1px solid transparent;'">
+              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                   width="120px"
+                   height="120px">
+              <div class="num-text">{{item.similarity}}%</div>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
   </div>
@@ -93,8 +108,10 @@ export default {
         [
           {
             faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
             similarity: 80,
             channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
             channelName: "192.168.9.198-通道1",
@@ -104,8 +121,10 @@ export default {
           },
           {
             faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
             similarity: 80,
             channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
             channelName: "192.168.9.198-通道1",
@@ -115,8 +134,10 @@ export default {
           },
           {
             faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
             similarity: 80,
             channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
             channelName: "192.168.9.198-通道1",
@@ -126,21 +147,25 @@ export default {
           },
           {
             faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
             similarity: 80,
             channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
             channelName: "192.168.9.198-通道1",
             snapshotTime: "2019-11-07 09:42:18",
             axisX: "121.4799",
             axisY: "31.2353"
-          },
+          }
         ],
         [
           {
             faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
             similarity: 80,
             channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
             channelName: "192.168.9.198-通道1",
@@ -150,8 +175,10 @@ export default {
           },
           {
             faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
             similarity: 80,
             channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
             channelName: "192.168.9.198-通道1",
@@ -161,8 +188,10 @@ export default {
           },
           {
             faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
             similarity: 80,
             channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
             channelName: "192.168.9.198-通道1",
@@ -172,8 +201,25 @@ export default {
           },
           {
             faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          }
+        ],
+        [
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
             similarity: 80,
             channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
             channelName: "192.168.9.198-通道1",
@@ -181,7 +227,100 @@ export default {
             axisX: "121.4799",
             axisY: "31.2353"
           },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4815",
+            axisY: "31.2364"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4807",
+            axisY: "31.2372"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          }
         ],
+        [
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4815",
+            axisY: "31.2364"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4807",
+            axisY: "31.2372"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl:
+              "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl:
+              "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          }
+        ]
       ],
       faceRecordPopoverClass: "companionPopoverClass",
       channelUuids: [],
@@ -190,15 +329,36 @@ export default {
       libraryType: "systemFaceLib,staticFaceLib,dynamicFaceLib",
       libraryTypeOption: [],
       imageUrl: "",
-      imageBase64: ""
+      imageBase64: "",
+      menuData: [],
+      traceData: []
     };
   },
   created() {},
   mounted() {
     this.initData();
-    // this.queryAct();
+    this.getMenuData();
   },
   methods: {
+    getMenuData() {
+      this.menuData = [];
+      if (this.itemData) {
+        this.itemData.forEach(v => {
+          this.menuData.push(v[0]);
+        });
+        this.menuData.forEach(v => {
+          this.$set(v, "checked", false);
+        });
+        this.clickMenuList(this.menuData[0], 0);
+      }
+    },
+    clickMenuList(item, index) {
+      this.menuData.forEach(v => {
+        this.$set(v, "checked", false);
+      });
+      this.$set(item, "checked", true);
+      this.traceData = this.itemData[index];
+    },
     addImage(picBaseUrl) {
       this.imageBase64 = picBaseUrl;
     },
@@ -258,7 +418,6 @@ export default {
           break;
       }
     },
-    handleTypeChange() {},
     initData() {
       this.startTime = this.$common.formatDate(
         new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
@@ -442,15 +601,47 @@ export default {
     .content-box {
       height: calc(100% - 165px);
       border-radius: 3px;
-      .title {
-        display: flex;
-        align-items: center;
-        height: 8%;
-        .title-text {
+      position: relative;
+      .map-box {
+        width: 100%;
+        height: 100%;
+      }
+      .menu-list {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: #25292d;
+        border-radius: 2px;
+        width: 160px;
+        max-height: 93%;
+        overflow-y: auto;
+        padding: 8px 6px;
+        box-sizing: border-box;
+        .list-title {
           font-family: PingFangSC-Regular;
-          font-size: 14px;
+          font-size: 13px;
           color: #ffffff;
-          margin-left: 20px;
+          width: 100%;
+          text-align: center;
+        }
+        .menu-item {
+          width: 140px;
+          height: 160px;
+          margin-top: 12px;
+          margin-left: 3px;
+          padding: 10px;
+          box-sizing: border-box;
+          cursor: pointer;
+          .num-text {
+            width: 100%;
+            text-align: center;
+            font-family: PingFangSC-Regular;
+            font-size: 12px;
+            color: #26D39D;
+            letter-spacing: 0;
+            margin-top: 3px;
+            text-align: center;
+          }
         }
       }
     }
