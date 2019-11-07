@@ -1,13 +1,19 @@
 <template>
-	<el-dialog class="GlobalAlarmDialogClass" :visible.sync="dialogShow" @close="closeDialog">
-		<el-row>
-			<div class="global_el-dialog__header">
+	<el-dialog
+		class="GlobalAlarmDialogClass"
+		:visible.sync="dialogShow"
+		@close="closeDialog"
+		:title="taskInfo.taskName||'布控报警'"
+		v-dialogDrag
+	>
+		<!-- <el-row>
+			<div class="global_el-dialog__header" @mousedown="mousedown">
 				<span class="el-dialog__title">{{taskInfo.taskName||'布控报警'}}</span>
 				<button type="button" aria-label="Close" class="el-dialog__headerbtn">
 					<i class="el-dialog__close el-icon el-icon-close" @click="dialogShow = false"></i>
 				</button>
 			</div>
-		</el-row>
+		</el-row> -->
 		<div class="GlobalAlarmDialog">
 			<!-- <big-img v-if="showImgs" @clickit="viewImg" :imgSrc="imgSrc"></big-img> -->
 			<el-row type="flex" justify="flex-start" class="GlobalAlarmDialogBodyClass" :gutter="5">
@@ -158,7 +164,7 @@ export default {
       var data = {
         limit: 1, // int每页显示行数是
         page: 8, // int第几页是
-        faceUuid: this.dialogParama.faceUuid,
+        faceUuid: this.dialogParama.faceUuid
       };
       api
         .getRecognizeInfo(data)
@@ -176,6 +182,24 @@ export default {
     },
     viewImg() {
       this.$emit("cs", false);
+    },
+    mousedown(event) {
+      this.selectElement = event.currentTarget;
+      var div1 = this.selectElement.parentNode.parentNode.parentNode;
+      this.selectElement.style.cursor = "move";
+      this.isDowm = true;
+      var distanceX = event.clientX - this.selectElement.offsetLeft;
+      var distanceY = event.clientY - this.selectElement.offsetTop;
+      document.onmousemove = function(ev) {
+        var oevent = ev || event;
+        div1.style.left = oevent.clientX - distanceX + "px";
+        div1.style.top = oevent.clientY - distanceY + "px";
+      };
+      document.onmouseup = function() {
+        document.onmousemove = null;
+        document.onmouseup = null;
+        div1.style.cursor = "default";
+      };
     },
     // 鼠标划过覆盖的hover弹窗事件
     mymouseover: event => {
@@ -240,12 +264,7 @@ export default {
 	vertical-align: middle;
 	line-height: 1;
 }
-.global_el-dialog__header {
-	padding: 0 25px;
-	border-bottom: 1px solid rgba(40, 255, 187, 0.1);
-	background-color: rgba(255, 0, 0, 0.1);
-}
-.global_el-dialog__header .el-dialog__title {
+.GlobalAlarmDialog .el-dialog__header .el-dialog__title {
 	border-left: 3px solid #fd545e;
 }
 .GlobalAlarmDialog .textclipsClass {
@@ -260,8 +279,9 @@ export default {
 	letter-spacing: 0;
 }
 .GlobalAlarmDialogClass .el-dialog__header {
-	display: none;
-	padding: 20px 20px 10px;
+	padding: 0 25px;
+	border-bottom: 1px solid rgba(40, 255, 187, 0.1);
+	background-color: rgba(255, 0, 0, 0.1);
 }
 .GlobalAlarmDialog .rightTxtBox {
 	padding-left: 35px;

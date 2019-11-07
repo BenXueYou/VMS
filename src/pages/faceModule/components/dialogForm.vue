@@ -128,6 +128,7 @@ export default {
     dialogParama: {
       handler: function(val, oldVal) {
         console.log(val, oldVal);
+        if (!val.list) return;
         this.shootPhotoList = JSON.parse(JSON.stringify(val.list)) || [];
         this.staffInfo = val.staffInfoEntity || {};
         this.taskInfo = this.shootPhotoList[0] || {};
@@ -137,21 +138,24 @@ export default {
         });
         this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
       },
-      deep: true,
+      deep: true
     }
   },
 
   mounted: function(e) {
     // 父組件向子組件傳值
     console.log(this.dialogParama);
-    this.shootPhotoList = JSON.parse(JSON.stringify(this.dialogParama.list)) || [];
-    this.staffInfo = this.dialogParama.staffInfoEntity || {};
-    this.taskInfo = this.shootPhotoList[0] || {};
-    this.taskInfo.taskName = "";
-    this.taskInfo.list.map((item, index) => {
-      this.taskInfo.taskName += item.faceMonitorName + ",";
-    });
-    this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
+    if (this.dialogParama.list) {
+      this.shootPhotoList =
+				JSON.parse(JSON.stringify(this.dialogParama.list)) || [];
+      this.staffInfo = this.dialogParama.staffInfoEntity || {};
+      this.taskInfo = this.shootPhotoList[0] || {};
+      this.taskInfo.taskName = "";
+      this.taskInfo.list.map((item, index) => {
+        this.taskInfo.taskName += item.faceMonitorName + ",";
+      });
+      this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
+    }
   },
   activated: function() {
     console.log("刷新页面");

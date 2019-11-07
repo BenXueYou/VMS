@@ -6,7 +6,7 @@ let ip = window.config.ip,
 let URLHeader = `${protocolHeader}${ip}/faceconfig-v1/project`;
 let URLHeaderFaceLog = `${protocolHeader}${ip}/facelog-v1/project`;
 let URLHeaderFaceServer = `${protocolHeader}${ip}/faceserver-v1/project`;
-let URLHeaderVideoServer = `${protocolHeader}${ip}/video/project`;
+let URLHeaderVideoServer = `${protocolHeader}${ip}/video-v1/project`;
 export default {
   // @pengxueyou
   baseDataApi: {
