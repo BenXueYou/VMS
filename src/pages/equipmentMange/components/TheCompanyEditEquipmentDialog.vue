@@ -164,11 +164,19 @@
           <br>
           <br>
           <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
+          <el-input v-model="item.gBCode"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">经度：</label>
-          <el-input v-model="item.longitude"></el-input>
+          <el-input v-model="item.longitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"></el-input>
+          <el-input v-model="item.latitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <br>
           <div class="mytagWrap">
             <gt-button class="button"
@@ -254,11 +262,19 @@
           <br>
           <br>
           <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
+          <el-input v-model="item.gBCode"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">经度：</label>
-          <el-input v-model="item.longitude"></el-input>
+          <el-input v-model="item.longitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"></el-input>
+          <el-input v-model="item.latitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <br>
           <div class="mytagWrap">
             <gt-button class="button"
@@ -343,11 +359,19 @@
           <br>
           <br>
           <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
+          <el-input v-model="item.gBCode"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">经度：</label>
-          <el-input v-model="item.longitude"></el-input>
+          <el-input v-model="item.longitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"></el-input>
+          <el-input v-model="item.latitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <br>
           <div class="mytagWrap">
             <gt-button class="button"
@@ -432,11 +456,19 @@
           <br>
           <br>
           <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
+          <el-input v-model="item.gBCode"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">经度：</label>
-          <el-input v-model="item.longitude"></el-input>
+          <el-input v-model="item.longitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"></el-input>
+          <el-input v-model="item.latitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <br>
           <div class="mytagWrap">
             <gt-button class="button"
@@ -522,11 +554,19 @@
           <br>
           <br>
           <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
+          <el-input v-model="item.gBCode"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">经度：</label>
-          <el-input v-model="item.longitude"></el-input>
+          <el-input v-model="item.longitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"></el-input>
+          <el-input v-model="item.latitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <br>
           <div class="mytagWrap">
             <gt-button class="button"
@@ -612,11 +652,19 @@
           <br>
           <br>
           <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
+          <el-input v-model="item.gBCode"
+                    @change="gogo"
+                    @focus="gogo"></el-input>
           <label class="label">经度：</label>
-          <el-input v-model="item.longitude"></el-input>
+          <el-input v-model="item.longitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"></el-input>
+          <el-input v-model="item.latitude"
+                    type="number"
+                    @focus="gogo"
+                    @change="gogo"></el-input>
           <br>
           <div class="mytagWrap">
             <gt-button class="button"
@@ -633,7 +681,6 @@
           </div>
         </div>
       </div>
-
       <person-tree-tag title="请选择要添加的标签"
                        rightTxt="已选择的标签"
                        :isShow.sync="isShow"
@@ -925,8 +972,9 @@ export default {
   },
   methods: {
     gogo() {
+      console.log(123);
       this.ipc = this.ipc.concat();
-      this.bullet_camera = this.bullet_camera.concat();
+      this.bullet_camera = JSON.parse(JSON.stringify(this.bullet_camera));
       this.doorData = this.doorData.concat();
       this.dutouData = this.dutouData.concat();
       this.shuchuData = this.shuchuData.concat();
@@ -1052,6 +1100,7 @@ export default {
             item.vehicleSnap =
               item.ability.indexOf("vehicleSnap") !== -1 ? 1 : 0;
             item.bodySnap = item.ability.indexOf("bodySnap") !== -1 ? 1 : 0;
+
             // channelList.push({
             //   nickName: item.nickName,
             //   channelUuid: item.channelUuid,
@@ -1196,9 +1245,9 @@ export default {
               val.faceSnap = !!(val.extInfo.faceSnap === 1);
               val.vehicleSnap = !!(val.extInfo.vehicleSnap === 1);
               val.bodySnap = !!(val.extInfo.bodySnap === 1);
-              val.gBCode = val.extInfo.gBCode;
-              val.latitude = val.extInfo.latitude;
-              val.longitude = val.extInfo.longitude;
+              val.gBCode = val.extInfo.gBCode || "";
+              val.latitude = val.extInfo.latitude || "";
+              val.longitude = val.extInfo.longitude || "";
             }
             val.tagPOList = val.tagPOList || [];
             val.ability = [];
