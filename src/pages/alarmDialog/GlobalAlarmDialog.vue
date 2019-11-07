@@ -264,7 +264,7 @@ export default {
 	vertical-align: middle;
 	line-height: 1;
 }
-.GlobalAlarmDialog .el-dialog__header .el-dialog__title {
+.GlobalAlarmDialogClass .el-dialog__header .el-dialog__title {
 	border-left: 3px solid #fd545e;
 }
 .GlobalAlarmDialog .textclipsClass {
