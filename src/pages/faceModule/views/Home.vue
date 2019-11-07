@@ -314,8 +314,8 @@ export default {
       that.footerHeight = (3 * h) / 10 + "px";
       that.asideWidth = w / 3 - 40 + "px";
       that.drawLine();
-      that.canvas.width = (this.WIDTH() * 2) / 3 - 200;
-      that.canvas.height = (this.HEIGHT() * 7) / 10 - 120;
+      that.canvas.width = (that.WIDTH() * 2) / 3 - 200;
+      that.canvas.height = (that.HEIGHT() * 7) / 10 - 120;
     });
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
