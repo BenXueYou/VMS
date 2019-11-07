@@ -342,7 +342,10 @@ export default {
       this.getFaceList();
     },
     turnToPersonTrace(item) {
-      this.$router.push({ name: "PersonTrace", params: { imgObj: item } });
+      if (!item.hasOwnProperty("faceUuid")) {
+        item.faceUuid = "";
+      }
+      this.$router.push({ name: "PersonTrace", query: { imgObj: item } });
     },
     lookAllView(item) {
       this.selectedItem = this.$common.copyObject(item, this.selectedItem);
