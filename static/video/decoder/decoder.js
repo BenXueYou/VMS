@@ -46,9 +46,9 @@ Decoder.prototype.initDecoder = function () {
     this.logger.logInfo("this.videoCallback: " + this.videoCallback  + ".");
     var paramCount = 7, paramSize = 4;
     var paramByteBuffer = Module._malloc(paramCount * paramSize);
-    var ret = Module._initDecoder(this.videoWidth, this.videoHeight, this.videoCallback);
-    this.logger.logInfo("initDecoder return " + ret + ".");
-    if (0 == ret) {
+    // var ret = Module._initDecoder(this.videoWidth, this.videoHeight, this.videoCallback);
+    //this.logger.logInfo("initDecoder return " + ret + ".");
+    //if (0 == ret) {
         /*
         var paramIntBuff    = paramByteBuffer >> 2;
         var paramArray      = Module.HEAP32.subarray(paramIntBuff, paramIntBuff + paramCount);
@@ -74,7 +74,7 @@ Decoder.prototype.initDecoder = function () {
         };
         self.postMessage(objData);
     */
-    }
+    //}
 	/*
 	var typedArray = new Uint8Array(2);
 	typedArray[0] = 42;
