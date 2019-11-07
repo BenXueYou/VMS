@@ -59,7 +59,8 @@
              v-loading="isLoading">
           <template v-for="(item, index) in moduleList">
             <div :key="index"
-                 class="list-item">
+                 class="list-item"
+                 @click="lookDetail(item)">
               <img :src="$common.setPictureShow(item.facePhotoUrl, 'facelog')"
                    width="100%"
                    height="120px"
@@ -103,7 +104,7 @@
             <el-table-column prop="status"
                              label="状态">
               <template slot-scope="scope">
-                {{scope.row.status ? '已处理' : '未处理'}}
+                {{$common.getEnumItemName('model_analysis_s', scope.row.status)}}
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -409,6 +410,7 @@ export default {
         .list-item {
           width: 150px;
           height: 230px;
+          cursor: pointer;
           background: rgba($color: #000000, $alpha: 0.1);
           border: 1px solid #2a2c2e;
           margin-right: 20px;

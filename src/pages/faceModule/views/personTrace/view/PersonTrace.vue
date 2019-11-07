@@ -3,6 +3,8 @@
     <div class="main-container">
       <div class="select-box">
         <pic-upload @addImage="addImage"
+                    :imageUrl="imageUrl"
+                    @deleteImage="deleteImage"
                     height="125px" />
         <div class="input">
           <div class="line-one">
@@ -27,30 +29,28 @@
               <el-radio-button label="thisMonth">本月</el-radio-button>
             </el-radio-group>
             <span class="topTitleTxt left-space">抓拍设备：</span>
-            <elPopverTree :channelInfoList="deviceList"
-                          :elPopoverClass="faceRecordPopoverClass"
-                          :checkedChannelKeys="checkedChannelKeys"
+            <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                           @transferCheckedChannel="transferCheckedChannel"
-                          inputWidth="200px"
-                          @show="popverShow"
-                          @hide="popverHidden"></elPopverTree>
+                          :isCheckedAll="true"
+                          inputWidth="200px"></elPopverTree>
             <span class="topTitleTxt left-space">对比库：</span>
             <el-radio-group v-model="libraryType"
                             @change="handleTypeChange"
                             style="margin: 4px 0 0 0.5%;">
-              <el-radio label="face">人脸库</el-radio>
-              <el-radio label="capture"
-                        style="margin-left: -7px;">抓拍库</el-radio>
+              <template v-for="(item, index) in libraryTypeOption">
+                <el-radio :label="item.typeStr"
+                          :key="index">{{item.typeName}}</el-radio>
+              </template>
             </el-radio-group>
           </div>
           <div class="line-two">
             <span class="topTitleTxt">相似度不低于：</span>
-            <el-input v-model="travelTogetherFrequency"
+            <el-input v-model="similarity"
                       class="time-interal"
                       type="number"></el-input>
             <span class="timeText">%</span>
             <span class="topTitleTxt left-space">搜索结果显示前：</span>
-            <el-input v-model="travelTogetherChannel"
+            <el-input v-model="staffLimit"
                       class="time-interal"
                       type="number"></el-input>
             <span class="timeText">个</span>
@@ -59,13 +59,14 @@
                        size="small"
                        class="left-space"
                        icon="el-icon-search">开始搜索</el-button>
-            <el-button @click="queryAct"
+            <el-button @click="resetData"
                        type="primary"
                        size="small">重置</el-button>
           </div>
         </div>
       </div>
-      <div class="content-box" id="allmap">
+      <div class="content-box"
+           id="allmap">
       </div>
     </div>
   </div>
@@ -88,17 +89,108 @@ export default {
       selectDate: "",
       startTime: "",
       endTime: "",
-      deviceList: [],
-      faceUuid: "",
-      fellowItemData: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
-      channelUuids: null,
-      captureInterval: 10,
-      travelTogetherFrequency: 1,
-      travelTogetherChannel: 1,
-      isLoading: false,
-      checkedChannelKeys: [],
-      libraryType: "face"
+      itemData: [
+        [
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4815",
+            axisY: "31.2364"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4807",
+            axisY: "31.2372"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+        ],
+        [
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4815",
+            axisY: "31.2364"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4807",
+            axisY: "31.2372"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+        ],
+      ],
+      faceRecordPopoverClass: "companionPopoverClass",
+      channelUuids: [],
+      similarity: 80,
+      staffLimit: 2,
+      libraryType: "systemFaceLib,staticFaceLib,dynamicFaceLib",
+      libraryTypeOption: [],
+      imageUrl: "",
+      imageBase64: ""
     };
   },
   created() {},
@@ -108,7 +200,7 @@ export default {
   },
   methods: {
     addImage(picBaseUrl) {
-      console.log(picBaseUrl);
+      this.imageBase64 = picBaseUrl;
     },
     selectDateAct(dateStr) {
       let day = new Date();
@@ -168,111 +260,83 @@ export default {
     },
     handleTypeChange() {},
     initData() {
-      // this.faceUuid = "752ca559f1cc4733a9e0b9da59764787";
       this.startTime = this.$common.formatDate(
         new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
       );
       this.endTime = this.$common.formatDate(new Date());
+      this.libraryTypeOption = this.$common.getEnumByGroupStr(
+        "face_h5_lib_group_type"
+      );
       // eslint-disable-next-line no-undef
       let map = new BMap.Map("allmap");
-      map.centerAndZoom("上海", 15);
+      map.centerAndZoom("上海", 19);
     },
     queryAct() {
-      if (!this.$route.query.imgObj) {
+      if (!this.imageBase64) {
         this.$cToast.warn("请添加图片");
       } else {
-        this.getCompanionList();
+        // this.getTragicList();
       }
-    },
-    onClickTurnToGetFace() {
-      this.$router.push("/FaceRecord");
-    },
-    getDeviceList() {
-      // var deviceList = this.$store.getters.getDeviceList;
-      // this.deviceList = deviceList;
-      // this.$store.dispatch("getDeviceList", false).then(res => {
-      //   if (res.result === 0) {
-      //     this.deviceList = res.data;
-      //   } else {
-      //     this.$message({ message: "更新设备列表失败", type: "warning" });
-      //   }
-      // });
     },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
-      if (!checkedChannel || checkedChannel.length === 0) {
-        this.getChannelUuids(this.deviceList);
-      } else {
-        for (var i = 0; i < checkedChannel.length; i++) {
-          this.channelUuids.push(checkedChannel[i].id);
-        }
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    getChannelUuids(data) {
-      if (!data) {
-        return;
-      }
-      for (let item of data) {
-        this.channelUuids.push(item.id);
-        this.getChannelUuids(item.children);
-      }
-    },
-    popverShow() {},
-    popverHidden() {},
-    getCompanionList() {
-      this.isLoading = true;
+    getTragicList() {
       this.$factTragicHttp
-        .getCompanionList({
-          faceUuid: this.$route.query.imgObj.faceUuid,
-          channelUuids: this.channelUuids,
+        .getTragicList({
+          imageBase64: this.imageBase64,
           startTime: this.startTime,
           endTime: this.endTime,
-          captureInterval: this.captureInterval,
-          travelTogetherFrequency: this.travelTogetherFrequency,
-          travelTogetherChannel: this.travelTogetherChannel
+          channelUuids: this.channelUuids,
+          libraryType: this.libraryType,
+          similarity: this.similarity,
+          staffLimit: this.staffLimit
         })
         .then(res => {
           let body = res.data;
-          this.getCompanionListSuccess(body);
-          this.isLoading = false;
-        })
-        .catch(() => {
-          this.isLoading = false;
+          this.getTragicListSuccess(body);
         });
     },
-    getCompanionListSuccess(data) {
-      this.fellowItemData = data.body.data;
+    getTragicListSuccess(data) {
+      this.itemData = data.body.data;
       if (data.body.data.length === 0) {
         this.$cToast.success("暂无同行人分析记录！");
       }
     },
     resetData() {
-      this.fellowItemData = [];
       this.initData();
+      this.itemData = [];
+      this.imageUrl = "";
+      this.imageBase64 = "";
+      this.similarity = 80;
+      this.staffLimit = 2;
+      this.libraryType = "systemFaceLib,staticFaceLib,dynamicFaceLib";
+    },
+    deleteImage() {
+      this.imageUrl = "";
+      this.imageBase64 = "";
     }
   },
   watch: {},
   destroyed() {},
   activated() {
-    this.getDeviceList();
-    this.resetData();
-    this.checkedChannelKeys = [];
-    this.channelUuids = [];
     if (this.$route.query.imgObj) {
-      this.checkedChannelKeys.push(this.$route.query.imgObj.channeluuid);
-      this.channelUuids = this.$common.copyArray(
-        this.checkedChannelKeys,
-        this.channelUuids
-      );
+      this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
+      this.$common.imageToBase64(this.imageUrl, base64 => {
+        this.imageBase64 = base64;
+      });
     }
   }
 };
 </script>
 
 <style lang="scss">
-.faceRecordPopoverClass {
-  width: 50%;
-  height: 45%;
+.companionPopoverClass {
+  width: 500px;
+  height: 230px;
   position: absolute;
   background: #202127;
   min-width: 150px;
@@ -322,7 +386,7 @@ export default {
     width: 100%;
     height: 100%;
     .select-box {
-      height: 20%;
+      height: 165px;
       padding: 1% 3%;
       box-sizing: border-box;
       display: flex;
@@ -376,7 +440,7 @@ export default {
       }
     }
     .content-box {
-      height: 80%;
+      height: calc(100% - 165px);
       border-radius: 3px;
       .title {
         display: flex;

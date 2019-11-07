@@ -2,13 +2,14 @@
   <div class="main-block">
     <module-details :isShow="isShowDetail"
                     @onCancel="onCancelDetail"
-                    @onConfirm="onConfirmDetail" />
+                    ref="modelDetails" />
     <div class="main-container">
       <div class="search">
         <div class="search-input">
           <span>抓拍设备：</span>
           <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                         @transferCheckedChannel="transferCheckedChannel"
+                        :isCheckedAll="true"
                         inputWidth="230px"></elPopverTree>
           <span class="left-space">人脸库：</span>
           <el-select v-model="faceLibraryList"
@@ -63,12 +64,7 @@
                     style="width: 60px;margin: 0 8px;"></el-input>
           <span>个</span>
           <span class="left-space">人脸抓拍图片质量：</span>
-          <pic-qulity-select :selectedButtons.sync="similarity"/>
-          <span class="left-space">抓拍间隔时间：</span>
-          <el-input v-model="captureInterval"
-                    type="number"
-                    style="width: 60px;margin: 0 8px;"></el-input>
-          <span>秒</span>
+          <pic-qulity-select :selectedButtons.sync="photoQualitieList"/>
           <div class="search-btn">
             <el-button @click="queryAct"
                        icon="el-icon-search"
@@ -95,13 +91,14 @@
              v-loading="isLoading">
           <template v-for="(item, index) in moduleList">
             <div :key="index"
-                 class="list-item">
-              <img :src="$common.setPictureShow(item.facePhotoUrl)"
+                 class="list-item"
+                 @click="lookDetail(item)">
+              <img :src="$common.setPictureShow(item.facePhotoUrl, 'facelog')"
                    width="95%"
                    height="120px"
                    class="img-fill">
               <div class="info-other">
-                <div class="other-span">{{`在${item.snapshotNumber}个抓拍设备出现${item.snapshotNumber}次`}}</div>
+                <div class="other-span">{{item.snapshotDesc}}</div>
                 <div class="other-span">{{item.staffName}}&nbsp;&nbsp;{{item.faceLibraryName}}</div>
               </div>
             </div>
@@ -120,7 +117,7 @@
                              show-overflow-tooltip
                              width="360">
               <template slot-scope="scope">
-                {{showCamera(scope.row)}}
+                {{scope.row.channelNames}}
               </template>
             </el-table-column>
             <el-table-column prop="snapshotNumber"
@@ -135,10 +132,10 @@
                              label="所属库"
                              show-overflow-tooltip>
             </el-table-column>
-            <el-table-column prop="startTime"
+            <el-table-column prop="captureDatetimeBegin"
                              label="开始时间">
             </el-table-column>
-            <el-table-column prop="endTime"
+            <el-table-column prop="captureDatetimeEnd"
                              label="结束时间">
             </el-table-column>
             <el-table-column label="操作">
@@ -187,24 +184,23 @@ export default {
       faceLibraryList: [],
       libraryOptions: [],
       logic: ">=",
-      frequency: 10,
+      frequency: 2,
       logicOptions: [],
       threshold: 80,
       typeRadio: "picture",
       moduleList: [],
       pageInfo: {
         total: 0,
-        pageSize: 12,
+        pageSize: 30,
         currentPage: 1
       },
       faceRecordPopoverClass: "popoverClass",
-      checkedChannelKeys: [],
       channelUuids: [],
       isShowDetail: false,
       isLoading: false,
-      leastNumberOfChannel: 5,
-      similarity: ["HIGH", "NORMAL", "LOW"],
-      captureInterval: 15,
+      leastNumberOfChannel: 2,
+      photoQualitieList: ["HIGH", "NORMAL", "LOW"],
+      checkedChannel: []
     };
   },
   created() {},
@@ -217,9 +213,9 @@ export default {
     init() {
       this.startTime = this.getStartTime();
       this.endTime = this.$common.getCurrentTime();
-      this.getModelList();
       this.getLibrarys();
       this.logicOptions = this.$common.getEnumByGroupStr("compare_r");
+      this.getModelList();
     },
     getStartTime() {
       var new111 = new Date();
@@ -262,17 +258,22 @@ export default {
     },
     getFacedbListSuccess(body) {
       this.libraryOptions = body.data;
+      this.faceLibraryList = [];
+      if (this.libraryOptions.length !== 0) {
+        this.faceLibraryList.push(this.libraryOptions[0].faceLibraryUuid);
+      }
     },
     handleTypeChange(val) {
       if (this.typeRadio === "picture") {
-        this.pageInfo.pageSize = 27;
+        this.pageInfo.pageSize = 30;
       } else {
-        this.pageInfo.pageSize = 14;
+        this.pageInfo.pageSize = 12;
       }
       this.getModelList();
     },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
+      this.checkedChannel = checkedChannel;
       for (let i = 0; i < checkedChannel.length; i++) {
         this.channelUuids.push(checkedChannel[i].channelUuid);
       }
@@ -281,22 +282,18 @@ export default {
       this.getModelList();
     },
     reset() {},
-    showCamera(row) {
-      let camStr = "";
-      row.devList.forEach((v, i) => {
-        if (i === 0) {
-          camStr = v.name;
-        } else {
-          camStr = camStr + "，" + v.name;
-        }
-      });
-      return camStr;
-    },
     lookDetail(row) {
+      this.$refs.modelDetails.modelItem = this.$common.copyObject(
+        row,
+        this.$refs.modelDetails.modelItem
+      );
+      this.$refs.modelDetails.devices = this.$common.copyArray(
+        this.checkedChannel,
+        this.$refs.modelDetails.devices
+      );
+      this.$refs.modelDetails.startTime = this.startTime;
+      this.$refs.modelDetails.endTime = this.endTime;
       this.isShowDetail = true;
-    },
-    onConfirmDetail() {
-      this.isShowDetail = false;
     },
     onCancelDetail() {
       this.isShowDetail = false;
@@ -307,16 +304,15 @@ export default {
         .getModelList({
           limit: this.pageInfo.pageSize,
           page: this.pageInfo.currentPage,
-          channelUuidList: this.channelUuids,
-          faceLibraryList: this.faceLibraryList,
+          channelUuidList: this.channelUuids.toString(),
+          faceLibraryList: this.faceLibraryList.toString(),
           threshold: this.threshold,
           startTime: this.startTime,
           endTime: this.endTime,
           logic: this.logic,
           frequency: this.frequency,
           leastNumberOfChannel: this.frequency,
-          similarity: this.similarity,
-          captureInterval: this.captureInterval,
+          photoQualitieList: this.photoQualitieList.toString(),
         })
         .then(res => {
           let body = res.data;
@@ -431,9 +427,10 @@ export default {
         .list-item {
           width: 142px;
           height: 180px;
+          cursor: pointer;
           background: rgba($color: #000000, $alpha: 0.1);
           border: 1px solid #2a2c2e;
-          margin-right: 14px;
+          margin-right: 12px;
           margin-bottom: 10px;
           padding: 10px 5px 0 5px;
           box-sizing: border-box;

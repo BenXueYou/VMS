@@ -42,12 +42,12 @@
                  style="background: #F6C620;"></div>
             <div class="item-right">
               <div class="right-item">
-                <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
+                <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
                      width="67.7px"
                      height="67.6px"
                      style="margin-left: 6px"
                      class="img-fill">
-                <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl)"
+                <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')"
                      width="120.9px"
                      style="margin-left: 6px"
                      height="67.6px"
@@ -125,7 +125,7 @@ export default {
     return {
       modelItem: {},
       isCurrentShow: false,
-      typeRadio: 0,
+      typeRadio: "",
       dataBaseOptions: [],
       dataBase: [],
       remark: "",
@@ -142,9 +142,23 @@ export default {
   methods: {
     onClickCancel() {
       this.$emit("onCancel");
+      this.resetData();
     },
     onClickConfirm() {
       this.$emit("onCancel");
+      this.resetData();
+    },
+    resetData() {
+      this.modelItem = {};
+      this.typeRadio = "";
+      this.dataBaseOptions = [];
+      this.dataBase = [];
+      this.remark = "";
+      this.checkAll = true;
+      this.checkedDevices = [];
+      this.devices = [];
+      this.isIndeterminate = false;
+      this.infoList = [];
     },
     getLibrarys() {
       this.$faceControlHttp.getFacedbList().then(res => {
@@ -198,7 +212,7 @@ export default {
       this.isLoading = true;
       this.$judgeHttp
         .getJudgeDetails({
-          faceModelAnalysisResultUuid: this.modelItem.faceModelUuid,
+          faceModelAnalysisResultUuid: this.modelItem.faceModelAnalysisResultUuid,
           channelUuids: this.checkedDevices ? this.checkedDevices.join(",") : ""
         })
         .then(res => {

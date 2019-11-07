@@ -12,6 +12,8 @@ import router from './router';
 
 // 权限控制中枢 路由守卫
 import './permission';
+import './directives';
+// import './dir';
 
 import echarts from 'echarts';
 import { EventBusPlugin as EventBus } from '@/utils/Eventbus';

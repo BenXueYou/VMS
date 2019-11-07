@@ -6,7 +6,7 @@ let ip = window.config.ip,
 let URLHeader = `${protocolHeader}${ip}/faceconfig-v1/project`;
 let URLHeaderFaceLog = `${protocolHeader}${ip}/facelog-v1/project`;
 let URLHeaderFaceServer = `${protocolHeader}${ip}/faceserver-v1/project`;
-let URLHeaderVideoServer = `${protocolHeader}${ip}/video/project`;
+let URLHeaderVideoServer = `${protocolHeader}${ip}/video-v1/project`;
 export default {
   // @pengxueyou
   baseDataApi: {
@@ -101,4 +101,5 @@ export default {
   getAlarmSound: `${URLHeader}/${projectUuid}/face/config/alarmSound`,
   tempMonitor: `${URLHeader}/${projectUuid}/monitoringTask/temp/info`,
   getCompareDetail: `${URLHeaderFaceLog}/${projectUuid}/recognize/info?asgName=${projectUuid}`,
+  getTragicList: `${URLHeaderFaceLog}/${projectUuid}/staffTrajectory/list?asgName=${projectUuid}`
 };

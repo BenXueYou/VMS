@@ -11,7 +11,7 @@
          class="avatar"
          @mouseenter="showDelete(true)"
          @mouseleave="showDelete(false)">
-      <img :src="imageUrl"
+      <img :src="$common.setPictureShow(imageUrl, 'facelog')"
            :width="`${width}`"
            @click="selectImg"
            :height="`${height}`"

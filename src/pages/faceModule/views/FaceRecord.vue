@@ -300,12 +300,13 @@ export default {
     },
     // 是否有人员轨迹
     judgeStaffTrace(item, routeName) {
+      //   this.$router.push({ path: routeName, query: { imgObj: item } });
       let data = {
-        faceRecognitionRecordUuid: item.faceRecognitionRecordUuid,
+        faceCaptureRecordUuid: item.faceCaptureUuid,
         captureDatetime: item.captureDatetime
       };
       api
-        .getFaceUuidByFaceCaptureUuid(data)
+        .photoRecordToAnalysis(data)
         .then(res => {
           if (res.data.success) {
             let params = res.data.data;
