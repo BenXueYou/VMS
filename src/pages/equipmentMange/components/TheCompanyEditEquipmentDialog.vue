@@ -161,8 +161,15 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
+          <br>
+          <br>
+          <label class="label">通道国标码：</label>
           <el-input v-model="item.gBCode"></el-input>
+          <label class="label">经度：</label>
+          <el-input v-model="item.longitude"></el-input>
+          <label class="label">纬度：</label>
+          <el-input v-model="item.latitude"></el-input>
+          <br>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(1,index,x)"
@@ -244,8 +251,15 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
+          <br>
+          <br>
+          <label class="label">通道国标码：</label>
           <el-input v-model="item.gBCode"></el-input>
+          <label class="label">经度：</label>
+          <el-input v-model="item.longitude"></el-input>
+          <label class="label">纬度：</label>
+          <el-input v-model="item.latitude"></el-input>
+          <br>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(2,index,x)"
@@ -326,8 +340,15 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
+          <br>
+          <br>
+          <label class="label">通道国标码：</label>
           <el-input v-model="item.gBCode"></el-input>
+          <label class="label">经度：</label>
+          <el-input v-model="item.longitude"></el-input>
+          <label class="label">纬度：</label>
+          <el-input v-model="item.latitude"></el-input>
+          <br>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(3,index,x)"
@@ -408,8 +429,15 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
+          <br>
+          <br>
+          <label class="label">通道国标码：</label>
           <el-input v-model="item.gBCode"></el-input>
+          <label class="label">经度：</label>
+          <el-input v-model="item.longitude"></el-input>
+          <label class="label">纬度：</label>
+          <el-input v-model="item.latitude"></el-input>
+          <br>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(4,index,x)"
@@ -491,8 +519,15 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
+          <br>
+          <br>
+          <label class="label">通道国标码：</label>
           <el-input v-model="item.gBCode"></el-input>
+          <label class="label">经度：</label>
+          <el-input v-model="item.longitude"></el-input>
+          <label class="label">纬度：</label>
+          <el-input v-model="item.latitude"></el-input>
+          <br>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(5,index,x)"
@@ -574,8 +609,15 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
+          <br>
+          <br>
+          <label class="label">通道国标码：</label>
           <el-input v-model="item.gBCode"></el-input>
+          <label class="label">经度：</label>
+          <el-input v-model="item.longitude"></el-input>
+          <label class="label">纬度：</label>
+          <el-input v-model="item.latitude"></el-input>
+          <br>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(6,index,x)"
@@ -1110,7 +1152,6 @@ export default {
       this.$emit("showEdit", false);
     },
     getServiceList() {
-
       // api.serviceList().then(res => {
       //   console.log(res);
       //   if (res.data.success) {
@@ -1156,6 +1197,8 @@ export default {
               val.vehicleSnap = !!(val.extInfo.vehicleSnap === 1);
               val.bodySnap = !!(val.extInfo.bodySnap === 1);
               val.gBCode = val.extInfo.gBCode;
+              val.latitude = val.extInfo.latitude;
+              val.longitude = val.extInfo.longitude;
             }
             val.tagPOList = val.tagPOList || [];
             val.ability = [];
@@ -1359,7 +1402,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         color: #fff;
         .el-input {
           display: inline-block;
-          width: 160px;
+          width: 180px;
           vertical-align: top;
         }
         .button {
@@ -1368,7 +1411,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
           margin-bottom: 10px;
         }
         .addIcon {
-          margin-left: $mleft;
+          // margin-left: $mleft;
           border: none;
           background: none;
           @include font-s;
@@ -1377,7 +1420,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         .label {
           display: inline-block;
           @include font-s;
-          width: 60px;
+          width: 80px;
           vertical-align: middle;
         }
         .mytagWrap {
