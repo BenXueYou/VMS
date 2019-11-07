@@ -7,7 +7,7 @@
 						ref="popverBox"
 						popper-class="elPopoverClass"
 						:visible-arrow="false"
-						:value="visible_popver"
+						v-model="visible_popver"
 						placement="right"
 						trigger="click"
 					>
@@ -249,7 +249,7 @@ export default {
       socketIP: this.$store.state.socketIP, //
       todayShootCount: 0, // 今日抓拍次数
       todayCompareCount: 0, // 今日对比次数
-      streamType: "main",
+      streamType: "sub",
       streamTypeOptions: [
         { typeStr: "main", typeName: "主码流" },
         { typeStr: "sub", typeName: "辅码流" },
@@ -307,12 +307,15 @@ export default {
       let h = that.HEIGHT();
       w = w - 120;
       h = h - 65;
-      // that.$nextTick(() => {
-      //   that.$refs.mainHeightBox.$el.style.height = (7 * h) / 10 + "px";
-      //   that.$refs.heightBox.$el.style.height = h + "px";
-      // });
+      that.$nextTick(() => {
+        that.$refs.mainHeightBox.$el.style.height = (7 * h) / 10 + "px";
+        that.$refs.heightBox.$el.style.height = h + "px";
+      });
       that.footerHeight = (3 * h) / 10 + "px";
       that.asideWidth = w / 3 - 40 + "px";
+      that.drawLine();
+      that.canvas.width = (this.WIDTH() * 2) / 3 - 200;
+      that.canvas.height = (this.HEIGHT() * 7) / 10 - 120;
     });
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
@@ -532,23 +535,53 @@ export default {
         })
         .catch(() => {});
     },
-    loadVideo(data) {
+    async loadVideo(data) {
       data.localId = "192.168.9.21";
       // eslint-disable-next-line
 			this.video_mgr = new CVideoMgrSdk();
       this.canvas = document.createElement("canvas");
-      this.canvas.width = (this.WIDTH() * 2) / 3 - 120;
-      this.canvas.height = (this.HEIGHT() * 6) / 10 - 100;
-      let ip = data.localId;
-      this.video = this.video_mgr.play(
-        `{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4400"}}}`,
-        `{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "${ip}", "port":"4401"}}}`,
+      this.canvas.width = (this.WIDTH() * 2) / 3 - 200;
+      this.canvas.height = (this.HEIGHT() * 7) / 10 - 120;
+      let jSignal = {
+        srcUuid: "signal_channel",
+        routeType: "location",
+        param: { location: { protocol: "icc-ws", port: "4400" } }
+      };
+      let jMedia = {
+        srcUuid: "media_channel",
+        routeType: "location",
+        param: { location: { protocol: "icc-ws", port: "4401" } }
+      };
+
+      jMedia.param.location.ip = data.localId;
+      jSignal.param.location.ip = data.localId;
+      let w, h;
+      if (this.streamType === "main") {
+        w = 1920;
+        h = 1080;
+      } else if (this.streamType === "sub") {
+        w = 704;
+        h = 576;
+      } else {
+        w = 2560;
+        h = 1440;
+      }
+      this.video = await this.video_mgr.setup(
+        JSON.stringify(jSignal),
+        JSON.stringify(jMedia),
         data.rtspUrl,
         "rtsp",
         "preview",
+        1,
         this.canvas,
-        this.streamType
+        w,
+        h
       );
+      if (this.video) {
+        await this.video_mgr.play(this.video);
+      }
+      document.getElementById("poster_img").style.display = "none";
+      this.$refs.canvasRefs.innerHTML = "";
       this.$refs.canvasRefs.appendChild(this.canvas);
     },
 
@@ -959,16 +992,16 @@ iframe html {
 	height: 100%;
 }
 .elPopoverClass .el-tree {
-	background: #202124;
+	background: transparent;
 	overflow: auto;
 }
 .elPopoverClass .el-tree-node:focus > .el-tree-node__content {
-	background: #202124;
+	background: transparent;
 }
 
 .elPopoverClass .el-tree-node__content:focus,
 .el-tree-node__content:hover {
-	background: #202124;
+	background: transparent;
 }
 .asidRowProgress {
 	margin: auto;
