@@ -45,7 +45,7 @@
 						:width="45"
 						type="circle"
 						:color="(recoginizeItem)&&(recoginizeItem.taskColour=='red')?'#FF5F5F':'#28FFBB'"
-						:percentage="(recoginizeItem)&&(recoginizeItem.similarity)?parseInt(recoginizeItem.similarity.toFixed(0)):0"
+						:percentage="recoginizeItem.similarity||recoginizeItem.faceSimilarity || 0"
 					></el-progress>
 					<div class="asidFontClass" style="visibility:hidden">布控照</div>
 				</div>
@@ -245,7 +245,6 @@ export default {
 	padding: 0px;
 	border-left: 1px dashed #333333;
 	margin-left: 10px;
-
 }
 @media screen and (max-width: 1400px) {
 	.RecognizeCardClass .asidCompareImgBox {
