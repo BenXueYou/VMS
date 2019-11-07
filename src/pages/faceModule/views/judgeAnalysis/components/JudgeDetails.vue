@@ -42,12 +42,12 @@
                  style="background: #F6C620;"></div>
             <div class="item-right">
               <div class="right-item">
-                <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
+                <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
                      width="67.7px"
                      height="67.6px"
                      style="margin-left: 6px"
                      class="img-fill">
-                <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl)"
+                <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')"
                      width="120.9px"
                      style="margin-left: 6px"
                      height="67.6px"

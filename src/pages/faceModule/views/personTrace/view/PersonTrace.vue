@@ -89,7 +89,100 @@ export default {
       selectDate: "",
       startTime: "",
       endTime: "",
-      itemData: [],
+      itemData: [
+        [
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4815",
+            axisY: "31.2364"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4807",
+            axisY: "31.2372"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+        ],
+        [
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4815",
+            axisY: "31.2364"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4807",
+            axisY: "31.2372"
+          },
+          {
+            faceUuid: "11111",
+            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
+            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
+            similarity: 80,
+            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
+            channelName: "192.168.9.198-通道1",
+            snapshotTime: "2019-11-07 09:42:18",
+            axisX: "121.4799",
+            axisY: "31.2353"
+          },
+        ],
+      ],
       faceRecordPopoverClass: "companionPopoverClass",
       channelUuids: [],
       similarity: 80,
@@ -176,13 +269,13 @@ export default {
       );
       // eslint-disable-next-line no-undef
       let map = new BMap.Map("allmap");
-      map.centerAndZoom("上海", 15);
+      map.centerAndZoom("上海", 19);
     },
     queryAct() {
       if (!this.imageBase64) {
         this.$cToast.warn("请添加图片");
       } else {
-        this.getTragicList();
+        // this.getTragicList();
       }
     },
     transferCheckedChannel(checkedChannel) {
