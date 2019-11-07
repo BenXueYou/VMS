@@ -9,6 +9,7 @@
           <span>抓拍设备：</span>
           <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                         @transferCheckedChannel="transferCheckedChannel"
+                        :isCheckedAll="true"
                         inputWidth="230px"></elPopverTree>
           <span class="left-space">人脸库：</span>
           <el-select v-model="faceLibraryList"
@@ -63,12 +64,7 @@
                     style="width: 60px;margin: 0 8px;"></el-input>
           <span>个</span>
           <span class="left-space">人脸抓拍图片质量：</span>
-          <pic-qulity-select :selectedButtons.sync="similarity"/>
-          <span class="left-space">抓拍间隔时间：</span>
-          <el-input v-model="captureInterval"
-                    type="number"
-                    style="width: 60px;margin: 0 8px;"></el-input>
-          <span>秒</span>
+          <pic-qulity-select :selectedButtons.sync="photoQualitieList"/>
           <div class="search-btn">
             <el-button @click="queryAct"
                        icon="el-icon-search"
@@ -187,7 +183,7 @@ export default {
       faceLibraryList: [],
       libraryOptions: [],
       logic: ">=",
-      frequency: 10,
+      frequency: 2,
       logicOptions: [],
       threshold: 80,
       typeRadio: "picture",
@@ -198,13 +194,11 @@ export default {
         currentPage: 1
       },
       faceRecordPopoverClass: "popoverClass",
-      checkedChannelKeys: [],
       channelUuids: [],
       isShowDetail: false,
       isLoading: false,
-      leastNumberOfChannel: 5,
-      similarity: ["HIGH", "NORMAL", "LOW"],
-      captureInterval: 15,
+      leastNumberOfChannel: 2,
+      photoQualitieList: ["HIGH", "NORMAL", "LOW"],
     };
   },
   created() {},
@@ -307,16 +301,15 @@ export default {
         .getModelList({
           limit: this.pageInfo.pageSize,
           page: this.pageInfo.currentPage,
-          channelUuidList: this.channelUuids,
-          faceLibraryList: this.faceLibraryList,
+          channelUuidList: this.channelUuids.toString(),
+          faceLibraryList: this.faceLibraryList.toString(),
           threshold: this.threshold,
           startTime: this.startTime,
           endTime: this.endTime,
           logic: this.logic,
           frequency: this.frequency,
           leastNumberOfChannel: this.frequency,
-          similarity: this.similarity,
-          captureInterval: this.captureInterval,
+          photoQualitieList: this.photoQualitieList.toString(),
         })
         .then(res => {
           let body = res.data;

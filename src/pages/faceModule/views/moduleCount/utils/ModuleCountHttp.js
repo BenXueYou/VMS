@@ -8,7 +8,7 @@ export var ModuleCountHttp = {
     for (let k in holder) {
       data[k] = holder[k];
     }
-    return axios.post(api, data);
+    return axios.get(api, { params: data });
   },
 };
 
