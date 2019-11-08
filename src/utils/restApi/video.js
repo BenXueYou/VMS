@@ -6,10 +6,10 @@ let ip = window.config.ip,
 let zwUrlPrefix = `${
   window.config.protocolHeader
 }${ip}/basedata-v1/project/${projectUuid}`;
-ip = "192.168.9.105:15029";
+// ip = "192.168.9.105:15029";
 let urlPrefix = `${
   window.config.protocolHeader
-}${ip}/video/project/${projectUuid}`;
+}${ip}/video-v1/project/${projectUuid}`;
 
 export default {
   // 获取视频预览信息
