@@ -46,7 +46,7 @@
 				</div>
 				<div class="rightTxtBox">
 					<div>{{dialogParama.staffName||'姓名'}}</div>
-					<div>{{dialogParama.staffType||'人员类型'}}</div>
+					<div>{{$common.getEnumItemName('staff_t',dialogParama.staffType)||'人员类型'}}</div>
 					<div>{{dialogParama.faceLibraryName||'所属库'}}</div>
 					<!-- <div>{{dialogParama.householdType||'住户类型'}}</div> -->
 					<div>{{dialogParama.channelName||'抓拍通道'}}</div>
