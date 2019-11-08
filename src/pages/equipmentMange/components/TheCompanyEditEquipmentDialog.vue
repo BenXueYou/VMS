@@ -161,23 +161,23 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <br>
-          <br>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">经度：</label>
-          <el-input v-model="item.longitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <br>
+          <div class='videoSetingaa'
+               v-if="isVideo&&isLocal">
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(1,index,x)"
@@ -259,23 +259,25 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <br>
-          <br>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">经度：</label>
-          <el-input v-model="item.longitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <br>
+
+          <div class='videoSetingaa'
+               v-if="isVideo&&isLocal">
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(2,index,x)"
@@ -356,23 +358,26 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <br>
-          <br>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">经度：</label>
-          <el-input v-model="item.longitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <br>
+
+          <div class='videoSetingaa'
+               v-if="isVideo&&isLocal">
+
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(3,index,x)"
@@ -453,23 +458,26 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <br>
-          <br>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">经度：</label>
-          <el-input v-model="item.longitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <br>
+
+          <div class='videoSetingaa'
+               v-if="isVideo&&isLocal">
+
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(4,index,x)"
@@ -551,23 +559,26 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <br>
-          <br>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">经度：</label>
-          <el-input v-model="item.longitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <br>
+
+          <div class='videoSetingaa'
+               v-if="isVideo&&isLocal">
+
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(5,index,x)"
@@ -649,23 +660,26 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <br>
-          <br>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"
-                    @change="gogo"
-                    @focus="gogo"></el-input>
-          <label class="label">经度：</label>
-          <el-input v-model="item.longitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <label class="label">纬度：</label>
-          <el-input v-model="item.latitude"
-                    type="number"
-                    @focus="gogo"
-                    @change="gogo"></el-input>
-          <br>
+
+          <div class='videoSetingaa'
+               v-if="isVideo&&isLocal">
+
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @change="gogo"
+                      @focus="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(6,index,x)"
@@ -1385,6 +1399,9 @@ export default {
 }
 $dashline: 1px dashed rgba(255, 255, 255, 0.1);
 .editEquip {
+  .videoSetingaa {
+    margin: 10px auto;
+  }
   width: 1200px;
   background: #212325;
   .header {
@@ -1474,7 +1491,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         }
         .mytagWrap {
           display: inline-block;
-          margin-top: 10px;
+          // margin-top: 10px;
           width: calc(100% - 300px);
         }
       }

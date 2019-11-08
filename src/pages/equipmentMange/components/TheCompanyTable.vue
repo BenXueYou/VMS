@@ -1,166 +1,186 @@
 <template>
-	<div class="wrap thecompanygroup">
-		<div class="btn-group">
-			<el-button :class="{'default':index!=0}" @click="switchType(0)" type="primary">门禁</el-button>
-			<el-button :class="{'default':index!=1}" @click="switchType(1)" type="primary">视频</el-button>
-			<el-button :class="{'default':index!=2}" @click="switchType(2)" type="primary">报警</el-button>
-			<el-button :class="{'default':index!=3}" @click="switchType(3)" type="primary">访客机</el-button>
-		</div>
-		<div class="tablecontent" ref="tablecontent">
-			<div class="btn-group">
-				<el-button type="primary" @click="addEquipMent">搜索设备</el-button>
-				<el-button type="primary" @click="manualAdd">手动添加</el-button>
-				<el-button type="primary" @click="deletetableData">删除</el-button>
-				<el-button type="primary" @click="update">批量升级</el-button>
-				<el-button type="primary" @click="sendData">下发数据</el-button>
+  <div class="wrap thecompanygroup">
+    <div class="btn-group">
+      <el-button :class="{'default':index!=0}"
+                 @click="switchType(0)"
+                 type="primary">门禁</el-button>
+      <el-button :class="{'default':index!=1}"
+                 @click="switchType(1)"
+                 type="primary">视频</el-button>
+      <el-button :class="{'default':index!=2}"
+                 @click="switchType(2)"
+                 type="primary">报警</el-button>
+      <el-button :class="{'default':index!=3}"
+                 @click="switchType(3)"
+                 type="primary">访客机</el-button>
+    </div>
+    <div class="tablecontent"
+         ref="tablecontent">
+      <div class="btn-group">
+        <el-button type="primary"
+                   @click="addEquipMent">搜索设备</el-button>
+        <el-button type="primary"
+                   @click="manualAdd">手动添加</el-button>
+        <el-button type="primary"
+                   @click="deletetableData">删除</el-button>
+        <el-button type="primary"
+                   @click="update">批量升级</el-button>
+        <el-button type="primary"
+                   @click="sendData">下发数据</el-button>
 
-				<div class="rightgroup">
-					<span class="title">设备名称：</span>
-					<el-input class="input" v-model="devName"></el-input>
+        <div class="rightgroup">
+          <span class="title">设备名称：</span>
+          <el-input class="input"
+                    v-model="devName"></el-input>
 
-					<el-button type="primary" @click="retrieveVisible=!retrieveVisible" size="small">其他条件检索</el-button>
-					<el-button type="primary" @click="searchBytext" icon="el-icon-search" size="small">检索</el-button>
-				</div>
-				<!-- <retrieve></retrieve> -->
-				<input-retrieve
-					:visible="retrieveVisible"
-					@query="retrieve"
-					@updateIpAndType="updateIpAndType"
-					class="retrieve"
-				></input-retrieve>
-			</div>
+          <el-button type="primary"
+                     @click="retrieveVisible=!retrieveVisible"
+                     size="small">其他条件检索</el-button>
+          <el-button type="primary"
+                     @click="searchBytext"
+                     icon="el-icon-search"
+                     size="small">检索</el-button>
+        </div>
+        <!-- <retrieve></retrieve> -->
+        <input-retrieve :visible="retrieveVisible"
+                        @query="retrieve"
+                        @updateIpAndType="updateIpAndType"
+                        class="retrieve"></input-retrieve>
+      </div>
 
-			<el-table
-				ref="multipleTable"
-				:data="tableData"
-				tooltip-effect="dark"
-				v-loading="showloading"
-				style="width: 100%;overflow:initial;"
-				:style="{'height':tableHeight+'px'}"
-				@selection-change="handleSelectionChange"
-			>
-				<el-table-column type="selection" width="55"></el-table-column>
-				<el-table-column prop="devName" label="设备名字">
-					<template slot-scope="scope">
-						<el-tooltip :content="scope.row.devName">
-							<div>{{scope.row.devName}}</div>
-						</el-tooltip>
-					</template>
-				</el-table-column>
-				<el-table-column prop="ip" label="IP">
-					<template slot-scope="scope">
-						<el-tooltip :content="scope.row.ip">
-							<div>{{scope.row.ip}}</div>
-						</el-tooltip>
-					</template>
-				</el-table-column>
-				<el-table-column prop="devId" label="设备ID">
-					<template slot-scope="scope">
-						<el-tooltip :content="scope.row.devId">
-							<div>{{scope.row.devId}}</div>
-						</el-tooltip>
-					</template>
-				</el-table-column>
-				<el-table-column prop="devMode" width="120" label="设备型号">
-					<template slot-scope="scope">
-						<el-tooltip :content="scope.row.devMode">
-							<div>{{scope.row.devMode}}</div>
-						</el-tooltip>
-					</template>
-				</el-table-column>
-				<el-table-column prop="doorCount" width="80" :label="index!=1?'门数量':'视频通道'"></el-table-column>
-				<el-table-column prop="netStatus" width="80" label="网络状态">
-					<template slot-scope="scope">
-						<div style="color:#32C5FF;" v-if="scope.row.netStatus==='online'" class="online">在线</div>
-						<div style="color:#FF5F5F;" v-else-if="scope.row.netStatus==='offline'" class="offline">离线</div>
-						<div v-else></div>
-					</template>
-				</el-table-column>
-				<el-table-column prop="createTime" label="时间">
-					<template slot-scope="scope">
-						<el-tooltip :content="scope.row.createTime">
-							<div>{{scope.row.createTime}}</div>
-						</el-tooltip>
-					</template>
-				</el-table-column>
-				<el-table-column label="操作" width="150">
-					<template slot-scope="scope">
-						<el-button @click="editEquipment(scope.row)" type="text" size="small">编辑</el-button>
-						<el-button type="text" class="deleteText" @click="deleteEquip(scope.row)" size="small">删除</el-button>
-						<el-button
-							type="text"
-							@click="remoteControl(scope.row)"
-							:class="{'offLine':scope.row.netStatus==='offline'}"
-							:disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig))"
-							size="small"
-						>配置</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
+      <el-table ref="multipleTable"
+                :data="tableData"
+                tooltip-effect="dark"
+                v-loading="showloading"
+                style="width: 100%;overflow:initial;"
+                :style="{'height':tableHeight+'px'}"
+                @selection-change="handleSelectionChange">
+        <el-table-column type="selection"
+                         width="55"></el-table-column>
+        <el-table-column prop="devName"
+                         label="设备名字">
+          <template slot-scope="scope">
+            <el-tooltip :content="scope.row.devName">
+              <div>{{scope.row.devName}}</div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column prop="ip"
+                         label="IP">
+          <template slot-scope="scope">
+            <el-tooltip :content="scope.row.ip">
+              <div>{{scope.row.ip}}</div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column prop="devId"
+                         label="设备ID">
+          <template slot-scope="scope">
+            <el-tooltip :content="scope.row.devId">
+              <div>{{scope.row.devId}}</div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column prop="devMode"
+                         width="120"
+                         label="设备型号">
+          <template slot-scope="scope">
+            <el-tooltip :content="scope.row.devMode">
+              <div>{{scope.row.devMode}}</div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column prop="doorCount"
+                         width="80"
+                         :label="index!=1?'门数量':'视频通道'"></el-table-column>
+        <el-table-column prop="netStatus"
+                         width="80"
+                         label="网络状态">
+          <template slot-scope="scope">
+            <div style="color:#32C5FF;"
+                 v-if="scope.row.netStatus==='online'"
+                 class="online">在线</div>
+            <div style="color:#FF5F5F;"
+                 v-else-if="scope.row.netStatus==='offline'"
+                 class="offline">离线</div>
+            <div v-else></div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime"
+                         label="时间">
+          <template slot-scope="scope">
+            <el-tooltip :content="scope.row.createTime">
+              <div>{{scope.row.createTime}}</div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作"
+                         width="150">
+          <template slot-scope="scope">
+            <el-button @click="editEquipment(scope.row)"
+                       type="text"
+                       size="small">编辑</el-button>
+            <el-button type="text"
+                       class="deleteText"
+                       @click="deleteEquip(scope.row)"
+                       size="small">删除</el-button>
+            <el-button type="text"
+                       @click="remoteControl(scope.row)"
+                       :class="{'offLine':scope.row.netStatus==='offline'}"
+                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig))"
+                       size="small">配置</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-			<div class="fenye">
-				<el-pagination
-					@current-change="handleCurrentChange"
-					:current-page.sync="pageNow"
-					:page-size="pageSize"
-					background
-					class="pagination"
-					layout="total, prev, pager, next, jumper"
-					:total="dataTotal"
-				></el-pagination>
-			</div>
+      <div class="fenye">
+        <el-pagination @current-change="handleCurrentChange"
+                       :current-page.sync="pageNow"
+                       :page-size="pageSize"
+                       background
+                       class="pagination"
+                       layout="total, prev, pager, next, jumper"
+                       :total="dataTotal"></el-pagination>
+      </div>
 
-			<remote-control-dialog
-				:visible.sync="remoteControlDialogVisiable"
-				:isVistors="index===3"
-				:deviceUuid="deviceUuid"
-			></remote-control-dialog>
+      <remote-control-dialog :visible.sync="remoteControlDialogVisiable"
+                             :isVistors="index===3"
+                             :deviceUuid="deviceUuid"></remote-control-dialog>
 
-			<confirm-dialog
-				:visible.sync="ConfirmDialogVisible"
-				confirmText="是否要下发到设备内"
-				@confirm="confirmxiafa"
-				@close="close"
-			></confirm-dialog>
+      <confirm-dialog :visible.sync="ConfirmDialogVisible"
+                      confirmText="是否要下发到设备内"
+                      @confirm="confirmxiafa"
+                      @close="close"></confirm-dialog>
 
-			<confirm-dialog
-				:visible.sync="deleteConfirmDialogVisible"
-				confirmText="是否删除该设备"
-				@confirm="confirm"
-				@close="close"
-			></confirm-dialog>
+      <confirm-dialog :visible.sync="deleteConfirmDialogVisible"
+                      confirmText="是否删除该设备"
+                      @confirm="confirm"
+                      @close="close"></confirm-dialog>
 
-			<confirm-dialog
-				:visible.sync="upgradeConfirmDialogVisible"
-				confirmText="是否升级选中的设备"
-				@confirm="confirmUpgrade"
-				@close="close"
-			></confirm-dialog>
+      <confirm-dialog :visible.sync="upgradeConfirmDialogVisible"
+                      confirmText="是否升级选中的设备"
+                      @confirm="confirmUpgrade"
+                      @close="close"></confirm-dialog>
 
-			<the-company-add-equipment-dialog
-				:visible.sync="addEquipMentDialgoVisible"
-				:orgUuid="orgUuid"
-				:deviceType="viewType"
-				@confirm="addSuccess"
-			></the-company-add-equipment-dialog>
+      <the-company-add-equipment-dialog :visible.sync="addEquipMentDialgoVisible"
+                                        :orgUuid="orgUuid"
+                                        :deviceType="viewType"
+                                        @confirm="addSuccess"></the-company-add-equipment-dialog>
 
-			<the-company-update-dialog :visible.sync="updateDialogVisible" :data="multipleSelection"></the-company-update-dialog>
+      <the-company-update-dialog :visible.sync="updateDialogVisible"
+                                 :data="multipleSelection"></the-company-update-dialog>
 
-			<the-company-upgradingDialog :visible.sync="upgradeVisible"></the-company-upgradingDialog>
+      <the-company-upgradingDialog :visible.sync="upgradeVisible"></the-company-upgradingDialog>
 
-			<the-company-table-xiafa-dialog
-				:visible.sync="TheCompanyTableXiafaDialogVisible"
-				@confirm="getTableData"
-			></the-company-table-xiafa-dialog>
+      <the-company-table-xiafa-dialog :visible.sync="TheCompanyTableXiafaDialogVisible"
+                                      @confirm="getTableData"></the-company-table-xiafa-dialog>
 
-			<manual-add-dialog
-				:visible.sync="manualAddVisible"
-				:deviceTypeArr="deviceTypeArr"
-				@commit="addSuccess"
-				:localService="localService"
-			></manual-add-dialog>
-		</div>
-	</div>
+      <manual-add-dialog :visible.sync="manualAddVisible"
+                         :deviceTypeArr="deviceTypeArr"
+                         @commit="addSuccess"
+                         :localService="localService"></manual-add-dialog>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -494,10 +514,10 @@ export default {
         this.$emit("showEdit", row.deviceUuid, row.netStatus);
         this.serviceList(this.viewType);
         this.DType(this.viewType);
+      } else {
+        this.$emit("showEdit", row.deviceUuid);
       }
       // this.editEquipMentDialgoVisible = true;
-
-      this.$emit("showEdit", row.deviceUuid);
     },
     deleteEquip(row) {
       this.deleteOneRow = row;
@@ -521,7 +541,7 @@ export default {
       this.remoteControlDialogVisiable = true;
       this.deviceUuid = row.deviceUuid;
       // eslint-disable-next-line
-			this[
+      this[
         this.index === 1 ? "videoDialogVisiable" : "remoteControlDialogVisiable"
       ] = true;
     }
@@ -555,74 +575,74 @@ export default {
 <style lang='scss'>
 @import "@/style/variables.scss";
 .thecompanygroup {
-	.btn-group {
-		input {
-			@include input30;
-		}
-	}
+  .btn-group {
+    input {
+      @include input30;
+    }
+  }
 }
 </style>
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .wrap {
-	height: 100%;
-	.btn-group {
-		position: relative;
-		height: 60px;
-		$defaultColor: rgb(44, 44, 44);
-		.retrieve {
-			position: absolute;
-			top: 35px;
-			right: 0px;
-			z-index: 1;
-		}
-		button {
-			padding: 10px 40px;
-		}
-		.default {
-			background: $defaultColor;
-			border: 1px solid $defaultColor;
-		}
-		.rightgroup {
-			float: right;
-			.title {
-				font-family: " PingFangSC-Regular";
-				font-size: 13px;
-				color: #dddddd;
-				margin-right: 12px;
-			}
-			.input {
-				width: 180px;
-				margin-right: 13px;
-			}
-		}
-	}
-	.tablecontent {
-		background-color: rgba(33, 35, 37, 1);
-		height: calc(100% - 60px);
-		padding: $rightContentPadding;
-		box-sizing: border-box;
-		overflow: hidden;
-		.btn-group {
-			button {
-				height: 30px;
-				padding: 6px 15px;
-			}
-		}
-	}
-	.fenye {
-		margin-top: 40px;
-		span {
-			@include font-s;
-			float: right;
-		}
-		.pagination {
-			float: right;
-		}
-	}
-	.offLine {
-		color: #ddd;
-	}
+  height: 100%;
+  .btn-group {
+    position: relative;
+    height: 60px;
+    $defaultColor: rgb(44, 44, 44);
+    .retrieve {
+      position: absolute;
+      top: 35px;
+      right: 0px;
+      z-index: 1;
+    }
+    button {
+      padding: 10px 40px;
+    }
+    .default {
+      background: $defaultColor;
+      border: 1px solid $defaultColor;
+    }
+    .rightgroup {
+      float: right;
+      .title {
+        font-family: " PingFangSC-Regular";
+        font-size: 13px;
+        color: #dddddd;
+        margin-right: 12px;
+      }
+      .input {
+        width: 180px;
+        margin-right: 13px;
+      }
+    }
+  }
+  .tablecontent {
+    background-color: rgba(33, 35, 37, 1);
+    height: calc(100% - 60px);
+    padding: $rightContentPadding;
+    box-sizing: border-box;
+    overflow: hidden;
+    .btn-group {
+      button {
+        height: 30px;
+        padding: 6px 15px;
+      }
+    }
+  }
+  .fenye {
+    margin-top: 40px;
+    span {
+      @include font-s;
+      float: right;
+    }
+    .pagination {
+      float: right;
+    }
+  }
+  .offLine {
+    color: #ddd;
+  }
 }
 </style>
