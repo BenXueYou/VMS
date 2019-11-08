@@ -201,8 +201,11 @@ export default {
     });
     window.addEventListener(
       "resize",
-      this.$common.throttle(this.initWrapDom, 300, { trailing: false })
+      this.$common.throttle(this.initWrapDom, 100, { trailing: false })
     );
+  },
+  activated() {
+    this.initWrapDom();
   },
   destroyed() {},
   methods: {

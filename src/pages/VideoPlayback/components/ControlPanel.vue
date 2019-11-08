@@ -4,14 +4,17 @@
       <ul>
         <li>
           <img :src="icons.play"
+               @play="play"
                alt="">
         </li>
         <li>
           <img :src="icons.stop"
+               @click="stop"
                alt="">
         </li>
         <li>
           <img :src="icons.zhen"
+               @click="singleFrame"
                alt="">
         </li>
         <div class="splitline">
@@ -19,14 +22,18 @@
         </div>
         <li>
           <img :src="icons.forward"
+               @click="speedUp"
                alt="">
         </li>
         <li style="width:80px;">
           <el-input class='speed'
+                    readonly=""
+                    @change="changeSpeed"
                     v-model='speed'></el-input>
         </li>
         <li>
           <img :src="icons.backward"
+               @click="slowDown"
                alt="">
         </li>
       </ul>
@@ -46,7 +53,7 @@
                     v-model='speed'></el-input> -->
           <el-select class='speed'
                      @change="changeFenlu"
-                     v-model='speed'>
+                     v-model='chooseFenlu'>
             <el-option v-for="(item,index) in fenlu"
                        :key="index"
                        :value="item">{{item}}</el-option>
@@ -68,6 +75,7 @@
         </li>
         <li>
           <img :src="icons.fullScreen"
+               @click="fullScreen"
                alt="">
         </li>
       </ul>
@@ -163,16 +171,29 @@ export default {
     },
     fenlu: {
       type: Array
+    },
+    // 用来表示正在操作的是第几个
+    operatorIndex: {
+      type: Number,
+      default() {
+        return 1;
+      }
+    },
+    speed: {
+      type: Number,
+      default() {
+        return 1;
+      }
     }
   },
   data() {
     return {
       icons,
-      speed: 4,
       voice: 50,
       zoom: 1, // 时间轴缩放倍数
       move: 0,
       left: 0,
+      chooseFenlu: 0,
       controlData: []
     };
   },
@@ -186,16 +207,33 @@ export default {
     this.controlData = this.data;
   },
   methods: {
+    play() {
+      this.$emit("play");
+    },
+    stop() {
+      this.$emit("stop");
+    },
+    singleFrame() {
+      this.$emit("singleFrame");
+    },
+    speedUp() {
+      this.$emit("speedUp");
+    },
+    slowDown() {
+      this.$emit("slowDown");
+    },
+    changeSpeed() {},
     changeFenlu() {
       for (let i = 0, len = this.fenlu.length; i < len; i++) {
-        if (this.speed === this.fenlu[i]) {
+        if (this.chooseFenlu === this.fenlu[i]) {
           this.$emit("chooseFenlu", i);
           break;
         }
       }
     },
     chooseTime(index, chooseTime) {
-      console.log(index, chooseTime);
+      // console.log(index, chooseTime);
+      // this.$emit("update:operatorIndex", index);
       this.$emit("choosetime", index, chooseTime);
     },
     saveView() {
@@ -219,6 +257,9 @@ export default {
       if (left <= 0 && left >= -(this.zoom - 1) * 100) {
         this.left = left;
       }
+    },
+    fullScreen() {
+      this.$emit("PreviewAreafullScreen");
     }
   },
   watch: {

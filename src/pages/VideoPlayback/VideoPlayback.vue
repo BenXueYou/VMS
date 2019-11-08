@@ -36,7 +36,14 @@
         <control-panel @download="download"
                        @saveView="saveView"
                        @choosetime="choosetime"
-                       @chooseFenlu="chooseFenlu"
+                       @play="pasueVideo"
+                       @stop="resumeVideo"
+                       @singleFrame="videoSingleFrame"
+                       @speedUp="videoSpeedUp"
+                       @slowDown="videoSpeedDown"
+                       @PreviewAreafullScreen="PreviewAreafullScreen"
+                       :speed="videoSpeed"
+                       :operatorIndex.sync="operatorIndex"
                        :fenlu="fenlu"
                        :data="videoArr">
 
@@ -95,6 +102,7 @@ export default {
   },
   data() {
     return {
+      videoSpeed: 1,
       videoinfo: {},
       appendViewVisible: false,
       setTimeVisible: false,
@@ -177,15 +185,16 @@ export default {
       ]
     };
   },
+  computed: {},
   mounted() {
     this.jugdeJump();
     this.$nextTick(() => {
       this.chooseFenlu(1);
     });
-    window.addEventListener(
-      "resize",
-      this.$common.throttle(this.initWrapDom, 300, { trailing: false })
-    );
+    window.addEventListener("resize", this.initWrapDom);
+  },
+  activated() {
+    this.initWrapDom();
   },
   destroyed() {},
   methods: {
@@ -271,10 +280,12 @@ export default {
     choosetime(index, chooseTime) {
       // this.videoArr[index].rtspUrl = this.controlData[index].rtspUrl;
       // this.videoArr.concat();
+      this.operatorIndex = index;
       this.$refs["video" + index][0].drag(
         this.videoArr[index].ymd.replace(/-/g, "") +
           chooseTime.replace(/:/g, "")
       );
+      this.getVideoSpeed();
     },
     updateView(viewData) {
       api2.updateView(viewData).then(res => {
@@ -477,10 +488,12 @@ export default {
     },
     ClickViDeoA(index) {
       this.operatorIndex = index;
+      this.getVideoSpeed();
     },
     showMenu(e, index) {
       console.log(e);
       this.operatorIndex = index;
+      this.getVideoSpeed();
       const _this = this;
       e.preventDefault();
       this.$ContextMenu({
@@ -586,9 +599,26 @@ export default {
       }
     },
     openVideoVoice(index) {},
-    videoSpeedUp() {},
-    videoSpeedDown() {},
-    videoSingleFrame() {},
+    getVideoSpeed() {
+      this.videoSpeed = this.$refs["video" + this.operatorIndex][0].speed;
+    },
+    videoSpeedUp() {
+      this.$refs["video" + this.operatorIndex][0].speedUp();
+      this.getVideoSpeed();
+    },
+    videoSpeedDown() {
+      this.$refs["video" + this.operatorIndex][0].slowDown();
+      this.getVideoSpeed();
+    },
+    pasueVideo() {
+      this.$refs["video" + this.operatorIndex][0].pause();
+    },
+    resumeVideo() {
+      this.$refs["video" + this.operatorIndex][0].resume();
+    },
+    videoSingleFrame() {
+      this.$refs["video" + this.operatorIndex][0].singleFrame();
+    },
     setVideoTime() {
       this.setTimeVisible = true;
     },

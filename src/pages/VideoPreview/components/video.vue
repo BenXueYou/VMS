@@ -144,7 +144,8 @@ export default {
       video_mgr: null,
       canvas: null,
       video: null,
-      video_list: []
+      video_list: [],
+      speed: 1 // 视频播放速度
     };
   },
   computed: {
@@ -247,6 +248,23 @@ export default {
     }
   },
   methods: {
+    async speedUp() {
+      await this.video_mgr.speedControl(this.video, ++this.speed);
+    },
+    async slowDown() {
+      if (this.speed <= 1) {
+        return;
+      }
+      await this.video_mgr.speedControl(this.video, --this.speed);
+    },
+    async pause() {
+      await this.video_mgr.pause(this.video);
+    },
+    async resume() {
+      await this.video_mgr.resume(this.video);
+    },
+    async singleFrame() {
+    },
     setPlayTime(startTime, endTime) {},
     dblclickhandler() {
       this.$emit("dblclickhandler", this.index);
@@ -307,7 +325,7 @@ export default {
         this.rtspUrl,
         "rtsp",
         this.action,
-        1,
+        this.speed,
         this.canvas,
         w,
         h
