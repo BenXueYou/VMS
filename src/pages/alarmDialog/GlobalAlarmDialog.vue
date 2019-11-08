@@ -162,8 +162,8 @@ export default {
     // 查询识别记录
     getRecoginizedList() {
       var data = {
-        limit: 1, // int每页显示行数是
-        page: 8, // int第几页是
+        limit: 8, // int每页显示行数是
+        page: 1, // int第几页是
         faceUuid: this.dialogParama.faceUuid
       };
       api

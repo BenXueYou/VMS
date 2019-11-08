@@ -378,13 +378,6 @@ export default {
         });
     },
     // 点击设备树的事件
-    /**
-     *  "channelUuid": "string",  通道UUID
-        "channelName": "string",通道名称
-    		"nickName": "string",昵称
-    		"channelType": "int",通道类型
-    		"deviceUuid": "string",设备UUID
-     */
     handleNodeClick(data) {
       api
         .getDeviceChannelList({ parentOrgUuid: data.id })
@@ -992,16 +985,16 @@ iframe html {
 	height: 100%;
 }
 .elPopoverClass .el-tree {
-	background: transparent;
+	background: transparent!important;
 	overflow: auto;
 }
 .elPopoverClass .el-tree-node:focus > .el-tree-node__content {
-	background: transparent;
+	background: transparent!important;
 }
 
 .elPopoverClass .el-tree-node__content:focus,
 .el-tree-node__content:hover {
-	background: transparent;
+	background: transparent!important;
 }
 .asidRowProgress {
 	margin: auto;
@@ -1253,7 +1246,7 @@ iframe html {
 	position: absolute;
 	left: 235px !important;
 	top: 125px !important;
-	background-color: transparent;
+	background-color: transparent !important;
 	z-index: 10 !important;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;

@@ -70,7 +70,7 @@ const routes = [
     path: "FaceHome",
     name: "FaceHome",
     meta: {
-      keepAlive: false // 不需要缓存
+      keepAlive: true // 不需要缓存
     },
     component: FaceHome
   },

@@ -12,7 +12,7 @@
 					<span>性别：{{faceImgDialogData.gender||" "}}</span>
 					<span>年龄：{{faceImgDialogData.age||""}}</span>
 				</p>
-				<p>{{faceImgDialogData.alarmDatetime||"抓拍时间"}}</p>
+				<p>{{faceImgDialogData.captureDatetime||"抓拍时间"}}</p>
 			</div>
 		</div>
 		<span slot="footer" class="dialog-footer">

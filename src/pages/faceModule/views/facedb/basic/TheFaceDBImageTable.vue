@@ -3,7 +3,7 @@
 		<div class="body" v-loading="listtableloadding">
 			<div class="box" v-for="(item,index) in imageTableData " :key="index">
 				<div class="headerimg">
-					<img :src="preload[index]" alt />
+					<img :src="$common.setPictureShow(preload[index])" alt />
 					<el-checkbox class="checkButton" v-model="item.checked" @change="checkboxchange(index)"></el-checkbox>
 					<div class="mask">
 						<div class="operator">
