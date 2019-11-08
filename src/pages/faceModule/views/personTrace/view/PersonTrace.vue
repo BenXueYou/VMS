@@ -35,7 +35,6 @@
                           inputWidth="200px"></elPopverTree>
             <span class="topTitleTxt left-space">对比库：</span>
             <el-radio-group v-model="libraryType"
-                            @change="handleTypeChange"
                             style="margin: 4px 0 0 0.5%;">
               <template v-for="(item, index) in libraryTypeOption">
                 <el-radio :label="item.typeStr"
@@ -65,8 +64,41 @@
           </div>
         </div>
       </div>
-      <div class="content-box"
-           id="allmap">
+      <div class="content-box">
+        <div class="map-box"
+             id="allmap">
+        </div>
+        <div class="menu-list">
+          <div class="list-title">满足条件人员</div>
+          <template v-for="(item, index) in menuData">
+            <div :key="index"
+                 class="menu-item"
+                 @click="clickMenuList(item, index)"
+                 :style="item.checked ? 'background: rgba(0, 0, 0, 0.3);border: 1px solid rgba(38, 211, 157, 0.3);' : 'border: 1px solid transparent;'">
+              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                   width="120px"
+                   height="120px">
+              <div class="num-text">{{item.similarity}}%</div>
+            </div>
+          </template>
+        </div>
+        <div class="same-place"
+             v-if="isShowSamePlaDialog">
+          <div class="same-place-inner">
+            <template v-for="(item, index) in samePlaArr">
+              <div :key="index"
+                  class="same-item">
+                  <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')" width="120px" height="120px">
+                  <div style="color: #26D39D;">{{item.similarity}}%</div>
+                  <div>{{item.channelName}}</div>
+                  <div>{{item.snapshotTime}}</div>
+              </div>
+            </template>
+          </div>
+          <div class="close" @click="closeSamePlaDialog">
+            <img src="@/assets/images/faceModule/close.png" width="20px" height="20px">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -76,6 +108,7 @@
 import PicUpload from "@/common/PicUpload";
 import FellowItem from "@/pages/faceModule/views/companion/view/FellowItem";
 import ElPopverTree from "@/pages/faceModule/components/ElPopverTree";
+import * as Overlay from '@/utils/BlockItemOverlay.js';
 
 export default {
   components: {
@@ -89,100 +122,7 @@ export default {
       selectDate: "",
       startTime: "",
       endTime: "",
-      itemData: [
-        [
-          {
-            faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
-            similarity: 80,
-            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
-            channelName: "192.168.9.198-通道1",
-            snapshotTime: "2019-11-07 09:42:18",
-            axisX: "121.4799",
-            axisY: "31.2353"
-          },
-          {
-            faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
-            similarity: 80,
-            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
-            channelName: "192.168.9.198-通道1",
-            snapshotTime: "2019-11-07 09:42:18",
-            axisX: "121.4815",
-            axisY: "31.2364"
-          },
-          {
-            faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
-            similarity: 80,
-            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
-            channelName: "192.168.9.198-通道1",
-            snapshotTime: "2019-11-07 09:42:18",
-            axisX: "121.4807",
-            axisY: "31.2372"
-          },
-          {
-            faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
-            similarity: 80,
-            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
-            channelName: "192.168.9.198-通道1",
-            snapshotTime: "2019-11-07 09:42:18",
-            axisX: "121.4799",
-            axisY: "31.2353"
-          },
-        ],
-        [
-          {
-            faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
-            similarity: 80,
-            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
-            channelName: "192.168.9.198-通道1",
-            snapshotTime: "2019-11-07 09:42:18",
-            axisX: "121.4799",
-            axisY: "31.2353"
-          },
-          {
-            faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
-            similarity: 80,
-            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
-            channelName: "192.168.9.198-通道1",
-            snapshotTime: "2019-11-07 09:42:18",
-            axisX: "121.4815",
-            axisY: "31.2364"
-          },
-          {
-            faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
-            similarity: 80,
-            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
-            channelName: "192.168.9.198-通道1",
-            snapshotTime: "2019-11-07 09:42:18",
-            axisX: "121.4807",
-            axisY: "31.2372"
-          },
-          {
-            faceUuid: "11111",
-            faceCapturePhotoUrl: "http://192.168.9.141:9334/3,0a83eac645e566.jpg",
-            panoramaCapturePhotoUrl: "http://192.168.9.141:9334/4,0a83e9470838b9.jpg",
-            similarity: 80,
-            channelUuid: "4C217E0C82B2935D8F7A6E3DB74EA105",
-            channelName: "192.168.9.198-通道1",
-            snapshotTime: "2019-11-07 09:42:18",
-            axisX: "121.4799",
-            axisY: "31.2353"
-          },
-        ],
-      ],
+      itemData: [],
       faceRecordPopoverClass: "companionPopoverClass",
       channelUuids: [],
       similarity: 80,
@@ -190,15 +130,89 @@ export default {
       libraryType: "systemFaceLib,staticFaceLib,dynamicFaceLib",
       libraryTypeOption: [],
       imageUrl: "",
-      imageBase64: ""
+      imageBase64: "",
+      menuData: [],
+      traceData: [],
+      pois: [],
+      samePlaArr: [],
+      isShowSamePlaDialog: false,
     };
   },
   created() {},
   mounted() {
     this.initData();
-    // this.queryAct();
   },
   methods: {
+    getMenuData() {
+      this.menuData = [];
+      if (this.itemData) {
+        this.itemData.forEach(v => {
+          this.menuData.push(v[0]);
+        });
+        this.menuData.forEach(v => {
+          this.$set(v, "checked", false);
+        });
+        this.clickMenuList(this.menuData[0], 0);
+      }
+    },
+    clickMenuList(item, index) {
+      this.menuData.forEach(v => {
+        this.$set(v, "checked", false);
+      });
+      this.$set(item, "checked", true);
+      this.traceData = [];
+      this.traceData = this.itemData[index];
+      this.setMapShow();
+    },
+    setMapShow() {
+      /* eslint-disable */
+      this.map.clearOverlays();
+      this.pois = [];
+      this.traceData.forEach(v => {
+        let pt = new BMap.Point(v.longitude, v.latitude);
+        this.pois.push(pt);
+        let myIcon = new BMap.Icon(
+          require("@/assets/images/faceModule/trace.png"),
+          new BMap.Size(48, 60)
+        );
+        let marker = new BMap.Marker(pt, { icon: myIcon });
+        marker.setOffset(new BMap.Size(0, -30));
+        this.map.addOverlay(marker);
+        let ItemOverlay = new Overlay.ItemOverlay(pt, v);
+        this.map.addOverlay(ItemOverlay);
+        ItemOverlay.addEventListener("click", ()=> {
+          this.getSamePlaceArr(v.longitude, v.latitude);
+          this.isShowSamePlaDialog = true;
+        });
+      });
+      let sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_CLOSED_ARROW, {
+        scale: 0.8, //图标缩放大小
+        strokeColor: "#E63434", //设置矢量图标的线填充颜色
+        strokeWeight: "3" //设置线宽
+      });
+      let icons = new BMap.IconSequence(sy, "50", "90");
+      // 创建polyline对象
+      let polyline = new BMap.Polyline(this.pois, {
+        icons: [icons],
+        strokeWeight: "2", //折线的宽度，以像素为单位
+        strokeOpacity: 0.8, //折线的透明度，取值范围0 - 1
+        strokeColor: "#E63434", //折线颜色
+        strokeStyle: "dashed"
+      });
+      this.map.addOverlay(polyline);
+    },
+    getSamePlaceArr(longitude, latitude) {
+      this.samePlaArr = [];
+      this.traceData.forEach(v => {
+        if (v.longitude === longitude && v.latitude === latitude) {
+          this.samePlaArr.push(v);
+        }
+      });
+    },
+    closeSamePlaDialog() {
+      this.isShowSamePlaDialog = false;
+      this.samePlaArr = [];
+    },
     addImage(picBaseUrl) {
       this.imageBase64 = picBaseUrl;
     },
@@ -258,7 +272,6 @@ export default {
           break;
       }
     },
-    handleTypeChange() {},
     initData() {
       this.startTime = this.$common.formatDate(
         new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
@@ -267,15 +280,19 @@ export default {
       this.libraryTypeOption = this.$common.getEnumByGroupStr(
         "face_h5_lib_group_type"
       );
-      // eslint-disable-next-line no-undef
-      let map = new BMap.Map("allmap");
-      map.centerAndZoom("上海", 19);
+      this.map = new BMap.Map("allmap", {
+        minZoom: 3,
+        maxZoom: 19,
+        enableMapClick: false
+      });
+      this.map.centerAndZoom("上海", 19);
+      this.map.enableScrollWheelZoom();
     },
     queryAct() {
       if (!this.imageBase64) {
         this.$cToast.warn("请添加图片");
       } else {
-        // this.getTragicList();
+        this.getTragicList();
       }
     },
     transferCheckedChannel(checkedChannel) {
@@ -288,9 +305,11 @@ export default {
       this.$factTragicHttp
         .getTragicList({
           imageBase64: this.imageBase64,
+          faceUuid: this.$route.query.imgObj ? this.$route.query.imgObj.faceUuid : "",
+          // faceUuid: "28334ca055b54a428fc6c63e56d24da4",
           startTime: this.startTime,
           endTime: this.endTime,
-          channelUuids: this.channelUuids,
+          channelUuidList: this.channelUuids,
           libraryType: this.libraryType,
           similarity: this.similarity,
           staffLimit: this.staffLimit
@@ -300,10 +319,14 @@ export default {
           this.getTragicListSuccess(body);
         });
     },
-    getTragicListSuccess(data) {
-      this.itemData = data.body.data;
-      if (data.body.data.length === 0) {
-        this.$cToast.success("暂无同行人分析记录！");
+    getTragicListSuccess(body) {
+      this.itemData = body.data;
+      this.setMapCenter();
+      this.getMenuData();
+    },
+    setMapCenter() {
+      if (this.itemData.length !== 0) {
+        this.map.setCenter(new BMap.Point(this.itemData[0][0].longitude, this.itemData[0][0].latitude));
       }
     },
     resetData() {
@@ -324,6 +347,7 @@ export default {
   destroyed() {},
   activated() {
     if (this.$route.query.imgObj) {
+      console.log(this.$route.query.imgObj);
       this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
       this.$common.imageToBase64(this.imageUrl, base64 => {
         this.imageBase64 = base64;
@@ -442,15 +466,89 @@ export default {
     .content-box {
       height: calc(100% - 165px);
       border-radius: 3px;
-      .title {
-        display: flex;
-        align-items: center;
-        height: 8%;
-        .title-text {
+      position: relative;
+      overflow: hidden;
+      .map-box {
+        width: 100%;
+        height: 100%;
+      }
+      .menu-list {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: #25292d;
+        border-radius: 2px;
+        width: 160px;
+        max-height: 93%;
+        overflow-y: auto;
+        padding: 8px 6px;
+        box-sizing: border-box;
+        .list-title {
           font-family: PingFangSC-Regular;
-          font-size: 14px;
+          font-size: 13px;
           color: #ffffff;
-          margin-left: 20px;
+          width: 100%;
+          text-align: center;
+        }
+        .menu-item {
+          width: 140px;
+          height: 160px;
+          margin-top: 12px;
+          margin-left: 3px;
+          padding: 10px;
+          box-sizing: border-box;
+          cursor: pointer;
+          .num-text {
+            width: 100%;
+            text-align: center;
+            font-family: PingFangSC-Regular;
+            font-size: 12px;
+            color: #26d39d;
+            letter-spacing: 0;
+            margin-top: 3px;
+          }
+        }
+      }
+      .same-place {
+        width: 480px;
+        padding: 15px 0px 15px 15px;
+        box-sizing: border-box;
+        background: #25292D;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.20);
+        border-radius: 2px;
+        position: absolute;
+        right: 30px;
+        top: 30px;
+        .same-place-inner {
+          max-height: 450px;
+          overflow-y: auto;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-flow: row wrap;
+          align-content: flex-start;
+          .same-item {
+            border: 1px #2E3135 solid;
+            border-radius: 2px;
+            background: rgba($color: #000000, $alpha: 0.1);
+            width: 140px;
+            height: 190px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding: 5px;
+            box-sizing: border-box;
+            font-family: PingFangSC-Regular;
+            font-size: 12px;
+            color: #DDDDDD;
+            letter-spacing: 0;
+            text-align: center;
+          }
+        }
+        .close {
+          position: absolute;
+          right: -8px;
+          top: -8px;
+          cursor: pointer;
         }
       }
     }
