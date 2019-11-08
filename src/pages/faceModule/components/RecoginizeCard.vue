@@ -51,44 +51,40 @@
 				</div>
 				<div class="relativeClass">
 					<div class="asidCompareImgBox" :style="`width:${imgWidth}px;height:${imgWidth}px`">
-						<img
-							class="asidCardImg"
-							:src="recoginizeItem.facePhotoUrl?imageHeader+recoginizeItem.facePhotoUrl:require('@/assets/user.png')"
-						/>
+						<img class="asidCardImg" :src="$common.setPictureShow(recoginizeItem.facePhotoUrl)" />
 					</div>
 					<div class="asidFontClass">布控照</div>
 				</div>
-				<div class="asidCompareTxtClass" style="padding-left:2%;padding-bottom:1.5%;">
+				<div class="asidCompareTxtClass" :style="`width:${1.2*imgWidth}px;`">
+					<div class="asidFontClass">{{recoginizeItem.staffName||'姓名:-- --'}}</div>
 					<div
 						class="asidFontClass"
-					>{{(recoginizeItem)&&(recoginizeItem.staffName)?recoginizeItem.staffName:'姓名:-- --'}}</div>
+					>{{$common.getEnumItemName("staff_t", recoginizeItem.staffType)||'人员类型'}}</div>
+					<div class="asidFontClass">{{recoginizeItem.libraryName||'所属库:-- -- '}}</div>
 					<div
+						@mouseover="mymouseover"
+						@mouseout="mymouseout"
+						@mousemove="mymousemove"
 						class="asidFontClass"
-					>{{(recoginizeItem)&&(recoginizeItem.staffType)?$common.getEnumItemName("staff_t", recoginizeItem.staffType):'人员类型'}}</div>
-					<div
-						class="asidFontClass"
-					>{{(recoginizeItem)&&(recoginizeItem.libraryName)?recoginizeItem.libraryName:'所属库:-- -- '}}</div>
-					<div
-						class="asidFontClass"
-					>{{(recoginizeItem)&&(recoginizeItem.channelName)?recoginizeItem.channelName:'通道名称'}}</div>
+					>{{recoginizeItem.channelName||'通道名称'}}</div>
 					<div
 						@mouseover="mymouseover"
 						@mouseout="mymouseout"
 						@mousemove="mymousemove"
 						class="textclipsClass asidFontClass"
-					>{{(recoginizeItem)&&(recoginizeItem.captureDatetime)?recoginizeItem.captureDatetime.split(" ")[0]:'抓拍日期：-- --'}}</div>
+					>{{recoginizeItem.captureDatetime.split(" ")[0]||'抓拍日期：-- --'}}</div>
 					<div
 						@mouseover="mymouseover"
 						@mouseout="mymouseout"
 						@mousemove="mymousemove"
 						class="textclipsClass asidFontClass"
-					>{{(recoginizeItem)&&(recoginizeItem.captureDatetime)?recoginizeItem.captureDatetime.split(" ")[1]:'抓拍时间：-- --'}}</div>
+					>{{recoginizeItem.captureDatetime.split(" ")[1]||'抓拍时间：-- --'}}</div>
 				</div>
 			</div>
 			<div
 				v-if="alarmState"
 				class="alarmStateTxt"
-			>{{alarmState?$common.getEnumItemName("alarm_r",alarmState):'已处理'}}</div>
+			>{{$common.getEnumItemName("alarm_r",alarmState)||'已处理'}}</div>
 		</div>
 	</transition>
 </template>
@@ -233,18 +229,14 @@ export default {
 .RecognizeCardClass .asidCompareTxtClass {
 	width: 36%;
 	text-align: left;
-	display: -webkit-box;
-	display: -ms-flexbox;
 	display: flex;
-	-webkit-box-orient: vertical;
-	-webkit-box-direction: normal;
-	-ms-flex-direction: column;
 	flex-direction: column;
-	-ms-flex-pack: distribute;
 	justify-content: space-around;
 	padding: 0px;
 	border-left: 1px dashed #333333;
 	margin-left: 10px;
+	padding-left: 2%;
+	padding-bottom: 1.5%;
 }
 @media screen and (max-width: 1400px) {
 	.RecognizeCardClass .asidCompareImgBox {
