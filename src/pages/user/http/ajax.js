@@ -104,7 +104,7 @@ export function getAccountListApi(data) {
   return axios({
     method: "GET",
     url,
-    data
+    params: data
   });
 }
 

@@ -29,7 +29,7 @@ export default {
   getHomeMenuUrl: `${httpHeader}/account/menu`,
   accountApi: {
     addAccountApi: `${httpAccountHeader}`,
-    getAccountListApi: `${httpAccountHeader}/upms-v1/account`,
+    getAccountListApi: `${httpAccountHeader}`,
     putAccountApi: accountUuid => `${httpAccountHeader}/${accountUuid}`,
     putAccountPWDApi: accountName =>
       `${httpAccountHeader}/updatePwd/${accountName}`,
