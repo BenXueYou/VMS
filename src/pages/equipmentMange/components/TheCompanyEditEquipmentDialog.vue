@@ -136,10 +136,8 @@
              :key="index">
           <label class="label">门{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -147,13 +145,11 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      multiple>
             <el-option v-for="item in abilityOption"
                        :key="item.value"
@@ -161,8 +157,7 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <div class='videoSetingaa'
-               v-if="isVideo&&isLocal">
+          <div class='videoSetingaa'>
             <label class="label">通道国标码：</label>
             <el-input v-model="item.gBCode"
                       @focus="gogo"
@@ -234,10 +229,8 @@
              :key="index">
           <label class="label">读头{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -245,12 +238,10 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
-                     v-if="isVideo&&isLocal"
                      multiple
                      @change="gogo">
             <el-option v-for="item in abilityOption"
@@ -260,8 +251,7 @@
             </el-option>
           </el-select>
 
-          <div class='videoSetingaa'
-               v-if="isVideo&&isLocal">
+          <div class='videoSetingaa'>
             <label class="label">通道国标码：</label>
             <el-input v-model="item.gBCode"
                       @focus="gogo"
@@ -333,10 +323,8 @@
              :key="index">
           <label class="label">报警输入{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in alarmInOptions"
                        :key="item.value"
@@ -344,12 +332,10 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
-                     v-if="isVideo&&isLocal"
                      @change="gogo"
                      multiple>
             <el-option v-for="item in abilityOption"
@@ -359,8 +345,7 @@
             </el-option>
           </el-select>
 
-          <div class='videoSetingaa'
-               v-if="isVideo&&isLocal">
+          <div class='videoSetingaa'>
 
             <label class="label">通道国标码：</label>
             <el-input v-model="item.gBCode"
@@ -433,10 +418,8 @@
              :key="index">
           <label class="label">报警输出{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in alarmOutOptions"
                        :key="item.value"
@@ -444,12 +427,10 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
-                     v-if="isVideo&&isLocal"
                      @change="gogo"
                      multiple>
             <el-option v-for="item in abilityOption"
@@ -459,8 +440,7 @@
             </el-option>
           </el-select>
 
-          <div class='videoSetingaa'
-               v-if="isVideo&&isLocal">
+          <div class='videoSetingaa'>
 
             <label class="label">通道国标码：</label>
             <el-input v-model="item.gBCode"
@@ -533,11 +513,9 @@
              :key="index">
           <label class="label">相机{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -545,13 +523,11 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      multiple>
             <el-option v-for="item in abilityOption"
                        :key="item.value"
@@ -560,8 +536,7 @@
             </el-option>
           </el-select>
 
-          <div class='videoSetingaa'
-               v-if="isVideo&&isLocal">
+          <div class='videoSetingaa'>
 
             <label class="label">通道国标码：</label>
             <el-input v-model="item.gBCode"
@@ -634,11 +609,9 @@
              :key="index">
           <label class="label">枪机{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -646,13 +619,11 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      multiple>
             <el-option v-for="item in abilityOption"
                        :key="item.value"
@@ -661,8 +632,7 @@
             </el-option>
           </el-select>
 
-          <div class='videoSetingaa'
-               v-if="isVideo&&isLocal">
+          <div class='videoSetingaa'>
 
             <label class="label">通道国标码：</label>
             <el-input v-model="item.gBCode"
