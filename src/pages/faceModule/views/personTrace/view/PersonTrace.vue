@@ -5,6 +5,7 @@
         <pic-upload @addImage="addImage"
                     :imageUrl="imageUrl"
                     @deleteImage="deleteImage"
+                    ref="picUpload"
                     height="125px" />
         <div class="input">
           <div class="line-one">
@@ -152,7 +153,9 @@ export default {
         this.menuData.forEach(v => {
           this.$set(v, "checked", false);
         });
-        this.clickMenuList(this.menuData[0], 0);
+        if (this.itemData.length !== 0) {
+          this.clickMenuList(this.menuData[0], 0);
+        }
       }
     },
     clickMenuList(item, index) {
@@ -334,20 +337,28 @@ export default {
       this.itemData = [];
       this.imageUrl = "";
       this.imageBase64 = "";
+      this.$refs.picUpload.imageFile = "";
+      this.$refs.picUpload.isDisabled = false;
       this.similarity = 80;
       this.staffLimit = 2;
       this.libraryType = "systemFaceLib,staticFaceLib,dynamicFaceLib";
+      this.menuData = [];
+      this.traceData = [];
+      this.pois = [];
+      this.samePlaArr = [];
+      this.isShowSamePlaDialog = false;
     },
     deleteImage() {
       this.imageUrl = "";
       this.imageBase64 = "";
+      this.$refs.picUpload.imageFile = "";
+      this.$refs.picUpload.isDisabled = false;
     }
   },
   watch: {},
   destroyed() {},
   activated() {
     if (this.$route.query.imgObj) {
-      console.log(this.$route.query.imgObj);
       this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
       this.$common.imageToBase64(this.imageUrl, base64 => {
         this.imageBase64 = base64;
