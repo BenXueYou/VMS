@@ -65,7 +65,7 @@
 						@mouseover="mymouseover"
 						@mouseout="mymouseout"
 						@mousemove="mymousemove"
-						class="asidFontClass"
+						class="asidFontClass textclipsClass"
 					>{{recoginizeItem.channelName||'通道名称'}}</div>
 					<div
 						@mouseover="mymouseover"
