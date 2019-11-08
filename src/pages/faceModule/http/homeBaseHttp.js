@@ -30,6 +30,6 @@ export function getRtspUrlByChannelUuidApi(data) {
   return Axios({
     method: "GET",
     url,
-    data: data
+    params: data
   });
 }

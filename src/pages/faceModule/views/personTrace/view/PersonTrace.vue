@@ -3,6 +3,8 @@
     <div class="main-container">
       <div class="select-box">
         <pic-upload @addImage="addImage"
+                    :imageUrl="imageUrl"
+                    @deleteImage="deleteImage"
                     height="125px" />
         <div class="input">
           <div class="line-one">
@@ -27,30 +29,27 @@
               <el-radio-button label="thisMonth">本月</el-radio-button>
             </el-radio-group>
             <span class="topTitleTxt left-space">抓拍设备：</span>
-            <elPopverTree :channelInfoList="deviceList"
-                          :elPopoverClass="faceRecordPopoverClass"
-                          :checkedChannelKeys="checkedChannelKeys"
+            <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                           @transferCheckedChannel="transferCheckedChannel"
-                          inputWidth="200px"
-                          @show="popverShow"
-                          @hide="popverHidden"></elPopverTree>
+                          :isCheckedAll="true"
+                          inputWidth="200px"></elPopverTree>
             <span class="topTitleTxt left-space">对比库：</span>
             <el-radio-group v-model="libraryType"
-                            @change="handleTypeChange"
                             style="margin: 4px 0 0 0.5%;">
-              <el-radio label="face">人脸库</el-radio>
-              <el-radio label="capture"
-                        style="margin-left: -7px;">抓拍库</el-radio>
+              <template v-for="(item, index) in libraryTypeOption">
+                <el-radio :label="item.typeStr"
+                          :key="index">{{item.typeName}}</el-radio>
+              </template>
             </el-radio-group>
           </div>
           <div class="line-two">
             <span class="topTitleTxt">相似度不低于：</span>
-            <el-input v-model="travelTogetherFrequency"
+            <el-input v-model="similarity"
                       class="time-interal"
                       type="number"></el-input>
             <span class="timeText">%</span>
             <span class="topTitleTxt left-space">搜索结果显示前：</span>
-            <el-input v-model="travelTogetherChannel"
+            <el-input v-model="staffLimit"
                       class="time-interal"
                       type="number"></el-input>
             <span class="timeText">个</span>
@@ -59,13 +58,47 @@
                        size="small"
                        class="left-space"
                        icon="el-icon-search">开始搜索</el-button>
-            <el-button @click="queryAct"
+            <el-button @click="resetData"
                        type="primary"
                        size="small">重置</el-button>
           </div>
         </div>
       </div>
-      <div class="content-box" id="allmap">
+      <div class="content-box">
+        <div class="map-box"
+             id="allmap">
+        </div>
+        <div class="menu-list">
+          <div class="list-title">满足条件人员</div>
+          <template v-for="(item, index) in menuData">
+            <div :key="index"
+                 class="menu-item"
+                 @click="clickMenuList(item, index)"
+                 :style="item.checked ? 'background: rgba(0, 0, 0, 0.3);border: 1px solid rgba(38, 211, 157, 0.3);' : 'border: 1px solid transparent;'">
+              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                   width="120px"
+                   height="120px">
+              <div class="num-text">{{item.similarity}}%</div>
+            </div>
+          </template>
+        </div>
+        <div class="same-place"
+             v-if="isShowSamePlaDialog">
+          <div class="same-place-inner">
+            <template v-for="(item, index) in samePlaArr">
+              <div :key="index"
+                  class="same-item">
+                  <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')" width="120px" height="120px">
+                  <div style="color: #26D39D;">{{item.similarity}}%</div>
+                  <div>{{item.channelName}}</div>
+                  <div>{{item.snapshotTime}}</div>
+              </div>
+            </template>
+          </div>
+          <div class="close" @click="closeSamePlaDialog">
+            <img src="@/assets/images/faceModule/close.png" width="20px" height="20px">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -75,6 +108,7 @@
 import PicUpload from "@/common/PicUpload";
 import FellowItem from "@/pages/faceModule/views/companion/view/FellowItem";
 import ElPopverTree from "@/pages/faceModule/components/ElPopverTree";
+import * as Overlay from '@/utils/BlockItemOverlay.js';
 
 export default {
   components: {
@@ -88,27 +122,99 @@ export default {
       selectDate: "",
       startTime: "",
       endTime: "",
-      deviceList: [],
-      faceUuid: "",
-      fellowItemData: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
-      channelUuids: null,
-      captureInterval: 10,
-      travelTogetherFrequency: 1,
-      travelTogetherChannel: 1,
-      isLoading: false,
-      checkedChannelKeys: [],
-      libraryType: "face"
+      itemData: [],
+      faceRecordPopoverClass: "companionPopoverClass",
+      channelUuids: [],
+      similarity: 80,
+      staffLimit: 2,
+      libraryType: "systemFaceLib,staticFaceLib,dynamicFaceLib",
+      libraryTypeOption: [],
+      imageUrl: "",
+      imageBase64: "",
+      menuData: [],
+      traceData: [],
+      pois: [],
+      samePlaArr: [],
+      isShowSamePlaDialog: false,
     };
   },
   created() {},
   mounted() {
     this.initData();
-    // this.queryAct();
   },
   methods: {
+    getMenuData() {
+      this.menuData = [];
+      if (this.itemData) {
+        this.itemData.forEach(v => {
+          this.menuData.push(v[0]);
+        });
+        this.menuData.forEach(v => {
+          this.$set(v, "checked", false);
+        });
+        this.clickMenuList(this.menuData[0], 0);
+      }
+    },
+    clickMenuList(item, index) {
+      this.menuData.forEach(v => {
+        this.$set(v, "checked", false);
+      });
+      this.$set(item, "checked", true);
+      this.traceData = [];
+      this.traceData = this.itemData[index];
+      this.setMapShow();
+    },
+    setMapShow() {
+      /* eslint-disable */
+      this.map.clearOverlays();
+      this.pois = [];
+      this.traceData.forEach(v => {
+        let pt = new BMap.Point(v.longitude, v.latitude);
+        this.pois.push(pt);
+        let myIcon = new BMap.Icon(
+          require("@/assets/images/faceModule/trace.png"),
+          new BMap.Size(48, 60)
+        );
+        let marker = new BMap.Marker(pt, { icon: myIcon });
+        marker.setOffset(new BMap.Size(0, -30));
+        this.map.addOverlay(marker);
+        let ItemOverlay = new Overlay.ItemOverlay(pt, v);
+        this.map.addOverlay(ItemOverlay);
+        ItemOverlay.addEventListener("click", ()=> {
+          this.getSamePlaceArr(v.longitude, v.latitude);
+          this.isShowSamePlaDialog = true;
+        });
+      });
+      let sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_CLOSED_ARROW, {
+        scale: 0.8, //图标缩放大小
+        strokeColor: "#E63434", //设置矢量图标的线填充颜色
+        strokeWeight: "3" //设置线宽
+      });
+      let icons = new BMap.IconSequence(sy, "50", "90");
+      // 创建polyline对象
+      let polyline = new BMap.Polyline(this.pois, {
+        icons: [icons],
+        strokeWeight: "2", //折线的宽度，以像素为单位
+        strokeOpacity: 0.8, //折线的透明度，取值范围0 - 1
+        strokeColor: "#E63434", //折线颜色
+        strokeStyle: "dashed"
+      });
+      this.map.addOverlay(polyline);
+    },
+    getSamePlaceArr(longitude, latitude) {
+      this.samePlaArr = [];
+      this.traceData.forEach(v => {
+        if (v.longitude === longitude && v.latitude === latitude) {
+          this.samePlaArr.push(v);
+        }
+      });
+    },
+    closeSamePlaDialog() {
+      this.isShowSamePlaDialog = false;
+      this.samePlaArr = [];
+    },
     addImage(picBaseUrl) {
-      console.log(picBaseUrl);
+      this.imageBase64 = picBaseUrl;
     },
     selectDateAct(dateStr) {
       let day = new Date();
@@ -166,113 +272,95 @@ export default {
           break;
       }
     },
-    handleTypeChange() {},
     initData() {
-      // this.faceUuid = "752ca559f1cc4733a9e0b9da59764787";
       this.startTime = this.$common.formatDate(
         new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
       );
       this.endTime = this.$common.formatDate(new Date());
-      // eslint-disable-next-line no-undef
-      let map = new BMap.Map("allmap");
-      map.centerAndZoom("上海", 15);
+      this.libraryTypeOption = this.$common.getEnumByGroupStr(
+        "face_h5_lib_group_type"
+      );
+      this.map = new BMap.Map("allmap", {
+        minZoom: 3,
+        maxZoom: 19,
+        enableMapClick: false
+      });
+      this.map.centerAndZoom("上海", 19);
+      this.map.enableScrollWheelZoom();
     },
     queryAct() {
-      if (!this.$route.query.imgObj) {
+      if (!this.imageBase64) {
         this.$cToast.warn("请添加图片");
       } else {
-        this.getCompanionList();
+        this.getTragicList();
       }
-    },
-    onClickTurnToGetFace() {
-      this.$router.push("/FaceRecord");
-    },
-    getDeviceList() {
-      // var deviceList = this.$store.getters.getDeviceList;
-      // this.deviceList = deviceList;
-      // this.$store.dispatch("getDeviceList", false).then(res => {
-      //   if (res.result === 0) {
-      //     this.deviceList = res.data;
-      //   } else {
-      //     this.$message({ message: "更新设备列表失败", type: "warning" });
-      //   }
-      // });
     },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
-      if (!checkedChannel || checkedChannel.length === 0) {
-        this.getChannelUuids(this.deviceList);
-      } else {
-        for (var i = 0; i < checkedChannel.length; i++) {
-          this.channelUuids.push(checkedChannel[i].id);
-        }
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    getChannelUuids(data) {
-      if (!data) {
-        return;
-      }
-      for (let item of data) {
-        this.channelUuids.push(item.id);
-        this.getChannelUuids(item.children);
-      }
-    },
-    popverShow() {},
-    popverHidden() {},
-    getCompanionList() {
-      this.isLoading = true;
+    getTragicList() {
       this.$factTragicHttp
-        .getCompanionList({
-          faceUuid: this.$route.query.imgObj.faceUuid,
-          channelUuids: this.channelUuids,
+        .getTragicList({
+          imageBase64: this.imageBase64,
+          faceUuid: this.$route.query.imgObj ? this.$route.query.imgObj.faceUuid : "",
+          // faceUuid: "28334ca055b54a428fc6c63e56d24da4",
           startTime: this.startTime,
           endTime: this.endTime,
-          captureInterval: this.captureInterval,
-          travelTogetherFrequency: this.travelTogetherFrequency,
-          travelTogetherChannel: this.travelTogetherChannel
+          channelUuidList: this.channelUuids,
+          libraryType: this.libraryType,
+          similarity: this.similarity,
+          staffLimit: this.staffLimit
         })
         .then(res => {
           let body = res.data;
-          this.getCompanionListSuccess(body);
-          this.isLoading = false;
-        })
-        .catch(() => {
-          this.isLoading = false;
+          this.getTragicListSuccess(body);
         });
     },
-    getCompanionListSuccess(data) {
-      this.fellowItemData = data.body.data;
-      if (data.body.data.length === 0) {
-        this.$cToast.success("暂无同行人分析记录！");
+    getTragicListSuccess(body) {
+      this.itemData = body.data;
+      this.setMapCenter();
+      this.getMenuData();
+    },
+    setMapCenter() {
+      if (this.itemData.length !== 0) {
+        this.map.setCenter(new BMap.Point(this.itemData[0][0].longitude, this.itemData[0][0].latitude));
       }
     },
     resetData() {
-      this.fellowItemData = [];
       this.initData();
+      this.itemData = [];
+      this.imageUrl = "";
+      this.imageBase64 = "";
+      this.similarity = 80;
+      this.staffLimit = 2;
+      this.libraryType = "systemFaceLib,staticFaceLib,dynamicFaceLib";
+    },
+    deleteImage() {
+      this.imageUrl = "";
+      this.imageBase64 = "";
     }
   },
   watch: {},
   destroyed() {},
   activated() {
-    this.getDeviceList();
-    this.resetData();
-    this.checkedChannelKeys = [];
-    this.channelUuids = [];
     if (this.$route.query.imgObj) {
-      this.checkedChannelKeys.push(this.$route.query.imgObj.channeluuid);
-      this.channelUuids = this.$common.copyArray(
-        this.checkedChannelKeys,
-        this.channelUuids
-      );
+      console.log(this.$route.query.imgObj);
+      this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
+      this.$common.imageToBase64(this.imageUrl, base64 => {
+        this.imageBase64 = base64;
+      });
     }
   }
 };
 </script>
 
 <style lang="scss">
-.faceRecordPopoverClass {
-  width: 50%;
-  height: 45%;
+.companionPopoverClass {
+  width: 500px;
+  height: 230px;
   position: absolute;
   background: #202127;
   min-width: 150px;
@@ -322,7 +410,7 @@ export default {
     width: 100%;
     height: 100%;
     .select-box {
-      height: 20%;
+      height: 165px;
       padding: 1% 3%;
       box-sizing: border-box;
       display: flex;
@@ -376,17 +464,91 @@ export default {
       }
     }
     .content-box {
-      height: 80%;
+      height: calc(100% - 165px);
       border-radius: 3px;
-      .title {
-        display: flex;
-        align-items: center;
-        height: 8%;
-        .title-text {
+      position: relative;
+      overflow: hidden;
+      .map-box {
+        width: 100%;
+        height: 100%;
+      }
+      .menu-list {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: #25292d;
+        border-radius: 2px;
+        width: 160px;
+        max-height: 93%;
+        overflow-y: auto;
+        padding: 8px 6px;
+        box-sizing: border-box;
+        .list-title {
           font-family: PingFangSC-Regular;
-          font-size: 14px;
+          font-size: 13px;
           color: #ffffff;
-          margin-left: 20px;
+          width: 100%;
+          text-align: center;
+        }
+        .menu-item {
+          width: 140px;
+          height: 160px;
+          margin-top: 12px;
+          margin-left: 3px;
+          padding: 10px;
+          box-sizing: border-box;
+          cursor: pointer;
+          .num-text {
+            width: 100%;
+            text-align: center;
+            font-family: PingFangSC-Regular;
+            font-size: 12px;
+            color: #26d39d;
+            letter-spacing: 0;
+            margin-top: 3px;
+          }
+        }
+      }
+      .same-place {
+        width: 480px;
+        padding: 15px 0px 15px 15px;
+        box-sizing: border-box;
+        background: #25292D;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.20);
+        border-radius: 2px;
+        position: absolute;
+        right: 30px;
+        top: 30px;
+        .same-place-inner {
+          max-height: 450px;
+          overflow-y: auto;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-flow: row wrap;
+          align-content: flex-start;
+          .same-item {
+            border: 1px #2E3135 solid;
+            border-radius: 2px;
+            background: rgba($color: #000000, $alpha: 0.1);
+            width: 140px;
+            height: 190px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding: 5px;
+            box-sizing: border-box;
+            font-family: PingFangSC-Regular;
+            font-size: 12px;
+            color: #DDDDDD;
+            letter-spacing: 0;
+            text-align: center;
+          }
+        }
+        .close {
+          position: absolute;
+          right: -8px;
+          top: -8px;
+          cursor: pointer;
         }
       }
     }

@@ -9,15 +9,17 @@ function CVideo(observer)
     this.m_speed        = null;
     this.m_width        = null;
     this.m_height       = null;
+    this.m_file         = null;
 }
 
-CVideo.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h)
+CVideo.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h, file)
 {
     this.m_canvas = canvas;
     this.m_action = action;
     this.m_speed = speed;
     this.m_width = w;
     this.m_height = h;
+    this.m_file = file;
     this.m_session = new CSession(jSignal, jMedia, url, protocol, action, speed, this);
     let ret = await this.m_session.setup();
 
@@ -42,7 +44,9 @@ CVideo.prototype.onSdp = function(sdp)
     {
         // 下载需要下载模块
         // fix: 下载模块暂未实现
-        this.m_download = new CDownload(Date().toString());
+        if (this.m_file == undefined)
+            this.m_file = Date().toString();
+        this.m_download = new CDownload(this.m_file);
     }
     else
     {

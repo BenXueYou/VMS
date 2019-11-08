@@ -32,6 +32,14 @@ export var FactTragicHttp = {
     }
     return axios.get(api, { params: data });
   },
+  getTragicList(holder) {
+    let api = `${RestApi.api.faceModuleAPi.getTragicList}`;
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.post(api, data);
+  },
 };
 
 function install(Vue) {
