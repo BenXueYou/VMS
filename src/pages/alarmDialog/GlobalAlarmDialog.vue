@@ -46,7 +46,7 @@
 				</div>
 				<div class="rightTxtBox">
 					<div>{{dialogParama.staffName||'姓名'}}</div>
-					<div>{{dialogParama.staffType||'人员类型'}}</div>
+					<div>{{$common.getEnumItemName('staff_t',dialogParama.staffType)||'人员类型'}}</div>
 					<div>{{dialogParama.faceLibraryName||'所属库'}}</div>
 					<!-- <div>{{dialogParama.householdType||'住户类型'}}</div> -->
 					<div>{{dialogParama.channelName||'抓拍通道'}}</div>
@@ -162,8 +162,8 @@ export default {
     // 查询识别记录
     getRecoginizedList() {
       var data = {
-        limit: 1, // int每页显示行数是
-        page: 8, // int第几页是
+        limit: 8, // int每页显示行数是
+        page: 1, // int第几页是
         faceUuid: this.dialogParama.faceUuid
       };
       api
