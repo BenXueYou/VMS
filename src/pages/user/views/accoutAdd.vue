@@ -46,8 +46,11 @@
          v-show="time==='shorttime'">
       <label for=""></label>
       <div class="aa">
-        <el-input style="width:220px"
-                  v-model="invalidTime"></el-input>
+        <el-date-picker v-model="invalidTime"
+                        type="datetime"
+                        style="width:220px"
+                        placeholder="选择日期时间">
+        </el-date-picker>
       </div>
     </div>
     <div class="k-form">
@@ -86,7 +89,7 @@
       <div class="aa">
         <el-button type="text"
                    size="small"
-                   @click="addFunction"
+                   @click="getResource"
                    icon="el-icon-circle-plus-outline">新增</el-button>
         <div>
           <gt-button v-for="(item,index) in resourceAuth"
@@ -213,6 +216,12 @@ export default {
     addFunction() {
       this.authTreeVisible = true;
     },
+    getResource() {
+      api.getResource({
+        roleUuid: this.roleUuid,
+        resourceType: ""
+      });
+    },
     saveAndAdd() {
       this.submit(false);
     },
@@ -235,15 +244,13 @@ export default {
     rebaseData() {
       let data = {
         roleName: this.roleName, // 角色名称
-        invalidTime: this.invalidTime, // 到期时间，当类型为短期时传时间字符串，永久时传枚举值
+        invalidTime: this.time === "forever" ? "long" : this.invalidTime, // 到期时间，当类型为短期时传时间字符串，永久时传枚举值
         description: this.description, // 角色描述
         enable: this.enable === "enable" ? 1 : 0, // 0禁用、1启用
-        featureAuthUuids: this.account.map(i => {
-          return i.featureUuid;
-        }),
+        featureAuthUuids: this.featureAuthUuids,
         // 关联的功能模块
         resourceAuthUuids: this.resourceAuth, // 关联的通道资源
-        accountUuids: this.featureAuth.map(i => {
+        accountUuids: this.account.map(i => {
           return i.accountUuid;
         }) // 账号uuid列表
       };
@@ -314,7 +321,7 @@ export default {
           // ]
           this.roleName = data.roleName;
           this.enable = parseInt(data.enable) === 1 ? "enable" : "disable";
-          if (!data.invalidTime) {
+          if (!data.invalidTime || data.invalidTime === "long") {
             this.time = "forever";
           } else {
             this.time = "shorttime";

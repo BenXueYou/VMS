@@ -24,6 +24,10 @@ export default {
   // 分配账号
   distruiAccoutUrl: `${httpHeader}/account/role`,
   // 变更角色状态
+  // 获取角色功能模块权限树
+  getAuthUrl: `${httpHeader}/role/feature/auth`,
+  // 获取角色资源模块权限
+  getResourceUrl: `${httpHeader}/role/resource/authh`,
   updateUserStatusUrl: `${httpHeader}/role/status`,
   // 获取用户的菜单
   getHomeMenuUrl: `${httpHeader}/account/menu`,

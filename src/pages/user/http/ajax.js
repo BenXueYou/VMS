@@ -29,6 +29,14 @@ export function getAuth(params) {
     params
   });
 }
+export function getResource(params) {
+  let { getResourceUrl: url } = userUrl;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
 export function getUserList(params) {
   console.log(params);
   let { getUserListUrl: url } = userUrl;
