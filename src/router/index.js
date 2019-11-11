@@ -131,14 +131,7 @@ export const constantRouterMap = [
     name: "MainLayout",
     component: MainLayout,
     redirect: "Home",
-    children: [
-      {
-        path: "/Home",
-        name: "Home",
-        component: Home,
-        title: "首页"
-      }
-    ]
+    children:allChildrenRouter
   },
   {
     path: "/Login",

@@ -86,8 +86,19 @@
 					</div>
 					<div>角色：</div>
 				</div>
-				<div class="bodyBoxDiv cursorClass" @click="addRoleBtn">
-					<img class="img" src="@/assets/images/add.png" alt srcset />新增
+				<div>
+					<div class="bodyBoxDiv addRoleBtnClass cursorClass" @click="addRoleBtn">
+						<img class="img" src="@/assets/images/add.png" alt srcset />新增
+					</div>
+					<div>
+						<gt-button
+							:icon="icons.door"
+							v-for="(item,index) in rowData.roleUuids || []"
+							class="person"
+							:key="index"
+							:show-close="false"
+						>{{item.roleName}}</gt-button>
+					</div>
 				</div>
 			</div>
 			<div class="footerClass">
@@ -111,11 +122,21 @@
 // import api from "@/pages/faceModule/api.js";
 import tabTreeTag from "@/common/TabTreeTag";
 import treePanelDialog from "@/pages/user/components/treePanelDialog";
+import tagView from "@/common/Tag.vue";
+import icons from "@/common/js/icon.js";
 export default {
-  components: { tabTreeTag, treePanelDialog },
-  props: {},
+  components: { tabTreeTag, treePanelDialog, tagView },
+  props: {
+    rowData: {
+      type: Object,
+      default() {
+        return {};
+      }
+    }
+  },
   data() {
     return {
+      icons,
       showTreeAdd: false,
       systemStaffDialogVisible: false,
       tabs: [
@@ -179,7 +200,7 @@ export default {
     addRoleBtn() {
       // 分配角色 向父组件传值
       //   this.showTreeAdd = !this.showTreeAdd;
-      this.$emit('addRole');
+      this.$emit("addRole");
     },
     initData() {},
 
@@ -331,6 +352,12 @@ export default {
 			}
 			.bodyBoxDiv:first-child {
 				width: 24%;
+				min-width: 100px;
+			}
+			.addRoleBtnClass{
+				text-align: left;
+				line-height: 25px;
+				margin-bottom:10px;
 			}
 		}
 		.footerClass {

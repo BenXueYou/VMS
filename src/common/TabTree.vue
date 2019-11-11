@@ -182,7 +182,6 @@ export default {
       // 向父组件传值
     },
     checkedKeys(val) {
-      // debugger;
       // var tree = this.activeName;
       // this.$refs[tree][0].setCheckedKeys(val);
     },

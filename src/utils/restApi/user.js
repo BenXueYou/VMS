@@ -5,9 +5,9 @@ let ip = window.config.ip,
   projectUuid = store.state.home.projectUuid;
 let httpHeader = `${
   window.config.protocolHeader
-}${ip}/sppc_auth_v1/project/${projectUuid}`;
-httpHeader =
-  "http://192.168.9.166:15101/project/299fc6dfa7104483bcee8d71e59957cd";
+}${ip}/upms-v1/project/${projectUuid}`;
+// httpHeader =
+//   "http://192.168.9.166:15101/project/299fc6dfa7104483bcee8d71e59957cd";
 let httpAccountHeader = `${window.config.protocolHeader}${ip}/upms-v1/account`;
 export default {
   getAccoutUrl: `${httpHeader}`,
@@ -22,19 +22,23 @@ export default {
   // 删除角色
   deleteUserUrl: `${httpHeader}/role`,
   // 分配账号
-  distruiAccoutUrl: `${httpHeader}/account/role`,
+  distruiAccoutUrl: `${httpHeader}/role/account`,
   // 变更角色状态
   updateUserStatusUrl: `${httpHeader}/role/status`,
   // 获取用户的菜单
   getHomeMenuUrl: `${httpHeader}/account/menu`,
+
   accountApi: {
     addAccountApi: `${httpAccountHeader}`,
     getAccountListApi: `${httpAccountHeader}`,
+    getAccountDetailApi: `${httpAccountHeader}/detail`,
     putAccountApi: accountUuid => `${httpAccountHeader}/${accountUuid}`,
     putAccountPWDApi: accountName =>
       `${httpAccountHeader}/updatePwd/${accountName}`,
     resetAccountPWDApi: `${httpAccountHeader}/resetPwd`,
     deleteAccountApi: `${httpAccountHeader}`,
-    switchAccountApi: `${httpAccountHeader}`
+    switchAccountApi: `${httpAccountHeader}`,
+    //账号分配角色
+    editRoleAccountApi:`${httpAccountHeader}/role`
   }
 };

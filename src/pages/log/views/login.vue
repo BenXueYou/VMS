@@ -25,20 +25,7 @@
 					</div>
 					<div class="leftgroupitem">
 						<span class="topTitleTxt">账号：</span>
-						<el-select
-							class="left-space time-interal"
-							v-model="accountName"
-							clearable
-							placeholder="账号"
-							size="small"
-						>
-							<el-option
-								v-for="item in accountOptions"
-								:key="item.typeStr"
-								:label="item.typeName"
-								:value="item.typeStr"
-							></el-option>
-						</el-select>
+						<el-input v-model="accountName" class="time-interal" size="small"></el-input>
 					</div>
 					<div class="leftgroupitem">
 						<span class="topTitleTxt">登陆IP：</span>
@@ -88,13 +75,15 @@
 				@selection-change="handleSelectionChange"
 			>
 				<el-table-column type="index" :index="tableIndex" label="序号" width="95"></el-table-column>
-				<el-table-column prop="visitorName" label="账号" width="120"></el-table-column>
-				<el-table-column prop="gender" label="姓名" width="128">
-					<template slot-scope="scope">{{$common.getEnumItemName("gender", scope.row.gender)}}</template>
+				<el-table-column prop="accountName" label="账号" width="120"></el-table-column>
+				<el-table-column prop="userName" label="姓名" width="128"></el-table-column>
+				<el-table-column prop="clientIp" label="登陆IP"></el-table-column>
+				<el-table-column prop="time" label="时间" :show-overflow-tooltip="true"></el-table-column>
+				<el-table-column prop="eventType" label="事件">
+					<template
+						slot-scope="scope"
+					>{{$common.getEnumItemName('system_log_event',scope.row.eventType)}}</template>
 				</el-table-column>
-				<el-table-column prop="phoneNo" label="登陆IP"></el-table-column>
-				<el-table-column prop="plateNo" label="时间" :show-overflow-tooltip="true"></el-table-column>
-				<el-table-column prop="reason" label="事件"></el-table-column>
 			</el-table>
 			<!----------------------------------表格分页器---------------------------------->
 			<div class="footer">
@@ -160,6 +149,7 @@ export default {
       console.log(that.pageSize);
     });
     // this.initData();
+    this.eventTypeOptions = this.$common.getEnumByGroupStr("system_log_event");
   },
   activated() {
     this.currentPage = 1;
@@ -173,7 +163,7 @@ export default {
         pageSize: this.pageSize,
         page: this.currentPage,
         accountName: this.accountName,
-        logType: "",
+        logType: "login",
         IP: this.loginIp,
         modelUuid: null,
         eventType: this.eventType
@@ -231,8 +221,7 @@ export default {
       return val < 10 ? "0" + val : val;
     }
   },
-  watch: {
-  },
+  watch: {},
   destroyed() {}
 };
 </script>

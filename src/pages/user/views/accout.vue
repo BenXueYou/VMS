@@ -92,6 +92,7 @@
 			v-show="addDialogVisible"
 			:checkedRoles="defaultRoleData"
 			@close="close"
+			:rowData="rowData"
 			@addRole="addRoleClick"
 		/>
 		<tree-panel-dialog
@@ -103,6 +104,7 @@
 			title="分配角色"
 			checkedText="已分配的角色"
 			@onConfirm="getCheckedRole"
+			@onCancel="showTreeAdd=false"
 		></tree-panel-dialog>
 		<reset-password :visible.sync="resetPasswordVisible" @confirm="resetPWD"></reset-password>
 		<confirm-dialog :visible.sync="isConfirm" title="提示" confirmText="是否删除账号" @confirm="deleteData"></confirm-dialog>
@@ -141,14 +143,36 @@ export default {
         label: "roleName",
         id: "roleUuid"
       },
-      checkedRoleList: []
+      checkedRoleList: [],
+      rowData: {}
     };
   },
   watch: {},
   methods: {
     getCheckedRole(arr) {
       console.log(arr);
-    //   this.defaultRoleData = arr;
+      this.defaultRoleData = arr;
+      this.editAccountRoleApi();
+    },
+    // 账号分配角色
+    editAccountRoleApi() {
+      let data = {
+        accountUuid: this.rowData.accountUuid, // 账号uuid
+        roleUuids: this.defaultRoleData.map((v, k) => {
+          return v.roleUuid;
+        })
+      };
+      api
+        .parcelRoleAccountApi(data)
+        .then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.msg);
+            this.initData();
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {});
     },
     selectchange(val) {
       console.log(val);
@@ -171,11 +195,43 @@ export default {
         .catch(() => {});
     },
     // 编辑
-    handleEditClick(rowData) {},
+    handleEditClick(rowData) {
+      this.rowData = rowData;
+      this.getAccountDetail(rowData);
+    },
     // 分配角色
-    addRoleClick() {
-      //   this.showTreeAdd = !this.showTreeAdd;
+    addRoleClick(rowData) {
+      this.rowData = rowData;
       this.getRoleList();
+    },
+    // 查详情
+    getAccountDetail(data) {
+      api
+        .getAccountDetail(data)
+        .then(res => {
+          if (res.data.success) {
+            this.addDialogVisible = !this.addDialogVisible;
+            this.rowData = res.data.data;
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {});
+    },
+    // 修改账户
+    putAccountApi(data) {
+      Object.assign(this.rowData, data);
+      api
+        .putAccountApi(this.rowData)
+        .then(res => {
+          if (res.data.success) {
+            this.$message.success(res.data.message);
+            this.initData();
+          } else {
+            this.$message.warning(res.data.message);
+          }
+        })
+        .catch(() => {});
     },
     // 获取分配角色弹窗内树列表数据
     getRoleList() {
@@ -196,7 +252,7 @@ export default {
     resetPWD(data) {
       console.log(data);
       if (!this.accountNames) {
-        this.$message.warning("请选择充值密码的账户");
+        this.$message.warning("请选择重置密码的账户");
         return;
       }
       api

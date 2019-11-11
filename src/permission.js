@@ -46,6 +46,7 @@ router.beforeEach((to, from, next) => {
               );
               router.addRoutes(routerData);
             }
+          }).catch(() => {
           });
       }
 

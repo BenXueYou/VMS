@@ -176,7 +176,9 @@ export default {
     },
     onClickConfirm() {
       console.log(this.checkedTreeList);
-      this.$emit("onConfirm", this.checkedTreeList.map(v => delete v.checked));
+      console.log(this.checkedTreeList.map(v => delete v.checked));
+      // this.$emit("onConfirm", this.checkedTreeList.map(v => delete v.checked));
+      this.$emit("onConfirm", this.checkedTreeList);
       this.$emit("onCancel");
     },
     onClickCancel() {
