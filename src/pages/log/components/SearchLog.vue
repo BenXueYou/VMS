@@ -6,7 +6,6 @@
 		</div>
 		<div class="form-item">
 			<label for>模块：</label>
-			<!-- <el-input class="input" v-model="gender"></el-input> -->
 			<el-select v-model="SearchObj.modelUuid" placeholder="请选择验证">
 				<el-option
 					v-for="item in modelUuidOptions"
@@ -78,7 +77,7 @@ export default {
     this.modelUuidOptions.unshift({ typeName: "全部", typeStr: null });
     this.SearchObj.modelUuid = this.modelUuidOptions[0].typeStr;
     this.eventTypeOptions = this.$common.getEnumByGroupStr(
-      "visitor_type"
+      "system_log_event"
     );
     this.eventTypeOptions.unshift({ typeName: "全部", typeStr: null });
     this.SearchObj.eventType = this.eventTypeOptions[0].typeStr;

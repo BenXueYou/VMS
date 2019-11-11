@@ -270,7 +270,6 @@ export default {
       if (this.vistorAIDetail && this.vistorAIDetail.staffType) {
         this.staffType = this.vistorAIDetail.staffType;
       }
-      //   debugger
       if (this.staffType === "resident") {
         // this.vistorAIDetail.staffUuid = "f5056126f7c14795a276cfab3909867e";
         this.detailResident(this.vistorAIDetail);

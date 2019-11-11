@@ -124,6 +124,16 @@ export function getAccountListApi(data) {
   });
 }
 
+// 账号详情
+export function getAccountDetail(data) {
+  let url = accountApi.getAccountDetailApi;
+  return axios({
+    method: 'GET',
+    url,
+    params: data
+  });
+}
+
 // put修改账号
 export function putAccountApi(data) {
   let url = accountApi.putAccountApi(data.accountUuid);
@@ -169,6 +179,17 @@ export function switchAccountApi(data) {
   let url = accountApi.switchAccountApi;
   return axios({
     method: "POST",
+    url,
+    data
+  });
+}
+
+// 账号分配角色
+
+export function parcelRoleAccountApi(data) {
+  let url = accountApi.editRoleAccountApi;
+  return axios({
+    method: 'POST',
     url,
     data
   });

@@ -144,7 +144,7 @@ export default {
         pageSize: this.pageSize,
         page: this.currentPage,
         accountName: this.accountName,
-        logType: '',
+        logType: 'config',
         IP: this.loginIp,
         modelUuid: null,
         eventType: this.eventType

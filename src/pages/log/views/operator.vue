@@ -51,15 +51,18 @@
 				@selection-change="handleSelectionChange"
 			>
 				<el-table-column type="index" :index="tableIndex" label="序号" width="95"></el-table-column>
-				<el-table-column prop="visitorName" label="账号" width="120"></el-table-column>
-				<el-table-column prop="gender" label="姓名" width="128">
-					<template slot-scope="scope">{{$common.getEnumItemName("gender", scope.row.gender)}}</template>
+				<el-table-column prop="accountName" label="账号" width="120"></el-table-column>
+				<el-table-column prop="userName" label="姓名" width="128">
 				</el-table-column>
-				<el-table-column prop="phoneNo" label="登陆IP"></el-table-column>
-				<el-table-column prop="plateNo" label="模块" :show-overflow-tooltip="true"></el-table-column>
-				<el-table-column prop="reason" label="类型"></el-table-column>
-				<el-table-column prop="reason" label="操作内容"></el-table-column>
-				<el-table-column prop="reason" label="操作时间"></el-table-column>
+				<el-table-column prop="clientIp" label="登陆IP"></el-table-column>
+				<el-table-column prop="moduleName" label="模块" :show-overflow-tooltip="true"></el-table-column>
+				<el-table-column prop="eventType" label="类型">
+					<template slot-scope="scope">
+						{{$common.getEnumItemName('system_log_event',scope.row.eventType)}}
+					</template>
+				</el-table-column>
+				<el-table-column prop="detail" label="操作内容"></el-table-column>
+				<el-table-column prop="time" label="操作时间"></el-table-column>
 			</el-table>
 			<!----------------------------------表格分页器---------------------------------->
 			<div class="footer">
@@ -134,7 +137,7 @@ export default {
         pageSize: this.pageSize,
         page: this.currentPage,
         accountName: this.accountName,
-        logType: '',
+        logType: 'operation',
         IP: this.loginIp,
         modelUuid: null,
         eventType: this.eventType
