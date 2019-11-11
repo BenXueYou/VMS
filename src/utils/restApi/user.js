@@ -7,8 +7,12 @@ let httpHeader = `${
   window.config.protocolHeader
 }${ip}/sppc_auth_v1/project/${projectUuid}`;
 httpHeader =
-  "http://192.168.9.166:15101/project/299fc6dfa7104483bcee8d71e59957cd";
+  "http://192.168.9.142:15101/project/299fc6dfa7104483bcee8d71e59957cd";
 let httpAccountHeader = `${window.config.protocolHeader}${ip}/upms-v1/account`;
+let zy = `${
+  window.config.protocolHeader
+}${ip}/basedata-v1/project/${projectUuid}`;
+
 export default {
   getAccoutUrl: `${httpHeader}`,
   // 获取角色列表
@@ -30,7 +34,11 @@ export default {
   getResourceUrl: `${httpHeader}/role/resource/authh`,
   updateUserStatusUrl: `${httpHeader}/role/status`,
   // 获取用户的菜单
-  getHomeMenuUrl: `${httpHeader}/account/menu`,
+  getHomeMenuUrl: `${
+    window.config.protocolHeader
+  }${ip}${httpHeader}/account/menu`,
+  // 获取关联通道树
+  getNewTreeUrl: `${zy}/auth/organization/tree`,
   accountApi: {
     addAccountApi: `${httpAccountHeader}`,
     getAccountListApi: `${httpAccountHeader}`,

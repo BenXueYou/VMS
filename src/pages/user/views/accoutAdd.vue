@@ -153,6 +153,7 @@
                @confirm="setFeatureData">
 
     </auth-tree>
+    <resouce-tree :visible.sync="showResouce"></resouce-tree>
   </div>
 </template>
 
@@ -160,11 +161,13 @@
 import * as api from "@/pages/user/http/ajax.js";
 import treePanelDialog from "@/pages/user/components/treePanelDialog";
 import authTree from "@/pages/user/components/authTree";
+import resouceTree from "@/pages/user/components/resouceTree";
 export default {
   name: "accountAdd",
   components: {
     treePanelDialog,
-    authTree
+    authTree,
+    resouceTree
   },
   props: {
     roleUuid: {
@@ -182,6 +185,7 @@ export default {
   },
   data() {
     return {
+      showResouce: false,
       showtreeadad: false,
       authTreeVisible: false,
       enable: "enable",
@@ -217,10 +221,11 @@ export default {
       this.authTreeVisible = true;
     },
     getResource() {
-      api.getResource({
-        roleUuid: this.roleUuid,
-        resourceType: ""
-      });
+      this.showResouce = true;
+      // api.getResource({
+      //   roleUuid: this.roleUuid,
+      //   resourceType: ""
+      // });
     },
     saveAndAdd() {
       this.submit(false);

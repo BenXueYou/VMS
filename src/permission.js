@@ -46,6 +46,14 @@ router.beforeEach((to, from, next) => {
               );
               router.addRoutes(routerData);
             }
+          })
+          .catch(() => {
+            let routerData = getRoute([], true);
+            window.localStorage.setItem(
+              "routerData",
+              JSON.stringify(routerData)
+            );
+            router.addRoutes(routerData);
           });
       }
 
