@@ -8,8 +8,10 @@ var DEBUG = "TEST";
 if (DEBUG == "DEBUG") {
   // 测试环境
   // ip = '180.167.210.2:51880';
-  ip = "192.168.9.190:15000";
-  websocketIp = "192.168.9.190:15007";
+  // ip = "192.168.9.190:15000";
+  // websocketIp = "192.168.9.190:15007";
+  ip = "192.168.9.141:15000";
+  websocketIp = "192.168.9.67:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -17,9 +19,9 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  ip = "192.168.9.141:15000";
+  ip = "192.168.9.94:15000";
   // ip = '192.168.6.191:51880';
-  websocketIp = "192.168.9.67:15007";
+  websocketIp = "192.168.9.94:15007";
   imageUrl =
     protocolHeader +
     "//" +
