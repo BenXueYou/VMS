@@ -22,7 +22,7 @@
 							:value="item.typeStr"
 						></el-option>
 					</el-select>
-					<el-button icon="el-icon-search">检索</el-button>
+					<el-button icon="el-icon-search" @click="initData">检索</el-button>
 				</div>
 			</div>
 			<el-table
@@ -33,7 +33,12 @@
 				@selection-change="handleSelectionChange"
 			>
 				<el-table-column type="index" :index="tableIndex" label="序号" width="95">
-					<template slot-scope="scope">{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</template>
+					<template slot-scope="scope">
+						<el-checkbox
+							v-model="scope.row.checked"
+							@change="selectchange"
+						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
+					</template>
 				</el-table-column>
 				<el-table-column prop="accountName" label="账户" width="120"></el-table-column>
 				<el-table-column prop="staffName" label="姓名" width="120"></el-table-column>
@@ -49,9 +54,24 @@
 				<el-table-column prop="reason" label="操作">
 					<template slot-scope="scope">
 						<el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
-						<el-button @click="addRoleClick(scope.row)" type="text" size="small">分配角色</el-button>
-						<el-button @click="forbidBtnClick(scope.row)" type="text" size="small">禁用</el-button>
-						<el-button @click="deleteBtnClick(scope.row)" type="text" size="small">删除</el-button>
+						<el-button
+							@click="addRoleClick(scope.row)"
+							v-loading="showTreeAdd"
+							type="text"
+							size="small"
+						>分配角色</el-button>
+						<el-button
+							class="onOffBtnClass"
+							@click="forbidBtnClick(scope.row)"
+							type="text"
+							size="small"
+						>禁用</el-button>
+						<el-button
+							class="deleteBtnClass"
+							@click="deleteBtnClick(scope.row)"
+							type="text"
+							size="small"
+						>删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -68,7 +88,12 @@
 				></el-pagination>
 			</div>
 		</div>
-		<account-add v-show="addDialogVisible" @close="close" @addRole="addRoleClick" />
+		<account-add
+			v-show="addDialogVisible"
+			:checkedRoles="defaultRoleData"
+			@close="close"
+			@addRole="addRoleClick"
+		/>
 		<tree-panel-dialog
 			:treeData="roleDataList"
 			:initSelectData="defaultRoleData"
@@ -77,8 +102,10 @@
 			:isShow.sync="showTreeAdd"
 			title="分配角色"
 			checkedText="已分配的角色"
+			@onConfirm="getCheckedRole"
 		></tree-panel-dialog>
 		<reset-password :visible.sync="resetPasswordVisible" @confirm="resetPWD"></reset-password>
+		<confirm-dialog :visible.sync="isConfirm" title="提示" confirmText="是否删除账号" @confirm="deleteData"></confirm-dialog>
 	</div>
 </template>
 <script>
@@ -86,12 +113,16 @@ import AccountAdd from "../components/accountAdd.vue";
 import treePanelDialog from "@/pages/user/components/treePanelDialog";
 import * as api from "../http/ajax";
 import resetPassword from "@/pages/user/components/resetPassword";
+import ConfirmDialog from "@/common/ConfirmDialog";
 export default {
   name: "accout",
-  components: { AccountAdd, treePanelDialog, resetPassword },
-  mounted() {},
+  components: { AccountAdd, treePanelDialog, resetPassword, ConfirmDialog },
+  mounted() {
+    this.initData();
+  },
   data() {
     return {
+      isConfirm: false,
       resetPasswordVisible: false,
       showTreeAdd: false,
       tableData: [],
@@ -109,11 +140,19 @@ export default {
       defaultProps: {
         label: "roleName",
         id: "roleUuid"
-      }
+      },
+      checkedRoleList: []
     };
   },
   watch: {},
   methods: {
+    getCheckedRole(arr) {
+      console.log(arr);
+    //   this.defaultRoleData = arr;
+    },
+    selectchange(val) {
+      console.log(val);
+    },
     initData() {
       let data = {
         staffName: this.staffName,
@@ -135,7 +174,7 @@ export default {
     handleEditClick(rowData) {},
     // 分配角色
     addRoleClick() {
-      this.showTreeAdd = !this.showTreeAdd;
+      //   this.showTreeAdd = !this.showTreeAdd;
       this.getRoleList();
     },
     // 获取分配角色弹窗内树列表数据
@@ -147,6 +186,7 @@ export default {
         })
         .then(res => {
           if (res.data.success) {
+            this.showTreeAdd = !this.showTreeAdd;
             let data = res.data.data || {};
             this.roleDataList = data.list || [];
           }
@@ -172,10 +212,20 @@ export default {
         .catch(() => {});
     },
     // 禁用
-    forbidBtnClick(rowData) {},
+    forbidBtnClick(rowData) {
+      this.accountUuids = [rowData.accountUuid];
+      this.switchData(0);
+    },
     switchData(enable) {
+      if (!this.accountUuids.length) {
+        this.$message.warning("请选择账号！");
+        return;
+      }
       api
-        .switchAccountApi({ accountUuids: this.accountUuids, enable: enable })
+        .switchAccountApi({
+          accountUuids: this.accountUuids.toString(),
+          enable: enable
+        })
         .then(res => {
           if (res.data.success) {
             this.$message({ type: "success", message: res.data.msg });
@@ -188,15 +238,16 @@ export default {
     },
     // 批量删除
     volumeDelete() {
-      this.deleteData(this.accountUuids);
+      this.isConfirm = !this.isConfirm;
     },
     // 删除
     deleteBtnClick(rowData) {
-      this.deleteData([rowData.accountUuid]);
+      this.accountUuids = [rowData.accountUuid];
+      this.isConfirm = !this.isConfirm;
     },
-    deleteData(accountUuids) {
+    deleteData() {
       api
-        .deleteAccountApi({ accountUuids: accountUuids })
+        .deleteAccountApi({ accountUuids: this.accountUuids })
         .then(res => {
           if (res.data.success) {
             this.$message({ type: "success", message: res.data.msg });
@@ -303,6 +354,17 @@ export default {
 		}
 		.tableBoxClass {
 			height: calc(100% - 100px);
+			overflow: auto;
+			.onOffBtnClass {
+				font-family: "PingFangSC-Regular";
+				font-size: 13px;
+				color: #ffba22;
+			}
+			.deleteBtnClass {
+				font-family: "PingFangSC-Regular";
+				font-size: 13px;
+				color: #ff5f5f;
+			}
 		}
 		.footer {
 			text-align: right;
