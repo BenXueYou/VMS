@@ -4,12 +4,14 @@ var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
 var Authorization = "Basic YXBwOjEyMzQ1Ng==";
-var DEBUG = "TEST";
+var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
   // ip = '180.167.210.2:51880';
-  ip = "192.168.9.190:15000";
-  websocketIp = "192.168.9.190:15007";
+  // ip = "192.168.9.190:15000";
+  // websocketIp = "192.168.9.190:15007";
+  ip = "192.168.9.141:15000";
+  websocketIp = "192.168.9.67:15007";
   imageUrl =
     protocolHeader +
     "//" +
