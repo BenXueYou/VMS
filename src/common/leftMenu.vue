@@ -87,13 +87,23 @@
 							<el-menu-item index="/FaceManage/PersonCompareCount">比对统计</el-menu-item>
 							<el-menu-item index="/FaceManage/ModuleCount">模型统计</el-menu-item>
 						</el-submenu>
-						<el-menu-item index="/FaceManage/Settings" :class="{isActive:($route.path == '/Settings')}" class>
+						<el-submenu index="/FaceManage/Setting">
+							<div class="menuItemTitle" slot="title">
+								<div class="images">
+									<img
+										:src="recordAnalysisImgSrc?require('@/assets/images/faceModule/setting_select.png'):require('@/assets/images/faceModule/setting_icon.png')"
+									/>
+								</div>设置
+							</div>
+							<el-menu-item index="/FaceManage/Settings">基础设置</el-menu-item>
+						</el-submenu>
+						<!-- <el-menu-item index="/FaceManage/Settings" :class="{isActive:($route.path == '/Settings')}" class>
 							<div class="images">
 								<img
 									:src="$route.path == '/FaceControl'?require('@/assets/images/faceModule/setting_select.png'):require('@/assets/images/faceModule/setting_icon.png')"
 								/>
 							</div>设置
-						</el-menu-item>
+						</el-menu-item> -->
 					</div>
 				</el-menu>
 			</el-col>

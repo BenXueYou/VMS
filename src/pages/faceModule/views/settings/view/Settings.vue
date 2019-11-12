@@ -221,11 +221,12 @@ export default {
         this.audio = document.createElement("audio");
         this.audio.autoplay = "autoplay";
       }
-      if (this.audio && this.audio.src) {
+      if (this.audio && this.audio.src && this.audio.src === tag.soundUrl) {
         this.audio.pause();
+      } else {
         this.audio.src = tag.soundUrl;
+        this.audio.play();
       }
-      this.audio.play();
     },
     uploadBtnAct() {
       var input = document.createElement("input");
