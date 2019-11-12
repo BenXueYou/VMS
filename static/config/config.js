@@ -17,8 +17,8 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  ip = "192.168.9.141:15000";
-  // ip = '192.168.6.191:51880';
+  // ip = "192.168.9.141:15000";
+  ip = '192.168.6.111:15000';
   websocketIp = "192.168.9.67:15007";
   imageUrl =
     protocolHeader +

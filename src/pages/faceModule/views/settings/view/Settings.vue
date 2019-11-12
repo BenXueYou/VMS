@@ -26,10 +26,18 @@
 						</el-radio-group>
 					</p>
 					<div>
-						<el-input type="number" v-model="queryBody.captureInterval"></el-input>秒
+						<el-input
+							type="number"
+							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+							v-model="queryBody.captureInterval"
+						></el-input>秒
 					</div>
 					<div>
-						<el-input type="number" v-model="queryBody.similarity"></el-input>
+						<el-input
+							type="number"
+							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+							v-model="queryBody.similarity"
+						></el-input>
 					</div>
 				</div>
 			</div>
@@ -65,10 +73,18 @@
 				<div class="bodyBoxDiv">
 					<p class="warningTxt">注：缩短时间前期时间数据会消失</p>
 					<div>
-						<el-input type="number" v-model="queryBody.saveImageUriDay"></el-input>天
+						<el-input
+							type="number"
+							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+							v-model="queryBody.saveImageUriDay"
+						></el-input>天
 					</div>
 					<div>
-						<el-input type="number" v-model="queryBody.savePanoramauriDay"></el-input>天
+						<el-input
+							type="number"
+							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+							v-model="queryBody.savePanoramauriDay"
+						></el-input>天
 					</div>
 					<p>
 						<el-radio-group v-model="queryBody.saveAlarmImageType">
@@ -77,7 +93,11 @@
 						</el-radio-group>
 					</p>
 					<div v-if="!queryBody.saveAlarmImageType">
-						<el-input type="number" v-model="queryBody.savaAlarmIangeDay"></el-input>天
+						<el-input
+							type="number"
+							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+							v-model="queryBody.savaAlarmIangeDay"
+						></el-input>天
 					</div>
 				</div>
 			</div>
@@ -95,20 +115,21 @@ export default {
   data() {
     return {
       tags: [],
+      audio: null,
       queryBody: {
         projectUuid: null /* 项目uuid */,
         saveQualityLowerImage: 0 /* 抓拍质量无效图片是否保存 */,
         removeDuplicationImage: 0 /* 抓拍查重 */,
-        captureInterval: 0 /* 抓拍间隔 */,
-        similarity: 0 /* 相似度 */,
+        captureInterval: 10 /* 抓拍间隔 */,
+        similarity: 80 /* 相似度 */,
         alarmSound: [
           {
             soundName: null /* 声音名称 */,
             soundUrl: null /* 声音地址 */
           }
         ] /* 报警声音 */,
-        saveImageUriDay: 0 /* 人脸抓拍人脸图保存天数 */,
-        savePanoramauriDay: 0 /* 人脸抓全景图保存天数 */,
+        saveImageUriDay: 180 /* 人脸抓拍人脸图保存天数 */,
+        savePanoramauriDay: 180 /* 人脸抓全景图保存天数 */,
         saveAlarmImageType: 1 /* 人脸报警图片保存天数类型，true长期，false短期 */,
         savaAlarmIangeDay: 0 /* 人脸报警图片保存天数 */
       }
@@ -144,12 +165,25 @@ export default {
         savaAlarmIangeDay: 0 /* 人脸报警图片保存天数 */
       };
       Object.assign(data, this.queryBody);
+      data.savaAlarmIangeDay = data.savaAlarmIangeDay
+        .toString()
+        .replace(/^(0+)|[^\d]+/g, "");
+      data.savePanoramauriDay = data.savePanoramauriDay
+        .toString()
+        .replace(/^(0+)|[^\d]+/g, "");
+      data.saveImageUriDay = data.saveImageUriDay
+        .toString()
+        .replace(/^(0+)|[^\d]+/g, "");
+      data.captureInterval = data.captureInterval
+        .toString()
+        .replace(/^(0+)|[^\d]+/g, "");
+      data.similarity = data.similarity.toString().replace(/^(0+)|[^\d]+/g, "");
       data.alarmSound = this.tags;
       api
         .postFaceModuleConfig(data)
         .then(res => {
           if (res.data.success) {
-            this.$message.success(res.data.msg);
+            this.$message.success("保存成功");
           } else {
             this.$message.warning(res.data.msg);
           }
@@ -181,11 +215,17 @@ export default {
         });
     },
     tryListenBtnAct(tag) {
+      console.log(tag.soundUrl);
       // 试听
-      let audio = document.createElement("audio");
-      audio.autoplay = "autoplay";
-      audio.src = tag.soundUrl;
-      audio.play();
+      if (!this.audio) {
+        this.audio = document.createElement("audio");
+        this.audio.autoplay = "autoplay";
+      }
+      if (this.audio && this.audio.src) {
+        this.audio.pause();
+        this.audio.src = tag.soundUrl;
+      }
+      this.audio.play();
     },
     uploadBtnAct() {
       var input = document.createElement("input");
@@ -281,7 +321,7 @@ export default {
 	.mainBox {
 		height: 100%;
 		background-color: #212325;
-		padding: 0 40px;
+		padding: 0 40px 40px;
 		box-sizing: border-box;
 		overflow: auto;
 		.headerBox {
@@ -366,7 +406,7 @@ export default {
 			}
 		}
 		.footerClass {
-			margin: 26px 0 100px;
+			margin: 26px 0 10px;
 			text-align: right;
 			.el-button {
 				background: rgba(40, 255, 187, 0.08);

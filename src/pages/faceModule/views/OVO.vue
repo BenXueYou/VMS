@@ -494,12 +494,10 @@ export default {
 }
 .OVO .el-icon-caret-left:before {
 	font-size: 30px;
-	content: "\E60A";
 	color: #ffffff;
 }
 .OVO .el-icon-caret-right:before {
 	font-size: 25px;
-	content: "\E60E";
 	color: #ffffff;
 }
 .OVO .el-progress__text {

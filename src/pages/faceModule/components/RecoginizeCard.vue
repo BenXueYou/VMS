@@ -72,13 +72,13 @@
 						@mouseout="mymouseout"
 						@mousemove="mymousemove"
 						class="textclipsClass asidFontClass"
-					>{{recoginizeItem.captureDatetime.split(" ")[0]||'抓拍日期：-- --'}}</div>
+					>{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[0]:'抓拍日期：-- --'}}</div>
 					<div
 						@mouseover="mymouseover"
 						@mouseout="mymouseout"
 						@mousemove="mymousemove"
 						class="textclipsClass asidFontClass"
-					>{{recoginizeItem.captureDatetime.split(" ")[1]||'抓拍时间：-- --'}}</div>
+					>{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[1]:'抓拍时间：-- --'}}</div>
 				</div>
 			</div>
 			<div
