@@ -28,7 +28,7 @@
 					element-loading-background="rgba(0, 0, 0, 0.8)"
 				>
 					<el-col class="colOVOClass" :span="2.5" v-for="(o, index) in 64" :key="index">
-						<div class="OVOImgClass">
+						<div @dblclick="dbclickAct(index)" class="OVOImgClass">
 							<img
 								style="width: 100%"
 								@click="clickImg($event)"
@@ -154,6 +154,17 @@ export default {
     // this.getAlarmShootPhotoList();
   },
   methods: {
+    dbclickAct(index) {
+      if (index < this.shootPhotoList.length) {
+        if (this.imageUrl2) {
+          this.imageUrl1 = this.shootPhotoList[index];
+          return;
+        }
+        if (this.imageUrl1) {
+          this.imageUrl2 = this.shootPhotoList[index];
+        }
+      }
+    },
     mouseDown(lr) {
       // 长按事件
       this.mouseDownFlag = true;
@@ -183,15 +194,13 @@ export default {
       }
     },
     statuschange() {
-      alert("文件选择成功！");
+      //   alert("文件选择成功！");
     },
     httpRequest2(e2) {
       console.log(e2, "---", e2.file, "---", e2.file.raw);
       this.fileList[1] = e2.file;
       let reader2 = new FileReader();
-
       reader2.readAsDataURL(this.fileList[1]);
-
       var _this = this;
       reader2.onload = function(e) {
         _this.imageBase642 = this.result
@@ -236,37 +245,33 @@ export default {
       // debugger;
       this.scores = 0;
       if (this.imageBase641 && this.imageBase642) {
-        this.compareBtnLoad = true;
         this.sendFileImgToServer();
       } else {
         this.$message({ message: "请上传图片", type: "warning" });
       }
     },
     sendFileImgToServer() {
+      this.compareBtnLoad = !this.compareBtnLoad;
       api
         .faceComparison1v1({
           imageBase641: this.imageBase641,
           imageBase642: this.imageBase642
         })
         .then(res => {
-          this.compareBtnLoad = false;
-          if (res.result === 0 && res.data) {
+          this.compareBtnLoad = !this.compareBtnLoad;
+          if (res.data.success && res.data.data) {
             this.scores = parseInt(res.data);
           } else {
-            this.$message({ message: "服务器开小差了！", type: "error" });
+            this.$message({ message: res.data.msg, type: "warning" });
           }
-
-          console.log("====", res);
+        })
+        .catch(() => {
+          this.compareBtnLoad = !this.compareBtnLoad;
         });
-      //   } else {
-      //     this.$message({ message: "请上传图片", type: "warning" });
-      //   }
     },
     // 删除历史记录
     deleteImgRecord() {
       this.shootPhotoList = [];
-      // this.imageUrl1 = false;
-      // this.imageUrl2 = false;
     },
     // 删除上传图片
     deleteUpdateImage(e) {
@@ -277,9 +282,11 @@ export default {
       if (e === "left") {
         this.shootPhotoList.unshift(this.imageUrl1);
         this.imageUrl1 = false;
+        this.imageBase641 = false;
       } else {
         this.shootPhotoList.unshift(this.imageUrl2);
         this.imageUrl2 = false;
+        this.imageBase642 = false;
       }
       this.scores = 0;
       if (this.shootPhotoList.length > 64) {
@@ -380,7 +387,13 @@ export default {
   }
 };
 </script>
-<style type="text/css">
+<style >
+.OVO .el-upload {
+	width: 100%;
+	height: 100%;
+}
+</style>
+<style type="text/css" scoped>
 .OVO .fontClass {
 	text-align: right;
 }
@@ -546,7 +559,7 @@ export default {
 	overflow-y: hidden;
 }
 
-<<<<<<< head @media screen and (max-width: 1400px) {
+@media screen and (max-width: 1400px) {
 	.OVO .colBoxClass {
 		width: calc(100% + 15px);
 		height: 130px;
@@ -571,7 +584,7 @@ export default {
 	}
 }
 
-=======>>>>>>>remotes/origin/1.4.alpha .OVO .OVOTitle {
+.OVO .OVOTitle {
 	/* padding: 35px 50px 17px 0px; */
 	text-align: left;
 	font-family: PingFangSC-Regular;

@@ -205,7 +205,7 @@
 import RestApi from "@/utils/RestApi.js";
 import dialogview from "@/pages/faceModule/components/dialogForm.vue";
 import alPopoverTree from "@/pages/faceModule/components/AlElTree.vue";
-import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import ImgCard from "@/pages/faceModule/components/ImgCard.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
@@ -358,7 +358,7 @@ export default {
   methods: {
     loadNode(node, resolve) {
       api
-        .getFaceDeviceList({ parentOrgUuid: node.data.id })
+        .getFaceDeviceList({ parentOrgUuid: node.data.id, shootType: "face,body" })
         .then(res => {
           if (res.data.success && res.data.data) {
             let data = res.data.data;
@@ -1108,13 +1108,6 @@ iframe html {
 	color: #bbbbbb;
 	font-size: 14px;
 }
-.RTask .asidCompareTxtClass {
-	text-align: left;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	padding: 10px 0px 0px;
-}
 .RTask .HomeFooterChannelName {
 	font-size: 12px;
 	position: relative;
@@ -1231,7 +1224,7 @@ iframe html {
 	border: 1px solid rgba(255, 255, 255, 0.3);
 	border-radius: 3px;
 	margin: 5px auto;
-	font-family: 'PingFangSC-Medium';
+	font-family: "PingFangSC-Medium";
 }
 .RTask .el-dialog {
 	width: 920px;
@@ -1291,19 +1284,10 @@ iframe html {
 	display: block;
 	font-size: 14px;
 }
-
-.RTask .asidListRowFooter {
-	/* line-height: 35px; */
-	font-size: 14px;
-	text-align: left;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-}
 .RTask .asidListRow {
 	width: 100%;
-	margin-top: 3.5%;
-	height: 17.5%;
+	margin-top: 3%;
+	/* height: 18%; */
 	color: #fff;
 	background-color: rgba(0, 0, 0, 0.15);
 	border-radius: 3px;
@@ -1316,7 +1300,7 @@ iframe html {
 }
 .RTask .textclipsClass,
 .RTask .asidListRow span {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	/* display: inline-block; */
 	/* width: 100%; */
 	white-space: nowrap;

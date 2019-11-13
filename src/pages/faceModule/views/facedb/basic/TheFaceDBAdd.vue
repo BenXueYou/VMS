@@ -4,7 +4,7 @@
 			<span>{{staffDetail.faceLibraryName}}-{{staffDetail.faceUuid?"修改人脸":'新增人脸'}}</span>
 			<div class="dialogHeaderBtn">
 				<el-button @click="cancelAct">返回</el-button>
-				<el-button @click="confirmAct">确认</el-button>
+				<el-button :loading="isloading" @click="confirmAct">确认</el-button>
 				<el-button @click="cancelAct">取消</el-button>
 			</div>
 		</div>
