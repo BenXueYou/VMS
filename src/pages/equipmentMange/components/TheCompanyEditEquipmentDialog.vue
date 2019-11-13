@@ -694,6 +694,12 @@ export default {
     personTreeTag
   },
   props: {
+    netStatus: {
+      type: String,
+      default() {
+        return "online";
+      }
+    },
     width: {
       type: String,
       default() {
