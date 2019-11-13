@@ -1,5 +1,5 @@
 <template>
-  <div class='wrap thecompanygroup'>
+  <div class="wrap thecompanygroup">
     <div class="btn-group">
       <el-button :class="{'default':index!=0}"
                  @click="switchType(0)"
@@ -13,42 +13,39 @@
       <el-button :class="{'default':index!=3}"
                  @click="switchType(3)"
                  type="primary">访客机</el-button>
-
     </div>
     <div class="tablecontent"
          ref="tablecontent">
       <div class="btn-group">
         <el-button type="primary"
-                   @click='addEquipMent'>搜索设备</el-button>
-        <!-- <el-button type="primary"
-                   @click='manualAdd'>手动添加</el-button> -->
+                   @click="addEquipMent">搜索设备</el-button>
+        <el-button type="primary"
+                   @click="manualAdd">手动添加</el-button>
         <el-button type="primary"
                    @click="deletetableData">删除</el-button>
         <el-button type="primary"
                    @click="update">批量升级</el-button>
         <el-button type="primary"
-                   @click='sendData'>下发数据</el-button>
+                   @click="sendData">下发数据</el-button>
 
         <div class="rightgroup">
-          <span class='title'>设备名称：</span>
-          <el-input class='input'
-                    v-model='devName'>
-
-          </el-input>
+          <span class="title">设备名称：</span>
+          <el-input class="input"
+                    v-model="devName"></el-input>
 
           <el-button type="primary"
-                     @click='retrieveVisible=!retrieveVisible'
+                     @click="retrieveVisible=!retrieveVisible"
                      size="small">其他条件检索</el-button>
           <el-button type="primary"
-                     @click='searchBytext'
+                     @click="searchBytext"
                      icon="el-icon-search"
                      size="small">检索</el-button>
         </div>
         <!-- <retrieve></retrieve> -->
-        <input-retrieve :visible='retrieveVisible'
+        <input-retrieve :visible="retrieveVisible"
                         @query="retrieve"
                         @updateIpAndType="updateIpAndType"
-                        class='retrieve'></input-retrieve>
+                        class="retrieve"></input-retrieve>
       </div>
 
       <el-table ref="multipleTable"
@@ -59,15 +56,12 @@
                 :style="{'height':tableHeight+'px'}"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection"
-                         width="55">
-        </el-table-column>
+                         width="55"></el-table-column>
         <el-table-column prop="devName"
                          label="设备名字">
           <template slot-scope="scope">
             <el-tooltip :content="scope.row.devName">
-              <div>
-                {{scope.row.devName}}
-              </div>
+              <div>{{scope.row.devName}}</div>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -75,9 +69,7 @@
                          label="IP">
           <template slot-scope="scope">
             <el-tooltip :content="scope.row.ip">
-              <div>
-                {{scope.row.ip}}
-              </div>
+              <div>{{scope.row.ip}}</div>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -85,53 +77,40 @@
                          label="设备ID">
           <template slot-scope="scope">
             <el-tooltip :content="scope.row.devId">
-              <div>
-                {{scope.row.devId}}
-              </div>
+              <div>{{scope.row.devId}}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="devMode"
-                         width='120'
+                         width="120"
                          label="设备型号">
           <template slot-scope="scope">
             <el-tooltip :content="scope.row.devMode">
-              <div>
-                {{scope.row.devMode}}
-              </div>
+              <div>{{scope.row.devMode}}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="doorCount"
-                         width='80'
-                         label="门数量">
-        </el-table-column>
+                         width="80"
+                         :label="index!=1?'门数量':'视频通道'"></el-table-column>
         <el-table-column prop="netStatus"
-                         width='80'
+                         width="80"
                          label="网络状态">
           <template slot-scope="scope">
             <div style="color:#32C5FF;"
                  v-if="scope.row.netStatus==='online'"
-                 class="online">
-              在线
-            </div>
+                 class="online">在线</div>
             <div style="color:#FF5F5F;"
                  v-else-if="scope.row.netStatus==='offline'"
-                 class="offline">
-              离线
-            </div>
-            <div v-else>
-
-            </div>
+                 class="offline">离线</div>
+            <div v-else></div>
           </template>
         </el-table-column>
         <el-table-column prop="createTime"
                          label="时间">
           <template slot-scope="scope">
             <el-tooltip :content="scope.row.createTime">
-              <div>
-                {{scope.row.createTime}}
-              </div>
+              <div>{{scope.row.createTime}}</div>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -142,8 +121,8 @@
                        type="text"
                        size="small">编辑</el-button>
             <el-button type="text"
-                       class='deleteText'
-                       @click='deleteEquip(scope.row)'
+                       class="deleteText"
+                       @click="deleteEquip(scope.row)"
                        size="small">删除</el-button>
             <el-button type="text"
                        @click="remoteControl(scope.row)"
@@ -161,59 +140,45 @@
                        background
                        class="pagination"
                        layout="total, prev, pager, next, jumper"
-                       :total="dataTotal">
-        </el-pagination>
+                       :total="dataTotal"></el-pagination>
       </div>
 
       <remote-control-dialog :visible.sync="remoteControlDialogVisiable"
                              :isVistors="index===3"
-                             :deviceUuid="deviceUuid">
-      </remote-control-dialog>
+                             :deviceUuid="deviceUuid"></remote-control-dialog>
 
       <confirm-dialog :visible.sync="ConfirmDialogVisible"
                       confirmText="是否要下发到设备内"
                       @confirm="confirmxiafa"
-                      @close="close">
-      </confirm-dialog>
+                      @close="close"></confirm-dialog>
 
       <confirm-dialog :visible.sync="deleteConfirmDialogVisible"
                       confirmText="是否删除该设备"
                       @confirm="confirm"
-                      @close="close">
-      </confirm-dialog>
+                      @close="close"></confirm-dialog>
 
       <confirm-dialog :visible.sync="upgradeConfirmDialogVisible"
                       confirmText="是否升级选中的设备"
                       @confirm="confirmUpgrade"
-                      @close="close">
-      </confirm-dialog>
+                      @close="close"></confirm-dialog>
 
       <the-company-add-equipment-dialog :visible.sync="addEquipMentDialgoVisible"
                                         :orgUuid="orgUuid"
                                         :deviceType="viewType"
-                                        @confirm="addSuccess">
-      </the-company-add-equipment-dialog>
+                                        @confirm="addSuccess"></the-company-add-equipment-dialog>
 
       <the-company-update-dialog :visible.sync="updateDialogVisible"
-                                 :data="multipleSelection">
+                                 :data="multipleSelection"></the-company-update-dialog>
 
-      </the-company-update-dialog>
-
-      <the-company-upgradingDialog :visible.sync="upgradeVisible">
-
-      </the-company-upgradingDialog>
+      <the-company-upgradingDialog :visible.sync="upgradeVisible"></the-company-upgradingDialog>
 
       <the-company-table-xiafa-dialog :visible.sync="TheCompanyTableXiafaDialogVisible"
-                                      @confirm="getTableData">
-
-      </the-company-table-xiafa-dialog>
+                                      @confirm="getTableData"></the-company-table-xiafa-dialog>
 
       <manual-add-dialog :visible.sync="manualAddVisible"
                          :deviceTypeArr="deviceTypeArr"
                          @commit="addSuccess"
-                         :localService="localService">
-
-      </manual-add-dialog>
+                         :localService="localService"></manual-add-dialog>
     </div>
   </div>
 </template>
@@ -227,6 +192,8 @@ import InputRetrieve from "@/common/InputRetrieve";
 import TheCompanyUpdateDialog from "@/pages/equipmentMange/components/TheCompanyUpdateDialog";
 import TheCompanyUpgradingDialog from "@/pages/equipmentMange/components/TheCompanyUpgradingDialog";
 import ManualAddDialog from "@/pages/equipmentMange/components/ManualAddDialog";
+import VideoSetDialog from "@/pages/equipmentMange/components/videoSetDialog";
+
 import * as api from "../ajax.js";
 import { mapState } from "vuex";
 export default {
@@ -253,6 +220,7 @@ export default {
       deleteConfirmDialogVisible: false,
       index: 0,
       remoteControlDialogVisiable: false,
+      videoDialogVisiable: false,
       updateDialogVisible: false,
       tableData: [],
       multipleSelection: [],
@@ -273,6 +241,7 @@ export default {
   },
   components: {
     ManualAddDialog,
+    VideoSetDialog,
     RemoteControlDialog,
     ConfirmDialog,
     TheCompanyAddEquipmentDialog,
@@ -290,30 +259,29 @@ export default {
   },
   methods: {
     serviceList() {
-      this.localService = [];
-      // api
-      //   .serviceList(this.viewType)
-      //   .then(res => {
-      //     console.log(res);
-      //     if (res.data.success) {
-      // this.localService = [
-      //   {
-      //     belongServiceName: "测试服务名称",
-      //     belongServiceUuid: "iotas_vd_serviceuuid_001"
-      //   }
-      // ].concat(res.data.data || []);
-      //     let num = (res.data.data || []).map(item => {
-      //       item.belongServiceName = item.serviceName;
-      //       item.belongServiceUuid = item.serviceUuid;
-      //       return item;
-      //     });
-      //     this.localService = num;
-      //   }
-      //   this.$emit("serverList", this.localService, this.viewType);
-      // })
-      // .catch(() => {
-      //   this.$emit("serverList", this.localService, this.viewType);
-      // });
+      api
+        .serviceList(this.viewType)
+        .then(res => {
+          console.log(res);
+          if (res.data.success) {
+            // this.localService = [
+            //   {
+            //     belongServiceName: "测试服务名称",
+            //     belongServiceUuid: "iotas_vd_serviceuuid_001"
+            //   }
+            // ].concat(res.data.data || []);
+            let num = (res.data.data || []).map(item => {
+              item.belongServiceName = item.serviceName;
+              item.belongServiceUuid = item.serviceUuid;
+              return item;
+            });
+            this.localService = num;
+          }
+          this.$emit("serverList", this.localService, this.viewType);
+        })
+        .catch(() => {
+          this.$emit("serverList", this.localService, this.viewType);
+        });
     },
     DType() {
       this.deviceTypeArr = [];
@@ -481,6 +449,7 @@ export default {
     },
     manualAdd() {
       // this.serviceList(this.viewType);
+      this.serviceList(this.viewType);
       this.DType(this.viewType);
       this.manualAddVisible = true;
     },
@@ -525,7 +494,7 @@ export default {
         num = this.vistor;
       }
       this.viewType = arr[index];
-      // this.serviceList(this.viewType);
+      this.serviceList(this.viewType);
       console.log(num);
       // this.deviceTypeArr = num;
       // this.deviceType = num.reduce((sum, val, index) => {
@@ -542,9 +511,13 @@ export default {
     editEquipment(row) {
       if (row.extInfo.source === "local") {
         // this.serviceList(this.viewType);
+        this.$emit("showEdit", row.deviceUuid, row.netStatus);
+        this.serviceList(this.viewType);
         this.DType(this.viewType);
+      } else {
+        this.$emit("showEdit", row.deviceUuid);
       }
-      this.$emit("showEdit", row.deviceUuid, row.netStatus);
+      // this.editEquipMentDialgoVisible = true;
     },
     deleteEquip(row) {
       this.deleteOneRow = row;
@@ -566,6 +539,11 @@ export default {
 
       this.deviceUuid = row.deviceUuid;
       this.remoteControlDialogVisiable = true;
+      this.deviceUuid = row.deviceUuid;
+      // eslint-disable-next-line
+      this[
+        this.index === 1 ? "videoDialogVisiable" : "remoteControlDialogVisiable"
+      ] = true;
     }
   },
   mounted() {
@@ -584,7 +562,7 @@ export default {
     //   });
     // }
     this.getTableData();
-    // this.serviceList(this.viewType);
+    this.serviceList(this.viewType);
   },
   watch: {
     orgUuid(val) {

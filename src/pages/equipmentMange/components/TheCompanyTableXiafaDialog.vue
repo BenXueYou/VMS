@@ -203,10 +203,10 @@ export default {
       this.$emit("update:visible", false);
     },
     cancel() {
+      this.stopxiafa();
       this.close();
     },
     close() {
-      this.stopxiafa();
       // 点击取消，不是终止下发，只是关闭弹窗
       this.$emit("update:visible", false);
       this.$emit("close");

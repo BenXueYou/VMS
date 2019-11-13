@@ -698,3 +698,27 @@ export function judgeRepeatCard(params) {
     params
   });
 }
+// 获取设备人脸库配置
+export function getVideoDeviceSetting(uuid) {
+  let url = sbUrl.getVideoDeviceSettingUrl(uuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+export function setDelaySyncSetting(uuid, data) {
+  let url = sbUrl.setDelaySyncSettingUrl(uuid);
+  return axios({
+    method: "put",
+    url,
+    data
+  });
+}
+export function setImmediateSyncSettingl(uuid, data) {
+  let url = sbUrl.setImmediateSyncSettingUrl(uuid);
+  return axios({
+    method: "put",
+    url,
+    data
+  });
+}

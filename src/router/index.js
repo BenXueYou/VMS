@@ -14,9 +14,9 @@ import personManage from './modules/personManage';
 import equipmentManage from './modules/equipmentManage';
 import doorAccess from './modules/doorAccess';
 import buildingHouse from './modules/buildingHouse';
+import faceModule from './modules/faceModule';
 
 Vue.use(Router);
-
 export const constantRouterMap = [
   {
     path: "/",
@@ -38,7 +38,7 @@ export const constantRouterMap = [
         children: doorAccess.children,
         icon: "doorControl",
         type: "app",
-        // redirect:'/DoorControl/' //设置默认子路由
+        // redirect: '/DoorControl/AccessGroupConfig' //设置默认子路由
       },
       {
         path: "/PersonMange",
@@ -56,7 +56,7 @@ export const constantRouterMap = [
         children: vistorManage,
         icon: "vistorMange",
         type: "app"
-      }, 
+      },
       {
         path: "/EquipmentMange",
         name: "EquipmentMange",
@@ -88,6 +88,16 @@ export const constantRouterMap = [
         title: "居民管理",
         icon: "residentManage",
         type: "config"
+      },
+      {
+        path: "/FaceManage",
+        name: "FaceManage",
+        component: faceModule.component,
+        title: "人脸识别",
+        children: faceModule.children,
+        icon: "FaceManage",
+        type: "app",
+        // redirect: '/FaceManage' //设置默认子路由
       }
     ]
   },

@@ -65,9 +65,8 @@ export default {
       if (item.name === this.$store.state.home.localTag) {
         if (this.$store.state.home.tagViewArr.length > 0) {
           // eslint-disable-next-line
-          let laseMenuName = this.$store.state.home.tagViewArr[
-            this.$store.state.home.tagViewArr.length - 1
-          ].name;
+          let index = this.$store.state.home.tagViewArr.length - 1;
+          let laseMenuName = this.$store.state.home.tagViewArr[index].name;
           this.$store.dispatch("setLocalTag", laseMenuName);
           this.$bus.$emit("setLocalTag", laseMenuName);
           this.$router.push({ name: laseMenuName });

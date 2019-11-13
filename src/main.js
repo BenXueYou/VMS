@@ -11,8 +11,9 @@ import App from './App';
 import router from './router';
 
 // 权限控制中枢 路由守卫
-
 import './permission';
+import './directives';
+// import './dir';
 
 import echarts from 'echarts';
 import { EventBusPlugin as EventBus } from '@/utils/Eventbus';
@@ -28,13 +29,17 @@ import DoorSetAjax from '@/pages/doorControl/utils/DoorAccessSetHttp.js';
 
 import ResidentHttp from '@/pages/residentManage/utils/ResidentHttp.js';
 import LoginAjax from '@/pages/login/utils/LoginAjax.js';
+import SearchFaceHttp from '@/pages/faceModule/views/searchFaceWithFace/utils/SearchFaceHttp.js';
+import JudgeHttp from '@/pages/faceModule/views/judgeAnalysis/utils/JudgeHttp.js';
+import ModuleCountHttp from '@/pages/faceModule/views/moduleCount/utils/ModuleCountHttp.js';
+import StatisticHttp from '@/pages/faceModule/views/statisticalForms/util/StatisticHttp.js';
+import FactTragicHttp from '@/pages/faceModule/views/companion/util/FactTragicHttp.js';
+import FaceControlHttp from '@/pages/faceModule/views/faceControl/utils/FaceControlHttp.js';
+import IntelModelHttp from '@/pages/faceModule/views/intelModel/utils/IntelModelHttp.js';
 
 Vue.prototype.$echarts = echarts;
-
 Vue.prototype.$http = Axios;
-
 Vue.config.productionTip = false;
-
 Vue.use(Vuex);
 Vue.use(ElementUI);
 Vue.use(EventBus);
@@ -45,7 +50,13 @@ Vue.use(GuangTuoUI);
 Vue.use(HouseHttp);
 Vue.use(UnitHttp);
 Vue.use(LogSearchHttp);
-
+Vue.use(SearchFaceHttp);
+Vue.use(JudgeHttp);
+Vue.use(ModuleCountHttp);
+Vue.use(StatisticHttp);
+Vue.use(FactTragicHttp);
+Vue.use(FaceControlHttp);
+Vue.use(IntelModelHttp);
 Vue.use(DoorSetAjax);
 Vue.use(ResidentHttp);
 Vue.use(LoginAjax);

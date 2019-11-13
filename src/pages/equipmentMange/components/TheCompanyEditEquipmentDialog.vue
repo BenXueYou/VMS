@@ -136,10 +136,8 @@
              :key="index">
           <label class="label">门{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -147,13 +145,11 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      multiple>
             <el-option v-for="item in abilityOption"
                        :key="item.value"
@@ -161,8 +157,22 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
-          <el-input v-model="item.gBCode"></el-input>
+          <div class='videoSetingaa'>
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(1,index,x)"
@@ -175,6 +185,33 @@
               <i class="el-icon-circle-plus-outline"></i>
               选择标签
             </el-button>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人脸抓拍：
+            <el-switch v-model="item.faceSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持车辆抓拍：
+            <el-switch v-model="item.vehicleSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人体抓拍：
+            <el-switch v-model="item.bodySnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
           </div>
 
         </div>
@@ -192,10 +229,8 @@
              :key="index">
           <label class="label">读头{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -203,12 +238,10 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
-                     v-if="isVideo&&isLocal"
                      multiple
                      @change="gogo">
             <el-option v-for="item in abilityOption"
@@ -217,8 +250,24 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
-          <el-input v-model="item.gBCode"></el-input>
+
+          <div class='videoSetingaa'>
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(2,index,x)"
@@ -231,6 +280,33 @@
               <i class="el-icon-circle-plus-outline"></i>
               选择标签
             </el-button>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人脸抓拍：
+            <el-switch v-model="item.faceSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持车辆抓拍：
+            <el-switch v-model="item.vehicleSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人体抓拍：
+            <el-switch v-model="item.bodySnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
           </div>
         </div>
       </div>
@@ -247,10 +323,8 @@
              :key="index">
           <label class="label">报警输入{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in alarmInOptions"
                        :key="item.value"
@@ -258,12 +332,10 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
-                     v-if="isVideo&&isLocal"
                      @change="gogo"
                      multiple>
             <el-option v-for="item in abilityOption"
@@ -272,8 +344,25 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
-          <el-input v-model="item.gBCode"></el-input>
+
+          <div class='videoSetingaa'>
+
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(3,index,x)"
@@ -286,6 +375,33 @@
               <i class="el-icon-circle-plus-outline"></i>
               选择标签
             </el-button>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人脸抓拍：
+            <el-switch v-model="item.faceSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持车辆抓拍：
+            <el-switch v-model="item.vehicleSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人体抓拍：
+            <el-switch v-model="item.bodySnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
           </div>
         </div>
       </div>
@@ -302,10 +418,8 @@
              :key="index">
           <label class="label">报警输出{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in alarmOutOptions"
                        :key="item.value"
@@ -313,12 +427,10 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
-                     v-if="isVideo&&isLocal"
                      @change="gogo"
                      multiple>
             <el-option v-for="item in abilityOption"
@@ -327,8 +439,25 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
-          <el-input v-model="item.gBCode"></el-input>
+
+          <div class='videoSetingaa'>
+
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(4,index,x)"
@@ -341,6 +470,33 @@
               <i class="el-icon-circle-plus-outline"></i>
               选择标签
             </el-button>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人脸抓拍：
+            <el-switch v-model="item.faceSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持车辆抓拍：
+            <el-switch v-model="item.vehicleSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人体抓拍：
+            <el-switch v-model="item.bodySnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
           </div>
         </div>
       </div>
@@ -357,11 +513,9 @@
              :key="index">
           <label class="label">相机{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -369,13 +523,11 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      multiple>
             <el-option v-for="item in abilityOption"
                        :key="item.value"
@@ -383,8 +535,25 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
-          <el-input v-model="item.gBCode"></el-input>
+
+          <div class='videoSetingaa'>
+
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(5,index,x)"
@@ -397,6 +566,33 @@
               <i class="el-icon-circle-plus-outline"></i>
               选择标签
             </el-button>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人脸抓拍：
+            <el-switch v-model="item.faceSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持车辆抓拍：
+            <el-switch v-model="item.vehicleSnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
+          </div>
+          <div class="form-item"
+               v-if="isLocal">
+            支持人体抓拍：
+            <el-switch v-model="item.bodySnap"
+                       @change='gogo'
+                       active-color="rgb(38,78,70)"
+                       inactive-color="rgb(75,78,82)">
+            </el-switch>
           </div>
         </div>
       </div>
@@ -413,11 +609,9 @@
              :key="index">
           <label class="label">枪机{{index+1}}：</label>
           <el-input v-model="item.nickName"></el-input>
-          <label class="label"
-                 v-if="isVideo&&isLocal">通道类型：</label>
+          <label class="label">通道类型：</label>
           <el-select v-model="item.channelType"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -425,13 +619,11 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label"
-                 v-if="isVideo&&isLocal">能力：</label>
+          <label class="label">能力：</label>
           <el-select v-model="item.ability"
                      style='width:230px;'
                      placeholder="请选择"
                      @change="gogo"
-                     v-if="isVideo&&isLocal"
                      multiple>
             <el-option v-for="item in abilityOption"
                        :key="item.value"
@@ -439,8 +631,25 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <label class="label">通道国标码</label>
-          <el-input v-model="item.gBCode"></el-input>
+
+          <div class='videoSetingaa'>
+
+            <label class="label">通道国标码：</label>
+            <el-input v-model="item.gBCode"
+                      @change="gogo"
+                      @focus="gogo"></el-input>
+            <label class="label">经度：</label>
+            <el-input v-model="item.longitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+            <label class="label">纬度：</label>
+            <el-input v-model="item.latitude"
+                      type="number"
+                      @focus="gogo"
+                      @change="gogo"></el-input>
+          </div>
+
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(6,index,x)"
@@ -456,7 +665,6 @@
           </div>
         </div>
       </div>
-
       <person-tree-tag title="请选择要添加的标签"
                        rightTxt="已选择的标签"
                        :isShow.sync="isShow"
@@ -748,8 +956,9 @@ export default {
   },
   methods: {
     gogo() {
+      console.log(123);
       this.ipc = this.ipc.concat();
-      this.bullet_camera = this.bullet_camera.concat();
+      this.bullet_camera = JSON.parse(JSON.stringify(this.bullet_camera));
       this.doorData = this.doorData.concat();
       this.dutouData = this.dutouData.concat();
       this.shuchuData = this.shuchuData.concat();
@@ -860,7 +1069,7 @@ export default {
     },
     setHouseData(params) {
       this.ruleForm.build = params.node.data.id;
-      this.houseName = params.name;
+      this.houseName = params.node.data.label;
     },
     saveData() {
       let num = [];
@@ -875,6 +1084,7 @@ export default {
             item.vehicleSnap =
               item.ability.indexOf("vehicleSnap") !== -1 ? 1 : 0;
             item.bodySnap = item.ability.indexOf("bodySnap") !== -1 ? 1 : 0;
+
             // channelList.push({
             //   nickName: item.nickName,
             //   channelUuid: item.channelUuid,
@@ -975,7 +1185,6 @@ export default {
       this.$emit("showEdit", false);
     },
     getServiceList() {
-
       // api.serviceList().then(res => {
       //   console.log(res);
       //   if (res.data.success) {
@@ -1020,7 +1229,9 @@ export default {
               val.faceSnap = !!(val.extInfo.faceSnap === 1);
               val.vehicleSnap = !!(val.extInfo.vehicleSnap === 1);
               val.bodySnap = !!(val.extInfo.bodySnap === 1);
-              val.gBCode = val.extInfo.gBCode;
+              val.gBCode = val.extInfo.gBCode || "";
+              val.latitude = val.extInfo.latitude || "";
+              val.longitude = val.extInfo.longitude || "";
             }
             val.tagPOList = val.tagPOList || [];
             val.ability = [];
@@ -1158,6 +1369,9 @@ export default {
 }
 $dashline: 1px dashed rgba(255, 255, 255, 0.1);
 .editEquip {
+  .videoSetingaa {
+    margin: 10px auto;
+  }
   width: 1200px;
   background: #212325;
   .header {
@@ -1224,7 +1438,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         color: #fff;
         .el-input {
           display: inline-block;
-          width: 160px;
+          width: 180px;
           vertical-align: top;
         }
         .button {
@@ -1233,7 +1447,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
           margin-bottom: 10px;
         }
         .addIcon {
-          margin-left: $mleft;
+          // margin-left: $mleft;
           border: none;
           background: none;
           @include font-s;
@@ -1242,12 +1456,12 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         .label {
           display: inline-block;
           @include font-s;
-          width: 60px;
+          width: 80px;
           vertical-align: middle;
         }
         .mytagWrap {
           display: inline-block;
-          margin-top: 10px;
+          // margin-top: 10px;
           width: calc(100% - 300px);
         }
       }

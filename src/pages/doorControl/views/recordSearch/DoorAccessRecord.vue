@@ -434,10 +434,8 @@ export default {
         eventStr = "验证失败，";
       }
       if (row.openDoorResult === 1 || row.verifyResult === 1) {
-        if (this.$common.getEnumItemName("verify_t", row.eventType)) {
-          eventStr =
-            eventStr + this.$common.getEnumItemName("verify_t", row.eventType);
-        }
+        eventStr =
+          eventStr + this.$common.getEnumItemName("verify_t", row.eventType);
       }
       return eventStr;
     },
