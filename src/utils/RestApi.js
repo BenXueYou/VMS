@@ -8,13 +8,14 @@ import sbUrl from "@/utils/restApi/equipment";
 import pmUrl from "@/utils/restApi/permission";
 import videoUrl from "@/utils/restApi/video";
 import vistorManageApi from "@/utils/restApi/vistorManageApi";
+import faceModuleAPi from "@/utils/restApi/faceModuleAPi";
 import store from '@/store/store.js';
 export default {
   api: {
     /**
      * 图片下载地址
      */
-    imageUrl:window.config.protocolHeader+window.config.ip+`/fileforward-server-v1/project/${store.state.home.projectUuid}/fileforward/fileByUrl?fileUrl=`,
+    imageUrl: window.config.protocolHeader + window.config.ip + `/fileforward-server-v1/project/${store.state.home.projectUuid}/fileforward/fileByUrl?fileUrl=`,
     /**
      * 全部翻译获取接口
      */
@@ -185,8 +186,11 @@ export default {
     pmUrl,
     videoUrl,
     vistorManageApi,
-    
     //人脸图片质量检测
-    faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`
+    faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`,
+    /**
+   * 人脸模块（fengyw）
+   */
+    faceModuleAPi,
   }
 };
