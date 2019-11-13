@@ -33,8 +33,8 @@ if (DEBUG == "DEBUG") {
     ip = hostname;
     websocketIp = hostname;
   } else {
-    ip = hostname + ":51880";
-    websocketIp = "180.167.210.2:51881";
+    ip = hostname + ":15000";
+    websocketIp = hostname + ":51881";
   }
   var imgUrlStr = protocolHeader + "//" + ip;
   imageUrl =
@@ -42,7 +42,7 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
 window.config = {
-  DeBug:true,
+  DeBug: true,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",
