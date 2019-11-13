@@ -46,6 +46,7 @@ router.beforeEach((to, from, next) => {
               );
               router.addRoutes(routerData);
             }
+<<<<<<< HEAD
           })
           .catch(() => {
             let routerData = getRoute([], true);
@@ -54,6 +55,9 @@ router.beforeEach((to, from, next) => {
               JSON.stringify(routerData)
             );
             router.addRoutes(routerData);
+=======
+          }).catch(() => {
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
           });
       }
 

@@ -4,7 +4,7 @@
 		<div class="content" v-show="!addDialogVisible">
 			<div class="topBox">
 				<div class="topBoxLeft">
-					<el-button @click="addDialogVisible=!addDialogVisible">新增</el-button>
+					<el-button @click="addBtnAct">新增</el-button>
 					<el-button @click="volumeDelete">删除</el-button>
 					<el-button @click="switchData(1)">启用</el-button>
 					<el-button @click="switchData(0)">禁用</el-button>
@@ -149,9 +149,16 @@ export default {
   },
   watch: {},
   methods: {
+    addBtnAct() {
+      this.defaultRoleData = [];
+      this.rowData = {};
+      this.addDialogVisible = !this.addDialogVisible;
+    },
+    // 选择角色弹窗的回调
     getCheckedRole(arr) {
       console.log(arr);
       this.defaultRoleData = arr;
+      this.rowData.roles = arr;
       this.editAccountRoleApi();
     },
     // 账号分配角色
@@ -201,7 +208,14 @@ export default {
     },
     // 分配角色
     addRoleClick(rowData) {
-      this.rowData = rowData;
+      if (rowData && this.rowData.accountUuid) {
+        this.rowData = rowData;
+        // 查详情
+        this.getAccountDetail(rowData);
+      } else {
+        this.defaultRoleData = [];
+        this.rowData = {};
+      }
       this.getRoleList();
     },
     // 查详情
@@ -212,23 +226,9 @@ export default {
           if (res.data.success) {
             this.addDialogVisible = !this.addDialogVisible;
             this.rowData = res.data.data;
+            this.defaultRoleData = this.rowData.roles;
           } else {
             this.$message.warning(res.data.msg);
-          }
-        })
-        .catch(() => {});
-    },
-    // 修改账户
-    putAccountApi(data) {
-      Object.assign(this.rowData, data);
-      api
-        .putAccountApi(this.rowData)
-        .then(res => {
-          if (res.data.success) {
-            this.$message.success(res.data.message);
-            this.initData();
-          } else {
-            this.$message.warning(res.data.message);
           }
         })
         .catch(() => {});
@@ -294,6 +294,10 @@ export default {
     },
     // 批量删除
     volumeDelete() {
+      if (this.accountUuids && !this.accountUuids.length) {
+        this.$message({ type: "warning", message: "请选择删除的账号" });
+        return;
+      }
       this.isConfirm = !this.isConfirm;
     },
     // 删除
@@ -325,8 +329,11 @@ export default {
     },
     handleCurrentChange() {},
     handleSizeChange() {},
-    close() {
+    close(is) {
       this.addDialogVisible = !this.addDialogVisible;
+      if (is) {
+        this.initData();
+      }
     },
     tableIndex(val) {
       val += 1;

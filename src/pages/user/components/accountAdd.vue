@@ -41,14 +41,14 @@
 					</p>
 					<p style="text-align: left;margin:28px 0 0 0">
 						<el-switch
-							v-model="queryBody.isRelativeSystem"
+							v-model="queryBody.isAssociateStaff"
 							active-color="rgba(32, 204, 150, 0.2)"
 							inactive-color="rgba(255,255,255,0.2)"
 						></el-switch>
 					</p>
 					<div>
 						<el-input v-model="queryBody.staffName"></el-input>
-						<span class="cursorClass" v-if="queryBody.isRelativeSystem" @click="addSystemStaff">
+						<span class="cursorClass" v-if="queryBody.isAssociateStaff" @click="addSystemStaff">
 							<img class="img" src="@/assets/images/resident/modify_icon.png" alt srcset />请选择
 						</span>
 					</div>
@@ -93,7 +93,7 @@
 					<div>
 						<gt-button
 							:icon="icons.door"
-							v-for="(item,index) in rowData.roleUuids || []"
+							v-for="(item,index) in rowData.roles || []"
 							class="person"
 							:key="index"
 							:show-close="false"
@@ -102,8 +102,8 @@
 				</div>
 			</div>
 			<div class="footerClass">
-				<el-button class="firstBtnClass">保存并继续添加</el-button>
-				<el-button>确认</el-button>
+				<el-button class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
+				<el-button @click="editBtnAct" v-loading="isload">确认</el-button>
 				<el-button @click="close">取消</el-button>
 			</div>
 		</div>
@@ -124,6 +124,7 @@ import tabTreeTag from "@/common/TabTreeTag";
 import treePanelDialog from "@/pages/user/components/treePanelDialog";
 import tagView from "@/common/Tag.vue";
 import icons from "@/common/js/icon.js";
+import * as api from "../http/ajax";
 export default {
   components: { tabTreeTag, treePanelDialog, tagView },
   props: {
@@ -137,6 +138,7 @@ export default {
   data() {
     return {
       icons,
+      isload: false,
       showTreeAdd: false,
       systemStaffDialogVisible: false,
       tabs: [
@@ -173,16 +175,52 @@ export default {
         invalidTime: null, // 失效时间 (可选)
         description: null, // 描述
         roleUuids: [], // 角色uuid数组
-        isRelativeSystem: 1,
+        isAssociateStaff: 1,
         isLongTIme: 1
       }
     };
   },
   created() {},
-  mounted() {
-    this.initData();
-  },
+  mounted() {},
   methods: {
+    // 点击确定按钮
+    editBtnAct() {
+      if (this.rowData.accountUuid) {
+        // 修改
+        this.isload = !this.isload;
+        api
+          .putAccountApi(this.queryBody)
+          .then(res => {
+            this.isload = !this.isload;
+            if (res.data.success) {
+              this.$message.success(res.data.msg);
+              this.$emit("close", true);
+            } else {
+              this.$message.warning(res.data.msg);
+            }
+          })
+          .catch(() => {
+            this.isload = !this.isload;
+          });
+      } else {
+        // 新增
+        this.isload = !this.isload;
+        api
+          .addAccountApi(this.queryBody)
+          .then(res => {
+            this.isload = !this.isload;
+            if (res.data.success) {
+              this.$message.success(res.data.msg);
+              this.$emit("close", true);
+            } else {
+              this.$message.warning(res.data.msg);
+            }
+          })
+          .catch(() => {
+            this.isload = !this.isload;
+          });
+      }
+    },
     onCancel() {
       this.systemStaffDialogVisible = !this.systemStaffDialogVisible;
     },
@@ -200,15 +238,23 @@ export default {
     addRoleBtn() {
       // 分配角色 向父组件传值
       //   this.showTreeAdd = !this.showTreeAdd;
-      this.$emit("addRole");
+      this.$emit("addRole", this.rowData);
     },
-    initData() {},
-
     close() {
       this.$emit("close");
     }
   },
-  watch: {},
+  watch: {
+    rowData: {
+      handler(newVal, old) {
+        console.log(newVal);
+        Object.assign(this.queryBody, newVal);
+        console.log("--------------------", this.queryBody);
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   destroyed() {}
 };
 </script>
@@ -354,10 +400,10 @@ export default {
 				width: 24%;
 				min-width: 100px;
 			}
-			.addRoleBtnClass{
+			.addRoleBtnClass {
 				text-align: left;
 				line-height: 25px;
-				margin-bottom:10px;
+				margin-bottom: 10px;
 			}
 		}
 		.footerClass {
