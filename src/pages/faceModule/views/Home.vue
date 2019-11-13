@@ -358,7 +358,7 @@ export default {
   methods: {
     loadNode(node, resolve) {
       api
-        .getFaceDeviceList({ parentOrgUuid: node.data.id })
+        .getFaceDeviceList({ parentOrgUuid: node.data.id, shootType: "face,body" })
         .then(res => {
           if (res.data.success && res.data.data) {
             let data = res.data.data;
@@ -523,7 +523,7 @@ export default {
           if (res.data.success) {
             let data = res.data.data;
             Object.assign(this.checkedChannel, data);
-            // this.loadVideo(data);
+            this.loadVideo(data);
           }
         })
         .catch(() => {});
@@ -571,7 +571,7 @@ export default {
         h
       );
       if (this.video) {
-        // await this.video_mgr.play(this.video);
+        await this.video_mgr.play(this.video);
       }
       document.getElementById("poster_img").style.display = "none";
       this.$refs.canvasRefs.innerHTML = "";

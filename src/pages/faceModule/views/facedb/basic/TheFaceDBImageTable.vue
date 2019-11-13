@@ -17,12 +17,17 @@
 					<span class="item">{{item.gender||""}}</span>
 					<span class="item">{{item.staffType||""}}</span>
 				</p>
-				<el-tooltip class="item" effect="dark" :content="item.credentialType" placement="bottom">
-					<div class="credentialType">{{item.credentialType||"证件类型"}}</div>
-				</el-tooltip>
-				<el-tooltip class="item" effect="dark" :content="item.credentialNo" placement="bottom">
-					<p class="adress">{{item.credentialNo||'证件号码'}}</p>
-				</el-tooltip>
+				<!-- <el-tooltip class="item" effect="dark" :content="item.credentialType" placement="bottom"> -->
+				<div class="textclipsClass credentialType">{{item.credentialType||"证件类型"}}</div>
+				<!-- </el-tooltip> -->
+				<!-- <el-tooltip class="item" effect="dark" :content="item.credentialNo" placement="bottom"> -->
+				<p
+					@mouseover="mymouseover"
+					@mouseout="mymouseout"
+					@mousemove="mymousemove"
+					class="textclipsClass adress"
+				>{{item.credentialNo||'证件号码'}}</p>
+				<!-- </el-tooltip> -->
 			</div>
 			<!-- <div class="box hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
 		</div>
@@ -46,6 +51,7 @@
 
 <script>
 import RestApi from "@/utils/RestApi.js";
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 export default {
   name: "facedblist",
   props: {
@@ -167,12 +173,21 @@ export default {
       });
     },
     async preloadImage() {
-    //   var url = "";
+      //   var url = "";
       for (var i = 0; i < this.imageTableData.length; i++) {
         let url = this.imageTableData[i].facePhotoUrl;
         this.preload[i] = url;
         this.preload.splice(i, 1, url);
       }
+    },
+    mymouseover: event => {
+      mouseover(event);
+    },
+    mymouseout(event) {
+      mouseout(event);
+    },
+    mymousemove(event) {
+      mousemove(event);
     }
   },
   deactivated() {
@@ -299,7 +314,7 @@ $fontcolor: #aaa;
 					}
 					&:hover {
 						color: #ffffff;
-						background-color: rgba(40,255,187,0.3);
+						background-color: rgba(40, 255, 187, 0.3);
 						// background-color: rgba(38,211,157,0.3);
 					}
 				}
@@ -321,10 +336,10 @@ $fontcolor: #aaa;
 		}
 		.adress {
 			cursor: pointer;
-			text-align: center!important;
+			text-align: center !important;
 		}
 		.credentialType {
-			text-align: center!important;
+			text-align: center !important;
 		}
 	}
 }
