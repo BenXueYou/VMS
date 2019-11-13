@@ -8,16 +8,23 @@
 					:style="`background-color:${recoginizeItem.taskColour?recoginizeItem.taskColour:'#26D39D'};opacity: 0.1`"
 				></div>
 				<el-col :span="18" class="asidListRowFooter textclipsClass">
+					<img
+						style="padding-right:12px"
+						:src="(recoginizeItem.faceRecognization)&&
+                        (recoginizeItem.faceRecognization.staffinfo.librarycolor==='red')?require('@/assets/red.png'):require('@/assets/icon/address.png')"
+						alt
+					/>
 					<span
 						class="textclipsClass"
-						style="font-size:14px;opacity:1;padding-left:8px;"
-						:style="`color:${recoginizeItem.taskColour?recoginizeItem.taskColour:'#26D39D'};border-left:2px solid ${recoginizeItem.taskColour?recoginizeItem.taskColour:'#26D39D'}`"
+						style="font-size:14px;"
+						:style="`color:${(recoginizeItem.faceRecognization)&&(recoginizeItem.faceRecognization.staffinfo.librarycolor==='red') ? '#FF5F5F' : '#CCCCCC'}`"
+						:class="(recoginizeItem.faceRecognization)&&(recoginizeItem.faceRecognization.staffinfo.librarycolor==='red')?'fontThemes':'fontTheme'"
 						@mouseover="mymouseover"
 						@mouseout="mymouseout"
 						@mousemove="mymousemove"
 					>
-						{{(recoginizeItem)&&
-						(recoginizeItem.faceMonitorName)?recoginizeItem.faceMonitorName:'布控任务名称'}}
+						{{(recoginizeItem.faceRecognization)&&
+						(recoginizeItem.faceRecognization.channelName)?recoginizeItem.faceRecognization.channelName:'未知任务通道'}}
 					</span>
 				</el-col>
 				<el-col :span="6" class="asidListRowFooter imgTxtClass">
@@ -35,12 +42,10 @@
 							:src="$common.setPictureShow(recoginizeItem.faceCapturePhotoUrl,PicSourceType)"
 						/>
 					</div>
-					<div class="asidFontClass">抓拍照</div>
-				</div>
-				<div class="progressBox">
+				<el-col :span="4" style="display: flex;text-align:center;width:50px">
 					<el-progress
 						class="asidRowProgress"
-						:class="{'activec':(recoginizeItem)&&(recoginizeItem.taskColour==='red')}"
+						:class="{'activec':(recoginizeItem.faceRecognization)&&(recoginizeItem.faceRecognization.staffinfo.librarycolor==='red')}"
 						:stroke-width="2"
 						:width="45"
 						type="circle"
@@ -48,6 +53,7 @@
 						:percentage="recoginizeItem.similarity||recoginizeItem.faceSimilarity || 0"
 					></el-progress>
 					<div class="asidFontClass" style="visibility:hidden">布控照</div>
+				</el-col>
 				</div>
 				<div class="relativeClass">
 					<div class="asidCompareImgBox" :style="`width:${imgWidth}px;height:${imgWidth}px`">
@@ -119,9 +125,8 @@ export default {
       // 发送事件
       this.$emit("clickit");
     },
-    clickDetailAct() {
-      console.log("事件");
-      this.$emit("detailClick");
+    dothis() {
+      this.$emit('detailClick');
     },
     // 鼠标划过覆盖的hover弹窗事件
     mymouseover: event => {
@@ -146,6 +151,7 @@ export default {
 	padding-right: 15%;
 }
 .RecognizeCardClass {
+	/* width: 100%; */
 	height: 100%;
 	box-sizing: border-box;
 	padding-bottom: 8px;
@@ -153,11 +159,11 @@ export default {
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	/* overflow: auto; */
 }
-.RecognizeCardClass .progressBox {
-	display: flex;
-	text-align: center;
-	width: 60px;
-	flex-direction: column;
+.RecognizeCardClass .footerImgBox {
+	width: 100%;
+	height: 65%;
+	box-sizing: border-box;
+	padding: 10px 0px;
 }
 .RecognizeCardClass .asidListRowFooter {
 	/* line-height: 35px; */
@@ -166,7 +172,6 @@ export default {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	opacity: 1;
 }
 .RecognizeCardClass .asidListRowFooter.imgTxtClass {
 	display: flex;
@@ -208,22 +213,24 @@ export default {
 	letter-spacing: 0;
 }
 .RecognizeCardClass .asidListRowBody {
-	padding: 12px 15px 0px;
+	padding: 0px 5% 0px;
+	width: calc(100% - 2px);
+	height: calc(75% - 1px);
 	box-sizing: border-box;
 	display: flex;
 	justify-content: flex-start;
 	overflow: auto;
 }
 .RecognizeCardClass .asidListRowHeader {
-	height: 35px;
+	width: calc(100% - 2px);
+	height: calc(25% - 1px);
 	box-sizing: border-box;
 	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 	padding: 1.5% 5% 1%;
 }
-.RecognizeCardClass .asidCompareImgBox {
-	width: 96px;
-	height: 96px;
-	margin-bottom: 6px;
+.RecognizeCardClass .asidCompareImgBox{
+	height: 100%;
+	padding-top: 12px;
 	box-sizing: border-box;
 }
 .RecognizeCardClass .asidCompareTxtClass {
@@ -248,11 +255,10 @@ export default {
 }
 .RecognizeCardClass .asidCardImg {
 	width: 100%;
-	height: 100%;
+	height: 100%;;
 }
 .RecognizeCardClass .relativeClass {
 	padding-bottom: 1.5%;
-	text-align: center;
 }
 .RecognizeCardClass .rowHeaderBox {
 	position: absolute;

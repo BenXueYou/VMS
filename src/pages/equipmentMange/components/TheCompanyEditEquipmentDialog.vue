@@ -108,11 +108,6 @@
                                     @setUseData="setHouseData" />
         </el-form-item>
 
-        <el-form-item label="1400上传国标码"
-                      prop="gBCode">
-          <el-input v-model.trim="ruleForm.gBCode"
-                    size="samll"></el-input>
-        </el-form-item>
         <el-form-item label="设备描述："
                       prop="desc">
           <el-input v-model.trim="ruleForm.desc"
@@ -689,7 +684,7 @@ import PopoverTree from "@/common/selectOrgTree";
 // 这是楼栋房屋只到单元的下拉框树
 import BuildHousePopoverTree from "@/common/BuildHousePopoverTree2";
 import personTreeTag from "@/common/personTreeTag";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import * as api from "../ajax";
 export default {
   name: "TreeChangeNameDialog.vue",
@@ -699,12 +694,6 @@ export default {
     personTreeTag
   },
   props: {
-    isVideo: {
-      type: Boolean,
-      default() {
-        return false;
-      }
-    },
     width: {
       type: String,
       default() {
@@ -724,12 +713,6 @@ export default {
       }
     },
     deviceUuid: {
-      type: String,
-      default() {
-        return "";
-      }
-    },
-    netStatus: {
       type: String,
       default() {
         return "";
@@ -907,7 +890,6 @@ export default {
         oriz: "",
         build: "",
         desc: "",
-        gBCode: "",
         deviceIp: "",
         devicePort: "",
         deviceUsername: "",
@@ -1054,7 +1036,6 @@ export default {
       } else if (this.whichType === 6) {
         key = "bullet_camera";
       }
-
       this[key][this.whichIndex].tagPOList = data;
       this[key].concat();
       let channelUuid = this[key][this.whichIndex].channelUuid;
@@ -1127,7 +1108,6 @@ export default {
           devicePassword: this.ruleForm.devicePassword,
           devicePort: this.ruleForm.devicePort,
           deviceType: this.ruleForm.deviceType,
-          gBCode: this.ruleForm.gBCode,
           deviceUsername: this.ruleForm.deviceUsername,
           deviceUuid: this.deviceUuid,
           infrastructureUuid: this.ruleForm.build,
@@ -1139,7 +1119,6 @@ export default {
         };
       } else {
         data = {
-          gBCode: this.ruleForm.gBCode,
           deviceType: this.ruleForm.deviceType,
           orgUuid: this.ruleForm.oriz,
           infrastructureUuid: this.ruleForm.build,
@@ -1234,17 +1213,6 @@ export default {
               val.longitude = val.extInfo.longitude || "";
             }
             val.tagPOList = val.tagPOList || [];
-            val.ability = [];
-            if (val.extInfo.faceSnap === 1) {
-              val.ability.push("faceSnap");
-            }
-            if (val.extInfo.vehicleSnap === 1) {
-              val.ability.push("vehicleSnap");
-            }
-            if (val.extInfo.bodySnap === 1) {
-              val.ability.push("bodySnap");
-            }
-
             return val;
             // return {
             //   nickName: val.nickName,
@@ -1310,9 +1278,6 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 .editEquip {
-  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-    color: rgba(40, 255, 187, 1) !important;
-  }
   input {
     @include input30;
   }

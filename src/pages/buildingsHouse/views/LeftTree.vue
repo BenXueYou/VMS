@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 
 export default {
   components: {},

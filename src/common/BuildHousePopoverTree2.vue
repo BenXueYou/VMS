@@ -174,9 +174,9 @@ export default {
       this.getUpAddress(this.labelArr);
       this.nodeText = this.upAddress;
       this.$emit("setUseData", {
-        node: this.currentNode,
-        name: this.upAddress
+        node: this.currentNode
       });
+      console.log(node);
       this.defaultExpKeys = [node.data.id];
       // }
     },

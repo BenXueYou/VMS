@@ -175,18 +175,29 @@ export default {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
 	box-shadow: 8px 0 18px 0 rgba(0, 0, 0, 0.1);
 }
-/* .vistor_left_menu .el-menu:hover,
+.vistor_left_menu .activeClass {
+	color: #26d39d !important;
+	background-color: rgb(35, 70, 62) !important;
+}
+
+.vistor_left_menu .el-menu:hover,
 .vistor_left_menu .el-menu-item:hover {
 	background-color: rgb(33, 45, 51);
-} */
+}
 .vistor_left_menu .el-menu-item.isActive {
 	border-left: 2px solid #26d39d !important;
 }
 .vistor_left_menu .el-menu-item.is-active {
 	color: rgb(220, 221, 222) !important;
+	/* border-left: 2px solid #26D39D !important; */
+	/* background-color: rgb(31, 42, 49) !important; */
 	background-color: rgba(38, 211, 157, 0.6) !important;
 }
 .vistor_left_menu .submenuActiveClass .el-submenu__title {
+	/* border-bottom-color: #26d39d;
+  background-color: rgb(35, 70, 62) !important;
+  color: #26d39d !important;
+  border-left: 2px solid #26d39d !important; */
 	background-color: rgb(35, 38, 41) !important;
 }
 .vistor_left_menu .el-menu--collapse {
@@ -232,23 +243,32 @@ export default {
 }
 .vistor_left_menu .el-menu--horizontal .el-submenu:hover,
 .vistor_left_menu .el-menu--horizontal .el-menu-item:hover {
+	/* background-color: rgba(40, 255, 187, 0.08); */
 	transition: all 0.6s ease-in-out;
 }
 .vistor_left_menu .el-menu--horizontal > .el-menu-item .is-active {
 	background-color: rgb(35, 57, 54);
+	/* border-left: 2px solid #26D39D; */
 }
-
+/* .el-submenu:hover,
+.el-menu-item:hover {
+  background-color: rgba(40, 255, 187, 0.08);
+} */
 .vistor_left_menu .el-submenu__title:hover,
 .vistor_left_menu .el-menu-item:hover,
 .vistor_left_menu .el-menu-item:focus {
-	background-color: rgba(40, 255, 187, 0.08);
-	/* background-color: rgb(35, 57, 54) !important; */
+	/* background-color: rgba(40, 255, 187, 0.08); */
+	background-color: rgb(35, 57, 54) !important;
 	color: #72757f;
 }
 .vistor_left_menu li {
 	padding: 0;
+	/* border-bottom: 1px solid rgba(40, 255, 187, 0.08); */
+	/* box-shadow: 8px 0 18px 0 rgba(0, 0, 0, 0.1); */
 }
-
+/* .el-menu-item:first-child {
+  font-size: 12px;
+} */
 a:-webkit-any-link {
 	color: -webkit-link;
 	text-decoration: none;

@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import BuildingTree from "@/pages/doorControl/views/doorStatus/BuildingTree";
 import OrgDeviceTree from "@/pages/doorControl/views/doorStatus/OrgDeviceTree";
 

@@ -74,7 +74,7 @@
 						<el-progress
 							style="margin:auto;color:#28ffbb;font-size:14px;"
 							:stroke-width="3"
-							:width="progWidth"
+							:width="80"
 							type="circle"
 							color="#ffffff"
 							:percentage="scores"
@@ -107,7 +107,7 @@
 	</div>
 </template>
 <script type="text/javascript">
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js";
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
@@ -118,8 +118,8 @@ export default {
   components: { "big-img": BigImg },
   data: function() {
     return {
-      progWidth: 80,
       fileList: [],
+
       showImg: false,
       imgSrc: "",
       photoCompareDeals: false,
@@ -138,8 +138,6 @@ export default {
 				"/mppr-face/v1/face/image/upload?fileType=full_body_shot",
       leftImg: "",
       rightImg: "",
-      imageBase641: null,
-      imageBase642: null,
       scores: 0,
       compareBtnLoad: false,
       mouseDownFlag: false,
@@ -149,15 +147,12 @@ export default {
   mounted: function(e) {
     // 父組件向子組件傳值
     console.log(this.dialogParama);
-    window.addEventListener("resize", this.PROGWIDTH);
+    //  this.shootPhotoList = this.dialogParama.shootPhotoList;
   },
   activated: function() {
     console.log("刷新页面");
+    // this.getAlarmShootPhotoList();
   },
-  deactivated: function() {
-    window.removeEventListener("resize", this.PROGWIDTH);
-  },
-  computed: {},
   methods: {
     mouseDown(lr) {
       // 长按事件
@@ -188,7 +183,7 @@ export default {
       }
     },
     statuschange() {
-      //   alert("文件选择成功！");
+      alert("文件选择成功！");
     },
     httpRequest2(e2) {
       console.log(e2, "---", e2.file, "---", e2.file.raw);
@@ -238,6 +233,7 @@ export default {
     },
     // 开始对比
     compareTwoFacePhoto() {
+      // debugger;
       this.scores = 0;
       if (this.imageBase641 && this.imageBase642) {
         this.compareBtnLoad = true;
@@ -254,15 +250,17 @@ export default {
         })
         .then(res => {
           this.compareBtnLoad = false;
-          if (res.data.success) {
-            this.scores = res.data.data;
+          if (res.result === 0 && res.data) {
+            this.scores = parseInt(res.data);
           } else {
-            this.$message({ type: "warning", message: res.data.msg });
+            this.$message({ message: "服务器开小差了！", type: "error" });
           }
-        })
-        .catch(() => {
-          this.compareBtnLoad = false;
+
+          console.log("====", res);
         });
+      //   } else {
+      //     this.$message({ message: "请上传图片", type: "warning" });
+      //   }
     },
     // 删除历史记录
     deleteImgRecord() {
@@ -362,20 +360,18 @@ export default {
 
     scrollToRight() {
       let dom = document.getElementById("scrollView");
-      let scrollLeft = dom.scrollLeft;
+      console.log(dom, "向左滚动", dom.scrollLeft);
       document.getElementById("scrollView").scrollLeft += this.scrollValue;
-      if (document.getElementById("scrollView").scrollLeft === scrollLeft) {
-        this.$message.warning("已经是最右端了");
-        // console.log("向左滚动", document.getElementById("scrollView").scrollLeft);
-      }
+
+      console.log("向左滚动", document.getElementById("scrollView").scrollLeft);
     },
     scrollToLeft() {
+      console.log("向右滚动");
       let dom = document.getElementById("scrollView");
-      if (dom.scrollLeft) {
-        document.getElementById("scrollView").scrollLeft -= this.scrollValue;
-      } else {
-        this.$message.warning("已经是最左端了");
-      }
+      console.log(dom, "向右滚动", dom.scrollLeft);
+      document.getElementById("scrollView").scrollLeft -= this.scrollValue;
+
+      console.log("向右滚动", document.getElementById("scrollView").scrollLeft);
     },
     handleAvatarError(err, file, fileList) {
       console.log(err, "===", file, "====", fileList);
@@ -395,13 +391,13 @@ export default {
 	height: 100%;
 }
 .OVO .font-color {
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	font-size: 12px;
 	color: #cccccc;
 	text-align: right;
 }
 .OVO .fontClass {
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	font-size: 16px;
 	color: #ffffff;
 }
@@ -432,7 +428,7 @@ export default {
 	border-radius: 19px;
 }
 .ovo-card-img {
-	margin: 45% 30% 10%;
+	margin: 50% 30% 10%;
 	vertical-align: middle;
 	width: 30%;
 	height: 20%;
@@ -476,7 +472,7 @@ export default {
 	border: 1px solid rgba(32, 50, 49, 1);
 }
 .OVO .colRowBoxClass {
-	margin:25px auto 0;
+	margin: 25px auto 0;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -510,7 +506,7 @@ export default {
 }
 .OVO .dialogPhotoItemTxt {
 	opacity: 0.8;
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	font-size: 12px;
 	color: #ffffff;
 	text-align: center;
@@ -550,7 +546,7 @@ export default {
 	overflow-y: hidden;
 }
 
-@media screen and (max-width: 1400px) {
+<<<<<<< head @media screen and (max-width: 1400px) {
 	.OVO .colBoxClass {
 		width: calc(100% + 15px);
 		height: 130px;
@@ -575,10 +571,10 @@ export default {
 	}
 }
 
-.OVO .OVOTitle {
+=======>>>>>>>remotes/origin/1.4.alpha .OVO .OVOTitle {
 	/* padding: 35px 50px 17px 0px; */
 	text-align: left;
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 	font-size: 18px;
 	/* color: #28FFBB; */
 }
@@ -601,6 +597,7 @@ export default {
 .OVO {
 	text-align: center;
 	background-color: transparent;
+
 	width: 100%;
 	height: 100%;
 	box-sizing: border-box;
@@ -637,6 +634,6 @@ export default {
 	vertical-align: middle;
 	/*margin-left: 10px;*/
 	line-height: 1;
-	font-family: "PingFangSC-Regular";
+	font-family: PingFangSC-Regular;
 }
 </style>
