@@ -21,7 +21,7 @@ if (DEBUG == "DEBUG") {
   // 提测环境
   // ip = "192.168.9.141:15000";
   ip = '192.168.6.111:15000';
-  websocketIp = "192.168.9.67:15007";
+  websocketIp = "192.168.6.111:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -33,8 +33,8 @@ if (DEBUG == "DEBUG") {
     ip = hostname;
     websocketIp = hostname;
   } else {
-    ip = hostname + ":51880";
-    websocketIp = "180.167.210.2:51881";
+    ip = hostname + ":15000";
+    websocketIp = hostname + ":15007";
   }
   var imgUrlStr = protocolHeader + "//" + ip;
   imageUrl =
@@ -42,7 +42,7 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
 window.config = {
-  DeBug:true,
+  DeBug: true,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",
