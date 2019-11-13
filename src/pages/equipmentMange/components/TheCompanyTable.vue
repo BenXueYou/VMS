@@ -277,10 +277,10 @@ export default {
             });
             this.localService = num;
           }
-          this.$emit("serverList", this.localService);
+          this.$emit("serverList", this.localService, this.viewType);
         })
         .catch(() => {
-          this.$emit("serverList", this.localService);
+          this.$emit("serverList", this.localService, this.viewType);
         });
     },
     DType() {
@@ -515,7 +515,7 @@ export default {
         this.serviceList(this.viewType);
         this.DType(this.viewType);
       } else {
-        this.$emit("showEdit", row.deviceUuid, row.netStatus);
+        this.$emit("showEdit", row.deviceUuid);
       }
       // this.editEquipMentDialgoVisible = true;
     },

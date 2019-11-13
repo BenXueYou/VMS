@@ -541,8 +541,8 @@ export default {
         case "关闭窗口":
           // 清空rtspUrl，则触发video组件stop事件
           this.closeVideo(this.operatorIndex);
-
           this.videoArr.concat();
+          this.showCloudControl = this.updateCloud();
           break;
         case "关闭所有窗口":
           // 把所有分路的rtspUrl都清空
@@ -553,6 +553,7 @@ export default {
             item.channelUuid = "";
             return item;
           });
+          this.showCloudControl = this.updateCloud();
           break;
         case "摄像机信息":
           if (!this.videoArr[this.operatorIndex].channelUuid) {
@@ -592,7 +593,11 @@ export default {
           );
           break;
         case "图像调节":
-          this.imageAdjustVisible = true;
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.imageAdjustVisible = true;
+          }
           break;
         case "开始录像":
           // this.jumpToPlayback();
@@ -711,9 +716,16 @@ export default {
       this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
     },
     updateCloud() {
-      if (!this.videoArr[this.operatorIndex].operatorData) {
+      if (this.operatorIndex < 0) {
         return false;
       }
+      if (
+        !this.videoArr[this.operatorIndex].rtspUrl ||
+        !this.videoArr[this.operatorIndex].operatorData
+      ) {
+        return false;
+      }
+      console.log(this.videoArr[this.operatorIndex].operatorData);
       return (
         ["bullet_camera_ptz", "bullet_camera"].indexOf(
           this.videoArr[this.operatorIndex].operatorData.relType
@@ -723,6 +735,7 @@ export default {
   },
   watch: {
     operatorIndex(val) {
+      this.showCloudControl = this.updateCloud();
       this.showCloudControl = this.updateCloud();
     },
     videoArr(val) {

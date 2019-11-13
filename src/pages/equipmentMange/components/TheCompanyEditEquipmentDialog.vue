@@ -108,6 +108,11 @@
                                     @setUseData="setHouseData" />
         </el-form-item>
 
+        <el-form-item label="1400上传国标码"
+                      prop="gBCode">
+          <el-input v-model.trim="ruleForm.gBCode"
+                    size="samll"></el-input>
+        </el-form-item>
         <el-form-item label="设备描述："
                       prop="desc">
           <el-input v-model.trim="ruleForm.desc"
@@ -181,34 +186,6 @@
               选择标签
             </el-button>
           </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人脸抓拍：
-            <el-switch v-model="item.faceSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持车辆抓拍：
-            <el-switch v-model="item.vehicleSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人体抓拍：
-            <el-switch v-model="item.bodySnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-
         </div>
       </div>
 
@@ -262,7 +239,6 @@
                       @focus="gogo"
                       @change="gogo"></el-input>
           </div>
-
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(2,index,x)"
@@ -276,33 +252,7 @@
               选择标签
             </el-button>
           </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人脸抓拍：
-            <el-switch v-model="item.faceSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持车辆抓拍：
-            <el-switch v-model="item.vehicleSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人体抓拍：
-            <el-switch v-model="item.bodySnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
+
         </div>
       </div>
 
@@ -371,33 +321,6 @@
               选择标签
             </el-button>
           </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人脸抓拍：
-            <el-switch v-model="item.faceSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持车辆抓拍：
-            <el-switch v-model="item.vehicleSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人体抓拍：
-            <el-switch v-model="item.bodySnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
         </div>
       </div>
 
@@ -436,7 +359,6 @@
           </el-select>
 
           <div class='videoSetingaa'>
-
             <label class="label">通道国标码：</label>
             <el-input v-model="item.gBCode"
                       @focus="gogo"
@@ -466,33 +388,7 @@
               选择标签
             </el-button>
           </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人脸抓拍：
-            <el-switch v-model="item.faceSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持车辆抓拍：
-            <el-switch v-model="item.vehicleSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人体抓拍：
-            <el-switch v-model="item.bodySnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
+
         </div>
       </div>
 
@@ -562,33 +458,7 @@
               选择标签
             </el-button>
           </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人脸抓拍：
-            <el-switch v-model="item.faceSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持车辆抓拍：
-            <el-switch v-model="item.vehicleSnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
-          <div class="form-item"
-               v-if="isLocal">
-            支持人体抓拍：
-            <el-switch v-model="item.bodySnap"
-                       @change='gogo'
-                       active-color="rgb(38,78,70)"
-                       inactive-color="rgb(75,78,82)">
-            </el-switch>
-          </div>
+
         </div>
       </div>
 
@@ -684,7 +554,7 @@ import PopoverTree from "@/common/selectOrgTree";
 // 这是楼栋房屋只到单元的下拉框树
 import BuildHousePopoverTree from "@/common/BuildHousePopoverTree2";
 import personTreeTag from "@/common/personTreeTag";
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 import * as api from "../ajax";
 export default {
   name: "TreeChangeNameDialog.vue",
@@ -694,10 +564,10 @@ export default {
     personTreeTag
   },
   props: {
-    netStatus: {
-      type: String,
+    isVideo: {
+      type: Boolean,
       default() {
-        return "online";
+        return false;
       }
     },
     width: {
@@ -719,6 +589,12 @@ export default {
       }
     },
     deviceUuid: {
+      type: String,
+      default() {
+        return "";
+      }
+    },
+    netStatus: {
       type: String,
       default() {
         return "";
@@ -896,6 +772,7 @@ export default {
         oriz: "",
         build: "",
         desc: "",
+        gBCode: "",
         deviceIp: "",
         devicePort: "",
         deviceUsername: "",
@@ -1042,6 +919,7 @@ export default {
       } else if (this.whichType === 6) {
         key = "bullet_camera";
       }
+
       this[key][this.whichIndex].tagPOList = data;
       this[key].concat();
       let channelUuid = this[key][this.whichIndex].channelUuid;
@@ -1071,7 +949,6 @@ export default {
             item.vehicleSnap =
               item.ability.indexOf("vehicleSnap") !== -1 ? 1 : 0;
             item.bodySnap = item.ability.indexOf("bodySnap") !== -1 ? 1 : 0;
-
             // channelList.push({
             //   nickName: item.nickName,
             //   channelUuid: item.channelUuid,
@@ -1114,6 +991,7 @@ export default {
           devicePassword: this.ruleForm.devicePassword,
           devicePort: this.ruleForm.devicePort,
           deviceType: this.ruleForm.deviceType,
+          gBCode: this.ruleForm.gBCode,
           deviceUsername: this.ruleForm.deviceUsername,
           deviceUuid: this.deviceUuid,
           infrastructureUuid: this.ruleForm.build,
@@ -1125,6 +1003,7 @@ export default {
         };
       } else {
         data = {
+          gBCode: this.ruleForm.gBCode,
           deviceType: this.ruleForm.deviceType,
           orgUuid: this.ruleForm.oriz,
           infrastructureUuid: this.ruleForm.build,
@@ -1219,6 +1098,17 @@ export default {
               val.longitude = val.extInfo.longitude || "";
             }
             val.tagPOList = val.tagPOList || [];
+            val.ability = [];
+            if (val.extInfo.faceSnap === 1) {
+              val.ability.push("faceSnap");
+            }
+            if (val.extInfo.vehicleSnap === 1) {
+              val.ability.push("vehicleSnap");
+            }
+            if (val.extInfo.bodySnap === 1) {
+              val.ability.push("bodySnap");
+            }
+
             return val;
             // return {
             //   nickName: val.nickName,
@@ -1235,6 +1125,9 @@ export default {
         this.dutouData = [];
         this.shuruData = [];
         this.shuchuData = [];
+        this.ipc = [];
+        this.bullet_camera = [];
+        this.ipc = this.ipc.concat();
         for (let k in this.row.channelMapList) {
           console.log(k);
           if (k === window.config.door) {
@@ -1284,6 +1177,9 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 .editEquip {
+  .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+    color: rgba(40, 255, 187, 1) !important;
+  }
   input {
     @include input30;
   }

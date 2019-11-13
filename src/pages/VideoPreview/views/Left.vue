@@ -27,7 +27,9 @@
                  lazy>
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                  class="span"
+                  :title="node.label">{{ node.label }}</span>
             <!-- v-if="data.h5Type==='channel'" -->
             <el-dropdown trigger="click"
                          @command="handleCommand"
@@ -56,7 +58,9 @@
                  @node-click="handleNodeClick">
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <span class="span"
+                  @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                  :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
@@ -84,7 +88,9 @@
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <span class="span"
+                  @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                  :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
@@ -459,42 +465,52 @@ export default {
     viewhandleCheckChange() {
       console.log(this.$refs.tree3.getCheckedNodes());
     },
+    openVidoeByDBClick(node, data, e) {
+      console.log(e);
+      e.preventDefault();
+      e.stopPropagation();
+      this.operatorData = data;
+      this.chuliData();
+    },
     saveClickData(node, data) {
       // 点击三角菜单保存树节点信息
       this.operatorData = data;
+    },
+    chuliData() {
+      if (this.operatorData.h5Type === "channel") {
+        this.getPreviewInfo(this.operatorData.id, this.operatorData);
+      } else if (this.operatorData.h5Type === "organization") {
+        // 根据组织来获取通道
+        api
+          .getTDByOrgUuid(this.operatorData.id, { viewType: "video" })
+          .then(res => {
+            console.log(res);
+            let data = res.data.data;
+            // 这里获取到通道UUid
+            for (let i = 0; i < data.length; i++) {
+              data[i].relType = data[i].type;
+              this.getPreviewInfo(data[i].id, data[i]);
+            }
+          });
+      } else if (this.operatorData.hasOwnProperty("channelType")) {
+        this.getPreviewInfo(this.operatorData.channelUuid, this.operatorData);
+      } else if (this.operatorData.hasOwnProperty("tagType")) {
+        this.getChannelByNode(this.operatorData.id).then(res => {
+          console.log(res);
+          let data = res || [];
+          for (let i = 0; i < data.length; i++) {
+            data[i].relType = data[i].channelType;
+            this.getPreviewInfo(data[i].channelUuid, data[i]);
+          }
+        });
+      }
     },
     handleCommand(command) {
       console.log(command);
       console.log(this.operatorData);
       if (command === "video") {
         // 打开视频操作
-        if (this.operatorData.h5Type === "channel") {
-          this.getPreviewInfo(this.operatorData.id, this.operatorData);
-        } else if (this.operatorData.h5Type === "organization") {
-          // 根据组织来获取通道
-          api
-            .getTDByOrgUuid(this.operatorData.id, { viewType: "video" })
-            .then(res => {
-              console.log(res);
-              let data = res.data.data;
-              // 这里获取到通道UUid
-              for (let i = 0; i < data.length; i++) {
-                data[i].relType = data[i].type;
-                this.getPreviewInfo(data[i].id, data[i]);
-              }
-            });
-        } else if (this.operatorData.hasOwnProperty("channelType")) {
-          this.getPreviewInfo(this.operatorData.channelUuid, this.operatorData);
-        } else if (this.operatorData.hasOwnProperty("tagType")) {
-          this.getChannelByNode(this.operatorData.id).then(res => {
-            console.log(res);
-            let data = res || [];
-            for (let i = 0; i < data.length; i++) {
-              data[i].relType = data[i].channelType;
-              this.getPreviewInfo(data[i].channelUuid, data[i]);
-            }
-          });
-        }
+        this.chuliData();
       } else if (command === "playback") {
         this.$emit("switchLuxiang", this.operatorData.id);
       } else if (command === "view") {
@@ -1419,6 +1435,13 @@ export default {
   background-color: rgba(35, 38, 41, 0.8);
   .custom-tree-node {
     width: 100%;
+    .span {
+      width: calc(100% - 30px);
+      overflow: hidden;
+      display: block;
+      text-overflow: ellipsis;
+      float: left;
+    }
     .threelinemenu {
       display: none;
       float: right;
