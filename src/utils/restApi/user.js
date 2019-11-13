@@ -6,8 +6,8 @@ let ip = window.config.ip,
 let httpHeader = `${
   window.config.protocolHeader
 }${ip}/upms-v1/project/${projectUuid}`;
-httpHeader =
-  "http://192.168.9.166:15101/project/299fc6dfa7104483bcee8d71e59957cd";
+// httpHeader =
+//   "http://192.168.9.166:15101/project/299fc6dfa7104483bcee8d71e59957cd";
 let httpAccountHeader = `${window.config.protocolHeader}${ip}/upms-v1/account`;
 let zy = `${
   window.config.protocolHeader
