@@ -16,7 +16,6 @@
                                        :deviceTypeArr="deviceTypeArr"
                                        :localService="localService"
                                        :visible="isShowEdit"
-                                       :netStatus="netStatus"
                                        :deviceUuid="deviceUuid"
                                        @updateEdit="showEdit"
                                        @showEdit="hiddenEdit">
@@ -62,9 +61,8 @@ export default {
     };
   },
   methods: {
-    serverList(arr, viewType) {
+    serverList(arr) {
       this.localService = arr;
-      this.viewType = viewType;
     },
     changeDevTypeArr(arr) {
       this.deviceTypeArr = arr;

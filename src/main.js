@@ -1,29 +1,29 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue';
-import Vuex from 'vuex';
-import store from '@/store/store.js';
-import Axios from '@/utils/Request';
-import ElementUI from 'element-ui';
-import './style/element-variables.scss';
-import './style/index.scss';
-import App from './App';
-import router from './router';
+import Vue from "vue";
+import Vuex from "vuex";
+import store from "@/store/store.js";
+import Axios from "@/utils/Request";
+import ElementUI from "element-ui";
+import "./style/element-variables.scss";
+import "./style/index.scss";
+import App from "./App";
+import router from "./router";
 
 // 权限控制中枢 路由守卫
 import './permission';
 import './directives';
 // import './dir';
 
-import echarts from 'echarts';
-import { EventBusPlugin as EventBus } from '@/utils/Eventbus';
-import Common from '@/utils/Common.js';
+import echarts from "echarts";
+import { EventBusPlugin as EventBus } from "@/utils/Eventbus";
+import Common from "@/utils/Common.js";
 import Toast from "@/utils/Toast.js";
-import HomeAjax from '@/pages/home/utils/HomeAjax.js';
-import GuangTuoUI from '@/common/package/index.js';
-import LogSearchHttp from '@/pages/doorControl/utils/LogSearchHttp.js';
-import HouseHttp from '@/pages/buildingsHouse/utils/HouseHttp.js';
-import UnitHttp from '@/pages/unitMange/utils/UnitHttp.js';
+import HomeAjax from "@/pages/home/utils/HomeAjax.js";
+import GuangTuoUI from "@/common/package/index.js";
+import LogSearchHttp from "@/pages/doorControl/utils/LogSearchHttp.js";
+import HouseHttp from "@/pages/buildingsHouse/utils/HouseHttp.js";
+import UnitHttp from "@/pages/unitMange/utils/UnitHttp.js";
 
 import DoorSetAjax from '@/pages/doorControl/utils/DoorAccessSetHttp.js';
 
@@ -63,9 +63,9 @@ Vue.use(LoginAjax);
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
+  el: "#app",
   router,
   store,
   components: { App },
-  template: '<App/>'
+  template: "<App/>"
 });

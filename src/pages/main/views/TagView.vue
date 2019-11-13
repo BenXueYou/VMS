@@ -88,7 +88,19 @@ export default {
       this.$bus.$off("setLocalTag");
     }
   },
-  watch: {},
+  watch: {
+    "$route.path": function(newVal, oldVal) {
+      // 监听路由用于非手动点击上面菜单切换路由而不切换菜单样式
+      let data = this.$store.state.home.tagViewArr;
+      for (let i = 0, len = data.length; i < len; i++) {
+        if (newVal.indexOf(data[i].name) !== -1) {
+          this.$store.dispatch("setLocalTag", data[i].name);
+          this.activeIndex = data[i].name;
+          break;
+        }
+      }
+    }
+  },
   deactivated() {
     this.unRegisterEventbus();
   },

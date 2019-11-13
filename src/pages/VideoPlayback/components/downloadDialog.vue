@@ -1,0 +1,132 @@
+<template>
+  <el-dialog :visible.sync="dialogVisible"
+             class="dialogCenter"
+             title="下载"
+             width="1200px"
+             :close-on-click-modal="false"
+             @close="close"
+             :append-to-body="true">
+    <div class="body">
+      <div>
+        <el-button size="small">下载</el-button>
+        <el-button size="small">删除</el-button>
+      </div>
+      <el-table :data="tableData"
+                style="width: 100%">
+        <el-table-column prop="filename"
+                         label="文件名称"
+                         show-overflow-tooltip
+                         width="100">
+        </el-table-column>
+        <el-table-column prop="devicename"
+                         label="设备名称"
+                         show-overflow-tooltip
+                         width="100">
+        </el-table-column>
+        <el-table-column prop="videoPeriod"
+                         show-overflow-tooltip
+                         label="录像时间段">
+        </el-table-column>
+        <el-table-column prop="progress"
+                         label="进度"
+                         width="180">
+          <template slot-scope="scope">
+            <el-progress :percentage="scope.row.progress"
+                         color="#26D39D"></el-progress>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status"
+                         label="状态"
+                         width="100">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status==='done'">已完成</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="taskAddTime"
+                         label="任务加入时间"
+                         show-overflow-tooltip
+                         width="180">
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button @click="downloadVideo(scope.row)"
+                       type="text"
+                       size="small">下载</el-button>
+            <el-button type="text"
+                       class='deleteText'
+                       @click='deleteVideo(scope.row)'
+                       size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="block">
+        <el-pagination @current-change="handleCurrentChange"
+                       :current-page.sync="currentPage"
+                       :page-size="pageSize"
+                       background
+                       class="pagination"
+                       layout="total, prev, pager, next, jumper"
+                       :total="total">
+        </el-pagination>
+      </div>
+    </div>
+  </el-dialog>
+</template>
+
+<script>
+export default {
+  props: {
+    visible: {
+      type: Boolean
+    },
+    tableData: {
+      type: Array,
+      default() {
+        return Array.from({ length: 10 }).fill({
+          fileName: "tradecore1",
+          devicename: "设备1-通道1",
+          videoPeriod: "2018-02-03 02:01:06 ～ 2018-02-03 02:01:06",
+          progress: 50,
+          status: "done",
+          taskAddTime: "2016-07-24  19:23"
+        });
+      }
+    }
+  },
+  data() {
+    return {
+      dialogVisible: false,
+      currentPage: 1,
+      pageSize: 20,
+      total: 100
+    };
+  },
+  methods: {
+    handleCurrentChange(val) {},
+    downloadVideo(device) {},
+    deleteVideo(device) {},
+    close() {
+      this.$emit("update:visible", false);
+    }
+  },
+  watch: {
+    visible(val) {
+      this.dialogVisible = val;
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.body {
+  padding: 10px 30px;
+  box-sizing: border-box;
+  .pagination {
+    float: right;
+  }
+  .block {
+    margin: 20px;
+    overflow: hidden;
+  }
+}
+</style>

@@ -111,7 +111,25 @@
 import * as api from "@/pages/faceModule/http/baseConfigHttp.js";
 export default {
   components: {},
-  props: {},
+  props: {
+    tableData: {
+      type: Array,
+      default: function() {
+        var num = [];
+        for (var i = 0; i < 14; i++) {
+          num.push({
+            modules: "以脸搜脸",
+            options: "临时布控",
+            optionsDetails: "修改了布控任务详情",
+            name: "李一一",
+            account: "admin",
+            time: "2018-11-12 16:34:45"
+          });
+        }
+        return num;
+      }
+    }
+  },
   data() {
     return {
       tags: [],

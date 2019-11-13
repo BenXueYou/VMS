@@ -42,7 +42,7 @@ Logger.prototype.logError = function (line) {
 }
 
 Logger.prototype.logInfo = function (line) {
-    // console.log("[" + this.currentTimeStr() + "][" + this.module + "][IF] " + line);
+    console.log("[" + this.currentTimeStr() + "][" + this.module + "][IF] " + line);
 }
 
 Logger.prototype.logDebug = function (line) {

@@ -11,30 +11,38 @@
 </template>
 
 <script>
-import leftMenu from "@/common/leftMenu.vue";
+import leftMenu from '@/common/leftMenu.vue';
 export default {
-  name: "FaceManage",
+  name: 'FaceManage',
   components: {
     leftMenu
   },
-  data: function(argument) {
+  data: function (argument) {
     return {
+      // this.$route.path:'/home'
       app_visible_popver: false
     };
   },
-  mounted: function() {},
+  mounted: function () {
+
+  },
   methods: {
-    switchModule() {
-      console.log("-----", this.$route.path);
+    switchModule () {
+      console.log('-----', this.$route.path);
       this.app_visible_popver = false;
+      // this.routerIndex = this.$route.path;
+    },
+    btnAct() {
+
     }
   }
 };
 </script>
 
 <style>
+
 body {
-	overflow: hidden;
+  overflow: hidden;
 }
 #FaceManage {
 	/* width: 100%; */
@@ -48,9 +56,9 @@ body {
 	flex-direction: wrap;
 	justify-content: flex-start;
 }
-.el-progress-circle__track {
-	stroke: rgb(61, 65, 71);
-	fill: none;
+.el-progress-circle__track{
+    stroke: rgb(61,65,71);
+    fill: none;
 }
 .FaceRightBox {
 	width: calc(100% - 200px);
