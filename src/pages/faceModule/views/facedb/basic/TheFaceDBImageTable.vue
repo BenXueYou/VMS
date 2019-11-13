@@ -279,6 +279,7 @@ $fontcolor: #aaa;
 					margin-top: 50px;
 					margin-left: 12px;
 					margin-right: 2px;
+					background: rgba(17, 17, 17, 0.9);
 				}
 				.operator i {
 					cursor: pointer;
@@ -298,7 +299,8 @@ $fontcolor: #aaa;
 					}
 					&:hover {
 						color: #ffffff;
-						background-color: rgba(40, 255, 187, 0.3);
+						background-color: rgba(40,255,187,0.3);
+						// background-color: rgba(38,211,157,0.3);
 					}
 				}
 			}
@@ -319,9 +321,10 @@ $fontcolor: #aaa;
 		}
 		.adress {
 			cursor: pointer;
+			text-align: center!important;
 		}
 		.credentialType {
-			text-align: center !important;
+			text-align: center!important;
 		}
 	}
 }

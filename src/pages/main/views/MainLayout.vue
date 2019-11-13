@@ -127,7 +127,7 @@ export default {
       this.stompClient.connect(
         { projectUuid: this.$store.state.home.projectUuid },
         frame => {
-          console.log("connect success:", frame);
+          console.log("connect success----------------:", frame);
           // 订阅通知
           const subCaptureApi = "/user/topic/face-1.3/client/capture";
           const subRecognizationApi =
@@ -136,14 +136,14 @@ export default {
           this.subCapture = this.stompClient.subscribe(
             subCaptureApi,
             greeting => {
-              // console.log("收到抓拍通知：", greeting);
+              console.log("收到抓拍通知：", greeting);
               this.handleSubscribeCapture(JSON.parse(greeting.body));
             }
           );
           this.subRecognization = this.stompClient.subscribe(
             subRecognizationApi,
             greeting => {
-              // console.log("收到识别通知：", greeting);
+              console.log("收到识别通知：", greeting);
               this.handleSubscribeRecognization(JSON.parse(greeting.body));
             }
           );
@@ -156,7 +156,7 @@ export default {
           );
         },
         err => {
-          console.log("error,errMsg:", err);
+          console.log("websocket connect error,errMsg:", err);
         }
       );
     },
