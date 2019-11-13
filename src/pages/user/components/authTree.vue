@@ -419,7 +419,7 @@ export default {
         label: "nodeName",
         children: "childNodes"
       },
-      allData: ["新建", "修改", "删除", "查看", "导入", "导出"],
+      allData: ["新增", "修改", "删除", "查看", "导入", "导出"],
       checkedNum: [],
       showNum: []
     };
@@ -652,6 +652,8 @@ export default {
       this.showNum = [];
       this.getAllCheckedLeafUuid(this.data);
       console.log(this.checkedNum);
+      console.log(this.showNum);
+
       this.$emit("confirm", this.checkedNum, this.showNum);
       this.close();
     },

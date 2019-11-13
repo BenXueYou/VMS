@@ -13,6 +13,14 @@ export function getAccout(params) {
     params
   });
 }
+export function getNewTree(params) {
+  let { getNewTreeUrl: url } = userUrl;
+  return axios({
+    method: "POST",
+    url,
+    dat: params
+  });
+}
 export function getHomeMenu(params) {
   let { getHomeMenuUrl: url } = userUrl;
   return axios({
@@ -23,6 +31,14 @@ export function getHomeMenu(params) {
 }
 export function getAuth(params) {
   let { getAuthUrl: url } = userUrl;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+export function getResource(params) {
+  let { getResourceUrl: url } = userUrl;
   return axios({
     method: "get",
     url,
