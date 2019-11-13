@@ -18,7 +18,7 @@ export function getNewTree(params) {
   return axios({
     method: "POST",
     url,
-    dat: params
+    data: params
   });
 }
 export function getHomeMenu(params) {
@@ -57,6 +57,14 @@ export function getUserList(params) {
 }
 export function getUserDetail(params) {
   let { getUserDetailUrl: url } = userUrl;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+export function getResourceAuth(params) {
+  let { getResourceAuthUrl: url } = userUrl;
   return axios({
     method: "get",
     url,
@@ -128,7 +136,7 @@ export function getAccountListApi(data) {
 export function getAccountDetail(data) {
   let url = accountApi.getAccountDetailApi;
   return axios({
-    method: 'GET',
+    method: "GET",
     url,
     params: data
   });
@@ -189,7 +197,7 @@ export function switchAccountApi(data) {
 export function parcelRoleAccountApi(data) {
   let url = accountApi.editRoleAccountApi;
   return axios({
-    method: 'POST',
+    method: "POST",
     url,
     data
   });
