@@ -1,14 +1,16 @@
 import store from "@/store/store.js";
 
 let ip = window.config.ip,
-  // projectUuid = window.config.projectUuid;
   projectUuid = store.state.home.projectUuid;
+// 项目内权限
 let httpHeader = `${
   window.config.protocolHeader
 }${ip}/upms-v1/project/${projectUuid}`;
-// httpHeader =
-//   "http://192.168.9.166:15101/project/299fc6dfa7104483bcee8d71e59957cd";
-let httpAccountHeader = `${window.config.protocolHeader}${ip}/upms-v1/account`;
+
+//项目外权限
+let httpAccountHeader = `${
+  window.config.protocolHeader
+}${ip}/upms-v1/account`;
 export default {
   getAccoutUrl: `${httpHeader}`,
   // 获取角色列表
@@ -39,6 +41,6 @@ export default {
     deleteAccountApi: `${httpAccountHeader}`,
     switchAccountApi: `${httpAccountHeader}`,
     //账号分配角色
-    editRoleAccountApi:`${httpAccountHeader}/role`
+    editRoleAccountApi:`${httpHeader}/account/role`
   }
 };

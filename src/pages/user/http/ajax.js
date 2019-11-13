@@ -91,6 +91,7 @@ export function updateUserStatus(data) {
 // add
 export function addAccountApi(data) {
   let url = accountApi.addAccountApi;
+  data.accountType = "management_platform";
   return axios({
     method: "POST",
     url,
@@ -120,6 +121,7 @@ export function getAccountDetail(data) {
 
 // put修改账号
 export function putAccountApi(data) {
+  data.accountType = "management_platform";
   let url = accountApi.putAccountApi(data.accountUuid);
   return axios({
     method: "PUT",
@@ -172,6 +174,7 @@ export function switchAccountApi(data) {
 
 export function parcelRoleAccountApi(data) {
   let url = accountApi.editRoleAccountApi;
+  debugger;
   return axios({
     method: 'POST',
     url,
