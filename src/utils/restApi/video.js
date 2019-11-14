@@ -44,7 +44,9 @@ export default {
   // 获取摄像机信息
   getCameraInfoUrl: `${urlPrefix}/video/cameraInfo`,
   // 获取子节点及视频设备通道数据
-  videoTreeUrl: `${zwUrlPrefix}/organization/video/children`
+  videoTreeUrl: `${zwUrlPrefix}/organization/video/children`,
+  // h获取媒流体服务的信息
+  getPreviewInfAAoUrl: `${urlPrefix}/video/streamPreviewInfo`
   // 先使用下面的url测试
   // videoTreeUrl: `http://192.168.9.164:9000/project/a2445ed3830b4a3d9607ef502e8333bf/organization/video/children`
 };

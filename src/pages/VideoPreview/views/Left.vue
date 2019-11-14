@@ -29,6 +29,9 @@
                slot-scope="{ node, data }">
             <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
                   class="span"
+                  :draggable="data.h5Type==='channel'"
+                  @click.stop="saveClickData('', data)"
+                  @dragstart="dragstart(data,$event)"
                   :title="node.label">{{ node.label }}</span>
             <!-- v-if="data.h5Type==='channel'" -->
             <el-dropdown trigger="click"
@@ -60,6 +63,9 @@
                slot-scope="{ node, data }">
             <span class="span"
                   @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                  @click.stop="saveClickData('', data)"
+                  :draggable="data.h5Type==='channel'"
+                  @dragstart="dragstart(data,$event)"
                   :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
                          @command="handleCommand"
@@ -89,7 +95,7 @@
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
             <span class="span"
-                  @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                  @dblclick.stop="openVidewTu(node,data,$event)"
                   :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
                          @command="handleCommand"
@@ -425,6 +431,12 @@ export default {
     })
   },
   methods: {
+    dragstart(data, e) {
+      console.log(JSON.stringify(data));
+      // 使用whereform记录拖拽源
+      e.dataTransfer.setData("whereform", "tree");
+      e.dataTransfer.setData("operatorData", JSON.stringify(data));
+    },
     changeYuZhi() {
       // 下拉列表修改预置点，暂且不需要什么操作
       // for (let i = 0; i < this.yuzhiOptions.length; i++) {
@@ -505,6 +517,9 @@ export default {
         });
       }
     },
+    openVidewTu() {
+      this.$emit("openView", this.operatorData);
+    },
     handleCommand(command) {
       console.log(command);
       console.log(this.operatorData);
@@ -514,7 +529,7 @@ export default {
       } else if (command === "playback") {
         this.$emit("switchLuxiang", this.operatorData.id);
       } else if (command === "view") {
-        this.$emit("openView", this.operatorData);
+        this.openVidewTu();
       } else if (command === "renameView") {
         this.nodeValue = this.operatorData.viewName;
         this.changeNameDialogVisible = true;

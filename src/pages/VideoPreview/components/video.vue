@@ -141,6 +141,8 @@ export default {
           name: "关闭"
         }
       ],
+      ip: "",
+      port: "",
       video_mgr: null,
       canvas: null,
       video: null,
@@ -263,8 +265,7 @@ export default {
     async resume() {
       await this.video_mgr.resume(this.video);
     },
-    async singleFrame() {
-    },
+    async singleFrame() {},
     setPlayTime(startTime, endTime) {},
     dblclickhandler() {
       this.$emit("dblclickhandler", this.index);
@@ -292,19 +293,8 @@ export default {
       this.canvas = document.createElement("canvas");
       this.canvas.width = this.width;
       this.canvas.height = this.height;
-      let ip = "192.168.9.21";
-      let jSignal = {
-        srcUuid: "signal_channel",
-        routeType: "location",
-        param: { location: { protocol: "icc-ws", port: "4400" } }
-      };
-      jSignal.param.location.ip = ip;
-      let jMedia = {
-        srcUuid: "media_channel",
-        routeType: "location",
-        param: { location: { protocol: "icc-ws", port: "4401" } }
-      };
-      jMedia.param.location.ip = ip;
+      let { jMedia, jSignal } = this.$store.getters;
+      console.log(jMedia, jSignal);
       let w, h;
       if (this.streamType === "main") {
         w = 1920;
@@ -343,10 +333,22 @@ export default {
       }
     },
     dragstart(e) {
-      this.$emit("dragstart", this.index);
+      e.dataTransfer.setData("whereform", "video");
+      this.$emit("dragstart", this.index, e);
     },
     drop(e) {
-      this.$emit("drop", this.index);
+      console.log(e);
+      let whereform = e.dataTransfer.getData("whereform");
+      console.log(whereform);
+      if (whereform === "tree") {
+        let operatorData = JSON.parse(e.dataTransfer.getData("operatorData"));
+        let channelUuid = operatorData.id;
+        console.log(operatorData);
+        this.$emit("playRtsp", channelUuid, "main", operatorData);
+      } else if (whereform === "video") {
+        this.$emit("drop", this.index);
+      }
+      // 这里判断下，拖动过来的是树上面的节点还是窗口互换
       e.preventDefault();
     },
     dragover(e) {

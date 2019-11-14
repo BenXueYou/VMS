@@ -36,6 +36,7 @@
                     :isRecord="!!item.isRecord"
                     :fenlu="fenluIndex+1"
                     :isAutoScreen="isAutoScreen===index"
+                    @playRtsp="playRtsp"
                     @dblclickhandler="dblclickhandler"
                     @closeVideo="closeVideo"
                     @startRecord="startRecord"
@@ -111,6 +112,8 @@ export default {
   },
   data() {
     return {
+      ip: "",
+      port: "",
       showCloudControl: false,
       videoinfo: {},
       appendViewVisible: false,
@@ -425,6 +428,7 @@ export default {
       this.dragStartIndex = index;
     },
     drop(index, e) {
+      console.log(e);
       // 拖拽结束
       console.log("drop:" + index);
       this.dragEndIndex = index;

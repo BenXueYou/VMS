@@ -11,6 +11,14 @@ export function getPreviewInfo(params = {}) {
     params
   });
 }
+export function getPreviewInfoAA(params = {}) {
+  let url = vUrl.getPreviewInfAAoUrl;
+  return axios({
+    method: "GET",
+    url,
+    params
+  });
+}
 export function ctrl(deviceUuid, data) {
   let url = vUrl.ctrlUrl + "?channelUuid=" + deviceUuid;
   return axios({
