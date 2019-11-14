@@ -316,7 +316,7 @@ export default {
   }
 };
 </script>
-<style>
+<style lang='scss'>
 .checkBoxClass {
 	text-align: left;
 	margin: 0px 15px;
@@ -356,7 +356,9 @@ export default {
 	justify-content: flex-start;
 	background: #202124;
 }
-.el-checkbox + .el-checkbox {
-	margin-left: 15px !important;
+.popverTreeParent {
+  .el-checkbox + .el-checkbox {
+    margin-left: 15px !important;
+  }
 }
 </style>

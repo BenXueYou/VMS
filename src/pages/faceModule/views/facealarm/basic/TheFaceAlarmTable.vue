@@ -106,15 +106,7 @@ export default {
       yeshu: ""
     };
   },
-  mounted() {
-    // this.$nextTick(function() {
-    //   var win_h = window.innerHeight;
-    //   var tableheight =
-    //     parseInt(getComputedStyle(this.$refs.tablelist).height) - 40;
-    //   this.pageSize = Math.floor(tableheight / 43);
-    //   //   alert(this.pageSize);
-    // });
-  },
+  mounted() {},
   methods: {
     blur() {
       if (this.yeshu !== "") {
@@ -191,16 +183,16 @@ export default {
 </style>
 <style lang="scss">
 .tablelist .yeshu {
-  display: inline-block;
-  width: 90px;
-  vertical-align: middle;
-  height: 40px;
-  .el-input__inner {
-    margin-top: 5px;
-    width: 50px;
-    height: 28px;
-    line-height: 28px;
-    padding: 0px 5px;
-  }
+	display: inline-block;
+	width: 90px;
+	vertical-align: middle;
+	height: 40px;
+	.el-input__inner {
+		margin-top: 5px;
+		width: 50px;
+		height: 28px;
+		line-height: 28px;
+		padding: 0px 5px;
+	}
 }
 </style>

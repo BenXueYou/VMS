@@ -55,7 +55,6 @@
 				<el-table-column label="操作" min-width="100">
 					<template slot-scope="scope">
 						<div class="tableCertificateBtnClass">
-							<!-- v-if="scope.row.source !== 'visitor_machine'" -->
 							<span @click="editBtnAct(scope.row)" class="editFontClass cursorClass">编辑</span>
 							<span @click="detailBtnAct(scope.row)" class="editFontClass cursorClass">详情</span>
 							<span @click="signWhitelistBtnAct(scope.row)" class="deleteBtnClass cursorClass">从黑名单中移出</span>
@@ -74,7 +73,7 @@
 							trigger="click"
 						>
 							<el-row class="popoverBox" justify="space-between">
-								<el-col class="BLelPopoverCol cursorClass" @click.native="detailResident(item)">
+								<el-col class="BLelPopoverCol cursorClass" @click.native="detailBtnAct(item)">
 									<img class="img" src="@/assets/images/personMange/detail1.png" />
 									详情
 								</el-col>
@@ -82,7 +81,7 @@
 									<img class="img" src="@/assets/images/personMange/edit.png" />
 									编辑
 								</el-col>
-								<el-col class="BLelPopoverCol cursorClass" @click.native="deleteResident(item)">
+								<el-col class="BLelPopoverCol cursorClass" @click.native="signWhitelistBtnAct(item)">
 									<img class="img" src="@/assets/images/personMange/delete1.png" />
 									移除
 								</el-col>
@@ -91,7 +90,7 @@
 								<div class="imgBox">
 									<img
 										class="images"
-										:src="item.snapPhotoUri?imageUrl+item.snapPhotoUri:require('@/assets/images/user.png')"
+										:src="item.snapPhotoUri?imageUrl(item.snapPhotoUri):require('@/assets/images/user.png')"
 										alt
 									/>
 								</div>
@@ -149,10 +148,11 @@
 </template>
 
 <script>
-import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 import BlacklistSearchView from "../../components/vistorBlacklist/BlacklistSearchView";
 import BlacklistDetail from "../../components/vistorBlacklist/BlacklistDetail";
 import BlacklistAdd from "../../components/vistorBlacklist/BlacklistAdd";
+import RestApi from "@/utils/RestApi.js";
 // eslint-disable-next-line
 import * as api from "../../utils/ajax";
 export default {
@@ -178,8 +178,7 @@ export default {
       showLoading: false,
       checkStaffUuids: [],
       title: "添加黑名单",
-      otherSearchData: {},
-      imageUrl: window.config.imageUrl
+      otherSearchData: {}
     };
   },
   created() {},
@@ -229,6 +228,10 @@ export default {
     this.initData();
   },
   methods: {
+    imageUrl(a) {
+    //   console.log(RestApi.api.imageUrl(a));
+      return RestApi.api.imageUrl + a;
+    },
     initData() {
       var params = {
         pageSize: this.pageSize,
@@ -475,6 +478,13 @@ export default {
 	border-right: 1px solid transparent;
 	-webkit-box-shadow: none;
 	box-shadow: none;
+}
+.BacklistPopoverClass .BLelPopoverCol {
+	font-family: 'PingFangSC-Regular';
+	font-size: 12px;
+	color: #dddddd;
+	height: 30%;
+	line-height: 25px;
 }
 .Backlist .el-radio-button__inner {
 	background: rgba(255, 255, 255, 0.05);
