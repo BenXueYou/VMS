@@ -3,9 +3,9 @@
 		<el-row class>
 			<el-col :span="24">
 				<el-menu
+					:default-active="$route.path"
 					mode="vertical"
 					background-color
-					default-active="$route.path"
 					text-color="#DDDDDD"
 					active-text-color="#FFFFFF"
 					:router="true"
@@ -156,8 +156,10 @@ export default {
 	},
 	methods: {
 		handleSelect: function(key, keyPath) {
-			this.$router.push({ path: "/" + key });
-			this.routerIndex = this.$route.path;
+			// this.$router.push({ path: "/" + key });
+			// this.routerIndex = this.$route.path;
+			// console.log(key,keyPath);
+			// console.log(this.$route.path);
 		},
 		clearActBtn(e) {
 			this.$router.push({ path: "/" });
@@ -205,10 +207,7 @@ export default {
 	max-width: 200px;
 	background: rgba(39, 42, 45, 0.8);
 	box-sizing: border-box;
-}
-.FaceHeader .el-menu {
-	background: rgba(39, 42, 45, 0.9);
-	border: none;
+	overflow: auto;
 }
 .FaceHeader .el-submenu {
 	line-height: 50px;
