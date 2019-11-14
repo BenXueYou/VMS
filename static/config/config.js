@@ -3,14 +3,14 @@ var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
 var Authorization = "Basic YXBwOjEyMzQ1Ng==";
-var DEBUG = "DEBUG";
+var DEBUG = "TEST";
 if (DEBUG == "DEBUG") {
   // 测试环境
   // ip = '180.167.210.2:51880';
   // ip = "192.168.9.190:15000";
   // websocketIp = "192.168.9.190:15007";
   ip = "192.168.9.141:15000";
-  websocketIp = "192.168.9.67:15007";
+  websocketIp = "192.168.9.141:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -20,7 +20,7 @@ if (DEBUG == "DEBUG") {
   // 提测环境
   // ip = "192.168.9.141:15000";
   ip = '192.168.6.111:15000';
-  websocketIp = "192.168.6.111:15007";
+  websocketIp = "192.168.6.111:80";
   imageUrl =
     protocolHeader +
     "//" +

@@ -32,7 +32,7 @@
 							<img
 								style="width: 100%"
 								@click="clickImg($event)"
-								:src="shootPhotoList[index]?shootPhotoList[index]:require('@/assets/user.png')"
+								:src="shootPhotoList[index]?shootPhotoList[index].url:require('@/assets/user.png')"
 							/>
 						</div>
 					</el-col>
@@ -157,11 +157,13 @@ export default {
     dbclickAct(index) {
       if (index < this.shootPhotoList.length) {
         if (this.imageUrl2) {
-          this.imageUrl1 = this.shootPhotoList[index];
+          this.imageUrl1 = this.shootPhotoList[index].url;
+          this.imageBase641 = this.shootPhotoList[index].base64Url;
           return;
         }
         if (this.imageUrl1) {
-          this.imageUrl2 = this.shootPhotoList[index];
+          this.imageUrl2 = this.shootPhotoList[index].url;
+          this.imageBase642 = this.shootPhotoList[index].base64Url;
         }
       }
     },
@@ -260,7 +262,7 @@ export default {
         .then(res => {
           this.compareBtnLoad = !this.compareBtnLoad;
           if (res.data.success && res.data.data) {
-            this.scores = parseInt(res.data);
+            this.scores = parseInt(res.data.data);
           } else {
             this.$message({ message: res.data.msg, type: "warning" });
           }
@@ -280,11 +282,17 @@ export default {
         return;
       }
       if (e === "left") {
-        this.shootPhotoList.unshift(this.imageUrl1);
+        this.shootPhotoList.unshift({
+          url: this.imageUrl1,
+          base64Url: this.imageBase641
+        });
         this.imageUrl1 = false;
         this.imageBase641 = false;
       } else {
-        this.shootPhotoList.unshift(this.imageUrl2);
+        this.shootPhotoList.unshift({
+          url: this.imageUrl2,
+          base64Url: this.imageBase642
+        });
         this.imageUrl2 = false;
         this.imageBase642 = false;
       }
@@ -294,27 +302,34 @@ export default {
       }
       console.log(this.shootPhotoList);
     },
-    // 上传成功的回调
+    // 上传成功的回调 该函数废弃
     handleAvatarSuccess1(res, file) {
       console.log("=====", file, "res=====", res);
 
       if (res.msg === "ok") {
         if (this.imageUrl1) {
-          this.shootPhotoList.unshift(this.imageUrl1);
+          this.imageUrl1 = res.data.imageUrl;
+          this.leftImg = res.data;
+          this.shootPhotoList.unshift({
+            url: this.imageUrl1,
+            base64Url: this.imageBase641
+          });
         }
-        this.imageUrl1 = res.data.imageUrl;
-        this.leftImg = res.data;
       } else {
         this.$message.error("上传图片失败!");
       }
     },
+    // 上传成功的回调 该函数废弃
     handleAvatarSuccess2(res, file) {
+      this.imageUrl2 = res.data.imageUrl;
+      this.rightImg = res.data;
       if (res.msg === "ok") {
         if (this.imageUrl2) {
-          this.shootPhotoList.unshift(this.imageUrl2);
+          this.shootPhotoList.unshift({
+            url: this.imageUrl2,
+            base64Url: this.imageBase642
+          });
         }
-        this.imageUrl2 = res.data.imageUrl;
-        this.rightImg = res.data;
       } else {
         this.$message.error("上传图片失败!");
       }

@@ -240,9 +240,11 @@ export default {
   },
   watch: {
     checkedTaskUuidList: function(newVal, oldVal) {
+      if (!newVal) return;
       this.checkTaskAll = newVal.length === this.taskItemList.length;
     },
     checkedFaceUuidList: function(newVal, oldVal) {
+      if (!newVal) return;
       this.checkLibAll = newVal.length === this.faceDBList.length;
     }
   },
@@ -253,7 +255,7 @@ export default {
         .getTaskList()
         .then(res => {
           if (res.data.success) {
-            this.taskItemList = res.data.data;
+            this.taskItemList = res.data.data || [];
             this.checkedTaskUuidList = [];
             for (var i = 0; i < this.taskItemList.length; i++) {
               var tempTask = this.taskItemList[i];
