@@ -1,108 +1,112 @@
 <template>
 	<div class="setting-main">
-		<div class="mainBox">
-			<el-header class="headerBox">
-				<div>基础配置</div>
-				<el-button @click="postData">保存</el-button>
-			</el-header>
-			<div class="bodyBox">
-				<div class="bodyBoxDiv">
-					<p>抓拍质量无效图片是否保存：</p>
-					<p>抓拍查重：</p>
-					<p>抓拍查重间隔：</p>
-					<p>人脸查重相似度：</p>
-				</div>
-				<div class="bodyBoxDiv">
-					<p>
-						<el-radio-group v-model="queryBody.saveQualityLowerImage">
-							<el-radio :label="1">是</el-radio>
-							<el-radio :label="0">否</el-radio>
-						</el-radio-group>
-					</p>
-					<p>
-						<el-radio-group v-model="queryBody.removeDuplicationImage">
-							<el-radio :label="1">是</el-radio>
-							<el-radio :label="0">否</el-radio>
-						</el-radio-group>
-					</p>
-					<div>
-						<el-input
-							type="number"
-							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-							v-model="queryBody.captureInterval"
-						></el-input>秒
+		<div style="background-color: #212325;height:100%">
+			<div class="mainBox">
+				<el-header class="headerBox">
+					<div>基础配置</div>
+					<el-button @click="postData">保存</el-button>
+				</el-header>
+				<div class="bodyBox">
+					<div class="bodyBoxDiv">
+						<p>抓拍质量无效图片是否保存：</p>
+						<p>抓拍查重：</p>
+						<p v-if="queryBody.removeDuplicationImage">抓拍查重间隔：</p>
+						<p v-if="queryBody.removeDuplicationImage">人脸查重相似度：</p>
 					</div>
-					<div>
-						<el-input
-							type="number"
-							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-							v-model="queryBody.similarity"
-						></el-input>
-					</div>
-				</div>
-			</div>
-			<div class="bodyBox">
-				<div class="bodyBoxDiv">
-					<p>报警声音：</p>
-					<p></p>
-				</div>
-				<div class="bodyBoxDiv">
-					<p class="cursorClass" style="text-align:left" @click="uploadBtnAct">
-						<img class="img" src="@/assets/images/add.png" alt srcset />添加
-					</p>
-					<p v-for="tag in tags" :key="tag.soundUrl">
-						<el-tag closable @close="handleClose(tag)" :disable-transitions="false">
-							<img class="img" src="@/assets/images/faceModule/voice.png" alt srcset />
-							{{tag.soundName}}
-						</el-tag>
-						<span class="cursorClass" style="margin-left:40px;" @click="tryListenBtnAct(tag)">
-							<img class="img" src="@/assets/images/faceModule/tryListen.png" alt srcset />试听
-						</span>
-					</p>
-					<p></p>
-				</div>
-			</div>
-			<div class="bodyBox">
-				<div class="bodyBoxDiv">
-					<p style="visibility: hidden;">抓拍质量无效图片是否保存：</p>
-					<p>人脸抓拍保存天数：</p>
-					<p>人脸抓拍全景天保存天数：</p>
-					<p>人脸报警图片保存天数：</p>
-					<!-- <p>人脸查重相似度：</p> -->
-				</div>
-				<div class="bodyBoxDiv">
-					<p class="warningTxt">注：缩短时间前期时间数据会消失</p>
-					<div>
-						<el-input
-							type="number"
-							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-							v-model="queryBody.saveImageUriDay"
-						></el-input>天
-					</div>
-					<div>
-						<el-input
-							type="number"
-							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-							v-model="queryBody.savePanoramauriDay"
-						></el-input>天
-					</div>
-					<p>
-						<el-radio-group v-model="queryBody.saveAlarmImageType">
-							<el-radio :label="1">长期</el-radio>
-							<el-radio :label="0">短期</el-radio>
-						</el-radio-group>
-					</p>
-					<div v-if="!queryBody.saveAlarmImageType">
-						<el-input
-							type="number"
-							onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-							v-model="queryBody.savaAlarmIangeDay"
-						></el-input>天
+					<div class="bodyBoxDiv" style="text-align:left">
+						<p class="bodyBoxDivRightP">
+							<el-radio-group v-model="queryBody.saveQualityLowerImage">
+								<el-radio :label="1">是</el-radio>
+								<el-radio :label="0">否</el-radio>
+							</el-radio-group>
+						</p>
+						<p class="bodyBoxDivRightP">
+							<el-radio-group v-model="queryBody.removeDuplicationImage">
+								<el-radio :label="1">是</el-radio>
+								<el-radio :label="0">否</el-radio>
+							</el-radio-group>
+						</p>
+						<div v-if="queryBody.removeDuplicationImage">
+							<el-input
+								v-if=" queryBody.removeDuplicationImage"
+								type="number"
+								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+								v-model="queryBody.captureInterval"
+							></el-input>秒
+						</div>
+						<p v-if=" queryBody.removeDuplicationImage">
+							<el-input
+								v-if=" queryBody.removeDuplicationImage"
+								type="number"
+								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+								v-model="queryBody.similarity"
+							></el-input>
+						</p>
 					</div>
 				</div>
-			</div>
-			<div class="footerClass">
-				<el-button @click="postData">保存</el-button>
+				<div class="bodyBox">
+					<div class="bodyBoxDiv">
+						<p>报警声音：</p>
+						<p></p>
+					</div>
+					<div class="bodyBoxDiv">
+						<p class="cursorClass" style="text-align:left" @click="uploadBtnAct">
+							<img class="img" src="@/assets/images/add.png" alt srcset />添加
+						</p>
+						<p v-for="tag in tags" :key="tag.soundUrl">
+							<el-tag closable @close="handleClose(tag)" :disable-transitions="false">
+								<img class="img" src="@/assets/images/faceModule/voice.png" alt srcset />
+								{{tag.soundName}}
+							</el-tag>
+							<span class="cursorClass" style="margin-left:40px;" @click="tryListenBtnAct(tag)">
+								<img class="img" src="@/assets/images/faceModule/tryListen.png" alt srcset />试听
+							</span>
+						</p>
+						<p></p>
+					</div>
+				</div>
+				<div class="bodyBox">
+					<div class="bodyBoxDiv">
+						<p class="warningTxt" style="visibility: hidden;">抓拍质量无效图片是否保存：</p>
+						<p>人脸抓拍保存天数：</p>
+						<p>人脸抓拍全景天保存天数：</p>
+						<p>人脸报警图片保存天数：</p>
+						<!-- <p>人脸查重相似度：</p> -->
+					</div>
+					<div class="bodyBoxDiv">
+						<p class="warningTxt">注：缩短时间前期时间数据会消失</p>
+						<p class="bodyBoxDivRightP">
+							<el-input
+								type="number"
+								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+								v-model="queryBody.saveImageUriDay"
+							></el-input>天
+						</p>
+						<p class="bodyBoxDivRightP">
+							<el-input
+								type="number"
+								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+								v-model="queryBody.savePanoramauriDay"
+							></el-input>天
+						</p>
+						<p class="bodyBoxDivRightP">
+							<el-radio-group v-model="queryBody.saveAlarmImageType">
+								<el-radio :label="1">长期</el-radio>
+								<el-radio :label="0">短期</el-radio>
+							</el-radio-group>
+						</p>
+						<div v-if="!queryBody.saveAlarmImageType">
+							<el-input
+								type="number"
+								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+								v-model="queryBody.savaAlarmIangeDay"
+							></el-input>天
+						</div>
+					</div>
+				</div>
+				<div class="footerClass">
+					<el-button @click="postData">保存</el-button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -367,11 +371,13 @@ export default {
 				text-align: right;
 				padding: 0px 11px;
 				p {
-					margin: 23px 0;
+					// margin: 13px 0;
+					height: 32px;
+					line-height: 32px;
 				}
-				p:last-child {
-					margin: 35px 0;
-				}
+				// p:last-child {
+				// 	margin: 0px 0;
+				// }
 				.el-radio-group {
 					display: block;
 				}
@@ -379,7 +385,7 @@ export default {
 					display: inline-block;
 					width: 100px;
 					height: 32px;
-					margin: 2px 13px 12px 0;
+					margin-right: 13px;
 				}
 				div {
 					text-align: left;
@@ -400,6 +406,13 @@ export default {
 					font-family: "PingFangSC-Regular";
 					font-size: 13px;
 					color: #fd545e;
+					margin-top: 0;
+				}
+				.bodyBoxDivRightP {
+					text-align: left;
+					.el-radio-group {
+						line-height: 40px !important;
+					}
 				}
 			}
 			.bodyBoxDiv:first-child {

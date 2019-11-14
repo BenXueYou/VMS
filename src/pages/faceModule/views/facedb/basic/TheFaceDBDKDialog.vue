@@ -1,6 +1,6 @@
 <template>
 	<div class="dialogwrap">
-		<el-dialog :title="title" :visible.sync="diglogvisible" @close="close" width="580px" center>
+		<el-dialog :title="title" :visible.sync="diglogvisible" :before-close="close" width="580px" center>
 			<el-form ref="form" label-width="150px">
 				<el-form-item label="人脸库：">
 					<el-select v-model="library" collapse-tags placeholder="请选择" class="myinput">
@@ -256,8 +256,8 @@ export default {
 			console.log(this.uploader);
 		},
 		close() {
-			this.$emit("close");
 			this.clearallData();
+			this.$emit("close");
 		},
 		changequality(val) {
 			console.log(val);

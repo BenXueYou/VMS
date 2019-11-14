@@ -523,7 +523,7 @@ export default {
           if (res.data.success) {
             let data = res.data.data;
             Object.assign(this.checkedChannel, data);
-            this.loadVideo(data);
+            // this.loadVideo(data);
           }
         })
         .catch(() => {});

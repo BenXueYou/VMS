@@ -400,7 +400,11 @@ export default {
 	}
 };
 </script>
-
+<style>
+.dialogwraphistory .el-dialog__wrapper {
+	overflow: auto;
+}
+</style>
 <style lang='scss' scoped>
 .dialogwraphistory {
 	.tableContent {
