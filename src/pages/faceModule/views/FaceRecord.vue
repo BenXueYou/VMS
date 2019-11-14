@@ -89,7 +89,7 @@
 					popper-class="FRelPopoverClass"
 					placement="center-center"
 					:width="cellwidth"
-					trigger="click"
+					trigger="hover"
 				>
 					<el-row class="FRelPopoverRow" justify="space-between">
 						<el-col
@@ -726,6 +726,9 @@ export default {
 	color: #ffffff;
 	margin: 2px 0px 2px;
 	cursor: pointer;
+}
+.FRelPopoverClass .FRelPopoverCol:hover{
+	background-color: rgba(38,211,157,0.3);
 }
 .FRelPopoverClass .FRelPopoverCol img {
 	margin-right: 8px;
