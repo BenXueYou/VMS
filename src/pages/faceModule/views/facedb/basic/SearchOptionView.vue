@@ -98,7 +98,7 @@ export default {
       this.phoneNo = null;
       this.credentialNo = null;
       this.staffType = this.staffTypeOptions[0].typeStr;
-      this.createTime = new Date();
+      this.createTime = this.$common.getCurrentTime();
     }
   }
 };
