@@ -594,7 +594,11 @@ export default {
           this.openVideoVoice(this.operatorIndex);
           break;
         case "图像调节":
-          this.imageAdjustVisible = true;
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.imageAdjustVisible = true;
+          }
           break;
       }
     },

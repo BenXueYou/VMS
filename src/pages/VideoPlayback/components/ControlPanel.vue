@@ -37,6 +37,9 @@
                alt="">
         </li>
       </ul>
+      <div class="centertime">
+        {{centerTime}}
+      </div>
       <ul>
         <li style="width:20px;">
           <img :src="icons.voice2"
@@ -129,9 +132,13 @@
           <timeline :scale="zoomNow"
                     :left="left"
                     :move="move"
+                    :startTime="startTime"
+                    :endTime="endTime"
                     @zoomFc="zoomFc"></timeline>
           <time-select v-for="(item,index)  in controlData"
                        :scale="zoomNow"
+                       :startTime="startTime"
+                       :endTime="endTime"
                        :timeData="item.timeData"
                        @chooseTime="chooseTime"
                        :left="left"
@@ -166,6 +173,18 @@ export default {
     timeSelect
   },
   props: {
+    startTime: {
+      type: String,
+      default() {
+        return "2019-10-01 00:00:00";
+      }
+    },
+    endTime: {
+      type: String,
+      default() {
+        return "2019-10-16 00:00:00";
+      }
+    },
     data: {
       type: Array
     },
@@ -198,6 +217,25 @@ export default {
     };
   },
   computed: {
+    centerTime() {
+      // 返回当前时间轴中间的时间的年月日
+      let d1 = new Date(this.startTime).getTime();
+      let d2 = new Date(this.endTime).getTime();
+      let middleValue = d2 - d1;
+      let panleWidth = Math.pow(2, this.zoomNow - 1) * 100;
+      let nowCenter = Math.abs(this.left) + 50;
+      // console.log(nowCenter);
+      // console.log(panleWidth);
+      let timeNow = ~~((nowCenter / panleWidth) * middleValue);
+      let d = new Date(d1 + timeNow);
+      const change = t => {
+        return ("0" + t).slice(-2);
+      };
+      let year = d.getFullYear();
+      let month = change(d.getMonth() + 1);
+      let day = change(d.getDate());
+      return `${year}-${month}-${day}`;
+    },
     zoomNow() {
       // return Math.pow(2, this.zoom - 1);
       return this.zoom;
@@ -232,7 +270,7 @@ export default {
       }
     },
     chooseTime(index, chooseTime) {
-      // console.log(index, chooseTime);
+      console.log(index, chooseTime);
       // this.$emit("update:operatorIndex", index);
       this.$emit("choosetime", index, chooseTime);
     },
@@ -253,9 +291,22 @@ export default {
       // 这边根据move的正负判断往哪边移动
       // 如果是向左移动，则left减去10，反之相加
       // 判断移动的边界，left小于0，大于(scale-1)*100
-      let left = this.left + (val > 0 ? 30 : -30);
-      if (left <= 0 && left >= -(this.zoom - 1) * 100) {
+      let left = this.left + (val > 0 ? 40 : -40);
+      console.log(left);
+      let panleWidth = (Math.pow(2, this.zoomNow - 1) - 1) * 100;
+      if (this.zoomNow === 1) {
+        panleWidth = 0;
+      }
+      console.log(panleWidth);
+      // if (left <= 0 && left >= -(this.zoom - 1) * 100) {
+      if (left <= 0 && left >= -panleWidth) {
         this.left = left;
+      } else {
+        if (val > 0) {
+          this.left = 0;
+        } else {
+          this.left = -panleWidth;
+        }
       }
     },
     fullScreen() {
@@ -385,6 +436,11 @@ export default {
     justify-content: space-between;
     height: 40px;
     background-color: #242527;
+    .centertime {
+      line-height: 40px;
+      color: #fff;
+      font-size: 14px;
+    }
     ul {
       list-style: none;
       display: flex;

@@ -41,7 +41,7 @@
       <div class="body">
         <span class="label"></span>
         <div class="input">
-          <el-button @click="confirm"
+          <el-button @click="exit"
                      class="btn"
                      type="primary">退出</el-button>
           <el-button @click="confirm"
@@ -106,10 +106,20 @@ export default {
   },
   methods: {
     confirm() {
-      this.$emit("update:visible", false);
+      this.moren();
+      // this.$emit("update:visible", false);
+    },
+    exit() {
+      this.close();
     },
     close() {
       this.$emit("update:visible", false);
+    },
+    moren() {
+      this.light = 50;
+      this.contrast = 50;
+      this.saturation = 50;
+      this.tonal = 50;
     }
   },
   watch: {

@@ -27,10 +27,10 @@
                  show-checkbox
                  @check-change="devhandleCheckChange">
           <div class="custom-tree-node"
-               slot-scope="{ node, data }">
+               slot-scope="{ node }">
             <span>{{ node.label }}</span>
             <!-- v-if="data.hasOwnProperty('channelType')" -->
-            <el-dropdown trigger="click"
+            <!-- <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
                          class='threelinemenu'>
@@ -44,7 +44,7 @@
                 <el-dropdown-item command="video">打开视频</el-dropdown-item>
                 <el-dropdown-item command="playback">查看录像</el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
+            </el-dropdown> -->
           </div>
         </el-tree>
       </el-tab-pane>
@@ -101,6 +101,7 @@
         <div class="time">
           <el-date-picker v-model="startDate"
                           type="datetime"
+                          @change="changeTime"
                           style='width:200px;'
                           placeholder="选择日期时间">
           </el-date-picker>
@@ -113,6 +114,7 @@
         <div class="time">
           <el-date-picker v-model="endDate"
                           type="datetime"
+                          @change="changeTime"
                           style='width:200px;'
                           placeholder="选择日期时间">
           </el-date-picker>
@@ -187,6 +189,11 @@ export default {
     };
   },
   methods: {
+    changeTime() {
+      if (this.startDate > this.endDate) {
+        [this.endDate, this.startDate] = [this.startDate, this.endDate];
+      }
+    },
     deleteNode() {
       // 删除该视图 this.operatorData
       api2.deleteView(this.operatorData.viewUuid).then(res => {
@@ -365,16 +372,21 @@ export default {
     },
     search() {
       // 判断两个日期是不是同一天
-      let d1 = new Date(this.startDate);
-      let d2 = new Date(this.endDate);
-      if (
-        d1.getFullYear() !== d2.getFullYear() ||
-        d1.getMonth() !== d2.getMonth() ||
-        d1.getDate() !== d2.getDate()
-      ) {
-        this.$message.error("请选择同一天时间！");
+      let d1 = new Date(this.startDate).getTime();
+      let d2 = new Date(this.endDate).getTime();
+      let oneMonth = 30 * 24 * 60 * 60;
+      if ((d2 - d1) / 1000 > oneMonth) {
+        this.$message.error("时间选择跨度不可以超过1个月");
         return;
       }
+      // if (
+      //   d1.getFullYear() !== d2.getFullYear() ||
+      //   d1.getMonth() !== d2.getMonth() ||
+      //   d1.getDate() !== d2.getDate()
+      // ) {
+      //   this.$message.error("请选择同一天时间！");
+      //   return;
+      // }
       // 获取树选中的节点
       let treeData = [];
       if (this.activeName === "organiza") {

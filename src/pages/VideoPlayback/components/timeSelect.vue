@@ -3,7 +3,7 @@
        ref='timeSelect'>
     <!-- 缩放系数 -->
     <div class="timeBG"
-         :style="{'left':left+'%','width':100*scale+'%'}"
+         :style="{'left':left+'%','width':panleWidth+'%'}"
          ref='timeBG'>
       <div class="timeBlock"
            v-for="(item,index) in blockArr"
@@ -33,6 +33,18 @@
 export default {
   name: "timeSelect",
   props: {
+    startTime: {
+      type: String,
+      default() {
+        return "2019-10-01 00:00:00";
+      }
+    },
+    endTime: {
+      type: String,
+      default() {
+        return "2019-10-15 00:00:00";
+      }
+    },
     scale: {
       type: Number,
       default() {
@@ -77,6 +89,11 @@ export default {
       whiteLeft: 0, // 选择时间白线的向左的偏移量
       time: "01:00:00"
     };
+  },
+  computed: {
+    panleWidth() {
+      return Math.pow(2, this.scale - 1) * 100;
+    }
   },
   mounted() {
     this.init();
