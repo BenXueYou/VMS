@@ -33,14 +33,14 @@
 						v-model="queryBody.captureInterval"
 					></el-input>秒
 					</div>
-					<!-- <p v-if=" queryBody.removeDuplicationImage"> -->
+					<p v-if=" queryBody.removeDuplicationImage">
 					<el-input
 						v-if=" queryBody.removeDuplicationImage"
 						type="number"
 						onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
 						v-model="queryBody.similarity"
 					></el-input>
-					<!-- </p> -->
+					</p>
 				</div>
 			</div>
 			<div class="bodyBox">
@@ -66,7 +66,7 @@
 			</div>
 			<div class="bodyBox">
 				<div class="bodyBoxDiv">
-					<p style="visibility: hidden;">抓拍质量无效图片是否保存：</p>
+					<p class="warningTxt" style="visibility: hidden;">抓拍质量无效图片是否保存：</p>
 					<p>人脸抓拍保存天数：</p>
 					<p>人脸抓拍全景天保存天数：</p>
 					<p>人脸报警图片保存天数：</p>
@@ -88,12 +88,12 @@
 							v-model="queryBody.savePanoramauriDay"
 						></el-input>天
 					</p>
-					<div style="margin-bottom:15px">
+					<p class="bodyBoxDivRightP">
 						<el-radio-group v-model="queryBody.saveAlarmImageType">
 							<el-radio :label="1">长期</el-radio>
 							<el-radio :label="0">短期</el-radio>
 						</el-radio-group>
-					</div>
+					</p>
 					<div v-if="!queryBody.saveAlarmImageType">
 						<el-input
 							type="number"
@@ -369,8 +369,9 @@ export default {
 				text-align: right;
 				padding: 0px 11px;
 				p {
-					margin: 23px 0;
-					line-height: 20px;
+					// margin: 13px 0;
+					height: 32px;
+					line-height: 32px;
 				}
 				// p:last-child {
 				// 	margin: 0px 0;
@@ -382,7 +383,7 @@ export default {
 					display: inline-block;
 					width: 100px;
 					height: 32px;
-					// margin: 2px 13px 12px 0;
+					margin-right: 13px;
 				}
 				div {
 					text-align: left;
@@ -403,9 +404,13 @@ export default {
 					font-family: "PingFangSC-Regular";
 					font-size: 13px;
 					color: #fd545e;
+					margin-top: 0;
 				}
 				.bodyBoxDivRightP{
 					text-align: left;
+					.el-radio-group{
+						line-height: 40px!important;
+					}
 				}
 			}
 			.bodyBoxDiv:first-child {
