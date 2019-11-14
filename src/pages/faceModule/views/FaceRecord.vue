@@ -9,6 +9,7 @@
 					type="datetime"
 					placeholder="选择日期"
 					value-format="yyyy-MM-dd HH:mm:ss"
+					@change="selectDate=null"
 				></el-date-picker>
 				<span class="timeText">至</span>
 				<el-date-picker
@@ -17,6 +18,7 @@
 					type="datetime"
 					placeholder="选择日期"
 					value-format="yyyy-MM-dd HH:mm:ss"
+					@change="selectDate=null"
 				></el-date-picker>
 			</div>
 			<div class="topBoxDiv topBoxDateRadioBtnBox">
@@ -915,7 +917,7 @@ export default {
 	box-sizing: border-box;
 }
 .bottomBox {
-	padding: 0px 27px 0;
+	padding: 0px 27px 10px;
 	display: flex;
 	align-items: center;
 	width: 100%;
@@ -927,7 +929,7 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding: 25px 40px 0px 27px;
-	height: 140px;
+	/* height: 140px; */
 	background: rgba(36, 39, 42, 1);
 	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
 	/* overflow-y: auto; */

@@ -988,14 +988,14 @@ iframe html {
 	background: transparent!important;
 	overflow: auto;
 }
-.elPopoverClass .el-tree-node:focus > .el-tree-node__content {
+/* .elPopoverClass .el-tree-node:focus > .el-tree-node__content {
 	background: transparent!important;
 }
 
 .elPopoverClass .el-tree-node__content:focus,
 .el-tree-node__content:hover {
 	background: transparent!important;
-}
+} */
 .asidRowProgress {
 	margin: auto;
 	color: #28ffbb;

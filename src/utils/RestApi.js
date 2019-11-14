@@ -185,6 +185,8 @@ export default {
     // 权限组
     pmUrl,
     videoUrl,
+
+    // 访客管理
     vistorManageApi,
     //人脸图片质量检测
     faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`,
