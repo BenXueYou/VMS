@@ -1,13 +1,13 @@
 <template>
   <div class="fellow-capture-detail">
     <div class="fellow-info-detail-img">
-      <img :src="JSON.parse(item.photoinfo).imageUri"
+      <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
            width="100%"
            height="100%">
     </div>
     <div class="fellow-info-detail-line1">
       <div class="title">
-        {{item.time ? item.time : "暂无"}}
+        {{item.snapshotTime ? item.snapshotTime : "暂无"}}
       </div>
     </div>
     <div class="fellow-info-detail-line2">

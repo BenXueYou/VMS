@@ -454,8 +454,17 @@ export function upgradeProgress(uuid) {
     url
   });
 }
-export function getUpgradeUrl() {
-  return sbUrl.upgradeDeviceUrl;
+export function getUpgradeUrl(data) {
+  let url =
+    sbUrl.upgradeDeviceUrl +
+    `?fileUrl=${data.fileUrl}&deviceUuidArr=${data.deviceUuidArr}`;
+  return axios({
+    method: "post",
+    url
+  });
+}
+export function getNewUpgradeUrl() {
+  return sbUrl.newUpgradeDeviceUrl;
 }
 // 设备升级
 export function upgradeDevice(data) {
@@ -688,5 +697,29 @@ export function judgeRepeatCard(params) {
     method: "get",
     url,
     params
+  });
+}
+// 获取设备人脸库配置
+export function getVideoDeviceSetting(uuid) {
+  let url = sbUrl.getVideoDeviceSettingUrl(uuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+export function setDelaySyncSetting(uuid, data) {
+  let url = sbUrl.setDelaySyncSettingUrl(uuid);
+  return axios({
+    method: "put",
+    url,
+    data
+  });
+}
+export function setImmediateSyncSettingl(uuid, data) {
+  let url = sbUrl.setImmediateSyncSettingUrl(uuid);
+  return axios({
+    method: "put",
+    url,
+    data
   });
 }

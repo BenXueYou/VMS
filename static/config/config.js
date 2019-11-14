@@ -3,12 +3,14 @@ var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
 var Authorization = "Basic YXBwOjEyMzQ1Ng==";
-var DEBUG = "TEST";
+var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
   // ip = '180.167.210.2:51880';
-  ip = "192.168.9.190:15000";
-  websocketIp = "192.168.9.190:15007";
+  // ip = "192.168.9.190:15000";
+  // websocketIp = "192.168.9.190:15007";
+  ip = "192.168.9.141:15000";
+  websocketIp = "192.168.9.67:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -16,9 +18,9 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  ip = "192.168.9.141:15000";
-  // ip = '192.168.6.191:51880';
-  websocketIp = "192.168.9.141:15007";
+  // ip = "192.168.9.141:15000";
+  ip = '192.168.6.111:15000';
+  websocketIp = "192.168.9.67:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -30,16 +32,16 @@ if (DEBUG == "DEBUG") {
     ip = hostname;
     websocketIp = hostname;
   } else {
-    ip = hostname + ":51880";
-    websocketIp = "180.167.210.2:51881";
+    ip = hostname + ":15000";
+    websocketIp = hostname + ":51881";
   }
   var imgUrlStr = protocolHeader + "//" + ip;
   imageUrl =
     imgUrlStr +
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
-
 window.config = {
+  DeBug: true,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",
@@ -59,6 +61,7 @@ window.config = {
   imageUrl: imageUrl,
   forbidBtnArr: ["uncome", "unleave"],
   signOffBtnArr: ["unleave", "leave_overtime"],
+  PicSourceType: "facelog",
   alinkArr: [
     {
       strName: "关于广拓",

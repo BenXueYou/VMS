@@ -9,6 +9,7 @@
 					type="datetime"
 					placeholder="选择日期"
 					value-format="yyyy-MM-dd HH:mm:ss"
+					@change="selectDate=null"
 				></el-date-picker>
 				<span class="timeText">至</span>
 				<el-date-picker
@@ -17,6 +18,7 @@
 					type="datetime"
 					placeholder="选择日期"
 					value-format="yyyy-MM-dd HH:mm:ss"
+					@change="selectDate=null"
 				></el-date-picker>
 			</div>
 			<div class="topBoxDiv topBoxDateRadioBtnBox">
@@ -31,11 +33,10 @@
 				抓拍设备：
 				<elPopverTree
 					:channelInfoList="deviceList"
-					:elPopoverClass="faceRecordPopoverClass"
+					:elPopoverClass="fRPopoverClass"
 					@transferCheckedChannel="transferCheckedChannel"
 					inputWidth="75%"
-					@show="popverShow"
-					@hide="popverHidden"
+					:isCheckedAll="true"
 				></elPopverTree>
 			</div>
 			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
@@ -46,23 +47,24 @@
 					<el-radio-button label="female">女</el-radio-button>
 				</el-radio-group>
 			</div>
-			<div :span="4" class="topBoxDiv topBoxQualityCheckBox">
+			<div :span="4" class="topBoxDiv topBoxCheckBox">
 				<span class="topTitleTxt" style="margin-right:15px;">属性:</span>
 				<el-radio-group v-model="propertyOption">
 					<el-radio-button label>不限</el-radio-button>
 					<el-radio-button label="glasses">眼镜</el-radio-button>
-					<el-radio-button label="blackGlasses">墨镜</el-radio-button>
+					<el-radio-button label="sunglasses">墨镜</el-radio-button>
 					<el-radio-button label="mask">口罩</el-radio-button>
 				</el-radio-group>
 			</div>
-			<div :span="4" class="topBoxDiv topBoxQualityCheckBox">
+			<div :span="4" class="topBoxDiv topBoxCheckBox topBoxQualityCheckBox">
 				<span class="topTitleTxt" style="margin-right:15px;">图片质量:</span>
-				<el-checkbox-group v-model="qualityOption">
+				<!-- <el-checkbox-group v-model="qualityOption">
 					<el-checkbox-button label="HIGH">高</el-checkbox-button>
 					<el-checkbox-button label="NORMAL">中</el-checkbox-button>
 					<el-checkbox-button label="LOW">低</el-checkbox-button>
 					<el-checkbox-button label="LOWER">无效</el-checkbox-button>
-				</el-checkbox-group>
+				</el-checkbox-group>-->
+				<pic-qulity-select :selectedButtons.sync="qualityOption" />
 			</div>
 
 			<div class="topBoxBtnBox">
@@ -90,30 +92,40 @@
 					trigger="click"
 				>
 					<el-row class="FRelPopoverRow" justify="space-between">
-						<el-col class="FRelPopoverCol" @click.native="searchImageToFace(o,index,'/faceImpact')">
-							<img src="@/assets/fr-svg/2.png" />
+						<el-col
+							class="FRelPopoverCol"
+							@click.native="searchImageToFace(o,index,'/FaceManage/searchFaceWithFace')"
+						>
+							<img src="@/assets/images/faceModule/2.png" />
 							以脸搜脸
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'/Companion')">
-							<img src="@/assets/fr-svg/4.png" />
+						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'/FaceManage/Companion')">
+							<img src="@/assets/images/faceModule/2.png" />
+							同行人分析
+						</el-col>
+						<el-col class="FRelPopoverCol" @click.native="judgeStaffTrace(o,'/FaceManage/PersonTrace')">
+							<img src="@/assets/images/faceModule/4.png" />
 							人员轨迹
 						</el-col>
 						<el-col class="FRelPopoverCol" @click.native="shoWholeImgUrl(o,index)">
-							<img src="@/assets/fr-svg/3.png" />
+							<img src="@/assets/images/faceModule/3.png" />
 							查看大图
 						</el-col>
 						<el-col class="FRelPopoverCol" @click.native="tempCtrlTask(o,index)">
-							<img src="@/assets/fr-svg/5.png" />
+							<img src="@/assets/images/faceModule/5.png" />
 							临时布控
 						</el-col>
 						<el-col class="FRelPopoverCol" @click.native="downloadImg(o,index)">
-							<img src="@/assets/fr-svg/6.png" />
+							<img src="@/assets/images/faceModule/6.png" />
 							导出图片
 						</el-col>
 					</el-row>
 					<el-row slot="reference" class="recordCellImgBox">
 						<div class="imgBox">
-							<img :src="$common.setPictureShow(o.photouri)" class="recordCellImg" />
+							<img
+								:src="$common.setPictureShow(o.faceCapturePhotoUrl,PicSourceType)"
+								class="recordCellImg"
+							/>
 						</div>
 						<el-col class="recordCellFooter">
 							<div
@@ -121,7 +133,7 @@
 								@mouseover="mymouseover"
 								@mouseout="mymouseout"
 								@mousemove="mymousemove"
-							>{{o.time?o.time:'---- --:--:--'}}</div>
+							>{{o.captureDatetime?o.captureDatetime:'---- --:--:--'}}</div>
 							<div
 								class="textclipClass recordCellFooterTxt"
 								@mouseover="mymouseover"
@@ -149,26 +161,24 @@
 		</el-row>
 		<!-- ======================================================= 人脸 弹 窗 ========================================================== -->
 		<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
-			<img
-				style="width:35%;height:100%"
-				:src="dialogPhotoImgUrl?dialogPhotoImgUrl:require('@/assets/user.png')"
-				alt
-			/>
-			<img
-				style="width:63%;height:100%;margin-left:2%"
-				:src="dialogPanoramaImgUrl?dialogPanoramaImgUrl:require('@/assets/user.png')"
-				alt
-			/>
+			<div class="leftImgBox">
+				<img :src="dialogPhotoImgUrl?dialogPhotoImgUrl:require('@/assets/user.png')" alt />
+			</div>
+			<div class="rightImgBox">
+				<img :src="dialogPanoramaImgUrl?dialogPanoramaImgUrl:require('@/assets/user.png')" alt />
+			</div>
 		</el-dialog>
 	</el-row>
 </template>
 <script>
-import CarFellowDetailDialog from "@/pages/faceModule/views/carFellow/view/CarFellowDetailDialog";
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import AlTree from "@/pages/faceModule/components/AlElTree.vue";
-import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import PicQulitySelect from "@/common/PicQulitySelect";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
+import RestApi from "@/utils/RestApi.js";
 export default {
-  components: { elPopverTree, AlTree, CarFellowDetailDialog },
+  components: { elPopverTree, AlTree, PicQulitySelect },
   mounted: function() {
     let h =
 			window.innerHeight ||
@@ -199,23 +209,17 @@ export default {
       that.cellwidth = w / 10 - 40;
       that.$refs.faceRecordHeight.$el.style.height = h + "px";
     }
-    // this.getDeviceList(true);
+    this.startTime = this.$common.getStartTime();
+    this.endTime = this.$common.getCurrentTime();
+    this.queryAct();
   },
-  watch: {
-    filterText(val) {
-      this.$refs.tree2.filter(val);
-    }
-  },
+  watch: {},
   activated: function() {
     console.log("抓拍记录刷新页面");
     this.checkNameString = "";
-    this.startTime = this.getStartTime();
-    this.endTime = this.$common.getCurrentTime();
-    // this.getDeviceList(false);
   },
   methods: {
     selectDateAct(dateStr) {
-      console.log(dateStr);
       let day = new Date();
       switch (dateStr) {
         case "lastday":
@@ -270,7 +274,6 @@ export default {
           this.endTime = enddate + " " + "23:59:59";
           break;
       }
-
       console.log(this.startTime, "-----", this.endTime);
     },
     onCancelDialog() {
@@ -278,32 +281,55 @@ export default {
     },
     // 临时布控
     tempCtrlTask(o, index) {
-      console.log(o.photouri);
-      this.$store.dispatch("tempCtrlTask", o.photouri).then(res => {
-        console.log(res);
-        if (res.result === 0) {
-          this.$message({
-            message: res.data,
-            type: "success"
-          });
-        } else {
-          this.$message({
-            message: "布控失败，请稍后再试",
-            type: "warning"
-          });
-        }
+      console.log(o.faceCapturePhotoUrl);
+      this.$common.imageToBase64(o.faceCapturePhotoUrl, base64 => {
+        api.addTempContrlTask({ imageBase64: base64 }).then(res => {
+          if (res.data.success) {
+            this.$message({
+              message: res.data.msg,
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: "布控失败，请稍后再试",
+              type: "warning"
+            });
+          }
+        });
       });
+    },
+    // 是否有人员轨迹
+    judgeStaffTrace(item, routeName) {
+      //   this.$router.push({ path: routeName, query: { imgObj: item } });
+      let data = {
+        faceCaptureRecordUuid: item.faceCaptureUuid,
+        captureDatetime: item.captureDatetime
+      };
+      api
+        .photoRecordToAnalysis(data)
+        .then(res => {
+          if (res.data.success) {
+            item.faceUuid = res.data.data;
+            this.$router.push({ path: routeName, query: { imgObj: item } });
+          } else {
+            this.$message({ type: "warning", message: res.data.msg });
+          }
+        })
+        .catch(() => {});
     },
     // 是否有同行人分析
     analysisAct(o, index, routeName) {
       this.mainScreenLoading = true;
-      this.$store
-        .dispatch("photoRecordToAnalysis", o.detecteduuid)
+      api
+        .photoRecordToAnalysis({
+          faceCaptureRecordUuid: o.faceCaptureUuid,
+          captureDatetime: o.captureDatetime
+        })
         .then(res => {
           console.log(res);
           this.mainScreenLoading = false;
-          if (res.result === 0 && res.data) {
-            o.staffuuid = res.data;
+          if (res.data.success) {
+            o.faceUuid = res.data.data;
             this.$router.push({ path: routeName, query: { imgObj: o } });
           } else {
             this.$message({
@@ -311,256 +337,169 @@ export default {
               type: "warning"
             });
           }
+        })
+        .catch(() => {
+          this.mainScreenLoading = false;
         });
     },
     searchImageToFace(o, index, routeName) {
-      var httpRequest = null;
-      var url =
-				this.$store.state.api +
-				"/mppr-baseface/v2/face/search/downloadImage/imageUrl?imageUrl=" +
-				o.photouri;
-      if (window.XMLHttpRequest) {
-        // 除了IE外的其它浏览器
-        httpRequest = new XMLHttpRequest();
-      } else {
-        // eslint-disable-next-line no-undef
-        httpRequest = new ActiveXObject("MsXml2.XmlHttp");
-      }
-      // this.mainScreenLoading = true;
-      httpRequest.responseType = "blob";
-      var _this = this;
-      httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4) {
-          // _this.mainScreenLoading = false;
-          if (httpRequest.status === 200) {
-            var value = this.response;
-
-            console.log(value);
-            var reader = new window.FileReader();
-            reader.readAsDataURL(value);
-            reader.onloadend = function() {
-              var base64data = reader.result;
-              o.imageBase64 = base64data;
-              _this.$router.push({ path: routeName, query: { imgObj: o } });
-            };
-          }
-        }
-      };
-      httpRequest.open("GET", url, true);
-      httpRequest.setRequestHeader("token", this.$store.state.token);
-      httpRequest.send(null);
+      this.$router.push({ path: routeName, query: { imgObj: o } });
     },
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
       console.log(checkedChannel);
       this.checkedChannelsUuidList = [];
       for (var i = 0; i < checkedChannel.length; i++) {
-        this.checkedChannelsUuidList.push(checkedChannel[i].id);
+        this.checkedChannelsUuidList.push(checkedChannel[i].channelUuid);
       }
+      console.log(this.checkedChannelsUuidList);
     },
-    // 图片质量
-    transferQualityAct(arr) {
-      console.log(arr);
-      this.qualityOption = arr;
-    },
-
     // 下载导出图片
     downloadImg(o, index) {
-      // var httpRequest = null;
-      var url =
-				this.$store.state.api +
-				"/mppr-baseface/v2/face/search/downloadImage/imageUrl?imageUrl=" +
-				o.photouri;
-      window.location.href = url;
+      this.$common.exportImageAct(o.faceCapturePhotoUrl, o);
     },
     // 查看大图
     shoWholeImgUrl(o, index) {
       this.dialogVisible = !this.dialogVisible;
-      this.dialogPhotoImgUrl = o.photouri;
-      this.dialogPanoramaImgUrl = o.panoramauri;
+      this.dialogPhotoImgUrl = this.imageHeader + o.faceCapturePhotoUrl;
+      this.dialogPanoramaImgUrl = this.imageHeader + o.panoramaCapturePhotoUrl;
       this.titleTxt = o.channelName;
     },
-    getStartTime() {
-      var new111 = new Date();
-      var hours = new111.getHours();
-      if (hours > 1) {
-        return (
-          new111.getFullYear() +
-					"-" +
-					addZero(new111.getMonth() + 1) +
-					"-" +
-					addZero(new111.getDate()) +
-					" " +
-					addZero(hours - 1) +
-					":" +
-					addZero(new111.getMinutes()) +
-					":" +
-					addZero(new111.getSeconds())
-        );
-      } else {
-        return (
-          new111.getFullYear() +
-					"-" +
-					addZero(new111.getMonth() + 1) +
-					"-" +
-					addZero(new111.getDate()) +
-					" " +
-					"00:00:00"
-        );
-      }
-      function addZero(num) {
-        if (num < 10) return "0" + num;
-        return num;
-      }
-    },
-    detailToDesc() {
-      // this.dialogVisible = !this.dialogVisible;
-    },
-    popverHidden() {},
-    popverShow() {
-      console.log("展开------");
-    },
-    checkBoxAction(data, node) {
-      console.log(node.checkedNodes);
-      for (var i = 0; i < node.checkedNodes.length; i++) {}
-    },
-    checkChanges(node, e2) {
-      this.checkedChannelsUuidList = this.$refs.tree.getCheckedKeys();
-    },
-    clearAction() {
-      console.log("清除----");
-      this.checkNameString = "";
-    },
-
     queryAct() {
-      /* eslint-disable */
-			if (this.startTime.length > 0 && this.endTime.length > 0) {
+      if (this.startTime && this.endTime) {
+        /* eslint-disable */
 				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
 				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
-				if (this.startTime !== "" && this.endTime !== "" && d1 >= d2) {
-					this.$message({
-						message: "开始时间必须小于结束时间！",
-						type: "warning"
-					});
-					return;
-				}
-			}
-			this.currentPage = 1;
-
-			this.total = 0;
-			this.getPhotoRecordList();
-		},
-		// 按照时间查询抓拍记录
-		getPhotoRecordList() {
-			this.mainScreenLoading = true;
-			// this.totalPhotoItems = []; //清除记录
-			var data = {
-				currentPage: this.currentPage,
-				pageSize: this.pageSize,
-				channelUuids: this.checkedChannelsUuidList,
-				startDate: this.startTime,
-				endDate: this.endTime,
-				quality: this.qualityOption,
-				gender: this.genderOption // male f
-			};
-
-			this.$store.dispatch("getPhotoList", data).then(res => {
-				this.mainScreenLoading = false;
-				console.log(data, "===抓拍记录===：", res);
-				if (res.result === 0 && res.data.total > 0) {
-					this.totalPhotoItems = res.data.list;
-					// this.totalPhotoItems = this.totalPhotoItems.reverse();
-					this.total = res.data.total;
-				} else {
-					this.$message({
-						message: "没有查找到相关的抓拍记录",
-						type: "warning"
-					});
-					this.total = 0;
-					this.totalPhotoItems = [];
-				}
-			});
-		},
-		handleSizeChange(val) {
-			console.log(`每页 ${val} 条`);
-		},
-		handleCurrentChange(val) {
-			console.log(`点击当前页: ${val}`);
-			this.currentPage = val;
-			this.getPhotoRecordList(false);
-		},
-		// 获取任务列表
-		getDeviceList(isTrue) {
-			this.$store.dispatch("getDeviceList", false).then(res => {
-				if (res.result === 0) {
-					this.deviceList = res.data;
-					if (isTrue) {
-						this.getPhotoRecordList();
-					}
-				} else {
-					this.$message({ message: "更新设备列表失败", type: "warning" });
-				}
-			});
-		},
-		filterNode(value, data) {
-			if (!value) return true;
-			return data.label.indexOf(value) !== -1;
-		},
-		// 鼠标划过覆盖的hover弹窗事件
-		mymouseover: event => {
-			mouseover(event);
-		},
-		mymouseout(event) {
-			mouseout(event);
-		},
-		mymousemove(event) {
-			mousemove(event);
-		}
-	},
-	data() {
-		return {
-			propertyOption: null,
-			selectDate: null,
-			inputPlaceholder: "高，中",
-			checkedUuid: ["HIGH", "NORMAL"],
-			dialogPanoramaImgUrl: false,
-			faceRecordPopoverClass: "faceRecordPopoverClass",
-			totalPhotoItems: 40,
-			dialogPhotoImgUrl: false,
-			dialogVisible: false, // 彈窗顯示標記
-			checkedChannelsNameList: [], // 当前勾选的通道名称list
-			checkedChannelsUuidList: new Array(), // 当前勾选的通道Id的list
-			channelNameList: [], // 当前任务显示的通道名list称
-			channelInfoList: [], // 所有通道名称和ID的二元list
-			deviceList: [], // 布控任務列表
-			mainScreenLoading: false, // 局部遮罩是否显示
-			pageSize: 40,
-			total: 0,
-			currentPage: 1,
-			startTime: "",
-			endTime: "",
-			checkList: [],
-			filterText: "",
-			HEIGHT: 0,
-			WIDTH: 0,
-			defaultProps: {
-				children: "children",
-				label: "label"
-			},
-			checkNameString: "全部任务",
-			allChannelUuid: [],
-			genderOption: null,
-			qualityOption: ["HIGH", "NORMAL"],
-			titleTxt: "抓拍设备",
-			defaultQualityProps: {
-				label: "label"
-			},
-			carFellowDetailList: [],
-			isShow: false,
-			size: 20,
-			cellwidth: 80
-		};
-	}
+				/* eslint-enable */
+        if (d1 >= d2) {
+          this.$message({
+            message: "开始时间必须小于结束时间！",
+            type: "warning"
+          });
+          return;
+        }
+      }
+      this.currentPage = 1;
+      this.total = 0;
+      this.getPhotoRecordList();
+    },
+    // 按照时间查询抓拍记录
+    getPhotoRecordList() {
+      this.mainScreenLoading = true;
+      this.totalPhotoItems = []; // 清除记录
+      var data = {
+        page: this.currentPage,
+        limit: this.pageSize,
+        channelUuids: this.checkedChannelsUuidList.toString(),
+        snapshotTimeStart: this.startTime,
+        snapshotTimeEnd: this.endTime,
+        faceCapturePhotoQuality: this.qualityOption.toString(),
+        genderCapture: this.genderOption
+      };
+      if (!data.channelUuids) data.channelUuids = null;
+      if (!data.faceCapturePhotoQuality) data.faceCapturePhotoQuality = null;
+      // 此处处理参数，入参的key值随页面变量的变化而变化
+      if (this.propertyOption) {
+        data[this.propertyOption] = this.propertyOption;
+        data[this.propertyOption] = Number(Boolean(data[this.propertyOption]));
+      }
+      if (!data.genderCapture) data.genderCapture = null;
+      api
+        .getSnapshotList(data)
+        .then(res => {
+          this.mainScreenLoading = false;
+          if (res.data.success) {
+            if (res.data.data && res.data.data.list) {
+              this.totalPhotoItems = res.data.data.list;
+              this.total = res.data.data.total;
+            } else {
+              this.$message.warning("查询结果为空");
+            }
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {
+          this.mainScreenLoading = false;
+        });
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getPhotoRecordList(false);
+    },
+    // 获取任务列表
+    getDeviceList(isTrue) {
+      this.$store.dispatch("getDeviceList", false).then(res => {
+        if (res.result === 0) {
+          this.deviceList = res.data;
+          if (isTrue) {
+            this.getPhotoRecordList();
+          }
+        } else {
+          this.$message({ message: "更新设备列表失败", type: "warning" });
+        }
+      });
+    },
+    // 鼠标划过覆盖的hover弹窗事件
+    mymouseover: event => {
+      mouseover(event);
+    },
+    mymouseout(event) {
+      mouseout(event);
+    },
+    mymousemove(event) {
+      mousemove(event);
+    }
+  },
+  data() {
+    return {
+      PicSourceType: window.config.PicSourceType,
+      imageHeader: RestApi.api.imageUrl,
+      propertyOption: null,
+      selectDate: null,
+      inputPlaceholder: "高，中",
+      checkedUuid: ["HIGH", "NORMAL"],
+      dialogPanoramaImgUrl: false,
+      fRPopoverClass: "fRPopoverClass",
+      totalPhotoItems: 40,
+      dialogPhotoImgUrl: false,
+      dialogVisible: false, // 彈窗顯示標記
+      checkedChannelsNameList: [], // 当前勾选的通道名称list
+      checkedChannelsUuidList: [], // 当前勾选的通道Id的list
+      channelNameList: [], // 当前任务显示的通道名list称
+      channelInfoList: [], // 所有通道名称和ID的二元list
+      deviceList: [], // 布控任務列表
+      mainScreenLoading: false, // 局部遮罩是否显示
+      pageSize: 40,
+      total: 0,
+      currentPage: 1,
+      startTime: "",
+      endTime: "",
+      checkList: [],
+      HEIGHT: 0,
+      WIDTH: 0,
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
+      checkNameString: "全部任务",
+      allChannelUuid: [],
+      genderOption: null,
+      qualityOption: ["HIGH", "NORMAL", "LOW"],
+      titleTxt: "抓拍设备",
+      defaultQualityProps: {
+        label: "label"
+      },
+      carFellowDetailList: [],
+      isShow: false,
+      size: 20,
+      cellwidth: 80,
+      defaultCheckedChannel: []
+    };
+  }
 };
 </script>
 <style>
@@ -568,8 +507,25 @@ export default {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
-	padding: 25px 27px;
+	padding: 25px 38px;
 	box-sizing: border-box;
+	width: 100%;
+}
+.dialogPhotoClass .el-dialog {
+	width: 800px;
+}
+.dialogPhotoClass img {
+	width: 100%;
+	height: 100%;
+}
+.dialogPhotoClass .leftImgBox {
+	width: 35%;
+	height: 100%;
+}
+.dialogPhotoClass .rightImgBox {
+	width: 63%;
+	height: 100%;
+	margin-left: 2%;
 }
 .reccordCellClass .FRelPopoverClass {
 	min-width: 118px;
@@ -584,7 +540,7 @@ export default {
 	padding: 4px 12px;
 	font-size: 10px;
 }
-.faceRecordPopoverClass {
+.fRPopoverClass {
 	width: 50%;
 	height: 45%;
 	position: absolute;
@@ -627,6 +583,9 @@ export default {
 	-webkit-transform: translateX(-200%);
 	transform: translateX(-200%);
 }
+.faceRecord .topBoxCheckBoxSelectedImg {
+	border: 1px solid red;
+}
 .faceRecord .el-checkbox-button__inner,
 .faceRecord .el-radio-button__inner {
 	background: rgba(255, 255, 255, 0.1);
@@ -657,8 +616,13 @@ export default {
 .faceRecord .topBoxDeviceBox {
 	min-width: 310px;
 }
-.faceRecord .topBoxQualityCheckBox {
+.faceRecord .topBoxCheckBox {
 	min-width: 360px;
+}
+.faceRecord .topBoxQualityCheckBox {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .faceRecord .el-checkbox-group {
 	display: inline-block;
@@ -918,7 +882,7 @@ export default {
 	background: rgba(36, 39, 42, 1);
 	padding: 10px 0px 0px 10px;
 	box-sizing: border-box;
-	align-content: space-around;
+	align-content: flex-start;
 }
 .textclipClass {
 	display: inline-block;
@@ -949,11 +913,11 @@ export default {
 	flex-direction: column;
 	justify-content: flex-start;
 	background: rgb(28, 29, 32);
-	padding: 2% 2%;
+	padding: 1.5% 2% 1%;
 	box-sizing: border-box;
 }
 .bottomBox {
-	padding: 0px 27px 0;
+	padding: 0px 27px 10px;
 	display: flex;
 	align-items: center;
 	width: 100%;
@@ -965,7 +929,7 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding: 25px 40px 0px 27px;
-	height: 140px;
+	/* height: 140px; */
 	background: rgba(36, 39, 42, 1);
 	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
 	/* overflow-y: auto; */

@@ -3,122 +3,108 @@
     <face-analysis-detail-dialog :isShow="isShow"
                                  :detailsData="detailsData"
                                  @onCancel="onCancelDialog" />
-    <div class="face-select">
-      <div class="title-text">抓拍设备：</div>
-      <!-- <el-select v-model="devicename"
-                 filterable
-                 collapse-tags
-                 placeholder="请选择"
-                 class='dev-select'>
-        <el-option v-for="item in devicearr"
-                   :key="item.channeluuid"
-                   :label="item.channelName"
-                   :value="item.channeluuid">
+    <div class="main-container">
+      <div class="face-select">
+        <div class="title-text">抓拍设备：</div>
+        <elPopverTree :elPopoverClass="faceRecordPopoverClass"
+                      @transferCheckedChannel="transferCheckedChannel"
+                      inputWidth="230px"></elPopverTree>
+        <div class="title-text left-space">抓拍时段：</div>
+        <el-date-picker v-model="startTime"
+                        type="datetime"
+                        class='dev-select'
+                        placeholder="选择日期"
+                        value-format="yyyy-MM-dd HH:mm:ss">
+        </el-date-picker>
+        <span class="time-text">至</span>
+        <el-date-picker v-model="endTime"
+                        type="datetime"
+                        class='dev-select'
+                        placeholder="选择日期"
+                        value-format="yyyy-MM-dd HH:mm:ss">
+        </el-date-picker>
+        <div class="title-text left-space">条件设置：</div>
+        <el-select v-model="conditionVal"
+                   filterable
+                   collapse-tags
+                   placeholder="请选择"
+                   class='dev-select'>
+          <el-option v-for="item in conditionArr"
+                     :key="item.typeStr"
+                     :label="item.typeName"
+                     :value="item.typeStr">
+          </el-option>
+        </el-select>
+        <el-input v-model="interalVal"
+                  class="dev-input"
+                  type="number"></el-input>
+        <div class="time-param">次</div>
+        <el-button class="search-btn"
+                   @click="queryAct"
+                   size="small"
+                   type="primary">查询</el-button>
+      </div>
+      <div class="face-table">
+        <el-scrollbar style="height: 92%;transition:0.2s">
+          <el-table :data="tableData"
+                    border
+                    v-loading="isLoading"
+                    style="width: 100%">
+            <el-table-column type="index"
+                             label="序号"
+                             width="90">
+            </el-table-column>
+            <el-table-column prop="channelName"
+                             label="设备名称"
+                             width="280">
+            </el-table-column>
+            <el-table-column prop="frequency"
+                             label="频度"
+                             width="190">
+            </el-table-column>
 
-        </el-option>
-      </el-select> -->
-      <elPopverTree :channelInfoList="deviceList"
-                    :elPopoverClass="faceRecordPopoverClass"
-                    @transferCheckedChannel="transferCheckedChannel"
-                    @show="popverShow"
-                    inputWidth="200px"
-                    @hide="popverHidden">
-      </elPopverTree>
-      <div class="title-text left-space">抓拍时段：</div>
-      <el-date-picker v-model="startTime"
-                      type="datetime"
-                      class='dev-select'
-                      placeholder="选择日期"
-                      value-format="yyyy-MM-dd HH:mm:ss">
-      </el-date-picker>
-      <span class="time-text">至</span>
-      <el-date-picker v-model="endTime"
-                      type="datetime"
-                      class='dev-select'
-                      placeholder="选择日期"
-                      value-format="yyyy-MM-dd HH:mm:ss">
-      </el-date-picker>
-      <div class="title-text left-space">条件设置：</div>
-      <el-select v-model="conditionVal"
-                 filterable
-                 collapse-tags
-                 placeholder="请选择"
-                 class='dev-select'>
-        <el-option v-for="item in conditionArr"
-                   :key="item.value"
-                   :label="item.label"
-                   :value="item.value">
-        </el-option>
-      </el-select>
-      <el-input v-model="interalVal"
-                class="dev-input"
-                type="number"></el-input>
-      <div class="time-param">次</div>
-      <el-button class="search-btn"
-                 @click="queryAct"
-                 type="primary">开始查询</el-button>
-    </div>
-    <div class="face-table">
-      <el-scrollbar style="height: 92%;transition:0.2s" v-loading="isLoading">
-        <el-table :data="tableData"
-                  border
-                  style="width: 100%">
-          <el-table-column type="index"
-                           label="序号"
-                           width="90">
-          </el-table-column>
-          <el-table-column prop="channelName"
-                           label="设备名称"
-                           width="280">
-          </el-table-column>
-          <el-table-column prop="count"
-                           label="频度"
-                           width="190">
-          </el-table-column>
-
-          <el-table-column prop=""
-                           label="人脸照片"
-                           width="190">
-            <template slot-scope="scope">
-              <img :src="$common.setPictureShow(scope.row.imageUri)"
-                   width="30px"
-                   height="30px">
-            </template>
-          </el-table-column>
-          <el-table-column prop=""
-                           label="全景照片"
-                           width="190">
-            <template slot-scope="scope">
-              <img :src="$common.setPictureShow(scope.row.panoramaUri)"
-                   width="50px"
-                   height="30px">
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <div class="detail-icon">
-                <img src="@/assets/images/look_details.png"
-                     width="14px"
-                     height="14px"
-                     style="margin:0 6px 0 0">
-                <el-button @click="lookface(scope.row)"
-                           type="text"
-                           size="small">
-                  详情
-                </el-button>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-scrollbar>
-      <div class="footer">
-        <el-pagination background
-                       layout="total, prev, pager, next, jumper"
-                       :page-size="pageInfo.pageSize"
-                       :current-page="pageInfo.currentPage"
-                       @current-change='handleCurrentChange'
-                       :total="pageInfo.total">
-        </el-pagination>
+            <el-table-column label="人脸照片"
+                             width="190">
+              <template slot-scope="scope">
+                <img :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl)"
+                     width="30px"
+                     height="30px">
+              </template>
+            </el-table-column>
+            <el-table-column label="全景照片"
+                             width="190">
+              <template slot-scope="scope">
+                <img :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl)"
+                     width="50px"
+                     height="30px">
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <div class="detail-icon">
+                  <img src="@/assets/images/look_details.png"
+                       width="14px"
+                       height="14px"
+                       style="margin:0 6px 0 0">
+                  <el-button @click="lookface(scope.row)"
+                             type="text"
+                             size="small">
+                    详情
+                  </el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-scrollbar>
+        <div class="footer">
+          <el-pagination background
+                         layout="total, prev, pager, next, jumper"
+                         :page-size="pageInfo.pageSize"
+                         :current-page="pageInfo.currentPage"
+                         @current-change='handleCurrentChange'
+                         :total="pageInfo.total">
+          </el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -138,59 +124,20 @@ export default {
     return {
       pageInfo: {
         total: 0,
-        pageSize: 13,
+        pageSize: 10,
         currentPage: 1
       },
       startTime: "",
       endTime: "",
       interalVal: 10,
-      devicearr: [
-        {
-          label: "全部",
-          vlaue: ""
-        },
-        {
-          label: "1",
-          value: "1"
-        },
-        {
-          label: "2",
-          value: "2"
-        },
-        {
-          label: "3",
-          value: "3"
-        }
-      ],
       conditionVal: ">",
-      conditionArr: [
-        {
-          label: "大于",
-          value: ">"
-        },
-        {
-          label: "大于等于",
-          value: ">="
-        },
-        {
-          label: "等于",
-          value: "="
-        },
-        {
-          label: "小于",
-          value: "<"
-        },
-        {
-          label: "小于等于",
-          value: "<="
-        }
-      ],
+      conditionArr: [],
       multipleSelection: [],
       isShow: false,
       deviceList: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
-      checkedChannelsUuidList: [],
-      staffUuid: "",
+      faceRecordPopoverClass: "faceAnaPopoverClass",
+      channelUuids: [],
+      faceUuid: "",
       tableData: [],
       detailsData: [],
       checkedChannel: [],
@@ -199,59 +146,41 @@ export default {
     };
   },
   created() {},
-  mounted() {
-    this.initData();
-    this.getFaceAnalysisTable();
-  },
+  mounted() {},
   methods: {
     initData() {
       this.startTime = this.$common.formatDate(
-        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+        new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
       );
       this.endTime = this.$common.formatDate(new Date());
+      this.conditionArr = this.$common.getEnumByGroupStr("compare_r");
     },
     getFaceAnalysisTable() {
       this.isLoading = true;
-      this.$statisticRequest.getFaceAnalysisTable({
-        devname: this.checkedChannelsUuidList.toString(),
-        starttime: this.startTime,
-        overtime: this.endTime,
-        condition: this.conditionVal,
-        num: this.interalVal,
-        currentPage: this.pageInfo.currentPage,
-        pageSize: this.pageInfo.pageSize,
-        onResult: (isSuccess, data) => {
-          if (isSuccess && data) {
-            this.handleGetFaceAnalysisTableSuccessResponse(data);
-          } else {
-            console.log("获取人脸频率分析统计失败！");
-            this.isLoading = false;
-          }
-        }
-      });
+      let xhr = {
+        channelUuids: this.channelUuids,
+        startTime: this.startTime,
+        endTime: this.endTime,
+        logic: this.conditionVal,
+        frequency: this.interalVal,
+        page: this.pageInfo.currentPage,
+        limit: this.pageInfo.pageSize
+      };
+      this.$factTragicHttp
+        .getFaceAnalysisTable(xhr)
+        .then(res => {
+          let body = res.data;
+          this.getFaceAnalysisTableSuccess(body);
+          this.isLoading = false;
+        })
+        .catch(() => {
+          this.isLoading = false;
+        });
     },
-    handleGetFaceAnalysisTableSuccessResponse(data) {
+    getFaceAnalysisTableSuccess(body) {
       this.isLoading = false;
-      this.idListForDetail = this.$common.copyArray(this.checkedChannelsUuidList, this.idListForDetail);
-      this.tableData = [];
-      this.tableData = data.body.data.list;
-      for (let item of this.tableData) {
-        item.channelName = "";
-        if (this.checkedChannelsUuidList.length === 0) {
-          item.channelName = "全部";
-        } else {
-          for (let item2 of this.checkedChannel) {
-            if (this.checkedChannel.length === 1) {
-              item.channelName = item2.label;
-            } else {
-              item.channelName = `${item.channelName}${
-                item.channelName ? "," : ""
-              }${item2.label}`;
-            }
-          }
-        }
-      }
-      this.handlePageInfo(data.body.data);
+      this.tableData = body.data.list;
+      this.handlePageInfo(body.data);
     },
     handlePageInfo(data) {
       let total = 0;
@@ -268,57 +197,49 @@ export default {
       this.getFaceAnalysisTable();
     },
     lookface(row) {
-      this.staffUuid = row.vstaffuuid;
+      this.faceUuid = row.faceUuid;
       this.getFaceAnalysisDetail();
       this.isShow = true;
     },
     getFaceAnalysisDetail() {
-      this.$statisticRequest.getFaceAnalysisDetail({
-        channelNameList: this.idListForDetail.toString(),
-        staffUuid: this.staffUuid,
-        // staffUuid: "da1c3c6ecf88413e8925c92e5630dba3",
-        onResult: (isSuccess, data) => {
-          if (isSuccess && data) {
-            this.handleGetFaceAnalysisDetailSuccessResponse(data);
-          } else {
-            console.log("获取人脸频率分析详情统计失败！");
-          }
-        }
+      this.$factTragicHttp.getCompareDetail({
+        limit: 100,
+        page: 1,
+        faceUuid: this.faceUuid,
+        snapshotTimeStart: this.startTime,
+        snapshotTimeEnd: this.endTime,
+      }).then(res => {
+        let body = res.data;
+        this.getCompareDetailSuccess(body);
       });
     },
-    handleGetFaceAnalysisDetailSuccessResponse(data) {
-      this.detailsData = data.body.data;
+    getCompareDetailSuccess(body) {
+      this.detailsData = body.data.list;
     },
     onCancelDialog() {
       this.isShow = false;
     },
-    // 获取任务列表
-    getDeviceList() {
-      var deviceList = this.$store.getters.getDeviceList;
-      this.deviceList = deviceList;
-    },
     transferCheckedChannel(checkedChannel) {
-      this.checkedChannel = checkedChannel;
-      this.checkedChannelsUuidList = [];
-      for (var i = 0; i < checkedChannel.length; i++) {
-        this.checkedChannelsUuidList.push(checkedChannel[i].id);
+      this.channelUuids = [];
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
-    },
-    popverShow() {},
-    popverHidden() {}
+      console.log("this.channelUuids: ", this.channelUuids, checkedChannel);
+    }
   },
   watch: {},
   destroyed() {},
   activated() {
-    this.getDeviceList();
+    this.initData();
+    this.getFaceAnalysisTable();
   }
 };
 </script>
 
 <style>
-.faceRecordPopoverClass {
-  width: 50%;
-  height: 45%;
+.faceAnaPopoverClass {
+  width: 500px;
+  height: 230px;
   position: absolute;
   background: #202127;
   min-width: 150px;
@@ -337,39 +258,42 @@ export default {
 </style>
 <style lang="scss" scoped>
 .face-main {
+  padding: 1.6%;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: 2% 2.5% 1% 2.5%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  $bg-color: #202326;
-  .face-select {
-    height: 12%;
-    padding: 0 2%;
+  .main-container {
+    padding: 1% 3%;
     box-sizing: border-box;
-    background: $bg-color;
-    border-radius: 3px;
-    margin-bottom: 1.5%;
-    display: flex;
-    align-items: center;
-    .time-text {
-      font-family: PingFangSC-Regular;
-      font-size: 14px;
-      color: #888888;
-      margin: 0 5px;
+    background: #212325;
+    width: 100%;
+    height: 100%;
+    .face-select {
+      height: 12%;
+      border: {
+        width: 0 0 1px 0;
+        style: dashed;
+        color: rgba($color: #ffffff, $alpha: 0.2);
+      }
+      display: flex;
+      align-items: center;
+      .time-text {
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+        color: #888888;
+        margin: 0 5px;
+      }
+      .search-btn {
+        margin-left: auto;
+      }
     }
-    .search-btn {
-      margin-left: auto;
+    .face-table {
+      height: 90%;
+      border-radius: 3px;
+      padding: 2% 2%;
+      box-sizing: border-box;
+      box-sizing: border-box;
     }
-  }
-  .face-table {
-    height: 84.5%;
-    background: $bg-color;
-    border-radius: 3px;
-    padding: 2% 2%;
-    box-sizing: border-box;
-    box-sizing: border-box;
   }
 }
 .title-text {

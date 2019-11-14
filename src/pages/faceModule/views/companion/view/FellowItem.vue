@@ -1,10 +1,10 @@
 <template>
 	<div class="fellow">
 		<div class="fellow-info">
-			<detail-item :item="item" />
+			<detail-item :item="item.travelTogetherStaffInfo" />
 		</div>
 		<div class="fellow-capture">
-			<template v-for="(detailItem, index) in item.discernFaceDTOs">
+			<template v-for="(detailItem, index) in item.list">
 				<fellow-capture-item :key="index" :item="detailItem" />
 			</template>
 		</div>

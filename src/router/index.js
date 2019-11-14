@@ -6,17 +6,15 @@ import MainLayout from "@/pages/main/views/MainLayout";
 import Home from "@/pages/home/views/Home";
 import projectManage from "@/pages/projectManage/projectManage";
 import VistorMangeSubRoute from "@/pages/vistorMange/VistorMange";
-import VideoPreview from "@/pages/VideoPreview/VideoPreview";
-import VideoPlayback from "@/pages/VideoPlayback/VideoPlayback";
 // 子系统系统路由
-import vistorManage from "./modules/vistorManage";
-import unitManage from "./modules/unitManage";
-import resident from "./modules/resident";
-import personManage from "./modules/personManage";
-import equipmentManage from "./modules/equipmentManage";
-import doorAccess from "./modules/doorAccess";
-import buildingHouse from "./modules/buildingHouse";
-import faceModule from "./modules/faceModule";
+import vistorManage from './modules/vistorManage';
+import unitManage from './modules/unitManage';
+import resident from './modules/resident';
+import personManage from './modules/personManage';
+import equipmentManage from './modules/equipmentManage';
+import doorAccess from './modules/doorAccess';
+import buildingHouse from './modules/buildingHouse';
+import faceModule from './modules/faceModule';
 
 Vue.use(Router);
 export const constantRouterMap = [
@@ -40,12 +38,7 @@ export const constantRouterMap = [
         children: doorAccess.children,
         icon: "doorControl",
         type: "app",
-        redirect: "/DoorControl/AccessGroupConfig" //设置默认子路由
-      },
-      {
-        path: "/projectManage",
-        name: "projectManage",
-        component: projectManage
+        // redirect: '/DoorControl/AccessGroupConfig' //设置默认子路由
       },
       {
         path: "/PersonMange",
@@ -64,7 +57,6 @@ export const constantRouterMap = [
         icon: "vistorMange",
         type: "app"
       },
-
       {
         path: "/EquipmentMange",
         name: "EquipmentMange",
@@ -129,6 +121,11 @@ export const constantRouterMap = [
     path: "/Login",
     name: "Login",
     component: Login
+  },
+  {
+    path: "/projectManage",
+    name: "projectManage",
+    component: projectManage
   }
 ];
 

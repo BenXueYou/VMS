@@ -294,9 +294,9 @@ export default {
             for (let i = 0; i < this.tableData.length; i++) {
               let item = this.tableData[i];
               // 判断是否需要签离 处理已到访，超出有效期后 权限回收的问题
-              item.signOff =
-								item.manualSignOff &&
-								Boolean(this.signOffBtnArr.indexOf(item.visitState) !== -1);
+              item.signOff = item.manualSignOff && Boolean(
+                this.signOffBtnArr.indexOf(item.visitState) !== -1
+              );
               let isOvertime = this.justifyForbidBtnTxt(item);
               item.forbid =
 								Boolean(this.forbidBtnArr.indexOf(item.visitState) !== -1) ||

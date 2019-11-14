@@ -148,6 +148,7 @@ import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路
 import VistorSearchView from "../../components/vistorRecord/VistorSearchView";
 import VistorDetail from "../../components/vistorRecord/VistorDetail";
 import * as api from "../../utils/ajax";
+import RestApi from "@/utils/RestApi.js";
 export default {
   components: { VistorSearchView, VistorDetail },
   props: {},
@@ -170,7 +171,7 @@ export default {
       vistorDetail: {},
       showLoading: false,
       otherSearchData: {},
-      imageUrl: window.config.imageUrl
+      imageUrl: RestApi.api.imageUrl
     };
   },
   created() {},

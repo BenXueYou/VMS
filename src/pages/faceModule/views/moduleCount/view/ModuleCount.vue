@@ -2,31 +2,31 @@
   <div class="main-block">
     <module-details :isShow="isShowDetail"
                     @onCancel="onCancelDetail"
-                    @onConfirm="onConfirmDetail" />
+                    ref="modelDetails" />
     <div class="main-container">
       <div class="search">
         <div class="search-input">
           <span>抓拍设备：</span>
-          <elPopverTree :channelInfoList="deviceList"
-                        :elPopoverClass="faceRecordPopoverClass"
-                        :checkedChannelKeys="checkedChannelKeys"
+          <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                         @transferCheckedChannel="transferCheckedChannel"
-                        inputWidth="220px"
-                        @show="popverShow"
-                        @hide="popverHidden"></elPopverTree>
+                        :isCheckedAll="true"
+                        inputWidth="230px"></elPopverTree>
           <span class="left-space">人脸库：</span>
-          <el-select style="width: 160px;"
-                     v-model="faceDataBase"
+          <el-select v-model="faceLibraryList"
+                     size="small"
+                     multiple
+                     style="width: 160px;"
                      clearable
-                     size="small">
-            <el-option v-for="item in faceDataBaseOptions"
-                       :key="item.typeStr"
-                       :label="item.typeName"
-                       :value="item.typeStr">
+                     collapse-tags
+                     placeholder="请选择人脸库">
+            <el-option v-for="item in libraryOptions"
+                       :key="item.faceLibraryUuid"
+                       :label="item.faceLibraryName"
+                       :value="item.faceLibraryUuid">
             </el-option>
           </el-select>
           <span class="left-space">相似度不低于：</span>
-          <el-input v-model="num"
+          <el-input v-model="threshold"
                     type="number"
                     style="width: 55px;"></el-input>
           <span class="left-space">时段：</span>
@@ -44,32 +44,27 @@
         </div>
         <div class="search-input">
           <span>抓拍总数：</span>
-          <el-select style="width: 60px;"
-                     v-model="faceDataBase"
+          <el-select style="width: 65px;"
+                     v-model="logic"
                      clearable
                      size="small">
-            <el-option v-for="item in faceDataBaseOptions"
+            <el-option v-for="item in logicOptions"
                        :key="item.typeStr"
-                       :label="item.typeName"
+                       :label="item.typeStr"
                        :value="item.typeStr">
             </el-option>
           </el-select>
-          <el-input v-model="num"
+          <el-input v-model="frequency"
                     type="number"
                     style="width: 60px;margin: 0 8px;"></el-input>
           <span>次</span>
           <span class="left-space">至少有抓拍设备数量：</span>
-          <el-input v-model="num"
+          <el-input v-model="leastNumberOfChannel"
                     type="number"
                     style="width: 60px;margin: 0 8px;"></el-input>
           <span>个</span>
           <span class="left-space">人脸抓拍图片质量：</span>
-          <pic-qulity-select @onSelect="onSelectPicQul" />
-          <span class="left-space">抓拍间隔时间：</span>
-          <el-input v-model="num"
-                    type="number"
-                    style="width: 60px;margin: 0 8px;"></el-input>
-          <span>秒</span>
+          <pic-qulity-select :selectedButtons.sync="photoQualitieList"/>
           <div class="search-btn">
             <el-button @click="queryAct"
                        icon="el-icon-search"
@@ -92,23 +87,26 @@
           </el-radio-group>
         </div>
         <div class="list-picture"
-             v-if="typeRadio === 'picture'">
+             v-if="typeRadio === 'picture'"
+             v-loading="isLoading">
           <template v-for="(item, index) in moduleList">
             <div :key="index"
-                 class="list-item">
-              <img :src="$common.setPictureShow(item.pictureUrl)"
+                 class="list-item"
+                 @click="lookDetail(item)">
+              <img :src="$common.setPictureShow(item.facePhotoUrl, 'facelog')"
                    width="95%"
                    height="120px"
                    class="img-fill">
               <div class="info-other">
-                <div class="other-span">{{`在${item.devList.length}个抓拍设备出现${item.times}次`}}</div>
-                <div class="other-span">{{item.name}}&nbsp;&nbsp;{{item.dataBase}}</div>
+                <div class="other-span">{{item.snapshotDesc}}</div>
+                <div class="other-span">{{item.staffName}}&nbsp;&nbsp;{{item.faceLibraryName}}</div>
               </div>
             </div>
           </template>
         </div>
         <div class="list-table"
-             v-else>
+             v-else
+             v-loading="isLoading">
           <el-table :data="moduleList"
                     style="width: 100%">
             <el-table-column type="index"
@@ -119,25 +117,25 @@
                              show-overflow-tooltip
                              width="360">
               <template slot-scope="scope">
-                {{showCamera(scope.row)}}
+                {{scope.row.channelNames}}
               </template>
             </el-table-column>
-            <el-table-column prop="times"
+            <el-table-column prop="snapshotNumber"
                              label="抓拍总数"
                              show-overflow-tooltip>
             </el-table-column>
-            <el-table-column prop="name"
+            <el-table-column prop="staffName"
                              label="人员姓名"
                              show-overflow-tooltip>
             </el-table-column>
-            <el-table-column prop="dataBase"
+            <el-table-column prop="faceLibraryName"
                              label="所属库"
                              show-overflow-tooltip>
             </el-table-column>
-            <el-table-column prop="startTime"
+            <el-table-column prop="captureDatetimeBegin"
                              label="开始时间">
             </el-table-column>
-            <el-table-column prop="endTime"
+            <el-table-column prop="captureDatetimeEnd"
                              label="结束时间">
             </el-table-column>
             <el-table-column label="操作">
@@ -183,793 +181,163 @@ export default {
     return {
       startTime: "",
       endTime: "",
-      faceDataBase: "",
-      faceDataBaseOptions: [],
-      num: 80,
+      faceLibraryList: [],
+      libraryOptions: [],
+      logic: ">=",
+      frequency: 2,
+      logicOptions: [],
+      threshold: 80,
       typeRadio: "picture",
-      moduleList: [
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        },
-        {
-          pictureUrl: "",
-          devList: [
-            {
-              name: "设备1"
-            },
-            {
-              name: "设备2"
-            },
-            {
-              name: "设备3"
-            }
-          ],
-          times: 90,
-          name: "程某某",
-          dataBase: "员工库",
-          startTime: "2019-12-25 12:00:00",
-          endTime: "2019-12-25 12:00:00"
-        }
-      ],
+      moduleList: [],
       pageInfo: {
         total: 0,
-        pageSize: 12,
+        pageSize: 30,
         currentPage: 1
       },
-      deviceList: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
-      checkedChannelKeys: [],
+      faceRecordPopoverClass: "popoverClass",
       channelUuids: [],
-      isShowDetail: false
+      isShowDetail: false,
+      isLoading: false,
+      leastNumberOfChannel: 2,
+      photoQualitieList: ["HIGH", "NORMAL", "LOW"],
+      checkedChannel: []
     };
   },
   created() {},
-  activated() {},
-  mounted() {},
+  activated() {
+    this.init();
+  },
+  mounted() {
+  },
   methods: {
-    handleCurrentChange() {},
-    handleTypeChange(val) {
-      console.log(val);
+    init() {
+      this.startTime = this.getStartTime();
+      this.endTime = this.$common.getCurrentTime();
+      this.getLibrarys();
+      this.logicOptions = this.$common.getEnumByGroupStr("compare_r");
+      this.getModelList();
     },
-    search() {},
-    getChannelUuids() {},
-    transferCheckedChannel(checkedChannel) {
-      this.channelUuids = [];
-      if (!checkedChannel || checkedChannel.length === 0) {
-        this.getChannelUuids(this.deviceList);
+    getStartTime() {
+      var new111 = new Date();
+      var hours = new111.getHours();
+      if (hours > 1) {
+        return (
+          new111.getFullYear() +
+          "-" +
+          addZero(new111.getMonth() + 1) +
+          "-" +
+          addZero(new111.getDate()) +
+          " " +
+          addZero(hours - 1) +
+          ":" +
+          addZero(new111.getMinutes()) +
+          ":" +
+          addZero(new111.getSeconds())
+        );
       } else {
-        for (var i = 0; i < checkedChannel.length; i++) {
-          this.channelUuids.push(checkedChannel[i].id);
-        }
+        return (
+          new111.getFullYear() +
+          "-" +
+          addZero(new111.getMonth() + 1) +
+          "-" +
+          addZero(new111.getDate()) +
+          " " +
+          "00:00:00"
+        );
+      }
+      function addZero(num) {
+        if (num < 10) return "0" + num;
+        return num;
       }
     },
-    popverShow() {},
-    popverHidden() {},
-    onSelectPicQul(val) {
-      console.log("onSelectPicQul: ", val);
-    },
-    queryAct() {},
-    reset() {},
-    showCamera(row) {
-      let camStr = "";
-      row.devList.forEach((v, i) => {
-        if (i === 0) {
-          camStr = v.name;
-        } else {
-          camStr = camStr + "，" + v.name;
-        }
+    getLibrarys() {
+      this.$faceControlHttp.getFacedbList().then(res => {
+        let body = res.data;
+        this.getFacedbListSuccess(body);
       });
-      return camStr;
     },
+    getFacedbListSuccess(body) {
+      this.libraryOptions = body.data;
+      this.faceLibraryList = [];
+      if (this.libraryOptions.length !== 0) {
+        this.faceLibraryList.push(this.libraryOptions[0].faceLibraryUuid);
+      }
+    },
+    handleTypeChange(val) {
+      if (this.typeRadio === "picture") {
+        this.pageInfo.pageSize = 30;
+      } else {
+        this.pageInfo.pageSize = 12;
+      }
+      this.getModelList();
+    },
+    transferCheckedChannel(checkedChannel) {
+      this.channelUuids = [];
+      this.checkedChannel = checkedChannel;
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
+      }
+    },
+    queryAct() {
+      this.getModelList();
+    },
+    reset() {},
     lookDetail(row) {
+      this.$refs.modelDetails.modelItem = this.$common.copyObject(
+        row,
+        this.$refs.modelDetails.modelItem
+      );
+      this.$refs.modelDetails.devices = this.$common.copyArray(
+        this.checkedChannel,
+        this.$refs.modelDetails.devices
+      );
+      this.$refs.modelDetails.startTime = this.startTime;
+      this.$refs.modelDetails.endTime = this.endTime;
       this.isShowDetail = true;
-    },
-    onConfirmDetail() {
-      this.isShowDetail = false;
     },
     onCancelDetail() {
       this.isShowDetail = false;
-    }
+    },
+    getModelList() {
+      this.isLoading = true;
+      this.$moduleCountHttp
+        .getModelList({
+          limit: this.pageInfo.pageSize,
+          page: this.pageInfo.currentPage,
+          channelUuidList: this.channelUuids.toString(),
+          faceLibraryList: this.faceLibraryList.toString(),
+          threshold: this.threshold,
+          startTime: this.startTime,
+          endTime: this.endTime,
+          logic: this.logic,
+          frequency: this.frequency,
+          leastNumberOfChannel: this.frequency,
+          photoQualitieList: this.photoQualitieList.toString(),
+        })
+        .then(res => {
+          let body = res.data;
+          this.getModelListSuccess(body);
+          this.isLoading = false;
+        })
+        .catch(() => {
+          this.isLoading = false;
+        });
+    },
+    getModelListSuccess(body) {
+      this.moduleList = body.data.list;
+      this.handlePageInfo(body.data);
+    },
+    handlePageInfo(data) {
+      let total = 0;
+      if (data.total >= 0) {
+        total = data.total;
+      }
+      this.pageInfo.total = total;
+    },
+    handleCurrentChange(val) {
+      this.pageInfo.currentPage = val;
+      this.getModelList();
+    },
   },
   watch: {},
   deactivated() {},
@@ -978,8 +346,8 @@ export default {
 </script>
 
 <style>
-.faceRecordPopoverClass {
-  width: 380px;
+.popoverClass {
+  width: 500px;
   height: 230px;
   position: absolute;
   background: #202127;
@@ -1059,9 +427,10 @@ export default {
         .list-item {
           width: 142px;
           height: 180px;
+          cursor: pointer;
           background: rgba($color: #000000, $alpha: 0.1);
           border: 1px solid #2a2c2e;
-          margin-right: 14px;
+          margin-right: 12px;
           margin-bottom: 10px;
           padding: 10px 5px 0 5px;
           box-sizing: border-box;

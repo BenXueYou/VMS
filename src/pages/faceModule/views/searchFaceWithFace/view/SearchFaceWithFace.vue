@@ -1,5 +1,8 @@
 <template>
   <div class="main-block">
+    <look-all-view :isShow="isShowAllView"
+                   @onCancel="onCancelAllView"
+                   :item="selectedItem" />
     <div class="main-container">
       <div class="search">
         <div class="picture-upload">
@@ -7,8 +10,10 @@
             <pic-upload @addImage="addImage($event, item)"
                         @deleteImage="deleteImage(item)"
                         :key="item.key"
+                        @selectImg="selectImg(item)"
                         v-if="index !== 5"
-                        style="margin-right: 30px;"
+                        :imageUrl="item.imageUrl"
+                        :style="`margin-right: 30px; ${item.selected ? 'border: 2px #26D39D solid' : ''}`"
                         height="125px" />
           </template>
         </div>
@@ -26,20 +31,18 @@
                           placeholder="选择日期"
                           value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
           <span style="margin-left: 4%">抓拍设备：</span>
-          <elPopverTree :channelInfoList="deviceList"
-                        :elPopoverClass="faceRecordPopoverClass"
-                        :checkedChannelKeys="checkedChannelKeys"
+          <elPopverTree :elPopoverClass="faceRecordPopoverClass"
                         @transferCheckedChannel="transferCheckedChannel"
-                        inputWidth="230px"
-                        @show="popverShow"
-                        @hide="popverHidden"></elPopverTree>
+                        :isCheckedAll="true"
+                        inputWidth="230px"></elPopverTree>
           <span style="margin-left: 4%">对比库：</span>
           <el-radio-group v-model="libraryType"
                           @change="handleTypeChange"
                           style="margin: 4px 0 0 0.5%;">
-            <el-radio label="face">人脸库</el-radio>
-            <el-radio label="capture"
-                      style="margin-left: -7px;">抓拍库</el-radio>
+            <template v-for="(item, index) in libraryTypeOption">
+              <el-radio :label="item.typeStr"
+                        :key="index">{{item.typeName}}</el-radio>
+            </template>
           </el-radio-group>
           <span style="margin-left: 4%">相似度不低于：</span>
           <el-input v-model="similarity"
@@ -62,18 +65,24 @@
           <template v-for="(item, index) in faceList">
             <div :key="index"
                  class="list-item">
+              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                   height="100%"
+                   width="40%"
+                   v-if="libraryType === 'captureFaceLib'"
+                   class="img-fill">
               <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
                    height="100%"
                    width="40%"
+                   v-else
                    class="img-fill">
               <div class="item-info">
                 <div class="info-name"
-                     v-if="libraryType === 'face'">
+                     v-if="libraryType !== 'captureFaceLib'">
                   {{item.staffName}}
                 </div>
                 <div class="info-other">
                   <div class="other-span">性别：{{$common.getEnumItemName("gender", item.genderCapture)}}</div>
-                  <div class="other-span">所属库：{{item.faceLibraryName}}</div>
+                  <div class="other-span">所属库：{{libraryType === 'captureFaceLib' ? '抓拍库' : '人脸库'}}</div>
                   <div class="other-span">{{item.captureDatetime}}</div>
                   <div class="other-span">{{item.channelName}}</div>
                 </div>
@@ -86,23 +95,30 @@
                              :stroke-width="2"></el-progress>
               </div>
               <div class="item-menu">
-                <div class="menu-elem">
+                <div class="menu-elem"
+                     @click="turnToSearchFace(item)">
                   <img src="@/assets/images/faceModule/face_search.png">
                   <span class="elem-title">以脸搜脸</span>
                 </div>
-                <div class="menu-elem">
+                <div class="menu-elem"
+                     @click="turnToPersonTrace(item)">
                   <img src="@/assets/images/faceModule/person_route.png">
                   <span class="elem-title">人员轨迹</span>
                 </div>
-                <div class="menu-elem">
+                <div class="menu-elem"
+                     v-if="libraryType === 'captureFaceLib'"
+                     @click="lookAllView(item)">
                   <img src="@/assets/images/faceModule/look_allview.png">
                   <span class="elem-title">查看全景图</span>
                 </div>
-                <div class="menu-elem" v-if="libraryType === 'capture'">
+                <div class="menu-elem"
+                     v-if="libraryType === 'captureFaceLib'"
+                     @click="tempMonitor(item)">
                   <img src="@/assets/images/faceModule/now_dect.png">
                   <span class="elem-title">临时布控</span>
                 </div>
-                <div class="menu-elem">
+                <div class="menu-elem"
+                     @click="downloadImage(item)">
                   <img src="@/assets/images/faceModule/export_pic.png">
                   <span class="elem-title">导出图片</span>
                 </div>
@@ -127,11 +143,13 @@
 <script>
 import PicUpload from "@/common/PicUpload";
 import ElPopverTree from "@/pages/faceModule/components/ElPopverTree";
+import LookAllView from "@/pages/faceModule/views/searchFaceWithFace/components/LookAllView";
 
 export default {
   components: {
     PicUpload,
-    ElPopverTree
+    ElPopverTree,
+    LookAllView
   },
   props: {},
   data() {
@@ -139,7 +157,7 @@ export default {
       imageList: [],
       startTime: "",
       endTime: "",
-      libraryType: "face",
+      libraryType: "captureFaceLib",
       similarity: 80,
       pageInfo: {
         total: 0,
@@ -148,22 +166,50 @@ export default {
       },
       faceList: [],
       deviceList: [],
-      faceRecordPopoverClass: "faceRecordPopoverClass",
+      faceRecordPopoverClass: "popoverClass",
       checkedChannelKeys: [],
       channelUuids: [],
       isLoading: false,
-      imageBase64: []
+      imageBase64: "",
+      selectedKey: "",
+      libraryTypeOption: [],
+      isShowAllView: false,
+      selectedItem: {},
     };
   },
   created() {},
-  activated() {},
+  activated() {
+    if (this.$route.query.imgObj) {
+      this.imageList = [];
+      this.imageList.push({
+        key: this.genModelIndex(),
+        picBaseUrl: "",
+        imageUrl: this.$route.query.imgObj.faceCapturePhotoUrl
+      });
+      this.imageList.push({
+        key: this.genModelIndex(),
+        picBaseUrl: "",
+        imageUrl: ""
+      });
+      this.defaultSelect();
+    }
+  },
   mounted() {
-    this.imageList.push({
-      key: this.genModelIndex(),
-      picBaseUrl: ""
-    });
+    this.initData();
   },
   methods: {
+    initData() {
+      this.startTime = this.$common.formatDate(
+        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
+      );
+      this.endTime = this.$common.formatDate(new Date());
+      this.libraryTypeOption = this.$common.getEnumByGroupStr("face_h5_lib_group_type");
+      this.imageList.push({
+        key: this.genModelIndex(),
+        picBaseUrl: "",
+        imageUrl: ""
+      });
+    },
     // 用js维护一套产生不重复id的机制
     genModelIndex() {
       let idStr = Date.now().toString(36);
@@ -172,69 +218,99 @@ export default {
         .substr(3);
       return idStr;
     },
+    defaultSelect() {
+      if (!this.selectedKey) {
+        this.imageList.forEach((v, i) => {
+          if (i === 0 && this.imageList.length > 1) {
+            this.$set(v, "selected", true);
+          } else {
+            this.$set(v, "selected", false);
+          }
+        });
+      }
+      this.getFaceList();
+    },
     addImage(picBaseUrl, item) {
       item.picBaseUrl = picBaseUrl;
       if (this.imageList.length < 6) {
         this.imageList.push({
           key: this.genModelIndex(),
-          picBaseUrl: ""
+          picBaseUrl: "",
+          imageUrl: ""
         });
       }
+      this.defaultSelect();
     },
     deleteImage(item) {
+      if (this.selectedKey === item.key) {
+        this.selectedKey = "";
+      }
       for (let [i, v] of this.imageList.entries()) {
         if (v.key === item.key) {
           this.imageList.splice(i, 1);
         }
       }
+      this.defaultSelect();
     },
-    handleTypeChange() {
+    selectImg(item) {
+      this.imageList.forEach((v, i) => {
+        this.$set(v, "selected", false);
+      });
+      this.$set(item, "selected", true);
+      this.selectedKey = item.key;
       this.getFaceList();
+    },
+    getImg() {
+      this.imageList.forEach((v, i) => {
+        if (v.selected && v.imageUrl) {
+          this.$common.imageToBase64(v.imageUrl, base64 => {
+            this.imageBase64 = base64;
+          });
+        } else if (v.selected && !v.imageUrl) {
+          this.imageBase64 = v.picBaseUrl;
+        }
+      });
     },
     search() {
       this.getFaceList();
     },
-    getChannelUuids() {},
+    handleTypeChange() {
+      this.getFaceList();
+    },
     transferCheckedChannel(checkedChannel) {
       this.channelUuids = [];
-      if (!checkedChannel || checkedChannel.length === 0) {
-        this.getChannelUuids(this.deviceList);
-      } else {
-        for (var i = 0; i < checkedChannel.length; i++) {
-          this.channelUuids.push(checkedChannel[i].id);
-        }
+      for (let i = 0; i < checkedChannel.length; i++) {
+        this.channelUuids.push(checkedChannel[i].channelUuid);
       }
     },
-    popverShow() {},
-    popverHidden() {},
     getFaceList() {
-      this.imageBase64 = [];
-      this.imageList.forEach((v) => {
-        this.imageBase64.push(v.picBaseUrl);
-      });
+      this.getImg();
       this.isLoading = true;
-      this.$searchFaceHttp
-        .searchFace({
-          limit: this.pageInfo.pageSize,
-          page: this.pageInfo.currentPage,
-          imageBase64: this.imageBase64,
-          channelUuids: this.channelUuids,
-          libraryType: this.libraryType,
-          similarity: this.similarity,
-          captureTimeStart: this.startTime,
-          captureTimeEnd: this.endTime,
-        })
-        .then(res => {
-          let body = res.data;
-          this.searchFaceSuccess(body);
-          this.isLoading = false;
-        })
-        .catch(() => {
-          this.isLoading = false;
-        });
+      setTimeout(() => {
+        this.$searchFaceHttp
+          .searchFace({
+            limit: this.pageInfo.pageSize,
+            page: this.pageInfo.currentPage,
+            imageBase64: this.imageBase64,
+            channelUuids: this.channelUuids,
+            libraryType: this.libraryType,
+            similarity: this.similarity,
+            captureTimeStart: this.startTime,
+            captureTimeEnd: this.endTime,
+            projectUuid: this.$store.state.home.projectUuid
+          })
+          .then(res => {
+            let body = res.data;
+            this.searchFaceSuccess(body);
+            this.isLoading = false;
+          })
+          .catch(() => {
+            this.isLoading = false;
+          });
+      }, 400);
     },
     searchFaceSuccess(body) {
-      this.tableData = body.data.list;
+      this.faceList = body.data.list;
       this.handlePageInfo(body.data);
     },
     handlePageInfo(data) {
@@ -248,6 +324,57 @@ export default {
       this.pageInfo.currentPage = val;
       this.getFaceList();
     },
+    turnToSearchFace(item) {
+      // this.$router.push({ name: "searchFaceWithFace", params: { imgObj: item } });
+      this.imageList = [];
+      this.imageList.push({
+        key: this.genModelIndex(),
+        picBaseUrl: "",
+        imageUrl: item.faceCapturePhotoUrl,
+        selected: true,
+      });
+      this.imageList.push({
+        key: this.genModelIndex(),
+        picBaseUrl: "",
+        imageUrl: ""
+      });
+      this.defaultSelect();
+      this.getFaceList();
+    },
+    turnToPersonTrace(item) {
+      if (!item.hasOwnProperty("faceUuid")) {
+        item.faceUuid = "";
+      }
+      this.$router.push({ name: "PersonTrace", query: { imgObj: item } });
+    },
+    lookAllView(item) {
+      this.selectedItem = this.$common.copyObject(item, this.selectedItem);
+      this.isShowAllView = true;
+    },
+    onCancelAllView() {
+      this.isShowAllView = false;
+    },
+    downloadImage(item) {
+      // this.$common.downloadImage(item.faceCapturePhotoUrl);
+      this.$common.exportImageAct(item.faceCapturePhotoUrl);
+    },
+    tempMonitor(item) {
+      let imageBase64 = "";
+      this.$common.imageToBase64(item.faceCapturePhotoUrl, base64 => {
+        imageBase64 = base64;
+        this.$searchFaceHttp
+          .tempMonitor({
+            imageBase64,
+          })
+          .then(res => {
+            let body = res.data;
+            this.tempMonitorSuccess(body);
+          });
+      });
+    },
+    tempMonitorSuccess(body) {
+      this.$cToast.success(body.msg);
+    },
   },
   watch: {},
   deactivated() {},
@@ -256,8 +383,8 @@ export default {
 </script>
 
 <style>
-.faceRecordPopoverClass {
-  width: 380px;
+.popoverClass {
+  width: 500px;
   height: 230px;
   position: absolute;
   background: #202127;

@@ -5,7 +5,7 @@
 		class="VistorAIDetail"
 		:visible.sync="dialogVisible"
 		:before-close="close"
-    v-loading="showLoading"
+		v-loading="showLoading"
 	>
 		<div class="body">
 			<div class="body_box" style="border-top:0px;">
@@ -109,25 +109,29 @@
 		</div>
 		<div slot="footer" class="dialogHeaderClass">
 			<el-row type="flex" justify="center">
+				<div v-if="vistorAIDetail.black !== 2 && vistorAIDetail.visitState">
+					<el-button
+						v-if="vistorAIDetail.black"
+						class="deleteBtn"
+						@click="addToBlacklistAct"
+						type="primary"
+					>拉黑</el-button>
+					<el-button
+						v-if="vistorAIDetail.black"
+						class="deleteBtn"
+						@click="addToWhitelistAct"
+						type="primary"
+					>解除拉黑</el-button>
+				</div>
 				<el-button
-					v-if="!vistorAIDetail.black"
 					class="deleteBtn"
-					@click="addToBlacklistAct"
-					type="primary"
-				>拉黑</el-button>
-				<el-button
-					v-if="vistorAIDetail.black"
-					class="deleteBtn"
-					@click="addToWhitelistAct"
-					type="primary"
-				>解除拉黑</el-button>
-				<el-button
-					class="deleteBtn"
-					v-if="vistorAIDetail.forbid"
+					v-if="vistorAIDetail.forbid && vistorAIDetail.visitState"
 					@click="forbidBtnAct"
 					type="primary"
 				>收回通行权限</el-button>
-				<el-button v-if="vistorAIDetail.signOff" @click="confirm" type="primary">签离</el-button>
+				<div v-if="!vistorAIDetail.visitState">
+					<el-button v-if="vistorAIDetail.signOff" @click="confirm" type="primary">签离</el-button>
+				</div>
 				<el-button @click="close" type="primary">关闭</el-button>
 			</el-row>
 		</div>

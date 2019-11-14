@@ -11,10 +11,14 @@
     </keep-alive>
     <the-company-edit-equipment-dialog v-show="isShowEdit"
                                        :row="row"
+                                       :update="update"
+                                       :isVideo="viewType==='video'"
                                        :deviceTypeArr="deviceTypeArr"
                                        :localService="localService"
                                        :visible="isShowEdit"
+                                       :netStatus="netStatus"
                                        :deviceUuid="deviceUuid"
+                                       @updateEdit="showEdit"
                                        @showEdit="hiddenEdit">
     </the-company-edit-equipment-dialog>
   </div>
@@ -51,12 +55,16 @@ export default {
       isShowEdit: false,
       editEquipMentDialgoVisible: true,
       row: {},
-      deviceUuid: ""
+      deviceUuid: "",
+      viewType: "door",
+      netStatus: "offline",
+      update: 0 // 新建一个int变量，监听他来进行修改数据
     };
   },
   methods: {
-    serverList(arr) {
+    serverList(arr, viewType) {
       this.localService = arr;
+      this.viewType = viewType;
     },
     changeDevTypeArr(arr) {
       this.deviceTypeArr = arr;
@@ -64,13 +72,15 @@ export default {
     updateTree(uuid) {
       this.$emit("updateTree", uuid);
     },
-    showEdit(deviceUuid) {
+    showEdit(deviceUuid, netStatus) {
       this.row = {};
       this.deviceUuid = deviceUuid;
       api.getDeviceDetail(deviceUuid).then(res => {
         if (res.data.success) {
           this.row = res.data.data;
           this.isShowEdit = true;
+          this.update++;
+          this.netStatus = netStatus;
         }
       });
     },

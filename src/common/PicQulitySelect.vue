@@ -17,63 +17,83 @@
 <script>
 export default {
   components: {},
-  props: {},
+  props: {
+    selectedButtons: {
+      type: Array,
+      default: () => []
+    },
+    isShowLower: {
+      type: Boolean,
+      default: true
+    }
+  },
   data() {
     return {
       picQultButtons: [
         {
-          value: "high",
+          value: "HIGH",
           text: "高",
           selected: false
         },
         {
-          value: "normal",
+          value: "NORMAL",
           text: "中",
           selected: false
         },
         {
-          value: "low",
+          value: "LOW",
           text: "低",
-          selected: false
-        },
-        {
-          value: "invalid",
-          text: "无效",
           selected: false
         }
       ],
-      selectedButtons: []
+      selectedButtonsLocal: [],
+      updateFlag: 0
     };
   },
   created() {},
   activated() {},
-  mounted() {},
+  mounted() {
+    this.initButton();
+  },
   methods: {
-    selectPicQult(item) {
+    initButton() {
+      if (this.isShowLower) {
+        this.picQultButtons.push(
+          {
+            value: "LOWER",
+            text: "无效",
+            selected: false
+          }
+        );
+      }
+      this.setButtonsSelect(this.selectedButtons);
+      this.updateFlag = 1;
+    },
+    changeSelect(item) {
       item.selected = !item.selected;
       switch (item.value) {
-        case "high":
+        case "HIGH":
           this.picQultButtons.forEach((v, i) => {
             if (i > 0 && !item.selected) {
               v.selected = item.selected;
             }
           });
           break;
-        case "normal":
+        case "NORMAL":
           this.picQultButtons.forEach((v, i) => {
             if ((i < 1 && item.selected) || (i > 1 && !item.selected)) {
               v.selected = item.selected;
             }
           });
           break;
-        case "low":
+        case "LOW":
           this.picQultButtons.forEach((v, i) => {
             if ((i < 2 && item.selected) || (i > 2 && !item.selected)) {
               v.selected = item.selected;
             }
           });
           break;
-        case "invalid":
+        case "LOWER":
           this.picQultButtons.forEach((v, i) => {
             if (item.selected) {
               v.selected = item.selected;
@@ -81,16 +101,92 @@ export default {
           });
           break;
       }
-      this.selectedButtons = [];
+    },
+    selectPicQult(item) {
+      this.updateFlag = 0;
+      this.changeSelect(item);
+      this.selectedButtonsLocal = [];
       this.picQultButtons.forEach(v => {
         if (v.selected) {
-          this.selectedButtons.push(v.value);
+          this.selectedButtonsLocal.push(v.value);
         }
       });
-      this.$emit("onSelect", this.selectedButtons);
+      this.$emit("update:selectedButtons", this.selectedButtonsLocal);
+    },
+    setButtonsSelect(val) {
+      let obj = {};
+      if (val.some(v => v === "LOWER")) {
+        obj = {
+          value: "LOWER",
+          text: "无效",
+          selected: false
+        };
+      } else if (val.some(v => v === "LOW")) {
+        obj = {
+          value: "LOW",
+          text: "低",
+          selected: false
+        };
+      } else if (val.some(v => v === "NORMAL")) {
+        obj = {
+          value: "NORMAL",
+          text: "中",
+          selected: false
+        };
+      } else if (val.some(v => v === "HIGH")) {
+        obj = {
+          value: "HIGH",
+          text: "高",
+          selected: false
+        };
+      }
+      this.picQultButtons.forEach((v, i) => {
+        if (v.value === obj.value) {
+          this.changeSelect(v);
+        }
+      });
+    },
+    resetButtons() {
+      this.picQultButtons = [
+        {
+          value: "HIGH",
+          text: "高",
+          selected: false
+        },
+        {
+          value: "NORMAL",
+          text: "中",
+          selected: false
+        },
+        {
+          value: "LOW",
+          text: "低",
+          selected: false
+        }
+      ];
+      if (this.isShowLower) {
+        this.picQultButtons.push(
+          {
+            value: "LOWER",
+            text: "无效",
+            selected: false
+          }
+        );
+      }
     }
   },
-  watch: {},
+  watch: {
+    selectedButtons: {
+      handler(val) {
+        if (this.updateFlag) {
+          this.resetButtons();
+          this.setButtonsSelect(val);
+        }
+        this.updateFlag = 1;
+      },
+      deep: true
+    }
+  },
   deactivated() {},
   destroyed() {}
 };

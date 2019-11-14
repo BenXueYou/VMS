@@ -7,17 +7,21 @@
 					:treeDataList="taskItemList"
 					:alPopoverClass="CRTaskPopoverClass"
 					:defaultProps="defaultProps"
-					nodeKey="taskuuid"
+					nodeKey="faceMonitorUuid"
+					inputWidth="160px"
 					@transferAct="transferTaskAct"
 				></alPopverTree>
 			</div>
 			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
 				抓拍设备：
-				<elPopverTree
-					:channelInfoList="DeviceTreeList"
-					:elPopoverClass="CompareRecordPopoverClass"
-					@transferCheckedChannel="transferCheckedChannel"
-				></elPopverTree>
+				<alPopverTree
+					:treeDataList="DeviceTreeList"
+					:alPopoverClass="CRTaskPopoverClass"
+					:defaultProps="defaultDeviceProps"
+					nodeKey="channelUuid"
+					inputWidth="160px"
+					@transferAct="transferCheckedChannel"
+				></alPopverTree>
 			</div>
 			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
 				所属库：
@@ -25,17 +29,26 @@
 					:treeDataList="faceDBList"
 					:alPopoverClass="CRTaskPopoverClass"
 					:defaultProps="faceDBDefaultProps"
-					nodeKey="libraryuuid"
+					nodeKey="faceLibraryUuid"
+					inputWidth="160px"
 					@transferAct="transferAct"
 				></alPopverTree>
 			</div>
-			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:center;display:block">
+			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
 				姓名：
 				<el-input placeholder v-model="staffName" />
 			</div>
-			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:center;display:block">
+			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
 				证件号：
 				<el-input placeholder v-model="certificateNum" />
+			</div>
+			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
+				<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
+				<el-radio-group v-model="genderOption">
+					<el-radio-button label>不限</el-radio-button>
+					<el-radio-button label="male">男</el-radio-button>
+					<el-radio-button label="female">女</el-radio-button>
+				</el-radio-group>
 			</div>
 			<div class="topBoxDiv topBoxDateTimeBox">
 				<span class="topTitleTxt" style="margin-right:15px;">时段：</span>
@@ -45,6 +58,7 @@
 					v-model="startTime"
 					type="datetime"
 					placeholder="选择日期"
+					@change="selectDate=null"
 				></el-date-picker>
 				<span class="compareRecordTxt">至</span>
 				<el-date-picker
@@ -53,147 +67,62 @@
 					v-model="endTime"
 					type="datetime"
 					placeholder="选择日期"
+					@change="selectDate=null"
 				></el-date-picker>
+				<div class="topBoxDiv topBoxDateRadioBtnBox" style="display:inline-block;padding-bottom:0px">
+					<el-radio-group style="margin-right:0px" v-model="selectDate" @change="selectDateAct">
+						<el-radio-button label="today">今天</el-radio-button>
+						<el-radio-button label="lastday">昨天</el-radio-button>
+						<el-radio-button label="thisWeek">本周</el-radio-button>
+						<el-radio-button label="thisMonth">本月</el-radio-button>
+					</el-radio-group>
+				</div>
 			</div>
-			<div class="topBoxDiv topBoxDateRadioBtnBox">
-				<el-radio-group v-model="selectDate" @change="selectDateAct">
-					<el-radio-button label="today">今天</el-radio-button>
-					<el-radio-button label="lastday">昨天</el-radio-button>
-					<el-radio-button label="thisWeek">本周</el-radio-button>
-					<el-radio-button label="thisMonth">本月</el-radio-button>
-				</el-radio-group>
-			</div>
-			<div :span="2">
+			<div :span="2" style="margin-top:-15px;">
 				<el-button icon="el-icon-search" class="search-btn" @click="queryAct" type="primary">查询</el-button>
 				<el-button class="search-btn" @click="queryAct" type="primary">重置</el-button>
 			</div>
 		</el-row>
-		<el-row
+		<div
 			ref="compareMiddleHeight"
 			v-loading="mainScreenLoading"
 			element-loading-background="rgba(0, 0, 0, 0.8)"
 			class="reccordBoxClass"
 		>
-			<div
-				class="elCardBoxClass"
-				v-for="(o, index) in pageSize"
-				:key="index"
-				@click="dialogCompareAction(index)"
-			>
-				<el-row
-					:class="(totalCompareItemList[index])&&
-          (totalCompareItemList[index])&&
-          (totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor === 'red')?'elCardBoxHeaders':'elCardBoxHeader'"
-				>
-					<el-col :span="18" class="asidListRowFooter textclipsClass">
-						<img
-							style="padding-right:12px"
-							:src="(totalCompareItemList.length>index)&&
-              (totalCompareItemList[totalCompareItemList.length-index-1])&&
-              (totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor === 'red')?require('@/assets/red.png'):require('@/assets/icon/address.png')"
-							alt
-						/>
-						<span
-							class="textclipsClass"
-							style="font-size:14px;"
-							:style="`color:${totalCompareItemList[totalCompareItemList.length-index-1]&&totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor=='red' ? '#FF5F5F' : '#CCCCCC'}`"
-							@mouseover="mymouseover"
-							@mouseout="mymouseout"
-							@mousemove="mymousemove"
-						>{{totalCompareItemList.length>index?totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.channelName:'未知任务通道'}}</span>
-					</el-col>
-					<el-col :span="6" class="asidListRowFooter imgTxtClass" style="justify-content:flex-end">
-						<span
-							class="fontColor"
-							:class="(totalCompareItemList.length>index)&&
-              (totalCompareItemList[totalCompareItemList.length-index-1])&&
-              (totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor === 'red')?'fontThemes':'fontTheme'"
-							@click="doComparethis(index)"
-						>详情</span>
-						<img
-							style="margin-left:10px"
-							:src="(totalCompareItemList.length>index)&&(totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor === 'red')?require('@/assets/icon/details.png'):require('@/assets/icon/details.png')"
-							@click="doComparethis(index)"
-						/>
-					</el-col>
-				</el-row>
-				<el-row class="elCardBoxBody" type="flex" justify="space-between">
-					<el-col :span="6">
-						<div class="asidCompareImgBox">
-							<img
-								class="asidCardImg"
-								:src="totalCompareItemList.length>index?totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.photoinfo.imageUri:require('@/assets/user.png')"
-							/>
-						</div>
-					</el-col>
-					<el-col :span="4" style="display: flex;text-align: center;width:50px">
-						<el-progress
-							style="margin:auto;"
-							:class="{'activec':totalCompareItemList[totalCompareItemList.length-index-1]&&totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor=='red'}"
-							:stroke-width="3"
-							:width="45"
-							type="circle"
-							:color="totalCompareItemList[totalCompareItemList.length-index-1]&&totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor=='red'?'#FF5F5F':'#28FFBB'"
-							:percentage="totalCompareItemList.length>index?parseInt(totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.scores.toFixed(0)):0"
-						></el-progress>
-					</el-col>
-					<el-col :span="6">
-						<div class="asidCompareImgBox">
-							<img
-								class="asidCardImg"
-								:src="totalCompareItemList.length>index?totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.photoUri:require('@/assets/user.png')"
-							/>
-						</div>
-					</el-col>
-					<el-col :span="8" class="asidCompareTxtClass">
-						<el-tooltip
-							effect="dark"
-							:content="totalCompareItemList.length>index?totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.time:'抓拍时间'"
-							placement="top"
-						>
-							<span
-								class="compareBoxTxt textclipsClass"
-							>{{totalCompareItemList.length>index?totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.time:'抓拍时间'}}&nbsp;</span>
-						</el-tooltip>
-						<div
-							class="compareBoxTxt"
-						>{{totalCompareItemList.length>index?totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.staffName:'姓名'}}</div>
-						<div class="compareBoxTxt">
-							{{totalCompareItemList.length>index?totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.libraryName:'所属库'}}
-							<i
-								v-if="(totalCompareItemList.length>index)
-                &&(totalCompareItemList[totalCompareItemList.length-index-1])
-                &&(totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor)"
-								class="el-icon-warning"
-								:style="{'color':totalCompareItemList[totalCompareItemList.length-index-1].faceRecognization.staffinfo.librarycolor}"
-							></i>
-							<i v-else class="el-icon-warning" :style="{'color':'#28FFBB'}"></i>
-						</div>
-					</el-col>
-				</el-row>
+			<div class="elCardBoxClass" v-for="(item, index) in totalCompareItemList" :key="index">
+				<recoginize-card
+					imgWidth="90"
+					:recoginizeItem="totalCompareItemList[index]"
+					@detailClick="doComparethis(index)"
+				/>
 			</div>
-		</el-row>
-		<!-- ======================================================= 弹 窗 ========================================================== -->
-		<el-dialog class="dialogClass" :visible.sync="dialogVisible" @close="closeDialog">
-			<el-row>
+		</div>
+		<!-- ==========				:close-on-click-modal="false"
+		v-dialogdrag============================================= 弹 窗 ==========================================================-->
+		<el-dialog
+			class="dialogClass"
+			:close-on-click-modal="false"
+			:visible.sync="dialogVisible"
+			@close="closeDialog"
+			v-dialogDrag
+			title="对比详情"
+		>
+			<!-- <el-row>
 				<div class="my_el-dialog__header">
-					<!-- <img src="@/assets/images/dialogTitle.svg" alt> -->
 					<span class="el-dialog__title">对比详情</span>
 					<button type="button" aria-label="Close" class="el-dialog__headerbtn">
 						<i class="el-dialog__close el-icon el-icon-close" @click="dialogVisible = false"></i>
 					</button>
 				</div>
-			</el-row>
-			<keep-alive>
-				<dialogview
-					v-loading="dialogfullscreenLoading"
-					element-loading-background="rgba(0, 0, 0, 0.8)"
-					:dialogParama="dialogParama"
-					:shootPhotoList="shootPhotoList"
-					:showImg="showImg"
-					@cs="changeShowStatus"
-				></dialogview>
-			</keep-alive>
+			</el-row> -->
+			<dialogview
+				v-loading="dialogfullscreenLoading"
+				element-loading-background="rgba(0, 0, 0, 0.8)"
+				:dialogParama="dialogParama"
+				:shootPhotoList="shootPhotoList"
+				:showImg="showImg"
+				@cs="changeShowStatus"
+			></dialogview>
 		</el-dialog>
 		<!-- ======================================================= 分页器 ========================================================== -->
 		<el-row ref="footerHeight" class="bottomBox" type="flex" justify="flex-end">
@@ -215,9 +144,11 @@
 import dialogview from "@/pages/faceModule/components/dialogForm.vue";
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import alPopverTree from "@/pages/faceModule/components/AlElTree.vue";
-import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
-  components: { dialogview, elPopverTree, alPopverTree },
+  components: { dialogview, elPopverTree, alPopverTree, RecoginizeCard },
   mounted: function() {
     let h =
 			window.innerHeight ||
@@ -228,7 +159,7 @@ export default {
 			document.documentElement.clientWidth ||
 			document.body.clientWidth;
     console.log(w);
-    h = h - 5;
+    h = h - 65;
     this.$refs.compareRecordHeight.$el.style.height = h + "px";
     // 当窗口发生变化时
     let that = this;
@@ -241,17 +172,16 @@ export default {
 				window.innerWidth ||
 				document.documentElement.clientWidth ||
 				document.body.clientWidth;
-      h = h - 5;
+      h = h - 65;
       console.log(w);
       that.$refs.compareRecordHeight.$el.style.height = h + "px";
     });
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    this.getTaskList(true);
+    this.getTaskList();
   },
   activated: function() {
     this.deactivated = false;
-    this.getTaskList(false);
   },
   deactivated: function() {
     this.deactivated = true;
@@ -259,6 +189,180 @@ export default {
   },
   watch: {},
   methods: {
+    transferAct(transferArray) {
+      this.checkedFaceUuidList = transferArray;
+    },
+    transferTaskAct(transferArray) {
+      this.checkedTaskUuidList = transferArray;
+      this.getFaceLibsAndDeviceList(transferArray);
+    },
+    changeShowStatus(flag) {
+      this.showImg = flag;
+    },
+    // 根据任务id获取设备树和人脸库
+    getFaceLibsAndDeviceList(faceMonitorUuidList) {
+      if (!faceMonitorUuidList.length) {
+        for (var i = 0; i < this.taskItemList.length; i++) {
+          var tempTask = this.taskItemList[i];
+          faceMonitorUuidList.push(tempTask.faceMonitorUuid);
+        }
+      }
+      this.faceDBList = [];
+      this.DeviceTreeList = [];
+      faceMonitorUuidList.forEach(faceMonitorUuid => {
+        this.getMonitoringTaskDetails(faceMonitorUuid);
+      });
+    },
+    // 查询布控任务详情
+    getMonitoringTaskDetails(taskUuid) {
+      api
+        .getTaskDeatailChannelAndLib(taskUuid)
+        .then(res => {
+          if (res.data.success && res.data.data) {
+            let arr = res.data.data;
+            this.faceDBList.push(
+              ...arr.libraryList.filter(item => {
+                return !this.faceDBList.some(i => {
+                  return i.faceLibraryUuid === item.faceLibraryUuid;
+                });
+              })
+            );
+            this.DeviceTreeList.push(
+              ...arr.channelList.filter(item => {
+                return !this.DeviceTreeList.some(im => {
+                  return im.channelUuid === item.channelUuid;
+                });
+              })
+            );
+          }
+        })
+        .catch(() => {});
+    },
+    transferCheckedChannel(checkedChannel) {
+      this.checkedChannelsUuidList = checkedChannel;
+    },
+    // 点击查询按钮
+    queryAct() {
+      if (this.startTime.length > 0 && this.endTime.length > 0) {
+        /* eslint-disable */
+				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
+				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
+				/* eslint-enable */
+        if (this.startTime !== "" && this.endTime !== "" && d1 >= d2) {
+          this.$message({
+            message: "开始时间必须小于结束时间！",
+            type: "warning"
+          });
+          return;
+        }
+      }
+      this.total = 0;
+      this.currentPage = 1;
+      this.getCompareRecordList();
+    },
+
+    // 获取数据
+    getCompareRecordList() {
+      this.mainScreenLoading = true;
+      var data = {
+        limit: this.pageSize, // int每页显示行数是
+        page: this.currentPage, // int第几页是
+        channelUuids: this.checkedChannelsUuidList.toString(), // string[]抓拍设备否
+        faceMonitorUuids: this.checkedTaskUuidList.toString(), // string[]布控任务否
+        faceLibraryUuids: this.checkedFaceUuidList.toString(), // string[]人脸库否
+        staffName: this.staffName, // string人员姓名否
+        credentialNo: this.certificateNum, // string证件号码否
+        genderCapture: this.genderOption, // string抓拍性别否
+        snapshotTimeStart: this.startTime, // string抓拍时间启否
+        snapshotTimeEnd: this.endTime
+      };
+      // 过滤空字符串
+      if (!data.channelUuids) data.channelUuids = null;
+      if (!data.faceMonitorUuids) data.faceMonitorUuids = null;
+      if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
+      if (!data.genderCapture) data.genderCapture = null;
+      api
+        .getRecognizeList(data)
+        .then(res => {
+          this.mainScreenLoading = !this.mainScreenLoading;
+          if (res.data.success && res.data.data && res.data.data.list) {
+            this.totalCompareItemList = res.data.data.list;
+            this.total = res.data.data.total;
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {
+          this.mainScreenLoading = !this.mainScreenLoading;
+        });
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`点击当前页: ${val}`);
+      this.currentPage = val;
+      this.getCompareRecordList();
+    },
+    // 关闭详情弹窗的事件
+    closeDialog(e) {
+      this.showImg = false;
+      this.dialogVisible = e;
+    },
+    // 点击详情的事件
+    doComparethis(e) {
+      this.getAlarmShootPhotoList(this.totalCompareItemList[e]);
+    },
+    // 根据客户端的传的人员staffUuid查找抓拍图片
+    getAlarmShootPhotoList(rowData, currentPage = 1, pageSize = 24) {
+      this.updatedFlag = true;
+      var data = {
+        faceUuid: rowData.faceUuid,
+        triggerFaceMonitor: 1,
+        limit: 8,
+        page: 1
+      };
+      this.dialogfullscreenLoading = true;
+      this.dialogVisible = !this.dialogVisible;
+      api
+        .getRecognizeInfo(data)
+        .then(res => {
+          this.dialogfullscreenLoading = false;
+          if (res.data.success) {
+            console.log(res.data.data);
+            this.dialogParama.showImg = false;
+            this.dialogParama = res.data.data;
+          }
+        })
+        .catch(() => {
+          this.dialogfullscreenLoading = false;
+          this.dialogVisible = !this.dialogVisible;
+        });
+    },
+    // 获取任务列表
+    getTaskList(isTrue = true) {
+      this.checkedTaskUuidList = [];
+      api
+        .getTaskList()
+        .then(res => {
+          if (res.data.success) {
+            this.taskItemList = res.data.data;
+            for (var i = 0; i < this.taskItemList.length; i++) {
+              var tempTask = this.taskItemList[i];
+              this.checkedTaskUuidList.push(tempTask.faceMonitorUuid);
+            }
+            this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
+            if (isTrue) {
+              this.currentPage = 1;
+              this.totalCompareItemList = [];
+              this.queryAct(true);
+            }
+          } else {
+            this.$message({ message: "请求布控任务列表错误", type: "warning" });
+          }
+        })
+        .catch(() => {});
+    },
     selectDateAct(dateStr) {
       console.log(dateStr);
       let day = new Date();
@@ -318,306 +422,75 @@ export default {
 
       console.log(this.startTime, "-----", this.endTime);
     },
-    transferAct(transferArray) {
-      this.checkedFaceUuidList = transferArray;
+    // 鼠标划过覆盖的hover弹窗事件
+    mymouseover: event => {
+      mouseover(event);
     },
-    transferTaskAct(transferArray) {
-      this.checkedTaskUuidList = transferArray;
-      var _this = this;
-      setTimeout(function() {
-        _this.getFaceLibsAndDeviceList(_this.checkedTaskUuidList);
-      }, 200);
+    mymouseout(event) {
+      mouseout(event);
     },
-    changeShowStatus(flag) {
-      this.showImg = flag;
-    },
-    // 根据任务id获取设备树和人脸库
-    getFaceLibsAndDeviceList(taskuuidList) {
-      if (!taskuuidList.length) {
-        for (var i = 0; i < this.taskItemList.length; i++) {
-          var tempTask = this.taskItemList[i];
-          taskuuidList.push(tempTask.taskuuid);
-        }
-      }
-      let _this = this;
-      _this.$store
-        .dispatch("getFaceLibsAndDeviceList", taskuuidList)
-        .then(res => {
-          console.log(res);
-          if (res.result === 0 && res.data) {
-            var arr = [];
-            arr.push(res.data.vcDeviceTreeDTO);
-            _this.DeviceTreeList = JSON.parse(JSON.stringify(arr));
-            _this.faceDBList = res.data.faceLibDTOS;
-            _this.checkedFaceUuidList = [];
-            for (var i = 0; i < _this.faceDBList.length; i++) {
-              var temp = _this.faceDBList[i];
-              _this.checkedFaceUuidList.push(temp.libraryuuid);
-            }
-
-            // 获取checkedChannelUuidList
-            _this.getChildren(
-              _this.DeviceTreeList,
-              _this.checkedChannelsUuidList
-            );
-          } else {
-            _this.$message({
-              message: "没有查找到相关设备",
-              type: "warning"
-            });
-          }
-        });
-    },
-    // 获取所有叶子节点
-    getChildren(data, arr) {
-      if (!data || data.length === 0) {
-        return;
-      }
-      for (let index = 0; index < data.length; index++) {
-        if (data[index].children === null) {
-          let channelObj = JSON.parse(JSON.stringify(data[index]));
-          arr.push(channelObj.id);
-        } else {
-          this.getChildren(data[index].children, arr);
-        }
-      }
-    },
-
-    transferCheckedChannel(checkedChannel) {
-      this.checkedChannelObj = checkedChannel;
-      this.checkedChannelsUuidList = [];
-      // 设备树
-      if (this.checkedChannelObj && this.checkedChannelObj.length) {
-        for (var i = 0; i < this.checkedChannelObj.length; i++) {
-          var item = this.checkedChannelObj[i];
-          this.checkedChannelsUuidList.push(item.id);
-        }
-      } else {
-        this.checkNameString = "全部设备";
-      }
-    },
-    // 点击查询按钮
-    queryAct() {
-      /* eslint-disable */
-			if (this.startTime.length > 0 && this.endTime.length > 0) {
-				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
-				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
-				if (this.startTime !== "" && this.endTime !== "" && d1 >= d2) {
-					this.$message({
-						message: "开始时间必须小于结束时间！",
-						type: "warning"
-					});
-					return;
-				}
-			}
-			this.total = 0;
-			this.currentPage = 1;
-			this.getCompareRecordList();
-		},
-
-		// 获取数据
-		getCompareRecordList() {
-			this.mainScreenLoading = true;
-
-			var data = {
-				// taskUuids: this.checkedTaskUuidList.toString(),
-				channelIds: this.checkedChannelsUuidList.toString(),
-				currentPage: this.currentPage,
-				endTime: this.endTime,
-				faceLibListUuids: this.checkedFaceUuidList.toString(),
-				pageSize: this.pageSize,
-				startTime: this.startTime
-			};
-			this.$store.dispatch("getCompareList", data).then(res => {
-				console.log(data, "getCompareList=", res);
-				this.mainScreenLoading = false;
-				if (res.result === 0 && res.data.list) {
-					this.totalCompareItemList = [];
-					res.data.list.reverse();
-					for (var i = 0; i < res.data.list.length; i++) {
-						var item = res.data.list[i];
-						if (!item.extinfo) return;
-						try {
-							item.extinfo = JSON.parse(item.extinfo);
-							item.faceRecognization = item.extinfo.faceRecognization;
-							item.faceRecognization.photoinfo = JSON.parse(
-								item.faceRecognization.photoinfo
-							);
-							item.faceRecognization.staffinfo = JSON.parse(
-								item.faceRecognization.staffinfo
-							);
-						} catch (error) {
-							res.data.list[i];
-						}
-						// let td = item.faceRecognization.time.split(" ")[0].split("-")[2]+item.faceRecognization.time.split(" ")[0].split("-")[1]+item.faceRecognization.time.split(" ")[0].split("-")[0]
-						// item.faceRecognization.time = item.faceRecognization.time.split(" ")[1]+' '+td
-
-						this.totalCompareItemList.push(item);
-					}
-					this.total = res.data.total;
-				} else {
-					this.$message({
-						message: "没有查找到相关的对比记录",
-						type: "warning"
-					});
-				}
-			});
-		},
-		handleSizeChange(val) {
-			console.log(`每页 ${val} 条`);
-		},
-		handleCurrentChange(val) {
-			console.log(`点击当前页: ${val}`);
-			this.currentPage = val;
-			this.getCompareRecordList();
-		},
-		// 关闭详情弹窗的事件
-		closeDialog(e) {
-			this.showImg = false;
-			this.dialogVisible = e;
-		},
-		// 弹窗的传值
-		dialogCompareAction(e) {
-			// this.doComparethis(e);
-		},
-		// 点击详情的事件
-		doComparethis(e) {
-			console.log(e);
-			if (this.totalCompareItemList.length - e > 0) {
-				console.log(
-					this.totalCompareItemList[this.totalCompareItemList.length - e - 1]
-				);
-				this.dialogParama = null;
-				this.dialogParama = this.totalCompareItemList[
-					this.totalCompareItemList.length - e - 1
-				];
-				this.dialogVisible = true;
-				this.dialogParama.showImg = false;
-				this.getAlarmShootPhotoList();
-			} else {
-			}
-		},
-		// 根据客户端的传的人员staffUuid查找抓拍图片
-		getAlarmShootPhotoList(currentPage = 1, pageSize = 24) {
-			this.updatedFlag = true;
-			var data = new Object({
-				staffUuid: this.dialogParama.faceRecognization.staffinfo.staffUuid,
-				scores: this.dialogParama.score
-			});
-			this.dialogfullscreenLoading = true;
-			this.$store.dispatch("getShootPhotosForStaffUuid", data).then(res => {
-				this.dialogfullscreenLoading = false;
-				console.log("==人脸记录照片：====", res);
-				if (res.result === 0 && this.deactivated === false) {
-					this.shootPhotoList = [];
-					for (var i = 0; i < res.data.length; i++) {
-						var item = res.data[i];
-						if (!item.extinfo) return;
-						item.extinfo = JSON.parse(item.extinfo);
-						item.faceRecognization = item.extinfo.faceRecognization;
-						this.shootPhotoList.push(item);
-					}
-					this.dialogParama.showImg = false;
-					// this.dialogVisible = true;
-				} else {
-					this.$message({
-						message: "没有找到更多相关的人脸记录",
-						type: "warning"
-					});
-				}
-			});
-		},
-		// 获取任务列表
-		getTaskList(isTrue = true) {
-			var taskList = this.$store.getters.getTasks;
-			this.checkedTaskUuidList = [];
-			this.taskItemList = taskList;
-			this.$store.dispatch("getTaskList", false).then(res => {
-				if (res.result === 0) {
-					taskList = res.data.enable;
-					for (var i = 0; i < this.taskItemList.length; i++) {
-						var tempTask = this.taskItemList[i];
-						this.checkedTaskUuidList.push(tempTask.taskuuid);
-					}
-					this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
-					if (isTrue) {
-						this.currentPage = 1;
-						this.totalCompareItemList = [];
-						this.queryAct(true);
-					}
-				} else {
-					this.$message({ message: "请求布控任务列表错误", type: "warning" });
-				}
-			});
-		},
-		// 鼠标划过覆盖的hover弹窗事件
-		mymouseover: event => {
-			mouseover(event);
-		},
-		mymouseout(event) {
-			mouseout(event);
-		},
-		mymousemove(event) {
-			mousemove(event);
-		}
-	},
-	data() {
-		return {
-			selectDate: null,
-			CRTaskPopoverClass: "CRTaskPopoverClass",
-			CompareRecordPopoverClass: "CompareRecordPopoverClass",
-			totalCompareItemList: new Array(),
-			api: this.$store.state.api, // http://172.20.10.11:5000/mppr-face
-			checkedChannelsUuidList: [], // 当前勾选的通道Id的list
-			taskItemList: [], // 布控任務列表
-			mainScreenLoading: false, // 局部遮罩是否显示
-			pageSize: 16,
-			total: 0,
-			currentPage: 1,
-			startTime: "",
-			endTime: "",
-			dialogVisible: false, // 彈窗顯示標記
-			dialogParama: {},
-			shootPhotoList: [],
-			defaultProps: {
-				label: "taskname"
-			},
-			faceDBDefaultProps: {
-				label: "libraryname"
-			},
-			defaultDeviceProps: {
-				label: "channelName"
-			},
-			checkedTaskNameString: "",
-			checkNameString: "全部设备",
-			faceDBList: [],
-			checkedFaceDB: [],
-			allFaceDBUuid: [],
-			checkFaceDBNameString: "对比人脸库",
-			checkedTaskUuidList: [],
-			checkedFaceUuidList: [],
-			checkedFaceLibObj: [],
-			checkedChannelObj: [],
-			checkedTaskObj: [],
-			showImg: false,
-			deactivated: false,
-			DeviceTreeList: [], // 设备树
-			initArr: [],
-			isIndeterminate: false,
-			checkTaskAll: true,
-			checkLibAll: true,
-			dialogfullscreenLoading: false,
-			staffName: null,
-			certificateNum: null
-		};
-	}
+    mymousemove(event) {
+      mousemove(event);
+    }
+  },
+  data() {
+    return {
+      selectDate: null,
+      CRTaskPopoverClass: "CRTaskPopoverClass",
+      CompareRecordPopoverClass: "CompareRecordPopoverClass",
+      totalCompareItemList: new Array(),
+      api: this.$store.state.api, // http://172.20.10.11:5000/mppr-face
+      checkedChannelsUuidList: [], // 当前勾选的通道Id的list
+      taskItemList: [], // 布控任務列表
+      mainScreenLoading: false, // 局部遮罩是否显示
+      pageSize: 16,
+      total: 0,
+      currentPage: 1,
+      startTime: "",
+      endTime: "",
+      dialogVisible: false, // 彈窗顯示標記
+      dialogParama: {},
+      shootPhotoList: [],
+      defaultProps: {
+        label: "faceMonitorName"
+      },
+      faceDBDefaultProps: {
+        label: "faceLibraryName"
+      },
+      defaultDeviceProps: {
+        label: "channelName"
+      },
+      checkedTaskNameString: "",
+      checkNameString: "全部设备",
+      faceDBList: [],
+      checkedFaceDB: [],
+      allFaceDBUuid: [],
+      checkFaceDBNameString: "对比人脸库",
+      checkedTaskUuidList: [],
+      checkedFaceUuidList: [],
+      checkedFaceLibObj: [],
+      checkedChannelObj: [],
+      checkedTaskObj: [],
+      showImg: false,
+      deactivated: false,
+      DeviceTreeList: [], // 设备树
+      initArr: [],
+      isIndeterminate: false,
+      checkTaskAll: true,
+      checkLibAll: true,
+      dialogfullscreenLoading: false,
+      staffName: null,
+      certificateNum: null,
+      genderOption: null
+    };
+  }
 };
 </script>
 <style>
-.topBoxDateTimeBox .el-input--prefix .el-input__inner {
+.CompareRecord .el-input--prefix .el-input__inner {
 	padding-left: 10px;
 }
-.topBoxDateTimeBox .el-input--suffix .el-input__inner {
+.CompareRecord .el-input--suffix .el-input__inner {
 	padding-right: 10px;
 }
 
@@ -668,7 +541,7 @@ export default {
 	box-shadow: 0px 0 0 0 #26d39d;
 }
 .CompareRecord .topBoxDeviceBox {
-	min-width: 310px;
+	min-width: 240px;
 }
 .CompareRecord .topBoxTaskBox {
 	min-width: 240px;
@@ -696,7 +569,7 @@ export default {
 	color: #cccccc;
 }
 .compareRecordTxt {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 14px;
 	color: #888888;
 }
@@ -722,13 +595,6 @@ export default {
 	-webkit-transform: rotate(45deg) scaleY(0);
 	transform: rotate(45deg) scaleY(0);
 	width: 3px;
-	-webkit-transition: -webkit-transform 0.15s ease-in 0.05s;
-	transition: -webkit-transform 0.15s ease-in 0.05s;
-	transition: transform 0.15s ease-in 0.05s;
-	transition: transform 0.15s ease-in 0.05s,
-		-webkit-transform 0.15s ease-in 0.05s;
-	transition: transform 0.15s ease-in 0.05s,
-		-webkit-transform 0.15s ease-in 0.05s;
 	-webkit-transform-origin: center;
 	transform-origin: center;
 }
@@ -744,10 +610,6 @@ export default {
 	background-color: transparent;
 	z-index: 1;
 	margin: 0px;
-	-webkit-transition: border-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46),
-		background-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46);
-	transition: border-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46),
-		background-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46);
 }
 
 .CompareRecordPopoverClass
@@ -767,12 +629,6 @@ export default {
 	background-color: #000000;
 	/* color: #; */
 }
-.CompareRecord .elCardBoxHeaders {
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding-bottom: 12px;
-	padding: 9px 15px;
-	color: rgba(227, 53, 53, 0.8);
-}
 .CompareRecordPopoverClass .el-tree {
 	color: #aaaaaa;
 	background: none;
@@ -784,11 +640,6 @@ export default {
 	background: none;
 	/* color: #28FFBB; */
 }
-/* .CompareRecordPopoverClass .el-tree-node__expand-icon { */
-/* color: #28ffbb; */
-/* display: none; */
-/* } */
-
 .CRTaskPopoverClass {
 	position: absolute;
 	background: #202127;
@@ -826,9 +677,7 @@ export default {
 }
 .CompareRecord .el-date-editor.el-input,
 .CompareRecord .el-date-editor.el-input__inner {
-	/* width: 220px; */
-	/* width: 30%; */
-	max-width: 220px;
+	width: 180px;
 }
 .CompareRecord .dialogClass .el-dialog__body {
 	padding: 0;
@@ -850,7 +699,7 @@ export default {
 	background: rgba(40, 255, 187, 0.15);
 	border: 1px solid rgba(32, 204, 150, 0.8);
 	border-radius: 3px;
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 14px;
 	color: #ffffff;
 	/* margin-left: 8%; */
@@ -861,7 +710,7 @@ export default {
 	-webkit-transform: rotate(90deg);
 }
 .CompareRecord .topBoxInputBox {
-	width: 230px;
+	width: 220px;
 	padding-bottom: 20px;
 }
 .CompareRecord .topBoxInputBox .el-input {
@@ -878,50 +727,47 @@ export default {
 }
 .CompareRecord .el-dialog__title {
 	line-height: 24px;
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 20px;
 	color: #ffffff;
 	text-align: left;
 	margin-left: 11px;
 }
 .CompareRecord .el-dialog {
-	width: 62.5%;
-	color: #fff;
-	height: 73.5%;
-	min-width: 1200px;
-	min-height: 760px;
+	width: 920px;
+	height: 760px;
 	position: relative;
 	margin: 0 auto 50px;
+	color: #fff;
 	background: #24272a;
 	border-radius: 3px;
-
 	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
 .CompareRecord .fontColor {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 16px;
 	color: #cccccc;
 	letter-spacing: 0;
 }
 .CompareRecord .fontTheme {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 14px;
 	color: rgb(39, 150, 119) !important;
 	letter-spacing: 0;
 	cursor: pointer;
 }
 .CompareRecord .fontThemes {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 14px;
 	color: #28ffbb;
 	letter-spacing: 0;
 	cursor: pointer;
 }
 .CompareRecord .el-dialog__header {
-	display: none;
+	/* display: none; */
 	padding: 20px 20px 10px;
 }
 .CompareRecord .el-progress__text {
@@ -940,73 +786,6 @@ export default {
 	/*margin-left: 10px;*/
 	line-height: 1;
 }
-.CompareRecord .elCardBoxClass {
-	width: calc((100% - 110px) / 4);
-	height: calc((100% - 255px) / 4);
-	margin: 20px 20px 0 0;
-	color: #ffffff;
-	/* padding: 20px 25px; */
-	box-sizing: border-box;
-	border-radius: 2px;
-	overflow: hidden;
-	background: rgba(0, 0, 0, 0.13);
-	border: 1px solid rgba(40, 255, 187, 0.13);
-}
-
-.CompareRecord .elCardBoxHeader {
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding: 9px 15px;
-	box-sizing: border-box;
-}
-
-.CompareRecord .elCardBoxBody {
-	padding: 16px 18px 19px;
-	box-sizing: border-box;
-}
-.CompareRecord .asidCompareImgBox {
-	width: 100%;
-	height: 0px;
-	padding-bottom: 100%;
-	position: relative;
-	max-width: 103px;
-	max-height: 103px;
-	box-sizing: border-box;
-}
-.CompareRecord .libImgClass {
-	vertical-align: bottom;
-	margin-left: 3px;
-}
-.CompareRecord .asidCompareTxtClass {
-	text-align: left;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	padding: 10px 0px 0px 12px;
-}
-
-.CompareRecord .asidCardImg {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	-webkit-background-size: cover;
-	-webkit-background-origin: content;
-	background-origin: content-box;
-	background-size: cover;
-	-webkit-background-origin: content;
-	background-origin: content-box;
-	background-clip: content-box;
-}
-.CompareRecord .asidListRowFooter {
-	/* line-height: 35px; */
-	font-size: 14px;
-	text-align: left;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-}
-
 .CompareRecord .el-select-dropdown__item {
 	font-size: 14px;
 	padding: 0 20px;
@@ -1021,7 +800,7 @@ export default {
 	box-sizing: border-box;
 	cursor: pointer;
 }
-.el-select-dropdown {
+.CompareRecord .el-select-dropdown {
 	position: absolute;
 	z-index: 1001;
 	border: 1px solid #e4e7ed;
@@ -1034,12 +813,12 @@ export default {
 	box-sizing: border-box;
 	margin: 5px 0;
 }
-.el-select {
+.CompareRecord .el-select {
 	width: 50%;
 	display: inline-block;
 	position: relative;
 }
-.el-select .el-tag {
+.CompareRecord .el-select .el-tag {
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	border-color: transparent;
@@ -1052,7 +831,6 @@ export default {
 	box-shadow: 2px 2px 16px 0 rgba(2, 0, 14, 0.3);
 	color: #ffffff;
 	border: 1px solid #e4e7ed;
-	/* border: 1px solid rgba(40,255,187, 1); */
 	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 	border-radius: 4px;
@@ -1089,34 +867,36 @@ export default {
 	outline: 0;
 	margin-top: 8px;
 }
-.CompareRecord .recordCellFooterTxt {
-	/* opacity: 0.8; */
-	font-family: PingFangSC-Regular;
-	font-size: 14px;
-	color: rgba(255, 255, 255, 0.8);
-	letter-spacing: 0;
-}
-.CompareRecord .recordCellFooter {
-	width: 100%;
-	/* height: 80px; */
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: center;
-	padding: 9px;
-}
 .CompareRecord .reccordBoxClass {
 	width: 100%;
 	height: 100%;
 	overflow: auto;
 	display: flex;
-	flex-direction: row;
 	flex-wrap: wrap;
-	justify-content: center;
+	flex-direction: row;
+	justify-content: space-between;
 	background: rgba(36, 39, 42, 1);
-	margin-top: 20px;
 	box-sizing: border-box;
+	padding-left: 17px;
+	/* padding-right: 15px; */
 }
+.CompareRecord .elCardBoxClass {
+	margin: 16px auto 0 0;
+	color: #ffffff;
+	box-sizing: border-box;
+	border-radius: 2px;
+	overflow: hidden;
+}
+/* .CompareRecord .reccordBoxClass::after {
+	content: "";
+	flex: auto;
+}
+.CompareRecord .reccordBoxClass > *:first-child {
+	margin-right: auto;
+}
+.CompareRecord .reccordBoxClass > *:nth-child(2) {
+	margin-right: auto;
+} */
 .textclipClass {
 	display: inline-block;
 	white-space: nowrap;
@@ -1127,16 +907,6 @@ export default {
 	-webkit-box-orient: vertical;
 	/* autoprefixer: on */
 }
-.CompareRecord .recordCellImg {
-	width: 150px;
-	height: 150px;
-}
-.CompareRecord .reccordCellClass {
-	width: 180px;
-	height: 200px;
-	border: 1px solid rgba(11, 33, 38, 1);
-	margin: 13px 12px 14px;
-}
 .CompareRecord {
 	font-family: Helvetica, sans-serif;
 	text-align: center;
@@ -1146,21 +916,14 @@ export default {
 	flex-direction: column;
 	justify-content: flex-start;
 	background: rgb(28, 29, 32);
-	padding: 40px 50px 30px;
+	padding: 2%;
 }
 .CompareRecord .topBox {
-	/* padding: 30px 50px 30px 27px;
-	display: flex;
-	align-items: center;
-	width: 100%;
-	height: 100px;
-	background: rgb(36, 39, 42); */
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: center;
 	padding: 25px 40px 0px 27px;
-	height: 140px;
 	background: rgba(36, 39, 42, 1);
 	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
 	/* overflow-y: auto; */

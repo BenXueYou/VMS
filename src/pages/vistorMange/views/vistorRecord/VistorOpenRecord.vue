@@ -69,7 +69,9 @@
 					>{{$common.getEnumItemName("visitor_type", scope.row.reservationType)}}</template>
 				</el-table-column>
 				<el-table-column prop="recognitionMode" label="验证类型">
-					<template slot-scope="scope">{{$common.getEnumItemName("pass", scope.row.recognitionMode)}}</template>
+					<template
+						slot-scope="scope"
+					>{{$common.getEnumItemName("pass", scope.row.recognitionMode)}}</template>
 				</el-table-column>
 				<el-table-column prop="channelNickName" label="门"></el-table-column>
 				<el-table-column prop="direction" label="方向" sortable="custom">

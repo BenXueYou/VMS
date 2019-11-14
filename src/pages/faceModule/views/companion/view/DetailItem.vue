@@ -1,22 +1,22 @@
 <template>
   <div class="fellow-info-detail">
     <div class="fellow-info-detail-img">
-      <img :src="$common.setPictureShow(item.staffPhotoUrl)" width="100%" height="100%">
+      <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')" width="100%" height="100%">
     </div>
     <div class="fellow-info-detail-line1">
       <div class="title">
-        共同摄像头{{item.channels ? item.channels : "未知"}}个
+        共同摄像头{{item.travelTogetherChannel ? item.travelTogetherChannel : "未知"}}个
       </div>
       <div class="title" style="margin-left: 2px;">
-        同行{{item.inHarns ? item.inHarns : "未知"}}次
+        同行{{item.travelTogetherFrequency ? item.travelTogetherFrequency : "未知"}}次
       </div>
     </div>
     <div class="fellow-info-detail-line2">
       <div class="title">
-        {{item.staffname ? item.staffname : "未知"}}
+        {{item.staffName ? item.staffName : "未知"}}
       </div>
       <div class="title">
-        {{item.libraryName ? item.libraryName : "未知"}}
+        {{item.faceLibraryName ? item.faceLibraryName : "未知"}}
       </div>
     </div>
   </div>

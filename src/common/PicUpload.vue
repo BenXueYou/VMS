@@ -1,19 +1,40 @@
 <template>
   <el-upload class="avatar-uploader"
-             :style="`width:${width}px;height:${height}px` "
+             :style="`width:${width};height:${height};min-height: 120px;` "
              :action="fileUrl"
              :show-file-list="false"
              :auto-upload="true"
+             :disabled="imageUrl ? true : isDisabled"
              :before-upload="beforeAvatarUpload"
              :http-request='httpRequest'>
-    <div v-if="imageFile"
-         class="avatar">
-      <img :src="imageFile" width="100%">
+    <div v-if="imageUrl"
+         class="avatar"
+         @mouseenter="showDelete(true)"
+         @mouseleave="showDelete(false)">
+      <img :src="$common.setPictureShow(imageUrl, 'facelog')"
+           :width="`${width}`"
+           @click="selectImg"
+           :height="`${height}`"
+           style="object-fit: fill;min-height: 120px;">
       <i class="el-icon-delete clearImageIcon"
-         @click.stop="deleteUpdateImage('left')"></i>
+         @click.stop="deleteUpdateImage()"
+         v-if="isShowDelButton"></i>
+    </div>
+    <div v-if="!imageUrl && imageFile"
+         class="avatar"
+         @mouseenter="showDelete(true)"
+         @mouseleave="showDelete(false)">
+      <img :src="imageFile"
+           :width="`${width}`"
+           @click="selectImg"
+           :height="`${height}`"
+           style="object-fit: fill;min-height: 120px;">
+      <i class="el-icon-delete clearImageIcon"
+         @click.stop="deleteUpdateImage()"
+         v-if="isShowDelButton"></i>
     </div>
     <div class="avatar"
-         v-else>
+         v-if="!imageUrl && !imageFile">
       <img src="@/assets/images/addImg2.png"
            class="ovo-card-img add-icon">
       <i class="el-icon-circle-plus-outline font-color">添加图片</i>
@@ -26,32 +47,57 @@ export default {
   components: {},
   props: {
     width: {
-      type: Number,
-      default: 100
+      type: String,
+      default: "100px"
     },
     height: {
-      type: Number,
-      default: 125
+      type: String,
+      default: "125px"
     },
+    enableEdit: {
+      type: Boolean,
+      default: false
+    },
+    imageUrl: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
       imageFile: "",
-      fileUrl: this.$store.state.api + "/mppr-face/v1/face/image/upload?fileType=full_body_shot",
+      picBaseUrl: "",
+      fileUrl: "",
+      isShowDelButton: false,
+      isDisabled: false,
     };
   },
   created() {},
   mounted() {},
   methods: {
-    httpRequest(e1) {
-      console.log(e1, "---", e1.file, "---", e1.file.raw);
-      this.imageFile = URL.createObjectURL(e1.file);
-      this.$emit("imageFile", this.imageFile);
+    httpRequest(e) {
+      this.imageFile = URL.createObjectURL(e.file);
+      let reader = new FileReader();
+      reader.readAsDataURL(e.file);
+      let _this = this;
+      reader.onload = function(e) {
+        _this.picBaseUrl = this.result
+          .replace("data:image/jpeg;base64,", "jpeg:")
+          .replace("data:image/png;base64,", "png:")
+          .replace("data:image/jpg;base64,", "jpg:");
+        _this.$emit("addImage", _this.picBaseUrl);
+      };
+      if (!this.enableEdit) {
+        this.isDisabled = true;
+      }
     },
     //删除上传图片
     deleteUpdateImage() {
       this.imageFile = "";
-      this.$emit("imageFile", this.imageFile);
+      this.$emit("deleteImage");
+      if (!this.enableEdit) {
+        this.isDisabled = false;
+      }
     },
     /**
      * 图片格式校验+
@@ -61,17 +107,28 @@ export default {
       if (file.type === "image/jpeg" || file.type === "image/png") {
         isJPG = true;
       }
-      // const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 10;
       if (!isJPG) {
         this.$cToast.error("上传图片只能是 JPG 或 PNG 格式!");
       }
-      /* if (!isLt2M) {
-        this.$cToast.error("上传图片大小不能超过 2MB!");
-      } */
+      if (!isLt2M) {
+        this.$cToast.error("上传图片大小不能超过 10MB!");
+      }
       return isJPG;
     },
+    showDelete(isShow) {
+      if (isShow) {
+        this.isShowDelButton = true;
+      } else {
+        this.isShowDelButton = false;
+      }
+    },
+    selectImg() {
+      this.$emit("selectImg");
+    }
   },
-  watch: {},
+  watch: {
+  },
   destroyed() {}
 };
 </script>
@@ -79,22 +136,20 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .avatar-uploader {
-  border: 1px dashed #3C3F42;
+  border: 1px dashed #3c3f42;
   position: relative;
   background-color: rgb(27, 30, 33);
-  padding: 4px;
-  box-sizing: border-box;
+  // padding: 4px;
+  // box-sizing: border-box;
 }
 .avatar {
-  width: 100%;
-  height: 100%;
   position: relative;
 }
 .clearImageIcon {
   position: absolute;
-  right: 3px;
-  top: 6px;
-  z-index: 99;
+  right: 1px;
+  top: 1px;
+  // z-index: 99;
   color: #efefef;
   width: 28px;
   height: 28px;
@@ -108,13 +163,13 @@ export default {
   vertical-align: middle;
   width: 55%;
   height: 55%;
-  color: #20735C;
+  color: #20735c;
 }
 .font-color {
   margin-top: 20%;
   font-family: PingFangSC-Regular;
   font-size: 12px;
-  color: #20735C;
+  color: #20735c;
   text-align: right;
 }
 </style>

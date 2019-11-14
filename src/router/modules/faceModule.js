@@ -1,198 +1,210 @@
-const FaceManage = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/FaceManage');
-const taskDB = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/taskDB');
-const FaceHome = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/Home');
-const faceDB = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/page/facedb/faceDB');
-const FaceRecord = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/FaceRecord');
-const CompareRecord = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/CompareRecord');
-const IntelligentModel = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/IntelligentModel');
-const OVO = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/OVO');
-const faceImpact = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/faceImpact');
-const ManBodyAnalysis = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/ManBodyAnalysis');
-const MBAnalysisRecord = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/MBAnalysisRecord');
-const faceAlarm = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/page/search/facealarm/faceAlarm');
-const faceAnalysis = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/page/search/faceanalysis/faceAnalysis');
-const IGMRecord = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/page/search/IntelligentModelRecord/IMRecord');
-const PersonFlowAnalysis = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/statisticalForms/view/PersonFlowAnalysis');
-const PersonCompareCount = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/statisticalForms/view/PersonCompareCount');
-const SingleCaptureAnalysis = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/statisticalForms/view/SingleCaptureAnalysis');
-const SingleMissionAnalysis = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/statisticalForms/view/SingleMissionAnalysis');
-const FaceAnalysisTable = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/statisticalForms/view/FaceAnalysisTable');
-const Companion = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/companion/view/Companion');
-const CarFellow = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/carFellow/view/CarFellow');
-const Settings = () => import(/* webpackChunkName: "FaceModule" */ '@/pages/faceModule/views/settings/view/Settings');
+const FaceManage = () =>
+  import(/* webpackChunkName: "FaceModule" */ "@/pages/faceModule/FaceManage");
+const FaceControl = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/faceControl/view/FaceControl"
+  );
+const FaceHome = () =>
+  import(/* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/Home");
+const faceDB = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/facedb/faceDB"
+  );
+const FaceRecord = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/FaceRecord"
+  );
+const CompareRecord = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/CompareRecord"
+  );
+const IntelModel = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/intelModel/view/IntelModel"
+  );
+const OVO = () =>
+  import(/* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/OVO");
+const searchFaceWithFace = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/searchFaceWithFace/view/SearchFaceWithFace"
+  );
+const judgeAnalysis = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/judgeAnalysis/view/JudgeAnalysis"
+  );
+const ModuleCount = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/moduleCount/view/ModuleCount"
+  );
+const faceAlarm = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/facealarm/faceAlarm"
+  );
+const PersonFlowAnalysis = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/statisticalForms/view/PersonFlowAnalysis"
+  );
+const PersonCompareCount = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/statisticalForms/view/PersonCompareCount"
+  );
+const FaceAnalysisTable = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/statisticalForms/view/FaceAnalysisTable"
+  );
+const Companion = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/companion/view/Companion"
+  );
+const PersonTrace = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/personTrace/view/PersonTrace"
+  );
+const Settings = () =>
+  import(
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/settings/view/Settings"
+  );
 
 const routes = [
   {
-    path: '/',
-    redirect: '/FaceHome'
-  },
-  {
-    path: '/FaceHome',
-    name: 'FaceHome',
+    path: "FaceHome",
+    name: "FaceHome",
     meta: {
-      keepAlive: false // 不需要缓存
+      keepAlive: true // 不需要缓存
     },
     component: FaceHome
   },
   {
-    path: '/MBAnalysisRecord',
-    name: 'MBAnalysisRecord',
-    meta: {
-      keepAlive: true // 不需要缓存
-    },
-    component: MBAnalysisRecord
-  },
-  {
-    path: '/faceAnalysis',
-    name: 'faceAnalysis',
-    meta: {
-      keepAlive: true // 需要缓存
-    },
-    component: faceAnalysis
-  },
-  {
-    path: '/ManBodyAnalysis',
-    name: 'ManBodyAnalysis',
-    meta: {
-      keepAlive: false // 需要缓存
-    },
-    component: ManBodyAnalysis
-  },
-  {
-    path: '/faceAlarm',
-    name: 'faceAlarm',
+    path: "faceAlarm",
+    name: "faceAlarm",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: faceAlarm
   },
   {
-    path: '/IntelligentModel',
-    name: 'IntelligentModel',
+    path: "IntelModel",
+    name: "IntelModel",
     meta: {
       keepAlive: true // 需要缓存
     },
-    component: IntelligentModel
+    component: IntelModel
   },
   {
-    path: '/CompareRecord',
-    name: 'CompareRecord',
+    path: "CompareRecord",
+    name: "CompareRecord",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: CompareRecord
   },
   {
-    path: '/FaceRecord',
-    name: 'FaceRecord',
+    path: "FaceRecord",
+    name: "FaceRecord",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: FaceRecord
   },
   {
-    path: '/faceDB',
-    name: 'faceDB',
+    path: "faceDB",
+    name: "faceDB",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: faceDB
   },
   {
-    path: '/taskDB',
-    name: 'taskDB',
+    path: "FaceControl",
+    name: "FaceControl",
     meta: {
       keepAlive: true // 需要缓存
     },
-    component: taskDB
+    component: FaceControl
   },
   {
-    path: '/OVO',
-    name: 'OVO',
+    path: "OVO",
+    name: "OVO",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: OVO
   },
   {
-    path: '/faceImpact',
-    name: 'faceImpact',
+    path: "searchFaceWithFace",
+    name: "searchFaceWithFace",
     meta: {
       keepAlive: true // 需要缓存
     },
-    component: faceImpact
+    component: searchFaceWithFace
   },
   {
-    path: '/IGMRecord',
-    name: 'IGMRecord',
+    path: "judgeAnalysis",
+    name: "judgeAnalysis",
     meta: {
       keepAlive: true // 需要缓存
     },
-    component: IGMRecord
+    component: judgeAnalysis
   },
   {
-    path: '/PersonFlowAnalysis',
-    name: 'PersonFlowAnalysis',
+    path: "PersonFlowAnalysis",
+    name: "PersonFlowAnalysis",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: PersonFlowAnalysis
   },
   {
-    path: '/PersonCompareCount',
-    name: 'PersonCompareCount',
+    path: "PersonCompareCount",
+    name: "PersonCompareCount",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: PersonCompareCount
   },
   {
-    path: '/SingleCaptureAnalysis',
-    name: 'SingleCaptureAnalysis',
-    meta: {
-      keepAlive: true // 需要缓存
-    },
-    component: SingleCaptureAnalysis
-  },
-  {
-    path: '/SingleMissionAnalysis',
-    name: 'SingleMissionAnalysis',
-    meta: {
-      keepAlive: true // 需要缓存
-    },
-    component: SingleMissionAnalysis
-  },
-  {
-    path: '/FaceAnalysisTable',
-    name: 'FaceAnalysisTable',
+    path: "FaceAnalysisTable",
+    name: "FaceAnalysisTable",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: FaceAnalysisTable
   },
   {
-    path: '/Companion',
-    name: 'Companion',
+    path: "Companion",
+    name: "Companion",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: Companion
   },
   {
-    path: '/Settings',
-    name: 'Settings',
+    path: "PersonTrace",
+    name: "PersonTrace",
+    meta: {
+      keepAlive: true // 需要缓存
+    },
+    component: PersonTrace
+  },
+  {
+    path: "Settings",
+    name: "Settings",
     meta: {
       keepAlive: true // 需要缓存
     },
     component: Settings
   },
   {
-    path: '/CarFellow',
-    name: 'CarFellow',
+    path: "ModuleCount",
+    name: "ModuleCount",
     meta: {
       keepAlive: true // 需要缓存
     },
-    component: CarFellow
+    component: ModuleCount
+  },
+  {
+    path: "/",
+    redirect: "FaceHome"
   }
 ];
 export default {
@@ -203,5 +215,5 @@ export default {
   children: routes,
   icon: "faceManage",
   type: "app",
-  redirect: '/FaceManage/FaceHome' //设置默认子路由
+  redirect: "/FaceManage/FaceHome" //设置默认子路由
 };

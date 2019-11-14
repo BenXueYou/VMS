@@ -519,7 +519,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
     }
   }
   .body {
-    // height: calc(100vh - 290px);
+    height: calc(100vh - 290px);
     overflow-y: auto;
     padding: 20px 0px 10px;
     margin: 0px 30px 30px;

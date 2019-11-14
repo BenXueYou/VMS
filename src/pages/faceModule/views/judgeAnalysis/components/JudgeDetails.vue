@@ -7,10 +7,10 @@
              :close-on-click-modal="false">
     <div class="dialog-content">
       <!--内容-->
-      <div class="content-title">
+      <!-- <div class="content-title">
         <img src="@/assets/images/faceModule/alarm_t.png">
         <span style="margin-left: 10px;">报警类型：{{"疑是黄牛"}}</span>
-      </div>
+      </div> -->
       <div class="content-device">
         <span>设备：</span>
         <el-checkbox :indeterminate="isIndeterminate"
@@ -20,9 +20,9 @@
         <el-checkbox-group v-model="checkedDevices"
                            @change="handleCheckedDevChange">
           <el-checkbox v-for="dev in devices"
-                       :label="dev"
-                       :key="dev">
-            {{dev}}
+                       :label="dev.channelUuid"
+                       :key="dev.channelUuid">
+            {{dev.channelName}}
             <div class="device-dot"
                  style="background: #F6C620;"></div>
           </el-checkbox>
@@ -31,30 +31,31 @@
       <div class="content-list">
         <template v-for="(item, index) in infoList">
           <div :key="index"
-               class="list-item">
+               class="list-item"
+               v-loading="isLoading">
             <div class="item-left">
               <div class="item-arrow">
-                {{item.time ? item.time.substr(5, 5) : ""}}
+                {{item.captureDatetime ? item.captureDatetime.substr(5, 5) : ""}}
               </div>
             </div>
             <div class="dot"
                  style="background: #F6C620;"></div>
             <div class="item-right">
               <div class="right-item">
-                <img :src="$common.setPictureShow(item.photoUrl)"
+                <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
                      width="67.7px"
                      height="67.6px"
                      style="margin-left: 6px"
                      class="img-fill">
-                <img :src="$common.setPictureShow(item.photoAllUrl)"
+                <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')"
                      width="120.9px"
                      style="margin-left: 6px"
                      height="67.6px"
                      class="img-fill">
                 <div class="info-other">
-                  <div class="other-span">{{item.time}}</div>
-                  <div class="other-span">{{item.address}}</div>
-                  <div class="other-span">{{item.details}}</div>
+                  <div class="other-span">{{item.captureDatetime}}</div>
+                  <div class="other-span">{{item.channelName}}</div>
+                  <div class="other-span">{{item.age + "岁" +$common.getEnumItemName("gender", item.gender)}} {{item.mask ? "戴口罩" : "不戴口罩"}}</div>
                 </div>
               </div>
             </div>
@@ -70,20 +71,23 @@
         <span>状态：</span>
         <el-radio-group v-model="typeRadio"
                         style="margin-left: 55px;">
-          <el-radio :label="1">已处理</el-radio>
-          <el-radio :label="0">未处理</el-radio>
+          <el-radio label="model_processed">已处理</el-radio>
+          <el-radio label="model_to_be_processed">未处理</el-radio>
         </el-radio-group>
       </div>
       <div class="content-status">
         <span>移至人脸库：</span>
-        <el-select style="width: 240px;margin-left: 20px;"
-                   v-model="dataBase"
+        <el-select v-model="dataBase"
+                   size="small"
+                   multiple
                    clearable
-                   size="small">
+                   collapse-tags
+                   placeholder="请选择人脸库"
+                   style="width: 240px;margin-left: 20px;">
           <el-option v-for="item in dataBaseOptions"
-                     :key="item.typeStr"
-                     :label="item.typeName"
-                     :value="item.typeStr">
+                     :key="item.faceLibraryUuid"
+                     :label="item.faceLibraryName"
+                     :value="item.faceLibraryUuid">
           </el-option>
         </el-select>
       </div>
@@ -119,66 +123,18 @@ export default {
   },
   data() {
     return {
+      modelItem: {},
       isCurrentShow: false,
-      typeRadio: 0,
+      typeRadio: "",
       dataBaseOptions: [],
-      dataBase: "",
+      dataBase: [],
       remark: "",
-      checkAll: false,
-      checkedDevices: ["设备1", "设备3"],
-      devices: ["设备1", "设备2", "设备3", "设备4"],
-      isIndeterminate: true,
-      infoList: [
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        },
-        {
-          photoUrl: "",
-          photoAllUrl: "",
-          time: "2018-10-20  12:22:00",
-          address: "南10入口1",
-          details: "中年男性  戴口罩"
-        }
-      ]
+      checkAll: true,
+      checkedDevices: [],
+      devices: [],
+      isIndeterminate: false,
+      infoList: [],
+      isLoading: false
     };
   },
   created() {},
@@ -186,24 +142,98 @@ export default {
   methods: {
     onClickCancel() {
       this.$emit("onCancel");
+      this.resetData();
     },
     onClickConfirm() {
       this.$emit("onCancel");
+      this.resetData();
+    },
+    resetData() {
+      this.modelItem = {};
+      this.typeRadio = "";
+      this.dataBaseOptions = [];
+      this.dataBase = [];
+      this.remark = "";
+      this.checkAll = true;
+      this.checkedDevices = [];
+      this.devices = [];
+      this.isIndeterminate = false;
+      this.infoList = [];
+    },
+    getLibrarys() {
+      this.$faceControlHttp.getFacedbList().then(res => {
+        let body = res.data;
+        this.getFacedbListSuccess(body);
+      });
+    },
+    getFacedbListSuccess(body) {
+      this.dataBaseOptions = body.data;
     },
     handleCheckAllChange(val) {
-      this.checkedDevices = val ? this.devices : [];
+      let devIdArr = [];
+      if (this.devices) {
+        this.devices.forEach(v => {
+          devIdArr.push(v.channelUuid);
+        });
+      }
+      this.checkedDevices = val ? devIdArr : [];
       this.isIndeterminate = false;
+      this.getJudgeDetails();
     },
     handleCheckedDevChange(value) {
       let checkedCount = value.length;
       this.checkAll = checkedCount === this.devices.length;
       this.isIndeterminate =
         checkedCount > 0 && checkedCount < this.devices.length;
+      this.getJudgeDetails();
+    },
+    getModelDev() {
+      this.$judgeHttp
+        .getModelDev({
+          modelUuid: this.modelItem.faceModelUuid
+        })
+        .then(res => {
+          let body = res.data;
+          this.getModelDevSuccess(body);
+        });
+    },
+    getModelDevSuccess(body) {
+      this.devices = body.data;
+      let devIdArr = [];
+      if (this.devices) {
+        this.devices.forEach(v => {
+          devIdArr.push(v.channelUuid);
+        });
+      }
+      this.checkedDevices = devIdArr;
+      this.getJudgeDetails();
+    },
+    getJudgeDetails() {
+      this.isLoading = true;
+      this.$judgeHttp
+        .getJudgeDetails({
+          faceModelAnalysisResultUuid: this.modelItem.faceModelAnalysisResultUuid,
+          channelUuids: this.checkedDevices ? this.checkedDevices.join(",") : ""
+        })
+        .then(res => {
+          let body = res.data;
+          this.getJudgeDetailsSuccess(body);
+          this.isLoading = false;
+        })
+        .catch(() => {
+          this.isLoading = false;
+        });
+    },
+    getJudgeDetailsSuccess(body) {
+      this.infoList = body.data.list;
     }
   },
   watch: {
     isShow(val) {
       this.isCurrentShow = val;
+      if (val) {
+        this.getLibrarys();
+      }
     }
   }
 };
@@ -296,7 +326,7 @@ export default {
         align-items: center;
         justify-content: center;
         .right-item {
-          background: rgba($color: #02000E, $alpha: 0.15);
+          background: rgba($color: #02000e, $alpha: 0.15);
           width: 460px;
           height: 80px;
           margin-left: 35px;
@@ -305,7 +335,7 @@ export default {
           .info-other {
             font-family: PingFangSC-Regular;
             font-size: 12px;
-            color: #DDDDDD;
+            color: #dddddd;
             letter-spacing: 0;
             display: flex;
             margin-left: 30px;

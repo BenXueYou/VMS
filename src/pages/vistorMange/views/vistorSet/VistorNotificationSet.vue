@@ -165,15 +165,8 @@ export default {
       setNotice:
 				"变量：预约时间{{appointment}}二维码链接{{qrcode}}有效期{{term}}",
       textarea: "",
-      msgArriveModelInput: {
-        content: "【访客到达通知】您的访客{{name}}在{{time}}经{{door}}验证通过",
-        templateUuid: "string1"
-      },
-      msgReservationModelInput: {
-        content:
-					"预约成功！请您于{{appointment}}前抵达，并通过{{qrcode}}验证，有效期至{{term}}，请及时到访。",
-        templateUuid: "string2"
-      }
+      msgArriveModelInput: null,
+      msgReservationModelInput: null
     };
   },
   created() {},
@@ -213,13 +206,9 @@ export default {
             this.isCheckCard = Boolean(data.needCheck); // 预约时是否需要人证核验
             this.threshold = data.checkThreshold; // 人证比对阈值
             this.isSendMsg = Boolean(data.msgToStaffArrive); // 访客到达时是否短信通知被访人
-            this.msgArriveModelInput = data.visitorArrive
-              ? data.visitorArrive
-              : this.msgArriveModelInput; // 访客到达短信通知模板
+            this.msgArriveModelInput = data.msgTemplateToStaffArrive; // 访客到达短信通知模板
             this.isNoticeVisitor = Boolean(data.msgToVisitorBookSuccess); // 预约成功后是否通知访客
-            this.msgReservationModelInput = data.visitorBook
-              ? data.visitorBook
-              : this.msgReservationModelInput; // 预约成功短信通知模板
+            this.msgReservationModelInput = data.msgTemplateVisitorBookSuccess; // 预约成功短信通知模板
             this.isInstructions = Boolean(data.operationalGuidelines); // 访客预约操作指南
             this.isEditCon = data.context; // 内容编辑
             this.vistorAIConfigData = data;
@@ -248,11 +237,11 @@ export default {
         msgToStaffArrive: Number(this.isSendMsg),
         msgToVisitorBookSuccess: Number(this.isNoticeVisitor),
         operationalGuidelines: Number(this.isInstructions),
-        msgTemplateToStaffArrive: this.msgArriveModelInput.templateUuid, /// 模板uuid
+        msgTemplateToStaffArrive: this.msgArriveModelInput, /// 模板uuid
         msgTemplateVisitorBookSuccess: this.msgReservationModelInput
-          .templateUuid
       };
       Object.assign(this.vistorAIConfigData, data);
+      console.log(this.vistorAIConfigData);
       api
         .putVistorAIConfigUrl(this.vistorAIConfigData)
         .then(res => {

@@ -8,14 +8,14 @@
 					<el-col :span="10">
 						<img
 							class="xydialog-card-img"
-							:src="dialogParama.imageUri?dialogParama.imageUri:require('@/assets/user.png')"
+							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
 						/>
 					</el-col>
 					<el-col :span="14">
 						<div class="firstTitle">
-							<div>抓拍时间</div>
-							<div>特征识别：特征识别</div>
-							<div>布控任务：{{dialogParama&&dialogParama.extinfo?shootPhotoList[0].extinfo.taskname:'--'}}</div>
+							<div>{{taskInfo.captureDatetime||'抓拍时间'}}</div>
+							<div>特征识别：{{taskInfo.sunglasses?'戴墨镜 ':" "}} {{taskInfo.mask?'戴口罩':""}}</div>
+							<div>布控任务：{{taskInfo.taskName}}</div>
 						</div>
 					</el-col>
 				</el-row>
@@ -27,7 +27,7 @@
 					:stroke-width="2"
 					:width="55"
 					type="circle"
-					:percentage="dialogParama&&dialogParama.faceRecognization?parseInt(dialogParama.faceRecognization.scores.toFixed(0)):0"
+					:percentage="taskInfo.similarity?parseInt(taskInfo.similarity.toFixed(0)):0"
 				></el-progress>
 			</el-col>
 			<el-col :span="13">
@@ -36,25 +36,25 @@
 					<el-col :span="7">
 						<img
 							class="xydialog-card-img"
-							:src="dialogParama&&dialogParama.faceRecognization?dialogParama.faceRecognization.staffinfo.photoUri:require('@/assets/user.png')"
+							:src="staffInfo.facePhotoUrl?imageHeader+staffInfo.facePhotoUrl:require('@/assets/user.png')"
 						/>
 					</el-col>
 					<el-col :span="17">
 						<el-row type="flex" justify="space-between" class="rightTxt">
 							<el-col :span="10" style="margin-right:8px">
-								<div>所属库：{{dialogParama.libName}}</div>
-								<div>姓名：{{dialogParama.staffName}}</div>
-								<div>性别：{{dialogParama.genderName}}</div>
-								<div>人员类型：{{dialogParama.staffType}}</div>
-								<div>住户类型：{{dialogParama.staffType}}</div>
-								<div>户籍：{{dialogParama.native}}</div>
+								<div>所属库：{{staffInfo?staffInfo.faceLibraryName:''}}</div>
+								<div>姓名：{{staffInfo?staffInfo.staffName:''}}</div>
+								<div>性别：{{$common.getEnumItemName('gender',staffInfo.gender)}}</div>
+								<div>人员类型：{{$common.getEnumItemName('staff_t',staffInfo.staffType)}}</div>
+								<div>住户类型：{{staffInfo?staffInfo.householdType:''}}</div>
+								<div>户籍：{{staffInfo?staffInfo.householdRegister:''}}</div>
 							</el-col>
 							<el-col :span="14">
-								<div>民族：{{dialogParama.libName}}</div>
-								<div>出生年月：{{dialogParama.staffName}}</div>
-								<div>证件类型：{{dialogParama.genderName}}</div>
-								<div>证件号码：{{dialogParama.staffType}}</div>
-								<div>住户地址：{{dialogParama.staffType}}</div>
+								<div>民族：{{$common.getEnumItemName('nation',staffInfo.nation)}}</div>
+								<div>出生年月：{{staffInfo?staffInfo.birthday:''}}</div>
+								<div>证件类型：{{$common.getEnumItemName('cred',staffInfo.credentialType)}}</div>
+								<div>证件号码：{{staffInfo?staffInfo.credentialNo:''}}</div>
+								<div>住户地址：{{staffInfo?staffInfo.address:''}}</div>
 							</el-col>
 						</el-row>
 					</el-col>
@@ -67,29 +67,29 @@
 					<el-row class="cardBoxHeader" type="flex" justify="center" :gutter="15">
 						<el-col class="facePhoto" :span="9">
 							<img
-								:src="dialogParama.imageUri?dialogParama.imageUri:require('@/assets/user.png')"
-								alt
-								srcset
+								:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 							/>
 						</el-col>
 						<el-col class="panoramaPhoto" :span="17">
 							<img
-								:src="dialogParama.imageUri?dialogParama.imageUri:require('@/assets/user.png')"
-								alt
-								srcset
+								:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 							/>
 						</el-col>
 					</el-row>
 					<div class="cardBoxFooter">
 						<el-row type="flex" justify="space-between">
-							<el-col :span="12">通道名称</el-col>
-							<el-col :span="12">抓拍时间</el-col>
+							<el-col
+								:span="12"
+							>{{shootPhotoList[index]&&shootPhotoList[index].channelName?shootPhotoList[index].channelName:"通道名称"}}</el-col>
+							<el-col
+								:span="12"
+							>{{shootPhotoList[index]&&shootPhotoList[index].captureDatetime?shootPhotoList[index].captureDatetime:"抓拍时间"}}</el-col>
 						</el-row>
 						<el-row type="flex" justify="space-around">
-							<span>特征：</span>
-							<span>性别：</span>
-							<span>年龄：</span>
-							<span>眼镜：</span>
+							<span>特征：{{shootPhotoList[index]&&shootPhotoList[index].sunglasses?'戴墨镜 ':" "}} {{shootPhotoList[index]&&shootPhotoList[index].mask?'戴口罩':""}}</span>
+							<span>性别：{{$common.getEnumItemName('gender',shootPhotoList[index]&&shootPhotoList[index].genderCapture)}}</span>
+							<span>年龄：{{shootPhotoList[index]&&shootPhotoList[index].age||''}}</span>
+							<span>眼镜：{{shootPhotoList[index]&&shootPhotoList[index].glasses?'戴眼镜 ':" "}}</span>
 						</el-row>
 					</div>
 				</div>
@@ -98,44 +98,46 @@
 	</div>
 </template>
 <script type="text/javascript">
-import { mouseover, mouseout, mousemove } from "@/common/mouse.js";
+import RestApi from "@/utils/RestApi.js";
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
 import BigImg from "./BigImg.vue";
 export default {
   name: "xydialog",
   props: {
     dialogParama: {},
-    shootPhotoList: null,
     showImg: {
       type: Boolean
     }
   },
   components: { "big-img": BigImg },
-
   data: function() {
     return {
-      comparePhotoListItem: {},
-      currentDate: "11:21:13",
-      currentDay: "2018.8.9",
-      menuType: "",
+      shootPhotoList: [],
+      staffInfo: {},
+      taskInfo: {},
       showImgs: false,
       imgSrc: "",
-      dialogPhotoType: true,
-      photoCompareDeals: false,
-      scrollValue: 120, // 点击左右箭头，移动的偏移量
-      api: this.$store.state.api, // http://172.20.10.11:5000/mppr-face
-      socketIP: this.$store.state.socketIP, //
-      mainVideoScreenLoading: false,
-      updatedFlag: false,
-      on_off: false
+      imageHeader: RestApi.api.imageUrl,
+      PicSourceType: window.config.PicSourceType
     };
   },
   watch: {
-    showImg: function() {
-      this.showImgs = this.showImg;
-      // return this.showImg;
+    showImg: function(val) {
+      this.showImgs = val;
     },
     dialogParama: {
-      handler: function(val, oldVal) {},
+      handler: function(val, oldVal) {
+        console.log(val, oldVal);
+        if (!val.list) return;
+        this.shootPhotoList = JSON.parse(JSON.stringify(val.list)) || [];
+        this.staffInfo = val.staffInfoEntity || {};
+        this.taskInfo = this.shootPhotoList[0] || {};
+        this.taskInfo.taskName = "";
+        this.taskInfo.list.map((item, index) => {
+          this.taskInfo.taskName += item.faceMonitorName + ",";
+        });
+        this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
+      },
       deep: true
     }
   },
@@ -143,11 +145,20 @@ export default {
   mounted: function(e) {
     // 父組件向子組件傳值
     console.log(this.dialogParama);
-    //  this.shootPhotoList = this.dialogParama.shootPhotoList;
+    if (this.dialogParama.list) {
+      this.shootPhotoList =
+				JSON.parse(JSON.stringify(this.dialogParama.list)) || [];
+      this.staffInfo = this.dialogParama.staffInfoEntity || {};
+      this.taskInfo = this.shootPhotoList[0] || {};
+      this.taskInfo.taskName = "";
+      this.taskInfo.list.map((item, index) => {
+        this.taskInfo.taskName += item.faceMonitorName + ",";
+      });
+      this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
+    }
   },
   activated: function() {
     console.log("刷新页面");
-    // this.getAlarmShootPhotoList();
   },
   methods: {
     clickImg(e) {
@@ -169,15 +180,6 @@ export default {
     mymousemove(event) {
       mousemove(event);
     },
-    // 关于照片类型展示
-    photoTypeSwitch(isBool) {
-      // console.log(this.on_off,'------点击之前-----', this.dialogParama);
-
-      this.on_off = isBool;
-
-      //  console.log(this.on_off,'------点击之后-----');
-    },
-
     closeDialog() {
       this.$emit("transferCloseDialog", false);
     }
@@ -190,7 +192,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	font-family: 'PingFangSC-Regular';
+	font-family: "PingFangSC-Regular";
 	font-size: 12px;
 	color: #bbbbbb;
 	letter-spacing: 0;
@@ -231,7 +233,7 @@ export default {
 	white-space: nowrap;
 	overflow: hidden;
 	font-size: 12px;
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	color: rgba(255, 255, 255, 0.6);
 	letter-spacing: 0;
 }
@@ -265,7 +267,7 @@ export default {
 	padding: 20px 20px 10px;
 }
 .xydialog .el-progress-class {
-	margin: 65% auto  0;
+	margin: 65% auto 0;
 }
 .xydialog {
 	text-align: center;
@@ -278,7 +280,6 @@ export default {
 	display: none;
 }
 .xydialog .dialog-footer {
-	width: 850px;
 	height: 480px;
 	box-sizing: border-box;
 	padding-bottom: 30px;
@@ -315,7 +316,7 @@ export default {
 	width: 100%;
 	height: 100%;
 }
-.cardBox .xydialog-card-img {
+.xydialog .xydialog-card-img {
 	width: 121px;
 	height: 121px;
 	-webkit-background-size: cover;

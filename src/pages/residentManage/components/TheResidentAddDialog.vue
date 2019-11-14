@@ -910,15 +910,16 @@ export default {
       // 把canvas图像转为img图片
       this.shootPhotoShow = true;
       this.img = document.getElementById("img");
-      this.img.src = canvas.toDataURL("image/jpg");
-      this.imageUrl = canvas.toDataURL("image/jpg");
+      this.img.src = canvas.toDataURL("image/jpeg");
+      this.imageUrl = canvas.toDataURL("image/jpeg");
       this.fileData = this.imageUrl
         .replace("data:image/jpeg;base64,", "jpeg:")
         .replace("data:image/png;base64,", "png:")
         .replace("data:image/jpg;base64,", "jpg:");
+
       this.getFaceQualityDetection(this.fileData);
       this.shootPhotoDialogVisible = false;
-      //   console.log(this.imageUrl);
+      // console.log(this.imageUrl);
     },
     // 调取摄像头
     shootPhoto() {

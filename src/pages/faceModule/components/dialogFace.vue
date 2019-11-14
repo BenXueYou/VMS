@@ -91,7 +91,6 @@
 						<el-row type="flex" justify="space-between" style="line-height: 25px;font-size: 14px">
 							<el-col :span="6" class="rightTxt">标签：</el-col>
 							<el-col :span="18">
-								<!-- <el-tag>标签一</el-tag><el-tag type="success">标签二</el-tag><el-tag type="info">标签三</el-tag><el-tag type="warning">标签四</el-tag> -->
 								{{this.dialogParama.tags}}
 							</el-col>
 						</el-row>
@@ -99,10 +98,6 @@
 				</div>
 			</el-col>
 		</el-row>
-
-		<!-- ============================="channelName": "string",
-      "shootTime": "2018-10-16T06:57:51.962Z",
-		"shootUrl": "string"============-->
 		<div slot="footer" class="dialog-footer">
 			<div class="photoItemClass dialogBodyClass">
 				<div class="photoTypeBoxClass">

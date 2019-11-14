@@ -4,12 +4,14 @@
              class='deviceInfoPanel'
              label-width="220px">
 
+      <!-- <el-form-item label="允许手动输入访客姓名、证件号：">
       <el-form-item label="允许手动输入访客姓名、证件号：">
         <el-switch v-model="inputNameByHandEnable"
                    active-color="rgb(38,78,70)"
                    inactive-color="rgb(75,78,82)">
         </el-switch>
-      </el-form-item>
+      </el-form-item> -->
+      <!-- </el-form-item> -->
 
       <el-form-item label="允许登记时间："
                     prop="name">

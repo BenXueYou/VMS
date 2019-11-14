@@ -4,7 +4,7 @@
 		<div class="ImgCardClass" style="width:100%;height:100%">
 			<div class="footerImgBox">
 				<img
-					:src="photoItem.photouri?photoItem.photouri:require('@/assets/user.png')"
+					:src="$common.setPictureShow(photoItem.faceCapturePhotoUrl,PicSourceType)"
 					class="image footerCardImg"
 				/>
 			</div>
@@ -15,7 +15,7 @@
 					@mouseover="mymouseover"
 					@mouseout="mymouseout"
 					@mousemove="mymousemove"
-				>{{(photoItem)&&(photoItem.time)?photoItem.time:'-- --'}}</span>
+				>{{(photoItem)&&(photoItem.captureDatetime)?photoItem.captureDatetime:'-- --'}}</span>
 			</div>
 			<div
 				class="HomeFooterChannelName textclipsClass"
@@ -31,7 +31,8 @@
 	</transition>
 </template>
 <script>
-import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
+import RestApi from "@/utils/RestApi.js";
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 export default {
   props: {
     photoItem: {
@@ -40,6 +41,12 @@ export default {
         return {};
       }
     }
+  },
+  data() {
+    return {
+      imageHeader: RestApi.api.imageUrl,
+      PicSourceType: window.config.PicSourceType
+    };
   },
   methods: {
     bigImg() {
@@ -60,10 +67,10 @@ export default {
 };
 </script>
 <style lang="postcss">
-.ImgCardClass{
-    /* width: 100%; */
-    height: 100%;
-    box-sizing: border-box;
+.ImgCardClass {
+	/* width: 100%; */
+	height: 100%;
+	box-sizing: border-box;
 }
 .ImgCardClass .footerImgBox {
 	width: 100%;
@@ -79,13 +86,13 @@ export default {
 	height: 17.5%;
 }
 .ImgCardClass .footerCardImg {
-  width: 100%;
-  height: 100%;
-  -webkit-background-size: cover;
-  -webkit-background-origin: content;
-  background-origin: content;
-  background-size: auto 100%;
-  -webkit-background-origin: content;
-  background-origin: content;
+	width: 100%;
+	height: 100%;
+	-webkit-background-size: cover;
+	-webkit-background-origin: content;
+	background-origin: content;
+	background-size: auto 100%;
+	-webkit-background-origin: content;
+	background-origin: content;
 }
 </style>

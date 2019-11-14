@@ -905,7 +905,7 @@
 								</div>
 							</div>
 							<div class="bottomTitle">
-								<div class="text"></div>
+								<div class="text">信息来源：<span v-if="source!='platform'">{{this.source}}设备</span><span v-if="source=='platform'">平台录入</span></div>
 								<div class="btnWrap">
 									<el-button
 										style="width: 120px;"
@@ -1783,7 +1783,8 @@ export default {
       setOrgName: "",
       chartTitle: "",
       viewLalelCompany: 0,
-      isResize: true
+      isResize: true,
+      source: ""
     };
   },
   created() {},
@@ -2867,16 +2868,17 @@ export default {
       canvas.getContext("2d").drawImage(this.video, 0, 0, 350, 260);
       // 把canvas图像转为img图片
       this.img = document.getElementById("img");
-      this.img.src = canvas.toDataURL("image/jpg");
-      this.imageUrl = canvas.toDataURL("image/jpg");
+      this.img.src = canvas.toDataURL("image/jpeg");
+      this.imageUrl = canvas.toDataURL("image/jpeg");
       this.frontUploaded = true;
-      this.frontPhoto = canvas.toDataURL("image/jpg");
+      this.frontPhoto = canvas.toDataURL("image/jpeg");
       this.imageFileData = this.imageUrl
         .replace("data:image/jpeg;base64,", "jpeg:")
         .replace("data:image/png;base64,", "png:")
         .replace("data:image/jpg;base64,", "jpg:");
       this.shootPhotoDialogVisible = false;
       this.checkImageQuality(this.imageFileData);
+      // console.log(this.imageFileData);
     },
     shootPhoto() {
       this.canvas = document.getElementById("canvas");
@@ -3149,6 +3151,7 @@ export default {
       }
     },
     newPersonList() {
+      this.source = "";
       this.frontUploaded = false;
       this.frontPhoto = "";
       this.imageFileData = "";
@@ -3461,6 +3464,7 @@ export default {
               this.marital = res.data.data.maritalStatus;
               this.nickName = res.data.data.nickName;
               this.versionName = res.data.data.version;
+              this.source = res.data.data.source;
               if (res.data.data.longTerm) {
                 this.timeRange = "1";
               } else {
@@ -4885,6 +4889,7 @@ export default {
 	float: left;
 	margin-right: 1.22%;
 	margin-bottom: 30px;
+	overflow: hidden;
 }
 .personMange
 	.rightmenu

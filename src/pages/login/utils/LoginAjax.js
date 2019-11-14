@@ -8,7 +8,7 @@ export var LoginAjax = {
    * 登录
    */
   login(holder) {
-    let api = `${window.location.protocol}//${ip}/${RestApi.api.login.login}`;
+    let api = `${window.config.protocolHeader}//${ip}/${RestApi.api.login.login}`;
     return axios.post(api, `username=${holder.username}&password=${holder.password}&grant_type=password`, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

@@ -97,6 +97,10 @@ export default {
   deleteFailTaskUrl: `${xfPrefix}issueTask`,
   // 远程控制 设备升级那块
   upgradeDeviceUrl: `${zwzPrefix}operation/operation/upgrade`,
+  // 远程控制 新的接口
+  newUpgradeDeviceUrl: `${
+    window.config.protocolHeader
+  }${ip}/zuul/fileforward-server-v1/project/system/fileforward/forwardFileToFileSystem`,
   // 数据备份
   dataBackupUrl: deviceUuid =>
     `${zwzPrefix}operation/operation/dataBackup/device/${deviceUuid}`,
@@ -150,12 +154,27 @@ export default {
 
   // 获取设备类型列表
   deviceTypeListUrl: `${sbPrefix}device/hand/view`,
-  
+
   // 同步通道
   syncChannelUrl: `${sbPrefix}channel/hand`,
   // 手动添加设备
   manualEquipmentUrl: `${sbPrefix}device/hand`,
   // 获取设备类型
   DTypetUrl: `${sbPrefix}device/hand/view`,
-  judgeRepeatCardUrl:`${wyfPrefix}info/exist`
+  judgeRepeatCardUrl: `${wyfPrefix}info/exist`,
+  // 获取视频设备的设置
+  getVideoDeviceSettingUrl: deviceUuid =>
+    `${
+      window.config.protocolHeader
+    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/setting`,
+  // 更新视频设备的设置(延迟下发)
+  setDelaySyncSettingUrl: deviceUuid =>
+    `${
+      window.config.protocolHeader
+    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/delaySync`,
+  // 更新视频设备的设置(立即下发)
+  setImmediateSyncSettingUrl: deviceUuid =>
+    `${
+      window.config.protocolHeader
+    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/delaySync`
 };

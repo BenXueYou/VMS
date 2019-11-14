@@ -17,7 +17,8 @@ export default {
     return {
       // isRouterAlive: true,
       doorRoute: "/DoorControl/AccessGroupConfig",
-      vistorRoute: "/VistorMange/VistorRecord"
+      vistorRoute: "/VistorMange/VistorRecord",
+      faceRoute: "/FaceManage/FaceHome"
     };
   },
   methods: {
@@ -50,6 +51,9 @@ export default {
       if (newVal === "/VistorMange") {
         this.$router.push(this.vistorRoute);
       }
+      if (newVal === "/FaceManage") {
+        this.$router.push(this.faceRoute);
+      }
       // 回复门禁控制的上一次的操作路径
       if (newVal.indexOf("/DoorControl") !== -1) {
         this.doorRoute = newVal;
@@ -57,6 +61,9 @@ export default {
       // 回复访客管理的上一次的操作路径
       if (newVal.toLocaleLowerCase().indexOf("/vistormange") !== -1) {
         this.vistorRoute = newVal;
+      }
+      if (newVal.toLocaleLowerCase().indexOf("/facemanage") !== -1) {
+        this.faceRoute = newVal;
       }
     }
   }
