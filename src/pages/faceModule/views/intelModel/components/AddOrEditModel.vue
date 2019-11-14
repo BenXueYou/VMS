@@ -384,8 +384,18 @@ export default {
         enabled: 1,
         remarks: ""
       };
-      this.allVideoSource = [];
+      this.allVideoSource = [
+        {
+          localType: "videoSource",
+          channelList: [],
+          checkedChannel: [],
+          logic: ">=",
+          frequency: 0,
+          leastNumberOfChannel: 0
+        }
+      ];
       this.faceDBSelectedList = [];
+      this.$refs.modelForm.resetFields();
     },
     onClickConfirm() {
       this.$refs.modelForm.validate(valid => {
