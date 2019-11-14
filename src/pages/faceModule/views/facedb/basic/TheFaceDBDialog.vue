@@ -4,6 +4,8 @@
 			:title="updatefacedata.faceLibraryUuid?'编辑人脸库':'新增人脸库'"
 			:visible.sync="diglogvisible"
 			width="580px"
+      :close-on-click-modal="false"
+      @close='close'
 			center
 		>
 			<el-form :model="formData" :rules="rules" ref="formRef" label-width="150px">
@@ -22,7 +24,7 @@
 			</el-form>
 			<span class="dialog-footer button-div btnBox">
 				<el-button type="primary" :loading="isloading" @click="onSubmit">确 定</el-button>
-				<el-button type="primary" @click="close">取 消</el-button>
+				<el-button type="primary" @click="diglogvisible=false">取 消</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -172,8 +174,8 @@ export default {
       };
     },
     close() {
-      this.$emit("close");
       this.resetdata();
+      this.$emit("close");
     }
   }
 };

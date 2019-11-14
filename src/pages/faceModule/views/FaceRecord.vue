@@ -69,7 +69,7 @@
 
 			<div class="topBoxBtnBox">
 				<el-button icon="el-icon-search" class="search-btn" @click="queryAct" type="primary">查询</el-button>
-				<el-button class="search-btn" @click="queryAct" type="primary">重置</el-button>
+				<el-button class="search-btn" @click="resetQueryAct" type="primary">重置</el-button>
 			</div>
 		</el-row>
 		<el-row
@@ -219,6 +219,14 @@ export default {
     this.checkNameString = "";
   },
   methods: {
+    resetQueryAct() {
+      this.checkedChannelsUuidList = [];
+      this.qualityOption = ["HIGH", "NORMAL", "LOW"];
+      this.genderOption = null;
+      this.startTime = this.$common.getStartTime();
+      this.endTime = this.$common.getCurrentTime();
+      this.queryAct();
+    },
     selectDateAct(dateStr) {
       let day = new Date();
       switch (dateStr) {
@@ -385,7 +393,7 @@ export default {
     },
     // 按照时间查询抓拍记录
     getPhotoRecordList() {
-      this.mainScreenLoading = true;
+      this.mainScreenLoading = !this.mainScreenLoading;
       this.totalPhotoItems = []; // 清除记录
       var data = {
         page: this.currentPage,
@@ -407,7 +415,7 @@ export default {
       api
         .getSnapshotList(data)
         .then(res => {
-          this.mainScreenLoading = false;
+          this.mainScreenLoading = !this.mainScreenLoading;
           if (res.data.success) {
             if (res.data.data && res.data.data.list) {
               this.totalPhotoItems = res.data.data.list;
@@ -420,7 +428,7 @@ export default {
           }
         })
         .catch(() => {
-          this.mainScreenLoading = false;
+          this.mainScreenLoading = !this.mainScreenLoading;
         });
     },
     handleSizeChange(val) {

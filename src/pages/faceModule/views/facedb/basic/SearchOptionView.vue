@@ -37,7 +37,6 @@
 				v-model="createTime"
 				type="datetime"
 				value-format="yyyy-MM-dd HH:mm:ss"
-				format="yyyy-MM-dd HH:mm:ss"
 				placeholder="选择日期"
 				class="input"
 			></el-date-picker>
@@ -65,7 +64,7 @@ export default {
       phoneNo: null,
       credentialNo: null,
       staffType: null,
-      createTime: null,
+      createTime: new Date(),
       genderOptions: [],
       staffTypeOptions: []
     };
@@ -76,17 +75,19 @@ export default {
     this.genderOptions.unshift({ typeStr: null, typeName: "全部" });
     this.staffTypeOptions.unshift({ typeStr: null, typeName: "全部" });
     this.staffType = this.staffTypeOptions[0].typeStr;
+    this.createTime = this.$common.getCurrentTime();
   },
   methods: {
     query() {
       console.log("注册时间：", this.createTime);
+      let createTime = null;
       if (this.createTime) {
-        this.createTime = this.createTime.split(" ")[0];
+        createTime = this.createTime.split(" ")[0];
       }
       var data = {
         credentialNo: this.credentialNo,
         phoneNo: this.phoneNo,
-        createTime: this.createTime,
+        createTime: createTime,
         gender: this.gender,
         staffType: this.staffType
       };
@@ -97,7 +98,7 @@ export default {
       this.phoneNo = null;
       this.credentialNo = null;
       this.staffType = this.staffTypeOptions[0].typeStr;
-      this.createTime = null;
+      this.createTime = new Date();
     }
   }
 };

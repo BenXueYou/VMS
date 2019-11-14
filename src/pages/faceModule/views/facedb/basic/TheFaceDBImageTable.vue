@@ -15,18 +15,20 @@
 				<p class="time">
 					<span class="item">{{item.staffName||""}} &nbsp;</span>
 					<span class="item">{{item.gender||""}}</span>
-					<span class="item">{{item.staffType||""}}</span>
+					<span
+						class="item textclipsClass"
+						@mouseover="mymouseover"
+						@mouseout="mymouseout"
+						@mousemove="mymousemove"
+					>{{item.staffType||""}}</span>
 				</p>
-				<!-- <el-tooltip class="item" effect="dark" :content="item.credentialType" placement="bottom"> -->
-				<div class="textclipsClass credentialType">{{item.credentialType||"证件类型"}}</div>
-				<!-- </el-tooltip> -->
-				<!-- <el-tooltip class="item" effect="dark" :content="item.credentialNo" placement="bottom"> -->
+				<div class="textclipsClass credentialType">{{item.credentialType||"----"}}</div>
 				<p
 					@mouseover="mymouseover"
 					@mouseout="mymouseout"
 					@mousemove="mymousemove"
 					class="textclipsClass adress"
-				>{{item.credentialNo||'证件号码'}}</p>
+				>{{item.credentialNo||'----'}}</p>
 				<!-- </el-tooltip> -->
 			</div>
 			<!-- <div class="box hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
@@ -336,7 +338,8 @@ $fontcolor: #aaa;
 		}
 		.adress {
 			cursor: pointer;
-			text-align: center !important;
+			display: flex;
+			justify-content: center;
 		}
 		.credentialType {
 			text-align: center !important;
