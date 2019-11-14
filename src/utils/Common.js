@@ -13,7 +13,7 @@ export var COMMON = {
     }
   },
   // 下载图片的几种方式
-  // 接口返回文件刘 chrome 浏览器会识别不了类型
+  // 接口返回文件流 chrome 浏览器会识别不了类型
   aLinkDownload(url, itemData) {
     url = this.setPictureShow(url, window.config.PicSourceType);
     console.log(url);
