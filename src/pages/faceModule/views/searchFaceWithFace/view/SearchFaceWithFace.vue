@@ -161,7 +161,7 @@ export default {
       similarity: 80,
       pageInfo: {
         total: 0,
-        pageSize: 12,
+        pageSize: 15,
         currentPage: 1
       },
       faceList: [],
