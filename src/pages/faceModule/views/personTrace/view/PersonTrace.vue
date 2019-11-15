@@ -324,6 +324,9 @@ export default {
     },
     getTragicListSuccess(body) {
       this.itemData = body.data;
+      if (!this.itemData || this.itemData.length === 0) {
+        this.$cToast.success("暂无满足条件人员");
+      }
       this.setMapCenter();
       this.getMenuData();
     },
