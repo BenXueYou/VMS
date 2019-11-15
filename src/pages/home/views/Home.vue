@@ -52,6 +52,7 @@ export default {
       this.menuArr = constantRouterMap;
     },
     onClickMenu(compomentItem) {
+      console.log(compomentItem);
       this.$store.dispatch("addTagViewItem", compomentItem);
       this.$store.dispatch("setLocalTag", compomentItem.name);
       this.$bus.$emit("setLocalTag", compomentItem.name);

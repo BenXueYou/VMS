@@ -141,7 +141,8 @@ export default {
       scores: 0,
       compareBtnLoad: false,
       mouseDownFlag: false,
-      setInt: null
+      setInt: null,
+      imageArr: ["image/jpeg", "image/jpg", "image/png", "image/bmp"]
     };
   },
   mounted: function(e) {
@@ -199,7 +200,12 @@ export default {
       //   alert("文件选择成功！");
     },
     httpRequest2(e2) {
-      console.log(e2, "---", e2.file, "---", e2.file.raw);
+      console.log(e2, "---", e2.file, "---", e2.type);
+
+      if (this.imageArr.indexOf(e2.file.type) === -1) {
+        this.$message({ type: "warning", message: "不支持改图片类型" });
+        return;
+      }
       this.fileList[1] = e2.file;
       let reader2 = new FileReader();
       reader2.readAsDataURL(this.fileList[1]);
@@ -214,6 +220,10 @@ export default {
     },
     httpRequest1(e1) {
       console.log(e1, "---", e1.file, "---", e1.file.raw);
+      if (this.imageArr.indexOf(e1.file.type) === -1) {
+        this.$message({ type: "warning", message: "不支持改图片类型" });
+        return;
+      }
       this.fileList[0] = e1.file;
       let reader1 = new FileReader();
       reader1.readAsDataURL(this.fileList[0]);

@@ -183,6 +183,10 @@ export default {
         .replace(/^(0+)|[^\d]+/g, "");
       data.similarity = data.similarity.toString().replace(/^(0+)|[^\d]+/g, "");
       data.alarmSound = this.tags;
+
+      //   data.some(i,v =>{
+      // 	  return
+      //   })
       api
         .postFaceModuleConfig(data)
         .then(res => {
@@ -226,7 +230,11 @@ export default {
         this.audio.autoplay = "autoplay";
         this.audio.isPlay = false;
       }
-      if (this.audio.src && !this.audio.isPlay && this.audio.src === tag.soundUrl) {
+      if (
+        this.audio.src &&
+				!this.audio.isPlay &&
+				this.audio.src === tag.soundUrl
+      ) {
         this.audio.pause();
       } else {
         this.audio.src = tag.soundUrl;
@@ -235,6 +243,10 @@ export default {
       }
     },
     uploadBtnAct() {
+      if (this.tags.length === 10) {
+        this.$message({ type: "warning", message: "允许添加音频最多10个" });
+        return;
+      }
       var input = document.createElement("input");
       input.type = "file";
       input.accept = "audio/*";

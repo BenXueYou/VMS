@@ -13,6 +13,7 @@
 					</el-col>
 					<el-col :span="14">
 						<div class="firstTitle">
+							<div>{{taskInfo.channelName||'抓拍通道'}}</div>
 							<div>{{taskInfo.captureDatetime||'抓拍时间'}}</div>
 							<div>特征识别：{{taskInfo.sunglasses?'戴墨镜 ':" "}} {{taskInfo.mask?'戴口罩':""}}</div>
 							<div>布控任务：{{taskInfo.taskName}}</div>
@@ -64,7 +65,7 @@
 		<div slot="footer" class="dialog-footer">
 			<div class="footerBox">
 				<div v-for="(item,index) in 8" :key="index" class="cardBox">
-					<el-row class="cardBoxHeader" type="flex" justify="center" :gutter="15">
+					<el-row class="cardBoxHeader" type="flex" justify="center">
 						<el-col class="facePhoto" :span="9">
 							<img
 								:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
@@ -136,7 +137,10 @@ export default {
         this.taskInfo.list.map((item, index) => {
           this.taskInfo.taskName += item.faceMonitorName + ",";
         });
-        this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
+        this.taskInfo.taskName = this.taskInfo.taskName.substr(
+          0,
+          this.taskInfo.taskName.length - 1
+        );
       },
       deep: true
     }
@@ -154,7 +158,10 @@ export default {
       this.taskInfo.list.map((item, index) => {
         this.taskInfo.taskName += item.faceMonitorName + ",";
       });
-      this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
+      this.taskInfo.taskName = this.taskInfo.taskName.substr(
+        0,
+        this.taskInfo.taskName.length - 1
+      );
     }
   },
   activated: function() {
@@ -306,6 +313,7 @@ export default {
 .xydialog .cardBox .facePhoto {
 	width: 139px;
 	height: 139px;
+	margin-right: 7.5px;
 }
 .xydialog .cardBox .panoramaPhoto {
 	width: 248px;

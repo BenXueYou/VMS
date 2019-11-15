@@ -70,7 +70,7 @@ export default {
   },
   watch: {
     "$route.path": function(newVal, oldVal) {
-      // this.getPreviewInfo();
+      this.getPreviewInfo();
       console.log(newVal);
       // 添加门禁控制的默认路径
       if (newVal === "/DoorControl") {

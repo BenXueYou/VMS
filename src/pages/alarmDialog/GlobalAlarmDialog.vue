@@ -6,16 +6,7 @@
 		:title="taskInfo.taskName||'布控报警'"
 		v-dialogDrag
 	>
-		<!-- <el-row>
-			<div class="global_el-dialog__header" @mousedown="mousedown">
-				<span class="el-dialog__title">{{taskInfo.taskName||'布控报警'}}</span>
-				<button type="button" aria-label="Close" class="el-dialog__headerbtn">
-					<i class="el-dialog__close el-icon el-icon-close" @click="dialogShow = false"></i>
-				</button>
-			</div>
-		</el-row> -->
 		<div class="GlobalAlarmDialog">
-			<!-- <big-img v-if="showImgs" @clickit="viewImg" :imgSrc="imgSrc"></big-img> -->
 			<el-row type="flex" justify="flex-start" class="GlobalAlarmDialogBodyClass" :gutter="5">
 				<div>
 					<div class="leftColBg">
@@ -34,12 +25,11 @@
 					type="circle"
 					:percentage="dialogParama.faceSimilarity?parseInt(dialogParama.faceSimilarity.toFixed(0)):0"
 				></el-progress>
-
 				<div class="rightBox">
 					<div class="leftColBg">
 						<img
 							class="GlobalAlarmDialog-card-img"
-							:src="dialogParama.facePhotoUrl?imageHeader+dialogParama.facePhotoUrl:require('@/assets/user.png')"
+							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
 						/>
 					</div>
 					<p>布控图片</p>
@@ -56,8 +46,9 @@
 			</el-row>
 			<el-row type="flex" justify="flex-start" class="operatorBoxClass">
 				<span>操作：</span>
-				<el-button>查看视频</el-button>
-				<el-button>查看录像</el-button>
+				<el-button @click="preViewVideo">查看视频</el-button>
+				<el-button @click="reviewVideo">查看录像</el-button>
+				<el-button @click="closeAudio">关闭声音</el-button>
 			</el-row>
 			<div slot="footer" class="dialog-footer">
 				<p class="footerTxtBox">抓拍记录</p>
@@ -86,7 +77,7 @@
 							</el-row>
 							<el-row type="flex" justify="space-around">
 								<span>特征：{{shootPhotoList[index]&&shootPhotoList[index].sunglasses?'戴墨镜 ':" "}} {{shootPhotoList[index]&&shootPhotoList[index].mask?'戴口罩':""}}</span>
-								<span>性别：{{shootPhotoList[index]&&shootPhotoList[index].genderCapture||''}}</span>
+								<span>性别：{{shootPhotoList[index]&&$common.getEnumItemName('gender',shootPhotoList[index].genderCapture)}}</span>
 								<span>年龄：{{shootPhotoList[index]&&shootPhotoList[index].age||''}}</span>
 								<span>眼镜：{{shootPhotoList[index]&&shootPhotoList[index].glasses?'戴眼镜 ':" "}}</span>
 							</el-row>
@@ -133,24 +124,6 @@ export default {
   },
   mounted: function(e) {
     // 父組件向子組件傳值
-    /**
-	 * captureDatetime: (...)
-		channelName: (...)
-		channelUuid: (...)
-		faceCapturePhotoUrl: (...)
-		faceCaptureRecordUuid: (...)
-		faceLibraryName: (...)
-		faceLibraryUuid: (...)
-		faceMonitorAlarmUuid: (...)
-		faceMonitorUuid: (...)
-		facePhotoUrl: (...)
-		facePhotoUuid: (...)
-		faceSimilarity: (...)
-		faceUuid: (...)
-		householdType: (...)
-		staffName: (...)
-		staffType: (...)
-	 */
     console.log("-------------", this.dialogParama);
     this.staffInfo = this.dialogParama || {};
     this.getRecoginizedList();
@@ -159,6 +132,47 @@ export default {
     console.log("刷新页面");
   },
   methods: {
+    // 查看视频
+    preViewVideo() {
+      this.$store.dispatch("addTagViewItem", {
+        icon: "VideoPreview",
+        name: "VideoPreview",
+        title: "视频预览",
+        type: "config",
+        path: "/VideoPreview"
+      });
+      this.$store.dispatch("setLocalTag", "VideoPreview");
+      this.$bus.$emit("setLocalTag", "VideoPreview");
+      this.$router.push({
+        path: "../VideoPreview",
+        query: {
+          dialogParama: this.dialogParama,
+          channelUuid: this.dialogParama.channelUuid
+        }
+      });
+    },
+    // 查看录像
+    reviewVideo() {
+      this.$store.dispatch("addTagViewItem", {
+        icon: "vistorMange",
+        name: "VideoPlayback",
+        title: "视频回放",
+        type: "config",
+        path: "/VideoPlayback"
+      });
+      this.$store.dispatch("setLocalTag", "VideoPlayback");
+      this.$bus.$emit("setLocalTag", "VideoPlayback");
+      this.$router.push({
+        path: "../VideoPlayback",
+        query: {
+          dialogParama: this.dialogParama,
+          channelUuid: this.dialogParama.channelUuid
+        }
+      });
+    },
+    closeAudio() {
+      this.$emit("closeAudio");
+    },
     // 查询识别记录
     getRecoginizedList() {
       var data = {
