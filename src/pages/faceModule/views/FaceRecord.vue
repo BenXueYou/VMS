@@ -162,10 +162,10 @@
 		<!-- ======================================================= 人脸 弹 窗 ========================================================== -->
 		<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
 			<div class="leftImgBox">
-				<img :src="dialogPhotoImgUrl?dialogPhotoImgUrl:require('@/assets/user.png')" alt />
+				<img :src="$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)" alt />
 			</div>
 			<div class="rightImgBox">
-				<img :src="dialogPanoramaImgUrl?dialogPanoramaImgUrl:require('@/assets/user.png')" alt />
+				<img :src="$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)" alt />
 			</div>
 		</el-dialog>
 	</el-row>
@@ -365,12 +365,13 @@ export default {
     // 下载导出图片
     downloadImg(o, index) {
       this.$common.exportImageAct(o.faceCapturePhotoUrl, o);
+      this.$common.exportImageAct(o.panoramaCapturePhotoUrl, o);
     },
     // 查看大图
     shoWholeImgUrl(o, index) {
       this.dialogVisible = !this.dialogVisible;
-      this.dialogPhotoImgUrl = this.imageHeader + o.faceCapturePhotoUrl;
-      this.dialogPanoramaImgUrl = this.imageHeader + o.panoramaCapturePhotoUrl;
+      this.dialogPhotoImgUrl = o.faceCapturePhotoUrl;
+      this.dialogPanoramaImgUrl = o.panoramaCapturePhotoUrl;
       this.titleTxt = o.channelName;
     },
     queryAct() {
