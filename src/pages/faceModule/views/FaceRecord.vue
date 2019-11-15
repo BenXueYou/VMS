@@ -58,7 +58,41 @@
 			</div>
 			<div :span="4" class="topBoxDiv topBoxCheckBox topBoxQualityCheckBox">
 				<span class="topTitleTxt" style="margin-right:15px;">图片质量:</span>
-				<pic-qulity-select :selectedButtons.sync="qualityOption" />
+				<el-checkbox-group v-model="qualityOption">
+					<el-checkbox-button label="HIGH">
+						高
+						<img
+							src="@/assets/images/faceModule/selected.png"
+							class="checkBtnImg"
+							v-if="qualityOption.indexOf('HIGH')!==-1"
+						/>
+					</el-checkbox-button>
+					<el-checkbox-button label="NORMAL">
+						中
+						<img
+							src="@/assets/images/faceModule/selected.png"
+							class="checkBtnImg"
+							v-if="qualityOption.indexOf('NORMAL')!==-1"
+						/>
+					</el-checkbox-button>
+					<el-checkbox-button label="LOW">
+						低
+						<img
+							src="@/assets/images/faceModule/selected.png"
+							class="checkBtnImg"
+							v-if="qualityOption.indexOf('LOW')!==-1"
+						/>
+					</el-checkbox-button>
+					<el-checkbox-button label="LOWER">
+						无效
+						<img
+							src="@/assets/images/faceModule/selected.png"
+							class="checkBtnImg"
+							v-if="qualityOption.indexOf('LOWER')!==-1"
+						/>
+					</el-checkbox-button>
+				</el-checkbox-group>
+				<!-- <pic-qulity-select :selectedButtons.sync="qualityOption" /> -->
 			</div>
 
 			<div class="topBoxBtnBox">
@@ -548,6 +582,11 @@ export default {
 	border-radius: 2px;
 	padding: 4px 12px;
 	font-size: 10px;
+}
+.faceRecord .checkBtnImg{
+	position: absolute;
+	right: -5px;
+	top: -5px;
 }
 .fRPopoverClass {
 	width: 50%;
