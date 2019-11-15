@@ -96,6 +96,7 @@
                         orgType="device"
                         :name="orgName"
                         :orgUuid="orgUuid"
+                        :aaaaaa="ruleForm.oriz"
                         @setUseData="setOrgData"
                         ref="popoverTree" />
         </el-form-item>
@@ -104,6 +105,7 @@
                       prop="build">
           <build-house-popover-tree width="250px"
                                     :name="houseName"
+                                    :aaaaaa="ruleForm.build"
                                     :houseUuid="houseUuid"
                                     @setUseData="setHouseData" />
         </el-form-item>
@@ -763,6 +765,7 @@ export default {
       icons,
       door: "",
       checkedNode: [],
+      checkedUuid: "",
       ruleForm: {
         ip: "",
         tagSn: "",
@@ -930,6 +933,7 @@ export default {
       // 获取组织架构的数据
       // this.maxTagSn = params.maxTagSn;
       this.ruleForm.oriz = params.node.data.orgUuid;
+      this.checkedUuid = this.row.org[0].orgUuid;
     },
     setHouseData(params) {
       this.ruleForm.build = params.node.data.id;
@@ -1081,6 +1085,7 @@ export default {
           devicePassword:
             this.row.extInfo.loginInfo && this.row.extInfo.loginInfo.loginPwd
         };
+        this.checkedUuid = this.row.org[0].orgUuid;
         if (this.row.extInfo.source === "local") {
           this.isLocal = true;
         } else {

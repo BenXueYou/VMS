@@ -22,7 +22,6 @@
                     class="i-tree-style">
         <el-tree :data="treeData"
                  :props="defaultProps"
-                 
                  node-key="id"
                  lazy
                  :load="loadNode"
@@ -37,7 +36,7 @@
                slot-scope="{ node }">
             <div class="i-tree-item-icon">
               {{ node.label }}
-              <img class="checked-img"
+              <img v-if="node.data.id===checkedUuid"
                    src="@/assets/images/doorAccess/checked_icon.png"
                    width="10.9px"
                    height="9px"
@@ -62,6 +61,10 @@ export default {
       type: String,
       default: ""
     },
+    aaaaaa: {
+      type: String,
+      default: ""
+    },
     houseUuid: {
       type: String,
       default: ""
@@ -82,7 +85,8 @@ export default {
       filterText: "",
       currentNode: "",
       subType: "",
-      lastLevelType: "house"
+      lastLevelType: "house",
+      checkedUuid: ""
     };
   },
   created() {},
@@ -131,8 +135,8 @@ export default {
             }
           }
           resolve(res.data.data);
-          console.log(this.defaultExpKeys);
-          this.$refs.popoverTree.setCheckedKeys(this.defaultExpKeys);
+          // console.log(this.defaultExpKeys);
+          // this.$refs.popoverTree.setCheckedKeys(this.defaultExpKeys);
         }
       });
     },
@@ -170,15 +174,26 @@ export default {
       this.currentNode = node;
       this.labelArr = [];
       this.upAddress = "";
-      this.getLabelArr(node);
-      this.getUpAddress(this.labelArr);
-      this.nodeText = this.upAddress;
+      // this.getLabelArr(node);
+      // this.getUpAddress(this.labelArr);
+      this.nodeText = this.getWanZheng(node);
       this.$emit("setUseData", {
         node: this.currentNode
       });
       console.log(node);
       this.defaultExpKeys = [node.data.id];
       // }
+    },
+    getWanZheng(node) {
+      console.log(node.data.label);
+      if (!node.parent) {
+        return "";
+      }
+      return (
+        node.data.label +
+        (node.parent ? "/" : "") +
+        this.getWanZheng(node.parent)
+      );
     },
     getLabelArr(node) {
       if (!node) {
@@ -210,6 +225,10 @@ export default {
     }
   },
   watch: {
+    aaaaaa() {
+      this.checkedUuid = this.aaaaaa;
+      console.log(this.aaaaaa);
+    },
     filterText(val) {
       this.$refs.popoverTree.filter(val);
     },
@@ -220,7 +239,8 @@ export default {
       deep: true
     },
     name() {
-      this.nodeText = this.name;
+      // 这行代码导致，完整路径选择之后，会被替换成不是完整路径 
+      // this.nodeText = this.name;
     },
     houseUuid() {
       this.defaultExpKeys = [this.houseUuid];
