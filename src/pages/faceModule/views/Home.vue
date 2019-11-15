@@ -337,7 +337,7 @@ export default {
       let arr = [];
       val.map(item => {
         if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
-          arr.push(item);
+          arr.unshift(item);
           this.todayShootCount += 1;
         }
       });

@@ -100,7 +100,7 @@ export const constantRouterMap = [
         children: faceModule.children,
         icon: "FaceManage",
         type: "app",
-        redirect: "/FaceManage" //设置默认子路由
+        // redirect: "/FaceManage" //设置默认子路由
       },
       {
         path: "/VideoPreview",
