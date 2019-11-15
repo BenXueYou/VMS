@@ -282,7 +282,7 @@ export default {
             endTime: ""
           }
         ],
-        recentDays: 0,
+        recentDays: 1,
         statisticType: "everyday",
         videoSource: {},
         otherVideoSource: [],
@@ -374,7 +374,7 @@ export default {
             endTime: ""
           }
         ],
-        recentDays: 0,
+        recentDays: 1,
         statisticType: "everyday",
         videoSource: {},
         otherVideoSource: [],
