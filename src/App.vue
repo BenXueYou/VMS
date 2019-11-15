@@ -44,8 +44,10 @@ export default {
     async getPreviewInfo() {
       if (
         this.$route.fullPath.toLocaleLowerCase().indexOf("/faceHome") !== -1 ||
-        this.$route.fullPath.toLocaleLowerCase().indexOf("/videopreview") !== -1 ||
-        this.$route.fullPath.toLocaleLowerCase().indexOf("/videoplayback") !== -1
+        this.$route.fullPath.toLocaleLowerCase().indexOf("/videopreview") !==
+          -1 ||
+        this.$route.fullPath.toLocaleLowerCase().indexOf("/videoplayback") !==
+          -1
       ) {
         const { jSignal, jMedia } = this.$store.getters;
         if (!jSignal.ip || !jMedia.ip) {
@@ -70,7 +72,7 @@ export default {
   },
   watch: {
     "$route.path": function(newVal, oldVal) {
-      // this.getPreviewInfo();
+      this.getPreviewInfo();
       console.log(newVal);
       // 添加门禁控制的默认路径
       if (newVal === "/DoorControl") {

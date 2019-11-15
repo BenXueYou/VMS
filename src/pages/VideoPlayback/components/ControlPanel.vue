@@ -218,6 +218,9 @@ export default {
   },
   computed: {
     centerTime() {
+      if (!this.startTime || !this.endTime) {
+        return "";
+      }
       // 返回当前时间轴中间的时间的年月日
       let d1 = new Date(this.startTime).getTime();
       let d2 = new Date(this.endTime).getTime();

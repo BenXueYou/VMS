@@ -30,14 +30,15 @@
       <div class="menu"
            v-else>
         <el-dropdown style='margin:13px 30px 0px 0px;'
+                     @command='clickMenu'
                      trigger="click">
           <span class="el-dropdown-link">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                  alt="">
           </span>
-          <el-dropdown-menu slot="dropdown"
-                            @click.stop='clickMenu(index)'>
-            <el-dropdown-item v-for="(item,index) in menuData"
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item :command="index"
+                              v-for="(item,index) in menuData"
                               :key='index'>{{item.name}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>

@@ -112,6 +112,7 @@ export default {
   },
   data() {
     return {
+      tipsFlag: true,
       ip: "",
       port: "",
       showCloudControl: false,
@@ -396,30 +397,48 @@ export default {
           if (operator === -1) {
             this.playVideo(data.rtspUrl, channelUuid, streamType, adata);
           } else {
-            this.videoArr[operator].rtspUrl = data.rtspUrl;
-            this.videoArr[operator].streamType = streamType;
-            this.videoArr.concat();
+            this.setData(data.rtspUrl, channelUuid, streamType, adata);
           }
         })
         .catch(err => {
           console.log(err);
         });
     },
+    setData(rtspUrl, channelUuid, streamType, operatorData) {
+      console.log(this.operatorIndex);
+      console.log(rtspUrl, channelUuid, streamType, operatorData);
+      this.videoArr[this.operatorIndex].streamType = streamType;
+      this.videoArr[this.operatorIndex].channelUuid = channelUuid;
+      this.videoArr[this.operatorIndex].rtspUrl = rtspUrl;
+      this.videoArr[this.operatorIndex].streamType = streamType;
+    },
+    judgeEnoughBoard() {},
     playVideo(rtspUrl, channelUuid, streamType, data) {
-      // 根据通道获取到了视频流地址，从而进行播放
-      // 遍历videoArr数组，看哪个分路的rtspUrl为空，则在上面播放
-      for (let i = 0; i < this.videoArr.length; i++) {
-        if (!this.videoArr[i].rtspUrl) {
-          this.videoArr[i].operatorData = data;
-          this.videoArr[i].rtspUrl = rtspUrl;
-          this.videoArr[i].channelUuid = channelUuid;
-          this.videoArr[i].streamType = streamType;
-          this.operatorIndex = i;
-          // 左边的树添加到右边去播放
-          break;
+      // 做个判断如果，当前的画面不够播放，则自动扩容
+      if (this.operatorIndex + 1 > 36) {
+        alert(1);
+        this.tipsFlag = false;
+        setTimeout(() => {
+          this.tipsFlag = true;
+        }, 1000);
+        this.operatorIndex = 35;
+        if (this.tipsFlag) {
+          this.$message.error("超过36路码流播放了！");
         }
+        return;
       }
-      this.videoArr.concat();
+      this.setData(rtspUrl, channelUuid, streamType, data);
+      if (
+        ++this.operatorIndex >= this.fenlu[this.fenluIndex] &&
+        this.fenluIndex <= 5
+      ) {
+        this.chooseFenlu(this.fenluIndex + 1);
+      }
+      if (this.operatorIndex + 1 > 36) {
+        this.operatorIndex = 35;
+      }
+      console.log(this.videoArr);
+      // 逻辑更改，直接根据用户选中的视频进行播放
     },
     dragstart(index, e) {
       // 拖拽开始
@@ -461,6 +480,13 @@ export default {
       console.log(tab);
     },
     initWrapDom() {
+      // 这里要给他16:9的效果
+      // 而且right的高度不能超过
+      console.log(this.$refs.rigth.clientWidth);
+      console.log(this.$refs.rigth.clientHeight);
+      console.log(this.$refs.vedioWrap.clientWidth);
+      console.log(this.$refs.vedioWrap.clientHeight);
+
       let vedioWrapDom = this.$refs.vedioWrap;
       let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
       this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
@@ -472,6 +498,7 @@ export default {
       });
     },
     chooseFenlu(index) {
+      this.operatorIndex = 0;
       this.fenluIndex = index;
       this.isAutoScreen = -1;
       this.initWrapDom();
@@ -544,20 +571,40 @@ export default {
       switch (value) {
         case "关闭窗口":
           // 清空rtspUrl，则触发video组件stop事件
-          this.closeVideo(this.operatorIndex);
-          this.videoArr.concat();
-          this.showCloudControl = this.updateCloud();
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.$confirm("是否关闭该窗口", "提示", {
+              confirmButtonText: "取消",
+              cancelButtonText: "确定"
+            })
+              .then(() => {})
+              .catch(() => {
+                this.closeVideo(this.operatorIndex);
+                this.videoArr.concat();
+                this.showCloudControl = this.updateCloud();
+              });
+          }
+
           break;
         case "关闭所有窗口":
-          // 把所有分路的rtspUrl都清空
-          this.videoArr = this.videoArr.map((item, index) => {
-            item.rtspUrl = "";
-            item.position = index;
-            item.streamType = "";
-            item.channelUuid = "";
-            return item;
-          });
-          this.showCloudControl = this.updateCloud();
+          this.$confirm("是否关闭所有的窗口?", "提示", {
+            confirmButtonText: "取消",
+            cancelButtonText: "确定"
+          })
+            .then(() => {})
+            .catch(() => {
+              // 把所有分路的rtspUrl都清空
+              this.videoArr = this.videoArr.map((item, index) => {
+                item.rtspUrl = "";
+                item.position = index;
+                item.streamType = "";
+                item.channelUuid = "";
+                return item;
+              });
+              this.showCloudControl = this.updateCloud();
+            });
+
           break;
         case "摄像机信息":
           if (!this.videoArr[this.operatorIndex].channelUuid) {
@@ -720,7 +767,7 @@ export default {
       this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
     },
     updateCloud() {
-      if (this.operatorIndex < 0) {
+      if (this.operatorIndex < 0 || !this.videoArr[this.operatorIndex]) {
         return false;
       }
       if (
@@ -731,7 +778,7 @@ export default {
       }
       console.log(this.videoArr[this.operatorIndex].operatorData);
       return (
-        ["bullet_camera_ptz", "bullet_camera"].indexOf(
+        ["bullet_camera_ptz", "ball_camera"].indexOf(
           this.videoArr[this.operatorIndex].operatorData.relType
         ) !== -1
       );
@@ -752,6 +799,19 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.VideoPreviewContent {
+  .el-message-box__title span {
+    color: #fff !important;
+  }
+  .el-message-box__message {
+    p {
+      text-align: center !important;
+    }
+  }
+}
+</style>
+
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .VideoPreviewContent {
@@ -768,7 +828,8 @@ export default {
     user-select: none;
     .vedioWrap {
       position: relative;
-      height: calc(100% - 80px);
+      // height: calc(100% - 80px);
+      padding-top: 56.25%;
     }
     .footer {
       height: 60px;
@@ -776,6 +837,7 @@ export default {
       display: flex;
       justify-content: space-between;
       .operator {
+        margin-top: 20px;
         .button {
           background: rgba(40, 255, 187, 0.2);
           border: 0 solid rgba(38, 211, 157, 0.8);
