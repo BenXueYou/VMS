@@ -255,7 +255,7 @@ export default {
       isAlarmLoading: false,
       faceMonitorUuid: "",
       alarmTotal: 0,
-      itemWidth: "31%",
+      itemWidth: "32%",
       limit: 9,
     };
   },
@@ -279,7 +279,7 @@ export default {
         this.$refs.faceDB.isShowMoreButton();
         this.$refs.camera.isShowMoreButton();
         this.limit = 12;
-        this.itemWidth = "23%";
+        this.itemWidth = "24%";
         this.getAlarmList(this.faceMonitorUuid);
       }, 600);
     },
@@ -290,7 +290,7 @@ export default {
         this.$refs.faceDB.isShowMoreButton();
         this.$refs.camera.isShowMoreButton();
         this.limit = 9;
-        this.itemWidth = "31%";
+        this.itemWidth = "32%";
         this.getAlarmList(this.faceMonitorUuid);
       }, 600);
     },
@@ -705,7 +705,7 @@ export default {
       align-content: flex-start;
       margin-bottom: 10px;
       .list-item {
-        margin: 24px 0px 0px 18px;
+        margin: 24px 0px 0px 10px;
       }
     }
   }

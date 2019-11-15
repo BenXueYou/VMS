@@ -104,7 +104,7 @@ export default {
      */
     beforeAvatarUpload(file) {
       let isJPG = false;
-      if (file.type === "image/jpeg" || file.type === "image/png") {
+      if (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/bmp") {
         isJPG = true;
       }
       const isLt2M = file.size / 1024 / 1024 < 10;
