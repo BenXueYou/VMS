@@ -613,8 +613,9 @@ export default {
       }
     },
     exportfile() {},
+    // 删除人员
     deletefile() {
-      if (!this.selectLibRow.deletable) {
+      if (!this.selectLibRow.delFaceByUser) {
         this.$message.error(`${this.selectLibRow.faceLibraryName}不可以删除`);
         return;
       }
@@ -727,7 +728,7 @@ export default {
     },
     // 删除人脸
     deleteStaffFace(uuid) {
-      if (!this.selectLibRow.deletable) {
+      if (!this.selectLibRow.delFaceByUser) {
         this.$message.error(`不可以删除${this.libraryName}人员`);
         return;
       }
