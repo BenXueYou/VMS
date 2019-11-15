@@ -58,7 +58,7 @@
       <div class="result">
         <div class="result-title">
           <img src="@/assets/images/faceModule/face_compare.png">
-          <span style="margin-left: 15px;">人脸库比对结果</span>
+          <span style="margin-left: 15px;">{{libraryType === 'captureFaceLib' ? '抓拍库' : '人脸库'}}比对结果</span>
         </div>
         <div class="result-list"
              v-loading="isLoading">
@@ -267,6 +267,9 @@ export default {
           this.imageBase64 = v.picBaseUrl;
         }
       });
+      if (this.imageList.length < 2) {
+        this.imageBase64 = "";
+      }
     },
     search() {
       this.getFaceList();
