@@ -3,7 +3,7 @@ var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
 var Authorization = "Basic YXBwOjEyMzQ1Ng==";
-var DEBUG = "TEST";
+var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
   // ip = '180.167.210.2:51880';
@@ -18,7 +18,11 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
+<<<<<<< HEAD
   // ip = "192.168.6.111:15000";
+=======
+  // ip = "192.168.9.141:15000";
+>>>>>>> 32ca44025b5803b97a0c5d02fc019f33bc4771bd
   ip = "192.168.6.111:15000";
   websocketIp = "192.168.6.111:15007";
   imageUrl =

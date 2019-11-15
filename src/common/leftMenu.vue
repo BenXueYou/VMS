@@ -161,14 +161,6 @@ export default {
 			// console.log(key,keyPath);
 			// console.log(this.$route.path);
 		},
-		clearActBtn(e) {
-			this.$router.push({ path: "/" });
-			this.hoverRoute = false;
-		},
-		clearActBtn2(e) {
-			this.$router.push({ path: "/" });
-			this.hoverRoute2 = false;
-		}
 	}
 };
 </script>

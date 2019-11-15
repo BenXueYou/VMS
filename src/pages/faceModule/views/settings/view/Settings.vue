@@ -69,7 +69,7 @@
 					<div class="bodyBoxDiv">
 						<p class="warningTxt" style="visibility: hidden;">抓拍质量无效图片是否保存：</p>
 						<p>人脸抓拍保存天数：</p>
-						<p>人脸抓拍全景天保存天数：</p>
+						<p>人脸抓拍全景图保存天数：</p>
 						<p>人脸报警图片保存天数：</p>
 						<!-- <p>人脸查重相似度：</p> -->
 					</div>

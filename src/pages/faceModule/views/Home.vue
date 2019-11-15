@@ -337,7 +337,7 @@ export default {
       let arr = [];
       val.map(item => {
         if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
-          arr.push(item);
+          arr.unshift(item);
           this.todayShootCount += 1;
         }
       });
@@ -529,25 +529,12 @@ export default {
         .catch(() => {});
     },
     async loadVideo(data) {
-      data.localId = "192.168.9.21";
+      let { jMedia, jSignal } = this.$store.getters;
       // eslint-disable-next-line
 			this.video_mgr = new CVideoMgrSdk();
       this.canvas = document.createElement("canvas");
       this.canvas.width = (this.WIDTH() * 2) / 3 - 200;
       this.canvas.height = (this.HEIGHT() * 7) / 10 - 120;
-      let jSignal = {
-        srcUuid: "signal_channel",
-        routeType: "location",
-        param: { location: { protocol: "icc-ws", port: "4400" } }
-      };
-      let jMedia = {
-        srcUuid: "media_channel",
-        routeType: "location",
-        param: { location: { protocol: "icc-ws", port: "4401" } }
-      };
-
-      jMedia.param.location.ip = data.localId;
-      jSignal.param.location.ip = data.localId;
       let w, h;
       if (this.streamType === "main") {
         w = 1920;

@@ -215,5 +215,5 @@ export default {
   children: routes,
   icon: "faceManage",
   type: "app",
-  redirect: "/FaceManage/FaceHome" //设置默认子路由
+  redirect: "/FaceManage/" //设置默认子路由
 };

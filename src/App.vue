@@ -70,7 +70,7 @@ export default {
   },
   watch: {
     "$route.path": function(newVal, oldVal) {
-      this.getPreviewInfo();
+      // this.getPreviewInfo();
       console.log(newVal);
       // 添加门禁控制的默认路径
       if (newVal === "/DoorControl") {
@@ -83,16 +83,17 @@ export default {
       if (newVal === "/FaceManage") {
         this.$router.push(this.faceRoute);
       }
-      // 回复门禁控制的上一次的操作路径
+      // 恢复门禁控制的上一次的操作路径
       if (newVal.indexOf("/DoorControl") !== -1) {
         this.doorRoute = newVal;
       }
-      // 回复访客管理的上一次的操作路径
+      // 恢复访客管理的上一次的操作路径
       if (newVal.toLocaleLowerCase().indexOf("/vistormange") !== -1) {
         this.vistorRoute = newVal;
       }
-      if (newVal.toLocaleLowerCase().indexOf("/facemanage") !== -1) {
+      if (newVal.indexOf("/FaceManage") !== -1) {
         this.faceRoute = newVal;
+        // this.$router.push(this.faceRoute);
       }
     }
   }
