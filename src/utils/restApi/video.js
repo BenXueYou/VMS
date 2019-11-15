@@ -6,10 +6,8 @@ let ip = window.config.ip,
 let zwUrlPrefix = `${
   window.config.protocolHeader
 }${ip}/basedata-v1/project/${projectUuid}`;
-// ip = "192.168.9.105:15029";
-let urlPrefix = `${
-  window.config.protocolHeader
-}${ip}/video-v1/project/${projectUuid}`;
+// ip = "192.168.9.141:15000";
+let urlPrefix = `${window.config.protocolHeader}${ip}/project/${projectUuid}`;
 
 export default {
   // 获取视频预览信息
@@ -46,7 +44,9 @@ export default {
   // 获取子节点及视频设备通道数据
   videoTreeUrl: `${zwUrlPrefix}/organization/video/children`,
   // h获取媒流体服务的信息
-  getPreviewInfAAoUrl: `${urlPrefix}/video/streamPreviewInfo`
+  getPreviewInfAAoUrl: `${
+    window.config.protocolHeader
+  }${ip}/media-stream/v1.0/media_stream_transfer/video/previewInfo`
   // 先使用下面的url测试
   // videoTreeUrl: `http://192.168.9.164:9000/project/a2445ed3830b4a3d9607ef502e8333bf/organization/video/children`
 };

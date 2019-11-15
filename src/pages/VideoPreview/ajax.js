@@ -1,6 +1,6 @@
 import axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
-
+import store from "@/store/store.js";
 let vUrl = RestApi.api.videoUrl;
 
 export function getPreviewInfo(params = {}) {
@@ -13,6 +13,7 @@ export function getPreviewInfo(params = {}) {
 }
 export function getPreviewInfoAA(params = {}) {
   let url = vUrl.getPreviewInfAAoUrl;
+  params.asgName = store.state.home.projectUuid;
   return axios({
     method: "GET",
     url,

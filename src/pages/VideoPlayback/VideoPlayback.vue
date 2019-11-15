@@ -43,6 +43,8 @@
                        @slowDown="videoSpeedDown"
                        @PreviewAreafullScreen="PreviewAreafullScreen"
                        :speed="videoSpeed"
+                       :startTime="startTime"
+                       :endTime="endTime"
                        :operatorIndex.sync="operatorIndex"
                        :fenlu="fenlu"
                        :data="videoArr">
@@ -102,6 +104,8 @@ export default {
   },
   data() {
     return {
+      startTime: "",
+      endTime: "",
       videoSpeed: 1,
       videoinfo: {},
       appendViewVisible: false,
@@ -348,6 +352,8 @@ export default {
       this.appendViewVisible = true;
     },
     playRtsp(arr, sd, ed, videoType, streamType) {
+      this.startTime = sd;
+      this.endTime = ed;
       // 播放rtsp,传过来的可能是多个通道id
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].h5Type === "channel") {
@@ -511,15 +517,43 @@ export default {
       switch (value) {
         case "关闭窗口":
           // 清空rtspUrl，则触发video组件stop事件
-          this.videoArr[this.operatorIndex].rtspUrl = "";
-          this.videoArr.concat();
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.$confirm(
+              `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
+              "",
+              {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消"
+              }
+            )
+              .then(() => {})
+              .catch(() => {
+                this.videoArr[this.operatorIndex].rtspUrl = "";
+                this.videoArr.concat();
+              });
+          }
+
           break;
         case "关闭所有窗口":
-          // 把所有分路的rtspUrl都清空
-          this.videoArr = this.videoArr.map(item => {
-            item.rtspUrl = "";
-            return item;
-          });
+          this.$confirm(
+            `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭所有的窗口?</span>`,
+            "提示",
+            {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消"
+            }
+          )
+            .then(() => {})
+            .catch(() => {
+              // 把所有分路的rtspUrl都清空
+              this.videoArr = this.videoArr.map(item => {
+                item.rtspUrl = "";
+                return item;
+              });
+            });
+
           break;
         case "加速":
           if (!this.videoArr[this.operatorIndex].channelUuid) {

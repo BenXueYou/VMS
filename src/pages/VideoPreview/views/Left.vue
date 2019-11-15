@@ -501,7 +501,7 @@ export default {
             // 这里获取到通道UUid
             for (let i = 0; i < data.length; i++) {
               data[i].relType = data[i].type;
-              this.getPreviewInfo(data[i].id, data[i]);
+              this.getPreviewInfo(data[i].id, data[i], -1);
             }
           });
       } else if (this.operatorData.hasOwnProperty("channelType")) {
@@ -537,8 +537,8 @@ export default {
         this.isDeleteVisible = true;
       }
     },
-    getPreviewInfo(channelUuid, data) {
-      this.$emit("playRtsp", channelUuid, "main", data);
+    getPreviewInfo(channelUuid, data, operator = 1) {
+      this.$emit("playRtsp", channelUuid, "main", data, operator);
     },
     handleNodeClick() {
       // 点击展开
