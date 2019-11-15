@@ -80,7 +80,7 @@
 			</div>
 			<div :span="2" style="margin-top:-15px;">
 				<el-button icon="el-icon-search" class="search-btn" @click="queryAct" type="primary">查询</el-button>
-				<el-button class="search-btn" @click="queryAct" type="primary">重置</el-button>
+				<el-button class="search-btn" @click="resetQueryAct" type="primary">重置</el-button>
 			</div>
 		</el-row>
 		<div
@@ -189,6 +189,16 @@ export default {
   },
   watch: {},
   methods: {
+    resetQueryAct() {
+      this.checkedChannelsUuidList = []; // string[]抓拍设备否
+      this.checkedTaskUuidList = []; // string[]布控任务否
+      this.checkedFaceUuidList = []; // string[]人脸库否
+      this.staffName = null; // string人员姓名否
+      this.certificateNum = null; // string证件号码否
+      this.genderOption = null; // string抓拍性别否
+      this.startTime = this.$common.getStartTime();
+      this.endTime = this.$common.getCurrentTime();
+    },
     transferAct(transferArray) {
       this.checkedFaceUuidList = transferArray;
     },

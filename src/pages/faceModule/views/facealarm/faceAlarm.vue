@@ -233,7 +233,7 @@ export default {
   },
   mounted() {
     console.log("mounted");
-    this.startTime = this.getStartTime();
+    this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
     this.statusOptions = this.$common.getEnumByGroupStr("alarm_r");
     this.getTaskList(false);
@@ -406,23 +406,15 @@ export default {
       }
     },
     resetData() {
-      this.detail = {
-        zhuapaiurl: "",
-        zhuapaiaddress: "",
-        zhuapaitime: "",
-        tezheng: "",
-        taskName: "",
-        jindu: 0,
-        kuurl: "",
-        belong: "",
-        staffName: "",
-        sex: "",
-        huji: "",
-        minzu: "",
-        bir: "",
-        cardtype: "",
-        credentialNo: ""
-      };
+      this.staffName = null;
+      this.credentialNo = null;
+      this.status = null;
+      this.checkedTaskUuidList = [];
+      this.checkedFaceUuidList = [];
+      this.checkedChannelsUuidList = [];
+      this.genderOption = null;
+      this.startTime = this.$common.getStartTime();
+      this.endTime = this.$common.getCurrentTime();
     },
     lookAlarmDetail(detail) {
       this.detail = detail;
