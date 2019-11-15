@@ -42,7 +42,7 @@
 			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
 				<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
 				<el-radio-group v-model="genderOption">
-					<el-radio-button label="">不限</el-radio-button>
+					<el-radio-button label>不限</el-radio-button>
 					<el-radio-button label="male">男</el-radio-button>
 					<el-radio-button label="female">女</el-radio-button>
 				</el-radio-group>
@@ -50,7 +50,7 @@
 			<div :span="4" class="topBoxDiv topBoxCheckBox">
 				<span class="topTitleTxt" style="margin-right:15px;">属性:</span>
 				<el-radio-group v-model="propertyOption">
-					<el-radio-button label="">不限</el-radio-button>
+					<el-radio-button label>不限</el-radio-button>
 					<el-radio-button label="glasses">眼镜</el-radio-button>
 					<el-radio-button label="sunglasses">墨镜</el-radio-button>
 					<el-radio-button label="mask">口罩</el-radio-button>
@@ -382,10 +382,15 @@ export default {
           });
           return;
         }
+        this.currentPage = 1;
+        this.total = 0;
+        this.getPhotoRecordList();
+      } else {
+        this.$message({
+          message: "查询时间不能为空！",
+          type: "warning"
+        });
       }
-      this.currentPage = 1;
-      this.total = 0;
-      this.getPhotoRecordList();
     },
     // 按照时间查询抓拍记录
     getPhotoRecordList() {
@@ -723,8 +728,8 @@ export default {
 	margin: 2px 0px 2px;
 	cursor: pointer;
 }
-.FRelPopoverClass .FRelPopoverCol:hover{
-	background-color: rgba(38,211,157,0.3);
+.FRelPopoverClass .FRelPopoverCol:hover {
+	background-color: rgba(38, 211, 157, 0.3);
 }
 .FRelPopoverClass .FRelPopoverCol img {
 	margin-right: 8px;

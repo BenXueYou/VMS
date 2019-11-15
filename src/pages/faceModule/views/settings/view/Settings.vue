@@ -224,12 +224,14 @@ export default {
       if (!this.audio) {
         this.audio = document.createElement("audio");
         this.audio.autoplay = "autoplay";
+        this.audio.isPlay = false;
       }
-      if (this.audio && this.audio.src && this.audio.src === tag.soundUrl) {
+      if (this.audio.src && !this.audio.isPlay && this.audio.src === tag.soundUrl) {
         this.audio.pause();
       } else {
         this.audio.src = tag.soundUrl;
         this.audio.play();
+        this.audio.isPlay = true;
       }
     },
     uploadBtnAct() {
