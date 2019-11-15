@@ -19,6 +19,7 @@
                   :showCloudControl="showCloudControl"
                   :channelUuid="operatorChannelUuid"></left-content>
     <div class='right'
+         :style="{'max-width':maxRightWidth+'px'}"
          ref='rigth'>
       <div class='vedioWrap'
            ref='vedioWrap'>
@@ -195,7 +196,8 @@ export default {
       ],
       src: "",
       dragStartIndex: -1,
-      dragEndIndex: -1
+      dragEndIndex: -1,
+      maxRightWidth: 10000
     };
   },
   mounted() {
@@ -484,6 +486,7 @@ export default {
       // 而且right的高度不能超过
       console.log(this.$refs.rigth.clientWidth);
       console.log(this.$refs.rigth.clientHeight);
+      // 根据这个高度算出来他的最大宽度，
       console.log(this.$refs.vedioWrap.clientWidth);
       console.log(this.$refs.vedioWrap.clientHeight);
 
@@ -837,7 +840,7 @@ export default {
       display: flex;
       justify-content: space-between;
       .operator {
-        margin-top: 20px;
+        margin-top: 10px;
         .button {
           background: rgba(40, 255, 187, 0.2);
           border: 0 solid rgba(38, 211, 157, 0.8);

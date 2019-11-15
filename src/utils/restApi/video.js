@@ -7,7 +7,9 @@ let zwUrlPrefix = `${
   window.config.protocolHeader
 }${ip}/basedata-v1/project/${projectUuid}`;
 // ip = "192.168.9.141:15000";
-let urlPrefix = `${window.config.protocolHeader}${ip}/project/${projectUuid}`;
+let urlPrefix = `${
+  window.config.protocolHeader
+}${ip}/video-v1/project/${projectUuid}`;
 
 export default {
   // 获取视频预览信息
