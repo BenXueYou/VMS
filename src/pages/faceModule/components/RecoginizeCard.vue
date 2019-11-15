@@ -10,8 +10,7 @@
 				<el-col :span="18" class="asidListRowFooter textclipsClass">
 					<span
 						class="textclipsClass"
-						style="font-size:14px;opacity:1;padding-left:8px;"
-						:style="`color:${recoginizeItem.taskColour?recoginizeItem.taskColour:'#26D39D'};border-left:2px solid ${recoginizeItem.taskColour?recoginizeItem.taskColour:'#26D39D'}`"
+						style="font-size:14px;opacity:1;padding-left:8px;color:#FFFFFF;border-left:2px solid #FFFFFF"
 						@mouseover="mymouseover"
 						@mouseout="mymouseout"
 						@mousemove="mymousemove"
@@ -55,7 +54,7 @@
 					</div>
 					<div class="asidFontClass">布控照</div>
 				</div>
-				<div class="asidCompareTxtClass" :style="`width:${1.2*imgWidth}px;`">
+				<div class="asidCompareTxtClass" :style="`width:${imgWidth>95?1.2*imgWidth:84}px;`">
 					<div class="asidFontClass">{{recoginizeItem.staffName||'姓名:-- --'}}</div>
 					<div
 						class="asidFontClass"
@@ -148,7 +147,6 @@ export default {
 .RecognizeCardClass {
 	height: 100%;
 	box-sizing: border-box;
-	padding-bottom: 8px;
 	background: rgba(0, 0, 0, 0.13);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	/* overflow: auto; */

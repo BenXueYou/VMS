@@ -9,7 +9,7 @@
 			<div class="flexBox">
 				<p>
 					<span>特征识别：{{faceImgDialogData.sunglasses?'戴墨镜 ':" "}} {{faceImgDialogData.mask?'戴口罩':""}}</span>
-					<span>性别：{{faceImgDialogData.gender||" "}}</span>
+					<span>性别：{{$common.getEnumItemName("gender", faceImgDialogData.gender)||" "}}</span>
 					<span>年龄：{{faceImgDialogData.age||""}}</span>
 				</p>
 				<p>{{faceImgDialogData.captureDatetime||"抓拍时间"}}</p>

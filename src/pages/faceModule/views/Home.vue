@@ -82,7 +82,7 @@
 							<span v-if="!footerLiftType">{{todayShootCount}}张</span>
 						</el-col>
 						<el-col :span="16" class="asidFontColor asidHeaderTxt">
-							<router-link style="padding:0px 6px 0 30px;font-size:16px" class="fontTheme" to="FaceRecord">
+							<router-link style="padding:0px 6px 0 30px;font-size:14px" class="fontTheme" to="FaceRecord">
 								更多
 								<img style="margin-left:6px" src="@/assets/icon/more.png" alt="更多" />
 							</router-link>
@@ -358,7 +358,10 @@ export default {
   methods: {
     loadNode(node, resolve) {
       api
-        .getFaceDeviceList({ parentOrgUuid: node.data.id, shootType: "face,body" })
+        .getFaceDeviceList({
+          parentOrgUuid: node.data.id,
+          shootType: "face,body"
+        })
         .then(res => {
           if (res.data.success && res.data.data) {
             let data = res.data.data;
@@ -523,7 +526,7 @@ export default {
           if (res.data.success) {
             let data = res.data.data;
             Object.assign(this.checkedChannel, data);
-            // this.loadVideo(data);
+            this.loadVideo(data);
           }
         })
         .catch(() => {});
@@ -972,7 +975,7 @@ iframe html {
 	height: 100%;
 }
 .elPopoverClass .el-tree {
-	background: transparent!important;
+	background: transparent !important;
 	overflow: auto;
 }
 /* .elPopoverClass .el-tree-node:focus > .el-tree-node__content {
@@ -1221,7 +1224,6 @@ iframe html {
 	margin: 0 auto 50px;
 	background: #24272a;
 	border-radius: 3px;
-
 	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 	-webkit-box-sizing: border-box;
@@ -1273,7 +1275,7 @@ iframe html {
 }
 .RTask .asidListRow {
 	width: 100%;
-	margin-top: 3%;
+	margin-top: 2.5%;
 	/* height: 18%; */
 	color: #fff;
 	background-color: rgba(0, 0, 0, 0.15);
@@ -1397,9 +1399,7 @@ iframe html {
 	background-color: transparent;
 	/* line-height: 30px; */
 	color: #28ffbb;
-	/* padding-bottom: 17px; */
-	/* border-bottom: 1px dashed rgba(250,250,250,0.1); */
-	margin: 2.5% 0px 0px;
+	margin: 2% 0px 0px;
 }
 
 .font-white {

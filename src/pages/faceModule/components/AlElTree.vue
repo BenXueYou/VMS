@@ -149,8 +149,7 @@ export default {
         string += element[name];
         string += ",";
       });
-      string.substr(0, string.length - 1);
-      return string;
+      return string.substr(0, string.length - 1);
     }
   }
 };

@@ -874,29 +874,20 @@ export default {
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: flex-start;
+	align-content: flex-start;
 	background: rgba(36, 39, 42, 1);
 	box-sizing: border-box;
 	padding-left: 17px;
 	/* padding-right: 15px; */
 }
 .CompareRecord .elCardBoxClass {
-	margin: 16px auto 0 0;
+	margin: 16px 2% 0 0;
 	color: #ffffff;
 	box-sizing: border-box;
 	border-radius: 2px;
 	overflow: hidden;
 }
-/* .CompareRecord .reccordBoxClass::after {
-	content: "";
-	flex: auto;
-}
-.CompareRecord .reccordBoxClass > *:first-child {
-	margin-right: auto;
-}
-.CompareRecord .reccordBoxClass > *:nth-child(2) {
-	margin-right: auto;
-} */
 .textclipClass {
 	display: inline-block;
 	white-space: nowrap;

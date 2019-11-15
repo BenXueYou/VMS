@@ -909,7 +909,7 @@ export default {
 .reccordCellClass {
 	display: inline-block;
 	border: 1px solid rgba(11, 33, 38, 1);
-	margin: 7px 9px;
+	margin: 7px 8px;
 	background: rgba(2, 0, 14, 0.2);
 	position: relative;
 }

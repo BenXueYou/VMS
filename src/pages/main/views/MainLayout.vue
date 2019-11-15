@@ -46,7 +46,7 @@
 			</el-main>
 		</el-container>
 		<template v-for="(dialogParama,index) in GlobalAlarmList">
-			<global-alarm-dialog :key="index" :dialogParama="dialogParama" />
+			<global-alarm-dialog :key="index" @closeAudio="closeAudio" :dialogParama="dialogParama" />
 		</template>
 	</div>
 </template>
@@ -73,7 +73,8 @@ export default {
       stompClient: null,
       subCapture: null,
       subRecognization: null,
-      subMonitorAlarm: null
+      subMonitorAlarm: null,
+      audio: null
     };
   },
   created() {
@@ -81,7 +82,6 @@ export default {
     this.queryBaseTypeByGroup();
   },
   mounted() {
-    console.log(this.$store);
     this.$store.commit(
       "SET_CERTIFICATE",
       this.$common.getEnumByGroupStr("cred")
@@ -108,13 +108,30 @@ export default {
       "SET_CARDOPTIONS",
       this.$common.getEnumByGroupStr("card_u")
     );
-
     this.initWebSocket();
   },
   activated() {
     console.log(this.$store);
   },
   methods: {
+    closeAudio() {
+      // 关闭音频
+      if (this.audio.isPlay) {
+        this.audio.pause();
+      }
+    },
+    playAudio(data) {
+      // 报警播放音频
+      if (!this.audio) {
+        this.audio = document.createElement("audio");
+        this.audio.autoplay = "autoplay";
+        this.audio.isPlay = false;
+      }
+      this.audio.pause();
+      this.audio.src = data.soundUrl;
+      this.audio.play();
+      this.audio.isPlay = true;
+    },
     // 建立websocket通知
     initWebSocket() {
       if (this.webSocket) return;
@@ -196,6 +213,7 @@ export default {
     },
     handleSubscribeMonitorAlarm(data) {
       this.GlobalAlarmList.push(data);
+      this.playAudio(data);
       if (this.GlobalAlarmList && this.GlobalAlarmList.length > 10) {
         this.GlobalAlarmList.shift();
       }
@@ -249,7 +267,7 @@ export default {
     }),
     key() {
       return this.$route.fullPath;
-    },
+    }
     // dialogVisible: {
     //   get: function() {
     //     console.log(Boolean(this.GlobalAlarmList.length));

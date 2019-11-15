@@ -11,7 +11,7 @@
                         @deleteImage="deleteImage(item)"
                         :key="item.key"
                         @selectImg="selectImg(item)"
-                        v-if="index !== 5"
+                        v-if="index < 5"
                         :imageUrl="item.imageUrl"
                         :style="`margin-right: 30px; ${item.selected ? 'border: 2px #26D39D solid' : ''}`"
                         height="125px" />
@@ -58,7 +58,7 @@
       <div class="result">
         <div class="result-title">
           <img src="@/assets/images/faceModule/face_compare.png">
-          <span style="margin-left: 15px;">人脸库比对结果</span>
+          <span style="margin-left: 15px;">{{libraryType === 'captureFaceLib' ? '抓拍库' : '人脸库'}}比对结果</span>
         </div>
         <div class="result-list"
              v-loading="isLoading">
@@ -70,7 +70,7 @@
                    width="40%"
                    v-if="libraryType === 'captureFaceLib'"
                    class="img-fill">
-              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
+              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
                    height="100%"
                    width="40%"
                    v-else
@@ -180,18 +180,7 @@ export default {
   created() {},
   activated() {
     if (this.$route.query.imgObj) {
-      this.imageList = [];
-      this.imageList.push({
-        key: this.genModelIndex(),
-        picBaseUrl: "",
-        imageUrl: this.$route.query.imgObj.faceCapturePhotoUrl
-      });
-      this.imageList.push({
-        key: this.genModelIndex(),
-        picBaseUrl: "",
-        imageUrl: ""
-      });
-      this.defaultSelect();
+      this.turnSearchCommon(this.$route.query.imgObj);
     }
   },
   mounted() {
@@ -223,8 +212,16 @@ export default {
         this.imageList.forEach((v, i) => {
           if (i === 0 && this.imageList.length > 1) {
             this.$set(v, "selected", true);
+            this.selectedKey = this.imageList[0].key;
           } else {
             this.$set(v, "selected", false);
+          }
+        });
+      } else {
+        this.imageList.forEach((v, i) => {
+          this.$set(v, "selected", false);
+          if (v.key === this.selectedKey) {
+            this.$set(v, "selected", true);
           }
         });
       }
@@ -270,6 +267,9 @@ export default {
           this.imageBase64 = v.picBaseUrl;
         }
       });
+      if (this.imageList.length < 2) {
+        this.imageBase64 = "";
+      }
     },
     search() {
       this.getFaceList();
@@ -285,6 +285,18 @@ export default {
     },
     getFaceList() {
       this.getImg();
+      if (!this.imageBase64) {
+        this.$cToast.warn("请添加图片");
+        return;
+      }
+      if (!this.similarity) {
+        this.$cToast.warn("请输入相似度");
+        return;
+      }
+      if (this.similarity < 0 || this.similarity > 100) {
+        this.$cToast.warn("相似度只能在0到100%范围内");
+        return;
+      }
       this.isLoading = true;
       setTimeout(() => {
         this.$searchFaceHttp
@@ -325,21 +337,29 @@ export default {
       this.getFaceList();
     },
     turnToSearchFace(item) {
-      // this.$router.push({ name: "searchFaceWithFace", params: { imgObj: item } });
-      this.imageList = [];
+      this.turnSearchCommon(item);
+    },
+    turnSearchCommon(item) {
+      if (this.imageList.length > 5) {
+        this.imageList.pop();
+      }
+      this.imageList.pop();
+      this.imageList.forEach((v, i) => {
+        this.$set(v, "selected", false);
+      });
       this.imageList.push({
         key: this.genModelIndex(),
         picBaseUrl: "",
         imageUrl: item.faceCapturePhotoUrl,
         selected: true,
       });
+      this.selectedKey = this.imageList[this.imageList.length - 1].key;
       this.imageList.push({
         key: this.genModelIndex(),
         picBaseUrl: "",
         imageUrl: ""
       });
       this.defaultSelect();
-      this.getFaceList();
     },
     turnToPersonTrace(item) {
       if (!item.hasOwnProperty("faceUuid")) {
@@ -470,7 +490,7 @@ export default {
           width: 19%;
           height: 160px;
           background: rgba($color: #000000, $alpha: 0.15);
-          border: 0 solid #26d39d;
+          border: 1px solid #223C36;
           margin-right: 15px;
           margin-bottom: 10px;
           position: relative;

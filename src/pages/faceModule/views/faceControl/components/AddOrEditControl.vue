@@ -417,26 +417,32 @@ export default {
       this.formLabelAlign = this.$common.copyObject(detailData, this.formLabelAlign);
       this.$set(this.formLabelAlign, "faceLibraryUuids", []);
       this.$set(this.formLabelAlign, "channelUuids", []);
-      this.formLabelAlign.libraryList.forEach(v => {
-        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
-        this.faceDBSelectedList.push(v);
-      });
-      this.formLabelAlign.channelList.forEach(v => {
-        this.formLabelAlign.channelUuids.push(v.channelUuid);
-        this.videoSrcSelectedList.push({
-          id: v.channelUuid,
-          label: v.channelName,
-          channelUuid: v.channelUuid,
-          channelName: v.channelName
+      if (this.formLabelAlign.libraryList) {
+        this.formLabelAlign.libraryList.forEach(v => {
+          this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+          this.faceDBSelectedList.push(v);
         });
-      });
-      this.formLabelAlign.systemStaffLibraryTypes.forEach(v => {
-        this.staffTypeOption.forEach(v2 => {
-          if (v2.typeStr === v) {
-            v2.checked = true;
-          }
+      }
+      if (this.formLabelAlign.channelList) {
+        this.formLabelAlign.channelList.forEach(v => {
+          this.formLabelAlign.channelUuids.push(v.channelUuid);
+          this.videoSrcSelectedList.push({
+            id: v.channelUuid,
+            label: v.channelName,
+            channelUuid: v.channelUuid,
+            channelName: v.channelName
+          });
         });
-      });
+      }
+      if (this.formLabelAlign.systemStaffLibraryTypes) {
+        this.formLabelAlign.systemStaffLibraryTypes.forEach(v => {
+          this.staffTypeOption.forEach(v2 => {
+            if (v2.typeStr === v) {
+              v2.checked = true;
+            }
+          });
+        });
+      }
     },
     getAlarmSound() {
       this.$faceControlHttp.getAlarmSound().then(res => {
