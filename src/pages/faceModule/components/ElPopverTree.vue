@@ -232,7 +232,7 @@ export default {
       this.isIndeterminate = false;
       this.$emit("transferCheckedChannel", checkedChannelArr);
     },
-    // 点击全选复选框事件
+    // 点击复选框事件
     handleCheckedChange(value, data) {
       console.log(value);
       if (this.boxType === "radio") {
@@ -298,6 +298,7 @@ export default {
                 checkedChannelUuidArr.push(element.channelUuid);
               });
               this.checkedChannel = checkedChannelUuidArr;
+              this.checkAll = true;
               this.$emit("transferCheckedChannel", this.channels);
             }
             // 处理单选逻辑

@@ -42,7 +42,7 @@
 			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
 				<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
 				<el-radio-group v-model="genderOption">
-					<el-radio-button label>不限</el-radio-button>
+					<el-radio-button label="">不限</el-radio-button>
 					<el-radio-button label="male">男</el-radio-button>
 					<el-radio-button label="female">女</el-radio-button>
 				</el-radio-group>
@@ -50,7 +50,7 @@
 			<div :span="4" class="topBoxDiv topBoxCheckBox">
 				<span class="topTitleTxt" style="margin-right:15px;">属性:</span>
 				<el-radio-group v-model="propertyOption">
-					<el-radio-button label>不限</el-radio-button>
+					<el-radio-button label="">不限</el-radio-button>
 					<el-radio-button label="glasses">眼镜</el-radio-button>
 					<el-radio-button label="sunglasses">墨镜</el-radio-button>
 					<el-radio-button label="mask">口罩</el-radio-button>
@@ -58,12 +58,6 @@
 			</div>
 			<div :span="4" class="topBoxDiv topBoxCheckBox topBoxQualityCheckBox">
 				<span class="topTitleTxt" style="margin-right:15px;">图片质量:</span>
-				<!-- <el-checkbox-group v-model="qualityOption">
-					<el-checkbox-button label="HIGH">高</el-checkbox-button>
-					<el-checkbox-button label="NORMAL">中</el-checkbox-button>
-					<el-checkbox-button label="LOW">低</el-checkbox-button>
-					<el-checkbox-button label="LOWER">无效</el-checkbox-button>
-				</el-checkbox-group>-->
 				<pic-qulity-select :selectedButtons.sync="qualityOption" />
 			</div>
 
@@ -162,10 +156,10 @@
 		<!-- ======================================================= 人脸 弹 窗 ========================================================== -->
 		<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
 			<div class="leftImgBox">
-				<img :src="dialogPhotoImgUrl?dialogPhotoImgUrl:require('@/assets/user.png')" alt />
+				<img :src="$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)" alt />
 			</div>
 			<div class="rightImgBox">
-				<img :src="dialogPanoramaImgUrl?dialogPanoramaImgUrl:require('@/assets/user.png')" alt />
+				<img :src="$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)" alt />
 			</div>
 		</el-dialog>
 	</el-row>
@@ -222,7 +216,8 @@ export default {
     resetQueryAct() {
       this.checkedChannelsUuidList = [];
       this.qualityOption = ["HIGH", "NORMAL", "LOW"];
-      this.genderOption = null;
+      this.genderOption = "";
+      this.propertyOption = "";
       this.startTime = this.$common.getStartTime();
       this.endTime = this.$common.getCurrentTime();
       this.queryAct();
@@ -365,12 +360,13 @@ export default {
     // 下载导出图片
     downloadImg(o, index) {
       this.$common.exportImageAct(o.faceCapturePhotoUrl, o);
+      this.$common.exportImageAct(o.panoramaCapturePhotoUrl, o);
     },
     // 查看大图
     shoWholeImgUrl(o, index) {
       this.dialogVisible = !this.dialogVisible;
-      this.dialogPhotoImgUrl = this.imageHeader + o.faceCapturePhotoUrl;
-      this.dialogPanoramaImgUrl = this.imageHeader + o.panoramaCapturePhotoUrl;
+      this.dialogPhotoImgUrl = o.faceCapturePhotoUrl;
+      this.dialogPanoramaImgUrl = o.panoramaCapturePhotoUrl;
       this.titleTxt = o.channelName;
     },
     queryAct() {
@@ -466,7 +462,7 @@ export default {
     return {
       PicSourceType: window.config.PicSourceType,
       imageHeader: RestApi.api.imageUrl,
-      propertyOption: null,
+      propertyOption: "",
       selectDate: null,
       inputPlaceholder: "高，中",
       checkedUuid: ["HIGH", "NORMAL"],
@@ -495,7 +491,7 @@ export default {
       },
       checkNameString: "全部任务",
       allChannelUuid: [],
-      genderOption: null,
+      genderOption: "",
       qualityOption: ["HIGH", "NORMAL", "LOW"],
       titleTxt: "抓拍设备",
       defaultQualityProps: {
