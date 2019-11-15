@@ -223,10 +223,25 @@ export default {
   }
 };
 </script>
-
+<style>
+#noteaacx .checkButton .el-checkbox__inner::after {
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+	border: 1px solid #ffffff;
+	border-left: 0;
+	border-top: 0;
+	height: 7px;
+	left: 4px;
+	position: absolute;
+	top: 1px;
+}
+.checkButton .el-checkbox__input.is-checked .el-checkbox__inner {
+	background-color: #26d39d;
+	border-color: #26d39d;
+}
+</style>
 <style lang="scss" scoped>
 $fontcolor: #aaa;
-
 .tablelist {
 	height: 100%;
 	// height: calc(100vh - 76px - 57px - 70px);

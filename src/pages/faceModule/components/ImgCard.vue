@@ -8,15 +8,6 @@
 					class="image footerCardImg"
 				/>
 			</div>
-			<div class="HomeFooterChannelName">
-				<span
-					style="width:100%;display: inline-block;"
-					class="textclipsClass"
-					@mouseover="mymouseover"
-					@mouseout="mymouseout"
-					@mousemove="mymousemove"
-				>{{(photoItem)&&(photoItem.captureDatetime)?photoItem.captureDatetime:'-- --'}}</span>
-			</div>
 			<div
 				class="HomeFooterChannelName textclipsClass"
 				style="width:100%;"
@@ -26,6 +17,15 @@
 			>
 				{{(photoItem)&&
 				(photoItem.channelName)?photoItem.channelName:'-- --'}}
+			</div>
+			<div class="HomeFooterChannelName">
+				<span
+					style="width:100%;display: inline-block;"
+					class="textclipsClass"
+					@mouseover="mymouseover"
+					@mouseout="mymouseout"
+					@mousemove="mymousemove"
+				>{{(photoItem)&&(photoItem.captureDatetime)?photoItem.captureDatetime:'-- --'}}</span>
 			</div>
 		</div>
 	</transition>

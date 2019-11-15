@@ -93,7 +93,6 @@ export default {
       }
       if (newVal.indexOf("/FaceManage") !== -1) {
         this.faceRoute = newVal;
-        // this.$router.push(this.faceRoute);
       }
     }
   }
