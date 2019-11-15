@@ -19,7 +19,8 @@ export default {
       // isRouterAlive: true,
       doorRoute: "/DoorControl/AccessGroupConfig",
       vistorRoute: "/VistorMange/VistorRecord",
-      faceRoute: "/FaceManage/FaceHome"
+      faceRoute: "/FaceManage/FaceHome",
+      isGetIpOnce: false
     };
   },
   methods: {
@@ -41,7 +42,11 @@ export default {
       });
     },
     async getPreviewInfo() {
-      if (this.$route.fullPath.toLocaleLowerCase().indexOf("/login") === -1) {
+      if (
+        this.$route.fullPath.toLocaleLowerCase().indexOf("/faceHome") !== -1 ||
+        this.$route.fullPath.toLocaleLowerCase().indexOf("/videopreview") !== -1 ||
+        this.$route.fullPath.toLocaleLowerCase().indexOf("/videoplayback") !== -1
+      ) {
         const { jSignal, jMedia } = this.$store.getters;
         if (!jSignal.ip || !jMedia.ip) {
           let data = await this.getPreviewInfoAA();

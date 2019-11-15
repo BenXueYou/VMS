@@ -228,12 +228,13 @@ export default {
       // 宽度变化 则更新canvas的大小
       if (this.width && this.canvas) {
         this.canvas.width = this.width;
+        this.canvas.height = this.calcHeight;
       }
       // 宽度和高度变化，不需要重新播放
     },
     height(val) {
       if (this.height && this.canvas) {
-        this.canvas.height = this.height;
+        // this.canvas.height = this.calcHeight;
       }
     },
     rtspUrl(val) {
@@ -289,10 +290,15 @@ export default {
       console.log(this.drag);
       this.video_mgr.drag(this.video, start);
     },
+    calcHeight() {
+      // 这里让视频的宽高比是*16:9；
+      // return this.height;
+      return ~~((9 / 16) * this.width);
+    },
     async playVideo() {
       this.canvas = document.createElement("canvas");
       this.canvas.width = this.width;
-      this.canvas.height = this.height;
+      this.canvas.height = this.calcHeight();
       let { jMedia, jSignal } = this.$store.getters;
       console.log(jMedia, jSignal);
       let w, h;
@@ -384,6 +390,17 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+#canvasWrap {
+  //让canvas垂直居中
+  canvas {
+    position: absolute;
+    top: 50%;
+    left: 0px;
+    transform: translateY(-50%);
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
