@@ -161,14 +161,14 @@ export default {
       checkLibAll: true,
       facealarmPopoverClass: "facealarmPopoverClass",
       faceDBDefaultProps: {
-        label: "faceLibraryName"
+        label: "faceLibraryName",
+        children: "children"
       },
       defaultProps: {
+        children: "children",
         label: "faceMonitorName"
       },
-      defaultDeviceProps: {
-        label: "channelName"
-      },
+      defaultDeviceProps: { children: "children", label: "channelName" },
       alarminfoid: "",
       startTime: null,
       endTime: null,
@@ -448,6 +448,8 @@ export default {
       if (!data.faceMonitorUuid) data.faceMonitorUuid = null;
       if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
       if (!data.gender) data.gender = null;
+      if (!data.staffName) data.staffName = null;
+      if (!data.credentialNo) data.credentialNo = null;
       api
         .getAlarmList(data)
         .then(res => {

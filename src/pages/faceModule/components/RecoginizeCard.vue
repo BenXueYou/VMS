@@ -143,6 +143,7 @@ export default {
 	letter-spacing: 0;
 	text-align: right;
 	padding-right: 15%;
+	padding-bottom: 10px;
 }
 .RecognizeCardClass {
 	height: 100%;

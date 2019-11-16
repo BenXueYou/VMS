@@ -220,7 +220,7 @@ export default {
 				background-color: rgb(27, 30, 33);
 				box-sizing: border-box;
 				margin-bottom: 30px;
-				margin-right: 15px;
+				margin-right: 14px;
 				.content {
 					padding: 10px 12px;
 					box-sizing: border-box;

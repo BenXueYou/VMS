@@ -130,7 +130,6 @@ export default {
       this.checkedUuidList = val ? this.getAllUuidList() : [];
       this.checkedObj = val ? this.treeDataList : [];
       this.$refs.treeRef.setCheckedKeys(this.checkedUuidList);
-
       this.$emit("transferAct", this.checkedUuidList);
     },
 

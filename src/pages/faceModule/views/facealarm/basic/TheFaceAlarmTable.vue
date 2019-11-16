@@ -7,7 +7,7 @@
 				</el-table-column>
 				<el-table-column prop="faceMonitorName" label="布控任务"></el-table-column>
 				<el-table-column prop="captureDatetime" label="报警时间"></el-table-column>
-				<el-table-column prop="channelName" label="抓拍摄像机"></el-table-column>
+				<el-table-column prop="channelName" label="抓拍摄像机" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="staffName" label="人员姓名" width="100"></el-table-column>
 				<el-table-column prop="gender" label="性别" width="100">
 					<template
@@ -20,7 +20,7 @@
 						slot-scope="scope"
 					>{{scope.row.staffType?$common.getEnumItemName("staff_t", scope.row.staffType):''}}</template>
 				</el-table-column>
-				<el-table-column prop="libraryName" label="所属库" width="120"></el-table-column>
+				<el-table-column prop="libraryName" show-overflow-tooltip label="所属库" width="120"></el-table-column>
 				<el-table-column prop="faceSimilarity" label="相似度" width="80"></el-table-column>
 				<el-table-column prop="dealState" label="状态">
 					<template

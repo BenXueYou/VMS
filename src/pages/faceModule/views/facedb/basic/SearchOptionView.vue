@@ -35,8 +35,8 @@
 			<label for>注册时间：</label>
 			<el-date-picker
 				v-model="createTime"
-				type="datetime"
-				value-format="yyyy-MM-dd HH:mm:ss"
+				type="date"
+				value-format="yyyy-MM-dd"
 				placeholder="选择日期"
 				class="input"
 			></el-date-picker>

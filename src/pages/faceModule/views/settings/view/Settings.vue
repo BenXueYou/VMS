@@ -243,7 +243,7 @@ export default {
       }
     },
     uploadBtnAct() {
-      if (this.tags.length === 10) {
+      if (this.tags.length > 9) {
         this.$message({ type: "warning", message: "允许添加音频最多10个" });
         return;
       }

@@ -533,9 +533,13 @@ export default {
     },
     async loadVideo(data) {
       let { jMedia, jSignal } = this.$store.getters;
-      // eslint-disable-next-line
-			this.video_mgr = new CVideoMgrSdk();
-      this.canvas = document.createElement("canvas");
+      if (!this.video_mgr) {
+        // eslint-disable-next-line
+				this.video_mgr = new CVideoMgrSdk();
+      }
+      if (!this.canvas) {
+        this.canvas = document.createElement("canvas");
+      }
       this.canvas.width = (this.WIDTH() * 2) / 3 - 200;
       this.canvas.height = (this.HEIGHT() * 7) / 10 - 120;
       let w, h;
@@ -549,6 +553,11 @@ export default {
         w = 2560;
         h = 1440;
       }
+      // 停止上一个视频的播放
+      if (!this.video) {
+        this.video_mgr.stop(this.video);
+      }
+      // 设置新的视频对象播放参数
       this.video = await this.video_mgr.setup(
         JSON.stringify(jSignal),
         JSON.stringify(jMedia),
@@ -560,6 +569,7 @@ export default {
         w,
         h
       );
+      // 检测到新的播放视频对象
       if (this.video) {
         await this.video_mgr.play(this.video);
       }
