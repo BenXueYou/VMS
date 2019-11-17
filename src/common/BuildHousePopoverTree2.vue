@@ -176,7 +176,7 @@ export default {
       this.upAddress = "";
       // this.getLabelArr(node);
       // this.getUpAddress(this.labelArr);
-      this.nodeText = this.getWanZheng(node);
+      this.nodeText = this.getWanZheng(node).substr(1);
       this.$emit("setUseData", {
         node: this.currentNode
       });
@@ -189,11 +189,7 @@ export default {
       if (!node.parent) {
         return "";
       }
-      return (
-        node.data.label +
-        (node.parent ? "/" : "") +
-        this.getWanZheng(node.parent)
-      );
+      return this.getWanZheng(node.parent) + "/" + node.data.label;
     },
     getLabelArr(node) {
       if (!node) {
@@ -239,7 +235,7 @@ export default {
       deep: true
     },
     name() {
-      // 这行代码导致，完整路径选择之后，会被替换成不是完整路径 
+      // 这行代码导致，完整路径选择之后，会被替换成不是完整路径
       // this.nodeText = this.name;
     },
     houseUuid() {

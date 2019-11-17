@@ -20,7 +20,7 @@
                   :channelUuid="operatorChannelUuid"></left-content>
     <div class='right'
          :style="{'max-width':maxRightWidth+'px'}"
-         ref='rigth'>
+         ref='right'>
       <div class='vedioWrap'
            ref='vedioWrap'>
         <video-wrap v-for="(item,index) in videoArr"
@@ -205,10 +205,17 @@ export default {
     this.$nextTick(() => {
       this.initWrapDom();
     });
-    window.addEventListener(
-      "resize",
-      this.$common.throttle(this.initWrapDom, 100, { trailing: false })
-    );
+    window.addEventListener("resize", this.initWrapDom);
+    const that = this;
+    document.addEventListener("keydown", e => {
+      console.log(e);
+      // alert(e.code + "  ------   " + (e.code === "F11"));
+      if (e.code === "F11") {
+        setTimeout(() => {
+          that.initWrapDom();
+        }, 100);
+      }
+    });
   },
   activated() {
     this.initWrapDom();
@@ -418,7 +425,7 @@ export default {
     playVideo(rtspUrl, channelUuid, streamType, data) {
       // 做个判断如果，当前的画面不够播放，则自动扩容
       if (this.operatorIndex + 1 > 36) {
-        alert(1);
+        // alert(1);
         this.tipsFlag = false;
         setTimeout(() => {
           this.tipsFlag = true;
@@ -484,11 +491,25 @@ export default {
     initWrapDom() {
       // 这里要给他16:9的效果
       // 而且right的高度不能超过
-      console.log(this.$refs.rigth.clientWidth);
-      console.log(this.$refs.rigth.clientHeight);
+      console.log(this.$refs.right.clientWidth);
+      console.log(this.$refs.right.offsetHeight);
+      if (this.$refs.right) {
+        const rightRect = this.$refs.right.getBoundingClientRect();
+        console.log(rightRect);
+      }
+      const rightHeight = ~~(
+        this.$refs.right.clientHeight -
+        window.innerWidth * 0.03 -
+        2
+      );
+      // alert(rightHeight);
+      // 计算16:9的最大高度
+      const maxHeight = rightHeight - 20;
+      console.log(maxHeight);
+      // 根据最大高度，反推最大宽度
+      this.maxRightWidth = ~~(maxHeight * 16) / 9;
       // 根据这个高度算出来他的最大宽度，
-      console.log(this.$refs.vedioWrap.clientWidth);
-      console.log(this.$refs.vedioWrap.clientHeight);
+      // 获取系统的高度，然后减去多余的部分
 
       let vedioWrapDom = this.$refs.vedioWrap;
       let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
@@ -496,7 +517,6 @@ export default {
       this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
       this.videoArr = this.videoArr.map(item => {
         item.width = this.videoWidth;
-        item.height = this.videoHeight;
         return item;
       });
     },
