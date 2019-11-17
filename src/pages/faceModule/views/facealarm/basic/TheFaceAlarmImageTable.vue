@@ -25,7 +25,14 @@
 			<p class="totalpagetitle">共{{pageCount}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
-				<el-input class="yeshu" type="number"></el-input>
+				<el-input
+					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+					@keyup.enter.native="blur"
+					@blur="blur"
+					v-model="page"
+					class="yeshu"
+					type="number"
+				></el-input>
 			</div>
 		</div>
 		<the-face-alarm-dialog
@@ -116,6 +123,7 @@ export default {
       arr: [1, 1, 1, 1, 1],
       dialogImageUrl: "",
       dialogVisible: false,
+      page: null,
       userheader: require("@/assets/user.png")
     };
   },
@@ -135,6 +143,15 @@ export default {
   },
   mounted() {},
   methods: {
+    blur() {
+      if (this.page !== "") {
+        if (this.page > Math.ceil(this.pageCount / this.pageSize)) {
+          this.page = Math.ceil(this.pageCount / this.pageSize);
+        }
+        this.page = parseInt(this.page);
+        this.$emit("pagechange", parseInt(this.page));
+      }
+    },
     showbig(url) {
       if (url) {
         this.dialogImageUrl = url;
@@ -176,8 +193,8 @@ export default {
 		background-color: rgb(27, 30, 33);
 		box-sizing: border-box;
 		margin-bottom: 30px;
-		margin-right: 6%!important;
-		margin-left: 6%!important;
+		margin-right: 6% !important;
+		margin-left: 6% !important;
 	}
 }
 @media screen and(min-width:1400px) and (max-width: 1700px) {
@@ -185,8 +202,8 @@ export default {
 		background-color: rgb(27, 30, 33);
 		box-sizing: border-box;
 		margin-bottom: 30px;
-		margin-right: 2%!important;
-		margin-left: 2.5%!important;
+		margin-right: 2% !important;
+		margin-left: 2.5% !important;
 	}
 }
 </style>

@@ -397,12 +397,26 @@ export default {
     },
     queryBtnAct() {
       this.init();
-      if (!this.statusOptions.length) {
-        // 点击搜索按钮从而发起请求
-        this.ajaxdata();
-      } else {
+
+      if (this.startTime && this.endTime) {
+        /* eslint-disable */
+				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
+				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
+				/* eslint-enable */
+        if (this.startTime !== "" && this.endTime !== "" && d1 >= d2) {
+          this.$message({
+            message: "开始时间必须小于结束时间！",
+            type: "warning"
+          });
+          return;
+        }
         this.pageNow = 1; // 点击搜索条件变更,当前页设置为第一页
         this.ajaxdata();
+      } else {
+        this.$message({
+          message: "查询时间不能为空！",
+          type: "warning"
+        });
       }
     },
     resetData() {

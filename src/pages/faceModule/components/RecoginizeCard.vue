@@ -1,7 +1,7 @@
 <template>
 	<!-- 过渡动画 -->
 	<transition name="fade">
-		<div class="RecognizeCardClass">
+		<div class="RecognizeCardClass" @dblclick.native="clickDetailAct">
 			<el-row class="asidListRowHeader" style="position:relative;">
 				<div
 					class="rowHeaderBox"

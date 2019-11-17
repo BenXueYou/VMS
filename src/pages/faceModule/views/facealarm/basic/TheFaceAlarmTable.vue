@@ -49,7 +49,14 @@
 			<p class="totalpagetitle">共{{pageCount}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
-				<el-input class="yeshu" v-model="yeshu" @blur="blur" type="number"></el-input>
+				<el-input
+					class="yeshu"
+					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+					v-model="yeshu"
+					@blur="blur"
+					@keyup.enter.native="blur"
+					type="number"
+				></el-input>
 			</div>
 		</div>
 	</div>
@@ -62,16 +69,6 @@ export default {
       type: Array,
       default: function() {
         var num = [];
-        for (var i = 0; i < 13; i++) {
-          num.push({
-            index: ("0" + (i + 1)).slice(-2),
-            name: "王小虎",
-            sex: "男",
-            time: "2018-10-18 12:00:00",
-            id: "342626199411060399",
-            ku: "住户"
-          });
-        }
         return num;
       }
     },

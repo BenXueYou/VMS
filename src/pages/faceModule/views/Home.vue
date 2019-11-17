@@ -173,7 +173,7 @@
 					</el-col>
 				</el-row>
 				<el-row class="asidListBox">
-					<div class="asidListRow" v-for="(o,index) in 5" :key="index">
+					<div class="asidListRow" v-for="(o,index) in 5" @dblclick="doRecoginizeDetail(index)" :key="index">
 						<recoginize-card
 							imgWidth="99"
 							:recoginizeItem="comparePhotoList[index]"

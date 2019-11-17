@@ -89,7 +89,12 @@
 			element-loading-background="rgba(0, 0, 0, 0.8)"
 			class="reccordBoxClass"
 		>
-			<div class="elCardBoxClass" v-for="(item, index) in totalCompareItemList" :key="index">
+			<div
+				class="elCardBoxClass"
+				v-for="(item, index) in totalCompareItemList"
+				@dblclick="doComparethis(index)"
+				:key="index"
+			>
 				<recoginize-card
 					imgWidth="90"
 					:recoginizeItem="totalCompareItemList[index]"
@@ -253,7 +258,7 @@ export default {
     },
     // 点击查询按钮
     queryAct() {
-      if (this.startTime.length > 0 && this.endTime.length > 0) {
+      if (this.startTime && this.endTime) {
         /* eslint-disable */
 				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
 				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
@@ -265,10 +270,15 @@ export default {
           });
           return;
         }
+        this.total = 0;
+        this.currentPage = 1;
+        this.getCompareRecordList();
+      } else {
+        this.$message({
+          message: "查询时间不能为空！",
+          type: "warning"
+        });
       }
-      this.total = 0;
-      this.currentPage = 1;
-      this.getCompareRecordList();
     },
 
     // 获取数据

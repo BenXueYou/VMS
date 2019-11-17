@@ -4,11 +4,11 @@
 			<el-table :data="listTableData" border style="width: 100%;" v-loading="listtableloadding">
 				<el-table-column prop="index" label="序号" width="120">
 					<template slot-scope="scope">
-            {{("0"+(parseInt(scope.$index)+1)).slice(-2)}}
+						{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}
 						<!-- <el-checkbox
 							v-model="scope.row.checked"
 							@change="selectchange"
-						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox> -->
+						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>-->
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -47,7 +47,14 @@
 			<p class="totalpagetitle">共{{listPageCount}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
-				<el-input class="yeshu" v-model="yeshu" @blur="blur" type="number"></el-input>
+				<el-input
+					class="yeshu"
+					v-model="yeshu"
+					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+					@blur="blur"
+					@keyup.enter.native="blur"
+					type="number"
+				></el-input>
 			</div>
 		</div>
 	</div>

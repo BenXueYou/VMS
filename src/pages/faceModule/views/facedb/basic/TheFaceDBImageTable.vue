@@ -45,7 +45,14 @@
 			<p class="totalpagetitle">共{{ imagePageCount}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
-				<el-input class="pageIndexClass" v-model="pageIndex" @blur="blur" type="number"></el-input>
+				<el-input
+					class="pageIndexClass"
+					v-model="pageIndex"
+					@blur="blur"
+					@keyup.enter.native="blur"
+					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+					type="number"
+				></el-input>
 			</div>
 		</div>
 	</div>
