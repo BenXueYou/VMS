@@ -674,6 +674,7 @@ export default {
       //   }
       // });
     },
+    // 关闭人脸库弹窗
     closeFaceDBDialogAct(is) {
       this.faceDBDialogVisible = false;
       if (is) {
@@ -696,6 +697,7 @@ export default {
       this.resetall();
       this.getStaffLibStaffData();
     },
+    // 关闭人脸新增页面
     closeStaffAddDialogAct(is) {
       this.isUpdate = !this.isUpdate;
       this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;

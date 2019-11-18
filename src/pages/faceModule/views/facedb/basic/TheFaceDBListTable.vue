@@ -4,11 +4,11 @@
 			<el-table :data="listTableData" border style="width: 100%;" v-loading="listtableloadding">
 				<el-table-column prop="index" label="序号" width="120">
 					<template slot-scope="scope">
-						{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}
-						<!-- <el-checkbox
+						<!-- {{("0"+(parseInt(scope.$index)+1)).slice(-2)}} -->
+						<el-checkbox
 							v-model="scope.row.checked"
 							@change="selectchange"
-						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>-->
+						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
 					</template>
 				</el-table-column>
 				<el-table-column
