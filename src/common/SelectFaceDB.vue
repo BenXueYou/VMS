@@ -241,7 +241,7 @@ export default {
             background: rgba($color: #26d39d, $alpha: 0.15);
           }
           .item-faceDB {
-            width: 34%;
+            width: 40%;
             margin-left: 18px;
             text-align: left;
           }
