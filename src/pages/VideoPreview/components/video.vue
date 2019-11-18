@@ -102,6 +102,12 @@ export default {
         return false;
       }
     },
+    isStopVoice: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     rtspUrl: {
       type: String,
       default() {
@@ -179,24 +185,6 @@ export default {
   watch: {
     isRecord(val) {
       if (val) {
-        this.menuData = [
-          {
-            icon: "voice",
-            name: "声音"
-          },
-          {
-            icon: "video",
-            name: "停止录像"
-          },
-          {
-            icon: "screenshot",
-            name: "抓图"
-          },
-          {
-            icon: "close",
-            name: "关闭"
-          }
-        ];
       } else {
         this.menuData = [
           {
@@ -229,13 +217,13 @@ export default {
       // 宽度变化 则更新canvas的大小
       if (this.width && this.canvas) {
         this.canvas.width = this.width;
-        this.canvas.height = this.calcHeight;
+        // this.canvas.height = this.calcHeight;
       }
       // 宽度和高度变化，不需要重新播放
     },
     height(val) {
       if (this.height && this.canvas) {
-        // this.canvas.height = this.calcHeight;
+        this.canvas.height = this.height;
       }
     },
     rtspUrl(val) {
@@ -252,6 +240,26 @@ export default {
     }
   },
   methods: {
+    updateMenu() {
+      this.menuData = [
+        {
+          icon: this.isStopVoice ? "closevideo" : "voice",
+          name: "声音"
+        },
+        {
+          icon: "video",
+          name: this.isRecord ? "停止" : "停止录像"
+        },
+        {
+          icon: "screenshot",
+          name: "抓图"
+        },
+        {
+          icon: "close",
+          name: "关闭"
+        }
+      ];
+    },
     async speedUp() {
       await this.video_mgr.speedControl(this.video, ++this.speed);
     },
@@ -333,6 +341,7 @@ export default {
       this.$refs.canvasRefs.appendChild(this.canvas);
     },
     stopVideo() {
+      alert(1);
       this.video_mgr.stop(this.video);
       if (this.canvas) {
         this.$refs.canvasRefs.removeChild(this.canvas);

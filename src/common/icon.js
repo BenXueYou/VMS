@@ -50,6 +50,7 @@ import backward from "@/assets/images/Video/backward.png";
 import forward from "@/assets/images/Video/forward.png";
 import save from "@/assets/images/Video/save.png";
 import voice2 from "@/assets/images/Video/voice2.png";
+import closevideo from "@/assets/images/Video/closevideo.png";
 import zoomOut from "@/assets/images/Video/zoomOut.png";
 import zoomIn from "@/assets/images/Video/zoomIn.png";
 import deleteIcon from "@/assets/images/Video/delete.png";
@@ -74,6 +75,7 @@ export default {
   forward,
   save,
   voice2,
+  closevideo,
   control,
   preset,
   voice,

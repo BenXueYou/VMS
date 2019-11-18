@@ -35,6 +35,7 @@
                     :IsShowMenu="!!item.rtspUrl"
                     :position="item.position"
                     :isRecord="!!item.isRecord"
+                    :isStopVoice="!!item.isStopVoice"
                     :fenlu="fenluIndex+1"
                     :isAutoScreen="isAutoScreen===index"
                     @playRtsp="playRtsp"
@@ -277,6 +278,14 @@ export default {
       });
     },
     addView(name) {
+      // 首先判断下视图有没有重复的名字
+      let da = this.$refs.leftTree.viewTreeData.filter(i => {
+        return i.viewName === name;
+      });
+      if (da.length > 0) {
+        this.$message.error("视图名字跟已有的重复!");
+        return;
+      }
       // 保存视图
       // 这里需要将数组按照position重新排序一下，这样打开才会是正确的
       let dataArr = JSON.parse(JSON.stringify(this.videoArr));
@@ -531,7 +540,8 @@ export default {
       console.log(this.videoArr);
     },
     chooseFenlu(index) {
-      this.operatorIndex = 0;
+      // this.operatorIndex = 0;
+
       this.fenluIndex = index;
       this.isAutoScreen = -1;
       this.initWrapDom();
@@ -706,7 +716,9 @@ export default {
           break;
       }
     },
-    openVideoVoice(index) {},
+    openVideoVoice(index) {
+      this.videoArr[index].isStopVoice = !ths.videoArr[index].isStopVoice;
+    },
     startRecord(index) {
       if (!this.videoArr[index].channelUuid) {
         this.$message.error("该分路上没有播放的视频");
