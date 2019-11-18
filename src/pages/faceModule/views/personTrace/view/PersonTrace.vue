@@ -69,7 +69,8 @@
         <div class="map-box"
              id="allmap">
         </div>
-        <div class="menu-list">
+        <div class="menu-list"
+             v-if="isShowMenuList">
           <div class="list-title">满足条件人员</div>
           <template v-for="(item, index) in menuData">
             <div :key="index"
@@ -137,6 +138,7 @@ export default {
       pois: [],
       samePlaArr: [],
       isShowSamePlaDialog: false,
+      isShowMenuList: false,
     };
   },
   created() {},
@@ -326,9 +328,12 @@ export default {
       this.itemData = body.data;
       if (!this.itemData || this.itemData.length === 0) {
         this.$cToast.success("暂无满足条件人员");
+        this.isShowMenuList = false;
+      } else {
+        this.isShowMenuList = true;
+        this.setMapCenter();
+        this.getMenuData();
       }
-      this.setMapCenter();
-      this.getMenuData();
     },
     setMapCenter() {
       if (this.itemData.length !== 0) {
