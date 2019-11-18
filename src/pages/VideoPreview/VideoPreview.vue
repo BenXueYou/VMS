@@ -437,6 +437,7 @@ export default {
         return;
       }
       this.setData(rtspUrl, channelUuid, streamType, data);
+      console.log(this.operatorIndex);
       if (
         ++this.operatorIndex >= this.fenlu[this.fenluIndex] &&
         this.fenluIndex <= 5
@@ -513,12 +514,21 @@ export default {
 
       let vedioWrapDom = this.$refs.vedioWrap;
       let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
+      // this.videoWidth = ~~(
+      //   (Math.min(this.$refs.right.clientWidth, this.maxRightWidth) -
+      //     window.innerWidth * 0.04 -
+      //     -1) /
+      //   fen
+      // );
+      // this.videoHeight = ~~((maxHeight - 60 - 1) / fen);
       this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
       this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
       this.videoArr = this.videoArr.map(item => {
         item.width = this.videoWidth;
+        item.height = this.videoHeight;
         return item;
       });
+      console.log(this.videoArr);
     },
     chooseFenlu(index) {
       this.operatorIndex = 0;
@@ -770,6 +780,7 @@ export default {
     },
     PreviewAreafullScreen() {
       this.setFullScreen(this.$refs.vedioWrap);
+      this.initWrapDom();
     },
     setFullScreen(target) {
       if (target.requestFullscreen) {
