@@ -82,9 +82,10 @@
                 </div>
                 <div class="info-other">
                   <div class="other-span">性别：{{$common.getEnumItemName("gender", item.genderCapture)}}</div>
-                  <div class="other-span">所属库：{{libraryType === 'captureFaceLib' ? '抓拍库' : item.faceLibraryName}}</div>
+                  <div class="other-span text-show">所属库：{{libraryType === 'captureFaceLib' ? '抓拍库' : item.faceLibraryName}}</div>
+                  <div class="other-span text-show" v-if="libraryType !== 'captureFaceLib'">人员类型：{{$common.getEnumItemName('staff_t', item.staffType)}}</div>
                   <div class="other-span">{{item.captureDatetime}}</div>
-                  <div class="other-span">{{item.channelName}}</div>
+                  <div class="other-span text-show" v-if="libraryType === 'captureFaceLib'">{{item.channelName}}</div>
                 </div>
               </div>
               <div class="item-num">
