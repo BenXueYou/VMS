@@ -254,6 +254,7 @@ export default {
       this.propertyOption = "";
       this.startTime = this.$common.getStartTime();
       this.endTime = this.$common.getCurrentTime();
+      this.selectDate = null;
       this.queryAct();
     },
     selectDateAct(dateStr) {
@@ -583,7 +584,7 @@ export default {
 	padding: 4px 12px;
 	font-size: 10px;
 }
-.faceRecord .checkBtnImg{
+.faceRecord .checkBtnImg {
 	position: absolute;
 	right: -5px;
 	top: -5px;
@@ -639,13 +640,13 @@ export default {
 	background: rgba(255, 255, 255, 0.1);
 	color: #ffffff;
 	margin-right: 9px;
-	border: 0;
+	border: 1px solid transparent;
 	padding: 8px 20px;
 	font-size: 13px;
 }
 .faceRecord .el-checkbox-button:first-child .el-checkbox-button__inner,
 .faceRecord .el-radio-button:first-child .el-radio-button__inner {
-	border: 0;
+	border: 1px solid transparent;
 }
 .faceRecord .topBoxDateRadioBtnBox {
 	min-width: 310px;
@@ -658,7 +659,7 @@ export default {
 	background: rgba(40, 255, 187, 0.1);
 	border-radius: 2px;
 	border-radius: 2px;
-	border: 0;
+	border: 1px solid #26d39d;
 	box-shadow: 0px 0 0 0 #26d39d;
 }
 .faceRecord .topBoxDeviceBox {

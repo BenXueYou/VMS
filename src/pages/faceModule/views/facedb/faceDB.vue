@@ -494,7 +494,7 @@ export default {
     // 新增人脸库
     addfacedb() {
       this.updatefacedata = {};
-      this.faceDBDialogVisible = !this.faceDBDialogVisible;
+      this.faceDBDialogVisible = true;
     },
     // 编辑人脸库
     editFaceLib(row) {
@@ -675,7 +675,7 @@ export default {
       // });
     },
     closeFaceDBDialogAct(is) {
-      this.faceDBDialogVisible = !this.faceDBDialogVisible;
+      this.faceDBDialogVisible = false;
       if (is) {
         this.getStaffLibList();
       }

@@ -200,16 +200,18 @@ export default {
       this.checkedFaceUuidList = []; // string[]人脸库否
       this.staffName = null; // string人员姓名否
       this.certificateNum = null; // string证件号码否
-      this.genderOption = null; // string抓拍性别否
+      this.genderOption = ""; // string抓拍性别否
       this.startTime = this.$common.getStartTime();
       this.endTime = this.$common.getCurrentTime();
+      this.selectDate = null;
     },
     transferAct(transferArray) {
       this.checkedFaceUuidList = transferArray;
     },
     transferTaskAct(transferArray) {
       this.checkedTaskUuidList = transferArray;
-      this.getFaceLibsAndDeviceList(transferArray);
+      let arr = JSON.parse(JSON.stringify(transferArray));
+      this.getFaceLibsAndDeviceList(arr);
     },
     changeShowStatus(flag) {
       this.showImg = flag;
@@ -501,7 +503,7 @@ export default {
       dialogfullscreenLoading: false,
       staffName: null,
       certificateNum: null,
-      genderOption: null
+      genderOption: ""
     };
   }
 };
@@ -538,13 +540,14 @@ export default {
 	background: rgba(255, 255, 255, 0.1);
 	color: #ffffff;
 	margin-right: 9px;
-	border: 0;
+	border: 1px solid transparent;
 	padding: 8px 20px;
 	font-size: 13px;
 }
+.el-checkbox-button.is-focus .el-checkbox-button__inner,
 .CompareRecord .el-checkbox-button:first-child .el-checkbox-button__inner,
 .CompareRecord .el-radio-button:first-child .el-radio-button__inner {
-	border: 0;
+	border: 1px solid transparent;
 }
 .CompareRecord .topBoxDateRadioBtnBox {
 	min-width: 310px;
@@ -557,7 +560,7 @@ export default {
 	background: rgba(40, 255, 187, 0.1);
 	border-radius: 2px;
 	border-radius: 2px;
-	border: 0;
+	border: 1px solid #26d39d;
 	box-shadow: 0px 0 0 0 #26d39d;
 }
 .CompareRecord .topBoxDeviceBox {

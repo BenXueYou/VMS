@@ -127,8 +127,10 @@ export default {
         this.audio.autoplay = "autoplay";
         this.audio.isPlay = false;
       }
-      this.audio.pause();
-      this.audio.src = data.soundUrl;
+      if (this.audio.isPlay) {
+        this.audio.pause();
+      }
+      this.audio.src = this.$common.setPictureShow(data.soundUrl);
       this.audio.play();
       this.audio.isPlay = true;
     },

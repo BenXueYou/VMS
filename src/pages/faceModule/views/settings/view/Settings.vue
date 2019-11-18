@@ -230,14 +230,10 @@ export default {
         this.audio.autoplay = "autoplay";
         this.audio.isPlay = false;
       }
-      if (
-        this.audio.src &&
-				!this.audio.isPlay &&
-				this.audio.src === tag.soundUrl
-      ) {
+      if (this.audio.src && !this.audio.isPlay) {
         this.audio.pause();
       } else {
-        this.audio.src = tag.soundUrl;
+        this.audio.src = this.$common.setPictureShow(tag.soundUrl);
         this.audio.play();
         this.audio.isPlay = true;
       }

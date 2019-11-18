@@ -3,7 +3,8 @@
 		class="GlobalAlarmDialogClass"
 		:visible.sync="dialogShow"
 		@close="closeDialog"
-		:title="taskInfo.taskName||'布控报警'"
+		:close-on-click-modal="false"
+		:title="dialogParama.faceMonitorName||'布控报警'"
 		v-dialogDrag
 	>
 		<div class="GlobalAlarmDialog">
