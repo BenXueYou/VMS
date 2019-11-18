@@ -213,6 +213,13 @@ export default {
     }
   },
   data() {
+    const validatorlength = (rule, value, callback) => {
+      if (parseInt(value) < 1 || parseInt(value) > 20) {
+        callback(new Error("目标人列表需为1-20"));
+      } else {
+        callback();
+      }
+    };
     return {
       formLabelAlign: {
         faceMonitorName: "",
@@ -241,6 +248,7 @@ export default {
         ],
         reservedCount: [
           { required: true, message: "目标人列表不能为空", trigger: "blur" },
+          { validator: validatorlength, trigger: "blur" }
         ],
         alarmed: [
           { required: true, message: '请选择是否报警', trigger: 'change' },
