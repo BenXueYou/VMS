@@ -127,8 +127,7 @@
             <el-button type="text"
                        v-if="index==1"
                        @click="remoteControl(scope.row)"
-                       :class="{'offLine':scope.row.netStatus==='offline'}"
-                       :disabled="(!!scope.row.extInfo.remoteConfig)"
+                       :disabled="(!!scope.row.extInfo.fdLib!=1)"
                        size="small">配置</el-button>
             <el-button type="text"
                        v-if="index!=1"
@@ -186,6 +185,11 @@
                          :deviceTypeArr="deviceTypeArr"
                          @commit="addSuccess"
                          :localService="localService"></manual-add-dialog>
+      <video-set-dialog :visible.sync="videoDialogVisiable"
+                        :deviceUuid="deviceUuid">
+
+      </video-set-dialog>
+
     </div>
   </div>
 </template>
@@ -544,8 +548,6 @@ export default {
       // let deviceUuid = "494F1F75B788464BB05AE87DAB1E8AF2";
       // this.deviceUuid = deviceUuid;
 
-      this.deviceUuid = row.deviceUuid;
-      this.remoteControlDialogVisiable = true;
       this.deviceUuid = row.deviceUuid;
       // eslint-disable-next-line
       this[
