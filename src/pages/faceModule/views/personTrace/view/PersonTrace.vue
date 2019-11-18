@@ -355,6 +355,7 @@ export default {
       this.pois = [];
       this.samePlaArr = [];
       this.isShowSamePlaDialog = false;
+      this.isShowMenuList = false;
     },
     deleteImage() {
       this.imageUrl = "";

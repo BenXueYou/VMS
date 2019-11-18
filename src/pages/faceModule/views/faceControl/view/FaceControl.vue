@@ -256,7 +256,7 @@ export default {
       faceMonitorUuid: "",
       alarmTotal: 0,
       itemWidth: "32%",
-      limit: 9,
+      limit: 6,
     };
   },
   created() {},
@@ -289,7 +289,7 @@ export default {
       setTimeout(() => {
         this.$refs.faceDB.isShowMoreButton();
         this.$refs.camera.isShowMoreButton();
-        this.limit = 9;
+        this.limit = 6;
         this.itemWidth = "32%";
         this.getAlarmList(this.faceMonitorUuid);
       }, 600);

@@ -100,10 +100,11 @@
                style="width: 20%">人脸抓拍图片需达到的质量：{{intelModelObj.qualities ? $common.getEnumItemName("face_quality", intelModelObj.qualities[intelModelObj.qualities.length-1]) : ""}} </div>
         </div>
         <div class="info-block">
-          <div class="block-line">时间段：
+          <div class="block-line"
+               style="width:100%;display:flex;flex-flow: row wrap;">时间段：
             <template v-for="(item, index) in intelModelObj.timeList">
               <span :key="index">
-                {{item.startTime}}至{{item.endTime}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{item.startTime ? item.startTime.substr(0, 5) : ""}}至{{item.endTime ? item.endTime.substr(0, 5) : ""}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </span>
             </template>
           </div>
