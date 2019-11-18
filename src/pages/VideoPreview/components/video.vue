@@ -157,6 +157,9 @@ export default {
       speed: 1 // 视频播放速度
     };
   },
+  destroyed() {
+    this.stopVideo();
+  },
   computed: {
     left() {
       // console.log((this.index % this.fenlu) * this.width);
@@ -341,8 +344,9 @@ export default {
       this.$refs.canvasRefs.appendChild(this.canvas);
     },
     stopVideo() {
-      alert(1);
-      this.video_mgr.stop(this.video);
+      if (this.video && this.video_mgr) {
+        this.video_mgr.stop(this.video);
+      }
       if (this.canvas) {
         this.$refs.canvasRefs.removeChild(this.canvas);
         this.canvas = null;
