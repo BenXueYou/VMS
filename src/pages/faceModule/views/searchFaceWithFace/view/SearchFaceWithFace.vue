@@ -82,7 +82,7 @@
                 </div>
                 <div class="info-other">
                   <div class="other-span">性别：{{$common.getEnumItemName("gender", item.genderCapture)}}</div>
-                  <div class="other-span">所属库：{{libraryType === 'captureFaceLib' ? '抓拍库' : '人脸库'}}</div>
+                  <div class="other-span">所属库：{{libraryType === 'captureFaceLib' ? '抓拍库' : item.faceLibraryName}}</div>
                   <div class="other-span">{{item.captureDatetime}}</div>
                   <div class="other-span">{{item.channelName}}</div>
                 </div>
@@ -285,20 +285,24 @@ export default {
     },
     getFaceList() {
       this.getImg();
-      if (!this.imageBase64) {
-        this.$cToast.warn("请添加图片");
-        return;
-      }
-      if (!this.similarity) {
-        this.$cToast.warn("请输入相似度");
-        return;
-      }
-      if (this.similarity < 0 || this.similarity > 100) {
-        this.$cToast.warn("相似度只能在0到100%范围内");
-        return;
-      }
-      this.isLoading = true;
       setTimeout(() => {
+        if (!this.imageBase64) {
+          this.$cToast.warn("请添加图片");
+          return;
+        }
+        if (!this.similarity) {
+          this.$cToast.warn("请输入相似度");
+          return;
+        }
+        if (this.similarity < 0 || this.similarity > 100) {
+          this.$cToast.warn("相似度只能在0到100%范围内");
+          return;
+        }
+        if (!this.startTime || !this.endTime) {
+          this.$cToast.warn("开始结束时间不能为空");
+          return;
+        }
+        this.isLoading = true;
         this.$searchFaceHttp
           .searchFace({
             limit: this.pageInfo.pageSize,
@@ -319,7 +323,7 @@ export default {
           .catch(() => {
             this.isLoading = false;
           });
-      }, 400);
+      }, 500);
     },
     searchFaceSuccess(body) {
       this.faceList = body.data.list;
@@ -341,24 +345,35 @@ export default {
     },
     turnSearchCommon(item) {
       if (this.imageList.length > 5) {
+        this.imageList.shift();
+        this.imageList.forEach((v, i) => {
+          this.$set(v, "selected", false);
+        });
+        this.imageList.splice(0, 0, {
+          key: this.genModelIndex(),
+          picBaseUrl: "",
+          imageUrl: item.faceCapturePhotoUrl,
+          selected: true,
+        });
+        this.selectedKey = this.imageList[0].key;
+      } else {
         this.imageList.pop();
+        this.imageList.forEach((v, i) => {
+          this.$set(v, "selected", false);
+        });
+        this.imageList.push({
+          key: this.genModelIndex(),
+          picBaseUrl: "",
+          imageUrl: item.faceCapturePhotoUrl,
+          selected: true,
+        });
+        this.selectedKey = this.imageList[this.imageList.length - 1].key;
+        this.imageList.push({
+          key: this.genModelIndex(),
+          picBaseUrl: "",
+          imageUrl: ""
+        });
       }
-      this.imageList.pop();
-      this.imageList.forEach((v, i) => {
-        this.$set(v, "selected", false);
-      });
-      this.imageList.push({
-        key: this.genModelIndex(),
-        picBaseUrl: "",
-        imageUrl: item.faceCapturePhotoUrl,
-        selected: true,
-      });
-      this.selectedKey = this.imageList[this.imageList.length - 1].key;
-      this.imageList.push({
-        key: this.genModelIndex(),
-        picBaseUrl: "",
-        imageUrl: ""
-      });
       this.defaultSelect();
     },
     turnToPersonTrace(item) {
