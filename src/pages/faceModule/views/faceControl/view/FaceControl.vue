@@ -58,6 +58,7 @@
                      active-color="rgba(32,204,150,0.2)"
                      inactive-color="rgba(255,255,255,0.2)"
                      @change="switchChange"
+                     :disabled="faceMonitorObj.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? true : false"
                      :active-value="1"
                      :inactive-value="0"></el-switch>
           <span>状态</span>
@@ -69,6 +70,7 @@
             <span>编辑</span>
           </div>
           <div class="status"
+               v-if="faceMonitorObj.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
                @click="deleteCon">
             <img src="@/assets/images/delete2.png"
                  width="14px"

@@ -3,16 +3,22 @@
 		class="GlobalAlarmDialogClass"
 		:visible.sync="dialogShow"
 		@close="closeDialog"
-		:title="taskInfo.taskName||'布控报警'"
+		:close-on-click-modal="false"
+		:title="dialogParama.faceMonitorName||'布控报警'"
 		v-dialogDrag
 	>
 		<div class="GlobalAlarmDialog">
 			<el-row type="flex" justify="flex-start" class="GlobalAlarmDialogBodyClass" :gutter="5">
 				<div>
+					<!-- facelog-->
 					<div class="leftColBg">
-						<img
+						<!-- <img
 							class="GlobalAlarmDialog-card-img"
 							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
+						/> -->
+						<img
+							class="GlobalAlarmDialog-card-img"
+							:src="$common.setPictureShow('http://192.168.9.88:9080/2,02b9672d72d088.jpg',this.picSourceType)"
 						/>
 					</div>
 					<p>抓拍图片</p>
@@ -108,7 +114,7 @@ export default {
       imgSrc: "",
       imageHeader: RestApi.api.imageUrl,
       dialogShow: true,
-      picSourceType: window.config.picSourceType
+      picSourceType: window.config.PicSourceType
     };
   },
   watch: {

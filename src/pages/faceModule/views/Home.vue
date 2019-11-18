@@ -173,7 +173,12 @@
 					</el-col>
 				</el-row>
 				<el-row class="asidListBox">
-					<div class="asidListRow" v-for="(o,index) in 5" @dblclick="doRecoginizeDetail(index)" :key="index">
+					<div
+						class="asidListRow"
+						v-for="(o,index) in 5"
+						@dblclick="doRecoginizeDetail(index)"
+						:key="index"
+					>
 						<recoginize-card
 							imgWidth="99"
 							:recoginizeItem="comparePhotoList[index]"
@@ -466,7 +471,7 @@ export default {
         this.checkedTaskUUidList = [];
         for (var i = 0; i < this.taskList.length; i++) {
           var temp = this.taskList[i];
-          this.checkedTaskUUidList.push(temp.taskuuid);
+          this.checkedTaskUUidList.push(temp.faceMonitorUuid);
         }
       } else {
         this.checkedTaskUUidList = [];

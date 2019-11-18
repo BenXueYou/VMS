@@ -14,7 +14,7 @@
 				</div>
 				<p class="time">
 					<span class="item">{{item.staffName||""}} &nbsp;</span>
-					<span class="item">{{item.gender||""}}</span>
+					<span style="margin:0 5px" class="item">{{item.gender||""}}</span>
 					<span
 						class="item textclipsClass"
 						@mouseover="mymouseover"
@@ -365,6 +365,14 @@ $fontcolor: #aaa;
 		}
 		.credentialType {
 			text-align: center !important;
+		}
+		.textclipsClass {
+			font-family: "PingFangSC-Regular";
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
 		}
 	}
 }

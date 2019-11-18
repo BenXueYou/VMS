@@ -187,7 +187,7 @@ export default {
       staffInfo: {
         faceUuid: null, // 人脸uuid
         staffName: null, // 姓名
-        gender: null, // 性别
+        gender: "male", // 性别
         phoneNo: null, // 手机号
         credentialType: null, // 证件类型
         credentialNo: null, // 证件号
@@ -218,7 +218,7 @@ export default {
         this.staffInfo = {
           faceUuid: null, // 人脸uuid
           staffName: null, // 姓名
-          gender: null, // 性别
+          gender: "male", // 性别
           phoneNo: null, // 手机号
           credentialType: null, // 证件类型
           credentialNo: null, // 证件号

@@ -37,7 +37,8 @@
           <el-form-item label="人脸库："
                         prop="faceLibraryUuids"
                         required>
-            <div class="add-item">
+            <div class="add-item"
+                 v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true">
               <img src="@/assets/images/faceModule/add.png"
                    style="cursor: pointer;"
                    @click="addFaceDB">
@@ -60,6 +61,7 @@
                     </div>
                   </template>
                   <div class="del-image"
+                       v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
                        @click="deleteItem(item)">
                     <img src="@/assets/images/delete_x.png"
                          width="13px"
@@ -74,6 +76,7 @@
                        height="11px">
                   <span style="margin-left: 4px">{{item.faceLibraryName}}</span>
                   <div class="del-image"
+                       v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
                        @click="deleteItem(item)">
                     <img src="@/assets/images/delete_x.png"
                          width="13px"
@@ -86,7 +89,8 @@
           <el-form-item label="视频源："
                         prop="channelUuids"
                         required>
-            <div class="add-item">
+            <div class="add-item"
+                 v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true">
               <img src="@/assets/images/faceModule/add.png"
                    style="cursor: pointer;"
                    @click="addVideoSource">
@@ -102,6 +106,7 @@
                        height="11px">
                   <span style="margin-left: 4px">{{item.label}}</span>
                   <div class="del-image"
+                       v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
                        @click="deleteVideoItem(item)">
                     <img src="@/assets/images/delete_x.png"
                          width="13px"
@@ -177,6 +182,7 @@
                        active-color="rgba(32,204,150,0.2)"
                        inactive-color="rgba(255,255,255,0.2)"
                        :active-value="1"
+                       :disabled="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? true : false"
                        :inactive-value="0"></el-switch>
           </el-form-item>
         </el-form>

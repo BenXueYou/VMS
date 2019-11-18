@@ -494,7 +494,7 @@ export default {
     // 新增人脸库
     addfacedb() {
       this.updatefacedata = {};
-      this.faceDBDialogVisible = !this.faceDBDialogVisible;
+      this.faceDBDialogVisible = true;
     },
     // 编辑人脸库
     editFaceLib(row) {
@@ -674,8 +674,9 @@ export default {
       //   }
       // });
     },
+    // 关闭人脸库弹窗
     closeFaceDBDialogAct(is) {
-      this.faceDBDialogVisible = !this.faceDBDialogVisible;
+      this.faceDBDialogVisible = false;
       if (is) {
         this.getStaffLibList();
       }
@@ -696,6 +697,7 @@ export default {
       this.resetall();
       this.getStaffLibStaffData();
     },
+    // 关闭人脸新增页面
     closeStaffAddDialogAct(is) {
       this.isUpdate = !this.isUpdate;
       this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;
