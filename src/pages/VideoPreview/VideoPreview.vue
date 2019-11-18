@@ -682,9 +682,10 @@ export default {
           }
           break;
         case "全屏":
-          this.setFullScreen(
-            this.$refs["video" + this.operatorIndex][0].getCanvas()
-          );
+          // this.setFullScreen(
+          //   this.$refs["video" + this.operatorIndex][0].getCanvas()
+          // );
+          this.PreviewAreafullScreen();
           break;
         case "图像调节":
           if (!this.videoArr[this.operatorIndex].channelUuid) {
@@ -710,6 +711,7 @@ export default {
           this.switchMaLiu(this.operatorIndex, "thrid");
           break;
         case "打开音频":
+
           this.openVideoVoice(this.operatorIndex);
           break;
         default:
@@ -717,7 +719,14 @@ export default {
       }
     },
     openVideoVoice(index) {
-      this.videoArr[index].isStopVoice = !ths.videoArr[index].isStopVoice;
+      console.log(index);
+      console.log(this.videoArr);
+      let item = this.videoArr[index];
+      item.isStopVoice = !item.isStopVoice;
+
+      // this.videoArr[index].isStopVoice = !this.videoArr[index].isStopVoice;
+      this.videoArr.splice(index, 1, item);
+      this.videoArr.concat();
     },
     startRecord(index) {
       if (!this.videoArr[index].channelUuid) {
@@ -733,8 +742,10 @@ export default {
         }
         return item;
       });
-      this.videoArr[index].isRecord = true;
-      this.videoArr.concat();
+      let item = this.videoArr[index];
+      item.isRecord = true;
+      this.videoArr.splice(index, 1, item);
+
       this.$refs["video" + index][0].record();
     },
     stopRecord(index) {
@@ -751,9 +762,9 @@ export default {
         }
         return item;
       });
-
-      this.videoArr[index].isRecord = false;
-      this.videoArr.concat();
+      let item = this.videoArr[index];
+      item.isRecord = false;
+      this.videoArr.splice(index, 1, item);
       this.$refs["video" + index][0].stopRecord();
     },
     switchLuxiang(channelUuid) {

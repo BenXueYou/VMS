@@ -130,24 +130,7 @@ export default {
   data() {
     return {
       icons,
-      menuData: [
-        {
-          icon: "voice",
-          name: "声音"
-        },
-        {
-          icon: "video",
-          name: "录像"
-        },
-        {
-          icon: "screenshot",
-          name: "抓图"
-        },
-        {
-          icon: "close",
-          name: "关闭"
-        }
-      ],
+
       ip: "",
       port: "",
       video_mgr: null,
@@ -161,6 +144,26 @@ export default {
     this.stopVideo();
   },
   computed: {
+    menuData() {
+      return [
+        {
+          icon: this.isStopVoice ? "closevideo" : "voice",
+          name: "声音"
+        },
+        {
+          icon: "video",
+          name: this.isRecord ? "停止录像" : "录像"
+        },
+        {
+          icon: "screenshot",
+          name: "抓图"
+        },
+        {
+          icon: "close",
+          name: "关闭"
+        }
+      ];
+    },
     left() {
       // console.log((this.index % this.fenlu) * this.width);
       if (this.isAutoScreen) {
@@ -186,29 +189,6 @@ export default {
     }
   },
   watch: {
-    isRecord(val) {
-      if (val) {
-      } else {
-        this.menuData = [
-          {
-            icon: "voice",
-            name: "声音"
-          },
-          {
-            icon: "video",
-            name: "录像"
-          },
-          {
-            icon: "screenshot",
-            name: "抓图"
-          },
-          {
-            icon: "close",
-            name: "关闭"
-          }
-        ];
-      }
-    },
     position(val) {
       console.log(val);
     },
@@ -243,26 +223,6 @@ export default {
     }
   },
   methods: {
-    updateMenu() {
-      this.menuData = [
-        {
-          icon: this.isStopVoice ? "closevideo" : "voice",
-          name: "声音"
-        },
-        {
-          icon: "video",
-          name: this.isRecord ? "停止" : "停止录像"
-        },
-        {
-          icon: "screenshot",
-          name: "抓图"
-        },
-        {
-          icon: "close",
-          name: "关闭"
-        }
-      ];
-    },
     async speedUp() {
       await this.video_mgr.speedControl(this.video, ++this.speed);
     },
@@ -375,11 +335,9 @@ export default {
       e.preventDefault();
     },
     clickMenu(index) {
-      console.log(index);
-      console.log(this.menuData[index].name);
       if (index === 0) {
         // 声音
-        this.$emit("openVideoVoice");
+        this.$emit("openVideoVoice", this.index);
       } else if (index === 1) {
         // 录像
         if (!this.isRecord) {

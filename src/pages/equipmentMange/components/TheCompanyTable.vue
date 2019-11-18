@@ -526,7 +526,7 @@ export default {
         this.serviceList(this.viewType);
         this.DType(this.viewType);
       } else {
-        this.$emit("showEdit", row.deviceUuid);
+        this.$emit("showEdit", row.deviceUuid, row.netStatus);
       }
       // this.editEquipMentDialgoVisible = true;
     },

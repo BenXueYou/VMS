@@ -23,8 +23,7 @@
                :model="data"
                class='deviceInfoPanel'
                label-width="160px">
-        <el-form-item label="请添加人脸库："
-                      prop="interval">
+        <el-form-item label="请添加人脸库：">
           <el-button class='iconButton'
                      @click="openDB()"
                      type="primary"
