@@ -1,11 +1,10 @@
-import Vue from 'Vue'
-import Main from './main.vue'
+import Vue from "Vue";
+import Main from "./main.vue";
 
 let ContextMenuDom = Vue.extend(Main);
 let isfirst = false;
 let contextmenu = null;
-const ContextMenu = function (options) {
-
+const ContextMenu = function(options) {
   options.isshow = true;
   if (isfirst) {
     contextmenu.isshow = true;
@@ -14,6 +13,7 @@ const ContextMenu = function (options) {
       contextmenu.initDom();
     }, 0);
   } else {
+    console.log(options);
     contextmenu = new ContextMenuDom({
       el: document.createElement("div"),
       data: options
@@ -21,6 +21,6 @@ const ContextMenu = function (options) {
     document.body.appendChild(contextmenu.$el);
     isfirst = true;
   }
-}
+};
 
 export default ContextMenu;
