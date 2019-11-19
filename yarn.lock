@@ -2628,7 +2628,7 @@ electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.295, electron-to-chromium
   resolved "https://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.306.tgz#e8265301d053d5f74e36cb876486830261fbe946"
   integrity sha1-6CZTAdBT1fdONsuHZIaDAmH76UY=
 
-element-ui@^2.7.0:
+element-ui@^2.12.0:
   version "2.12.0"
   resolved "https://registry.npm.taobao.org/element-ui/download/element-ui-2.12.0.tgz#a893bc11ae4f7dbb7e9d541606f23e643f131ee4"
   integrity sha1-qJO8Ea5Pfbt+nVQWBvI+ZD8THuQ=
