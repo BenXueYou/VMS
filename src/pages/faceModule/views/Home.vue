@@ -242,7 +242,7 @@ export default {
       visible_popver: false, // task弹窗是否弹出，默认隐藏
       rtspAddress: "",
       channelInfoList: [], // 所有通道名称和ID的二元list
-      notCheckAll: true, // 通道勾选的list的长度
+      notCheckAll: false, // 通道勾选的list的长度
       checkTaskAll: true,
       checkedChannelsUuidList: [], // 当前勾选的通道Id的list
       checkedChannel: "",
@@ -353,7 +353,7 @@ export default {
       let arr = [];
       val.map(item => {
         if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
-          arr.push(item);
+          arr.unshift(item);
           this.todayCompareCount += 1;
         }
       });
@@ -525,6 +525,10 @@ export default {
         channelUuid: channelUuid,
         streamType: this.streamType
       };
+      // 停止上一个视频的播放
+      if (this.video) {
+        this.video_mgr.stop(this.video);
+      }
       api
         .getRtspUrlByChannelUuidApi(data)
         .then(res => {
@@ -557,10 +561,6 @@ export default {
       } else {
         w = 2560;
         h = 1440;
-      }
-      // 停止上一个视频的播放
-      if (!this.video) {
-        this.video_mgr.stop(this.video);
       }
       // 设置新的视频对象播放参数
       this.video = await this.video_mgr.setup(

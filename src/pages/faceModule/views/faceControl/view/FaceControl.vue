@@ -322,6 +322,7 @@ export default {
       } else {
         this.enabled = 0;
       }
+      this.faceMonitorUuid = "";
       this.getMonitoringTaskList();
     },
     check(item) {
@@ -514,6 +515,7 @@ export default {
     },
     editMonitoringTaskStatusSuccess(body) {
       this.$cToast.success(body.msg);
+      this.resetData();
       this.getMonitoringTaskList();
     },
     turnToAlarm() {

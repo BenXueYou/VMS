@@ -190,10 +190,18 @@
 		<!-- ======================================================= 人脸 弹 窗 ========================================================== -->
 		<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
 			<div class="leftImgBox">
-				<img :src="$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)" alt />
+				<!-- <img :src="$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)" alt /> -->
+				<el-image
+					:src="$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)"
+					:preview-src-list="[$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)]"
+				></el-image>
 			</div>
 			<div class="rightImgBox">
-				<img :src="$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)" alt />
+				<!-- <img :src="$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)" alt /> -->
+				<el-image
+					:src="$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)"
+					:preview-src-list="[$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)]"
+				></el-image>
 			</div>
 		</el-dialog>
 	</el-row>

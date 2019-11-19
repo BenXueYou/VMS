@@ -1,11 +1,19 @@
 <template>
 	<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt" @close="close">
 		<div class="leftImgBox">
-			<img :src="$common.setPictureShow(faceImgDialogData.faceCapturePhotoUrl,PicSourceType)" alt />
+			<!-- <img :src="$common.setPictureShow(faceImgDialogData.faceCapturePhotoUrl,PicSourceType)" alt /> -->
+			<el-image
+				:src="$common.setPictureShow(faceImgDialogData.facePhotoUrl,PicSourceType)"
+				:preview-src-list="[$common.setPictureShow(faceImgDialogData.facePhotoUrl,PicSourceType)]"
+			></el-image>
 			<p>{{faceImgDialogData.channelName||'抓拍相机'}}</p>
 		</div>
 		<div class="rightImgBox">
-			<img :src="$common.setPictureShow(faceImgDialogData.panoramaCapturePhotoUrl,PicSourceType)" alt />
+			<!-- <img :src="$common.setPictureShow(faceImgDialogData.panoramaCapturePhotoUrl,PicSourceType)" alt /> -->
+			<el-image
+				:src="$common.setPictureShow(faceImgDialogData.panoramaCapturePhotoUrl,PicSourceType)"
+				:preview-src-list="[$common.setPictureShow(faceImgDialogData.panoramaCapturePhotoUrl,PicSourceType)]"
+			></el-image>
 			<div class="flexBox">
 				<p>
 					<span>特征识别：{{faceImgDialogData.sunglasses?'戴墨镜 ':" "}} {{faceImgDialogData.mask?'戴口罩':""}}</span>
