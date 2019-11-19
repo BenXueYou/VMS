@@ -325,6 +325,7 @@ export default {
       } else {
         this.enabled = 0;
       }
+      this.faceModelUuid = "";
       this.getIntelModelList();
     },
     resetData() {
@@ -535,6 +536,7 @@ export default {
     },
     editIntelModelStatusSuccess(body) {
       this.$cToast.success(body.msg);
+      this.resetData();
       this.getIntelModelList();
     },
     turnToJudge() {

@@ -311,7 +311,7 @@ export default {
             imageBase64: this.imageBase64,
             channelUuids: this.channelUuids,
             libraryType: this.libraryType,
-            similarity: this.similarity,
+            similarity: parseInt(this.similarity),
             captureTimeStart: this.startTime,
             captureTimeEnd: this.endTime,
             projectUuid: this.$store.state.home.projectUuid

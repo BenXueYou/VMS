@@ -254,11 +254,13 @@ export default {
 
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
-      let elements = data.elements.map((item, index) => {
+      let newdata = JSON.parse(JSON.stringify(data));
+      let elements = newdata.elements.map((item, index) => {
         item.position = index;
         return item;
       });
       console.log(elements);
+      this.videoArr = [];
       this.videoArr = elements;
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
@@ -711,7 +713,6 @@ export default {
           this.switchMaLiu(this.operatorIndex, "thrid");
           break;
         case "打开音频":
-
           this.openVideoVoice(this.operatorIndex);
           break;
         default:
