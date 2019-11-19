@@ -28,6 +28,13 @@ export function operatorOrgTree(data) {
     data
   });
 }
+export function getScond(viewType) {
+  let url = sbUrl.getScondUrl(viewType);
+  return axios({
+    method: "get",
+    url
+  });
+}
 // 操作标签 上下移动
 export function opeartorTag(data) {
   let url = sbUrl.operatorTagUrl;

@@ -313,6 +313,7 @@ export default {
           data.push(this.data[i].endTime);
         }
       }
+      console.log(this.data.length);
       if (data.length) {
         data.sort();
         let len = data.length - 1;

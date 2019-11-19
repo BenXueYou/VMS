@@ -532,6 +532,7 @@ export default {
       this.getTableData();
       // this.deviceUuid = "123";
       // this.remoteControlDialogVisiable = true;
+      this.$emit("changeViewType", arr[index]);
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;

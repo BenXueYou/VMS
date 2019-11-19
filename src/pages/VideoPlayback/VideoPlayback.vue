@@ -61,7 +61,7 @@
 
     </screenshot-dialog>
     <download-dialog :visible.sync="downloadVisible"></download-dialog>
-    <local-broadcast-dialog></local-broadcast-dialog>
+    <local-broadcast-dialog :visible.sync="showBroadCastVisible"></local-broadcast-dialog>
     <tree-append-tag-dialog @confirm="addView"
                             title="添加视图"
                             labelName="视图名称"
@@ -108,6 +108,7 @@ export default {
       videoSpeed: 1,
       videoinfo: {},
       appendViewVisible: false,
+      showBroadCastVisible: false,
       setTimeVisible: false,
       controlData: new Array(4).fill({
         fileName: "",
@@ -124,7 +125,7 @@ export default {
           rtspUrl: "",
           position: index,
           fileName: "测试文件名字1",
-          // startTime: "2019-11-12 00:00:00",
+          // startTime: "2019-11-19 00:00:00",
           // endTime: "2019-11-19 23:59:59",
           startTime: "",
           endTime: "",
@@ -568,8 +569,8 @@ export default {
               "",
               {
                 dangerouslyUseHTMLString: true,
-                confirmButtonText: "确定",
-                cancelButtonText: "取消"
+                confirmButtonText: "取消",
+                cancelButtonText: "确"
               }
             )
               .then(() => {})
@@ -589,8 +590,8 @@ export default {
             "提示",
             {
               dangerouslyUseHTMLString: true,
-              confirmButtonText: "确定",
-              cancelButtonText: "取消"
+              confirmButtonText: "取消",
+              cancelButtonText: "确定"
             }
           )
             .then(() => {})

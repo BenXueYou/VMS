@@ -70,6 +70,7 @@ export default {
       if (!this.startTime || !this.endTime) {
         return [];
       }
+      // 这里需要优化一下，这里的数组不用全部显示出来
       let fenshu = 5 * Math.pow(2, this.scale);
       console.log(fenshu);
       let allTime = this.getAllTime();
@@ -78,13 +79,27 @@ export default {
         return this.getFormatTime(new Date(this.startTime).getTime() + now);
       };
       let data = new Array(fenshu);
+      // let scaleNow = Math.pow(2, this.scale - 1);
+      let allWidth = Math.pow(2, this.scale - 1) * 100;
+
+      let newDate = [];
+      let left = Math.abs(this.left);
       for (let i = 0, len = data.length; i < len; i++) {
-        data[i] = {
-          left: (i / data.length) * 100,
-          time: calcTime(i)
-        };
+        let a = i / data.length;
+        let fenshu = a * allWidth;
+        let isInMiddle = false;
+        console.log(fenshu + "   " + left);
+        if (fenshu >= left && fenshu <= left + 100) {
+          isInMiddle = true;
+        }
+        if (isInMiddle) {
+          newDate.push({
+            left: a * 100,
+            time: calcTime(i)
+          });
+        }
       }
-      return data;
+      return newDate;
     }
   },
   data() {

@@ -120,6 +120,12 @@ export default {
       default() {
         return "";
       }
+    },
+    viewType: {
+      type: String,
+      default() {
+        return "";
+      }
     }
   },
   data() {
@@ -281,6 +287,18 @@ export default {
       //   this.$message.error("请选择左边导入的标签!");
       //   return;
       // }
+      // 导入通道的时候去获取下拉列表
+      api.getScond(this.viewType).then(res => {
+        console.log(res);
+        if (res.data.data) {
+          let data = res.data.data || [];
+          data.unshift({
+            value: null,
+            label: "全部通道类型"
+          });
+          this.options = data;
+        }
+      });
       this.checkedNode = [];
       this.exportDialogVisible = true;
     },

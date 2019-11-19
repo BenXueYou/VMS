@@ -22,7 +22,9 @@
       <div class="timemask"
            v-show="show"
            :style="{'left':whiteLeft}">
-        {{time.split(" ")}}
+        <!-- {{time.split(" ")[0]}}
+        <br> -->
+        {{time.split(" ")[1]}}
       </div>
     </div>
 

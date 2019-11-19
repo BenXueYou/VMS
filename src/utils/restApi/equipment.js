@@ -86,6 +86,9 @@ export default {
   getDoorListUrl: deviceUuid => `${ycPrefix}deviceDoorList/${deviceUuid}/`,
   getDoorDutouUrl: channelUuid => `${ycPrefix}deviceDoor/${channelUuid}`,
   setDoorDutouUrl: channelUuid => `${ycPrefix}deviceDoor/${channelUuid}`,
+  // 根据类型来获取耳机菜单
+  getScondUrl: subViewType =>
+    `${ycPrefix}project/${projectUuid}/subViewType/${subViewType}`,
   // 获取设备的时段列表
   getTimeUrl: `${ycPrefix}device/passthrough/periodList`,
   setTimeUrl: `${ycPrefix}device/passthrough/periodList`,
