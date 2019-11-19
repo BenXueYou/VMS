@@ -14,12 +14,12 @@
 					<div class="leftColBg">
 						<!-- <img
 							class="GlobalAlarmDialog-card-img"
-							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
+							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)"
 						/>-->
 						<el-image
 							class="GlobalAlarmDialog-card-img"
-							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
-							:preview-src-list="[$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)]"
+							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)"
+							:preview-src-list="[$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)]"
 						></el-image>
 					</div>
 					<p>抓拍图片</p>
@@ -138,7 +138,7 @@ export default {
       imgSrc: "",
       imageHeader: RestApi.api.imageUrl,
       dialogShow: true,
-      picSourceType: window.config.PicSourceType
+      PicSourceType: window.config.PicSourceType
     };
   },
   watch: {
