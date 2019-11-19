@@ -17,6 +17,7 @@
 							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
 						/>-->
 						<el-image
+							class="GlobalAlarmDialog-card-img"
 							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
 							:preview-src-list="[$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)]"
 						></el-image>
@@ -38,6 +39,7 @@
 							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
 						/>-->
 						<el-image
+							class="GlobalAlarmDialog-card-img"
 							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
 							:preview-src-list="[$common.setPictureShow(dialogParama.facePhotoUrl)]"
 						></el-image>

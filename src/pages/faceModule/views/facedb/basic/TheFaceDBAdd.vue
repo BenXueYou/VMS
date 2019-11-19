@@ -40,7 +40,6 @@
 				<div class="bodyBoxRightUploadClass">
 					<div class="staffNameInputBox">
 						<el-input v-model="staffInfo.staffName" placeholder="姓名"></el-input>
-						<span style="color:#ff5f5f;margin-left:10px;line-height:30px">*</span>
 					</div>
 					<el-radio-group v-model="staffInfo.gender">
 						<el-radio label="male">男</el-radio>
@@ -251,12 +250,30 @@ export default {
   },
   methods: {
     confirmAct() {
-      if (!this.$common.isPhoneNum(this.staffInfo.phoneNo)) {
+      if (
+        this.staffInfo.phoneNo &&
+				!this.$common.isPhoneNum(this.staffInfo.phoneNo)
+      ) {
+        debugger;
         this.$message.warning("请填写正确的手机号");
         return;
       }
-      if (!this.$common.isPhoneNum(this.staffInfo.createObjectURL)) {
+
+      if (
+        this.credentialType &&
+				this.credentialType === "id_card" &&
+				this.staffInfo.credentialNo &&
+				!this.$common.isCredentialNo(this.staffInfo.credentialNo)
+      ) {
         this.$message.warning("请填写正确的身份证号");
+        return;
+      }
+      if (!this.staffInfo.staffName) {
+        this.$message.warning("请填写姓名");
+        return;
+      }
+      if (!this.staffInfo.gender) {
+        this.$message.warning("请选择性别");
         return;
       }
       if (this.staffInfo.faceUuid) {
@@ -356,6 +373,11 @@ export default {
 .dialogwrapadd .bodyBoxRight .el-input__inner {
 	border: 1px solid rgba(255, 255, 255, 0.15);
 	border-radius: 2px;
+}
+.dialogwrapadd .bodyBoxRight .staffNameInputBox .el-input__inner {
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 2px;
+	width: calc(100% - 20px);
 }
 .dialogwrapadd .bodyBoxRight .bodyBoxRightUploadClass {
 	display: flex;
@@ -473,7 +495,12 @@ export default {
 			margin-left: 25px;
 			.staffNameInputBox {
 				.el-input {
-					width: 120px;
+					width: 150px;
+				}
+				.el-input::after {
+					content: '*';
+					color: #ff5f5f;
+					margin-left: 10px;
 				}
 			}
 			.phoneNumberInputBox {

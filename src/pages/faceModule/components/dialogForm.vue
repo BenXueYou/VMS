@@ -12,6 +12,7 @@
 							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
 						/>-->
 						<el-image
+							class="xydialog-card-img"
 							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
 							:preview-src-list="[$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)]"
 						></el-image>
@@ -46,6 +47,7 @@
 							:src="staffInfo.facePhotoUrl?imageHeader+staffInfo.facePhotoUrl:require('@/assets/user.png')"
 						/>-->
 						<el-image
+							class="xydialog-card-img"
 							:src="$common.setPictureShow(staffInfo.facePhotoUrl)"
 							:preview-src-list="[$common.setPictureShow(staffInfo.facePhotoUrl)]"
 						></el-image>
