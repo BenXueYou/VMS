@@ -47,7 +47,7 @@
 						<el-radio label="female">女</el-radio>
 					</el-radio-group>
 					<div class="phoneNumberInputBox">
-						<el-input v-model="staffInfo.phoneNo" placeholder="手机号码"></el-input>
+						<el-input type="number" v-model="staffInfo.phoneNo" placeholder="手机号码"></el-input>
 					</div>
 				</div>
 				<div>
@@ -251,6 +251,14 @@ export default {
   },
   methods: {
     confirmAct() {
+      if (!this.$common.isPhoneNum(this.staffInfo.phoneNo)) {
+        this.$message.warning("请填写正确的手机号");
+        return;
+      }
+      if (!this.$common.isPhoneNum(this.staffInfo.createObjectURL)) {
+        this.$message.warning("请填写正确的身份证号");
+        return;
+      }
       if (this.staffInfo.faceUuid) {
         this.updateStaff(this.staffInfo);
       } else {

@@ -225,6 +225,15 @@
         "fire_orbital_ehv": "消防轨道超高压",
         "f5_aic": "F5报警输入",
         "f7_aic": "F7报警输入",
+        "contact_pulse_fence": "触网脉冲电子围栏",
+        "tension_fence": "张力围栏",
+        "optical_fiber": "振动光纤",
+        "leak_cable": "泄漏电缆",
+        "infrared_detector": "红外探测器",
+        "hlc_dc": "红外对射",
+        "dumidity_detector": "湿度",
+        "emergency_button": "紧急按钮",
+        "fire": "火警",
         "bell": "警号",
         "printer": "打印机",
         "lcm": "灯控模块（输出）",
@@ -290,7 +299,8 @@
         "residentServer": "住户服务",
         "courier": "快递人员",
         "take-out": "外卖人员",
-        "other": "其他人员"
+        "other": "其他人员",
+        "": ""
     },
     "cred": {
         "id_card": "身份证",
@@ -348,7 +358,59 @@
         "han": "汉族",
         "man": "满族",
         "hui": "回族",
-        "weiwuer": "维吾尔族"
+        "weiwuer": "维吾尔族",
+        "mengguzu": "蒙古族",
+        "zangzu": "藏族",
+        "miaozu": "苗族",
+        "xizu": "彝族",
+        "zhuangzu": "壮族",
+        "buyizu": "布依族",
+        "chaoxianzu": "朝鲜族",
+        "dongzu": "侗族",
+        "yaozu": "瑶族",
+        "baizu": "白族",
+        "tujiazu": "土家族",
+        "hanizu": "哈尼族",
+        "hasakezu": "哈萨克族",
+        "daizu": "傣族",
+        "lizu": "黎族",
+        "lilizu": "傈僳族",
+        "wazu": "佤族",
+        "shezu": "畲族",
+        "gaoshanzu": "高山族",
+        "lahuzu": "拉祜族",
+        "shuizu": "水族",
+        "dongxiangzu": "东乡族",
+        "naxizu": "纳西族",
+        "jingpozu": "景颇族",
+        "keerkezizu": "柯尔克孜族",
+        "tuzu": "土族",
+        "dahanerzu": "达翰尔族",
+        "melaozu": "么佬族",
+        "qiangzu": "羌族",
+        "bulangzu": "布朗族",
+        "salazu": "撒拉族",
+        "maonanzu": "毛南族",
+        "yilaozu": "仡佬族",
+        "xibozu": "锡伯族",
+        "achagnzu": "阿昌族",
+        "pumizu": "普米族",
+        "tajiekezu": "塔吉克族",
+        "nvzu": "怒族",
+        "wuzibiekezu": "乌孜别克族",
+        "eluosizu": "俄罗斯族",
+        "ewenkezu": "鄂温克族",
+        "deangzu": "德昂族",
+        "baoanzu": "保安族",
+        "yuguzu": "裕固族",
+        "jingzu": "京族",
+        "tataerzu": "塔塔尔族",
+        "dulongzu": "独龙族",
+        "elunchunzu": "鄂伦春族",
+        "hezhezu": "赫哲族",
+        "menbazu": "门巴族",
+        "luobazu": "珞巴族",
+        "jinuozu": "基诺族"
     },
     "nationality": {
         "china": "中国",
@@ -789,10 +851,10 @@
         "fire_fighting": "消防"
     },
     "face_quality": {
-        "HIGH": "高",
-        "NORMAL": "中",
-        "LOW": "低",
-        "LOWER": "无效"
+        "high": "高",
+        "middle": "中",
+        "low": "低",
+        "invalid": "无效"
     },
     "model_analisis_s": {
         "everyday": "每天",
@@ -975,7 +1037,16 @@
         "GT_DOOR_DH": "大华门禁服务",
         "GT_VIDEO_HK": "海康视频服务",
         "GT_VIDEO_DH": "大华视频服务",
-        "GT_UPLOAD_POLICE1400": "公安1400上传服务"
+        "GT_UPLOAD_POLICE1400": "公安1400上传服务",
+        "GT_STATISTICAL_POLICE1400": "公安1400统计服务",
+        "GT_FACELOG": "人脸日志服务",
+        "GT_FACEBASE": "人脸基础服务",
+        "GT_MTS": "流媒体转发服务",
+        "GT_FILEFORWARD": "文件转发服务",
+        "GT_EUREKA": "注册中心服务",
+        "GT_GATEWAY": "网关服务",
+        "GT_GUESTSLAVE": "网桥服务",
+        "GT_DATACENTER": "数据中心服务"
     },
     "face_lib_type": {
         "systemFaceLib": "系统人员库",
@@ -990,6 +1061,15 @@
     "face_report_type": {
         "faceDailyReport": "日报表",
         "faceMonthlyReport": "月报表"
+    },
+    "face_algorithm_type": {
+        "GT-FCK": "GT-FCK",
+        "GT-FCD": "GT-FCD",
+        "GT-FCH": "GT-FCH"
+    },
+    "model_analysis_s": {
+        "model_to_be_processed": "待处理",
+        "model_processed": "已处理"
     },
     "onoffline": {
         "online": "在线",
@@ -1129,9 +1209,5 @@
     "mask_s": {
         "normal": "戴口罩",
         "none": "不戴"
-    },
-    "model_analysis_s": {
-      "model_to_be_processed": "待处理",
-      "model_processed": "已处理"
     }
 }
