@@ -40,8 +40,77 @@ if (DEBUG == "DEBUG") {
     imgUrlStr +
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
+// 设备资源的类型前端字典表:front end so difficult
+var resourceType = {
+  video: [
+    {
+      id: "auth_video",
+      label: "视频设备"
+    },
+    {
+      id: "auth_video_monitor",
+      label: "监控点"
+    },
+    {
+      id: "auth_video_input",
+      label: "输入"
+    },
+    {
+      id: "auth_video_output",
+      label: "输出"
+    }
+  ],
+  door: [
+    {
+      id: "auth_door",
+      label: "门禁设备"
+    },
+    {
+      id: "auth_door_monitor",
+      label: "门禁点"
+    },
+    {
+      id: "auth_door_input",
+      label: "输入"
+    },
+    {
+      id: "auth_door_output",
+      label: "输出"
+    },
+    {
+      id: "auth_door_readhead",
+      label: "读头"
+    }
+  ],
+  alarm: [
+    {
+      id: "auth_alarm",
+      label: "门禁设备"
+    },
+    {
+      id: "auth_alarm_zone",
+      label: "防区"
+    },
+    {
+      id: "auth_alarm_subsystem",
+      label: "子系统"
+    },
+    {
+      id: "auth_alarm_output",
+      label: "输出"
+    }
+  ],
+  visitor: [
+    {
+      id: "auth_visitor",
+      label: "访客设备"
+    }
+  ]
+};
+
 window.config = {
   DeBug: true,
+  resourceType,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",

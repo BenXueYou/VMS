@@ -45,7 +45,9 @@
                      style="margin-right: 20%;">
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="video">打开视频</el-dropdown-item>
+                <el-dropdown-item command="video">
+                  打开视频
+                </el-dropdown-item>
                 <el-dropdown-item command="playback">查看录像</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>

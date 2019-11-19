@@ -730,3 +730,18 @@ export function setImmediateSyncSettingl(uuid, data) {
     data
   });
 }
+export function getTongDaoType(resUuid, resType) {
+  let url = sbUrl.getTongDaoTypeUrl(resUuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+
+export function getViewTypeList(resUuid, resType) {
+  let url = sbUrl.getViewTypeListUrl(resUuid);
+  return axios({
+    method: "get",
+    url
+  });
+}

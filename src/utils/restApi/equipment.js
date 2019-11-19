@@ -37,6 +37,11 @@ export default {
   setReConfigIssue: (deviceUuid, taskUuid) =>
     `${xfPrefix}restIssueData/${deviceUuid}/${taskUuid}`,
   getTagUrl: `${sbPrefix}tag/list`,
+  getTongDaoTypeUrl: subViewType =>
+    `${ycPrefix}project/${projectUuid}/subViewType/${subViewType}`,
+  getViewTypeListUrl: viewType =>
+    `${ycPrefix}project/${projectUuid}/chnType/${viewType}/list`,
+
   addTagUrl: `${sbPrefix}tag`,
   updateTagUrl: `${sbPrefix}tag`,
   operatorTagUrl: `${sbPrefix}tag/move`,

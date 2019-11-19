@@ -212,8 +212,8 @@ export default {
   mounted() {
     this.jugdeJump();
     this.$nextTick(() => {
-      // this.initWrapDom();
       this.chooseFenlu(1);
+      this.initWrapDom();
     });
     window.addEventListener("resize", this.initWrapDom);
     const that = this;

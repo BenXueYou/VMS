@@ -1,5 +1,5 @@
 <template>
-  <div class="editEquip">
+  <div class="editEquipaa">
     <div class="header">
       <span class="shuline">设备编辑</span>
       <div class="buttongroup">
@@ -96,7 +96,6 @@
                         orgType="device"
                         :name="orgName"
                         :orgUuid="orgUuid"
-                        :aaaaaa="ruleForm.oriz"
                         @setUseData="setOrgData"
                         ref="popoverTree" />
         </el-form-item>
@@ -105,7 +104,6 @@
                       prop="build">
           <build-house-popover-tree width="250px"
                                     :name="houseName"
-                                    :aaaaaa="ruleForm.build"
                                     :houseUuid="houseUuid"
                                     @setUseData="setHouseData" />
         </el-form-item>
@@ -159,22 +157,8 @@
                        :value="item.value">
             </el-option>
           </el-select>
-          <div class='videoSetingaa'>
-            <label class="label">通道国标码：</label>
-            <el-input v-model="item.gBCode"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">经度：</label>
-            <el-input v-model="item.longitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">纬度：</label>
-            <el-input v-model="item.latitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-          </div>
+          <label class="label">通道国标码：</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(1,index,x)"
@@ -224,23 +208,8 @@
                        :value="item.value">
             </el-option>
           </el-select>
-
-          <div class='videoSetingaa'>
-            <label class="label">通道国标码：</label>
-            <el-input v-model="item.gBCode"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">经度：</label>
-            <el-input v-model="item.longitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">纬度：</label>
-            <el-input v-model="item.latitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-          </div>
+          <label class="label">通道国标码：</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(2,index,x)"
@@ -254,7 +223,6 @@
               选择标签
             </el-button>
           </div>
-
         </div>
       </div>
 
@@ -291,25 +259,8 @@
                        :value="item.value">
             </el-option>
           </el-select>
-
-          <div class='videoSetingaa'>
-
-            <label class="label">通道国标码：</label>
-            <el-input v-model="item.gBCode"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">经度：</label>
-            <el-input v-model="item.longitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">纬度：</label>
-            <el-input v-model="item.latitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-          </div>
-
+          <label class="label">通道国标码：</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(3,index,x)"
@@ -359,24 +310,8 @@
                        :value="item.value">
             </el-option>
           </el-select>
-
-          <div class='videoSetingaa'>
-            <label class="label">通道国标码：</label>
-            <el-input v-model="item.gBCode"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">经度：</label>
-            <el-input v-model="item.longitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">纬度：</label>
-            <el-input v-model="item.latitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-          </div>
-
+          <label class="label">通道国标码：</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(4,index,x)"
@@ -390,7 +325,6 @@
               选择标签
             </el-button>
           </div>
-
         </div>
       </div>
 
@@ -428,25 +362,8 @@
                        :value="item.value">
             </el-option>
           </el-select>
-
-          <div class='videoSetingaa'>
-
-            <label class="label">通道国标码：</label>
-            <el-input v-model="item.gBCode"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">经度：</label>
-            <el-input v-model="item.longitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">纬度：</label>
-            <el-input v-model="item.latitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-          </div>
-
+          <label class="label">通道国标码：</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(5,index,x)"
@@ -497,25 +414,8 @@
                        :value="item.value">
             </el-option>
           </el-select>
-
-          <div class='videoSetingaa'>
-
-            <label class="label">通道国标码：</label>
-            <el-input v-model="item.gBCode"
-                      @change="gogo"
-                      @focus="gogo"></el-input>
-            <label class="label">经度：</label>
-            <el-input v-model="item.longitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-            <label class="label">纬度：</label>
-            <el-input v-model="item.latitude"
-                      type="number"
-                      @focus="gogo"
-                      @change="gogo"></el-input>
-          </div>
-
+          <label class="label">通道国标码：</label>
+          <el-input v-model="item.gBCode"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(6,index,x)"
@@ -531,6 +431,16 @@
           </div>
         </div>
       </div>
+
+      <channel-set-row v-for="(item,index) in abstractArr"
+                       :key="index"
+                       :options="options"
+                       :index="index"
+                       :abilityOption="abilityOption"
+                       @update="updateData"
+                       :channelType="item.name"
+                       :data="item.data"></channel-set-row>
+
       <person-tree-tag title="请选择要添加的标签"
                        rightTxt="已选择的标签"
                        :isShow.sync="isShow"
@@ -554,6 +464,7 @@
 import PopoverTree from "@/common/selectOrgTree";
 // 这是楼栋房屋只到单元的下拉框树
 import BuildHousePopoverTree from "@/common/BuildHousePopoverTree2";
+import channelSetRow from "@/pages/equipmentMange/components/channelSetRow";
 import personTreeTag from "@/common/personTreeTag";
 import icons from "@/common/js/icon.js";
 import * as api from "../ajax";
@@ -561,6 +472,7 @@ export default {
   name: "TreeChangeNameDialog.vue",
   components: {
     PopoverTree,
+    channelSetRow,
     BuildHousePopoverTree,
     personTreeTag
   },
@@ -640,6 +552,7 @@ export default {
   },
   data() {
     return {
+      abstractArr: [],
       orgUuid: "",
       isLocal: false,
       service: "",
@@ -765,7 +678,6 @@ export default {
       icons,
       door: "",
       checkedNode: [],
-      checkedUuid: "",
       ruleForm: {
         ip: "",
         tagSn: "",
@@ -822,10 +734,12 @@ export default {
     // this.name = this.value;
   },
   methods: {
+    updateData(index, data) {
+      this.abstractArr[index].data = data;
+    },
     gogo() {
-      console.log(123);
       this.ipc = this.ipc.concat();
-      this.bullet_camera = JSON.parse(JSON.stringify(this.bullet_camera));
+      this.bullet_camera = this.bullet_camera.concat();
       this.doorData = this.doorData.concat();
       this.dutouData = this.dutouData.concat();
       this.shuchuData = this.shuchuData.concat();
@@ -933,11 +847,10 @@ export default {
       // 获取组织架构的数据
       // this.maxTagSn = params.maxTagSn;
       this.ruleForm.oriz = params.node.data.orgUuid;
-      this.checkedUuid = this.row.org[0].orgUuid;
     },
     setHouseData(params) {
       this.ruleForm.build = params.node.data.id;
-      this.houseName = params.node.data.label;
+      this.houseName = params.name;
     },
     saveData() {
       let num = [];
@@ -976,8 +889,13 @@ export default {
       num = num.concat(getNum(this.shuchuData));
       num = num.concat(getNum(this.ipc));
       num = num.concat(getNum(this.bullet_camera));
-      console.log(num);
 
+      // num
+      for (let i = 0; i < this.abstractArr.length; i++) {
+        // num[this.abstractArr[i].name] = this.abstractArr[i].data;
+        num = num.concat(this.abstractArr[i].data);
+      }
+      console.log(num);
       let data = {};
       const getServiceNameByUuid = uuid => {
         return this.localService.filter(v => {
@@ -1052,11 +970,11 @@ export default {
       this.$emit("showEdit", false);
     },
     getServiceList() {
-      // api.serviceList().then(res => {
-      //   console.log(res);
-      //   if (res.data.success) {
-      //   }
-      // });
+      api.serviceList().then(res => {
+        console.log(res);
+        if (res.data.success) {
+        }
+      });
     }
   },
   watch: {
@@ -1085,7 +1003,6 @@ export default {
           devicePassword:
             this.row.extInfo.loginInfo && this.row.extInfo.loginInfo.loginPwd
         };
-        this.checkedUuid = this.row.org[0].orgUuid;
         if (this.row.extInfo.source === "local") {
           this.isLocal = true;
         } else {
@@ -1097,7 +1014,7 @@ export default {
               val.faceSnap = !!(val.extInfo.faceSnap === 1);
               val.vehicleSnap = !!(val.extInfo.vehicleSnap === 1);
               val.bodySnap = !!(val.extInfo.bodySnap === 1);
-              val.gBCode = val.extInfo.gBCode || "";
+              val.gBCode = val.extInfo.gBCode;
               val.latitude = val.extInfo.latitude || "";
               val.longitude = val.extInfo.longitude || "";
             }
@@ -1129,29 +1046,39 @@ export default {
         this.dutouData = [];
         this.shuruData = [];
         this.shuchuData = [];
-        this.ipc = [];
-        this.bullet_camera = [];
-        this.ipc = this.ipc.concat();
+        this.abstractArr = [];
         for (let k in this.row.channelMapList) {
-          console.log(k);
-          if (k === window.config.door) {
-            this.doorData = deal(this.row.channelMapList[k]);
-          } else if (k === window.config.readhead) {
-            this.dutouData = deal(this.row.channelMapList[k]);
-          } else if (k === window.config.door_aic) {
-            this.shuruData = deal(this.row.channelMapList[k]);
-          } else if (k === window.config.door_aoc) {
-            this.shuchuData = deal(this.row.channelMapList[k]);
-          } else if (k === "face_ipc") {
-            let aaa = deal(this.row.channelMapList[k]);
-            this.ipc = aaa;
-          } else if (k === "bullet_camera") {
-            let bbb = deal(this.row.channelMapList[k]);
-            this.bullet_camera = bbb;
-            console.log(bbb);
-          }
+          let arr = deal(this.row.channelMapList[k]);
+          this.abstractArr.push({
+            name: k,
+            data: arr
+          });
+          // console.log(k);
+          // if (k === window.config.door) {
+          //   this.doorData = deal(this.row.channelMapList[k]);
+          // } else if (k === window.config.readhead) {
+          //   this.dutouData = deal(this.row.channelMapList[k]);
+          // } else if (k === window.config.door_aic) {
+          //   this.shuruData = deal(this.row.channelMapList[k]);
+          // } else if (k === window.config.door_aoc) {
+          //   this.shuchuData = deal(this.row.channelMapList[k]);
+          // } else if (k === "face_ipc") {
+          //   let aaa = deal(this.row.channelMapList[k]);
+          //   this.ipc = aaa;
+          // } else if (k === "bullet_camera") {
+          //   let bbb = deal(this.row.channelMapList[k]);
+          //   this.bullet_camera = bbb;
+          //   console.log(bbb);
+          // } else {
+          //   // 这里将channelMapList里面剩下的枚举值放到一个数组里面
+          //   let arr = deal(this.row.channelMapList[k]);
+          //   this.abstractArr.push({
+          //     name: k,
+          //     data: arr
+          //   });
+          // }
         }
-
+        console.log(this.abstractArr);
         // this.ipc = this.ipc.concat();
         // 记录门状态
         if (this.row.org && this.row.org.length) {
@@ -1180,7 +1107,7 @@ export default {
 
 <style lang="scss">
 @import "@/style/variables.scss";
-.editEquip {
+.editEquipaa {
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
     color: rgba(40, 255, 187, 1) !important;
   }
@@ -1231,7 +1158,7 @@ export default {
 }
 </style>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 @import "@/style/variables.scss";
 
 @mixin padding {
@@ -1239,10 +1166,7 @@ export default {
   box-sizing: border-box;
 }
 $dashline: 1px dashed rgba(255, 255, 255, 0.1);
-.editEquip {
-  .videoSetingaa {
-    margin: 10px auto;
-  }
+.editEquipaa {
   width: 1200px;
   background: #212325;
   .header {
@@ -1309,7 +1233,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         color: #fff;
         .el-input {
           display: inline-block;
-          width: 180px;
+          width: 160px;
           vertical-align: top;
         }
         .button {
@@ -1318,7 +1242,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
           margin-bottom: 10px;
         }
         .addIcon {
-          // margin-left: $mleft;
+          margin-left: $mleft;
           border: none;
           background: none;
           @include font-s;
@@ -1332,9 +1256,12 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
         }
         .mytagWrap {
           display: inline-block;
-          // margin-top: 10px;
+          margin-top: 10px;
           width: calc(100% - 300px);
         }
+      }
+      .videoSetingaa {
+        margin-top: 10px;
       }
       .head {
         padding: 10px 20px;
