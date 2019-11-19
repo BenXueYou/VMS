@@ -242,7 +242,7 @@ export default {
       visible_popver: false, // task弹窗是否弹出，默认隐藏
       rtspAddress: "",
       channelInfoList: [], // 所有通道名称和ID的二元list
-      notCheckAll: true, // 通道勾选的list的长度
+      notCheckAll: false, // 通道勾选的list的长度
       checkTaskAll: true,
       checkedChannelsUuidList: [], // 当前勾选的通道Id的list
       checkedChannel: "",

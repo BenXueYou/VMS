@@ -3,7 +3,7 @@
 		class="GlobalAlarmDialogClass"
 		:visible.sync="dialogShow"
 		@close="closeDialog"
-		:close-on-click-modal="false"
+		:close-on-click-modal="ture"
 		:title="dialogParama.faceMonitorName||'布控报警'"
 		v-dialogDrag
 	>
@@ -15,11 +15,11 @@
 						<!-- <img
 							class="GlobalAlarmDialog-card-img"
 							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
-						/> -->
-						<img
-							class="GlobalAlarmDialog-card-img"
-							:src="$common.setPictureShow('http://192.168.9.88:9080/2,02b9672d72d088.jpg',this.picSourceType)"
-						/>
+						/>-->
+						<el-image
+							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
+							:preview-src-list="[$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)]"
+						></el-image>
 					</div>
 					<p>抓拍图片</p>
 				</div>
@@ -33,10 +33,14 @@
 				></el-progress>
 				<div class="rightBox">
 					<div class="leftColBg">
-						<img
+						<!-- <img
 							class="GlobalAlarmDialog-card-img"
 							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
-						/>
+						/>-->
+						<el-image
+							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
+							:preview-src-list="[$common.setPictureShow(dialogParama.facePhotoUrl)]"
+						></el-image>
 					</div>
 					<p>布控图片</p>
 				</div>
@@ -62,13 +66,31 @@
 					<div v-for="(item,index) in 8" :key="index" class="cardBox">
 						<el-row class="cardBoxHeader" type="flex" justify="center" :gutter="15">
 							<el-col class="facePhoto" :span="9">
+								<el-image
+									v-if="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl"
+									:src="$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)"
+									:preview-src-list="[$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)]"
+								></el-image>
 								<img
-									:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
+									v-else
+									:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 								/>
+								<!-- <img
+									:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
+								/>-->
 							</el-col>
 							<el-col class="panoramaPhoto" :span="17">
-								<img
+								<!-- <img
 									:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
+								/>-->
+								<el-image
+									v-if="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl"
+									:src="$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)"
+									:preview-src-list="[$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)]"
+								></el-image>
+								<img
+									v-else
+									:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 								/>
 							</el-col>
 						</el-row>

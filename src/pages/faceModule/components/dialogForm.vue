@@ -6,10 +6,15 @@
 				<p>抓拍图片</p>
 				<el-row type="flex" class="leftColBg" justify="center" :gutter="15">
 					<el-col :span="10">
-						<img
+						<!-- <img
 							class="xydialog-card-img"
+							v-image-preview
 							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
-						/>
+						/>-->
+						<el-image
+							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
+							:preview-src-list="[$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)]"
+						></el-image>
 					</el-col>
 					<el-col :span="14">
 						<div class="firstTitle">
@@ -35,10 +40,15 @@
 				<p>布控图片</p>
 				<el-row type="flex" justify="center" :gutter="15" class="leftColBg">
 					<el-col :span="7">
-						<img
+						<!-- <img
 							class="xydialog-card-img"
+							v-image-preview
 							:src="staffInfo.facePhotoUrl?imageHeader+staffInfo.facePhotoUrl:require('@/assets/user.png')"
-						/>
+						/>-->
+						<el-image
+							:src="$common.setPictureShow(staffInfo.facePhotoUrl)"
+							:preview-src-list="[$common.setPictureShow(staffInfo.facePhotoUrl)]"
+						></el-image>
 					</el-col>
 					<el-col :span="17">
 						<el-row type="flex" justify="space-between" class="rightTxt">
@@ -67,12 +77,24 @@
 				<div v-for="(item,index) in 8" :key="index" class="cardBox">
 					<el-row class="cardBoxHeader" type="flex" justify="center">
 						<el-col class="facePhoto" :span="9">
+							<el-image
+								v-if="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl"
+								:src="$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)"
+								:preview-src-list="[$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)]"
+							></el-image>
 							<img
+								v-else
 								:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 							/>
 						</el-col>
 						<el-col class="panoramaPhoto" :span="17">
+							<el-image
+								v-if="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl"
+								:src="$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)"
+								:preview-src-list="[$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)]"
+							></el-image>
 							<img
+								v-else
 								:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 							/>
 						</el-col>

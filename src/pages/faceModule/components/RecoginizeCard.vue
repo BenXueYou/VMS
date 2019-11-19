@@ -66,18 +66,28 @@
 						@mousemove="mymousemove"
 						class="asidFontClass textclipsClass"
 					>{{recoginizeItem.channelName||'通道名称'}}</div>
-					<div
-						@mouseover="mymouseover"
-						@mouseout="mymouseout"
-						@mousemove="mymousemove"
-						class="textclipsClass asidFontClass"
-					>{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[0]:'抓拍日期：-- --'}}</div>
-					<div
-						@mouseover="mymouseover"
-						@mouseout="mymouseout"
-						@mousemove="mymousemove"
-						class="textclipsClass asidFontClass"
-					>{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[1]:'抓拍时间：-- --'}}</div>
+					<template v-if="imgWidth>95">
+						<div
+							@mouseover="mymouseover"
+							@mouseout="mymouseout"
+							@mousemove="mymousemove"
+							class="textclipsClass asidFontClass"
+						>{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime:'抓拍时间：-- --'}}</div>
+					</template>
+					<template v-else>
+						<div
+							@mouseover="mymouseover"
+							@mouseout="mymouseout"
+							@mousemove="mymousemove"
+							class="textclipsClass asidFontClass"
+						>{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[0]:'抓拍日期：-- --'}}</div>
+						<div
+							@mouseover="mymouseover"
+							@mouseout="mymouseout"
+							@mousemove="mymousemove"
+							class="textclipsClass asidFontClass"
+						>{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[1]:'抓拍时间：-- --'}}</div>
+					</template>
 				</div>
 			</div>
 			<div
