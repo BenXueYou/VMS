@@ -23,7 +23,7 @@
          ref='right'>
       <div class='vedioWrap'
            ref='vedioWrap'>
-        <video-wrap v-for="(item,index) in videoArr"
+        <video-wrap v-for="(item,index) in showFenlu"
                     :ref="'video'+index"
                     :key="index"
                     :index="index"
@@ -103,6 +103,11 @@ import icons from "@/common/icon.js";
 
 export default {
   name: "VideoPreview",
+  computed: {
+    showFenlu() {
+      return this.videoArr.slice(0, this.fenlu[this.fenluIndex]);
+    }
+  },
   components: {
     LeftContent,
     VideoWrap,
@@ -125,13 +130,15 @@ export default {
       videoInfoVisible: false,
       imageAdjustVisible: false,
       isAutoScreen: -1,
-      videoArr: [
-        {
-          position: 0, // 表示视频的位置，初始化的时候是从0-n的按顺序的，拖动之后position就会变化
-          rtspUrl: "", // 播放的视频 Url
-          streamType: ""
-        }
-      ],
+      videoArr: Array.from({ length: 36 }, (item, index) => {
+        item = {
+          width: 0,
+          height: 0,
+          rtspUrl: "",
+          position: index
+        };
+        return item;
+      }),
       icons,
       fenlu: [1, 4, 9, 16, 25, 36],
       fenluIndex: 0,
@@ -198,13 +205,15 @@ export default {
       src: "",
       dragStartIndex: -1,
       dragEndIndex: -1,
-      maxRightWidth: 10000
+      maxRightWidth: 10000,
+      parentArr: new Array(36) // 用来记录所有的视频
     };
   },
   mounted() {
     this.jugdeJump();
     this.$nextTick(() => {
-      this.initWrapDom();
+      // this.initWrapDom();
+      this.chooseFenlu(1);
     });
     window.addEventListener("resize", this.initWrapDom);
     const that = this;
@@ -266,7 +275,15 @@ export default {
       this.initWrapDom();
     },
     updateView(viewData) {
-      console.log();
+      console.log(viewData);
+      // 首先判断下视图有没有重复的名字
+      let da = this.$refs.leftTree.viewTreeData.filter(i => {
+        return i.viewName === viewData.viewInfo.view_name;
+      });
+      if (da.length > 0) {
+        this.$message.error("视图名字跟已有的重复!");
+        return;
+      }
       let data = JSON.parse(JSON.stringify(viewData));
       delete data.viewName;
       api2.updateView(data).then(res => {
@@ -547,26 +564,37 @@ export default {
       this.fenluIndex = index;
       this.isAutoScreen = -1;
       this.initWrapDom();
+      let dataArr = JSON.parse(JSON.stringify(this.videoArr));
+      dataArr.sort((a, b) => {
+        return a.position - b.position;
+      });
+      this.videoArr = dataArr;
+
+      // 如果从多路切换到少路的时候，选中的index小于显示的分路，则将他切换到0
+      // if (this.operatorIndex > this.fenlu[this.fenluIndex]) {
+      //   this.operatorIndex = 0;
+      // }
+
       // 切换分路，还需要保留之前已经打开的视频画面
 
-      let num = Array.from(
-        { length: this.fenlu[this.fenluIndex] },
-        (item, index) => {
-          item = {
-            width: this.videoWidth,
-            height: this.videoHeight,
-            rtspUrl: "",
-            position: index
-          };
-          if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
-            item = this.videoArr[index];
-            item.position = index;
-          }
-          return item;
-        }
-      );
-      this.videoArr = num;
-      console.log(num);
+      // let num = Array.from(
+      //   { length: this.fenlu[this.fenluIndex] },
+      //   (item, index) => {
+      //     item = {
+      //       width: this.videoWidth,
+      //       height: this.videoHeight,
+      //       rtspUrl: "",
+      //       position: index
+      //     };
+      //     if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
+      //       item = this.videoArr[index];
+      //       item.position = index;
+      //     }
+      //     return item;
+      //   }
+      // );
+      // this.videoArr = num;
+      // console.log(num);
     },
     // 控制云台
     ctrl(action, start, speed) {
@@ -769,6 +797,15 @@ export default {
       this.$refs["video" + index][0].stopRecord();
     },
     switchLuxiang(channelUuid) {
+      this.$store.dispatch("addTagViewItem", {
+        icon: "VideoPlayback",
+        name: "VideoPlayback",
+        title: "视频回放",
+        type: "config",
+        path: "/VideoPlayback"
+      });
+      this.$store.dispatch("setLocalTag", "VideoPlayback");
+      this.$bus.$emit("setLocalTag", "VideoPlayback");
       this.$router.push({
         name: "VideoPlayback",
         params: { channelUuid }

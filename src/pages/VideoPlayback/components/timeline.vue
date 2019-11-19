@@ -162,7 +162,7 @@ export default {
       &::after {
         content: "";
         position: absolute;
-        left: 3px;
+        left: 0px;
         bottom: 0px;
         width: 1px;
         height: 10px;

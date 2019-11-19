@@ -56,10 +56,11 @@
                     v-model='speed'></el-input> -->
           <el-select class='speed'
                      @change="changeFenlu"
-                     v-model='chooseFenlu'>
+                     v-model='fenluIndex'>
             <el-option v-for="(item,index) in fenlu"
                        :key="index"
-                       :value="item">{{item}}</el-option>
+                       :label="item"
+                       :value="index"></el-option>
           </el-select>
         </li>
         <li style='width:50px;'>
@@ -173,18 +174,6 @@ export default {
     timeSelect
   },
   props: {
-    startTime: {
-      type: String,
-      default() {
-        return "2019-10-01 00:00:00";
-      }
-    },
-    endTime: {
-      type: String,
-      default() {
-        return "2019-10-16 00:00:00";
-      }
-    },
     data: {
       type: Array
     },
@@ -207,12 +196,14 @@ export default {
   },
   data() {
     return {
+      startTime: "",
+      endTime: "",
       icons,
       voice: 50,
       zoom: 1, // 时间轴缩放倍数
       move: 0,
       left: 0,
-      chooseFenlu: 0,
+      fenluIndex: 1,
       controlData: []
     };
   },
@@ -246,6 +237,7 @@ export default {
   },
   mounted() {
     this.controlData = this.data;
+    this.getMaxTime();
   },
   methods: {
     play() {
@@ -265,12 +257,7 @@ export default {
     },
     changeSpeed() {},
     changeFenlu() {
-      for (let i = 0, len = this.fenlu.length; i < len; i++) {
-        if (this.chooseFenlu === this.fenlu[i]) {
-          this.$emit("chooseFenlu", i);
-          break;
-        }
-      }
+      this.$emit("chooseFenlu", this.fenluIndex);
     },
     chooseTime(index, chooseTime) {
       console.log(index, chooseTime);
@@ -314,12 +301,36 @@ export default {
     },
     fullScreen() {
       this.$emit("PreviewAreafullScreen");
+    },
+    getMaxTime() {
+      // 求视频播放的时间集合中的最大值和最小值
+      let data = [];
+      for (let i = 0, len = this.data.length; i < len; i++) {
+        if (this.data[i].startTime !== "") {
+          data.push(this.data[i].startTime);
+        }
+        if (this.data[i].endTime !== "") {
+          data.push(this.data[i].endTime);
+        }
+      }
+      if (data.length) {
+        data.sort();
+        let len = data.length - 1;
+        this.startTime = data[0];
+        this.endTime = data[len];
+      } else {
+        this.startTime = "";
+        this.endTime = "";
+      }
+      console.log(this.startTime);
+      console.log(this.endTime);
     }
   },
   watch: {
     data(val) {
       console.log(val);
       this.controlData = this.data;
+      this.getMaxTime();
     },
     zoom(newVal, oldVal) {
       console.log(newVal, oldVal);

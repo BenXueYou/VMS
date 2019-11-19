@@ -8,7 +8,7 @@
          ref='rigth'>
       <div class='vedioWrap'
            ref='vedioWrap'>
-        <video-wrap v-for="(item,index) in videoArr"
+        <video-wrap v-for="(item,index) in showFenlu"
                     :ref="'video'+index"
                     :key="index"
                     :index="index"
@@ -42,9 +42,8 @@
                        @speedUp="videoSpeedUp"
                        @slowDown="videoSpeedDown"
                        @PreviewAreafullScreen="PreviewAreafullScreen"
+                       @chooseFenlu="chooseFenlu"
                        :speed="videoSpeed"
-                       :startTime="startTime"
-                       :endTime="endTime"
                        :operatorIndex.sync="operatorIndex"
                        :fenlu="fenlu"
                        :data="videoArr">
@@ -104,8 +103,8 @@ export default {
   },
   data() {
     return {
-      startTime: "",
-      endTime: "",
+      startTime: "2019-11-19 00:00:00",
+      endTime: "2019-11-19 23:59:59",
       videoSpeed: 1,
       videoinfo: {},
       appendViewVisible: false,
@@ -118,15 +117,30 @@ export default {
       screenShotVisible: false,
       videoInfoVisible: false,
       imageAdjustVisible: false,
-      videoArr: [
-        {
-          position: 0, // 表示视频的位置，初始化的时候是从0-n的按顺序的，拖动之后position就会变化
-          rtspUrl: "", // 播放的视频 Url
-          streamType: "",
-          fileName: "",
-          timeData: []
-        }
-      ],
+      videoArr: Array.from({ length: 16 }, (item, index) => {
+        item = {
+          width: 0,
+          height: 0,
+          rtspUrl: "",
+          position: index,
+          fileName: "测试文件名字1",
+          // startTime: "2019-11-12 00:00:00",
+          // endTime: "2019-11-19 23:59:59",
+          startTime: "",
+          endTime: "",
+          timeData: [
+            // {
+            //   startTime: "2019-11-12 00:00:00", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
+            //   endTime: "2019-11-12 15:00:00" // 结束时间（yyyy-MM-dd hh:mm:ss），必填
+            // },
+            // {
+            //   startTime: "2019-11-19 11:59:59", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
+            //   endTime: "2019-11-19 23:00:00" // 结束时间（yyyy-MM-dd hh:mm:ss），必填
+            // }
+          ]
+        };
+        return item;
+      }),
       icons,
       fenlu: [1, 4, 9, 16],
       fenluIndex: 0,
@@ -189,7 +203,11 @@ export default {
       ]
     };
   },
-  computed: {},
+  computed: {
+    showFenlu() {
+      return this.videoArr.slice(0, this.fenlu[this.fenluIndex]);
+    }
+  },
   mounted() {
     this.jugdeJump();
     this.$nextTick(() => {
@@ -237,6 +255,7 @@ export default {
     drop(index, e) {
       // 拖拽结束
       console.log("drop:" + index);
+      console.log(this.videoArr);
       this.dragEndIndex = index;
 
       // 这里用于切换两个视频的拖拽交换逻辑,dragstart记录拖拽的是哪个,drop用于记录放在哪个上面
@@ -285,10 +304,7 @@ export default {
       // this.videoArr[index].rtspUrl = this.controlData[index].rtspUrl;
       // this.videoArr.concat();
       this.operatorIndex = index;
-      this.$refs["video" + index][0].drag(
-        this.videoArr[index].ymd.replace(/-/g, "") +
-          chooseTime.replace(/:/g, "")
-      );
+      this.$refs["video" + index][0].drag(chooseTime);
       this.getVideoSpeed();
     },
     updateView(viewData) {
@@ -352,16 +368,16 @@ export default {
       this.appendViewVisible = true;
     },
     playRtsp(arr, sd, ed, videoType, streamType) {
-      this.startTime = sd;
-      this.endTime = ed;
+      // this.startTime = sd;
+      // this.endTime = ed;
       // 播放rtsp,传过来的可能是多个通道id
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].h5Type === "channel") {
-          this.playVideo(arr[i].id, sd, ed, videoType, streamType);
+          this.playVideo(arr[i].id, sd, ed, videoType, streamType, i === 0);
         }
       }
     },
-    async playVideo(id, sd, ed, videoType, streamType) {
+    async playVideo(id, sd, ed, videoType, streamType, isFrist) {
       let data = await this.backup(id, sd, ed, videoType, streamType);
       // videos是录像的信息，现在将这些放倒控制面板中
       // {
@@ -380,25 +396,25 @@ export default {
       //   }
       // 处理数据
       console.log(data);
-      let videos = data.videos || [];
-      let timeData = videos.map(item => {
-        let startTime = item.startTime.split(" ")[1];
-        let endTime = item.endTime.split(" ")[1];
-        if (sd.split(" ")[0] !== item.startTime.split(" ")[0]) {
-          // 返回来的第一个时间为前一天
-          startTime = "00:00:00";
-        }
-        if (ed.split(" ")[0] !== item.endTime.split(" ")[0]) {
-          // 返回来的第一个时间为前一天
-          endTime = "24:00:00";
-        }
-        return {
-          startTime,
-          endTime,
-          videoType: item.videoType,
-          fileName: item.fileName
-        };
-      });
+      let videos = {};
+      // let timeData = videos.map(item => {
+      //   let startTime = item.startTime.split(" ")[1];
+      //   let endTime = item.endTime.split(" ")[1];
+      //   if (sd.split(" ")[0] !== item.startTime.split(" ")[0]) {
+      //     // 返回来的第一个时间为前一天
+      //     startTime = "00:00:00";
+      //   }
+      //   if (ed.split(" ")[0] !== item.endTime.split(" ")[0]) {
+      //     // 返回来的第一个时间为前一天
+      //     endTime = "24:00:00";
+      //   }
+      //   return {
+      //     startTime,
+      //     endTime,
+      //     videoType: item.videoType,
+      //     fileName: item.fileName
+      //   };
+      // });
       // console.log(timeData);
       // if(timeData.length){
       //   // 如果没有时间段，则表示没有录像
@@ -412,21 +428,41 @@ export default {
       //   rtspUrl += "?starttime=" + sd.split(" ")[0] + timeData[0].startTime;
       // }
       // 模拟数据
+      data.videos = data.videos || [];
       videos = {
-        fileName: timeData.length ? timeData[0].fileName : "", // 文件名
+        fileName: data.videos.length ? data.videos[0].fileName : "", // 文件名
         videoType: videoType, // 录像类型，必填
         streamType: "third", // 码流类型
         rtspUrl,
-        ymd: sd.split(" ")[0], // 用于记录年月日
-        date: sd.split(" ")[0],
+        startTime: sd,
+        endTime: ed,
         channelUuid: id,
-        timeData
+        timeData: data.videos || []
       };
-      for (let i = 0; i < this.videoArr.length; i++) {
-        // 如果controlData哪个没有数据则找到它添加他
-        if (!this.videoArr[i].rtspUrl) {
-          this.videoArr.splice(i, 1, videos);
-          break;
+      // 从选中的框开始播放
+      // 往后面放的时候，还要判断后面的框是不是在放
+      let index = -1;
+      if (isFrist) {
+        for (let i = this.operatorIndex; i < 16; i++) {
+          if (!this.videoArr[i].rtspUrl) {
+            index = i;
+            break;
+          }
+        }
+      } else {
+        index = this.operatorIndex;
+      }
+      console.log(index);
+      if (index === -1) {
+        // 说明后面没有格子可以播放了，则提示用户
+        this.$message.error("超过16路码流播放了！");
+      } else {
+        this.operatorIndex = index;
+        let item = this.videoArr[index];
+        videos = Object.assign(item, videos);
+        this.videoArr.splice(this.operatorIndex++, 1, videos);
+        if (this.operatorIndex >= 16) {
+          this.operatorIndex = 15;
         }
       }
     },
@@ -472,6 +508,13 @@ export default {
       let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
       this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
       this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
+
+      this.videoArr = this.videoArr.map(item => {
+        item.width = this.videoWidth;
+        item.height = this.videoHeight;
+        return item;
+      });
+      console.log(this.videoArr);
     },
     chooseFenlu(index) {
       console.log(index);
@@ -479,18 +522,18 @@ export default {
       this.initWrapDom();
       // 切换分路，还需要保留之前已经打开的视频画面
 
-      let num = Array.from(
-        { length: this.fenlu[this.fenluIndex] },
-        (item, index) => {
-          item = { rtspUrl: "", position: index };
-          if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
-            item = this.videoArr[index];
-          }
-          return item;
-        }
-      );
-      this.videoArr = num;
-      console.log(num);
+      // let num = Array.from(
+      //   { length: this.fenlu[this.fenluIndex] },
+      //   (item, index) => {
+      //     item = { rtspUrl: "", position: index };
+      //     if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
+      //       item = this.videoArr[index];
+      //     }
+      //     return item;
+      //   }
+      // );
+      // this.videoArr = num;
+      // console.log(num);
     },
     ClickViDeoA(index) {
       this.operatorIndex = index;
@@ -524,6 +567,7 @@ export default {
               `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
               "",
               {
+                dangerouslyUseHTMLString: true,
                 confirmButtonText: "确定",
                 cancelButtonText: "取消"
               }
@@ -531,6 +575,9 @@ export default {
               .then(() => {})
               .catch(() => {
                 this.videoArr[this.operatorIndex].rtspUrl = "";
+                this.videoArr[this.operatorIndex].startTime = "";
+                this.videoArr[this.operatorIndex].endTime = "";
+                this.videoArr[this.operatorIndex].timeData = [];
                 this.videoArr.concat();
               });
           }
@@ -541,6 +588,7 @@ export default {
             `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭所有的窗口?</span>`,
             "提示",
             {
+              dangerouslyUseHTMLString: true,
               confirmButtonText: "确定",
               cancelButtonText: "取消"
             }
@@ -550,6 +598,9 @@ export default {
               // 把所有分路的rtspUrl都清空
               this.videoArr = this.videoArr.map(item => {
                 item.rtspUrl = "";
+                item.startTime = "";
+                item.endTime = "";
+                item.timeData = "";
                 return item;
               });
             });
@@ -661,6 +712,15 @@ export default {
       this.setTimeVisible = true;
     },
     swithlive(channelUuid) {
+      this.$store.dispatch("addTagViewItem", {
+        icon: "VideoPreview",
+        name: "VideoPreview",
+        title: "视频预览",
+        type: "config",
+        path: "/VideoPreview"
+      });
+      this.$store.dispatch("setLocalTag", "VideoPreview");
+      this.$bus.$emit("setLocalTag", "VideoPreview");
       this.$router.push({
         name: "VideoPreview",
         params: { channelUuid }
