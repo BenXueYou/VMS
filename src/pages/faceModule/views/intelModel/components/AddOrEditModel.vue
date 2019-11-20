@@ -551,12 +551,17 @@ export default {
       this.isShowAddFaceDB = false;
     },
     deleteItem(item) {
+      this.formLabelAlign.faceLibraryUuids = [];
       for (let [i, v] of this.faceDBSelectedList.entries()) {
         if (v.id === item.id) {
           this.faceDBSelectedList.splice(i, 1);
         }
       }
       this.$refs.selectFace.deleteItem(item);
+      this.faceDBSelectedList.forEach(v => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+      });
+      this.$refs.modelForm.validateField("faceLibraryUuids");
     },
     transferCheckedChannel(checkedChannel, item) {
       item.channelList = [];
