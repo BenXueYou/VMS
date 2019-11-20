@@ -128,8 +128,8 @@ export default {
 	height: 100%;
 }
 .dialogPhotoClass .leftImgBox img {
-	min-width: 249px;
-	min-height: 249px;
+	width: 249px;
+	height: 249px;
 }
 .dialogPhotoClass .rightImgBox {
 	width: 63%;

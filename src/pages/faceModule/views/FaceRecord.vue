@@ -566,10 +566,6 @@ export default {
 .dialogPhotoClass .el-dialog {
 	width: 800px;
 }
-.dialogPhotoClass img {
-	width: 100%;
-	height: 100%;
-}
 .dialogPhotoClass .leftImgBox {
 	width: 35%;
 	height: 100%;
@@ -578,6 +574,10 @@ export default {
 	width: 63%;
 	height: 100%;
 	margin-left: 2%;
+}
+.dialogPhotoClass .rightImgBox img {
+	width: 100%;
+	height: 100%;
 }
 .reccordCellClass .FRelPopoverClass {
 	min-width: 118px;
