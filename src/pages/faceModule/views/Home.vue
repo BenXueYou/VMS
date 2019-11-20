@@ -551,17 +551,6 @@ export default {
       }
       this.canvas.width = (this.WIDTH() * 2) / 3 - 200;
       this.canvas.height = (this.HEIGHT() * 7) / 10 - 120;
-      let w, h;
-      if (this.streamType === "main") {
-        w = 1920;
-        h = 1080;
-      } else if (this.streamType === "sub") {
-        w = 704;
-        h = 576;
-      } else {
-        w = 2560;
-        h = 1440;
-      }
       // 设置新的视频对象播放参数
       this.video = await this.video_mgr.setup(
         JSON.stringify(jSignal),
@@ -570,9 +559,7 @@ export default {
         "rtsp",
         "preview",
         1,
-        this.canvas,
-        w,
-        h
+        this.canvas
       );
       // 检测到新的播放视频对象
       if (this.video) {
