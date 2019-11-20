@@ -12,6 +12,7 @@
 							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
 						/>-->
 						<el-image
+							class="xydialog-card-img"
 							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
 							:preview-src-list="[$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)]"
 						></el-image>
@@ -46,6 +47,7 @@
 							:src="staffInfo.facePhotoUrl?imageHeader+staffInfo.facePhotoUrl:require('@/assets/user.png')"
 						/>-->
 						<el-image
+							class="xydialog-card-img"
 							:src="$common.setPictureShow(staffInfo.facePhotoUrl)"
 							:preview-src-list="[$common.setPictureShow(staffInfo.facePhotoUrl)]"
 						></el-image>
@@ -341,7 +343,11 @@ export default {
 	width: 248px;
 	height: 139px;
 }
-.xydialog .cardBox .facePhoto img,
+.xydialog .cardBox .facePhoto .el-image img{
+	max-width: 100%;
+	height: 100%;;
+}
+/* .xydialog .cardBox .facePhoto img, */
 .xydialog .cardBox .panoramaPhoto img {
 	width: 100%;
 	height: 100%;

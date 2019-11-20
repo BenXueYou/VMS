@@ -14,11 +14,12 @@
 					<div class="leftColBg">
 						<!-- <img
 							class="GlobalAlarmDialog-card-img"
-							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
+							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)"
 						/>-->
 						<el-image
-							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
-							:preview-src-list="[$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)]"
+							class="GlobalAlarmDialog-card-img"
+							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)"
+							:preview-src-list="[$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)]"
 						></el-image>
 					</div>
 					<p>抓拍图片</p>
@@ -38,6 +39,7 @@
 							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
 						/>-->
 						<el-image
+							class="GlobalAlarmDialog-card-img"
 							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
 							:preview-src-list="[$common.setPictureShow(dialogParama.facePhotoUrl)]"
 						></el-image>
@@ -136,7 +138,7 @@ export default {
       imgSrc: "",
       imageHeader: RestApi.api.imageUrl,
       dialogShow: true,
-      picSourceType: window.config.PicSourceType
+      PicSourceType: window.config.PicSourceType
     };
   },
   watch: {
@@ -402,7 +404,11 @@ export default {
 	width: 248px;
 	height: 139px;
 }
-.GlobalAlarmDialog .cardBox .facePhoto img,
+.GlobalAlarmDialog .cardBox .facePhoto .el-image img{
+	max-width: 100%;
+	height: 100%;
+}
+/* .GlobalAlarmDialog .cardBox .facePhoto img, */
 .GlobalAlarmDialog .cardBox .panoramaPhoto img {
 	width: 100%;
 	height: 100%;
