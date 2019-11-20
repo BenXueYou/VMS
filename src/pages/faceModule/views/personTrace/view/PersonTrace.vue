@@ -316,7 +316,7 @@ export default {
           endTime: this.endTime,
           channelUuidList: this.channelUuids,
           libraryType: this.libraryType,
-          similarity: this.similarity,
+          similarity: parseInt(this.similarity),
           staffLimit: this.staffLimit
         })
         .then(res => {
