@@ -72,7 +72,7 @@ export default {
   getModelDev: `${URLHeader}/${projectUuid}/IntelligentModel/channel/list`,
   getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list?asgName=${projectUuid}`,
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
-  getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
+  getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
   getModelList: `${URLHeaderFaceLog}/${projectUuid}/modelStatistics/list?asgName=${projectUuid}`,
   getFaceCaptureAll: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/all/list?asgName=${projectUuid}`,
   getFaceCaptureOne: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/one/list?asgName=${projectUuid}`,
