@@ -10,7 +10,8 @@
          v-for="(item,index) in oData"
          :key="index">
       <label class="label">{{name}}{{index+1}}：</label>
-      <el-input v-model="item.nickName"></el-input>
+      <el-input v-model="item.nickName"
+                @change="gogo"></el-input>
       <label class="label">通道类型：</label>
       <el-select v-model="item.channelType"
                  @change="gogo"
@@ -128,11 +129,7 @@ export default {
     this.getOptions();
     this.initName();
   },
-  watch: {
-    oData(val) {
-      this.$emit("update", this.index, this.data);
-    }
-  },
+  watch: {},
   methods: {
     initName() {
       // console.log(window.c)
@@ -156,7 +153,10 @@ export default {
       });
     },
     gogo() {
-      console.log(this.oData);
+      // console.log(this.oData);
+      this.oData = JSON.parse(JSON.stringify(this.oData));
+      // console.log(this.oData);
+      this.$emit("update", this.channelType, this.index, this.oData);
       // this.$emit("update", this.index, this.data);
     },
     elteTagChannel(data, channelUuid, channelType) {

@@ -158,7 +158,8 @@
             </el-option>
           </el-select>
           <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
+          <el-input v-model="item.gBCode"
+                    @change="gogo"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(1,index,x)"
@@ -433,6 +434,7 @@
       </div>
 
       <channel-set-row v-for="(item,index) in abstractArr"
+                       v-if="visible"
                        :key="index"
                        :options="options"
                        :index="index"
@@ -734,8 +736,14 @@ export default {
     // this.name = this.value;
   },
   methods: {
-    updateData(index, data) {
-      this.abstractArr[index].data = data;
+    updateData(channelType, index, data) {
+      console.log(channelType, index, data);
+      for (let i = 0; i < this.abstractArr.length; i++) {
+        if (this.abstractArr[i].name === channelType) {
+          this.abstractArr[i].data = data;
+        }
+      }
+      console.log(this.abstractArr);
     },
     gogo() {
       this.ipc = this.ipc.concat();
@@ -856,22 +864,20 @@ export default {
       let num = [];
       console.log(this.ipc);
       const getNum = data => {
-        if (this.isLocal) {
-          data.forEach(item => {
-            item.faceSnap = item.faceSnap ? 1 : 0;
-            item.vehicleSnap = item.vehicleSnap ? 1 : 0;
-            item.bodySnap = item.bodySnap ? 1 : 0;
-            item.faceSnap = item.ability.indexOf("faceSnap") !== -1 ? 1 : 0;
-            item.vehicleSnap =
-              item.ability.indexOf("vehicleSnap") !== -1 ? 1 : 0;
-            item.bodySnap = item.ability.indexOf("bodySnap") !== -1 ? 1 : 0;
-            // channelList.push({
-            //   nickName: item.nickName,
-            //   channelUuid: item.channelUuid,
-            //   version: item.version
-            // });
-          });
-        }
+        data.forEach(item => {
+          item.faceSnap = item.ability.indexOf("faceSnap") !== -1 ? 1 : 0;
+          item.vehicleSnap = item.ability.indexOf("vehicleSnap") !== -1 ? 1 : 0;
+          item.bodySnap = item.ability.indexOf("bodySnap") !== -1 ? 1 : 0;
+          delete item.ability;
+          item.extInfo.latitude = item.latitude;
+          item.extInfo.longitude = item.longitude;
+          item.extInfo.gBCode = item.gBCode;
+          // channelList.push({
+          //   nickName: item.nickName,
+          //   channelUuid: item.channelUuid,
+          //   version: item.version
+          // });
+        });
         return data;
         // let channelList = [];
         // data.forEach(item => {
@@ -893,7 +899,7 @@ export default {
       // num
       for (let i = 0; i < this.abstractArr.length; i++) {
         // num[this.abstractArr[i].name] = this.abstractArr[i].data;
-        num = num.concat(this.abstractArr[i].data);
+        num = num.concat(getNum(this.abstractArr[i].data));
       }
       console.log(num);
       let data = {};
@@ -1010,14 +1016,9 @@ export default {
         }
         const deal = arr => {
           return arr.map(val => {
-            if (this.isLocal) {
-              val.faceSnap = !!(val.extInfo.faceSnap === 1);
-              val.vehicleSnap = !!(val.extInfo.vehicleSnap === 1);
-              val.bodySnap = !!(val.extInfo.bodySnap === 1);
-              val.gBCode = val.extInfo.gBCode;
-              val.latitude = val.extInfo.latitude || "";
-              val.longitude = val.extInfo.longitude || "";
-            }
+            val.gBCode = val.extInfo.gBCode || "";
+            val.latitude = val.extInfo.latitude || "";
+            val.longitude = val.extInfo.longitude || "";
             val.tagPOList = val.tagPOList || [];
             val.ability = [];
             if (val.extInfo.faceSnap === 1) {
@@ -1095,6 +1096,7 @@ export default {
         // this.getServiceList();
         // }
       } else {
+        this.abstractArr = [];
         this.orgName = "";
         this.houseName = "";
         this.$refs.ruleForm.resetFields();
