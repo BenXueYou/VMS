@@ -135,7 +135,7 @@ export default {
         saveImageUriDay: 180 /* 人脸抓拍人脸图保存天数 */,
         savePanoramauriDay: 180 /* 人脸抓全景图保存天数 */,
         saveAlarmImageType: 1 /* 人脸报警图片保存天数类型，true长期，false短期 */,
-        savaAlarmIangeDay: 0 /* 人脸报警图片保存天数 */
+        savaAlarmIangeDay: 180 /* 人脸报警图片保存天数 */
       }
     };
   },
@@ -150,6 +150,13 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.queryBody = res.data.data;
+            // 若初始化人脸报警图片保存天数为零，不允许,自动处理默认180
+            if (
+              !this.queryBody.saveAlarmImageType &&
+							!this.queryBody.savaAlarmIangeDay
+            ) {
+              this.queryBody.savaAlarmIangeDay = 180;
+            }
             this.tags = res.data.data.alarmSound;
           }
         })
@@ -171,32 +178,44 @@ export default {
       Object.assign(data, this.queryBody);
       data.savaAlarmIangeDay = data.savaAlarmIangeDay
         .toString()
-        .replace(/^(0+)|[^\d]+/g, "");
+        .replace(/^(0+)|[^\d]+/g, 0);
       data.savePanoramauriDay = data.savePanoramauriDay
         .toString()
-        .replace(/^(0+)|[^\d]+/g, "");
+        .replace(/^(0+)|[^\d]+/g, 0);
       data.saveImageUriDay = data.saveImageUriDay
         .toString()
-        .replace(/^(0+)|[^\d]+/g, "");
+        .replace(/^(0+)|[^\d]+/g, 0);
       data.captureInterval = data.captureInterval
         .toString()
-        .replace(/^(0+)|[^\d]+/g, "");
-      data.similarity = data.similarity.toString().replace(/^(0+)|[^\d]+/g, "");
+        .replace(/^(0+)|[^\d]+/g, 0);
+      data.similarity = data.similarity.toString().replace(/^(0+)|[^\d]+/g, 0);
       data.alarmSound = this.tags;
 
-      //   data.some(i,v =>{
-      // 	  return
-      //   })
-      api
-        .postFaceModuleConfig(data)
-        .then(res => {
-          if (res.data.success) {
-            this.$message.success("保存成功");
-          } else {
-            this.$message.warning(res.data.msg);
-          }
+      delete data.saveAlarmImageType;
+      delete data.saveQualityLowerImage;
+      delete data.removeDuplicationImage;
+      console.log(data);
+      if (
+        Object.getOwnPropertyNames(data).every(item => {
+          return Boolean(data[item]);
         })
-        .catch(() => {});
+      ) {
+        // 无空值
+        Object.assign(data, this.queryBody);
+        console.log(data);
+        api
+          .postFaceModuleConfig(data)
+          .then(res => {
+            if (res.data.success) {
+              this.$message.success("保存成功");
+            } else {
+              this.$message.warning(res.data.msg);
+            }
+          })
+          .catch(() => {});
+      } else {
+        this.$message.warning("基础设置项不允许空值");
+      }
     },
     handleClose(tag) {
       if (tag.defaulted) {

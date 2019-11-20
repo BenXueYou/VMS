@@ -410,20 +410,30 @@ export default {
       this.isShowAddVideoSrc = false;
     },
     deleteItem(item) {
+      this.formLabelAlign.faceLibraryUuids = [];
       for (let [i, v] of this.faceDBSelectedList.entries()) {
         if (v.faceLibraryUuid === item.faceLibraryUuid) {
           this.faceDBSelectedList.splice(i, 1);
         }
       }
       this.$refs.selectFace.deleteItem(item);
+      this.faceDBSelectedList.forEach(v => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+      });
+      this.$refs.monitorForm.validateField('faceLibraryUuids');
     },
     deleteVideoItem(item) {
+      this.formLabelAlign.channelUuids = [];
       for (let [i, v] of this.videoSrcSelectedList.entries()) {
         if (v.id === item.id) {
           this.videoSrcSelectedList.splice(i, 1);
         }
       }
       this.$refs.selectVideo.deleteItem(item);
+      this.videoSrcSelectedList.forEach(v => {
+        this.formLabelAlign.channelUuids.push(v.channelUuid);
+      });
+      this.$refs.monitorForm.validateField('channelUuids');
     },
     setFromDataForEdit(detailData) {
       this.faceDBSelectedList = [];
