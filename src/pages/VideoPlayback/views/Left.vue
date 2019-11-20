@@ -425,9 +425,9 @@ export default {
       let fz = z => {
         return ("0" + z).slice(-2);
       };
-      return `${d.getFullYear()}-${fz(d.getMonth())}-${fz(d.getDate())} ${fz(
-        d.getHours()
-      )}:${fz(d.getMinutes())}:${fz(d.getSeconds())}`;
+      return `${d.getFullYear()}-${fz(d.getMonth() + 1)}-${fz(
+        d.getDate()
+      )} ${fz(d.getHours())}:${fz(d.getMinutes())}:${fz(d.getSeconds())}`;
     },
     showAddChildrenDialog() {}
   }

@@ -474,6 +474,12 @@ export default {
         let item = this.videoArr[index];
         videos = Object.assign(item, videos);
         this.videoArr.splice(this.operatorIndex++, 1, videos);
+        if (
+          this.operatorIndex >= this.fenlu[this.fenluIndex] &&
+          this.fenluIndex <= 4
+        ) {
+          this.chooseFenlu(this.fenluIndex + 1);
+        }
         if (this.operatorIndex >= 16) {
           this.operatorIndex = 15;
         }
