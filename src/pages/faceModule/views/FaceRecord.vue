@@ -555,7 +555,7 @@ export default {
 };
 </script>
 <style>
-.dialogPhotoClass .el-dialog__body {
+.faceRecord .dialogPhotoClass .el-dialog__body {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
@@ -563,23 +563,29 @@ export default {
 	box-sizing: border-box;
 	width: 100%;
 }
-.dialogPhotoClass .el-dialog {
+.faceRecord .dialogPhotoClass .el-dialog {
 	width: 800px;
 }
-.dialogPhotoClass .leftImgBox {
+.faceRecord .dialogPhotoClass .leftImgBox {
 	width: 35%;
 	height: 100%;
 }
-.dialogPhotoClass .rightImgBox {
+.faceRecord .dialogPhotoClass .rightImgBox {
 	width: 63%;
 	height: 100%;
 	margin-left: 2%;
 }
-.dialogPhotoClass .rightImgBox img {
+.faceRecord .dialogPhotoClass .rightImgBox img {
 	width: 100%;
 	height: 100%;
 }
-.reccordCellClass .FRelPopoverClass {
+.dialogPhotoClass .rightImgBox .el-image .el-image-viewer__canvas img,
+.dialogPhotoClass .leftImgBox .el-image .el-image-viewer__canvas img{
+	width: auto;
+	max-width: 100%;
+	height: 100%;;
+}
+.faceRecord .reccordCellClass .FRelPopoverClass {
 	min-width: 118px;
 	position: absolute !important;
 	bottom: 0px !important;

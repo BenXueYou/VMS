@@ -404,11 +404,12 @@ export default {
 	width: 248px;
 	height: 139px;
 }
-.GlobalAlarmDialog .cardBox .facePhoto .el-image img{
+.GlobalAlarmDialog .cardBox .facePhoto .el-image .el-image-viewer__canvas img {
+	width: auto;
 	max-width: 100%;
 	height: 100%;
 }
-/* .GlobalAlarmDialog .cardBox .facePhoto img, */
+.GlobalAlarmDialog .cardBox .facePhoto img,
 .GlobalAlarmDialog .cardBox .panoramaPhoto img {
 	width: 100%;
 	height: 100%;

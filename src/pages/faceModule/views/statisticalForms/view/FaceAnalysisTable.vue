@@ -66,7 +66,7 @@
             <el-table-column label="人脸照片"
                              width="190">
               <template slot-scope="scope">
-                <img :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl)"
+                <img :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl, 'facelog')"
                      width="30px"
                      height="30px">
               </template>
@@ -74,7 +74,7 @@
             <el-table-column label="全景照片"
                              width="190">
               <template slot-scope="scope">
-                <img :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl)"
+                <img :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl, 'facelog')"
                      width="50px"
                      height="30px">
               </template>
