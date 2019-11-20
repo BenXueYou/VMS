@@ -283,6 +283,10 @@ export default {
       }
     },
     addStaff(data) {
+      if (!this.staffInfo.faceImage) {
+        this.$message.warning("请上传人脸照片");
+        return;
+      }
       this.isloading = !this.isloading;
       api
         .addStaffInfo(data)
@@ -498,7 +502,7 @@ export default {
 					width: 150px;
 				}
 				.el-input::after {
-					content: '*';
+					content: "*";
 					color: #ff5f5f;
 					margin-left: 10px;
 				}
