@@ -429,6 +429,7 @@ export default {
       this.genderOption = null;
       this.startTime = this.$common.getStartTime();
       this.endTime = this.$common.getCurrentTime();
+      this.selectDate = null;
     },
     lookAlarmDetail(detail) {
       this.detail = detail;

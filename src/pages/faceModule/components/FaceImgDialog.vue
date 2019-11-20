@@ -3,8 +3,8 @@
 		<div class="leftImgBox">
 			<!-- <img :src="$common.setPictureShow(faceImgDialogData.faceCapturePhotoUrl,PicSourceType)" alt /> -->
 			<el-image
-				:src="$common.setPictureShow(faceImgDialogData.facePhotoUrl,PicSourceType)"
-				:preview-src-list="[$common.setPictureShow(faceImgDialogData.facePhotoUrl,PicSourceType)]"
+				:src="$common.setPictureShow(faceImgDialogData.faceCapturePhotoUrl,PicSourceType)"
+				:preview-src-list="[$common.setPictureShow(faceImgDialogData.faceCapturePhotoUrl,PicSourceType)]"
 			></el-image>
 			<p>{{faceImgDialogData.channelName||'抓拍相机'}}</p>
 		</div>
@@ -128,8 +128,14 @@ export default {
 	height: 100%;
 }
 .dialogPhotoClass .leftImgBox img {
-	width: 249px;
-	height: 249px;
+	min-width: 249px;
+	min-height: 249px;
+}
+.dialogPhotoClass .rightImgBox .el-image .el-image-viewer__canvas img,
+.dialogPhotoClass .leftImgBox .el-image .el-image-viewer__canvas img{
+	width: auto;
+	max-width: 100%;
+	height: 100%;;
 }
 .dialogPhotoClass .rightImgBox {
 	width: 63%;
@@ -137,7 +143,7 @@ export default {
 	margin-left: 2%;
 }
 .dialogPhotoClass .rightImgBox img {
-	width: 445px;
-	height: 250px;
+	min-width: 445px;
+	min-height: 250px;
 }
 </style>

@@ -343,11 +343,12 @@ export default {
 	width: 248px;
 	height: 139px;
 }
-.xydialog .cardBox .facePhoto .el-image img{
+.xydialog .cardBox .facePhoto .el-image .el-image-viewer__canvas img{
+	width: auto;
 	max-width: 100%;
 	height: 100%;;
 }
-/* .xydialog .cardBox .facePhoto img, */
+.xydialog .cardBox .facePhoto img,
 .xydialog .cardBox .panoramaPhoto img {
 	width: 100%;
 	height: 100%;
