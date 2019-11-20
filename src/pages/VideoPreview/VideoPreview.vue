@@ -206,7 +206,8 @@ export default {
       dragStartIndex: -1,
       dragEndIndex: -1,
       maxRightWidth: 10000,
-      parentArr: new Array(36) // 用来记录所有的视频
+      parentArr: new Array(36), // 用来记录所有的视频
+      timer: null
     };
   },
   mounted() {
@@ -216,21 +217,29 @@ export default {
       this.initWrapDom();
     });
     window.addEventListener("resize", this.initWrapDom);
-    const that = this;
-    document.addEventListener("keydown", e => {
-      console.log(e);
-      // alert(e.code + "  ------   " + (e.code === "F11"));
-      if (e.code === "F11") {
-        setTimeout(() => {
-          that.initWrapDom();
-        }, 100);
-      }
-    });
+
+    // document.addEventListener("keydown", e => {
+    //   console.log(e);
+    //   // alert(e.code + "  ------   " + (e.code === "F11"));
+
+    // });
+    // 下面是MDZZ代码
+    // this.timer = setInterval(() => {
+    //   that.initWrapDom();
+    // }, 100);
+  },
+  destroyed() {
+    clearInterval(this.timer);
+    this.timer = null;
   },
   activated() {
-    this.initWrapDom();
+    const that = this;
+    if (!this.timer) {
+      this.timer = setInterval(() => {
+        that.initWrapDom();
+      }, 100);
+    }
   },
-  destroyed() {},
   methods: {
     dblclickhandler(index) {
       if (this.isAutoScreen === index) {
@@ -520,12 +529,12 @@ export default {
     initWrapDom() {
       // 这里要给他16:9的效果
       // 而且right的高度不能超过
-      console.log(this.$refs.right.clientWidth);
-      console.log(this.$refs.right.offsetHeight);
-      if (this.$refs.right) {
-        const rightRect = this.$refs.right.getBoundingClientRect();
-        console.log(rightRect);
-      }
+      // console.log(this.$refs.right.clientWidth);
+      // console.log(this.$refs.right.offsetHeight);
+      // if (this.$refs.right) {
+      //   const rightRect = this.$refs.right.getBoundingClientRect();
+      //   // console.log(rightRect);
+      // }
       const rightHeight = ~~(
         this.$refs.right.clientHeight -
         window.innerWidth * 0.03 -
@@ -534,7 +543,7 @@ export default {
       // alert(rightHeight);
       // 计算16:9的最大高度
       const maxHeight = rightHeight - 20;
-      console.log(maxHeight);
+      // console.log(maxHeight);
       // 根据最大高度，反推最大宽度
       this.maxRightWidth = ~~(maxHeight * 16) / 9;
       // 根据这个高度算出来他的最大宽度，
@@ -551,12 +560,12 @@ export default {
       // this.videoHeight = ~~((maxHeight - 60 - 1) / fen);
       this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
       this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
-      this.videoArr = this.videoArr.map(item => {
+      let data = JSON.parse(JSON.stringify(this.videoArr));
+      this.videoArr = data.map(item => {
         item.width = this.videoWidth;
         item.height = this.videoHeight;
         return item;
       });
-      console.log(this.videoArr);
     },
     chooseFenlu(index) {
       // this.operatorIndex = 0;
