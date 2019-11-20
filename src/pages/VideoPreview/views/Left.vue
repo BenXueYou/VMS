@@ -17,6 +17,7 @@
 
     <el-tabs v-model="activeName"
              class="tabs"
+             :class="{'tabsPanel':showCloudControl}"
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
@@ -496,7 +497,11 @@ export default {
       } else if (this.operatorData.h5Type === "organization") {
         // 根据组织来获取通道
         api
-          .getTDByOrgUuid(this.operatorData.id, { viewType: "video" })
+          .getTDByOrgUuid(this.operatorData.id, {
+            viewType: "video",
+            page: 1,
+            limit: 3
+          })
           .then(res => {
             console.log(res);
             let data = res.data.data;
@@ -514,7 +519,7 @@ export default {
           let data = res || [];
           for (let i = 0; i < data.length; i++) {
             data[i].relType = data[i].channelType;
-            this.getPreviewInfo(data[i].channelUuid, data[i]);
+            this.getPreviewInfo(data[i].channelUuid, data[i], -1);
           }
         });
       }
@@ -1485,9 +1490,12 @@ export default {
     }
   }
   .tabs {
-    height: calc(100vh - 550px);
+    height: calc(100vh - 150px);
     overflow-y: auto;
     padding: 0px 26px 25px;
+  }
+  .tabsPanel {
+    height: calc(100vh - 550px);
   }
   .mypanel {
     // height: calc(100vh - 60px - 70px - 80px);
@@ -1495,7 +1503,7 @@ export default {
     width: 228px;
   }
   .cloundControlPannel {
-    padding: 30px;
+    padding: 30px 30px 0px 30px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
     @include font-s;

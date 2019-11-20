@@ -4,10 +4,10 @@ function CVideoMgrSdk(observer)
     this.m_observer     = observer;
 }
 
-CVideoMgrSdk.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h, file)
+CVideoMgrSdk.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, file)
 {
     var video = new CVideo(this);
-    let ret = await video.setup(jSignal, jMedia, url, protocol, action, speed, canvas, w, h, file);
+    let ret = await video.setup(jSignal, jMedia, url, protocol, action, speed, canvas, file);
     if (ret)
     {
         this.m_videoList[this.m_videoList.length] = video;

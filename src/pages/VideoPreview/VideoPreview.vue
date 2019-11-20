@@ -277,9 +277,10 @@ export default {
         item.position = index;
         return item;
       });
-      console.log(elements);
-      this.videoArr = [];
-      this.videoArr = elements;
+      for (let i = 0, len = elements.length; i < len; i++) {
+        this.videoArr[i] = elements[i];
+      }
+      this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
     },
@@ -429,6 +430,7 @@ export default {
       });
     },
     playRtsp(channelUuid, streamType = "string", adata, operator = -1) {
+      console.log(channelUuid, streamType, adata, operator);
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
       api2
@@ -452,11 +454,11 @@ export default {
     },
     setData(rtspUrl, channelUuid, streamType, operatorData) {
       console.log(this.operatorIndex);
-      console.log(rtspUrl, channelUuid, streamType, operatorData);
+      console.log(rtspUrl, channelUuid, operatorData, operatorData);
       this.videoArr[this.operatorIndex].streamType = streamType;
+      this.videoArr[this.operatorIndex].operatorData = operatorData;
       this.videoArr[this.operatorIndex].channelUuid = channelUuid;
       this.videoArr[this.operatorIndex].rtspUrl = rtspUrl;
-      this.videoArr[this.operatorIndex].streamType = streamType;
     },
     judgeEnoughBoard() {},
     playVideo(rtspUrl, channelUuid, streamType, data) {
@@ -636,6 +638,7 @@ export default {
       this.$ContextMenu({
         data: this.menuData,
         event: e,
+        target: this.$refs.vedioWrap,
         callback(value) {
           // value表示点击按钮的value
           _this.dealContextMenu(value);
@@ -880,7 +883,6 @@ export default {
       ) {
         return false;
       }
-      console.log(this.videoArr[this.operatorIndex].operatorData);
       return (
         ["bullet_camera_ptz", "ball_camera"].indexOf(
           this.videoArr[this.operatorIndex].operatorData.relType
@@ -890,7 +892,7 @@ export default {
   },
   watch: {
     operatorIndex(val) {
-      this.showCloudControl = this.updateCloud();
+      console.log(this.videoArr);
       this.showCloudControl = this.updateCloud();
     },
     videoArr(val) {

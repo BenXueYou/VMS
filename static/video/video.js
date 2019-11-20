@@ -7,18 +7,14 @@ function CVideo(observer)
     this.m_observer     = observer;
     this.m_action       = null;
     this.m_speed        = null;
-    this.m_width        = null;
-    this.m_height       = null;
     this.m_file         = null;
 }
 
-CVideo.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, w, h, file)
+CVideo.prototype.setup = async function(jSignal, jMedia, url, protocol, action, speed, canvas, file)
 {
     this.m_canvas = canvas;
     this.m_action = action;
     this.m_speed = speed;
-    this.m_width = w;
-    this.m_height = h;
     this.m_file = file;
     this.m_session = new CSession(jSignal, jMedia, url, protocol, action, speed, this);
     let ret = await this.m_session.setup();
@@ -38,7 +34,7 @@ CVideo.prototype.onSdp = function(sdp)
     {
         // fix: 要等sdp到了之后才能play
         this.m_decoder = new CDecoder(this.m_canvas);
-        this.m_decoder.setup(sdp, this.m_width, this.m_height);
+        this.m_decoder.setup(sdp);
     }
     else if (this.m_action === "download")
     {

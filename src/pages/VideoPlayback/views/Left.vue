@@ -25,6 +25,8 @@
                  ref="tree1"
                  lazy
                  show-checkbox
+                 node-key="id"
+                 :default-checked-keys="defaultExpandedKeys"
                  @check-change="devhandleCheckChange">
           <div class="custom-tree-node"
                slot-scope="{ node }">
@@ -54,9 +56,11 @@
                  :load="tagloadNode"
                  :expand-on-click-node="false"
                  lazy
+                 node-key="id"
                  :indent="10"
                  ref="tree2"
                  show-checkbox
+                 :default-checked-keys="defaultExpandedKeys"
                  @check-change="taghandleCheckChange"
                  @node-click="taghandleNodeClick">
 
@@ -161,6 +165,7 @@ export default {
     d.setMinutes(0);
     d.setSeconds(0);
     return {
+      defaultExpandedKeys: [],
       changeNameDialogVisible: false,
       isDeleteVisible: false,
       nodeValue: "",
@@ -189,6 +194,11 @@ export default {
     };
   },
   methods: {
+    setKeys(id) {
+      if (this.defaultExpandedKeys.indexOf(id) === -1) {
+        this.defaultExpandedKeys.push(id);
+      }
+    },
     changeTime() {
       if (this.startDate > this.endDate) {
         [this.endDate, this.startDate] = [this.startDate, this.endDate];
@@ -458,8 +468,9 @@ export default {
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
   padding: 0px 40px;
+  overflow: auto;
   .custom-tree-node {
-    width: 100%;
+    // width: 100%;
     .threelinemenu {
       display: none;
       float: right;
@@ -470,6 +481,7 @@ export default {
     }
   }
   .timeSelect {
+    margin-top: 20px;
     .startWrap {
       display: flex;
       margin-bottom: 10px;
@@ -492,7 +504,7 @@ export default {
   .treeWrap,
   .tabs {
     height: calc(100vh - 350px);
-    overflow-y: auto;
+    overflow: auto;
   }
 
   .treeSwitchTabs {

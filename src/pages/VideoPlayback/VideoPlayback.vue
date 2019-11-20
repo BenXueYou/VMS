@@ -46,7 +46,7 @@
                        :speed="videoSpeed"
                        :operatorIndex.sync="operatorIndex"
                        :fenlu="fenlu"
-                       :data="videoArr">
+                       :data="showFenlu">
 
         </control-panel>
       </div>
@@ -228,7 +228,11 @@ export default {
         endTime
       );
     },
-    closeVideo() {},
+    closeVideo(index) {
+      this.videoArr[index].rtspUrl = "";
+      this.videoArr[index].streamType = "";
+      this.videoArr[index].channelUuid = "";
+    },
     startRecord() {},
     stopRecord() {},
     openVideo() {},
@@ -292,6 +296,7 @@ export default {
       let d = new Date();
       let ymd = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay();
       let hms = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      this.$refs.leftTree.setKeys(id);
       this.playVideo(
         id,
         ymd + " 00:00:00",
@@ -320,12 +325,19 @@ export default {
       });
     },
     openView(data) {
-      // 打开视图
-      this.fenluIndex = data.colTotal - 1;
-      this.initWrapDom();
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
-      this.videoArr = data.elements;
+      let newdata = JSON.parse(JSON.stringify(data));
+      let elements = newdata.elements.map((item, index) => {
+        item.position = index;
+        return item;
+      });
+      for (let i = 0, len = elements.length; i < len; i++) {
+        this.videoArr[i] = elements[i];
+      }
+      this.videoArr.concat();
+      this.fenluIndex = data.colTotal - 1;
+      this.initWrapDom();
     },
     addView(name) {
       // 保存视图
@@ -438,7 +450,7 @@ export default {
         startTime: sd,
         endTime: ed,
         channelUuid: id,
-        timeData: data.videos || []
+        timeData: data.videos
       };
       // 从选中的框开始播放
       // 往后面放的时候，还要判断后面的框是不是在放
@@ -549,6 +561,7 @@ export default {
       this.$ContextMenu({
         data: this.menuData,
         event: e,
+        target: this.$refs.vedioWrap,
         callback(value) {
           // value表示点击按钮的value
           _this.dealContextMenu(value);
@@ -570,7 +583,7 @@ export default {
               {
                 dangerouslyUseHTMLString: true,
                 confirmButtonText: "取消",
-                cancelButtonText: "确"
+                cancelButtonText: "确定"
               }
             )
               .then(() => {})
@@ -601,7 +614,7 @@ export default {
                 item.rtspUrl = "";
                 item.startTime = "";
                 item.endTime = "";
-                item.timeData = "";
+                item.timeData = [];
                 return item;
               });
             });
@@ -740,6 +753,7 @@ export default {
     },
     PreviewAreafullScreen() {
       this.setFullScreen(this.$refs.vedioWrap);
+      this.initWrapDom();
     },
     setFullScreen(target) {
       if (target.requestFullscreen) {

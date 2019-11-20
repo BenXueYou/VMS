@@ -20,9 +20,8 @@
 <body>
     <!--canvas id="playCanvas" width="1280" height="720"></canvas-->
     server_ip: <input id="ip" type="text" name="url" value="192.168.9.199"></input><br>
-    url: <input id="url" type="text" name="url" value="rtsp://admin:admin123456@192.168.9.203/Streaming/tracks/201?starttime=20191014t145200z&endtime=20191014t145220z"></input><br>
-    action: <input id="preview" type="radio" name="action">preview</input><input id="playback" type="radio" name="action" checked=true>playback</input><br>
-    stream type: <input id="main" type="radio" name="streamType" checked=true>main</input><input id="sub" type="radio" name="streamType">sub</input><input id="super" type="radio" name="streamType">super</input><hr>
+    url: <input id="url" type="text" name="url" value="rtsp://admin:admin@192.168.9.221:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif"></input><br>
+    action: <input id="preview" type="radio" name="action" checked=true>preview</input><input id="playback" type="radio" name="action">playback</input><br>
     <button id="button" type="button" onclick="slot_createVideo()">create video</button><br><hr>
     <button id="button_stop" type="button" onclick="slot_stopall()">stop all video</button>
     <button id="button_pause" type="button" onclick="slot_pauseall()">pause all video</button>

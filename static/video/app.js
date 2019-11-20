@@ -28,27 +28,8 @@ async function slot_createVideo()
     let jMedia = {"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "port":"4401"}}};
     jMedia.param.location.ip = ip;
 
-    let w, h;
-    if (document.getElementById("main").checked)
-    {
-        w = 1920;
-        h = 1080;
-    }
-    else if (document.getElementById("sub").checked)
-    {
-        w = 704;
-        h = 576;
-    }
-    else
-    {
-        w = 2560;
-        h = 1440;
-    }
-
-    // 2560 1440
-
     // create video
-    var video = await video_mgr.setup(JSON.stringify(jSignal), JSON.stringify(jMedia), url, "rtsp", action, 1, canvas, w, h);
+    var video = await video_mgr.setup(JSON.stringify(jSignal), JSON.stringify(jMedia), url, "rtsp", action, 1, canvas);
     if (video != null)
         await video_mgr.play(video);
     

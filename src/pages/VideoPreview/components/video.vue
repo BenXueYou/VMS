@@ -224,7 +224,8 @@ export default {
   },
   methods: {
     async speedUp() {
-      await this.video_mgr.speedControl(this.video, ++this.speed);
+      this.speed = this.speed * 2;
+      await this.video_mgr.speedControl(this.video, this.speed);
     },
     async slowDown() {
       if (this.speed <= 1) {
@@ -286,7 +287,6 @@ export default {
       }
       console.log(w, h);
       console.log("播放的url" + this.rtspUrl);
-      console.log(this.action);
       this.video = await this.video_mgr.setup(
         JSON.stringify(jSignal),
         JSON.stringify(jMedia),
@@ -294,9 +294,7 @@ export default {
         "rtsp",
         this.action,
         this.speed,
-        this.canvas,
-        w,
-        h
+        this.canvas
       );
       if (this.video) {
         await this.video_mgr.play(this.video);

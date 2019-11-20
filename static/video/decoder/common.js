@@ -17,7 +17,7 @@ const kFeedDataReq          = 4;
 const kStartDecodingReq     = 5;
 const kPauseDecodingReq     = 6;
 const kH264AVFrmaeDataReq	= 7;
-const kSetWidthAndHeight    = 8;
+const kSetPlayInit          = 8;
 
 //Decoder response.
 const kInitDecoderRsp       = 0;
@@ -42,7 +42,7 @@ Logger.prototype.logError = function (line) {
 }
 
 Logger.prototype.logInfo = function (line) {
-    // console.log("[" + this.currentTimeStr() + "][" + this.module + "][IF] " + line);
+    console.log("[" + this.currentTimeStr() + "][" + this.module + "][IF] " + line);
 }
 
 Logger.prototype.logDebug = function (line) {

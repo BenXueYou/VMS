@@ -5,9 +5,9 @@ function CDecoder(canvas)
     this.m_cache    = new CDeque;
 };
 
-CDecoder.prototype.setup = function(sdp, w, h)
+CDecoder.prototype.setup = function(sdp)
 {
-    this.m_player = new Player(w, h);  // fix: 分辨率先保留
+    this.m_player = new Player();  // fix: 分辨率先保留
     this.m_player.setCanvas(this.m_canvas);
 }
 

@@ -92,6 +92,7 @@ export default {
   created() {},
   mounted() {
     // this.initData();
+    this.checkedUuid = this.aaaaaa;
   },
   methods: {
     initData() {
@@ -170,6 +171,7 @@ export default {
     //   }
     // },
     handleNodeClick(obj, node, component) {
+      this.checkedUuid = node.data.id;
       // if (obj.type === this.lastLevelType) {
       this.currentNode = node;
       this.labelArr = [];
