@@ -231,6 +231,8 @@ export default {
       ) {
         if (val > nowDateVal) {
           this.timeValue = nowDateVal;
+          this.setTableData();
+          this.drawLine();
         } else {
           this.timer1 = setInterval(() => {
             if (this.timeValue < nowDateVal) {
