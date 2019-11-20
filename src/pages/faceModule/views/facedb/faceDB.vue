@@ -485,6 +485,7 @@ export default {
       } else {
         this.imagePageNow = index;
       }
+      this.pageNow = index;
       this.getStaffLibStaffData();
     },
     selectAll(val) {

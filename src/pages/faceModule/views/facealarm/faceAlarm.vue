@@ -340,7 +340,8 @@ export default {
     transferTaskAct(val) {
       console.log("布控任务：", val);
       this.checkedTaskUuidList = val;
-      this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
+      let arr = JSON.parse(JSON.stringify(val));
+      this.getFaceLibsAndDeviceList(arr);
     },
     transferCheckedChannel(checkedChannel) {
       console.log("设备列表：", checkedChannel);

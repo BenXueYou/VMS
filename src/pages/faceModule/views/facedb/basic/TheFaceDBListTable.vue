@@ -35,7 +35,7 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<div class="footer">
+		<div class="faceDBFooter">
 			<el-pagination
 				background
 				layout="prev, pager, next"
@@ -202,7 +202,7 @@ export default {
 .tablelist {
 	height: 100%;
 }
-.footer {
+.faceDBFooter {
 	position: relative;
 	.totalpagetitle {
 		font-size: 14px;
