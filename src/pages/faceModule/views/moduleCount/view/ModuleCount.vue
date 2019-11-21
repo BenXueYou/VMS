@@ -251,7 +251,9 @@ export default {
       }
     },
     getLibrarys() {
-      this.$faceControlHttp.getFacedbList().then(res => {
+      this.$faceControlHttp.getFacedbList({
+        faceLibraryType: "systemFaceLib,captureFaceLib,dynamicFaceLib,staticFaceLib"
+      }).then(res => {
         let body = res.data;
         this.getFacedbListSuccess(body);
       });
