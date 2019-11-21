@@ -128,10 +128,7 @@ export default {
         } else {
           for (let item of res.data.data) {
             this.$set(item, "leaf", true);
-            if (
-              item.nextCount !== 0 &&
-              (item.nodeType !== "building" && item.nodeType !== "unit")
-            ) {
+            if (item.nextCount !== 0) {
               this.$set(item, "leaf", false);
             }
           }

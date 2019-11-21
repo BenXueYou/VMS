@@ -22,6 +22,7 @@
          :style="{'max-width':maxRightWidth+'px'}"
          ref='right'>
       <div class='vedioWrap'
+           :class="{'fullVideoWrap':fullscreen}"
            ref='vedioWrap'>
         <video-wrap v-for="(item,index) in showFenlu"
                     :ref="'video'+index"
@@ -120,6 +121,7 @@ export default {
   data() {
     return {
       tipsFlag: true,
+      fullscreen: false,
       ip: "",
       port: "",
       showCloudControl: false,
@@ -563,9 +565,11 @@ export default {
       this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
       this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
       let data = JSON.parse(JSON.stringify(this.videoArr));
-      this.videoArr = data.map(item => {
-        item.width = this.videoWidth;
-        item.height = this.videoHeight;
+      this.videoArr = data.map((item, index) => {
+        if (index !== this.isAutoScreen) {
+          item.width = this.videoWidth;
+          item.height = this.videoHeight;
+        }
         return item;
       });
     },
@@ -720,7 +724,10 @@ export default {
           if (!this.videoArr[this.operatorIndex].channelUuid) {
             this.$message.error("该分路上没有通道！");
           } else {
-            this.switchLuxiang(this.videoArr[this.operatorIndex].channelUuid);
+            this.switchLuxiang(
+              this.videoArr[this.operatorIndex].channelUuid,
+              this.videoArr[this.operatorIndex].operatorData.label
+            );
           }
           break;
         case "全屏":
@@ -808,7 +815,7 @@ export default {
       this.videoArr.splice(index, 1, item);
       this.$refs["video" + index][0].stopRecord();
     },
-    switchLuxiang(channelUuid) {
+    switchLuxiang(channelUuid, channelName) {
       this.$store.dispatch("addTagViewItem", {
         icon: "VideoPlayback",
         name: "VideoPlayback",
@@ -820,7 +827,7 @@ export default {
       this.$bus.$emit("setLocalTag", "VideoPlayback");
       this.$router.push({
         name: "VideoPlayback",
-        params: { channelUuid }
+        params: { channelUuid, channelName }
       });
     },
     screenShot(index) {
@@ -852,8 +859,37 @@ export default {
       this.playRtsp(this.videoArr[index].channelUuid, streamType, {}, index);
     },
     PreviewAreafullScreen() {
+      var element = document.documentElement;
       this.setFullScreen(this.$refs.vedioWrap);
       this.initWrapDom();
+
+      // if (this.fullscreen) {
+      //   if (document.exitFullscreen) {
+      //     document.exitFullscreen();
+      //   } else if (document.webkitCancelFullScreen) {
+      //     document.webkitCancelFullScreen();
+      //   } else if (document.mozCancelFullScreen) {
+      //     document.mozCancelFullScreen();
+      //   } else if (document.msExitFullscreen) {
+      //     document.msExitFullscreen();
+      //   }
+      //   console.log("已还原！");
+      // } else {
+      //   // 否则，进入全屏
+      //   if (element.requestFullscreen) {
+      //     element.requestFullscreen();
+      //   } else if (element.webkitRequestFullScreen) {
+      //     element.webkitRequestFullScreen();
+      //   } else if (element.mozRequestFullScreen) {
+      //     element.mozRequestFullScreen();
+      //   } else if (element.msRequestFullscreen) {
+      //     // IE11
+      //     element.msRequestFullscreen();
+      //   }
+      //   console.log("已全屏！");
+      // }
+      // // 改变当前全屏状态
+      // this.fullscreen = !this.fullscreen;
     },
     setFullScreen(target) {
       if (target.requestFullscreen) {
@@ -926,6 +962,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   box-sizing: border-box;
+
   .right {
     width: calc(100% - #{$equLeftMenuWidth});
     height: 100%;
@@ -977,6 +1014,16 @@ export default {
         }
       }
     }
+  }
+  .fullVideoWrap {
+    position: fixed !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
   }
 }
 </style>

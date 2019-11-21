@@ -46,6 +46,7 @@
                        :speed="videoSpeed"
                        :operatorIndex.sync="operatorIndex"
                        :fenlu="fenlu"
+                       :fenlWW="fenluIndex"
                        :data="showFenlu">
 
         </control-panel>
@@ -289,16 +290,20 @@ export default {
         this.$route.params.channelUuid &&
         this.$route.path === "/VideoPlayback"
       ) {
-        this.jumpVideo(this.$route.params.channelUuid);
+        this.jumpVideo(
+          this.$route.params.channelUuid,
+          this.$route.params.channelName
+        );
       }
     },
-    jumpVideo(id) {
+    jumpVideo(id, name) {
       let d = new Date();
       let ymd = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay();
       let hms = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
       this.$refs.leftTree.setKeys(id);
       this.playVideo(
         id,
+        name,
         ymd + " 00:00:00",
         ymd + " " + hms,
         "normal_vod",
@@ -385,12 +390,21 @@ export default {
       // this.endTime = ed;
       // 播放rtsp,传过来的可能是多个通道id
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i].h5Type === "channel") {
-          this.playVideo(arr[i].id, sd, ed, videoType, streamType, i === 0);
+        // nodeType: "chnNode"
+        if (arr[i].nodeType === "chnNode") {
+          this.playVideo(
+            arr[i].id,
+            arr[i].label,
+            sd,
+            ed,
+            videoType,
+            streamType,
+            i === 0
+          );
         }
       }
     },
-    async playVideo(id, sd, ed, videoType, streamType, isFrist) {
+    async playVideo(id, channelName, sd, ed, videoType, streamType, isFrist) {
       let data = await this.backup(id, sd, ed, videoType, streamType);
       // videos是录像的信息，现在将这些放倒控制面板中
       // {
@@ -443,7 +457,7 @@ export default {
       // 模拟数据
       data.videos = data.videos || [];
       videos = {
-        fileName: data.videos.length ? data.videos[0].fileName : "", // 文件名
+        fileName: channelName, // 文件名
         videoType: videoType, // 录像类型，必填
         streamType: "third", // 码流类型
         rtspUrl,
@@ -784,6 +798,14 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.VideoPlaybackContent {
+  // .el-tree-node {
+  //   overflow: auto !important;
+  // }
+}
+</style>
+
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .VideoPlaybackContent {

@@ -455,8 +455,10 @@
     <div slot="footer"
          class="footer">
       <el-button @click="confirm"
+                 class='aaaaaaaaaa'
                  type="primary">保存</el-button>
       <el-button @click="close"
+                 class='aaaaaaaaaa'
                  type="primary">取消</el-button>
     </div>
   </div>
@@ -986,6 +988,7 @@ export default {
   watch: {
     update() {
       let val = this.visible;
+      this.$refs.scroll.scrollTop = 0;
       if (val) {
         console.log(this.row);
         this.row.extInfo = this.row.extInfo || {};
@@ -1282,7 +1285,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
   overflow: hidden;
   display: flex;
   justify-content: flex-end;
-  button {
+  .aaaaaaaaaa {
     width: 66px;
     @include button30;
   }

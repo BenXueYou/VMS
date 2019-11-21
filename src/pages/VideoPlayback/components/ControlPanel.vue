@@ -192,6 +192,12 @@ export default {
       default() {
         return 1;
       }
+    },
+    fenlnWW: {
+      type: Number,
+      default() {
+        return 1;
+      }
     }
   },
   data() {
@@ -328,6 +334,9 @@ export default {
     }
   },
   watch: {
+    fenlnWW() {
+      this.fenluIndex = this.fenlnWW;
+    },
     data(val) {
       console.log(val);
       this.controlData = this.data;

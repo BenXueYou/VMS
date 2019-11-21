@@ -29,13 +29,19 @@
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
             <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
-                  class="span"
+                  class="span "
                   :draggable="data.h5Type==='channel'"
                   @click.stop="saveClickData('', data)"
                   @dragstart="dragstart(data,$event)"
                   :title="node.label">{{ node.label }}</span>
+            <span class="el-dropdown-link  "
+                  @click.stop="saveClickData(node, data,$event)">
+              <img class="checked-img threelinemenu"
+                   src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                   style="margin-right: 20%;">
+            </span>
             <!-- v-if="data.h5Type==='channel'" -->
-            <el-dropdown trigger="click"
+            <!-- <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
                          class='threelinemenu'>
@@ -51,7 +57,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item command="playback">查看录像</el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
+            </el-dropdown> -->
           </div>
         </el-tree>
       </el-tab-pane>
@@ -487,13 +493,51 @@ export default {
       this.operatorData = data;
       this.chuliData();
     },
-    saveClickData(node, data) {
+    saveClickData(node, data, event) {
       // 点击三角菜单保存树节点信息
       this.operatorData = data;
+      if (event) {
+        const _this = this;
+        this.$ContextMenu({
+          data: [
+            {
+              value: "video",
+              label: "打开视频",
+              children: [
+                {
+                  label: "主码流",
+                  value: "main"
+                },
+                {
+                  label: "辅码流",
+                  value: "sub"
+                },
+                {
+                  label: "三码流",
+                  value: "thrid"
+                }
+              ]
+            },
+            {
+              value: "playback",
+              label: "查看录像"
+            }
+          ],
+          event: event,
+          callback(value) {
+            // value表示点击按钮的value
+            _this.handleCommand(value);
+          }
+        });
+      }
     },
-    chuliData() {
+    chuliData(streamType = "main") {
       if (this.operatorData.h5Type === "channel") {
-        this.getPreviewInfo(this.operatorData.id, this.operatorData);
+        this.getPreviewInfo(
+          this.operatorData.id,
+          this.operatorData,
+          streamType
+        );
       } else if (this.operatorData.h5Type === "organization") {
         // 根据组织来获取通道
         api
@@ -508,18 +552,22 @@ export default {
             // 这里获取到通道UUid
             for (let i = 0; i < data.length; i++) {
               data[i].relType = data[i].type;
-              this.getPreviewInfo(data[i].id, data[i], -1);
+              this.getPreviewInfo(data[i].id, data[i], streamType, -1);
             }
           });
       } else if (this.operatorData.hasOwnProperty("channelType")) {
-        this.getPreviewInfo(this.operatorData.channelUuid, this.operatorData);
+        this.getPreviewInfo(
+          this.operatorData.channelUuid,
+          streamType,
+          this.operatorData
+        );
       } else if (this.operatorData.hasOwnProperty("tagType")) {
         this.getChannelByNode(this.operatorData.id).then(res => {
           console.log(res);
           let data = res || [];
           for (let i = 0; i < data.length; i++) {
             data[i].relType = data[i].channelType;
-            this.getPreviewInfo(data[i].channelUuid, data[i], -1);
+            this.getPreviewInfo(data[i].channelUuid, data[i], streamType, -1);
           }
         });
       }
@@ -533,8 +581,22 @@ export default {
       if (command === "video") {
         // 打开视频操作
         this.chuliData();
+      } else if (
+        command === "main" ||
+        command === "sub" ||
+        command === "thrid"
+      ) {
+        this.chuliData(command);
       } else if (command === "playback") {
-        this.$emit("switchLuxiang", this.operatorData.id);
+        if (this.operatorData.relType === "channel") {
+          this.$emit(
+            "switchLuxiang",
+            this.operatorData.id,
+            this.operatorData.label
+          );
+        } else {
+          this.$message.error("请选择通道查看录像！");
+        }
       } else if (command === "view") {
         this.openVidewTu();
       } else if (command === "renameView") {
@@ -544,8 +606,8 @@ export default {
         this.isDeleteVisible = true;
       }
     },
-    getPreviewInfo(channelUuid, data, operator = 1) {
-      this.$emit("playRtsp", channelUuid, "main", data, operator);
+    getPreviewInfo(channelUuid, data, streamType, operator = 1) {
+      this.$emit("playRtsp", channelUuid, streamType, data, operator);
     },
     handleNodeClick() {
       // 点击展开
@@ -1443,6 +1505,12 @@ export default {
       margin-top: 9px;
     }
   }
+  // .el-tree,
+  // .el-tree-node
+  .el-tree-node {
+    height: 100%;
+    overflow: auto !important;
+  }
 }
 </style>
 
@@ -1455,14 +1523,20 @@ export default {
   height: 100%;
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
+
   .custom-tree-node {
-    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 18px;
     .span {
-      width: calc(100% - 30px);
-      overflow: hidden;
-      display: block;
-      text-overflow: ellipsis;
-      float: left;
+      // width: calc(100% - 30px);
+      // overflow: hidden;
+      // display: block;
+      // text-overflow: ellipsis;
+      // float: left;
     }
     .threelinemenu {
       display: none;

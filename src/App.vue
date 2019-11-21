@@ -43,7 +43,7 @@ export default {
     },
     async getPreviewInfo() {
       if (
-        this.$route.fullPath.toLocaleLowerCase().indexOf("/faceHome") !== -1 ||
+        this.$route.fullPath.toLocaleLowerCase().indexOf("/facehome") !== -1 ||
         this.$route.fullPath.toLocaleLowerCase().indexOf("/videopreview") !==
           -1 ||
         this.$route.fullPath.toLocaleLowerCase().indexOf("/videoplayback") !==

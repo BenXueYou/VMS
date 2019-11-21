@@ -1,5 +1,5 @@
 import store from "@/store/store.js";
-
+let zhengyu = window.config.zhengyu;
 let ip = window.config.ip,
   // projectUuid = window.config.projectUuid;
   projectUuid = store.state.home.projectUuid;
@@ -10,7 +10,9 @@ let zwUrlPrefix = `${
 let urlPrefix = `${
   window.config.protocolHeader
 }${ip}/video-v1/project/${projectUuid}`;
-
+let sbPrefix = `${
+  window.config.protocolHeader
+}${ip}/${zhengyu}/project/${projectUuid}/`;
 export default {
   // 获取视频预览信息
   getPreviewInfoUrl: `${urlPrefix}/video/previewInfo`,
@@ -48,7 +50,9 @@ export default {
   // h获取媒流体服务的信息
   getPreviewInfAAoUrl: `${
     window.config.protocolHeader
-  }${ip}/media-stream/v1.0/media_stream_transfer/video/previewInfo`
+  }${ip}/media-stream/v1.0/media_stream_transfer/video/previewInfo`,
+  // 获取视频通道树
+  getPlayTreeUrl: `${zwUrlPrefix}/video/playback/tree`
   // 先使用下面的url测试
   // videoTreeUrl: `http://192.168.9.164:9000/project/a2445ed3830b4a3d9607ef502e8333bf/organization/video/children`
 };

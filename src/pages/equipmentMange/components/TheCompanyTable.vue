@@ -100,7 +100,7 @@
                          label="视频通道"></el-table-column>
         <el-table-column prop="alarmCount"
                          width="80"
-                         v-else-if="index==1"
+                         v-else-if="index==2"
                          label="门数量"></el-table-column>
         <el-table-column prop="vistorCount"
                          width="80"
@@ -378,9 +378,9 @@ export default {
               list[i].ip = list[i].deviceIp;
               list[i].devId = list[i].deviceSn;
               list[i].devMode = list[i].productType;
-              list[i].doorCount = list[i].doorCount;
-              list[i].videoCount = list[i].videoCount;
-              list[i].alarmCount = list[i].alarmCount;
+              list[i].doorCount = list[i].extInfo.doorCount;
+              list[i].videoCount = list[i].extInfo.videoCount;
+              list[i].alarmCount = list[i].extInfo.alarmCount;
               list[i].vistorCount = 0;
               list[i].netStatus = list[i].deviceOnlineStatus;
               list[i].createTime = list[i].createTime;

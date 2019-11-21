@@ -274,18 +274,18 @@ export default {
       this.canvas.height = this.calcHeight();
       let { jMedia, jSignal } = this.$store.getters;
       console.log(jMedia, jSignal);
-      let w, h;
-      if (this.streamType === "main") {
-        w = 1920;
-        h = 1080;
-      } else if (this.streamType === "sub") {
-        w = 704;
-        h = 576;
-      } else {
-        w = 2560;
-        h = 1440;
-      }
-      console.log(w, h);
+      // let w, h;
+      // if (this.streamType === "main") {
+      //   w = 1920;
+      //   h = 1080;
+      // } else if (this.streamType === "sub") {
+      //   w = 704;
+      //   h = 576;
+      // } else {
+      //   w = 2560;
+      //   h = 1440;
+      // }
+      // console.log(w, h);
       console.log("播放的url" + this.rtspUrl);
       this.video = await this.video_mgr.setup(
         JSON.stringify(jSignal),

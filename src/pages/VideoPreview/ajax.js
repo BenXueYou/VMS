@@ -145,3 +145,11 @@ export function getCameraInfo(params = {}) {
     params
   });
 }
+export function getPlayTree(params = {}) {
+  let url = vUrl.getPlayTreeUrl;
+  return axios({
+    method: "GET",
+    url,
+    params
+  });
+}

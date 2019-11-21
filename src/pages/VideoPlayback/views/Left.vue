@@ -292,7 +292,10 @@ export default {
     async devloadNode(node, resolve) {
       //  懒加载子结点
       console.log(node);
-      let data = await this.videoTree(node.data && node.data.id);
+      let data = await this.videoTree(
+        node.data && node.data.id,
+        node.data && node.data.nodeType
+      );
       data = data.map(item => {
         item.leaf = !item.openFlag;
         return item;
@@ -307,11 +310,17 @@ export default {
       // ];
       return resolve(data);
     },
-    videoTree(parentOrgUuid) {
-      let data = parentOrgUuid ? { parentOrgUuid } : {};
+    videoTree(parentUuid, parentType) {
+      let data = {};
+      if (parentUuid) {
+        data.parentUuid = parentUuid;
+      }
+      if (parentType) {
+        data.parentType = parentType;
+      }
       return new Promise((resolve, reject) => {
         api2
-          .videoTree(data)
+          .getPlayTree(data)
           .then(res => {
             let list = res.data.data || [];
             resolve(list);
@@ -456,6 +465,9 @@ export default {
       margin-top: 9px;
     }
   }
+  .el-tree {
+    overflow: auto;
+  }
 }
 </style>
 
@@ -471,14 +483,21 @@ export default {
   overflow: auto;
   .custom-tree-node {
     // width: 100%;
-    .threelinemenu {
-      display: none;
-      float: right;
-      margin-right: 10px;
-    }
-    &:hover .threelinemenu {
-      display: block;
-    }
+    // flex: 1;
+    // display: flex;
+    // align-items: center;
+    // justify-content: space-between;
+    // font-size: 14px;
+    // padding-right: 8px;
+
+    // .threelinemenu {
+    //   display: none;
+    //   // float: right;
+    //   // margin-right: 10px;
+    // }
+    // &:hover .threelinemenu {
+    //   display: block;
+    // }
   }
   .timeSelect {
     margin-top: 20px;
