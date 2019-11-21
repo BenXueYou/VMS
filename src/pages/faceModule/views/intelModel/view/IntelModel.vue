@@ -127,7 +127,7 @@
                               :lineLimit="2"
                               style="width: 60%; margin-left: 40px;"
                               ref="camera2"
-                              containerId="camera1" />
+                              containerId="camera2" />
           </div>
           <div class="block-camera">
             <span>同时不符合：</span>
@@ -137,7 +137,7 @@
                               :lineLimit="2"
                               style="width: 60%; margin-left: 28px;"
                               ref="camera3"
-                              containerId="camera1" />
+                              containerId="camera3" />
           </div>
           <div class="block-line">排除人脸库：&nbsp;&nbsp;&nbsp;&nbsp;
             <template v-for="(item, index) in intelModelObj.notInlibrary">

@@ -1,6 +1,7 @@
 .el-color-picker__trigger {
   border: 0;
 }
+
 .el-color-picker__panel {
   background-color: #232629;
   .el-button--default,
@@ -40,20 +41,39 @@ img,
 }
 
 /**************************************图片预览******************************************/
-.el-image-viewer__canvas {
-  width: 80%;
-  height: 80%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  margin-top: 5%;
-  margin-left: 10%;
+.el-image-viewer__wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.el-image-viewer__canvas img {
+  width: auto;
+  max-width: 60%!important;
+  height: 60%!important;
+  top: 5%;
+  left: 5%;
+}
+.el-image-viewer__mask {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.5;
+  background: #000;
+}
+.el-icon-circle-close:before {
+  content: "\E78D";
+  color: #efefef;
+}
+.el-image-viewer__btn.el-image-viewer__close {
+  position: absolute;
+  top: 15%;
+  right: 15%;
 }
 /**************************************单选框样式*********************************************/
 
@@ -939,20 +959,20 @@ input::-webkit-input-placeholder {
   color: #868686;
 }
 .el-tabs__nav-wrap::after {
-  background-color: #3F4244;
+  background-color: #3f4244;
 }
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-  color: #26D39D;
+  color: #26d39d;
 }
 .el-select .el-tag {
-  background-color: rgba($color: #26D39D, $alpha: 0.1);
+  background-color: rgba($color: #26d39d, $alpha: 0.1);
 }
 .el-tag.el-tag--info {
   border-color: rgba($color: #e9e9eb, $alpha: 0.1);
 }
 .el-tag.el-tag--info .el-tag__close {
-  color: #3E4145;
+  color: #3e4145;
 }
 .el-select .el-tag__close.el-icon-close {
-  background-color: #B8B9BA;
+  background-color: #b8b9ba;
 }

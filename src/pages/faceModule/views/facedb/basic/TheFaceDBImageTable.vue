@@ -33,7 +33,7 @@
 			</div>
 			<!-- <div class="box hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
 		</div>
-		<div class="footer">
+		<div class="faceDBImageFooter">
 			<el-pagination
 				background
 				layout="prev, pager, next"
@@ -376,7 +376,7 @@ $fontcolor: #aaa;
 		}
 	}
 }
-.footer {
+.faceDBImageFooter {
 	position: relative;
 	margin: 10px 0px;
 	.totalpagetitle {

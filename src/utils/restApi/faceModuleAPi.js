@@ -93,7 +93,7 @@ export default {
   addIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
   editIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
   editIntelModelStatus: `${URLHeader}/${projectUuid}/IntelligentModel/status`,
-  getFacedbList: `${URLHeader}/${projectUuid}/faceLib/list`,
+  getFacedbList: `${URLHeader}/${projectUuid}/faceLib/select/list`,
   getDevList: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/organization/children`,
   getTagList: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/tag/list`,
   getTagDev: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/tagElement/channelList`,

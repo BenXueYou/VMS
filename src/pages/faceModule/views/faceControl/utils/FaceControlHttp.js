@@ -71,9 +71,13 @@ export var FaceControlHttp = {
     let api = `${RestApi.api.faceModuleAPi.deleteMonitoringTask(holder.taskUuid)}`;
     return axios.delete(api);
   },
-  getFacedbList() {
+  getFacedbList(holder) {
     let api = `${RestApi.api.faceModuleAPi.getFacedbList}`;
-    return axios.get(api);
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return axios.get(api, { params: data });
   },
   getDevList(holder) {
     let api = `${RestApi.api.faceModuleAPi.getDevList}`;

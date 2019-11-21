@@ -10,7 +10,7 @@ if (DEBUG == "DEBUG") {
   // ip = "192.168.9.190:15000";
   // websocketIp = "192.168.9.190:15007";
   ip = "192.168.6.111:15000";
-  websocketIp = "192.168.9.67:15007";
+  websocketIp = "192.168.6.111:80";
   imageUrl =
     protocolHeader +
     "//" +

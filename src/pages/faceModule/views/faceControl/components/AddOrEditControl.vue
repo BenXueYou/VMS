@@ -3,6 +3,7 @@
     <select-face :isShow="isShowAddFaceDB"
                  ref="selectFace"
                  :initSelectData="initSelectFaceData"
+                 faceLibraryType="systemFaceLib,dynamicFaceLib,staticFaceLib"
                  @onCancel="cancelAddFaceDB"
                  @onConfirm="confirmAddFaceDB" />
     <select-video :isShow="isShowAddVideoSrc"

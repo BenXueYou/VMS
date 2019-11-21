@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <el-dialog class="GlobalAlarmDialogClass"
              :visible.sync="dialogShow"
              @close="closeDialog"
@@ -14,6 +15,21 @@
           <!-- facelog-->
           <div class="leftColBg">
             <!-- <img
+=======
+	<el-dialog
+		class="GlobalAlarmDialogClass"
+		:visible.sync="isShow"
+		@close="closeDialog"
+		:title="dialogParama.faceMonitorName||'布控报警'"
+		v-dialogDrag
+	>
+		<div class="GlobalAlarmDialog">
+			<el-row type="flex" justify="flex-start" class="GlobalAlarmDialogBodyClass" :gutter="5">
+				<div>
+					<!-- facelog-->
+					<div class="leftColBg">
+						<!-- <img
+>>>>>>> dfa2da5965c88cdc72915d4a4b71d2b353341f4c
 							class="GlobalAlarmDialog-card-img"
 							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)"
 						/>-->
@@ -116,41 +132,40 @@
 <script type="text/javascript">
 import RestApi from "@/utils/RestApi.js";
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
-import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
   name: "GlobalAlarmDialog",
   props: {
-    dialogParama: {}
+    dialogParama: {},
+    dialogShow: {
+      type: Boolean,
+      default: false
+    }
   },
-  components: { "big-img": BigImg },
   data: function() {
     return {
       shootPhotoList: [],
       staffInfo: {},
       taskInfo: {},
-      showImgs: false,
       imgSrc: "",
+      isShow: false,
       imageHeader: RestApi.api.imageUrl,
-      dialogShow: true,
       PicSourceType: window.config.PicSourceType
     };
   },
   watch: {
-    showImg: function() {
-      this.showImgs = this.showImg;
-    },
-    dialogParama: {
+    dialogShow: {
       handler: function(val, oldVal) {
-        console.log(val);
+        this.isShow = val;
       },
       deep: true
-    }
+    },
   },
   mounted: function(e) {
     // 父組件向子組件傳值
     console.log("-------------", this.dialogParama);
     this.staffInfo = this.dialogParama || {};
+    this.isShow = this.dialogParama.showDialog;
     this.getRecoginizedList();
   },
   activated: function() {
@@ -220,9 +235,6 @@ export default {
       // 获取当前图片地址
       this.imgSrc = e.currentTarget.src;
     },
-    viewImg() {
-      this.$emit("cs", false);
-    },
     mousedown(event) {
       this.selectElement = event.currentTarget;
       var div1 = this.selectElement.parentNode.parentNode.parentNode;
@@ -252,7 +264,8 @@ export default {
       mousemove(event);
     },
     closeDialog() {
-      this.dialogShow = false;
+      this.isShow = false;
+      this.$emit("close");
     }
   }
 };
@@ -400,10 +413,14 @@ export default {
   width: 248px;
   height: 139px;
 }
+.GlobalAlarmDialog .leftColBg .el-image .el-image-viewer__canvas img,
 .GlobalAlarmDialog .cardBox .facePhoto .el-image .el-image-viewer__canvas img {
   width: auto;
   max-width: 100%;
   height: 100%;
+}
+.GlobalAlarmDialog .leftColBg .GlobalAlarmDialog-card-img.el-image {
+	height: 100%;
 }
 .GlobalAlarmDialog .cardBox .facePhoto img,
 .GlobalAlarmDialog .cardBox .panoramaPhoto img {
