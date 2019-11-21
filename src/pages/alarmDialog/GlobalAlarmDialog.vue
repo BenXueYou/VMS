@@ -1,21 +1,4 @@
 <template>
-<<<<<<< HEAD
-  <el-dialog class="GlobalAlarmDialogClass"
-             :visible.sync="dialogShow"
-             @close="closeDialog"
-             :close-on-click-modal="ture"
-             :title="dialogParama.faceMonitorName||'布控报警'"
-             v-dialogDrag>
-    <div class="GlobalAlarmDialog">
-      <el-row type="flex"
-              justify="flex-start"
-              class="GlobalAlarmDialogBodyClass"
-              :gutter="5">
-        <div>
-          <!-- facelog-->
-          <div class="leftColBg">
-            <!-- <img
-=======
 	<el-dialog
 		class="GlobalAlarmDialogClass"
 		:visible.sync="isShow"
@@ -29,7 +12,6 @@
 					<!-- facelog-->
 					<div class="leftColBg">
 						<!-- <img
->>>>>>> dfa2da5965c88cdc72915d4a4b71d2b353341f4c
 							class="GlobalAlarmDialog-card-img"
 							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)"
 						/>-->
