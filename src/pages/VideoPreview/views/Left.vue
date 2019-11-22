@@ -525,6 +525,7 @@ export default {
           ],
           event: event,
           callback(value) {
+            // alert(value);
             // value表示点击按钮的value
             _this.handleCommand(value);
           }

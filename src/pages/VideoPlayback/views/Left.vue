@@ -482,13 +482,13 @@ export default {
   padding: 0px 40px;
   overflow: auto;
   .custom-tree-node {
-    // width: 100%;
-    // flex: 1;
-    // display: flex;
-    // align-items: center;
-    // justify-content: space-between;
-    // font-size: 14px;
-    // padding-right: 8px;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
 
     // .threelinemenu {
     //   display: none;

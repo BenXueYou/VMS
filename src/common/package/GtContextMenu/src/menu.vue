@@ -5,12 +5,13 @@
           :key="index"
           :onmouseover="item.hover=true"
           :mouseout="item.hover=false"
-          @click="chooseItem(item.value)"
+          @click.stop="clickLabel(item.value)"
           :class="{'next':item.children&&item.children.length}"
           class="submenu-li">
         {{item.label}}
 
-        <sub-menu :data="item.children||[]" @chooseItem="chooseItem">
+        <sub-menu :data="item.children||[]"
+                  @chooseItem="$emit('chooseItem',$event)">
 
         </sub-menu>
       </li>
@@ -29,7 +30,7 @@ export default {
     }
   },
   methods: {
-    chooseItem(item) {
+    clickLabel(item) {
       this.$emit("chooseItem", item);
     }
   },

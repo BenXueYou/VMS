@@ -4,7 +4,7 @@
        :style='{"left":left+"px","top":top+"px"}'
        ref='wrap'>
     <sub-menu :data="data"
-              @chooseItem='chooseItem'></sub-menu>
+              @chooseItem='ccccc'></sub-menu>
   </div>
 </template>
 
@@ -33,7 +33,8 @@ export default {
     });
   },
   methods: {
-    chooseItem(item) {
+    ccccc(item) {
+      // alert(item);
       //获取到用户点击的菜单，并且关闭右键菜单。
       this.callback(item);
       this.isshow = false;
