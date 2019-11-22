@@ -13,7 +13,7 @@
 				<!-- <div class="item hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
 			</div>
 		</div>
-		<div class="footer">
+		<div class="FAMImageListFooter">
 			<el-pagination
 				background
 				layout="prev, pager, next"
@@ -310,7 +310,7 @@ export default {
 		}
 	}
 }
-.footer {
+.FAMImageListFooter {
 	position: relative;
 	// margin: 30px 0px;
 	.totalpagetitle {

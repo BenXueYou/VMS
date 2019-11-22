@@ -215,10 +215,16 @@ export default {
     // 弹窗展开的回调
     show() {},
     // 弹窗关闭的回调
-    hide() {},
+    hide() {
+      if (!this.checkAll) {
+        debugger;
+        this.$emit("transferCheckedChannel", this.channels);
+      }
+    },
     // 全选的回调
     handleCheckAllChange(val) {
       console.log(val);
+      this.checkAll = val;
       let checkedChannelArr = [];
       let checkedChannelUuidArr = [];
       if (val) {
@@ -226,6 +232,8 @@ export default {
           checkedChannelUuidArr.push(element.channelUuid);
           checkedChannelArr.push(element);
         });
+      } else {
+        checkedChannelArr = this.channels;
       }
       this.checkedChannel = checkedChannelUuidArr;
       console.log(this.checkedChannel);
@@ -358,8 +366,8 @@ export default {
 	background: #202124;
 }
 .popverTreeParent {
-  .el-checkbox + .el-checkbox {
-    margin-left: 15px !important;
-  }
+	.el-checkbox + .el-checkbox {
+		margin-left: 15px !important;
+	}
 }
 </style>
