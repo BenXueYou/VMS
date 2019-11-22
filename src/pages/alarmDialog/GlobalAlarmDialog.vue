@@ -75,15 +75,9 @@
                           :preview-src-list="[$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)]"></el-image>
                 <img v-else
                      :src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType):require('@/assets/user.png')" />
-                <!-- <img
-									:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
-								/>-->
               </el-col>
               <el-col class="panoramaPhoto"
                       :span="17">
-                <!-- <img
-									:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
-								/>-->
                 <el-image v-if="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl"
                           :src="$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)"
                           :preview-src-list="[$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)]"></el-image>
