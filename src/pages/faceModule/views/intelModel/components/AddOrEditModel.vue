@@ -556,7 +556,7 @@ export default {
     deleteItem(item) {
       this.formLabelAlign.faceLibraryUuids = [];
       for (let [i, v] of this.faceDBSelectedList.entries()) {
-        if (v.id === item.id) {
+        if (v.faceLibraryUuid === item.faceLibraryUuid) {
           this.faceDBSelectedList.splice(i, 1);
         }
       }
