@@ -1,5 +1,5 @@
 <template>
-  <div class='left'
+  <div class='VideoPlaybackContentLeft'
        id='VideoPlaybackContentLeft'>
     <div class="searchWrap">
       <el-input placeholder='搜索组织/标签/名称'
@@ -25,11 +25,17 @@
                  ref="tree1"
                  lazy
                  show-checkbox
+                 class='videoTree'
                  node-key="id"
                  :default-checked-keys="defaultExpandedKeys"
                  @check-change="devhandleCheckChange">
           <div class="custom-tree-node"
-               slot-scope="{ node }">
+               slot-scope="{ node,data }">
+            <div class="channelStatus"
+                 v-if="data.nodeType==='chnNode'&&data.icon">
+              <img :src="data.icon"
+                   alt="">
+            </div>
             <span>{{ node.label }}</span>
             <!-- v-if="data.hasOwnProperty('channelType')" -->
             <!-- <el-dropdown trigger="click"
@@ -57,6 +63,7 @@
                  :expand-on-click-node="false"
                  lazy
                  node-key="id"
+                 class='videoTree'
                  :indent="10"
                  ref="tree2"
                  show-checkbox
@@ -70,6 +77,7 @@
       <el-tab-pane label="视图"
                    name="view">
         <el-tree :props="viewProps"
+                 class='videoTree'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
@@ -296,8 +304,24 @@ export default {
         node.data && node.data.id,
         node.data && node.data.nodeType
       );
+      let treeIcons = window.config.treeIcons;
       data = data.map(item => {
         item.leaf = !item.openFlag;
+        if (item.nodeType === "chnNode") {
+          for (let i = 0; i < treeIcons.length; i++) {
+            if (treeIcons[i].value === item.realType) {
+              item.icon = require(`@/assets/images/treeIcons/${
+                treeIcons[i].icon
+              }.png`);
+              if (item.extInfo.netStatus === "offline") {
+                item.icon = require(`@/assets/images/treeIcons/${
+                  treeIcons[i].icon
+                }2.png`);
+              }
+              break;
+            }
+          }
+        }
         return item;
       });
       // data = [
@@ -445,6 +469,9 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
+  .el-tree-node {
+    width: 500px;
+  }
   .el-tree-node__label {
     text-indent: 10px;
   }
@@ -473,7 +500,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
-.left {
+.VideoPlaybackContentLeft {
   width: 280px;
   box-sizing: border-box;
   height: 100%;
@@ -481,14 +508,28 @@ export default {
   background-color: rgba(35, 38, 41, 0.8);
   padding: 0px 40px;
   overflow: auto;
+  .videoTree {
+    height: calc(100vh - 380px);
+    // width:500px;
+    overflow: auto;
+  }
   .custom-tree-node {
-    // width: 100%;
-    // flex: 1;
-    // display: flex;
-    // align-items: center;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
     // justify-content: space-between;
-    // font-size: 14px;
-    // padding-right: 8px;
+    font-size: 14px;
+    padding-right: 8px;
+    .channelStatus {
+      float: left;
+      width: 15px;
+      height: 15px;
+      margin-right: 7px;
+      img {
+        height: 100%;
+      }
+    }
 
     // .threelinemenu {
     //   display: none;
@@ -521,10 +562,10 @@ export default {
     }
   }
   .treeWrap,
-  .tabs {
-    height: calc(100vh - 350px);
-    overflow: auto;
-  }
+  // .tabs {
+  //   height: calc(100vh - 350px);
+  //   overflow: auto;
+  // }
 
   .treeSwitchTabs {
     ul {

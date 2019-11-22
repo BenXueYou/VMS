@@ -50,7 +50,7 @@ export default {
           -1
       ) {
         const { jSignal, jMedia } = this.$store.getters;
-        if (!jSignal.ip || !jMedia.ip) {
+        if (!jSignal.srcUuid || !jMedia.srcUuid) {
           let data = await this.getPreviewInfoAA();
           this.$store.commit("setIccSignalRule", data.iccSignalRule);
           this.$store.commit("setIccMediaRule", data.iccMediaRule);

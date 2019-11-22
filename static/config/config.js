@@ -107,10 +107,67 @@ var resourceType = {
     }
   ]
 };
-
+let treeIcons = [
+  {
+    label: "IPC",
+    value: "ipc",
+    icon: "ip"
+  },
+  {
+    label: "NVR",
+    value: "nvr",
+    icon: "nvr"
+  },
+  {
+    label: "门禁",
+    value: "door",
+    icon: "door"
+  },
+  {
+    label: "人工访客",
+    value: "hand_visitordevice",
+    icon: "rgfk"
+  },
+  {
+    label: "自助访客",
+    value: "auto_visitordevice",
+    icon: "zzfk"
+  },
+  {
+    label: "枪机",
+    value: "bullet_camera",
+    icon: "qj"
+  },
+  {
+    label: "半球",
+    value: "dome_camera",
+    icon: "bq"
+  },
+  {
+    label: "球机",
+    value: "ball_camera",
+    icon: "qiuji"
+  },
+  {
+    label: "人脸门",
+    value: "",
+    icon: "rl"
+  },
+  {
+    label: "普通门",
+    value: "",
+    icon: "pt"
+  },
+  {
+    label: "带云台的枪机",
+    value: "bullet_camera_ptz",
+    icon: "ytqj"
+  }
+];
 window.config = {
   DeBug: true,
   resourceType,
+  treeIcons,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",

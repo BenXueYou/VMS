@@ -346,6 +346,7 @@ export default {
     },
     resetData() {
       this.initData();
+      this.selectDate = "";
       this.itemData = [];
       this.imageUrl = "";
       this.imageBase64 = "";
