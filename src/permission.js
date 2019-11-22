@@ -47,6 +47,8 @@ router.beforeEach((to, from, next) => {
               router.addRoutes(routerData);
             }
           }).catch(() => {
+            //  当1.6的服务接口不同的情况下，保证前端代码正常调试的测试代码 ******************************************
+            next('/Login');
           });
       }
 
