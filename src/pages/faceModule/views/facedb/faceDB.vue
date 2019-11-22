@@ -1,53 +1,53 @@
 <template>
 	<div id="noteaacx" class="wrap">
-    <transition name="slide-fade">
-		<div class="left" :style="{'margin-left':(issuoxiao?-470:0)+'px'}">
-			<div class="rightarrow" @click="suoxiao">
-				<img :src="rightarrow" :style="{'transform':(issuoxiao?'rotate(180deg)':'rotate(0deg)')}" alt />
-			</div>
-			<div class="leftHeader">
-				<img src="@/assets/images/faceModule/twopeople.png" alt />
-				人脸库
-			</div>
-			<div class="title button-div">
-				<el-button type="primary" icon="el-icon-plus" class="addnewdb" @click="addfacedb">新建人像库</el-button>
-				<span class="tips">人像库总数：{{tableData.length}} &nbsp;&nbsp;&nbsp;&nbsp; 总人脸数：{{totalrenshu}}</span>
-			</div>
-			<div class="leftasda">
-				<!-- :current-row-key="selectLibRow.index" -->
-				<el-table
-					:data="tableData"
-					border
-					ref="multipleTable"
-					v-loading="loadding"
-					:current-row-key="0"
-					highlight-current-row
-					@row-click="selectedRow"
-					style="width: 100%"
-				>
-					<el-table-column prop="faceLibraryName" label="库名称" width="180"></el-table-column>
-					<el-table-column prop="faceTotal" label="人员数量" width="100"></el-table-column>
-					<el-table-column label="操作">
-						<template slot-scope="scope">
-							<el-button @click.stop="editFaceLib(scope.row)" type="text" size="small">
-								<i class="el-icon-edit-outline"></i>
-								编辑
-							</el-button>
+		<transition name="slide-fade">
+			<div class="left" :style="{'margin-left':(issuoxiao?-470:0)+'px'}">
+				<div class="rightarrow" @click="suoxiao">
+					<img :src="rightarrow" :style="{'transform':(issuoxiao?'rotate(180deg)':'rotate(0deg)')}" alt />
+				</div>
+				<div class="leftHeader">
+					<img src="@/assets/images/faceModule/twopeople.png" alt />
+					人脸库
+				</div>
+				<div class="title button-div">
+					<el-button type="primary" icon="el-icon-plus" class="addnewdb" @click="addfacedb">新建人像库</el-button>
+					<span class="tips">人像库总数：{{tableData.length}} &nbsp;&nbsp;&nbsp;&nbsp; 总人脸数：{{totalrenshu}}</span>
+				</div>
+				<div class="leftasda">
+					<!-- :current-row-key="selectLibRow.index" -->
+					<el-table
+						:data="tableData"
+						border
+						ref="multipleTable"
+						v-loading="loadding"
+						:current-row-key="0"
+						highlight-current-row
+						@row-click="selectedRow"
+						style="width: 100%"
+					>
+						<el-table-column prop="faceLibraryName" label="库名称" width="180"></el-table-column>
+						<el-table-column prop="faceTotal" label="人员数量" width="100"></el-table-column>
+						<el-table-column label="操作">
+							<template slot-scope="scope">
+								<el-button @click.stop="editFaceLib(scope.row)" type="text" size="small">
+									<i class="el-icon-edit-outline"></i>
+									编辑
+								</el-button>
 
-							<el-button
-								type="text"
-								size="small"
-								@click.stop="openDeleteDialog('deletefaceLib',scope.row)"
-							>
-								<i class="el-icon-delete"></i>
-								删除
-							</el-button>
-						</template>
-					</el-table-column>
-				</el-table>
+								<el-button
+									type="text"
+									size="small"
+									@click.stop="openDeleteDialog('deletefaceLib',scope.row)"
+								>
+									<i class="el-icon-delete"></i>
+									删除
+								</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
 			</div>
-		</div>
-    </transition>
+		</transition>
 		<div class="right" :style="{'width': 'calc(100% - '+(issuoxiao?30:500)+'px)'}">
 			<div v-show="!faceDBDialogAddVisible" class="rightheader">
 				<ul>
@@ -242,14 +242,14 @@ export default {
       selectall: false,
       typeradio: "TheFaceDBImageTable",
       currentcomponents: "TheFaceDBImageTable",
-      listPageSize: 15,
-      imagePageSize: 24,
+      listPageSize: 18,
+      imagePageSize: 40,
       listPageCount: 0,
       imagePageCount: 0,
       listPageNow: 1,
       imagePageNow: 1,
       pageNow: 1,
-      pageSize: 24,
+      pageSize: 28,
       imageTableData: [],
       listTableData: [],
       libraryarr: [],
@@ -320,22 +320,11 @@ export default {
     },
     suoxiao() {
       this.issuoxiao = !this.issuoxiao;
-      if (this.issuoxiao) {
-        this.$nextTick(() => {
-          var el = this.$refs.dataWrap;
-          var w = el.offsetWidth;
-          this.imagePageSize = 4 * Math.floor(w / 150);
-          if (this.typeradio === "TheFaceDBImageTable") {
-            this.getStaffLibStaffData();
-          }
-        });
+      if (this.typeradio === "TheFaceDBImageTable") {
+        this.pageSize = this.issuoxiao ? 40 : 28;
+        this.getStaffLibStaffData();
       } else {
-        this.$nextTick(() => {
-          var el = this.$refs.dataWrap;
-          var w = el.offsetWidth;
-          this.imagePageSize = 4 * Math.floor(w / 150);
-          this.imageTableData.splice(this.imagePageSize, 20000);
-        });
+        // 列表的limit不需改变
       }
     },
     sureExport() {
@@ -549,48 +538,12 @@ export default {
     changetype(val) {
       this.currentcomponents = val;
       this.selectall = false;
-      if (
-        this.typeradio === "TheFaceDBListTable" &&
-				!this.listTableData.length
-      ) {
-        this.getStaffLibStaffData();
+      if (this.typeradio === "TheFaceDBListTable") {
+        this.pageSize = 18;
+      } else {
+        this.pageSize = this.issuoxiao ? 40 : 28;
       }
-      if (this.typeradio === "TheFaceDBImageTable") {
-        if (this.issuoxiao) {
-          this.$nextTick(() => {
-            var el = this.$refs.dataWrap;
-            var w = el.offsetWidth;
-            var size = this.imagePageSize;
-            this.imagePageSize = 4 * Math.floor(w / 150);
-            if (
-              this.typeradio === "TheFaceDBImageTable" &&
-							size !== this.imagePageSize
-            ) {
-              this.getStaffLibStaffData();
-            }
-          });
-        } else {
-          if (this.imageTableData.length) {
-            this.$nextTick(() => {
-              var el = this.$refs.dataWrap;
-              var w = el.offsetWidth;
-              var size = this.imagePageSize;
-              this.imagePageSize = 4 * Math.floor(w / 150);
-              this.imageTableData.splice(this.imagePageSize, 20000);
-              if (size !== this.imagePageSize) {
-                this.getStaffLibStaffData();
-              }
-            });
-          } else {
-            this.$nextTick(() => {
-              var el = this.$refs.dataWrap;
-              var w = el.offsetWidth;
-              this.imagePageSize = 4 * Math.floor(w / 150);
-              this.getStaffLibStaffData();
-            });
-          }
-        }
-      }
+      this.getStaffLibStaffData();
     },
 
     updateLibraryTask() {
@@ -696,6 +649,7 @@ export default {
       this.currentRowStyle(this.selectLibRow.index);
       this.selectall = false;
       this.resetall();
+      this.pageNow = 1;
       this.getStaffLibStaffData();
     },
     // 关闭人脸新增页面
@@ -905,14 +859,14 @@ export default {
 		color: rgba(255, 255, 255, 0.8);
 	}
 	.el-checkbox__inner::after {
-    box-sizing: content-box;
-    border: 1px solid #26D39D;
-    border-left: 0;
-    border-top: 0;
-    height: 7px;
-    left: 4px;
-    position: absolute;
-    top: 1px;
+		box-sizing: content-box;
+		border: 1px solid #26d39d;
+		border-left: 0;
+		border-top: 0;
+		height: 7px;
+		left: 4px;
+		position: absolute;
+		top: 1px;
 	}
 	.DeleteDialogClass {
 		.mydelete {

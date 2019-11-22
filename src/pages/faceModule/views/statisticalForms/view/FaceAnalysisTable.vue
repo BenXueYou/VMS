@@ -203,7 +203,7 @@ export default {
     },
     getFaceAnalysisDetail() {
       this.$factTragicHttp.getCompareDetail({
-        limit: 100,
+        limit: 30,
         page: 1,
         faceUuid: this.faceUuid,
         snapshotTimeStart: this.startTime,
@@ -224,7 +224,6 @@ export default {
       for (let i = 0; i < checkedChannel.length; i++) {
         this.channelUuids.push(checkedChannel[i].channelUuid);
       }
-      console.log("this.channelUuids: ", this.channelUuids, checkedChannel);
     }
   },
   watch: {},

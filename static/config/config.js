@@ -33,7 +33,7 @@ if (DEBUG == "DEBUG") {
     websocketIp = hostname;
   } else {
     ip = hostname + ":15000";
-    websocketIp = hostname + ":15007";
+    websocketIp = hostname + ":80";
   }
   var imgUrlStr = protocolHeader + "//" + ip;
   imageUrl =

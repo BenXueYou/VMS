@@ -276,6 +276,7 @@ export default {
       this.getFaceList();
     },
     handleTypeChange() {
+      this.faceList = [];
       this.getFaceList();
     },
     transferCheckedChannel(checkedChannel) {

@@ -307,6 +307,10 @@ export default {
       }
     },
     getTragicList() {
+      if (this.staffLimit < 1) {
+        this.$cToast.warn("搜索结果显示数量最小值为1");
+        return;
+      }
       this.$factTragicHttp
         .getTragicList({
           imageBase64: this.imageBase64,
@@ -342,6 +346,7 @@ export default {
     },
     resetData() {
       this.initData();
+      this.selectDate = "";
       this.itemData = [];
       this.imageUrl = "";
       this.imageBase64 = "";

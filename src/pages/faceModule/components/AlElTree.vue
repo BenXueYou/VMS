@@ -111,7 +111,11 @@ export default {
       this.checkedNameString = this.getCheckedNameString();
       this.$emit("transferAct", this.checkedUuidList);
     },
-    popverHidden() {},
+    popverHidden() {
+      if (this.checkedUuidList && this.checkedUuidList.length === 0) {
+        this.$emit("transferAct", this.getAllUuidList());
+      }
+    },
     clearAction() {
       this.checkAll = false;
       this.checkedNameString = "";
@@ -132,7 +136,7 @@ export default {
       this.checkedObj = val ? this.treeDataList : [];
       console.log(this.checkedUuidList);
       this.$refs.treeRef.setCheckedKeys(this.checkedUuidList);
-      this.$emit("transferAct", this.checkedUuidList);
+      this.$emit("transferAct", this.getAllUuidList());
     },
 
     // getAllUuidList

@@ -189,7 +189,7 @@
 			</el-aside>
 		</el-row>
 		<!-- ======================================================= 弹 窗 ========================================================== -->
-		<el-dialog class="dialogClass" :visible.sync="dialogVisible" @close="closeDialog">
+		<el-dialog class="HomeDialogClass" :visible.sync="dialogVisible" @close="closeDialog">
 			<el-row>
 				<div class="my_el-dialog__header">
 					<span class="el-dialog__title">对比详情</span>
@@ -231,7 +231,7 @@ export default {
       imageHeader: RestApi.api.imageUrl,
       isIndeterminate: false,
       canvsWidth: "300px",
-      footerHeight: "60px",
+      footerHeight: "",
       asideWidth: "60px",
       asidDropdownMednu: "全部任务", // 选中的任务
       deviceTreeList: [], // 设备树
@@ -299,28 +299,25 @@ export default {
     let w = this.WIDTH();
     let h = this.HEIGHT();
     h = h - 65; // 不知道为什么会差5个像素
-    w = w - 120;
-    this.$refs.mainHeightBox.$el.style.height = (7 * h) / 10 + "px";
-    this.footerHeight = (3 * h) / 10 + "px";
-    this.asideWidth = w / 3 - 40 + "px";
+    w = w - 200;
     this.$refs.heightBox.$el.style.height = h + "px";
-
+    this.asideWidth = 0.3 * w + "px";
+    this.$refs.mainHeightBox.$el.style.height = 0.7 * w * 9 / 16 + "px";
+    // this.footerHeight = h - ((0.7 * 9) / 16) * w - 30 + "px";
     // 当窗口发生变化时
     let that = this;
     window.addEventListener("resize", function() {
       let w = that.WIDTH();
       let h = that.HEIGHT();
-      w = w - 120;
+      w = w - 200;
       h = h - 65;
       that.$nextTick(() => {
-        that.$refs.mainHeightBox.$el.style.height = (7 * h) / 10 + "px";
         that.$refs.heightBox.$el.style.height = h + "px";
+        that.$refs.mainHeightBox.$el.style.height = ((0.7 * 9) / 16) * w + "px";
       });
-      that.footerHeight = (3 * h) / 10 + "px";
-      that.asideWidth = w / 3 - 40 + "px";
+      // that.footerHeight = h - ((0.7 * 9) / 16) * w - 30 + "px";
+      that.asideWidth = w * 0.3 + "px";
       that.drawLine();
-      that.canvas.width = (that.WIDTH() * 2) / 3 - 200;
-      that.canvas.height = (that.HEIGHT() * 7) / 10 - 120;
     });
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
@@ -488,10 +485,11 @@ export default {
         this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
       } else {
         // 去掉单选
-        this.checkedChannelsUuidList = [];
+        let tempArr = [];
         this.channelInfoList.forEach(item => {
-          this.checkedChannelsUuidList.push(item.channelUuid);
+          tempArr.push(item.channelUuid);
         });
+        this.checkedChannelsUuidList = tempArr;
       }
       // 更新抓拍数据和统计数据
       this.todayShootCount = 0;
@@ -549,8 +547,8 @@ export default {
       if (!this.canvas) {
         this.canvas = document.createElement("canvas");
       }
-      this.canvas.width = (this.WIDTH() * 2) / 3 - 200;
-      this.canvas.height = (this.HEIGHT() * 7) / 10 - 120;
+      this.canvas.width = 0.7 * (this.WIDTH() - 200) - 120;
+      this.canvas.height = ((0.7 * 9) / 16) * (this.WIDTH() - 200) - 60;
       // 设置新的视频对象播放参数
       this.video = await this.video_mgr.setup(
         JSON.stringify(jSignal),
@@ -753,16 +751,13 @@ export default {
     // 画折线图
     drawLine() {
       let dom = document.getElementById("bar_bot");
-      let w =
-				window.innerWidth ||
-				document.documentElement.clientWidth ||
-				document.body.clientWidth;
-      let h =
-				window.innerHeight ||
-				document.documentElement.clientHeight ||
-				document.body.clientHeight;
-      this.$refs.canvsWidth.$el.style.width = (w * 2) / 3 - 180 + "px";
-      this.$refs.canvsWidth.$el.style.height = (3 * h) / 10 - 100 + "px";
+      let w = this.WIDTH();
+      let h = this.HEIGHT();
+      h = h - 65; // 不知道为什么会差5个像素
+      w = w - 200;
+      this.$refs.canvsWidth.$el.style.width = 0.7 * w - 60 + "px";
+      this.$refs.canvsWidth.$el.style.height =
+				((0.7 * 7) / 16) * h - 100 + "px";
       console.log(this.$refs.canvsWidth.$el.style.width);
       if (!dom) {
         return;
@@ -938,19 +933,6 @@ export default {
 	color: #aaaaaa;
 	letter-spacing: 0;
 }
-.iframeClass {
-	position: absolute;
-	visibility: inherit;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	border: 0;
-	background: transparent;
-}
-iframe html {
-	background: #10131a;
-}
 .asidColumsRightClass {
 	display: flex;
 	flex-direction: row;
@@ -1024,12 +1006,12 @@ iframe html {
 	flex-direction: row;
 	align-items: center;
 }
-.dialogClass .el-dialog__body {
+.HomeDialogClass .el-dialog__body {
 	padding: 0;
 	color: #606266;
 	font-size: 14px;
 }
-.dialogClass {
+.HomeDialogClass {
 	text-align: left;
 	overflow-y: auto;
 }
@@ -1084,7 +1066,6 @@ iframe html {
 	background-size: 100% 100%;
 	background-clip: content-box;
 	background-origin: content-box;
-	padding: 22px 27px;
 	box-sizing: border-box;
 	/* background-color: #FFFFFF; */
 }
@@ -1151,7 +1132,7 @@ iframe html {
 .elPopoverClass .el-radio + .el-radio {
 	margin-left: 0px;
 }
-.taskParent {
+.elPopoverClass .taskParent {
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -1159,30 +1140,30 @@ iframe html {
 	margin: 0px 8px;
 	padding-top: 10px;
 }
-.taskParentBgClass {
+.elPopoverClass .taskParentBgClass {
 	background: rgba(32, 33, 36, 0.1);
 	width: calc(100% - 245px);
 }
-.taskParentPopoverBox {
+.elPopoverClass .taskParentPopoverBox {
 	width: 245px;
 	border-right: 1px solid rgb(104, 103, 102);
 	background: rgba(32, 33, 36, 0.1);
 }
-.taskParentBox {
+.elPopoverClass .taskParentBox {
 	width: 100%;
 	height: calc(100% - 18px);
 	margin-top: 15px;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: flex-start;
-	background: rgba(32, 33, 36, 0.1);
+	background: rgba(32, 33, 36, 0.3);
 }
 .RTask .asidClass {
 	height: 100%;
 	overflow: auto;
 	background-image: linear-gradient(-180deg, #343942 4%, #2e3537 100%);
 }
-.taskParent .el-radio__inner {
+.elPopoverClass .taskParent .el-radio__inner {
 	background-color: transparent;
 	display: none;
 }
@@ -1200,24 +1181,6 @@ iframe html {
 	border-color: gray;
 	display: none;
 }
-.elPopoverClass .taskItemsBtn:active,
-.elPopoverClass .taskItemsBtnActive {
-	color: #ffffff;
-	border: 1px solid rgba(32, 204, 150, 0.8);
-	opacity: 0.8;
-	background-color: rgb(41, 63, 48);
-}
-
-.taskItemsBtn {
-	width: 60%;
-	padding: 7px 15px;
-	color: #cccccc;
-	background-color: transparent;
-	border: 1px solid rgba(255, 255, 255, 0.3);
-	border-radius: 3px;
-	margin: 5px auto;
-	font-family: "PingFangSC-Medium";
-}
 .RTask .el-dialog {
 	width: 920px;
 	color: #fff;
@@ -1232,12 +1195,12 @@ iframe html {
 	box-sizing: border-box;
 }
 .elPopoverClass {
-	width: calc(66.667% - 210px);
+	width: calc(70% - 220px);
 	height: calc(70% - 120px);
 	position: absolute;
 	left: 235px !important;
 	top: 125px !important;
-	background-color: transparent !important;
+	background-color: #2a2e319c !important;
 	z-index: 10 !important;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
@@ -1306,21 +1269,6 @@ iframe html {
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: nowrap;
-}
-
-.RTask .el-popover {
-	position: absolute;
-	background: transparent !important;
-	min-width: 150px;
-	border-radius: 4px;
-	border: 0;
-	padding: 12px;
-	z-index: 2000;
-	color: #aaaaaa;
-	line-height: 1.4;
-	text-align: justify;
-	font-size: 14px;
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 .RTask .footer-top-row {
 	background-color: transparent;
@@ -1421,8 +1369,8 @@ iframe html {
 .RTask .el-main {
 	color: #333;
 	text-align: center;
-	padding: 0px 0px 1px 0px;
 	background: rgba(36, 39, 42, 1);
+	padding: 20px 25px;
 }
 
 .RTask .main-box {
@@ -1432,7 +1380,6 @@ iframe html {
 	box-sizing: border-box;
 	box-sizing: border-box;
 	background: transparent;
-	/* padding: 0px 20px 15px; */
 	background: rgba(36, 39, 42, 1);
 }
 .RTask .el-container {
