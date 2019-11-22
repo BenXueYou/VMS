@@ -705,9 +705,7 @@ export default {
           break;
 
         case "全屏":
-          this.setFullScreen(
-            this.$refs["video" + this.operatorIndex][0].getCanvas()
-          );
+          this.PreviewAreafullScreen();
           break;
         case "打开音频":
           this.openVideoVoice(this.operatorIndex);

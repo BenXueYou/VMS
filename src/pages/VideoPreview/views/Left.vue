@@ -1,6 +1,6 @@
 <template>
-  <div id="equipLeftMenu"
-       class="leftmenu">
+  <div id="treeLaa"
+       class="treeLaa">
     <div class="searchWrap">
       <el-input :placeholder="orgType=='staff'?'搜索组织/标签/名称':'搜索设备/标签/名称'"
                 v-model="searchText">
@@ -17,7 +17,6 @@
 
     <el-tabs v-model="activeName"
              class="tabs"
-             :class="{'tabsPanel':showCloudControl}"
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
@@ -25,15 +24,23 @@
         <el-tree :props="devprops"
                  :load="devloadNode"
                  ref="tree1"
+                 class='videoTree'
+                 :class="{'tabsPanel':showCloudControl}"
                  lazy>
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
+            <!-- <div class="channelStatus"
+                 v-if="data.h5Type==='channel'">
+              <img src="@/assets/images/treeIcons/nvr.png"
+                   alt="">
+            </div> -->
             <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
                   class="span "
                   :draggable="data.h5Type==='channel'"
                   @click.stop="saveClickData('', data)"
                   @dragstart="dragstart(data,$event)"
                   :title="node.label">{{ node.label }}</span>
+
             <span class="el-dropdown-link  "
                   @click.stop="saveClickData(node, data,$event)">
               <img class="checked-img threelinemenu"
@@ -64,6 +71,7 @@
       <el-tab-pane label="标签"
                    name="tag">
         <el-tree :props="props"
+                 class='videoTree'
                  :load="loadNode"
                  :expand-on-click-node="false"
                  lazy
@@ -98,6 +106,7 @@
       <el-tab-pane label="视图"
                    name="view">
         <el-tree :props="viewProps"
+                 class='videoTree'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
@@ -1488,7 +1497,7 @@ export default {
 </script>
 <style lang="scss">
 @import "@/style/variables.scss";
-#equipLeftMenu {
+#treeLaa {
   .el-tabs__item {
     color: #dddddd;
   }
@@ -1509,8 +1518,8 @@ export default {
   // .el-tree,
   // .el-tree-node
   .el-tree-node {
+    // width: 500px;
     height: 100%;
-    overflow: auto !important;
   }
 }
 </style>
@@ -1518,13 +1527,21 @@ export default {
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 
-.leftmenu {
+.treeLaa {
   width: 280px;
   box-sizing: border-box;
   height: 100%;
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
-
+  .videoTree {
+    //  height: calc(100vh - 150px);
+    height: calc(100vh - 250px);
+    // width:500px;
+    overflow: auto;
+  }
+  .tabsPanel {
+    height: calc(100vh - 550px);
+  }
   .custom-tree-node {
     flex: 1;
     display: flex;
@@ -1532,11 +1549,25 @@ export default {
     justify-content: space-between;
     font-size: 14px;
     padding-right: 18px;
+    height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: calc(100% - 30px);
+    .channelStatus {
+      float: left;
+      width: 15px;
+      height: 15px;
+      img {
+        height: 100%;
+      }
+    }
     .span {
       // width: calc(100% - 30px);
-      // overflow: hidden;
+      overflow: hidden;
       // display: block;
-      // text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       // float: left;
     }
     .threelinemenu {
@@ -1565,12 +1596,12 @@ export default {
     }
   }
   .tabs {
-    height: calc(100vh - 150px);
-    overflow-y: auto;
+    // height: calc(100vh - 150px);
+    // overflow-y: auto;
     padding: 0px 26px 25px;
   }
   .tabsPanel {
-    height: calc(100vh - 550px);
+    // height: calc(100vh - 550px);
   }
   .mypanel {
     // height: calc(100vh - 60px - 70px - 80px);

@@ -18,11 +18,12 @@ const ContextMenu = function(options) {
       el: document.createElement("div"),
       data: options
     });
-    if(options.target){
-      options.target.appendChild(contextmenu.$el);
-    }else{
-      document.body.appendChild(contextmenu.$el);
-    }
+    document.body.appendChild(contextmenu.$el);
+    // if(options.target){
+    //   options.target.appendChild(contextmenu.$el);
+    // }else{
+
+    // }
     isfirst = true;
   }
 };
