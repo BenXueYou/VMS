@@ -231,7 +231,7 @@ export default {
       imageHeader: RestApi.api.imageUrl,
       isIndeterminate: false,
       canvsWidth: "300px",
-      footerHeight: "60px",
+      footerHeight: "",
       asideWidth: "60px",
       asidDropdownMednu: "全部任务", // 选中的任务
       deviceTreeList: [], // 设备树
@@ -300,10 +300,10 @@ export default {
     let h = this.HEIGHT();
     h = h - 65; // 不知道为什么会差5个像素
     w = w - 200;
-    this.$refs.mainHeightBox.$el.style.height = 0.7 * h + "px";
-    this.footerHeight = ((0.7 * 7) / 16) * h + "px";
-    this.asideWidth = 0.3 * w + "px";
     this.$refs.heightBox.$el.style.height = h + "px";
+    this.asideWidth = 0.3 * w + "px";
+    this.$refs.mainHeightBox.$el.style.height = 0.7 * w * 9 / 16 + "px";
+    // this.footerHeight = h - ((0.7 * 9) / 16) * w - 30 + "px";
     // 当窗口发生变化时
     let that = this;
     window.addEventListener("resize", function() {
@@ -313,9 +313,9 @@ export default {
       h = h - 65;
       that.$nextTick(() => {
         that.$refs.heightBox.$el.style.height = h + "px";
-        that.$refs.mainHeightBox.$el.style.height = 0.7 * h + "px";
+        that.$refs.mainHeightBox.$el.style.height = ((0.7 * 9) / 16) * w + "px";
       });
-      that.footerHeight = ((0.7 * 7) / 16) * h + "px";
+      // that.footerHeight = h - ((0.7 * 9) / 16) * w - 30 + "px";
       that.asideWidth = w * 0.3 + "px";
       that.drawLine();
     });
@@ -485,10 +485,11 @@ export default {
         this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
       } else {
         // 去掉单选
-        this.checkedChannelsUuidList = [];
+        let tempArr = [];
         this.channelInfoList.forEach(item => {
-          this.checkedChannelsUuidList.push(item.channelUuid);
+          tempArr.push(item.channelUuid);
         });
+        this.checkedChannelsUuidList = tempArr;
       }
       // 更新抓拍数据和统计数据
       this.todayShootCount = 0;
@@ -546,8 +547,8 @@ export default {
       if (!this.canvas) {
         this.canvas = document.createElement("canvas");
       }
-      this.canvas.width = (this.WIDTH() * 2) / 3 - 200;
-      this.canvas.height = (this.HEIGHT() * 7) / 10 - 120;
+      this.canvas.width = 0.7 * (this.WIDTH() - 200) - 120;
+      this.canvas.height = ((0.7 * 9) / 16) * (this.WIDTH() - 200) - 60;
       // 设置新的视频对象播放参数
       this.video = await this.video_mgr.setup(
         JSON.stringify(jSignal),
@@ -1379,7 +1380,6 @@ export default {
 	box-sizing: border-box;
 	box-sizing: border-box;
 	background: transparent;
-	padding: 20px 25px;
 	background: rgba(36, 39, 42, 1);
 }
 .RTask .el-container {
