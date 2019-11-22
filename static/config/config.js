@@ -9,8 +9,8 @@ if (DEBUG == "DEBUG") {
   // ip = '180.167.210.2:51880';
   // ip = "192.168.9.190:15000";
   // websocketIp = "192.168.9.190:15007";
-  ip = "192.168.9.141:15000";
-  websocketIp = "192.168.9.67:15007";
+  ip = "192.168.9.102:15000";
+  websocketIp = "192.168.9.102:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -18,15 +18,9 @@ if (DEBUG == "DEBUG") {
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
-<<<<<<< HEAD
   // ip = "192.168.9.141:15000";
-  ip = '192.168.6.111:15000';
-  websocketIp = "192.168.6.111:15007";
-=======
-  ip = "192.168.9.141:15000";
-  // ip = '192.168.6.191:51880';
-  websocketIp = "192.168.9.141:15007";
->>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
+  ip = '192.168.9.102:15000';
+  websocketIp = "192.168.9.102:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -39,7 +33,7 @@ if (DEBUG == "DEBUG") {
     websocketIp = hostname;
   } else {
     ip = hostname + ":15000";
-    websocketIp = hostname + ":15007";
+    websocketIp = hostname + ":80";
   }
   var imgUrlStr = protocolHeader + "//" + ip;
   imageUrl =
