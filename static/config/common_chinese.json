@@ -299,8 +299,7 @@
         "residentServer": "住户服务",
         "courier": "快递人员",
         "take-out": "外卖人员",
-        "other": "其他人员",
-        "": ""
+        "other": "其他人员"
     },
     "cred": {
         "id_card": "身份证",
@@ -799,10 +798,10 @@
         "fire_fighting": "消防"
     },
     "face_quality": {
-        "high": "高",
-        "middle": "中",
-        "low": "低",
-        "invalid": "无效"
+        "HIGH": "高",
+        "NORMAL": "中",
+        "LOW": "低",
+        "LOWER": "无效"
     },
     "model_analisis_s": {
         "everyday": "每天",
@@ -985,10 +984,14 @@
         "GT_DOOR_DH": "大华门禁服务",
         "GT_VIDEO_HK": "海康视频服务",
         "GT_VIDEO_DH": "大华视频服务",
+<<<<<<< HEAD
+        "GT_UPLOAD_POLICE1400": "公安1400上传服务"
+=======
         "GT_UPLOAD_POLICE1400": "公安1400上传服务",
         "GT_STATISTICAL_POLICE1400": "公安1400统计服务",
         "GT_FACELOG": "人脸日志服务",
         "GT_FACEBASE": "人脸基础服务"
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
     },
     "face_lib_type": {
         "systemFaceLib": "系统人员库",
@@ -1001,6 +1004,10 @@
         "captureFaceLib": "抓拍库"
     },
     "face_report_type": {
+<<<<<<< HEAD
+        "faceDailyReport": "日报表",
+        "faceMonthlyReport": "月报表"
+=======
         "faceDailyReport": "月报表",
         "faceMonthlyReport": "日报表"
     },
@@ -1008,6 +1015,7 @@
         "GT-FCK": "GT-FCK",
         "GT-FCD": "GT-FCD",
         "GT-FCH": "GT-FCH"
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
     },
     "onoffline": {
         "online": "在线",
@@ -1148,6 +1156,11 @@
         "normal": "戴口罩",
         "none": "不戴"
     },
+<<<<<<< HEAD
+    "model_analysis_s": {
+      "model_to_be_processed": "待处理",
+      "model_processed": "已处理"
+=======
     "auth_video": {
         "auth_video_monitor": "监控点",
         "auth_video_input": "输入",
@@ -1165,5 +1178,6 @@
     },
     "auth_visitor": {
         "": ""
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
     }
 }
