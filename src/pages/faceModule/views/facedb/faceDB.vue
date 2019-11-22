@@ -649,6 +649,7 @@ export default {
       this.currentRowStyle(this.selectLibRow.index);
       this.selectall = false;
       this.resetall();
+      this.pageNow = 1;
       this.getStaffLibStaffData();
     },
     // 关闭人脸新增页面
