@@ -217,7 +217,6 @@ export default {
     // 弹窗关闭的回调
     hide() {
       if (!this.checkAll) {
-        debugger;
         this.$emit("transferCheckedChannel", this.channels);
       }
     },
