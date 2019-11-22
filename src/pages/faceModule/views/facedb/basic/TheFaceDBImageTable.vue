@@ -266,7 +266,7 @@ $fontcolor: #aaa;
 		pointer-events: none;
 	}
 	.box {
-		width: 140px;
+		width: 150px;
 		min-height: 178px;
 		// background-color: rgb(36, 39, 42);
 		background: rgba(0, 0, 0, 0.1);

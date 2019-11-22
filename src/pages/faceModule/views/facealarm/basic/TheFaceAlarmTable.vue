@@ -37,7 +37,7 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<div class="footer">
+		<div class="FAMTableListFooter">
 			<el-pagination
 				background
 				layout="prev, pager, next"
@@ -144,7 +144,7 @@ export default {
 		overflow: auto;
 	}
 }
-.footer {
+.FAMTableListFooter {
 	position: relative;
 	// margin: 30px 0px 20px;
 	.totalpagetitle {
