@@ -18,7 +18,12 @@ export default {
       // isRouterAlive: true,
       doorRoute: "/DoorControl/AccessGroupConfig",
       vistorRoute: "/VistorMange/VistorRecord",
+<<<<<<< HEAD
       faceRoute: "/FaceManage/FaceHome"
+=======
+      logRoute: "/log/setLog",
+      userRoute: "/user/accout"
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
     };
   },
   methods: {
@@ -31,13 +36,25 @@ export default {
   },
   mounted() {
     console.log(this.$route);
+<<<<<<< HEAD
     if (this.$route.fullPath.indexOf("/DoorControl") !== -1) {
+=======
+    if (
+      this.$route.fullPath.indexOf("/DoorControl") !== -1
+    ) {
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
       this.doorRoute = this.$route.fullPath;
     }
     if (
-      this.$route.fullPath.toLocaleLowerCase().indexOf("/vistormange") !== -1
+      this.$route.fullPath.indexOf("/VistorMange") !== -1
     ) {
       this.vistorRoute = this.$route.fullPath;
+    }
+    if (this.$route.fullPath.indexOf("/log") !== -1) {
+      this.logRoute = this.$route.fullPath;
+    }
+    if (this.$route.fullPath.indexOf("/user") !== -1) {
+      this.userRoute = this.$route.fullPath;
     }
   },
   watch: {
@@ -51,16 +68,20 @@ export default {
       if (newVal === "/VistorMange") {
         this.$router.push(this.vistorRoute);
       }
+<<<<<<< HEAD
       if (newVal === "/FaceManage") {
         this.$router.push(this.faceRoute);
       }
       // 回复门禁控制的上一次的操作路径
       if (newVal.indexOf("/DoorControl") !== -1) {
         this.doorRoute = newVal;
+=======
+      if (newVal === "/log") {
+        this.$router.push(this.logRoute);
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
       }
-      // 回复访客管理的上一次的操作路径
-      if (newVal.toLocaleLowerCase().indexOf("/vistormange") !== -1) {
-        this.vistorRoute = newVal;
+      if (newVal === "/user") {
+        this.$router.push(this.userRoute);
       }
       if (newVal.toLocaleLowerCase().indexOf("/facemanage") !== -1) {
         this.faceRoute = newVal;
@@ -82,5 +103,9 @@ body {
   /* min-width: 1920px; */
   overflow-x: auto;
   margin: auto;
+<<<<<<< HEAD
+=======
+  background: #1b1b1b;
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
 }
 </style>

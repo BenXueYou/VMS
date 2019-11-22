@@ -135,6 +135,8 @@ export default {
       this.$emit("update:isShow", false);
     },
     transferCheckedNodes(data, nodeBool, treeName) {
+      treeName = this.activeName;
+      console.log('iiiiiiiiiiiiiiii',treeName);
       this.$emit("transferCheckedNodes", data, nodeBool, treeName);
     },
     handleClick(val) {
@@ -180,7 +182,6 @@ export default {
       // 向父组件传值
     },
     checkedKeys(val) {
-      // debugger;
       // var tree = this.activeName;
       // this.$refs[tree][0].setCheckedKeys(val);
     },

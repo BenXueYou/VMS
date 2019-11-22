@@ -11,9 +11,14 @@ import App from "./App";
 import router from "./router";
 
 // 权限控制中枢 路由守卫
+<<<<<<< HEAD
 import './permission';
 import './directives';
 // import './dir';
+=======
+
+import "./permission";
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
 
 import echarts from "echarts";
 import { EventBusPlugin as EventBus } from "@/utils/Eventbus";
@@ -25,8 +30,9 @@ import LogSearchHttp from "@/pages/doorControl/utils/LogSearchHttp.js";
 import HouseHttp from "@/pages/buildingsHouse/utils/HouseHttp.js";
 import UnitHttp from "@/pages/unitMange/utils/UnitHttp.js";
 
-import DoorSetAjax from '@/pages/doorControl/utils/DoorAccessSetHttp.js';
+import DoorSetAjax from "@/pages/doorControl/utils/DoorAccessSetHttp.js";
 
+<<<<<<< HEAD
 import ResidentHttp from '@/pages/residentManage/utils/ResidentHttp.js';
 import LoginAjax from '@/pages/login/utils/LoginAjax.js';
 import SearchFaceHttp from '@/pages/faceModule/views/searchFaceWithFace/utils/SearchFaceHttp.js';
@@ -36,6 +42,10 @@ import StatisticHttp from '@/pages/faceModule/views/statisticalForms/util/Statis
 import FactTragicHttp from '@/pages/faceModule/views/companion/util/FactTragicHttp.js';
 import FaceControlHttp from '@/pages/faceModule/views/faceControl/utils/FaceControlHttp.js';
 import IntelModelHttp from '@/pages/faceModule/views/intelModel/utils/IntelModelHttp.js';
+=======
+import ResidentHttp from "@/pages/residentManage/utils/ResidentHttp.js";
+import LoginAjax from "@/pages/login/utils/LoginAjax.js";
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
 
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = Axios;

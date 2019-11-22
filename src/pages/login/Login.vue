@@ -211,8 +211,10 @@ export default {
         this.$store.commit("SET_PROJECT_LIST", projects);
 
         // 设置ProjectUuid 默认设置第一个，其他Uuid可以在切换项目更改
-
+        // 这里存储的username用于上面的账号名称显示
         localStorage.setItem("username", body.data.adminUser.username);
+        // 这里存储userUuid, 后面调用菜单的时候会使用到
+        localStorage.setItem("useruuid", body.data.adminUser.useruuid);
         // this.$store.dispatch("setUserName", body.data.adminUser.username);
 
         if (projects.length > 1) {
@@ -223,6 +225,13 @@ export default {
             "setProjectUuid",
             body.data.adminUser.projects[0].projectUuid
           );
+          // 以下是测试代码 projectUuid 299fc6dfa7104483bcee8d71e59957cd
+          /** ***********测试代码*************** */
+          this.$store.dispatch(
+            "setProjectUuid",
+            "299fc6dfa7104483bcee8d71e59957cd"
+          );
+          /** ***********测试结束*************** */
           // 刷新页面以便于更新projectUuid
           this.$nextTick(() => {
             window.location.reload();

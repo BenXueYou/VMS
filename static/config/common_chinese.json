@@ -225,6 +225,15 @@
         "fire_orbital_ehv": "消防轨道超高压",
         "f5_aic": "F5报警输入",
         "f7_aic": "F7报警输入",
+        "contact_pulse_fence": "触网脉冲电子围栏",
+        "tension_fence": "张力围栏",
+        "optical_fiber": "振动光纤",
+        "leak_cable": "泄漏电缆",
+        "infrared_detector": "红外探测器",
+        "hlc_dc": "红外对射",
+        "dumidity_detector": "湿度",
+        "emergency_button": "紧急按钮",
+        "fire": "火警",
         "bell": "警号",
         "printer": "打印机",
         "lcm": "灯控模块（输出）",
@@ -975,7 +984,14 @@
         "GT_DOOR_DH": "大华门禁服务",
         "GT_VIDEO_HK": "海康视频服务",
         "GT_VIDEO_DH": "大华视频服务",
+<<<<<<< HEAD
         "GT_UPLOAD_POLICE1400": "公安1400上传服务"
+=======
+        "GT_UPLOAD_POLICE1400": "公安1400上传服务",
+        "GT_STATISTICAL_POLICE1400": "公安1400统计服务",
+        "GT_FACELOG": "人脸日志服务",
+        "GT_FACEBASE": "人脸基础服务"
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
     },
     "face_lib_type": {
         "systemFaceLib": "系统人员库",
@@ -988,8 +1004,18 @@
         "captureFaceLib": "抓拍库"
     },
     "face_report_type": {
+<<<<<<< HEAD
         "faceDailyReport": "日报表",
         "faceMonthlyReport": "月报表"
+=======
+        "faceDailyReport": "月报表",
+        "faceMonthlyReport": "日报表"
+    },
+    "face_algorithm_type": {
+        "GT-FCK": "GT-FCK",
+        "GT-FCD": "GT-FCD",
+        "GT-FCH": "GT-FCH"
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
     },
     "onoffline": {
         "online": "在线",
@@ -1130,8 +1156,28 @@
         "normal": "戴口罩",
         "none": "不戴"
     },
+<<<<<<< HEAD
     "model_analysis_s": {
       "model_to_be_processed": "待处理",
       "model_processed": "已处理"
+=======
+    "auth_video": {
+        "auth_video_monitor": "监控点",
+        "auth_video_input": "输入",
+        "auth_video_output": "输出"
+    },
+    "auth_door": {
+        "auth_door_access": "门禁点",
+        "auth_door_input": "输入",
+        "auth_door_output": "输出"
+    },
+    "auth_alarm": {
+        "auth_alarm_zone": "防区",
+        "auth_alarm_subsystem": "子系统",
+        "auth_alarm_output": "输出"
+    },
+    "auth_visitor": {
+        "": ""
+>>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
     }
 }

@@ -1,5 +1,5 @@
-import router from './router';
-import store from '@/store/store';
+import router, { getRoute } from "./router";
+import store from "@/store/store";
 // import { Message } from 'element-ui';
 
 // permissiom judge
@@ -10,18 +10,46 @@ import store from '@/store/store';
   // return roles.some(role => permissionRoles.indexOf(role) >= 0)
   return true;
 } */
+import * as api from "@/pages/user/http/ajax.js";
 
-const whiteList = ['/Login'];// 不重定向白名单
-
+const whiteList = ["/Login"]; // 不重定向白名单
+let isInitRoute = false;
 router.beforeEach((to, from, next) => {
   // NProgress.start() // 开启Progress
   // eslint-disable-next-line no-constant-condition
-  if (store.state.home.Authorization && store.state.home.Authorization.substr(0, 5) !== "Basic") { // 判断是否有token 目前先置为 true !!!!
-    if (to.path === '/Login') {
+  if (
+    store.state.home.Authorization &&
+    store.state.home.Authorization.substr(0, 5) !== "Basic"
+  ) {
+    // 判断是否有token 目前先置为 true !!!!
+    if (to.path === "/Login") {
       // next({ path: '/' })
       next();
       // NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
     } else {
+      if (!isInitRoute) {
+        isInitRoute = true;
+        // 这里去请求用户的权限菜单
+        api
+          .getHomeMenu({
+            accountUuid: window.localStorage.getItem("useruuid").trim()
+          })
+          .then(res => {
+            console.log(res);
+            if (res.data.success) {
+              let data = res.data.data || [];
+              let getAllData = true; // 测试用的，先显示全部的菜单那
+              let routerData = getRoute(data, getAllData);
+              window.localStorage.setItem(
+                "routerData",
+                JSON.stringify(routerData)
+              );
+              router.addRoutes(routerData);
+            }
+          }).catch(() => {
+          });
+      }
+
       /* console.log("topath : ", to.path);
       if (store.state.user.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetUserInfo').then(res => { // 拉取user_info
@@ -52,10 +80,11 @@ router.beforeEach((to, from, next) => {
       next();
     }
   } else {
-    if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
+    if (whiteList.indexOf(to.path) !== -1) {
+      // 在免登录白名单，直接进入
       next();
     } else {
-      next('/Login'); // 否则全部重定向到登录页
+      next("/Login"); // 否则全部重定向到登录页
       // NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
     }
   }
@@ -69,6 +98,4 @@ router.afterEach(() => {
  * 格式化路由映射 服务器返回的类 变成路由所需要的类
  */
 // eslint-disable-next-line no-unused-vars
-function formateRouterMap() {
-
-}
+function formateRouterMap() {}
