@@ -15,7 +15,7 @@
           <el-select v-model="faceLibraryList"
                      size="small"
                      multiple
-                     style="width: 160px;"
+                     style="width: 190px;"
                      clearable
                      collapse-tags
                      placeholder="请选择人脸库">
