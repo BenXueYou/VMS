@@ -254,7 +254,6 @@ export default {
         this.staffInfo.phoneNo &&
 				!this.$common.isPhoneNum(this.staffInfo.phoneNo)
       ) {
-        debugger;
         this.$message.warning("请填写正确的手机号");
         return;
       }

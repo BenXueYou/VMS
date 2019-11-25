@@ -114,32 +114,6 @@ export default {
       this.$common.getEnumByGroupStr("card_u")
     );
     this.initWebSocket();
-
-    // var t = setInterval(() => {
-    //   let data = {
-    //     faceUuid: "1cb01a76a5c6426b88e239c626ef2f44",
-    //     facePhotoUrl: "http://192.168.6.111:9333/1,8222d67c802b.jpeg",
-    //     facePhotoUuid: "ceb867c8f82849dfb04a39c7c4c3f825",
-    //     channelUuid: "B816D106EF760DCB2A908423D696278D",
-    //     faceCapturePhotoUrl: "http://192.168.9.213:9333/3,04797aaa394daf.jpg",
-    //     taskColour: "#8000FF",
-    //     faceMonitorName: "任务19",
-    //     staffType: "",
-    //     faceMonitorUuid: "7223da46b9964ba584752f79b65be638",
-    //     captureDatetime: "2019-11-20 16:01:18",
-    //     faceLibraryUuid: "34e8bd1b07a94565883c832a04da8666",
-    //     faceRecognitionRecordUuid: "f73cb42f769a4e11a678c9ec4e79625c",
-    //     faceSimilarity: 95,
-    //     staffName: "111111",
-    //     channelName: "192.168.9.25-枪机1",
-    //     householdType: "",
-    //     soundUrl: "http://192.168.6.111:9333/3,0484a3ef0243.mp3"
-    //   };
-    //   this.handleSubscribeMonitorAlarm(data);
-    // }, 5000);
-    // setTimeout(() => {
-    //   clearInterval(t);
-    // }, 600000);
   },
   activated() {
     // console.log(this.$store);
@@ -147,7 +121,8 @@ export default {
   methods: {
     closeDialog(dialogParama, index) {
       this.$set(this.GlobalAlarmList[index], "showDialog", false);
-      console.log(this.GlobalAlarmList[index]);
+      this.GlobalAlarmList.splice(index, 1);
+      console.log(this.GlobalAlarmList);
     },
     closeAudio() {
       // 关闭音频
@@ -197,7 +172,7 @@ export default {
           this.subRecognization = this.stompClient.subscribe(
             subRecognizationApi,
             greeting => {
-              console.log("收到识别通知：", greeting);
+              // console.log("收到识别通知：", greeting);
               this.handleSubscribeRecognization(JSON.parse(greeting.body));
             }
           );
@@ -250,7 +225,7 @@ export default {
     },
     handleSubscribeMonitorAlarm(data) {
       this.$set(data, "showDialog", true);
-      // data.showDialog = true;
+      data.showDialog = true;
       this.GlobalAlarmList.push(data);
       this.playAudio(data);
       if (this.GlobalAlarmList && this.GlobalAlarmList.length > 10) {

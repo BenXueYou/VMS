@@ -189,6 +189,8 @@ export default {
 .dialog-content {
   padding: 3% 5% 0 5%;
   box-sizing: border-box;
+  height: 620px;
+  overflow-y: auto;
   .content-title {
     font-family: PingFangSC-Regular;
     font-size: 14px;
@@ -198,9 +200,9 @@ export default {
   }
   .content-device {
     background: rgba($color: #26d39d, $alpha: 0.05);
-    height: 40px;
+    height: auto;
     margin-top: 15px;
-    padding: 0 18px;
+    padding: 10px 18px;
     box-sizing: border-box;
     font-family: PingFangSC-Regular;
     font-size: 12px;
@@ -216,7 +218,7 @@ export default {
     }
   }
   .content-list {
-    height: 380px;
+    height: 370px;
     width: 100%;
     border: 1px solid #254a43;
     margin-top: 15px;
