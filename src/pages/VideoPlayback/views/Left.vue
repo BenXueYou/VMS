@@ -76,6 +76,7 @@
       </el-tab-pane>
       <el-tab-pane label="视图"
                    name="view">
+
         <el-tree :props="viewProps"
                  class='videoTree'
                  :data="viewTreeData"
@@ -83,7 +84,9 @@
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <span class="span"
+                  @dblclick.stop="openVidewTu(node,data,$event)"
+                  :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
@@ -304,16 +307,17 @@ export default {
         node.data && node.data.id,
         node.data && node.data.nodeType
       );
-      let treeIcons = window.config.treeIcons;
+      let treeIcons = window.config.treeIcons || [];
       data = data.map(item => {
         item.leaf = !item.openFlag;
+        item.isOnline = item.extInfo.chnOnlineOrNot === "online";
         if (item.nodeType === "chnNode") {
           for (let i = 0; i < treeIcons.length; i++) {
             if (treeIcons[i].value === item.realType) {
               item.icon = require(`@/assets/images/treeIcons/${
                 treeIcons[i].icon
               }.png`);
-              if (item.extInfo.netStatus === "offline") {
+              if (!item.isOnline) {
                 item.icon = require(`@/assets/images/treeIcons/${
                   treeIcons[i].icon
                 }2.png`);
@@ -439,14 +443,20 @@ export default {
       } else if (this.activeName === "view") {
         treeData = this.$refs.tree3.getCheckedNodes();
       }
-      console.log(treeData);
       if (!treeData.length) {
-        this.$message.error("请选择视频通道!");
+        this.$message.error("请选择选择视频通道!");
+        return;
+      }
+      let num = treeData.filter(item => {
+        return item.isOnline;
+      });
+      if (!num.length) {
+        this.$message.error("请选择在线的视频通道!");
         return;
       }
       this.$emit(
         "playRtsp",
-        treeData,
+        num,
         this.dealTime(this.startDate),
         this.dealTime(this.endDate),
         "normal_vod",
@@ -469,8 +479,10 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
-  .el-tree-node {
-    width: 500px;
+  .mypanel {
+    .el-tree-node {
+      width: 500px;
+    }
   }
   .el-tree-node__label {
     text-indent: 10px;
@@ -516,9 +528,9 @@ export default {
   .custom-tree-node {
     width: 100%;
     flex: 1;
-    display: flex;
+    // display: flex;
     align-items: center;
-    // justify-content: space-between;
+    justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
     .channelStatus {
@@ -530,15 +542,17 @@ export default {
         height: 100%;
       }
     }
-
-    // .threelinemenu {
-    //   display: none;
-    //   // float: right;
-    //   // margin-right: 10px;
-    // }
-    // &:hover .threelinemenu {
-    //   display: block;
-    // }
+    .span {
+      white-space: nowrap;
+    }
+    .threelinemenu {
+      display: none;
+      float: right;
+      margin-right: 10px;
+    }
+    &:hover .threelinemenu {
+      display: block;
+    }
   }
   .timeSelect {
     margin-top: 20px;

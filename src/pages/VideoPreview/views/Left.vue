@@ -29,11 +29,11 @@
                  lazy>
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
-            <!-- <div class="channelStatus"
-                 v-if="data.h5Type==='channel'">
-              <img src="@/assets/images/treeIcons/nvr.png"
+            <div class="channelStatus"
+                 v-if="data.nodeType==='chnNode'&&data.icon">
+              <img :src="data.icon"
                    alt="">
-            </div> -->
+            </div>
             <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
                   class="span "
                   :draggable="data.h5Type==='channel'"
@@ -617,6 +617,9 @@ export default {
       }
     },
     getPreviewInfo(channelUuid, data, streamType, operator = 1) {
+      if (!data.isOnline) {
+        return;
+      }
       this.$emit("playRtsp", channelUuid, streamType, data, operator);
     },
     handleNodeClick() {
@@ -625,10 +628,29 @@ export default {
     async devloadNode(node, resolve) {
       //  懒加载子结点
       console.log(node);
-      let data = await this.videoTree(node.data && node.data.id);
-
+      let data = await this.videoTree(
+        node.data && node.data.id,
+        node.data && node.data.nodeType
+      );
+      let treeIcons = window.config.treeIcons || [];
       data = data.map(item => {
         item.leaf = !item.openFlag;
+        item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+        if (item.nodeType === "chnNode") {
+          for (let i = 0; i < treeIcons.length; i++) {
+            if (treeIcons[i].value === item.realType) {
+              item.icon = require(`@/assets/images/treeIcons/${
+                treeIcons[i].icon
+              }.png`);
+              if (!item.isOnline) {
+                item.icon = require(`@/assets/images/treeIcons/${
+                  treeIcons[i].icon
+                }2.png`);
+              }
+              break;
+            }
+          }
+        }
         return item;
       });
       // data = [
@@ -641,11 +663,23 @@ export default {
       console.log(data);
       return resolve(data);
     },
-    videoTree(parentOrgUuid) {
-      let data = parentOrgUuid ? { parentOrgUuid } : {};
+    videoTree(parentOrgUuid = "", parentType) {
+      // let data = parentOrgUuid ? { parentOrgUuid } : {};
+      let data = {
+        viewType: "video",
+        treeStructure: "orgNode$device|chnNode",
+        authEnable: false,
+        parentUuid: parentOrgUuid,
+        parentType,
+        recursiveEnable: true,
+        extInfo: {
+          aimType: "chnOnlineStatus",
+          aimDetail: null
+        }
+      };
       return new Promise((resolve, reject) => {
         api2
-          .videoTree(data)
+          .getPreviewTree(data)
           .then(res => {
             let list = res.data.data || [];
             resolve(list);
@@ -1517,9 +1551,10 @@ export default {
   }
   // .el-tree,
   // .el-tree-node
-  .el-tree-node {
+  .custom-tree-node {
     // width: 500px;
     height: 100%;
+    overflow: auto;
   }
 }
 </style>
@@ -1551,8 +1586,8 @@ export default {
     padding-right: 18px;
     height: 100%;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
     width: calc(100% - 30px);
     .channelStatus {
       float: left;
@@ -1564,9 +1599,9 @@ export default {
     }
     .span {
       // width: calc(100% - 30px);
-      overflow: hidden;
+      // overflow: hidden;
       // display: block;
-      text-overflow: ellipsis;
+      // text-overflow: ellipsis;
       white-space: nowrap;
       // float: left;
     }

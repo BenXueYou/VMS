@@ -599,37 +599,43 @@ export default {
           } else {
             this.$confirm(
               `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
-              "",
               {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                distinguishCancelAndClose: true,
+                confirmButtonClass: "confirm-button",
+                cancelButtonClass: "cancel-button",
+                center: true,
                 dangerouslyUseHTMLString: true,
-                confirmButtonText: "取消",
-                cancelButtonText: "确定"
+                customClass: "isCloseDialog"
               }
             )
-              .then(() => {})
-              .catch(() => {
+              .then(() => {
                 this.videoArr[this.operatorIndex].rtspUrl = "";
                 this.videoArr[this.operatorIndex].startTime = "";
                 this.videoArr[this.operatorIndex].endTime = "";
                 this.videoArr[this.operatorIndex].timeData = [];
                 this.videoArr.concat();
-              });
+              })
+              .catch(() => {});
           }
 
           break;
         case "关闭所有窗口":
           this.$confirm(
             `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭所有的窗口?</span>`,
-            "提示",
             {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              distinguishCancelAndClose: true,
+              confirmButtonClass: "confirm-button",
+              cancelButtonClass: "cancel-button",
+              center: true,
               dangerouslyUseHTMLString: true,
-              confirmButtonText: "取消",
-              cancelButtonText: "确定"
+              customClass: "isCloseDialog"
             }
           )
-            .then(() => {})
-            .catch(() => {
-              // 把所有分路的rtspUrl都清空
+            .then(() => {
               this.videoArr = this.videoArr.map(item => {
                 item.rtspUrl = "";
                 item.startTime = "";
@@ -637,7 +643,8 @@ export default {
                 item.timeData = [];
                 return item;
               });
-            });
+            })
+            .catch(() => {});
 
           break;
         case "加速":
@@ -797,10 +804,18 @@ export default {
 };
 </script>
 <style lang="scss">
-.VideoPlaybackContent {
-  // .el-tree-node {
-  //   overflow: auto !important;
-  // }
+// .el-tree-node {
+//   overflow: auto !important;
+// }
+.isCloseDialog {
+  .el-message-box__btns {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    button {
+      margin-right: 30px;
+    }
+  }
 }
 </style>
 

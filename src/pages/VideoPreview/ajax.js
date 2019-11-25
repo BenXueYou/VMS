@@ -43,6 +43,14 @@ export function preset(uuid, data) {
     data
   });
 }
+export function getPreviewTree(data) {
+  let url = vUrl.getPreviewTreeUrl;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
 export function getPreset(params) {
   let url = vUrl.getPresetUrl;
   return axios({

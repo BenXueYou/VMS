@@ -663,36 +663,54 @@ export default {
           if (!this.videoArr[this.operatorIndex].channelUuid) {
             this.$message.error("该分路上没有通道！");
           } else {
-            this.$confirm("是否关闭该窗口", "提示", {
-              confirmButtonText: "取消",
-              cancelButtonText: "确定"
-            })
-              .then(() => {})
-              .catch(() => {
-                this.closeVideo(this.operatorIndex);
+            this.$confirm(
+              `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
+              {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                distinguishCancelAndClose: true,
+                confirmButtonClass: "confirm-button",
+                cancelButtonClass: "cancel-button",
+                center: true,
+                dangerouslyUseHTMLString: true,
+                customClass: "isCloseDialog"
+              }
+            )
+              .then(() => {
+                this.videoArr[this.operatorIndex].rtspUrl = "";
+                this.videoArr[this.operatorIndex].startTime = "";
+                this.videoArr[this.operatorIndex].endTime = "";
+                this.videoArr[this.operatorIndex].timeData = [];
                 this.videoArr.concat();
-                this.showCloudControl = this.updateCloud();
-              });
+              })
+              .catch(() => {});
           }
 
           break;
         case "关闭所有窗口":
-          this.$confirm("是否关闭所有的窗口?", "提示", {
-            confirmButtonText: "取消",
-            cancelButtonText: "确定"
-          })
-            .then(() => {})
-            .catch(() => {
-              // 把所有分路的rtspUrl都清空
-              this.videoArr = this.videoArr.map((item, index) => {
+          this.$confirm(
+            `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭所有的窗口?</span>`,
+            {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              distinguishCancelAndClose: true,
+              confirmButtonClass: "confirm-button",
+              cancelButtonClass: "cancel-button",
+              center: true,
+              dangerouslyUseHTMLString: true,
+              customClass: "isCloseDialog"
+            }
+          )
+            .then(() => {
+              this.videoArr = this.videoArr.map(item => {
                 item.rtspUrl = "";
-                item.position = index;
-                item.streamType = "";
-                item.channelUuid = "";
+                item.startTime = "";
+                item.endTime = "";
+                item.timeData = [];
                 return item;
               });
-              this.showCloudControl = this.updateCloud();
-            });
+            })
+            .catch(() => {});
 
           break;
         case "摄像机信息":
