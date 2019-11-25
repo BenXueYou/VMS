@@ -302,7 +302,7 @@ export default {
     w = w - 200;
     this.$refs.heightBox.$el.style.height = h + "px";
     this.asideWidth = 0.3 * w + "px";
-    this.$refs.mainHeightBox.$el.style.height = 0.7 * w * 9 / 16 + "px";
+    this.$refs.mainHeightBox.$el.style.height = (0.7 * w * 9) / 16 + "px";
     // this.footerHeight = h - ((0.7 * 9) / 16) * w - 30 + "px";
     // 当窗口发生变化时
     let that = this;
@@ -337,21 +337,27 @@ export default {
     CapturePhotoArr(val) {
       // console.log(val);
       let arr = [];
+      let snapshotTotal = this.todayShootCount;
+      snapshotTotal++;
       val.map(item => {
         if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
           arr.unshift(item);
-          this.todayShootCount += 1;
+        } else {
+          snapshotTotal--;
         }
       });
       this.photoList = arr;
+      this.todayShootCount = snapshotTotal;
     },
     RecognizationArr(val) {
       console.log(val);
       let arr = [];
+      this.todayCompareCount += 1;
       val.map(item => {
         if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
           arr.unshift(item);
-          this.todayCompareCount += 1;
+        } else {
+          this.todayCompareCount -= 1;
         }
       });
       this.comparePhotoList = arr;
@@ -526,6 +532,9 @@ export default {
       // 停止上一个视频的播放
       if (this.video) {
         this.video_mgr.stop(this.video);
+        this.canvas = null;
+        this.$refs.canvasRefs.innerHTML = "";
+        document.getElementById("poster_img").style.display = "block";
       }
       api
         .getRtspUrlByChannelUuidApi(data)

@@ -20,6 +20,7 @@
 					:defaultProps="defaultDeviceProps"
 					nodeKey="channelUuid"
 					inputWidth="160px"
+					ref="CPDeviceRef"
 					@transferAct="transferCheckedChannel"
 				></alPopverTree>
 			</div>
@@ -204,6 +205,7 @@ export default {
       this.startTime = this.$common.getStartTime();
       this.endTime = this.$common.getCurrentTime();
       this.selectDate = null;
+      this.$refs.DeviceRef.clearAction();
     },
     transferAct(transferArray) {
       this.checkedFaceUuidList = transferArray;

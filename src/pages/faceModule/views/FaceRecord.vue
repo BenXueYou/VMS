@@ -36,6 +36,7 @@
 					:elPopoverClass="fRPopoverClass"
 					@transferCheckedChannel="transferCheckedChannel"
 					inputWidth="75%"
+					ref="FRDeviceRef"
 					:isCheckedAll="true"
 				></elPopverTree>
 			</div>
@@ -116,6 +117,7 @@
 					:visible-arrow="false"
 					popper-class="FRelPopoverClass"
 					placement="center-center"
+					v-model="o.CellVisiblePopver"
 					:width="cellwidth"
 					trigger="hover"
 				>
@@ -254,6 +256,7 @@ export default {
     console.log("抓拍记录刷新页面");
     this.checkNameString = "";
   },
+  deactivated: function() {},
   methods: {
     resetQueryAct() {
       this.checkedChannelsUuidList = [];
@@ -263,6 +266,7 @@ export default {
       this.startTime = this.$common.getStartTime();
       this.endTime = this.$common.getCurrentTime();
       this.selectDate = null;
+      this.$refs.DeviceRef.clearAction();
       this.queryAct();
     },
     selectDateAct(dateStr) {
@@ -356,6 +360,7 @@ export default {
         .then(res => {
           if (res.data.success) {
             item.faceUuid = res.data.data;
+            this.$set(item, "CellVisiblePopver", false);
             this.$router.push({ path: routeName, query: { imgObj: item } });
           } else {
             this.$message({ type: "warning", message: res.data.msg });
@@ -376,6 +381,7 @@ export default {
           this.mainScreenLoading = false;
           if (res.data.success) {
             o.faceUuid = res.data.data;
+            this.$set(o, "CellVisiblePopver", false);
             this.$router.push({ path: routeName, query: { imgObj: o } });
           } else {
             this.$message({
@@ -389,6 +395,7 @@ export default {
         });
     },
     searchImageToFace(o, index, routeName) {
+      this.$set(o, "CellVisiblePopver", false);
       this.$router.push({ path: routeName, query: { imgObj: o } });
     },
     // 全景菜单的组件回调，返回选中的对象数组
@@ -516,7 +523,7 @@ export default {
       checkedUuid: ["HIGH", "NORMAL"],
       dialogPanoramaImgUrl: false,
       fRPopoverClass: "fRPopoverClass",
-      totalPhotoItems: 40,
+      totalPhotoItems: [],
       dialogPhotoImgUrl: false,
       dialogVisible: false, // 彈窗顯示標記
       checkedChannelsNameList: [], // 当前勾选的通道名称list
@@ -580,10 +587,10 @@ export default {
 	height: 100%;
 }
 .dialogPhotoClass .rightImgBox .el-image .el-image-viewer__canvas img,
-.dialogPhotoClass .leftImgBox .el-image .el-image-viewer__canvas img{
+.dialogPhotoClass .leftImgBox .el-image .el-image-viewer__canvas img {
 	width: auto;
 	max-width: 100%;
-	height: 100%;;
+	height: 100%;
 }
 .faceRecord .reccordCellClass .FRelPopoverClass {
 	min-width: 118px;
