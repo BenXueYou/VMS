@@ -258,7 +258,7 @@ export default {
       faceModelUuid: "",
       otherVideoSourceList: [],
       notInVideoSourceList: [],
-      limit: 5,
+      limit: 7,
       judgeItemTotal: 0,
     };
   },
@@ -295,7 +295,7 @@ export default {
         this.$refs.camera1.isShowMoreButton();
         this.$refs.camera2.isShowMoreButton();
         this.$refs.camera3.isShowMoreButton();
-        this.limit = 5;
+        this.limit = 7;
         this.getJudgedList(this.faceModelUuid);
       }, 600);
     },
