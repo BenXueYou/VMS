@@ -11,6 +11,7 @@
 						nodeKey="faceMonitorUuid"
 						inputWidth="160px"
 						@transferAct="transferTaskAct"
+            ref="taskMonitorRef"
 					></alPopverTree>
 				</div>
 				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
@@ -22,6 +23,7 @@
 						nodeKey="channelUuid"
 						inputWidth="160px"
 						@transferAct="transferCheckedChannel"
+            ref="DeviceRef"
 					></alPopverTree>
 				</div>
 				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
@@ -31,6 +33,7 @@
 						:alPopoverClass="facealarmPopoverClass"
 						:defaultProps="faceDBDefaultProps"
 						nodeKey="faceLibraryUuid"
+            ref="faceLibRef"
 						inputWidth="160px"
 						@transferAct="transferCheckedFaceDB"
 					></alPopverTree>
@@ -431,6 +434,9 @@ export default {
       this.startTime = this.$common.getStartTime();
       this.endTime = this.$common.getCurrentTime();
       this.selectDate = null;
+      this.$refs.taskMonitorRef.clearAction();
+      this.$refs.DeviceRef.clearAction();
+      this.$refs.faceLibRef.clearAction();
     },
     lookAlarmDetail(detail) {
       this.detail = detail;
