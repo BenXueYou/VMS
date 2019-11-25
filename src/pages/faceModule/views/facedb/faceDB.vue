@@ -643,6 +643,7 @@ export default {
     },
     selectedRow(row, event, column) {
       // 当点击左边的列表，右边进行更新
+      this.faceDBDialogAddVisible = false;
       this.selectLibRow = row;
       this.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
       this.libraryName = this.selectLibRow.faceLibraryName;

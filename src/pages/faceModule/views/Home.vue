@@ -343,7 +343,12 @@ export default {
         if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
           arr.unshift(item);
         } else {
-          snapshotTotal--;
+          if (
+            this.checkedChannelsUuidList &&
+						this.checkedChannelsUuidList.length
+          ) {
+            snapshotTotal--;
+          }
         }
       });
       this.photoList = arr;
@@ -357,7 +362,9 @@ export default {
         if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
           arr.unshift(item);
         } else {
-          this.todayCompareCount -= 1;
+          if (this.checkedTaskUUidList && this.checkedTaskUUidList.length) {
+            this.todayCompareCount -= 1;
+          }
         }
       });
       this.comparePhotoList = arr;
@@ -714,6 +721,7 @@ export default {
           this.asidDropdownMednu += this.checkedNodes[i].faceMonitorName;
           this.asidDropdownMednu += ",";
         }
+        this.asidDropdownMednu = this.asidDropdownMednu.slice(0, this.asidDropdownMednu.length - 1);
       }
       // 预防在接口返回结果前，websocket就有推送数据
       this.todayCompareCount = 0;
