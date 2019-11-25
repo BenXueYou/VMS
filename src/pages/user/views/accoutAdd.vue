@@ -231,6 +231,7 @@ export default {
       this.submit(false);
     },
     confirm() {
+      debugger;
       this.submit();
     },
     close() {

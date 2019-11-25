@@ -119,8 +119,11 @@ import ConfirmDialog from "@/common/ConfirmDialog";
 export default {
   name: "accout",
   components: { AccountAdd, treePanelDialog, resetPassword, ConfirmDialog },
-  mounted() {
+  activated() {
     this.initData();
+  },
+  mounted() {
+    // this.initData();
   },
   data() {
     return {

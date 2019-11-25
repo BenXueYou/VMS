@@ -4,8 +4,8 @@
 			<el-header class="headerBox">
 				<div class="headerTxt">添加账号</div>
 				<div>
-					<el-button class="firstBtnClass">保存并继续添加</el-button>
-					<el-button>确认</el-button>
+					<el-button class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
+					<el-button @click="editBtnAct" v-loading="isload">确认</el-button>
 					<el-button @click="close">取消</el-button>
 				</div>
 			</el-header>
@@ -34,21 +34,21 @@
 						<el-input v-model="queryBody.confirmPassword"></el-input>
 					</div>
 					<p style="margin:17px 0">
-						<el-radio-group v-model="queryBody.enable">
+						<el-radio-group v-model="queryBody.enableValue">
 							<el-radio :label="1">启用</el-radio>
 							<el-radio :label="0">禁用</el-radio>
 						</el-radio-group>
 					</p>
 					<p style="text-align: left;margin:28px 0 0 0">
 						<el-switch
-							v-model="queryBody.isAssociateStaff"
+							v-model="queryBody.isAssociateSwitch"
 							active-color="rgba(32, 204, 150, 0.2)"
 							inactive-color="rgba(255,255,255,0.2)"
 						></el-switch>
 					</p>
 					<div>
 						<el-input v-model="queryBody.staffName"></el-input>
-						<span class="cursorClass" v-if="queryBody.isAssociateStaff" @click="addSystemStaff">
+						<span class="cursorClass" v-if="queryBody.isAssociateSwitch" @click="addSystemStaff">
 							<img class="img" src="@/assets/images/resident/modify_icon.png" alt srcset />请选择
 						</span>
 					</div>
@@ -66,7 +66,7 @@
 					</p>
 					<div v-if="!queryBody.isLongTIme">
 						<el-date-picker
-							v-model="queryBody.invalidTime"
+							v-model="queryBody.invalidTimeVal"
 							type="datetime"
 							class="time-interal-date"
 							placeholder="选择日期"
@@ -168,20 +168,26 @@ export default {
         password: null, // 用户密码
         confirmPassword: null, // 用户确认密码
         enable: 1, // 使能状态
+        enableValue: 1, // 使能状态
         staffUuid: null, // 人员UUID (可选)
         staffName: null, // 用户名
         phoneNumber: null, // 电话号码
         emailNumber: null, // 邮箱号码
-        invalidTime: null, // 失效时间 (可选)
+        invalidTimeVal: null, // 失效时间 (可选)
         description: null, // 描述
         roleUuids: [], // 角色uuid数组
-        isAssociateStaff: 1,
-        isLongTIme: 1
+        isAssociateSwitch: false,
+        isAssociateStaff: "",
+        isLongTIme: 1,
+        invalidTime: "", // 失效时间 (可选)
       }
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.queryBody.invalidTimeVal = new Date();
+    // this.queryBody.invalidTime = this.$common.timestampToFormatter(new Date(), "yyyy-mm-dd HH:mm:ss");
+  },
   methods: {
     // 点击确定按钮
     editBtnAct() {
@@ -203,10 +209,27 @@ export default {
             this.isload = !this.isload;
           });
       } else {
+        let parms = this.queryBody;
+        if (parms.isAssociateSwitch === true) {
+          parms.isAssociateStaff = 1;
+        } else {
+          parms.isAssociateStaff = 0;
+        }
+        if (parms.isLongTIme === 1) {
+          parms.invalidTime = "long";
+        } else {
+          parms.invalidTime = this.$common.timestampToFormatter(parms.invalidTimeVal, "yyyy-mm-dd HH:mm:ss");
+        }
+        if (parms.enableValue === 1) {
+          parms.enable = true;
+        } else {
+          parms.enable = false;
+        }
+        console.log("parms===", parms);
         // 新增
         this.isload = !this.isload;
         api
-          .addAccountApi(this.queryBody)
+          .addAccountApi(parms)
           .then(res => {
             this.isload = !this.isload;
             if (res.data.success) {
