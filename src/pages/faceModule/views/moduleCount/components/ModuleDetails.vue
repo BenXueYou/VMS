@@ -189,7 +189,7 @@ export default {
 .dialog-content {
   padding: 3% 5% 0 5%;
   box-sizing: border-box;
-  height: 600px;
+  height: 620px;
   overflow-y: auto;
   .content-title {
     font-family: PingFangSC-Regular;
@@ -218,7 +218,7 @@ export default {
     }
   }
   .content-list {
-    height: 380px;
+    height: 370px;
     width: 100%;
     border: 1px solid #254a43;
     margin-top: 15px;
