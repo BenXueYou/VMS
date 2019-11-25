@@ -69,7 +69,9 @@
                 <div class="other-span">{{item.faceModelName}}</div>
                 <div class="other-span">{{item.createTime}}</div>
                 <div class="other-span desc">{{item.analysisResultDescribe}}</div>
-                <div class="other-span">{{item.staffName}}&nbsp;&nbsp;{{item.faceLibraryName}}</div>
+                <div class="other-span">{{item.staffName}}
+                  <span :style="item.staffName ? 'margin-left: 5px;' : ''">{{item.faceLibraryName}}</span>
+                </div>
                 <div class="other-span"
                      :style="item.status === 'model_processed' ? 'color:#26D39D' : 'color:#FD545E'">{{$common.getEnumItemName('model_analysis_s', item.status)}}</div>
               </div>
@@ -153,7 +155,7 @@ export default {
       statusOptions: [],
       pageInfo: {
         total: 0,
-        pageSize: 14,
+        pageSize: 27,
         currentPage: 1
       },
       moduleList: [],
