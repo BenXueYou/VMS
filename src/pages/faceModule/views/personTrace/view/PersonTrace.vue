@@ -141,9 +141,21 @@ export default {
       isShowMenuList: false,
     };
   },
-  created() {},
+  created() {
+    let script = document.createElement("script");
+    script.src = "./static/utils/BMap_min.js";
+    document.body.appendChild(script);
+    script.onload = () => {
+      let scriptDraw = document.createElement("script");
+      scriptDraw.src = "./static/utils/DrawingManager.js";
+      document.body.appendChild(scriptDraw);
+      scriptDraw.onload = () => {
+        this.initData();
+      };
+    };
+  },
   mounted() {
-    this.initData();
+    // this.initData();
   },
   methods: {
     getMenuData() {
@@ -184,6 +196,7 @@ export default {
         marker.setOffset(new BMap.Size(0, -30));
         this.map.addOverlay(marker);
         let ItemOverlay = new Overlay.ItemOverlay(pt, v);
+        ItemOverlay.init();
         this.map.addOverlay(ItemOverlay);
         ItemOverlay.addEventListener("click", ()=> {
           this.getSamePlaceArr(v.longitude, v.latitude);
