@@ -79,6 +79,7 @@ export default {
       subCapture: null,
       subRecognization: null,
       subMonitorAlarm: null,
+      subDeviceOnOff: null,
       audio: null
     };
   },
@@ -162,6 +163,7 @@ export default {
           const subRecognizationApi =
 						"/user/topic/face-1.3/client/recognization";
           const subMonitorAlarmApi = "/user/topic/face-1.3/client/monitorAlarm";
+          const subDeviceOnOffApi = "/user/topic/status/device";
           this.subCapture = this.stompClient.subscribe(
             subCaptureApi,
             greeting => {
@@ -183,6 +185,13 @@ export default {
               this.handleSubscribeMonitorAlarm(JSON.parse(greeting.body));
             }
           );
+          this.subDeviceOnOff = this.stompClient.subscribe(
+            subDeviceOnOffApi,
+            greeting => {
+              console.log("收到设备状态变更通知：", greeting);
+              this.handleSubscribeDeviceOnOff(JSON.parse(greeting.body));
+            }
+          );
         },
         err => {
           console.log("websocket connect error,errMsg:", err);
@@ -202,6 +211,12 @@ export default {
       this.subRecognization.unsubscribe();
       this.subMonitorAlarm.unsubscribe();
     },
+    // 设备状态变更通知
+    handleSubscribeDeviceOnOff(data) {
+      console.log("设备状态变更通知：", data);
+      this.$store.dispatch("setDeviceOnOffArr", data);
+    },
+    // 抓拍通知
     handleSubscribeCapture(data) {
       let CapturePhotoArr = this.$store.state.home.CapturePhotoArr;
       let his = data.captureDatetime.split(" ")[1];
@@ -215,6 +230,7 @@ export default {
       }
       this.$store.dispatch("setCapturePhotoArr", CapturePhotoArr);
     },
+    // 识别通知
     handleSubscribeRecognization(data) {
       let RecognizationArr = this.$store.state.home.RecognizationArr;
       RecognizationArr.push(data);
@@ -223,6 +239,7 @@ export default {
       }
       this.$store.dispatch("setRecognizationArr", RecognizationArr);
     },
+    // 报警通知
     handleSubscribeMonitorAlarm(data) {
       this.$set(data, "showDialog", true);
       data.showDialog = true;

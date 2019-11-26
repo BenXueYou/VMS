@@ -279,6 +279,9 @@ export default {
     ...mapState({
       orgUuid: state => {
         return state.equipment.orgUuid;
+      },
+      setDeviceOnOffArr: state => {
+        return state.equipment.DeviceOnOffArr;
       }
     })
   },
@@ -595,7 +598,19 @@ export default {
     orgUuid(val) {
       // alert(val);
       this.getTableData();
-    }
+    },
+    DeviceOnOffArr(val) {
+      console.log(val);
+      console.log(this.tableData);
+      let array = this.tableData;
+      for (let index = 0; index < array.length; index++) {
+        const element = array[index];
+        if (val.deviceUuid === element.deviceUuid) {
+          this.$set(this.tableData[index], 'netStatus', val.stateValue);
+          break;
+        }
+      }
+    },
   }
 };
 </script>
