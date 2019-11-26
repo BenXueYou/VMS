@@ -18,6 +18,7 @@ export function getFaceDeviceList(data) {
 }
 export function getDeviceChannelList(data) {
   if (data) { data.projectUuid = store.state.home.projectUuid; }
+  data.shootType = "faceSnap,bodySnap";
   let url = FaceModuleApi.baseDataApi.getDeviceChannelList(store.state.home.projectUuid);
   return Axios({
     method: 'GET',

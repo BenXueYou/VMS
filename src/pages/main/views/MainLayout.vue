@@ -84,42 +84,32 @@ export default {
     };
   },
   created() {
-    // window.config.projectUuid = this.$store.state.home.projectUuid;
     this.queryBaseTypeByGroup();
   },
   mounted() {
-    this.$store.commit(
-      "SET_CERTIFICATE",
-      this.$common.getEnumByGroupStr("cred")
-    );
-    this.$store.commit("SET_EDUOPTIONS", this.$common.getEnumByGroupStr("edu"));
-    this.$store.commit(
-      "SET_COUNTRY",
-      this.$common.getEnumByGroupStr("nationality")
-    );
-    this.$store.commit("SET_NATION", this.$common.getEnumByGroupStr("nation"));
-    this.$store.commit(
-      "SET_MARITAL",
-      this.$common.getEnumByGroupStr("marital")
-    );
-    this.$store.commit(
-      "SET_GENDEROPTIONS",
-      this.$common.getEnumByGroupStr("gender")
-    );
-    this.$store.commit(
-      "SET_STAFFOPTIONS",
-      this.$common.getEnumByGroupStr("staff_t")
-    );
-    this.$store.commit(
-      "SET_CARDOPTIONS",
-      this.$common.getEnumByGroupStr("card_u")
-    );
     this.initWebSocket();
+    // 添加用户交互模拟事件
+    var btn = document.createElement("button");
+    let event = new MouseEvent("click");
+    btn.onclick = function() {
+      console.log("模拟点击事件");
+    };
+    btn.dispatchEvent(event);
+    btn.onclick();
+    window.addEventListener("beforeunload", e => this.browerStatus(e));
+    window.addEventListener("onunload", e => this.browerStatusOff(e));
   },
-  activated() {
-    // console.log(this.$store);
-  },
+  activated() {},
   methods: {
+    browerStatus(e) {
+      e = window.event || e;
+      e.returnValue = "确定离开当前页面吗？";
+      console.log("---------------");
+    },
+    browerStatusOff() {
+      console.log("完善登出事件");
+    },
+    // 关闭报警弹窗
     closeDialog(dialogParama, index) {
       this.$set(this.GlobalAlarmList[index], "showDialog", false);
       this.GlobalAlarmList.splice(index, 1);
@@ -158,12 +148,12 @@ export default {
         { projectUuid: this.$store.state.home.projectUuid },
         frame => {
           console.log("connect success----------------:", frame);
-          // 订阅通知
           const subCaptureApi = "/user/topic/face-1.3/client/capture";
           const subRecognizationApi =
 						"/user/topic/face-1.3/client/recognization";
           const subMonitorAlarmApi = "/user/topic/face-1.3/client/monitorAlarm";
           const subDeviceOnOffApi = "/user/topic/status/device";
+          // 订阅通知
           this.subCapture = this.stompClient.subscribe(
             subCaptureApi,
             greeting => {
@@ -188,7 +178,7 @@ export default {
           this.subDeviceOnOff = this.stompClient.subscribe(
             subDeviceOnOffApi,
             greeting => {
-              console.log("收到设备状态变更通知：", greeting);
+              // console.log("收到设备状态变更通知：", greeting);
               this.handleSubscribeDeviceOnOff(JSON.parse(greeting.body));
             }
           );
@@ -234,6 +224,8 @@ export default {
     handleSubscribeRecognization(data) {
       let RecognizationArr = this.$store.state.home.RecognizationArr;
       RecognizationArr.push(data);
+      // 解决字段名称不一致
+      data.libraryName = data.faceLibraryName;
       if (RecognizationArr && RecognizationArr.length > 5) {
         RecognizationArr.shift();
       }
@@ -280,6 +272,42 @@ export default {
     handleQueryBaseTypeByGroupSuccessResponse(body) {
       this.local_enums = body;
       this.$store.dispatch("setLocalEnums", this.local_enums);
+      this.localStorageResidentTypeTransfer();
+    },
+    // 居民管理模块的部分本地翻译数组
+    localStorageResidentTypeTransfer() {
+      this.$store.commit(
+        "SET_CERTIFICATE",
+        this.$common.getEnumByGroupStr("cred")
+      );
+      this.$store.commit(
+        "SET_EDUOPTIONS",
+        this.$common.getEnumByGroupStr("edu")
+      );
+      this.$store.commit(
+        "SET_COUNTRY",
+        this.$common.getEnumByGroupStr("nationality")
+      );
+      this.$store.commit(
+        "SET_NATION",
+        this.$common.getEnumByGroupStr("nation")
+      );
+      this.$store.commit(
+        "SET_MARITAL",
+        this.$common.getEnumByGroupStr("marital")
+      );
+      this.$store.commit(
+        "SET_GENDEROPTIONS",
+        this.$common.getEnumByGroupStr("gender")
+      );
+      this.$store.commit(
+        "SET_STAFFOPTIONS",
+        this.$common.getEnumByGroupStr("staff_t")
+      );
+      this.$store.commit(
+        "SET_CARDOPTIONS",
+        this.$common.getEnumByGroupStr("card_u")
+      );
     }
   },
   watch: {

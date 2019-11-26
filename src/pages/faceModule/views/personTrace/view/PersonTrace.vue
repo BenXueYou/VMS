@@ -114,7 +114,6 @@
 import PicUpload from "@/common/PicUpload";
 import FellowItem from "@/pages/faceModule/views/companion/view/FellowItem";
 import ElPopverTree from "@/pages/faceModule/components/ElPopverTree";
-import * as Overlay from "@/utils/BlockItemOverlay.js";
 
 export default {
   components: {
@@ -142,7 +141,8 @@ export default {
       pois: [],
       samePlaArr: [],
       isShowSamePlaDialog: false,
-      isShowMenuList: false
+      isShowMenuList: false,
+      Overlay: null,
     };
   },
   created() {
@@ -154,6 +154,7 @@ export default {
       scriptDraw.src = "./static/utils/DrawingManager.js";
       document.body.appendChild(scriptDraw);
       scriptDraw.onload = () => {
+        this.Overlay = require("@/utils/BlockItemOverlay.js");
         this.initData();
       };
     };
@@ -189,7 +190,7 @@ export default {
       /* eslint-disable */
       this.map.clearOverlays();
       this.pois = [];
-      this.traceData.forEach(v => {
+      for (let v of this.traceData) {
         let pt = new BMap.Point(v.longitude, v.latitude);
         this.pois.push(pt);
         let myIcon = new BMap.Icon(
@@ -199,20 +200,19 @@ export default {
         let marker = new BMap.Marker(pt, { icon: myIcon });
         marker.setOffset(new BMap.Size(0, -30));
         this.map.addOverlay(marker);
-        let ItemOverlay = new Overlay.ItemOverlay(pt, v);
-        ItemOverlay.init();
+        let ItemOverlay = new this.Overlay.ItemOverlay(pt, v);
         this.map.addOverlay(ItemOverlay);
         ItemOverlay.addEventListener("click", () => {
           this.getSamePlaceArr(v.longitude, v.latitude);
           this.isShowSamePlaDialog = true;
         });
-      });
+      };
       let sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_CLOSED_ARROW, {
         scale: 0.8, //图标缩放大小
         strokeColor: "#E63434", //设置矢量图标的线填充颜色
         strokeWeight: "3" //设置线宽
       });
-      let icons = new BMap.IconSequence(sy, "50", "90");
+      let icons = new BMap.IconSequence(sy, "20%", "5%");
       // 创建polyline对象
       let polyline = new BMap.Polyline(this.pois, {
         icons: [icons],
@@ -328,6 +328,8 @@ export default {
         this.$cToast.warn("搜索结果显示数量最小值为1");
         return;
       }
+      this.menuData = [];
+      this.itemData = [];
       this.$factTragicHttp
         .getTragicList({
           imageBase64: this.imageBase64,

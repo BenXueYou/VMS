@@ -11,7 +11,7 @@
 						nodeKey="faceMonitorUuid"
 						inputWidth="160px"
 						@transferAct="transferTaskAct"
-            ref="taskMonitorRef"
+						ref="taskMonitorRef"
 					></alPopverTree>
 				</div>
 				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
@@ -23,7 +23,7 @@
 						nodeKey="channelUuid"
 						inputWidth="160px"
 						@transferAct="transferCheckedChannel"
-            ref="DeviceRef"
+						ref="DeviceRef"
 					></alPopverTree>
 				</div>
 				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
@@ -33,7 +33,7 @@
 						:alPopoverClass="facealarmPopoverClass"
 						:defaultProps="faceDBDefaultProps"
 						nodeKey="faceLibraryUuid"
-            ref="faceLibRef"
+						ref="faceLibRef"
 						inputWidth="160px"
 						@transferAct="transferCheckedFaceDB"
 					></alPopverTree>
@@ -121,16 +121,30 @@
 					@lookAlarmDetail="lookAlarmDetail"
 					@pagechange="pagechange"
 				></component>
+				<el-dialog
+					class="dialogClass"
+					:close-on-click-modal="false"
+					:visible.sync="faceImgDialogVisible"
+					@close="faceImgDialogVisible=false"
+					v-dialogDrag
+					title="报警详情"
+				>
+					<AlarmDetailDialog
+						v-loading="dialogfullscreenLoading"
+						element-loading-background="rgba(0, 0, 0, 0.8)"
+						:dialogParama="detail"
+					></AlarmDetailDialog>
+				</el-dialog>
 				<!-- <the-face-alarm-dialog
 				title="报警详情"
 				:detail="detail"
 				:detail2="detail2"
 				:facearr="facearr"
 				:alarminfoid="alarminfoid"
-				:faceDBDialogVisible="facealarmvisible"
+				:faceDBDialogVisible="faceImgDialogVisible"
 				@close="facealarmvisible=false"
 				></the-face-alarm-dialog>-->
-				<face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" />
+				<!-- <face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" /> -->
 			</div>
 		</div>
 	</div>
@@ -140,6 +154,7 @@
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import FaceImgDialog from "@/pages/faceModule/components/FaceImgDialog.vue";
 import alPopverTree from "@/pages/faceModule/components/AlElTree.vue";
+import AlarmDetailDialog from "@/pages/faceModule/components/AlarmDetailDialog.vue";
 import TheFaceAlarmDialog from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmDialog.vue";
 import faceAlarmTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmTable.vue";
 import theFaceAlarmImageTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmImageTable.vue";
@@ -153,10 +168,12 @@ export default {
     TheFaceAlarmDialog,
     elPopverTree,
     alPopverTree,
-    FaceImgDialog
+    FaceImgDialog,
+    AlarmDetailDialog
   },
   data() {
     return {
+      dialogfullscreenLoading: false,
       imageHeader: RestApi.api.imageUrl,
       isIndeterminate: false,
       checkTaskAll: true,
@@ -433,8 +450,34 @@ export default {
     },
     lookAlarmDetail(detail) {
       this.detail = detail;
-      this.faceImgDialogVisible = !this.faceImgDialogVisible;
-      // this.facealarmvisible = true;
+      this.getAlarmShootPhotoList(detail);
+    },
+    // 根据客户端的传的人员staffUuid查找抓拍图片
+    getAlarmShootPhotoList(rowData, currentPage = 1, pageSize = 24) {
+      this.updatedFlag = true;
+      var data = {
+        faceUuid: rowData.faceUuid,
+        triggerFaceMonitor: 1,
+        limit: 8,
+        page: 1
+      };
+      this.dialogfullscreenLoading = true;
+      this.dialogVisible = !this.dialogVisible;
+      api
+        .getRecognizeInfo(data)
+        .then(res => {
+          this.dialogfullscreenLoading = false;
+          this.faceImgDialogVisible = !this.faceImgDialogVisible;
+          if (res.data.success) {
+            console.log(res.data.data);
+            this.detail.showImg = false;
+            this.detail = res.data.data;
+          }
+        })
+        .catch(() => {
+          this.dialogfullscreenLoading = false;
+          this.faceImgDialogVisible = !this.faceImgDialogVisible;
+        });
     },
     changeIndex(index) {
       this.showindex = index;
