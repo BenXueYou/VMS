@@ -192,13 +192,17 @@ export default {
       this.checkedChannel = [];
       this.checkedChannelName = "";
       this.checkAll = false;
-      this.$emit("transferCheckedChannel", []);
+      if (!this.checkAll && this.isCheckedAll) {
+        this.$emit("transferCheckedChannel", this.channels);
+      } else {
+        this.$emit("transferCheckedChannel", []);
+      }
     },
     // 弹窗展开的回调
     show() {},
     // 弹窗关闭的回调
     hide() {
-      if (!this.checkAll) {
+      if (!this.checkAll && this.isCheckedAll) {
         this.$emit("transferCheckedChannel", this.channels);
       }
     },
