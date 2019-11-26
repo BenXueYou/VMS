@@ -38,11 +38,11 @@
 				background
 				layout="prev, pager, next"
 				:page-size="imagePageSize"
-				:current-page="imagePageNow"
+				:current-page="pageNow"
 				@current-change="currentChange"
-				:total="imagePageCount"
+				:total="total"
 			></el-pagination>
-			<p class="totalpagetitle">共{{ imagePageCount}}条</p>
+			<p class="totalpagetitle">共{{ total}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
 				<el-input
@@ -82,7 +82,7 @@ export default {
         return false;
       }
     },
-    imagePageNow: {
+    pageNow: {
       type: Number,
       default() {
         return 1;
@@ -94,7 +94,7 @@ export default {
         return 15;
       }
     },
-    imagePageCount: {
+    total: {
       type: Number,
       default() {
         return 0;
@@ -106,39 +106,18 @@ export default {
       imageHeader: RestApi.api.imageUrl,
       pageIndex: "",
       multipleSelection: [],
-      pageSize: 24,
-      pagenow: 1,
-      total: 1000,
-      countdata: 10000,
+      pageSize: 28,
       preload: []
     };
   },
-  computed: {
-    getLast() {
-      var len = this.imagePageSize - this.imageTableData.length;
-      var a = [];
-      while (len--) {
-        a.push("kj");
-      }
-      return a;
-    }
-  },
+  computed: {},
   mounted() {
-    // this.$nextTick(function() {
-    //   var win_h = window.innerHeight;
-    //   var tableheight =
-    //     parseInt(getComputedStyle(this.$refs.tablelist).height) - 40;
-    //   this.pageSize = Math.floor(tableheight / 43);
-    //   //   alert(this.pageSize);
-    // });
   },
   methods: {
     blur() {
       if (this.pageIndex !== "") {
-        if (
-          this.pageIndex > Math.ceil(this.listPageCount / this.listPageSize)
-        ) {
-          this.pageIndex = Math.ceil(this.listPageCount / this.listPageSize);
+        if (this.pageIndex > Math.ceil(this.total / this.imagePageSize)) {
+          this.pageIndex = Math.ceil(this.total / this.imagePageSize);
         }
         this.pageIndex = parseInt(this.pageIndex);
         this.$emit("changepage", parseInt(this.pageIndex));
@@ -378,7 +357,7 @@ $fontcolor: #aaa;
 }
 .faceDBImageFooter {
 	position: relative;
-	margin: 10px 0px;
+	margin: 5px 0px;
 	.totalpagetitle {
 		font-size: 14px;
 		color: #fff;
