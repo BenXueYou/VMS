@@ -280,7 +280,7 @@ export default {
       orgUuid: state => {
         return state.equipment.orgUuid;
       },
-      setDeviceOnOffArr: state => {
+      DeviceOnOffArr: state => {
         return state.equipment.DeviceOnOffArr;
       }
     })
