@@ -218,13 +218,9 @@ export default {
     this.$nextTick(() => {
       this.initWrapDom();
     });
-    window.addEventListener("resize", this.initWrapDom);
 
-    // document.addEventListener("keydown", e => {
-    //   console.log(e);
-    //   // alert(e.code + "  ------   " + (e.code === "F11"));
+    // 监听F11事件
 
-    // });
     // 下面是MDZZ代码
     // this.timer = setInterval(() => {
     //   that.initWrapDom();
@@ -238,11 +234,21 @@ export default {
     const that = this;
     if (!this.timer) {
       this.timer = setInterval(() => {
+        if (this.fullscreen) {
+          this.fullscreen = this.checkFull();
+        }
         that.initWrapDom();
+        console.log(this.fullscreen);
       }, 100);
     }
   },
   methods: {
+    checkFull() {
+      return (
+        window.innerHeight === window.screen.height &&
+        window.innerWidth === window.screen.width
+      );
+    },
     dblclickhandler(index) {
       if (this.isAutoScreen === index) {
         // 已经满屏则退出满屏
@@ -663,36 +669,55 @@ export default {
           if (!this.videoArr[this.operatorIndex].channelUuid) {
             this.$message.error("该分路上没有通道！");
           } else {
-            this.$confirm("是否关闭该窗口", "提示", {
-              confirmButtonText: "取消",
-              cancelButtonText: "确定"
-            })
-              .then(() => {})
-              .catch(() => {
-                this.closeVideo(this.operatorIndex);
+            this.$confirm(
+              `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
+              {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                distinguishCancelAndClose: true,
+                confirmButtonClass: "confirm-button",
+                cancelButtonClass: "cancel-button",
+                center: true,
+                dangerouslyUseHTMLString: true,
+                customClass: "isCloseDialog"
+              }
+            )
+              .then(() => {
+                this.videoArr[this.operatorIndex].rtspUrl = "";
+                this.videoArr[this.operatorIndex].channelUuid = "";
+                this.videoArr[this.operatorIndex].startTime = "";
+                this.videoArr[this.operatorIndex].endTime = "";
+                this.videoArr[this.operatorIndex].timeData = [];
                 this.videoArr.concat();
-                this.showCloudControl = this.updateCloud();
-              });
+              })
+              .catch(() => {});
           }
 
           break;
         case "关闭所有窗口":
-          this.$confirm("是否关闭所有的窗口?", "提示", {
-            confirmButtonText: "取消",
-            cancelButtonText: "确定"
-          })
-            .then(() => {})
-            .catch(() => {
-              // 把所有分路的rtspUrl都清空
-              this.videoArr = this.videoArr.map((item, index) => {
+          this.$confirm(
+            `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭所有的窗口?</span>`,
+            {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              distinguishCancelAndClose: true,
+              confirmButtonClass: "confirm-button",
+              cancelButtonClass: "cancel-button",
+              center: true,
+              dangerouslyUseHTMLString: true,
+              customClass: "isCloseDialog"
+            }
+          )
+            .then(() => {
+              this.videoArr = this.videoArr.map(item => {
                 item.rtspUrl = "";
-                item.position = index;
-                item.streamType = "";
-                item.channelUuid = "";
+                item.startTime = "";
+                item.endTime = "";
+                item.timeData = [];
                 return item;
               });
-              this.showCloudControl = this.updateCloud();
-            });
+            })
+            .catch(() => {});
 
           break;
         case "摄像机信息":
@@ -860,36 +885,36 @@ export default {
     },
     PreviewAreafullScreen() {
       var element = document.documentElement;
-      this.setFullScreen(this.$refs.vedioWrap);
+      // this.setFullScreen(this.$refs.vedioWrap);
       this.initWrapDom();
 
-      // if (this.fullscreen) {
-      //   if (document.exitFullscreen) {
-      //     document.exitFullscreen();
-      //   } else if (document.webkitCancelFullScreen) {
-      //     document.webkitCancelFullScreen();
-      //   } else if (document.mozCancelFullScreen) {
-      //     document.mozCancelFullScreen();
-      //   } else if (document.msExitFullscreen) {
-      //     document.msExitFullscreen();
-      //   }
-      //   console.log("已还原！");
-      // } else {
-      //   // 否则，进入全屏
-      //   if (element.requestFullscreen) {
-      //     element.requestFullscreen();
-      //   } else if (element.webkitRequestFullScreen) {
-      //     element.webkitRequestFullScreen();
-      //   } else if (element.mozRequestFullScreen) {
-      //     element.mozRequestFullScreen();
-      //   } else if (element.msRequestFullscreen) {
-      //     // IE11
-      //     element.msRequestFullscreen();
-      //   }
-      //   console.log("已全屏！");
-      // }
+      if (this.fullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        console.log("已还原！");
+      } else {
+        // 否则，进入全屏
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          // IE11
+          element.msRequestFullscreen();
+        }
+        console.log("已全屏！");
+      }
       // // 改变当前全屏状态
-      // this.fullscreen = !this.fullscreen;
+      this.fullscreen = !this.fullscreen;
     },
     setFullScreen(target) {
       if (target.requestFullscreen) {
@@ -942,6 +967,16 @@ export default {
 };
 </script>
 <style lang="scss">
+.isCloseDialog {
+  .el-message-box__btns {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    button {
+      margin-right: 30px;
+    }
+  }
+}
 .VideoPreviewContent {
   .el-message-box__title span {
     color: #fff !important;

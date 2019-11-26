@@ -7,6 +7,7 @@
     <div class='right'
          ref='rigth'>
       <div class='vedioWrap'
+           :class="{'fullVideoWrap':fullscreen}"
            ref='vedioWrap'>
         <video-wrap v-for="(item,index) in showFenlu"
                     :ref="'video'+index"
@@ -46,7 +47,7 @@
                        :speed="videoSpeed"
                        :operatorIndex.sync="operatorIndex"
                        :fenlu="fenlu"
-                       :fenlWW="fenluIndex"
+                       :fenlnWW="fenluIndex"
                        :data="showFenlu">
 
         </control-panel>
@@ -117,6 +118,7 @@ export default {
       }),
       downloadVisible: false,
       screenShotVisible: false,
+      fullscreen: false,
       videoInfoVisible: false,
       imageAdjustVisible: false,
       videoArr: Array.from({ length: 16 }, (item, index) => {
@@ -218,10 +220,25 @@ export default {
     window.addEventListener("resize", this.initWrapDom);
   },
   activated() {
-    this.initWrapDom();
+    const that = this;
+    if (!this.timer) {
+      this.timer = setInterval(() => {
+        if (this.fullscreen) {
+          this.fullscreen = this.checkFull();
+        }
+        that.initWrapDom();
+        console.log(this.fullscreen);
+      }, 100);
+    }
   },
   destroyed() {},
   methods: {
+    checkFull() {
+      return (
+        window.innerHeight === window.screen.height &&
+        window.innerWidth === window.screen.width
+      );
+    },
     setPlayTime(startTime, endTime) {
       // 设置回放时间
       this.$refs["video" + this.operatorIndex][0].setPlayTime(
@@ -391,7 +408,11 @@ export default {
       // 播放rtsp,传过来的可能是多个通道id
       for (let i = 0; i < arr.length; i++) {
         // nodeType: "chnNode"
-        if (arr[i].nodeType === "chnNode") {
+        // 判断传过来的数据，类型是不是通道
+        if (
+          arr[i].nodeType === "chnNode" ||
+          arr[i].hasOwnProperty("channelType")
+        ) {
           this.playVideo(
             arr[i].id,
             arr[i].label,
@@ -553,6 +574,11 @@ export default {
       console.log(index);
       this.fenluIndex = index;
       this.initWrapDom();
+      let dataArr = JSON.parse(JSON.stringify(this.videoArr));
+      dataArr.sort((a, b) => {
+        return a.position - b.position;
+      });
+      this.videoArr = dataArr;
       // 切换分路，还需要保留之前已经打开的视频画面
 
       // let num = Array.from(
@@ -599,37 +625,44 @@ export default {
           } else {
             this.$confirm(
               `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
-              "",
               {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                distinguishCancelAndClose: true,
+                confirmButtonClass: "confirm-button",
+                cancelButtonClass: "cancel-button",
+                center: true,
                 dangerouslyUseHTMLString: true,
-                confirmButtonText: "取消",
-                cancelButtonText: "确定"
+                customClass: "isCloseDialog"
               }
             )
-              .then(() => {})
-              .catch(() => {
+              .then(() => {
                 this.videoArr[this.operatorIndex].rtspUrl = "";
+                this.videoArr[this.operatorIndex].channelUuid = "";
                 this.videoArr[this.operatorIndex].startTime = "";
                 this.videoArr[this.operatorIndex].endTime = "";
                 this.videoArr[this.operatorIndex].timeData = [];
                 this.videoArr.concat();
-              });
+              })
+              .catch(() => {});
           }
 
           break;
         case "关闭所有窗口":
           this.$confirm(
             `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭所有的窗口?</span>`,
-            "提示",
             {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              distinguishCancelAndClose: true,
+              confirmButtonClass: "confirm-button",
+              cancelButtonClass: "cancel-button",
+              center: true,
               dangerouslyUseHTMLString: true,
-              confirmButtonText: "取消",
-              cancelButtonText: "确定"
+              customClass: "isCloseDialog"
             }
           )
-            .then(() => {})
-            .catch(() => {
-              // 把所有分路的rtspUrl都清空
+            .then(() => {
               this.videoArr = this.videoArr.map(item => {
                 item.rtspUrl = "";
                 item.startTime = "";
@@ -637,7 +670,8 @@ export default {
                 item.timeData = [];
                 return item;
               });
-            });
+            })
+            .catch(() => {});
 
           break;
         case "加速":
@@ -770,8 +804,36 @@ export default {
       this.videoArr.concat();
     },
     PreviewAreafullScreen() {
-      this.setFullScreen(this.$refs.vedioWrap);
+      // this.setFullScreen(this.$refs.vedioWrap);
+      var element = document.documentElement;
       this.initWrapDom();
+      if (this.fullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        console.log("已还原！");
+      } else {
+        // 否则，进入全屏
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          // IE11
+          element.msRequestFullscreen();
+        }
+        console.log("已全屏！");
+      }
+      // // 改变当前全屏状态
+      this.fullscreen = !this.fullscreen;
     },
     setFullScreen(target) {
       if (target.requestFullscreen) {
@@ -797,10 +859,18 @@ export default {
 };
 </script>
 <style lang="scss">
-.VideoPlaybackContent {
-  // .el-tree-node {
-  //   overflow: auto !important;
-  // }
+// .el-tree-node {
+//   overflow: auto !important;
+// }
+.isCloseDialog {
+  .el-message-box__btns {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    button {
+      margin-right: 30px;
+    }
+  }
 }
 </style>
 
@@ -812,6 +882,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   box-sizing: border-box;
+
   .right {
     width: calc(100% - #{$equLeftMenuWidth});
     height: 100%;
@@ -861,6 +932,16 @@ export default {
         }
       }
     }
+  }
+  .fullVideoWrap {
+    position: fixed !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    left: 0px !important;
+    top: 0px !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 10 !important;
   }
 }
 </style>

@@ -110,7 +110,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import PicUpload from "@/common/PicUpload";
 import FellowItem from "@/pages/faceModule/views/companion/view/FellowItem";
@@ -203,7 +202,7 @@ export default {
         this.map.addOverlay(marker);
         let ItemOverlay = new this.Overlay.ItemOverlay(pt, v);
         this.map.addOverlay(ItemOverlay);
-        ItemOverlay.addEventListener("click", ()=> {
+        ItemOverlay.addEventListener("click", () => {
           this.getSamePlaceArr(v.longitude, v.latitude);
           this.isShowSamePlaDialog = true;
         });
