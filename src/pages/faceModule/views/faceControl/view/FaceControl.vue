@@ -421,6 +421,7 @@ export default {
       this.formatObj();
     },
     getAlarmList(faceMonitorUuid) {
+      this.compareList = [];
       this.isAlarmLoading = true;
       this.$faceControlHttp
         .getAlarmList({
