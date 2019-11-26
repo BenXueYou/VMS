@@ -6,7 +6,7 @@ let ip = window.config.ip,
 let httpHeader = `${
   window.config.protocolHeader
 
-  }${ip}/sppc_auth_v1/project/${projectUuid}`;
+  }${ip}/upms-v1/project/${projectUuid}`;
 
 //项目外权限
 let httpAccountHeader = `${

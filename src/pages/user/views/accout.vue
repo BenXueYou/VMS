@@ -32,13 +32,14 @@
 				class="tableBoxClass"
 				@selection-change="handleSelectionChange"
 			>
+      <el-table-column type="selection" width="55"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" width="95">
-					<template slot-scope="scope">
+					<!-- <template slot-scope="scope">
 						<el-checkbox
 							v-model="scope.row.checked"
 							@change="selectchange"
 						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
-					</template>
+					</template> -->
 				</el-table-column>
 				<el-table-column prop="accountName" label="账户" width="120"></el-table-column>
 				<el-table-column prop="staffName" label="姓名" width="120"></el-table-column>
@@ -55,7 +56,7 @@
 					<template slot-scope="scope">
 						<el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
 						<el-button
-							@click="addRoleClick(scope.row)"
+							@click="editRoleClick(scope.row)"
 							v-loading="showTreeAdd"
 							type="text"
 							size="small"
@@ -124,6 +125,8 @@ export default {
   },
   mounted() {
     // this.initData();
+    this.onlineStatusOptions = this.$common.getEnumByGroupStr("onoffline");
+    console.log("onlineStatusOptions==", this.onlineStatusOptions);
   },
   data() {
     return {
@@ -147,12 +150,15 @@ export default {
         id: "roleUuid"
       },
       checkedRoleList: [],
-      rowData: {}
+      rowData: {},
+      accountUuid: "",
+      isAddRole: ""
     };
   },
   watch: {},
   methods: {
     addBtnAct() {
+      this.isAddRole = "add";
       this.defaultRoleData = [];
       this.rowData = {};
       this.addDialogVisible = !this.addDialogVisible;
@@ -161,17 +167,25 @@ export default {
     getCheckedRole(arr) {
       console.log(arr);
       this.defaultRoleData = arr;
-      this.rowData.roles = arr;
-      this.editAccountRoleApi();
+      // this.rowData.roles = arr;
+      this.$set(this.rowData, 'roles', arr);
+      if (this.isAddRole === "edit") {
+        this.editAccountRoleApi();
+      } else if (this.isAddRole === "add") {
+        console.log("defaultRoleData==", this.defaultRoleData);
+        this.showTreeAdd = false;
+      }
     },
     // 账号分配角色
     editAccountRoleApi() {
+      this.isAddRole = "edit";
       let data = {
-        accountUuid: this.rowData.accountUuid, // 账号uuid
+        accountUuid: this.accountUuid, // 账号uuid
         roleUuids: this.defaultRoleData.map((v, k) => {
           return v.roleUuid;
         })
       };
+      console.log("data==", this.rowData);
       api
         .parcelRoleAccountApi(data)
         .then(res => {
@@ -188,6 +202,7 @@ export default {
       console.log(val);
     },
     initData() {
+      this.tableData = [];
       let data = {
         staffName: this.staffName,
         onlineStatus: this.onlineStatus,
@@ -209,16 +224,26 @@ export default {
       this.rowData = rowData;
       this.getAccountDetail(rowData);
     },
+    // 修改角色
+    editRoleClick(rowData) {
+      this.accountUuid = rowData.accountUuid;
+      this.getRoleList();
+      console.log("rowData===", rowData);
+    },
     // 分配角色
     addRoleClick(rowData) {
-      if (rowData && this.rowData.accountUuid) {
-        this.rowData = rowData;
-        // 查详情
-        this.getAccountDetail(rowData);
-      } else {
-        this.defaultRoleData = [];
-        this.rowData = {};
-      }
+      console.log("rowData===", rowData);
+      // debugger
+      // if (rowData && this.rowData.accountUuid) {
+      //   this.rowData = rowData;
+      //   // 查详情
+      //   this.getAccountDetail(rowData);
+      // } else {
+      //   this.defaultRoleData = [];
+      //   this.rowData = {};
+      // }
+
+      this.$set(this.rowData, 'roles', this.defaultRoleData);
       this.getRoleList();
     },
     // 查详情
@@ -260,7 +285,7 @@ export default {
       }
       api
         .resetAccountPWDApi({
-          accountNames: this.accountNames.toString(),
+          accountNames: this.accountNames,
           password: data // 密码
         })
         .then(res => {
@@ -282,7 +307,7 @@ export default {
       }
       api
         .switchAccountApi({
-          accountUuids: this.accountUuids.toString(),
+          accountUuids: this.accountUuids,
           enable: enable
         })
         .then(res => {
@@ -329,9 +354,14 @@ export default {
         this.accountUuids.push(item.accountUuid);
         this.accountNames.push(item.accountName);
       });
+      console.log("accountUuids==", this.accountUuids);
     },
-    handleCurrentChange() {},
-    handleSizeChange() {},
+    handleSizeChange() {
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.initData();
+    },
     close(is) {
       this.addDialogVisible = !this.addDialogVisible;
       if (is) {

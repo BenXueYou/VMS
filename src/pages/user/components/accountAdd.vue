@@ -20,7 +20,7 @@
 					<p>手机：</p>
 					<p>邮箱：</p>
 					<p>到期时间：</p>
-					<p v-if="!queryBody.isLongTIme" style="visibility: hidden;">到期时间：</p>
+					<p v-if="!isLongTIme" style="visibility: hidden;">到期时间：</p>
 					<p>账号描述：</p>
 				</div>
 				<div class="bodyBoxDiv">
@@ -41,14 +41,14 @@
 					</p>
 					<p style="text-align: left;margin:28px 0 0 0">
 						<el-switch
-							v-model="queryBody.isAssociateSwitch"
+							v-model="isAssociateSwitch"
 							active-color="rgba(32, 204, 150, 0.2)"
 							inactive-color="rgba(255,255,255,0.2)"
 						></el-switch>
 					</p>
 					<div>
 						<el-input v-model="queryBody.staffName"></el-input>
-						<span class="cursorClass" v-if="queryBody.isAssociateSwitch" @click="addSystemStaff">
+						<span class="cursorClass" v-if="isAssociateSwitch" @click="addSystemStaff">
 							<img class="img" src="@/assets/images/resident/modify_icon.png" alt srcset />请选择
 						</span>
 					</div>
@@ -59,14 +59,14 @@
 						<el-input v-model="queryBody.emailNumber"></el-input>
 					</div>
 					<p style="margin:17px 0">
-						<el-radio-group v-model="queryBody.isLongTIme">
+						<el-radio-group v-model="isLongTIme">
 							<el-radio :label="1">长期</el-radio>
 							<el-radio :label="0">短期</el-radio>
 						</el-radio-group>
 					</p>
-					<div v-if="!queryBody.isLongTIme">
+					<div v-if="!isLongTIme">
 						<el-date-picker
-							v-model="queryBody.invalidTimeVal"
+							v-model="invalidTimeVal"
 							type="datetime"
 							class="time-interal-date"
 							placeholder="选择日期"
@@ -162,6 +162,9 @@ export default {
         }
       ],
       tags: [],
+      invalidTimeVal: null, // 失效时间 (可选)
+      isAssociateSwitch: false,
+      isLongTIme: 1,
       queryBody: {
         accountName: null, // 用户账号
         accountType: null, // 账号类型
@@ -173,19 +176,16 @@ export default {
         staffName: null, // 用户名
         phoneNumber: null, // 电话号码
         emailNumber: null, // 邮箱号码
-        invalidTimeVal: null, // 失效时间 (可选)
         description: null, // 描述
         roleUuids: [], // 角色uuid数组
-        isAssociateSwitch: false,
         isAssociateStaff: "",
-        isLongTIme: 1,
         invalidTime: "", // 失效时间 (可选)
       }
     };
   },
   created() {},
   mounted() {
-    this.queryBody.invalidTimeVal = new Date();
+    this.invalidTimeVal = new Date();
     // this.queryBody.invalidTime = this.$common.timestampToFormatter(new Date(), "yyyy-mm-dd HH:mm:ss");
   },
   methods: {
@@ -210,15 +210,15 @@ export default {
           });
       } else {
         let parms = this.queryBody;
-        if (parms.isAssociateSwitch === true) {
+        if (this.isAssociateSwitch === true) {
           parms.isAssociateStaff = 1;
         } else {
           parms.isAssociateStaff = 0;
         }
-        if (parms.isLongTIme === 1) {
+        if (this.isLongTIme === 1) {
           parms.invalidTime = "long";
         } else {
-          parms.invalidTime = this.$common.timestampToFormatter(parms.invalidTimeVal, "yyyy-mm-dd HH:mm:ss");
+          parms.invalidTime = this.$common.timestampToFormatter(this.invalidTimeVal, "yyyy-mm-dd HH:mm:ss");
         }
         if (parms.enableValue === 1) {
           parms.enable = true;

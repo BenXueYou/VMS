@@ -180,7 +180,7 @@ export function deleteAccountApi(data) {
 export function switchAccountApi(data) {
   let url = accountApi.switchAccountApi;
   return axios({
-    method: "POST",
+    method: "PUT",
     url,
     data
   });
@@ -190,7 +190,6 @@ export function switchAccountApi(data) {
 
 export function parcelRoleAccountApi(data) {
   let url = accountApi.editRoleAccountApi;
-  debugger;
   return axios({
     method: 'POST',
     url,
