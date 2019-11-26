@@ -47,7 +47,10 @@
 										v-for="(channelItem,index) in channelInfoList"
 										:label="channelItem"
 										:key="index"
-									>{{channelItem.nickName}}</el-radio>
+									>
+										<img class="radioIcon" :src="getIcon(channelItem.chnOnlineOrNot,channelItem.channelType)" alt srcset />
+										{{channelItem.nickName}}
+									</el-radio>
 								</el-radio-group>
 								<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
 							</el-row>
@@ -423,7 +426,21 @@ export default {
         })
         .catch(() => {});
     },
-
+    getIcon(isOnline, type) {
+      let treeIcons = window.config.treeIcons || [],
+        icon = "";
+      for (let i = 0; i < treeIcons.length; i++) {
+        if (treeIcons[i].value === type) {
+          if (!isOnline) {
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
+          } else {
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
+          }
+          break;
+        }
+      }
+      return icon;
+    },
     // 获取设备列表
     getDeviceList(uuid) {
       let data = { parentOrgUuid: uuid };
@@ -721,7 +738,10 @@ export default {
           this.asidDropdownMednu += this.checkedNodes[i].faceMonitorName;
           this.asidDropdownMednu += ",";
         }
-        this.asidDropdownMednu = this.asidDropdownMednu.slice(0, this.asidDropdownMednu.length - 1);
+        this.asidDropdownMednu = this.asidDropdownMednu.slice(
+          0,
+          this.asidDropdownMednu.length - 1
+        );
       }
       // 预防在接口返回结果前，websocket就有推送数据
       this.todayCompareCount = 0;
@@ -979,14 +999,11 @@ export default {
 	background: transparent !important;
 	overflow: auto;
 }
-/* .elPopoverClass .el-tree-node:focus > .el-tree-node__content {
-	background: transparent!important;
+.radioIcon{
+  width: 12px;
+  height: 12px;
+  margin-right:5px;
 }
-
-.elPopoverClass .el-tree-node__content:focus,
-.el-tree-node__content:hover {
-	background: transparent!important;
-} */
 .asidRowProgress {
 	margin: auto;
 	color: #28ffbb;
