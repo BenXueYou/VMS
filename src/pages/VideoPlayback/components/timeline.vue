@@ -88,7 +88,7 @@ export default {
         let a = i / data.length;
         let fenshu = a * allWidth;
         let isInMiddle = false;
-        console.log(fenshu + "   " + left);
+        // console.log(fenshu + "   " + left);
         if (fenshu >= left && fenshu <= left + 100) {
           isInMiddle = true;
         }

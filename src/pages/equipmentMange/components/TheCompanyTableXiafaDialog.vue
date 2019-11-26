@@ -25,7 +25,7 @@
             {{"0"+(scope.$index+1)}}
           </template>
         </el-table-column>
-        <el-table-column prop="deviceName"
+        <el-table-column prop="nickName"
                          width='120'
                          label="设备名称">
         </el-table-column>

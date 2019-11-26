@@ -492,6 +492,10 @@ export default {
       // 不在线的通道 ，双击进行展示
       if (data.isOnline || data.type === "tag") {
         this.chuliData();
+      } else {
+        if (data.isOnline === false) {
+          this.$message.error("设备不在线");
+        }
       }
     },
     saveClickData(node, data, event) {
@@ -546,7 +550,7 @@ export default {
           .getTDByOrgUuid(this.operatorData.id, {
             viewType: "video",
             page: 1,
-            limit: 3
+            limit: 36
           })
           .then(res => {
             console.log(res);
@@ -1601,8 +1605,8 @@ export default {
     width: calc(100% - 30px);
     .channelStatus {
       float: left;
-      width: 15px;
-      height: 15px;
+      width: 12px;
+      height: 12px;
       img {
         height: 100%;
       }

@@ -538,8 +538,8 @@ export default {
     padding-right: 8px;
     .channelStatus {
       float: left;
-      width: 15px;
-      height: 15px;
+      width: 12px;
+      height: 12px;
       margin-right: 7px;
       img {
         height: 100%;

@@ -238,7 +238,7 @@ export default {
           this.fullscreen = this.checkFull();
         }
         that.initWrapDom();
-        console.log(this.fullscreen);
+        // console.log(this.fullscreen);
       }, 100);
     }
   },

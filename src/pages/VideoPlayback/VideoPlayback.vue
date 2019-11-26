@@ -227,7 +227,6 @@ export default {
           this.fullscreen = this.checkFull();
         }
         that.initWrapDom();
-        console.log(this.fullscreen);
       }, 100);
     }
   },
@@ -568,7 +567,7 @@ export default {
         item.height = this.videoHeight;
         return item;
       });
-      console.log(this.videoArr);
+      // console.log(this.videoArr);
     },
     chooseFenlu(index) {
       console.log(index);

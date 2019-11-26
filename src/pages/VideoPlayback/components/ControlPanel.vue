@@ -319,7 +319,7 @@ export default {
           data.push(this.data[i].endTime);
         }
       }
-      console.log(this.data.length);
+      // console.log(this.data.length);
       if (data.length) {
         data.sort();
         let len = data.length - 1;
@@ -329,8 +329,8 @@ export default {
         this.startTime = "";
         this.endTime = "";
       }
-      console.log(this.startTime);
-      console.log(this.endTime);
+      // console.log(this.startTime);
+      // console.log(this.endTime);
     }
   },
   watch: {
@@ -338,12 +338,12 @@ export default {
       this.fenluIndex = this.fenlnWW;
     },
     data(val) {
-      console.log(val);
+      // console.log(val);
       this.controlData = this.data;
       this.getMaxTime();
     },
     zoom(newVal, oldVal) {
-      console.log(newVal, oldVal);
+      // console.log(newVal, oldVal);
       // 监听scale缩放系数的变化
       // 如果是放大，left直接加-50%就可以了，没有超出边界的可能
       // 如果是缩小,

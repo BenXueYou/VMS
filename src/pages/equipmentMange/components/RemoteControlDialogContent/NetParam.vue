@@ -134,7 +134,9 @@ export default {
       api.getDeivceInfo(this.deviceUuid).then(res => {
         if (res.data.success) {
           let data = res.data.data;
-          if (!data.port) {
+          if (data.radioFlag === "ip") {
+            this.radioFlag = "IP";
+          } else {
             this.radioFlag = "域名";
           }
           this.data = data;

@@ -322,8 +322,10 @@ export default {
         let operatorData = JSON.parse(e.dataTransfer.getData("operatorData"));
         let channelUuid = operatorData.id;
         console.log(operatorData);
-        if(operatorData.isOnline){
+        if (operatorData.isOnline) {
           this.$emit("playRtsp", channelUuid, "main", operatorData);
+        } else {
+          this.$message.error("设备不在线！");
         }
       } else if (whereform === "video") {
         this.$emit("drop", this.index);
