@@ -179,10 +179,10 @@ export default {
   setDelaySyncSettingUrl: deviceUuid =>
     `${
       window.config.protocolHeader
-    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/immediateSync`,
+    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/delaySync`,
   // 更新视频设备的设置(立即下发)
   setImmediateSyncSettingUrl: deviceUuid =>
     `${
       window.config.protocolHeader
-    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/delaySync`
+    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/immediateSync`
 };
