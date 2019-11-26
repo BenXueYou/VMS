@@ -350,6 +350,7 @@ export default {
       console.log("设备列表：", checkedChannel);
       this.checkedChannelsUuidList = checkedChannel;
     },
+    // 根据布控Uuid查询相关的人脸库和设备通道
     getFaceLibsAndDeviceList(taskuuidList) {
       console.log(taskuuidList);
       if (!taskuuidList.length) {
@@ -390,18 +391,9 @@ export default {
         })
         .catch(() => {});
     },
-    getidName(val) {
-      var str = val;
-      for (let i = 0, len = this.idtypetranslatearr.length; i < len; i++) {
-        if (this.idtypetranslatearr[i].typeStr === val) {
-          str = this.idtypetranslatearr[i].typeName;
-        }
-      }
-      return str;
-    },
+    // 查询按钮响应事件
     queryBtnAct() {
       this.init();
-
       if (this.startTime && this.endTime) {
         /* eslint-disable */
 				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
@@ -423,6 +415,7 @@ export default {
         });
       }
     },
+    // 条件重置
     resetData() {
       this.staffName = null;
       this.credentialNo = null;
@@ -451,7 +444,6 @@ export default {
     init() {},
     ajaxdata() {
       this.isloading = true;
-      // 过滤空字符串
       let data = {
         staffName: this.staffName,
         credentialNo: this.credentialNo,
@@ -466,6 +458,7 @@ export default {
         gender: this.genderOption,
         credentialType: null
       };
+      // 过滤空字符串
       if (!data.channelUuids) data.channelUuids = null;
       if (!data.faceMonitorUuid) data.faceMonitorUuid = null;
       if (!data.faceLibraryUuids) data.faceLibraryUuids = null;

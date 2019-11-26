@@ -119,7 +119,6 @@ export default {
     }
   },
   components: {},
-
   data: function() {
     return {
       defaultExpandedKeys: [],
@@ -148,23 +147,6 @@ export default {
         arr.push(element.channelUuid);
       });
       this.checkedChannel = arr;
-    },
-    checkedChannel(val) {
-      // if (!val) val = [];
-      // if (val.length && val.length === this.channels.length) {
-      //   this.checkedChannelName = "全部";
-      //   this.isIndeterminate = false;
-      //   this.checkAll = true;
-      //   return;
-      // }
-      // let str = "";
-      // this.channels.forEach(item => {
-      //   if (val.indexOf(item.channelUuid) !== -1) {
-      //     str += item.nickName;
-      //     str += "，";
-      //   }
-      // });
-      // this.checkedChannelName = str.substr(0, str.length - 1);
     },
     channels(val) {
       if (val && !val.length) {
@@ -210,13 +192,17 @@ export default {
       this.checkedChannel = [];
       this.checkedChannelName = "";
       this.checkAll = false;
-      this.$emit("transferCheckedChannel", []);
+      if (!this.checkAll && this.isCheckedAll) {
+        this.$emit("transferCheckedChannel", this.channels);
+      } else {
+        this.$emit("transferCheckedChannel", []);
+      }
     },
     // 弹窗展开的回调
     show() {},
     // 弹窗关闭的回调
     hide() {
-      if (!this.checkAll) {
+      if (!this.checkAll && this.isCheckedAll) {
         this.$emit("transferCheckedChannel", this.channels);
       }
     },
@@ -232,7 +218,13 @@ export default {
           checkedChannelArr.push(element);
         });
       } else {
-        checkedChannelArr = this.channels;
+        // 此处标示该弹窗是否携带可编辑的数据
+        if (this.isCheckedAll) {
+          checkedChannelArr = this.channels;
+        } else {
+          // 携带编辑数据，允许传NULL数组
+          checkedChannelArr = [];
+        }
       }
       this.checkedChannel = checkedChannelUuidArr;
       console.log(this.checkedChannel);

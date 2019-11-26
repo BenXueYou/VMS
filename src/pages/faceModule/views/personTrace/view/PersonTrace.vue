@@ -147,26 +147,19 @@ export default {
   },
   created() {
     let script = document.createElement("script");
-    script.type = "text/javascript";
     script.src = "./static/utils/BMap_min.js";
     document.body.appendChild(script);
-    script.src = "./static/utils/DrawingManager.js";
-    document.body.appendChild(script);
-    let link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "./static/utils/DrawingManager.css";
-    document.body.appendChild(link);
+    script.onload = () => {
+      let scriptDraw = document.createElement("script");
+      scriptDraw.src = "./static/utils/DrawingManager.js";
+      document.body.appendChild(scriptDraw);
+      scriptDraw.onload = () => {
+        this.initData();
+      };
+    };
   },
   mounted() {
-    //
-    let that = this;
-    let timer = setInterval(() => {
-      if (window.BMap) {
-        console.log(123);
-        clearInterval(timer);
-        that.initData();
-      }
-    }, 100);
+    // this.initData();
   },
   methods: {
     getMenuData() {
@@ -207,6 +200,7 @@ export default {
         marker.setOffset(new BMap.Size(0, -30));
         this.map.addOverlay(marker);
         let ItemOverlay = new Overlay.ItemOverlay(pt, v);
+        ItemOverlay.init();
         this.map.addOverlay(ItemOverlay);
         ItemOverlay.addEventListener("click", () => {
           this.getSamePlaceArr(v.longitude, v.latitude);

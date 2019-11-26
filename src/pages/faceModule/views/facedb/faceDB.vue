@@ -112,10 +112,8 @@
 						:selectall="selectall"
 						:listPageSize="listPageSize"
 						:imagePageSize="imagePageSize"
-						:listPageCount="listPageCount"
-						:imagePageCount="imagePageCount"
-						:listPageNow="listPageNow"
-						:imagePageNow="imagePageNow"
+						:total="total"
+						:pageNow="pageNow"
 						:listTableData="listTableData"
 						:imageTableData="imageTableData"
 						:listtableloadding="listtableloadding"
@@ -243,13 +241,14 @@ export default {
       typeradio: "TheFaceDBImageTable",
       currentcomponents: "TheFaceDBImageTable",
       listPageSize: 18,
-      imagePageSize: 40,
+      imagePageSize: 28,
       listPageCount: 0,
       imagePageCount: 0,
       listPageNow: 1,
       imagePageNow: 1,
       pageNow: 1,
       pageSize: 28,
+      total: 0,
       imageTableData: [],
       listTableData: [],
       libraryarr: [],
@@ -303,15 +302,6 @@ export default {
       },
       deep: true
     },
-    typeradio(val) {
-      if (val === "TheFaceDBListTable") {
-        this.pageSize = this.listPageSize;
-        this.pageNow = this.listPageNow;
-      } else {
-        this.pageSize = this.imagePageSize;
-        this.pageNow = this.imagePageNow;
-      }
-    }
   },
   methods: {
     queryAct(data) {
@@ -320,11 +310,13 @@ export default {
     },
     suoxiao() {
       this.issuoxiao = !this.issuoxiao;
+      this.imagePageSize = this.issuoxiao ? 40 : 28;
       if (this.typeradio === "TheFaceDBImageTable") {
-        this.pageSize = this.issuoxiao ? 40 : 28;
+        this.pageSize = this.imagePageSize;
         this.getStaffLibStaffData();
       } else {
         // 列表的limit不需改变
+        this.pageSize = this.listPageSize;
       }
     },
     sureExport() {
@@ -446,11 +438,10 @@ export default {
           }
           if (this.typeradio === "TheFaceDBListTable") {
             this.listTableData = staffTableData;
-            this.listPageCount = res.data.data.total;
           } else {
             this.imageTableData = staffTableData;
-            this.imagePageCount = res.data.data.total;
           }
+          this.total = res.data.data.total;
         })
         .catch(err => {
           console.log(err);
@@ -538,11 +529,13 @@ export default {
     changetype(val) {
       this.currentcomponents = val;
       this.selectall = false;
+      this.imagePageSize = this.issuoxiao ? 40 : 28;
       if (this.typeradio === "TheFaceDBListTable") {
-        this.pageSize = 18;
+        this.pageSize = this.listPageSize;
       } else {
-        this.pageSize = this.issuoxiao ? 40 : 28;
+        this.pageSize = this.imagePageSize;
       }
+      this.pageNow = 1;
       this.getStaffLibStaffData();
     },
 
@@ -643,6 +636,7 @@ export default {
     },
     selectedRow(row, event, column) {
       // 当点击左边的列表，右边进行更新
+      this.faceDBDialogAddVisible = false;
       this.selectLibRow = row;
       this.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
       this.libraryName = this.selectLibRow.faceLibraryName;

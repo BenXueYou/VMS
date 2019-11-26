@@ -40,11 +40,11 @@
 				background
 				layout="prev, pager, next"
 				:page-size="listPageSize"
-				:current-page="listPageNow"
+				:current-page="pageNow"
 				@current-change="currentChange"
-				:total="listPageCount"
+				:total="total"
 			></el-pagination>
-			<p class="totalpagetitle">共{{listPageCount}}条</p>
+			<p class="totalpagetitle">共{{total}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
 				<el-input
@@ -99,7 +99,7 @@ export default {
         return false;
       }
     },
-    listPageNow: {
+    pageNow: {
       type: Number,
       default() {
         return 1;
@@ -111,7 +111,7 @@ export default {
         return 15;
       }
     },
-    listPageCount: {
+    total: {
       type: Number,
       default() {
         return 0;

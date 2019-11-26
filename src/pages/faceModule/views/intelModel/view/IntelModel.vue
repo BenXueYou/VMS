@@ -468,6 +468,8 @@ export default {
       this.formatObj();
     },
     getJudgedList(faceModelUuid) {
+      this.compareList = [];
+      this.judgeItemTotal = 0;
       this.isJudgeLoading = true;
       this.$intelModelHttp
         .getJudgedList({
