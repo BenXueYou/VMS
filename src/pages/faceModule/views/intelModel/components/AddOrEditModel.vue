@@ -496,15 +496,15 @@ export default {
           return;
         }
         if (
-          this.formLabelAlign.videoSource.frequency < 1 ||
-					this.formLabelAlign.otherVideoSource.some(v => v.frequency < 1) ||
-					this.formLabelAlign.notInVideoSource.some(v => v.frequency < 1)
+          this.formLabelAlign.videoSource.frequency < 0 ||
+					this.formLabelAlign.otherVideoSource.some(v => v.frequency < 0) ||
+					this.formLabelAlign.notInVideoSource.some(v => v.frequency < 0)
         ) {
-          this.$cToast.warn("抓拍次数不可以小于1");
+          this.$cToast.warn("抓拍次数不可以小于0");
           return;
         }
-        if (this.formLabelAlign.videoSource.leastNumberOfChannel < 1) {
-          this.$cToast.warn("摄像机个数不可以小于1");
+        if (this.formLabelAlign.videoSource.leastNumberOfChannel < 0) {
+          this.$cToast.warn("摄像机个数不可以小于0");
           return;
         }
       }
