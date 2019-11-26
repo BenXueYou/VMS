@@ -322,7 +322,9 @@ export default {
         let operatorData = JSON.parse(e.dataTransfer.getData("operatorData"));
         let channelUuid = operatorData.id;
         console.log(operatorData);
-        this.$emit("playRtsp", channelUuid, "main", operatorData);
+        if(operatorData.isOnline){
+          this.$emit("playRtsp", channelUuid, "main", operatorData);
+        }
       } else if (whereform === "video") {
         this.$emit("drop", this.index);
       }

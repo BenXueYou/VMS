@@ -200,6 +200,7 @@
                          @commit="addSuccess"
                          :localService="localService"></manual-add-dialog>
       <video-set-dialog :visible.sync="videoDialogVisiable"
+                        :title="deviceTitle"
                         :deviceUuid="deviceUuid">
 
       </video-set-dialog>
@@ -225,6 +226,7 @@ export default {
   name: "TheCompanyTable",
   data() {
     return {
+      deviceTitle: "",
       viewType: "door",
       deviceTypeArr: window.config.door_machine,
       door: window.config.door_machine,
@@ -571,6 +573,7 @@ export default {
       this[
         this.index === 1 ? "videoDialogVisiable" : "remoteControlDialogVisiable"
       ] = true;
+      this.deviceTitle = row.devName;
     }
   },
   mounted() {

@@ -36,35 +36,18 @@
             </div>
             <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
                   class="span "
-                  :draggable="data.h5Type==='channel'"
+                  :draggable="data.nodeType==='chnNode'"
                   @click.stop="saveClickData('', data)"
                   @dragstart="dragstart(data,$event)"
                   :title="node.label">{{ node.label }}</span>
 
             <span class="el-dropdown-link  "
+                  v-if="data.isOnline||data.nodeType!='chnNode'"
                   @click.stop="saveClickData(node, data,$event)">
               <img class="checked-img threelinemenu"
                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                    style="margin-right: 20%;">
             </span>
-            <!-- v-if="data.h5Type==='channel'" -->
-            <!-- <el-dropdown trigger="click"
-                         @command="handleCommand"
-                         placement="bottom"
-                         class='threelinemenu'>
-              <span class="el-dropdown-link"
-                    @click.stop="saveClickData(node, data)">
-                <img class="checked-img"
-                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                     style="margin-right: 20%;">
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="video">
-                  打开视频
-                </el-dropdown-item>
-                <el-dropdown-item command="playback">查看录像</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown> -->
           </div>
         </el-tree>
       </el-tab-pane>
@@ -78,10 +61,15 @@
                  @node-click="handleNodeClick">
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
+            <div class="channelStatus"
+                 v-if="data.icon">
+              <img :src="data.icon"
+                   alt="">
+            </div>
             <span class="span"
                   @dblclick.stop="openVidoeByDBClick(node,data,$event)"
                   @click.stop="saveClickData('', data)"
-                  :draggable="data.h5Type==='channel'"
+                  :draggable="data.hasOwnProperty('channelType')"
                   @dragstart="dragstart(data,$event)"
                   :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
@@ -500,7 +488,11 @@ export default {
       e.preventDefault();
       e.stopPropagation();
       this.operatorData = data;
-      this.chuliData();
+      console.log(data);
+      // 不在线的通道 ，双击进行展示
+      if (data.isOnline || data.type === "tag") {
+        this.chuliData();
+      }
     },
     saveClickData(node, data, event) {
       // 点击三角菜单保存树节点信息
@@ -542,13 +534,13 @@ export default {
       }
     },
     chuliData(streamType = "main") {
-      if (this.operatorData.h5Type === "channel") {
+      if (this.operatorData.nodeType === "chnNode") {
         this.getPreviewInfo(
           this.operatorData.id,
           this.operatorData,
           streamType
         );
-      } else if (this.operatorData.h5Type === "organization") {
+      } else if (this.operatorData.nodeType === "orgNode") {
         // 根据组织来获取通道
         api
           .getTDByOrgUuid(this.operatorData.id, {
@@ -561,8 +553,12 @@ export default {
             let data = res.data.data;
             // 这里获取到通道UUid
             for (let i = 0; i < data.length; i++) {
-              data[i].relType = data[i].type;
-              this.getPreviewInfo(data[i].id, data[i], streamType, -1);
+              if (data[i].extInfo.chnOnlineOrNot === "online") {
+                if (data[i].extInfo.chnOnlineOrNot === "online") {
+                  data[i].relType = data[i].type;
+                  this.getPreviewInfo(data[i].id, data[i], streamType, -1);
+                }
+              }
             }
           });
       } else if (this.operatorData.hasOwnProperty("channelType")) {
@@ -576,8 +572,11 @@ export default {
           console.log(res);
           let data = res || [];
           for (let i = 0; i < data.length; i++) {
-            data[i].relType = data[i].channelType;
-            this.getPreviewInfo(data[i].channelUuid, data[i], streamType, -1);
+            // 判断设备在不在线
+            if (data[i].extInfo.chnOnlineOrNot === "online") {
+              data[i].relType = data[i].channelType;
+              this.getPreviewInfo(data[i].channelUuid, data[i], streamType, -1);
+            }
           }
         });
       }
@@ -617,13 +616,33 @@ export default {
       }
     },
     getPreviewInfo(channelUuid, data, streamType, operator = 1) {
-      if (!data.isOnline) {
-        return;
-      }
+      // if (!data.isOnline) {
+      //   return;
+      // }
+      console.log(data);
       this.$emit("playRtsp", channelUuid, streamType, data, operator);
     },
     handleNodeClick() {
       // 点击展开
+    },
+    getIcon(isOnline, type) {
+      let treeIcons = window.config.treeIcons || [],
+        icon = "";
+      for (let i = 0; i < treeIcons.length; i++) {
+        if (treeIcons[i].value === type) {
+          if (!isOnline) {
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }2.png`);
+          } else {
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }.png`);
+          }
+          break;
+        }
+      }
+      return icon;
     },
     async devloadNode(node, resolve) {
       //  懒加载子结点
@@ -632,24 +651,12 @@ export default {
         node.data && node.data.id,
         node.data && node.data.nodeType
       );
-      let treeIcons = window.config.treeIcons || [];
+
       data = data.map(item => {
         item.leaf = !item.openFlag;
-        item.isOnline = item.extInfo.chnOnlineOrNot === "online";
         if (item.nodeType === "chnNode") {
-          for (let i = 0; i < treeIcons.length; i++) {
-            if (treeIcons[i].value === item.realType) {
-              item.icon = require(`@/assets/images/treeIcons/${
-                treeIcons[i].icon
-              }.png`);
-              if (!item.isOnline) {
-                item.icon = require(`@/assets/images/treeIcons/${
-                  treeIcons[i].icon
-                }2.png`);
-              }
-              break;
-            }
-          }
+          item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          item.icon = this.getIcon(item.isOnline, item.realType);
         }
         return item;
       });
@@ -699,6 +706,7 @@ export default {
         return resolve(data);
       } else if (node.level === 1) {
         let data = await this.getChannelByNode(node.data.id);
+        console.log(data);
         return resolve(data);
       }
     },
@@ -708,15 +716,17 @@ export default {
           .getChannelByTag({
             tagUuid,
             page: 1,
-            limit: 11111,
+            limit: 111111,
             viewType: "video"
           })
           .then(res => {
             let list = (res.data.data.list || []).map(item => {
               item.label = item.channelName;
               item.id = item.channelUuid;
-              // item.id = item.deviceUuid;
               item.leaf = true;
+              item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+              item.icon = this.getIcon(item.isOnline, item.channelType);
+
               return item;
             });
             resolve(list);

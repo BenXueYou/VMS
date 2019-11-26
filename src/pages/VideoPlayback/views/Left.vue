@@ -37,26 +37,11 @@
                    alt="">
             </div>
             <span>{{ node.label }}</span>
-            <!-- v-if="data.hasOwnProperty('channelType')" -->
-            <!-- <el-dropdown trigger="click"
-                         @command="handleCommand"
-                         placement="bottom"
-                         class='threelinemenu'>
-              <span class="el-dropdown-link"
-                    @click="saveClickData(node, data)">
-                <img class="checked-img"
-                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                     style="margin-right: 20%;">
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="video">打开视频</el-dropdown-item>
-                <el-dropdown-item command="playback">查看录像</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown> -->
           </div>
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
+                   class="mypanel"
                    name="tag">
         <el-tree :props="tagprops"
                  :load="tagloadNode"
@@ -70,7 +55,15 @@
                  :default-checked-keys="defaultExpandedKeys"
                  @check-change="taghandleCheckChange"
                  @node-click="taghandleNodeClick">
-
+          <div class="custom-tree-node"
+               slot-scope="{ node,data }">
+            <div class="channelStatus"
+                 v-if="data.icon">
+              <img :src="data.icon"
+                   alt="">
+            </div>
+            <span>{{ node.label }}</span>
+          </div>
         </el-tree>
 
       </el-tab-pane>
@@ -300,6 +293,25 @@ export default {
       this.deal();
     },
     deal() {},
+    getIcon(isOnline, type) {
+      let treeIcons = window.config.treeIcons || [],
+        icon = "";
+      for (let i = 0; i < treeIcons.length; i++) {
+        if (treeIcons[i].value === type) {
+          if (!isOnline) {
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }2.png`);
+          } else {
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }.png`);
+          }
+          break;
+        }
+      }
+      return icon;
+    },
     async devloadNode(node, resolve) {
       //  懒加载子结点
       console.log(node);
@@ -307,24 +319,11 @@ export default {
         node.data && node.data.id,
         node.data && node.data.nodeType
       );
-      let treeIcons = window.config.treeIcons || [];
       data = data.map(item => {
         item.leaf = !item.openFlag;
-        item.isOnline = item.extInfo.chnOnlineOrNot === "online";
         if (item.nodeType === "chnNode") {
-          for (let i = 0; i < treeIcons.length; i++) {
-            if (treeIcons[i].value === item.realType) {
-              item.icon = require(`@/assets/images/treeIcons/${
-                treeIcons[i].icon
-              }.png`);
-              if (!item.isOnline) {
-                item.icon = require(`@/assets/images/treeIcons/${
-                  treeIcons[i].icon
-                }2.png`);
-              }
-              break;
-            }
-          }
+          item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          item.icon = this.getIcon(item.isOnline, item.realType);
         }
         return item;
       });
@@ -396,6 +395,8 @@ export default {
               item.id = item.channelUuid;
               // item.id = item.deviceUuid;
               item.leaf = true;
+              item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+              item.icon = this.getIcon(item.isOnline, item.channelType);
               return item;
             });
             resolve(list);
@@ -434,6 +435,7 @@ export default {
       //   this.$message.error("请选择同一天时间！");
       //   return;
       // }
+      // alert(this.activeName);
       // 获取树选中的节点
       let treeData = [];
       if (this.activeName === "organiza") {
@@ -454,6 +456,7 @@ export default {
         this.$message.error("请选择在线的视频通道!");
         return;
       }
+      console.log(num);
       this.$emit(
         "playRtsp",
         num,

@@ -1279,15 +1279,15 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
       }
     }
   }
-}
-.footer {
-  @include padding;
-  overflow: hidden;
-  display: flex;
-  justify-content: flex-end;
-  .aaaaaaaaaa {
-    width: 66px;
-    @include button30;
+  .footer {
+    @include padding;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    .aaaaaaaaaa {
+      width: 66px;
+      @include button30;
+    }
   }
 }
 </style>

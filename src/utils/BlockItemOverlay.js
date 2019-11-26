@@ -3,7 +3,9 @@ function ItemOverlay(point, option) {
   this._point = point;
   this._option = option;
 }
-ItemOverlay.prototype = new BMap.Overlay();
+ItemOverlay.prototype.init=()=>{
+  ItemOverlay.prototype = new BMap.Overlay();
+}
 ItemOverlay.prototype.initialize = function (map) {
   this._map = map;
   var div = this._div = document.createElement("div");

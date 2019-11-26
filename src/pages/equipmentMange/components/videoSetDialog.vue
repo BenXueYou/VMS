@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title='设备名称-设备'
+  <el-dialog :title='title'
              @close="close"
              :width="width"
              :class="{'dialogCenter':center}"
@@ -87,6 +87,12 @@ export default {
   },
   props: {
     deviceUuid: {
+      type: String,
+      default() {
+        return "";
+      }
+    },
+    title: {
       type: String,
       default() {
         return "";

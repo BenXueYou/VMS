@@ -89,28 +89,32 @@
           <div class="same-place-inner">
             <template v-for="(item, index) in samePlaArr">
               <div :key="index"
-                  class="same-item">
-                  <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')" width="120px" height="120px">
-                  <div style="color: #26D39D;">{{item.similarity}}%</div>
-                  <div>{{item.channelName}}</div>
-                  <div>{{item.snapshotTime}}</div>
+                   class="same-item">
+                <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                     width="120px"
+                     height="120px">
+                <div style="color: #26D39D;">{{item.similarity}}%</div>
+                <div>{{item.channelName}}</div>
+                <div>{{item.snapshotTime}}</div>
               </div>
             </template>
           </div>
-          <div class="close" @click="closeSamePlaDialog">
-            <img src="@/assets/images/faceModule/close.png" width="20px" height="20px">
+          <div class="close"
+               @click="closeSamePlaDialog">
+            <img src="@/assets/images/faceModule/close.png"
+                 width="20px"
+                 height="20px">
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import PicUpload from "@/common/PicUpload";
 import FellowItem from "@/pages/faceModule/views/companion/view/FellowItem";
 import ElPopverTree from "@/pages/faceModule/components/ElPopverTree";
-import * as Overlay from '@/utils/BlockItemOverlay.js';
+import * as Overlay from "@/utils/BlockItemOverlay.js";
 
 export default {
   components: {
@@ -138,12 +142,31 @@ export default {
       pois: [],
       samePlaArr: [],
       isShowSamePlaDialog: false,
-      isShowMenuList: false,
+      isShowMenuList: false
     };
   },
-  created() {},
+  created() {
+    let script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "./static/utils/BMap_min.js";
+    document.body.appendChild(script);
+    script.src = "./static/utils/DrawingManager.js";
+    document.body.appendChild(script);
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "./static/utils/DrawingManager.css";
+    document.body.appendChild(link);
+  },
   mounted() {
-    this.initData();
+    //
+    let that = this;
+    let timer = setInterval(() => {
+      if (window.BMap) {
+        console.log(123);
+        clearInterval(timer);
+        that.initData();
+      }
+    }, 100);
   },
   methods: {
     getMenuData() {
@@ -185,7 +208,7 @@ export default {
         this.map.addOverlay(marker);
         let ItemOverlay = new Overlay.ItemOverlay(pt, v);
         this.map.addOverlay(ItemOverlay);
-        ItemOverlay.addEventListener("click", ()=> {
+        ItemOverlay.addEventListener("click", () => {
           this.getSamePlaceArr(v.longitude, v.latitude);
           this.isShowSamePlaDialog = true;
         });
@@ -314,7 +337,9 @@ export default {
       this.$factTragicHttp
         .getTragicList({
           imageBase64: this.imageBase64,
-          faceUuid: this.$route.query.imgObj ? this.$route.query.imgObj.faceUuid : "",
+          faceUuid: this.$route.query.imgObj
+            ? this.$route.query.imgObj.faceUuid
+            : "",
           // faceUuid: "28334ca055b54a428fc6c63e56d24da4",
           startTime: this.startTime,
           endTime: this.endTime,
@@ -341,7 +366,12 @@ export default {
     },
     setMapCenter() {
       if (this.itemData.length !== 0) {
-        this.map.setCenter(new BMap.Point(this.itemData[0][0].longitude, this.itemData[0][0].latitude));
+        this.map.setCenter(
+          new BMap.Point(
+            this.itemData[0][0].longitude,
+            this.itemData[0][0].latitude
+          )
+        );
       }
     },
     resetData() {
@@ -538,8 +568,8 @@ export default {
         width: 480px;
         padding: 15px 0px 15px 15px;
         box-sizing: border-box;
-        background: #25292D;
-        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.20);
+        background: #25292d;
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2);
         border-radius: 2px;
         position: absolute;
         right: 30px;
@@ -553,7 +583,7 @@ export default {
           flex-flow: row wrap;
           align-content: flex-start;
           .same-item {
-            border: 1px #2E3135 solid;
+            border: 1px #2e3135 solid;
             border-radius: 2px;
             background: rgba($color: #000000, $alpha: 0.1);
             width: 140px;
@@ -564,7 +594,7 @@ export default {
             box-sizing: border-box;
             font-family: PingFangSC-Regular;
             font-size: 12px;
-            color: #DDDDDD;
+            color: #dddddd;
             letter-spacing: 0;
             text-align: center;
           }
