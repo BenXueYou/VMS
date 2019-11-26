@@ -224,6 +224,8 @@ export default {
     handleSubscribeRecognization(data) {
       let RecognizationArr = this.$store.state.home.RecognizationArr;
       RecognizationArr.push(data);
+      // 解决字段名称不一致
+      data.libraryName = data.faceLibraryName;
       if (RecognizationArr && RecognizationArr.length > 5) {
         RecognizationArr.shift();
       }
