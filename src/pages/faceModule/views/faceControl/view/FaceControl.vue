@@ -295,7 +295,7 @@ export default {
       setTimeout(() => {
         this.$refs.faceDB.isShowMoreButton();
         this.$refs.camera.isShowMoreButton();
-        this.limit = 12;
+        this.limit = 8;
         this.itemWidth = "24%";
         this.getAlarmList(this.faceMonitorUuid);
       }, 600);
