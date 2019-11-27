@@ -113,14 +113,6 @@
 			v-dialogDrag
 			title="对比详情"
 		>
-			<!-- <el-row>
-				<div class="my_el-dialog__header">
-					<span class="el-dialog__title">对比详情</span>
-					<button type="button" aria-label="Close" class="el-dialog__headerbtn">
-						<i class="el-dialog__close el-icon el-icon-close" @click="dialogVisible = false"></i>
-					</button>
-				</div>
-			</el-row>-->
 			<dialogview
 				v-loading="dialogfullscreenLoading"
 				element-loading-background="rgba(0, 0, 0, 0.8)"

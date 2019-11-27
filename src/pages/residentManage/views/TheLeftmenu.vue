@@ -1,134 +1,113 @@
 <template>
-  <div id="ResdientLeftMenu"
-       class="leftmenu">
-    <div class="searchWrap">
-      <el-input placeholder="搜索组织/标签/名称"
-                v-model="searchText">
-        <img slot="prefix"
-             class="image"
-             :src="icons.search"
-             alt>
-      </el-input>
-      <img @click="addTagClick"
-           v-if="this.treeName !='tree1'"
-           :src="icons.add"
-           alt>
-    </div>
-    <el-tabs v-model="activeName"
-             class="tabs"
-             @tab-click="handleClick">
-      <el-tab-pane label="楼栋房屋"
-                   name="first">
-        <div class="i-tree">
-          <el-tree :data="data"
-                   :props="defaultProps"
-                   node-key="id"
-                   :indent="10"
-                   ref="tree1"
-                   lazy
-                   :load="loadNode"
-                   :filter-node-method="filterNode"
-                   :highlight-current="true"
-                   :expand-on-click-node="false"
-                   :default-expanded-keys="defaultExpandedKeys"
-                   @node-click="handleNodeClick">
-            <div class="custom-tree-node i-tree-item"
-                 slot-scope="{ node }">
-              <div v-if="node.data.myChildren">
-                <el-popover placement="right-start"
-                            trigger="hover"
-                            @show="showHoverMenu(node)">
-                  <el-card class="box-card">
-                    <div slot="header"
-                         class="clearfix">
-                      <div style="padding-left:10px;border-left: 4px solid #26D39D;">{{upAddress}}</div>
-                    </div>
-                    <div v-for="(o , index) in node.data.myChildren"
-                         :key="index"
-                         class="card-item-box">
-                      <div v-if="o.label">
-                        <img :src="icons.ceng"
-                             class="cengIcon"
-                             alt>
-                        <a class="text-item-Title textClips bigText"
-                           href="#"
-                           @click="clickHoverMenu(node,o)">{{ o.label }}</a>
-                      </div>
-                      <div class="text-item-box"
-                           v-for="(item , i) in o.house"
-                           :key="i">
-                        <a class="text-item-Title textClips bigText2"
-                           href="#"
-                           @click="clickHoverMenu(node,item,o)">{{item.label}}</a>
-                      </div>
-                    </div>
-                  </el-card>
-                  <div class="i-tree-item-icon"
-                       slot="reference">
-                    <img :src="iconShow(node)"
-                         width="10.9px"
-                         height="9px"
-                         style="margin-right: 4px;">
-                    <span class="text-show">{{node.label}}</span>
-                  </div>
-                </el-popover>
-              </div>
-              <div v-else>
-                <div class="i-tree-item-icon">
-                  <img :src="iconShow(node)"
-                       width="10.9px"
-                       height="9px"
-                       style="margin-right: 4px;">
-                  <!-- <img :src="icons.folder" width="16px" height="13px" style="margin-right: 4px;"> -->
-                  <span class="text-show">{{node.label}}</span>
-                </div>
-              </div>
-            </div>
-          </el-tree>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="标签"
-                   name="second">
-        <gt-tree title="修改标签"
-                 ref="tree2"
-                 class="tree"
-                 @clickmenu="clickmenu2"
-                 @exportData="exportData2"
-                 :initdata="data2"></gt-tree>
-      </el-tab-pane>
-    </el-tabs>
+	<div id="ResdientLeftMenu" class="leftmenu">
+		<div class="searchWrap">
+			<el-input placeholder="搜索组织/标签/名称" v-model="searchText">
+				<img slot="prefix" class="image" :src="icons.search" alt />
+			</el-input>
+			<img @click="addTagClick" v-if="this.treeName !='tree1'" :src="icons.add" alt />
+		</div>
+		<el-tabs v-model="activeName" class="tabs" @tab-click="handleClick">
+			<el-tab-pane label="楼栋房屋" name="first">
+				<div class="i-tree">
+					<el-tree
+						:data="data"
+						:props="defaultProps"
+						node-key="id"
+						:indent="10"
+						ref="tree1"
+						lazy
+						:load="loadNode"
+						:filter-node-method="filterNode"
+						:highlight-current="true"
+						:expand-on-click-node="false"
+						:default-expanded-keys="defaultExpandedKeys"
+						@node-click="handleNodeClick"
+					>
+						<div class="custom-tree-node i-tree-item" slot-scope="{ node }">
+							<div v-if="node.data.myChildren">
+								<el-popover placement="right-start" trigger="hover" @show="showHoverMenu(node)">
+									<el-card class="box-card">
+										<div slot="header" class="clearfix">
+											<div style="padding-left:10px;border-left: 4px solid #26D39D;">{{upAddress}}</div>
+										</div>
+										<div v-for="(o , index) in node.data.myChildren" :key="index" class="card-item-box">
+											<div v-if="o.label">
+												<img :src="icons.ceng" class="cengIcon" alt />
+												<a
+													class="text-item-Title textClips bigText"
+													href="#"
+													@click="clickHoverMenu(node,o)"
+												>{{ o.label }}</a>
+											</div>
+											<div class="text-item-box" v-for="(item , i) in o.house" :key="i">
+												<a
+													class="text-item-Title textClips bigText2"
+													href="#"
+													@click="clickHoverMenu(node,item,o)"
+												>{{item.label}}</a>
+											</div>
+										</div>
+									</el-card>
+									<div class="i-tree-item-icon" slot="reference">
+										<img :src="iconShow(node)" width="10.9px" height="9px" style="margin-right: 4px;" />
+										<span class="text-show">{{node.label}}</span>
+									</div>
+								</el-popover>
+							</div>
+							<div v-else>
+								<div class="i-tree-item-icon">
+									<img :src="iconShow(node)" width="10.9px" height="9px" style="margin-right: 4px;" />
+									<!-- <img :src="icons.folder" width="16px" height="13px" style="margin-right: 4px;"> -->
+									<span class="text-show">{{node.label}}</span>
+								</div>
+							</div>
+						</div>
+					</el-tree>
+				</div>
+			</el-tab-pane>
+			<el-tab-pane label="标签" name="second">
+				<gt-tree
+					title="修改标签"
+					ref="tree2"
+					class="tree"
+					@clickmenu="clickmenu2"
+					@exportData="exportData2"
+					:initdata="data2"
+				></gt-tree>
+			</el-tab-pane>
+		</el-tabs>
 
-    <tree-append-child-dialog :options="appendNodeOptions"
-                              @confirm="addchildren"
-                              :visible.sync="appendChildrenDialogVisible"></tree-append-child-dialog>
+		<tree-append-child-dialog
+			:options="appendNodeOptions"
+			@confirm="addchildren"
+			:visible.sync="appendChildrenDialogVisible"
+		></tree-append-child-dialog>
 
-    <tree-change-name-dialog @confirm="changeName"
-                             :value="nodeValue"
-                             title="修改标签"
-                             :visible.sync="changeNameDialogVisible"></tree-change-name-dialog>
+		<tree-change-name-dialog
+			@confirm="changeName"
+			:value="nodeValue"
+			title="修改标签"
+			:visible.sync="changeNameDialogVisible"
+		></tree-change-name-dialog>
 
-    <el-dialog class="tagDialogBox"
-               title="新增标签"
-               :visible.sync="addTagDialogVisible"
-               width="25%"
-               center>
-      <div class="changeTagBox">
-        标签名称：
-        <el-input placeholder="请填写标签名称"
-                  v-model="newTagName"></el-input>
-      </div>
-      <span slot="footer"
-            class="dialog-footer">
-        <el-button type="primary"
-                   @click="addTagDialogVisibleTrue">保 存</el-button>
-        <el-button type="primary"
-                   @click="addTagClick">取 消</el-button>
-      </span>
-    </el-dialog>
-    <confirm-dialog :visible.sync="isDeleteVisible"
-                    @confirm="deleteNode"
-                    confirmText="确定删除"></confirm-dialog>
-  </div>
+		<el-dialog
+			class="tagDialogBox"
+			title="新增标签"
+			:visible.sync="addTagDialogVisible"
+			width="25%"
+			center
+		>
+			<div class="changeTagBox">
+				标签名称：
+				<el-input placeholder="请填写标签名称" v-model="newTagName"></el-input>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="addTagDialogVisibleTrue">保 存</el-button>
+				<el-button type="primary" @click="addTagClick">取 消</el-button>
+			</span>
+		</el-dialog>
+		<confirm-dialog :visible.sync="isDeleteVisible" @confirm="deleteNode" confirmText="确定删除"></confirm-dialog>
+	</div>
 </template>
 <script>
 import TreeAppendChildDialog from "@/common/TreeAppendChildDialog";
@@ -361,9 +340,9 @@ export default {
             for (let item of res.data.data) {
               if (
                 item.nodeType === "area" ||
-                item.nodeType === "phase" ||
-                item.nodeType === "unit" ||
-                item.nodeType === "building"
+								item.nodeType === "phase" ||
+								item.nodeType === "unit" ||
+								item.nodeType === "building"
               ) {
                 this.$set(item, "leaf", true);
                 if (item.nextCount !== 0) {
@@ -680,229 +659,232 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #ResdientLeftMenu {
-  .el-tabs__item {
-    color: #dddddd;
-  }
-  .el-tabs__nav-wrap::after {
-    background: rgb(131, 131, 131);
-  }
-  .is-active {
-    color: $add-text-color;
-  }
-  .el-input__prefix {
-    position: absolute;
-    left: 43px;
-    top: 9px;
-  }
-  .el-input__prefix {
-    position: absolute;
-    left: 43px;
-    top: 5px;
-  }
-  .el-input--prefix .el-input__inner {
-    padding-left: 40px;
-  }
-  .el-tree {
-    // background: rgba($color: #212326, $alpha: 1);
-    background: transparent;
-  }
-  .el-tree-node__content {
-    .action-icon {
-      display: none;
-    }
-    &:hover {
-      .action-icon {
-        display: block;
-      }
-    }
-  }
+	.el-tabs__item {
+		color: #dddddd;
+	}
+	.el-tabs__nav-wrap::after {
+		background: rgb(131, 131, 131);
+	}
+	.is-active {
+		color: $add-text-color;
+	}
+	.el-input__prefix {
+		position: absolute;
+		left: 43px;
+		top: 9px;
+	}
+	.el-input__prefix {
+		position: absolute;
+		left: 43px;
+		top: 5px;
+	}
+	.el-input--prefix .el-input__inner {
+		padding-left: 40px;
+	}
+	.el-tree {
+		// background: rgba($color: #212326, $alpha: 1);
+		background: transparent;
+	}
+	.el-tree-node__content {
+		.action-icon {
+			display: none;
+		}
+		&:hover {
+			.action-icon {
+				display: block;
+			}
+		}
+	}
 }
 .box-card .el-card__header {
-  padding: 10px 0px;
-  margin: 0 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+	padding: 10px 0px;
+	margin: 0 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 .card-item-box {
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 15px;
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	margin-bottom: 15px;
 }
 .text-item-box a {
-  margin-right: 15px;
+	margin-right: 15px;
 }
 .text-item-Title {
-  margin-right: 30px;
+	margin-right: 30px;
 }
 .textClips {
-  /* display: inline-block; */
-  /* width: 100%; */
-  font-family: "PingFangSC-Regular";
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 1; /*3表示只显示3行*/
-  /* autoprefixer: off */
-  -webkit-box-orient: vertical;
-  /* autoprefixer: on */
-  transform-origin: center center;
-  transition: all 0.2s;
-  cursor: pointer;
-  color: #dddddd !important;
-  font-size: 14px;
-  text-decoration: none;
-  cursor: pointer !important;
+	/* display: inline-block; */
+	/* width: 100%; */
+	font-family: "PingFangSC-Regular";
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-line-clamp: 1; /*3表示只显示3行*/
+	/* autoprefixer: off */
+	-webkit-box-orient: vertical;
+	/* autoprefixer: on */
+	transform-origin: center center;
+	transition: all 0.2s;
+	cursor: pointer;
+	color: #dddddd !important;
+	font-size: 14px;
+	text-decoration: none;
+	cursor: pointer !important;
 }
 .cengIcon {
-  width: 14px;
-  height: 13px;
-  vertical-align: middle;
-  margin: 3px 5px 0px;
+	width: 14px;
+	height: 13px;
+	vertical-align: middle;
+	margin: 3px 5px 0px;
 }
 .bigText:active {
-  transform: scale(1.5, 1.5);
+	transform: scale(1.5, 1.5);
 }
 .bigText2:active {
-  transform: scale(3.5, 3.5);
+	transform: scale(3.5, 3.5);
 }
 .bigText2:hover {
-  transform: scale(3.5, 3.5);
+	transform: scale(3.5, 3.5);
 }
 </style>
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .box-card {
-  background: transparent;
-  font-family: "PingFangSC-Regular";
-  font-size: 13px;
-  color: #dddddd;
-  letter-spacing: 0;
-  border: none;
-  box-shadow: none;
+	background: transparent;
+	font-family: "PingFangSC-Regular";
+	font-size: 13px;
+	color: #dddddd;
+	letter-spacing: 0;
+	border: none;
+	box-shadow: none;
+	max-height: calc(99vh - 20px);;
+	overflow: auto;
+  margin-top: 20px;
 }
 .leftmenu {
-  width: $equLeftMenuWidth;
-  box-sizing: border-box;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(37, 41, 45, 0.8);
-  $iconWidth: 40px;
-  .changeTagBox {
-    color: #dddddd;
-    text-align: center;
-    margin: 30px 0 10px;
-    .el-input {
-      width: 50%;
-      text-align: left;
-    }
-  }
-  .searchWrap {
-    padding: 25px 26px 10px;
-    .el-input {
-      position: relative;
-      width: calc(100% - #{$iconWidth});
-    }
-    $addIconWidth: 14px;
-    img {
-      display: inline-block;
-      vertical-align: middle;
-      width: $addIconWidth;
-      margin-left: 4px;
-      cursor: pointer;
-    }
-  }
-  .tabs {
-    padding: 0px 26px 25px;
-  }
-  .tree-input {
-    height: 100px;
-    border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.08);
-    display: flex;
-    align-items: center;
-    .image {
-      margin-left: 10px;
-      cursor: pointer;
-    }
-  }
-  .i-tree {
-    // padding: 20px 0;
-    box-sizing: border-box;
-    .i-tree-item {
-      width: 100%;
-      .i-tree-item-icon {
-        display: flex;
-        align-items: center;
-        // position: relative;
-        .action-icon {
-          margin-left: auto;
-          margin-right: 10px;
-          cursor: pointer;
-        }
-      }
-    }
-  }
-  width: $equLeftMenuWidth;
-  box-sizing: border-box;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(37, 41, 45, 0.8);
-  $iconWidth: 40px;
-  .changeTagBox {
-    color: #dddddd;
-    text-align: center;
-    margin: 30px 0 10px;
-    .el-input {
-      width: 50%;
-      text-align: left;
-    }
-  }
-  .searchWrap {
-    padding: 25px 26px 10px;
-    .el-input {
-      position: relative;
-      width: calc(100% - #{$iconWidth});
-    }
-    $addIconWidth: 14px;
-    img {
-      display: inline-block;
-      vertical-align: middle;
-      width: $addIconWidth;
-      margin-left: 4px;
-      cursor: pointer;
-    }
-  }
-  .tabs {
-    padding: 0px 26px 25px;
-  }
-  .tree-input {
-    height: 100px;
-    border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.08);
-    display: flex;
-    align-items: center;
-    .image {
-      margin-left: 10px;
-      cursor: pointer;
-    }
-  }
-  .i-tree {
-    padding: 20px 0;
-    box-sizing: border-box;
-    .i-tree-item {
-      width: 100%;
-      .i-tree-item-icon {
-        display: flex;
-        align-items: center;
-        // position: relative;
-        .action-icon {
-          margin-left: auto;
-          margin-right: 10px;
-          cursor: pointer;
-        }
-      }
-    }
-  }
+	width: $equLeftMenuWidth;
+	box-sizing: border-box;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(37, 41, 45, 0.8);
+	$iconWidth: 40px;
+	.changeTagBox {
+		color: #dddddd;
+		text-align: center;
+		margin: 30px 0 10px;
+		.el-input {
+			width: 50%;
+			text-align: left;
+		}
+	}
+	.searchWrap {
+		padding: 25px 26px 10px;
+		.el-input {
+			position: relative;
+			width: calc(100% - #{$iconWidth});
+		}
+		$addIconWidth: 14px;
+		img {
+			display: inline-block;
+			vertical-align: middle;
+			width: $addIconWidth;
+			margin-left: 4px;
+			cursor: pointer;
+		}
+	}
+	.tabs {
+		padding: 0px 26px 25px;
+	}
+	.tree-input {
+		height: 100px;
+		border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.08);
+		display: flex;
+		align-items: center;
+		.image {
+			margin-left: 10px;
+			cursor: pointer;
+		}
+	}
+	.i-tree {
+		// padding: 20px 0;
+		box-sizing: border-box;
+		.i-tree-item {
+			width: 100%;
+			.i-tree-item-icon {
+				display: flex;
+				align-items: center;
+				// position: relative;
+				.action-icon {
+					margin-left: auto;
+					margin-right: 10px;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+	width: $equLeftMenuWidth;
+	box-sizing: border-box;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(37, 41, 45, 0.8);
+	$iconWidth: 40px;
+	.changeTagBox {
+		color: #dddddd;
+		text-align: center;
+		margin: 30px 0 10px;
+		.el-input {
+			width: 50%;
+			text-align: left;
+		}
+	}
+	.searchWrap {
+		padding: 25px 26px 10px;
+		.el-input {
+			position: relative;
+			width: calc(100% - #{$iconWidth});
+		}
+		$addIconWidth: 14px;
+		img {
+			display: inline-block;
+			vertical-align: middle;
+			width: $addIconWidth;
+			margin-left: 4px;
+			cursor: pointer;
+		}
+	}
+	.tabs {
+		padding: 0px 26px 25px;
+	}
+	.tree-input {
+		height: 100px;
+		border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.08);
+		display: flex;
+		align-items: center;
+		.image {
+			margin-left: 10px;
+			cursor: pointer;
+		}
+	}
+	.i-tree {
+		padding: 20px 0;
+		box-sizing: border-box;
+		.i-tree-item {
+			width: 100%;
+			.i-tree-item-icon {
+				display: flex;
+				align-items: center;
+				// position: relative;
+				.action-icon {
+					margin-left: auto;
+					margin-right: 10px;
+					cursor: pointer;
+				}
+			}
+		}
+	}
 }
 </style>
