@@ -9,7 +9,17 @@
     <!-- <control-details :isShow="isShowDetailDialog"
                      @onCancel="onCancelDetailDialog"
                      :dialogParama="dialogParama" /> -->
-    <face-img-dialog :visible.sync="isShowDetailDialog" :faceImgDialogData="dialogParama" />
+    <!-- <face-img-dialog :visible.sync="isShowDetailDialog"
+                     :faceImgDialogData="dialogParama" /> -->
+    <el-dialog class="dialogClass"
+               :close-on-click-modal="false"
+               :visible.sync="faceImgDialogVisible"
+               @close="faceImgDialogVisible=false"
+               title="报警详情">
+      <AlarmDetailDialog v-loading="dialogfullscreenLoading"
+                         element-loading-background="rgba(0, 0, 0, 0.8)"
+                         :dialogParama="dialogParama"></AlarmDetailDialog>
+    </el-dialog>
     <div class="menu"
          v-show="isShowMain">
       <el-button @click="addNewMission"
@@ -174,7 +184,9 @@ import SourceShowMore from "@/pages/faceModule/views/faceControl/components/Sour
 import AddOrEditControl from "@/pages/faceModule/views/faceControl/components/AddOrEditControl";
 // import ControlDetails from "@/pages/faceModule/views/faceControl/components/ControlDetails";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
-import FaceImgDialog from "@/pages/faceModule/components/FaceImgDialog.vue";
+// import FaceImgDialog from "@/pages/faceModule/components/FaceImgDialog.vue";
+import AlarmDetailDialog from "@/pages/faceModule/components/AlarmDetailDialog.vue";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 
 export default {
   components: {
@@ -182,7 +194,8 @@ export default {
     RecoginizeCard,
     // ControlDetails,
     AddOrEditControl,
-    FaceImgDialog
+    // FaceImgDialog
+    AlarmDetailDialog
   },
   props: {},
   data() {
@@ -259,6 +272,8 @@ export default {
       alarmTotal: 0,
       itemWidth: "32%",
       limit: 6,
+      faceImgDialogVisible: false,
+      dialogfullscreenLoading: false,
     };
   },
   created() {},
@@ -371,11 +386,33 @@ export default {
     },
     openDetail(item) {
       this.dialogParama = this.$common.copyObject(item, this.dialogParama);
-      this.isShowDetailDialog = true;
+      this.getAlarmShootPhotoList(this.dialogParama);
     },
-    // onCancelDetailDialog() {
-    //   this.isShowDetailDialog = false;
-    // },
+    // 根据客户端的传的人员staffUuid查找抓拍图片
+    getAlarmShootPhotoList(rowData) {
+      var data = {
+        faceUuid: rowData.faceUuid,
+        triggerFaceMonitor: 1,
+        limit: 8,
+        page: 1
+      };
+      this.dialogfullscreenLoading = true;
+      this.dialogVisible = !this.dialogVisible;
+      api
+        .getRecognizeInfo(data)
+        .then(res => {
+          this.dialogfullscreenLoading = false;
+          this.faceImgDialogVisible = !this.faceImgDialogVisible;
+          if (res.data.success) {
+            this.dialogParama.showImg = false;
+            this.dialogParama = res.data.data;
+          }
+        })
+        .catch(() => {
+          this.dialogfullscreenLoading = false;
+          this.faceImgDialogVisible = !this.faceImgDialogVisible;
+        });
+    },
     getMonitoringTaskList() {
       this.isLoading = true;
       this.$faceControlHttp
