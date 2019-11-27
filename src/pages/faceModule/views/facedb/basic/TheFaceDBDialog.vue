@@ -172,6 +172,7 @@ export default {
         faceLibraryColour: "",
         facePhotoQualities: []
       };
+      this.$refs["formRef"].resetFields();
     },
     close() {
       this.resetdata();

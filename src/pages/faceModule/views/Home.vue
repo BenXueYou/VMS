@@ -431,7 +431,7 @@ export default {
         icon = "";
       for (let i = 0; i < treeIcons.length; i++) {
         if (treeIcons[i].value === type) {
-          if (!isOnline) {
+          if (isOnline === 'offline') {
             icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
           } else {
             icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
@@ -532,6 +532,10 @@ export default {
     // 选中某通道
     handleCheckedCitiesChange(value) {
       console.log("选中某通道------", this.checkedChannel);
+      if (this.checkedChannel.chnOnlineOrNot === 'offline') {
+        this.$message.warning('该设备离线！');
+        return;
+      }
       // 获取rtspUlrl
       this.getRtspInChannelUuid(this.checkedChannel.channelUuid, true);
       // 更新抓拍总数

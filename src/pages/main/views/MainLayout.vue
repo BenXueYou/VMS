@@ -103,7 +103,7 @@ export default {
   methods: {
     browerStatus(e) {
       e = window.event || e;
-      e.returnValue = "确定离开当前页面吗？";
+      // e.returnValue = "确定离开当前页面吗？";
       console.log("---------------");
     },
     browerStatusOff() {
