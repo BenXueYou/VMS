@@ -23,13 +23,13 @@
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="startTime"
                             type="datetime"
-                            style="width: 190px"
+                            style="width: 205px"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
-            <span class="timeText">—</span>
+            <span class="timeText" style="margin: 0 3px;">—</span>
             <el-date-picker v-model="endTime"
                             type="datetime"
-                            style="width: 190px"
+                            style="width: 205px"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <span class="topTitleTxt left-space">抓拍设备：</span>
@@ -307,7 +307,6 @@ export default {
   font-family: PingFangSC-Regular;
   font-size: 14px;
   color: #888888;
-  width: 28px;
 }
 .topTitleTxt {
   font-family: PingFangSC-Regular;
@@ -346,8 +345,7 @@ export default {
 .ovo-card-img {
   margin-top: 22%;
   vertical-align: middle;
-  width: 55%;
-  height: 45px;
+  width: 45%;
   color: #20735c;
 }
 .font-color {

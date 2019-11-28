@@ -11,8 +11,10 @@
       <el-button @click="addNewMission"
                  type="primary"
                  size="small">
-        <img src="@/assets/images/faceModule/new_mission.png">
-        新建模型
+        <div style="display: flex; align-items: center;">
+          <img src="@/assets/images/faceModule/new_mission.png">
+          <span style="margin-left: 3px;">新建模型</span>
+        </div>
       </el-button>
       <div class="tab">
         <template v-for="(item, index) in missionButtArr">
@@ -56,20 +58,20 @@
                      @change="switchChange"
                      :active-value="1"
                      :inactive-value="0"></el-switch>
-          <span>状态</span>
+          <span style="margin-left: 3px;">状态</span>
           <div class="status"
                @click="editTaskInit">
             <img src="@/assets/images/edit.png"
                  width="14px"
                  height="14px" />
-            <span>编辑</span>
+            <span style="margin-left: 3px;">编辑</span>
           </div>
           <div class="status"
                @click="deleteIntel">
             <img src="@/assets/images/delete2.png"
                  width="14px"
                  height="14px" />
-            <span>删除</span>
+            <span style="margin-left: 3px;">删除</span>
           </div>
         </div>
       </div>
@@ -156,25 +158,30 @@
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="createTimeStart"
                             type="datetime"
-                            style="width: 180px"
+                            style="width: 205px"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <span class="timeText">—</span>
             <el-date-picker v-model="createTimeEnd"
                             type="datetime"
-                            style="width: 180px; margin-right: 49px;"
+                            style="width: 205px; margin-right: 49px;"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <el-button @click="queryAct"
                        type="primary"
-                       size="small"
-                       icon="el-icon-search">查询</el-button>
+                       size="small">
+              <div style="display: flex; align-items: center;">
+                <img src="@/assets/images/faceModule/search.png">
+                <span style="margin-left: 3px;">查询</span>
+              </div>
+            </el-button>
             <el-button @click="turnToJudge"
                        type="primary"
                        size="small">
-              <img src="@/assets/images/faceModule/turn_record.png"
-                   height="10px">
-              跳转研判记录
+              <div style="display: flex; align-items: center;">
+                <img src="@/assets/images/faceModule/turn_record.png" height="12.5px">
+                <span style="margin-left: 3px;">跳转研判记录</span>
+              </div>
             </el-button>
           </div>
         </div>
@@ -551,11 +558,11 @@ export default {
 };
 </script>
 <style lang="scss">
-.model-main {
-  .el-icon-time:before {
-    width: 0px;
-  }
-}
+// .model-main {
+//   .el-icon-time:before {
+//     width: 0px;
+//   }
+// }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
@@ -601,7 +608,7 @@ export default {
         font-family: PingFangSC-Regular;
         font-size: 13px;
         color: #dddddd;
-        width: 96%;
+        width: 100%;
         height: 50px;
         line-height: 50px;
         cursor: pointer;
@@ -668,6 +675,8 @@ export default {
         .status {
           cursor: pointer;
           margin-left: 25px;
+          display: flex;
+          align-items: center;
         }
       }
     }
@@ -696,8 +705,8 @@ export default {
     }
     .block-line {
       height: 37px;
-      // display: flex;
-      // align-items: center;
+      display: flex;
+      align-items: center;
     }
     .info-container {
       display: flex;

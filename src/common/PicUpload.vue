@@ -161,8 +161,8 @@ export default {
 .ovo-card-img {
   margin-top: 22%;
   vertical-align: middle;
-  width: 55%;
-  height: 55%;
+  width: 45%;
+  height: 45%;
   color: #20735c;
 }
 .font-color {

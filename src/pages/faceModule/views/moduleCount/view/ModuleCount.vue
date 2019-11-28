@@ -267,9 +267,13 @@ export default {
     },
     handleTypeChange(val) {
       if (this.typeRadio === "picture") {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 30;
+        this.pageInfo.currentPage = 1;
       } else {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 12;
+        this.pageInfo.currentPage = 1;
       }
       this.getModelList();
     },
@@ -313,7 +317,7 @@ export default {
           endTime: this.endTime,
           logic: this.logic,
           frequency: this.frequency,
-          leastNumberOfChannel: this.frequency,
+          leastNumberOfChannel: this.leastNumberOfChannel,
           photoQualitieList: this.photoQualitieList.toString(),
         })
         .then(res => {
@@ -375,13 +379,13 @@ export default {
   width: 100%;
   height: 100%;
   .main-container {
-    padding: 1.8% 3%;
+    padding: 1% 3%;
     box-sizing: border-box;
     background: #212325;
     width: 100%;
     height: 100%;
     .search {
-      height: 120px;
+      height: 130px;
       width: 100%;
       border: {
         width: 0 0 1px 0;
@@ -389,7 +393,7 @@ export default {
         color: rgba($color: #ffffff, $alpha: 0.2);
       }
       .search-input {
-        height: 50%;
+        height: 45%;
         display: flex;
         align-items: center;
         font-family: PingFangSC-Regular;

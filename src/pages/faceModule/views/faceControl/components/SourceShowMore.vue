@@ -134,7 +134,7 @@ export default {
   .item-container {
     width: 95%;
     margin-left: 58px;
-    margin-top: 14px;
+    margin-top: 8px;
     display: flex;
     flex-flow: row wrap;
     align-content: flex-start;
