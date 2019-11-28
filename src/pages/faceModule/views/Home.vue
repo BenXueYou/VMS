@@ -48,7 +48,12 @@
 										:label="channelItem"
 										:key="index"
 									>
-										<img class="radioIcon" :src="getIcon(channelItem.chnOnlineOrNot,channelItem.channelType)" alt srcset />
+										<img
+											class="radioIcon"
+											:src="getIcon(channelItem.chnOnlineOrNot,channelItem.channelType)"
+											alt
+											srcset
+										/>
 										{{channelItem.nickName}}
 									</el-radio>
 								</el-radio-group>
@@ -325,7 +330,6 @@ export default {
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
     this.getDeviceList();
-    this.getTaskList();
   },
 
   destroyed: function() {
@@ -335,6 +339,10 @@ export default {
     }
     this.stompClient = null;
     this.websocket = null;
+  },
+  deactivated: function() {},
+  activated: function() {
+    this.getTaskList();
   },
   watch: {
     CapturePhotoArr(val) {
@@ -431,7 +439,7 @@ export default {
         icon = "";
       for (let i = 0; i < treeIcons.length; i++) {
         if (treeIcons[i].value === type) {
-          if (isOnline === 'offline') {
+          if (isOnline === "offline") {
             icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
           } else {
             icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
@@ -532,8 +540,8 @@ export default {
     // 选中某通道
     handleCheckedCitiesChange(value) {
       console.log("选中某通道------", this.checkedChannel);
-      if (this.checkedChannel.chnOnlineOrNot === 'offline') {
-        this.$message.warning('该设备离线！');
+      if (this.checkedChannel.chnOnlineOrNot === "offline") {
+        this.$message.warning("该设备离线！");
         return;
       }
       // 获取rtspUlrl
@@ -1003,10 +1011,10 @@ export default {
 	background: transparent !important;
 	overflow: auto;
 }
-.radioIcon{
-  width: 12px;
-  height: 12px;
-  margin-right:5px;
+.radioIcon {
+	width: 12px;
+	height: 12px;
+	margin-right: 5px;
 }
 .asidRowProgress {
 	margin: auto;
