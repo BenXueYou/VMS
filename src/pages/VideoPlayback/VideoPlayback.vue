@@ -153,6 +153,8 @@ export default {
       operatorIndex: 0,
       videoWidth: 0,
       videoHeight: 0,
+      timer: null,
+      cnt: 0,
       menuData: [
         {
           label: "关闭窗口",
@@ -223,17 +225,34 @@ export default {
   },
   activated() {
     const that = this;
-    if (!this.timer) {
+    window.onresize = function() {
+      that.jishi();
+    };
+  },
+  destroyed() {
+    clearInterval(this.timer);
+    this.timer = null;
+    window.onresize = null;
+  },
+  methods: {
+    jishi() {
+      const that = this;
+      that.cnt = 0;
+      // 下面的定时器是为了刷新页面的每个video框，
+      clearInterval(that.timer);
+      that.timer = null;
       this.timer = setInterval(() => {
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
         that.initWrapDom();
+        if (that.cnt++ > 100) {
+          clearInterval(that.timer);
+          that.timer = null;
+        }
+        // console.log(this.fullscreen);
       }, 100);
-    }
-  },
-  destroyed() {},
-  methods: {
+    },
     checkFull() {
       return (
         window.innerHeight === window.screen.height &&

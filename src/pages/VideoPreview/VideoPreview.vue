@@ -211,15 +211,14 @@ export default {
       dragEndIndex: -1,
       maxRightWidth: 10000,
       parentArr: new Array(36), // 用来记录所有的视频
-      timer: null
+      timer: null,
+      cnt: 0
     };
   },
   mounted() {
     this.jugdeJump();
     this.chooseFenlu(1);
-    this.$nextTick(() => {
-      this.initWrapDom();
-    });
+    this.jishi();
 
     // 监听F11事件
 
@@ -228,24 +227,33 @@ export default {
   destroyed() {
     clearInterval(this.timer);
     this.timer = null;
+    window.onresize = null;
   },
   activated() {
-    window.onresize = function() {
-      alert(1);
-    };
     const that = this;
-    // 下面的定时器是为了刷新页面的每个video框，
-    if (!this.timer) {
+    window.onresize = function() {
+      that.jishi();
+    };
+  },
+  methods: {
+    jishi() {
+      const that = this;
+      that.cnt = 0;
+      // 下面的定时器是为了刷新页面的每个video框，
+      clearInterval(that.timer);
+      that.timer = null;
       this.timer = setInterval(() => {
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
         that.initWrapDom();
+        if (that.cnt++ > 100) {
+          clearInterval(that.timer);
+          that.timer = null;
+        }
         // console.log(this.fullscreen);
       }, 100);
-    }
-  },
-  methods: {
+    },
     checkFull() {
       return (
         window.innerHeight === window.screen.height &&
