@@ -51,7 +51,7 @@ export default {
   components: { TheTagTable, TheCompanyTable, TheCompanyEditEquipmentDialog },
   data() {
     return {
-      deviceTypeArr: window.config.door_machine,
+      deviceTypeArr: [],
       localService: [],
       isShowEdit: false,
       editEquipMentDialgoVisible: true,
