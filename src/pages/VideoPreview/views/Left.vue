@@ -29,17 +29,18 @@
                  lazy>
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
-            <div class="channelStatus"
-                 v-if="data.nodeType==='chnNode'&&data.icon">
+            <div class="channelStatus">
               <img :src="data.icon"
+                   v-if="data.icon"
                    alt="">
+              <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                    class="span "
+                    :draggable="data.nodeType==='chnNode'"
+                    @click.stop="saveClickData('', data)"
+                    @dragstart="dragstart(data,$event)"
+                    :class="{'channelOffline':!data.isOnline}"
+                    :title="node.label">{{ node.label }}</span>
             </div>
-            <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
-                  class="span "
-                  :draggable="data.nodeType==='chnNode'"
-                  @click.stop="saveClickData('', data)"
-                  @dragstart="dragstart(data,$event)"
-                  :title="node.label">{{ node.label }}</span>
 
             <span class="el-dropdown-link  "
                   v-if="data.isOnline||data.nodeType!='chnNode'"
@@ -61,22 +62,25 @@
                  @node-click="handleNodeClick">
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
-            <div class="channelStatus"
-                 v-if="data.icon">
+            <div class="channelStatus">
               <img :src="data.icon"
+                   v-if="data.icon"
                    alt="">
+              <span class="span"
+                    @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                    @click.stop="saveClickData('', data)"
+                    :draggable="data.hasOwnProperty('channelType')"
+                    @dragstart="dragstart(data,$event)"
+                    :title="node.label"
+                    :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
             </div>
-            <span class="span"
-                  @dblclick.stop="openVidoeByDBClick(node,data,$event)"
-                  @click.stop="saveClickData('', data)"
-                  :draggable="data.hasOwnProperty('channelType')"
-                  @dragstart="dragstart(data,$event)"
-                  :title="node.label">{{ node.label }}</span>
+
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
                          class='threelinemenu'>
               <span class="el-dropdown-link"
+                    v-if="data.isOnline||!data.hasOwnProperty('channelType')"
                     @click="saveClickData(node, data)">
                 <img class="checked-img"
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
@@ -537,6 +541,23 @@ export default {
         });
       }
     },
+    // 根据组织或者设备来获取
+    getOnlineChannelList(parentUuid, parentType, streamType) {
+      api
+        .getTDByOrgUuid({
+          parentUuid,
+          parentType
+        })
+        .then(res => {
+          console.log(res);
+          let data = res.data.data;
+          // 这里获取到通道UUid
+          for (let i = 0; i < data.length; i++) {
+            data[i].realType = data[i].type;
+            this.getPreviewInfo(data[i].id, data[i], streamType, -1);
+          }
+        });
+    },
     chuliData(streamType = "main") {
       if (this.operatorData.nodeType === "chnNode") {
         this.getPreviewInfo(
@@ -544,27 +565,12 @@ export default {
           this.operatorData,
           streamType
         );
+      } else if (this.operatorData.nodeType === "devNode") {
+        // 点击的是设备，根据设备
+        this.getOnlineChannelList(this.operatorData.id, "devNode", streamType);
       } else if (this.operatorData.nodeType === "orgNode") {
         // 根据组织来获取通道
-        api
-          .getTDByOrgUuid(this.operatorData.id, {
-            viewType: "video",
-            page: 1,
-            limit: 36
-          })
-          .then(res => {
-            console.log(res);
-            let data = res.data.data;
-            // 这里获取到通道UUid
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].extInfo.chnOnlineOrNot === "online") {
-                if (data[i].extInfo.chnOnlineOrNot === "online") {
-                  data[i].relType = data[i].type;
-                  this.getPreviewInfo(data[i].id, data[i], streamType, -1);
-                }
-              }
-            }
-          });
+        this.getOnlineChannelList(this.operatorData.id, "orgNode", streamType);
       } else if (this.operatorData.hasOwnProperty("channelType")) {
         this.getPreviewInfo(
           this.operatorData.channelUuid,
@@ -578,7 +584,7 @@ export default {
           for (let i = 0; i < data.length; i++) {
             // 判断设备在不在线
             if (data[i].extInfo.chnOnlineOrNot === "online") {
-              data[i].relType = data[i].channelType;
+              data[i].realType = data[i].channelType;
               this.getPreviewInfo(data[i].channelUuid, data[i], streamType, -1);
             }
           }
@@ -601,7 +607,7 @@ export default {
       ) {
         this.chuliData(command);
       } else if (command === "playback") {
-        if (this.operatorData.relType === "channel") {
+        if (this.operatorData.nodeType === "chnNode") {
           this.$emit(
             "switchLuxiang",
             this.operatorData.id,
@@ -658,10 +664,11 @@ export default {
 
       data = data.map(item => {
         item.leaf = !item.openFlag;
+        item.isOnline = true;
         if (item.nodeType === "chnNode") {
           item.isOnline = item.extInfo.chnOnlineOrNot === "online";
-          item.icon = this.getIcon(item.isOnline, item.realType);
         }
+        item.icon = this.getIcon(item.isOnline, item.realType);
         return item;
       });
       // data = [
@@ -674,23 +681,18 @@ export default {
       console.log(data);
       return resolve(data);
     },
-    videoTree(parentOrgUuid = "", parentType) {
-      // let data = parentOrgUuid ? { parentOrgUuid } : {};
-      let data = {
-        viewType: "video",
-        treeStructure: "orgNode$device|chnNode",
-        authEnable: false,
-        parentUuid: parentOrgUuid,
-        parentType,
-        recursiveEnable: true,
-        extInfo: {
-          aimType: "chnOnlineStatus",
-          aimDetail: null
-        }
-      };
+    videoTree(parentUuid, parentType) {
+      // 换成视频回放树，添加nvr设备
+      let data = {};
+      if (parentUuid) {
+        data.parentUuid = parentUuid;
+      }
+      if (parentType) {
+        data.parentType = parentType;
+      }
       return new Promise((resolve, reject) => {
         api2
-          .getPreviewTree(data)
+          .getPlayTree(data)
           .then(res => {
             let list = res.data.data || [];
             resolve(list);
@@ -700,6 +702,31 @@ export default {
             resolve([]);
           });
       });
+      // 下面是新树的接口，不满足有nvr的条件，更换成上面的
+      // let data = {
+      //   viewType: "video",
+      //   treeStructure: "orgNode$device|chnNode",
+      //   authEnable: false,
+      //   parentUuid: parentOrgUuid,
+      //   parentType,
+      //   recursiveEnable: true,
+      //   extInfo: {
+      //     aimType: "chnOnlineStatus",
+      //     aimDetail: null
+      //   }
+      // };
+      // return new Promise((resolve, reject) => {
+      //   api2
+      //     .getPreviewTree(data)
+      //     .then(res => {
+      //       let list = res.data.data || [];
+      //       resolve(list);
+      //     })
+      //     .catch(err => {
+      //       console.log(err);
+      //       resolve([]);
+      //     });
+      // });
     },
     async loadNode(node, resolve) {
       // 加载子结点
@@ -745,6 +772,10 @@ export default {
           })
           .then(res => {
             let list = res.data.data.list || [];
+            list = list.map(item => {
+              item.icon = require(`@/assets/images/treeIcons/doc.png`);
+              return item;
+            });
             resolve(list);
           });
       });
@@ -1135,11 +1166,11 @@ export default {
     },
     appendChild(children) {
       // console.log(children);
-      this.$refs[this.treeName].operator({
-        operator: "addChildre",
-        node: this.Treeparent,
-        value: children
-      });
+      // this.$refs[this.treeName].operator({
+      //   operator: "addChildre",
+      //   node: this.Treeparent,
+      //   value: children
+      // });
     },
     confirAppendChildren(data) {
       // console.log(data);
@@ -1570,6 +1601,9 @@ export default {
     height: 100%;
     overflow: auto;
   }
+  .el-input__inner {
+    padding-left: 40px;
+  }
 }
 </style>
 
@@ -1604,11 +1638,15 @@ export default {
     // text-overflow: ellipsis;
     width: calc(100% - 30px);
     .channelStatus {
-      float: left;
-      width: 12px;
-      height: 12px;
       img {
-        height: 100%;
+        width: 12px;
+        height: 12px;
+      }
+      span {
+        color: #fff;
+      }
+      .channelOffline {
+        color: #999999;
       }
     }
     .span {
@@ -1633,7 +1671,7 @@ export default {
     padding: 25px 26px 10px;
     .el-input {
       position: relative;
-      width: calc(100% - #{$iconWidth});
+      width: calc(100% - 40px);
     }
     $addIconWidth: 14px;
     img {

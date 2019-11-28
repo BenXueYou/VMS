@@ -161,3 +161,11 @@ export function getPlayTree(params = {}) {
     params
   });
 }
+export function getOnlineChannel(params = {}) {
+  let url = vUrl.getOnlineChannelUrl;
+  return axios({
+    methods: "get",
+    url,
+    params
+  });
+}

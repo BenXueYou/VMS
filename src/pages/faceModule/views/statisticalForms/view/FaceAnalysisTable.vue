@@ -268,7 +268,7 @@ export default {
     width: 100%;
     height: 100%;
     .face-select {
-      height: 12%;
+      height: 90px;
       border: {
         width: 0 0 1px 0;
         style: dashed;
@@ -288,9 +288,9 @@ export default {
     }
     .face-table {
       height: 90%;
+      width: 100%;
       border-radius: 3px;
-      padding: 2% 2%;
-      box-sizing: border-box;
+      padding: 2% 0;
       box-sizing: border-box;
     }
   }

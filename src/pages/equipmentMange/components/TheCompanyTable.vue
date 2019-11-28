@@ -466,6 +466,7 @@ export default {
       // console.log(this.multipleSelection);
       // 修改:这边修改所有的数据
       let num = this.multipleSelection.map(item => {
+        item.deviceName = item.nickName;
         item.ipAddress = item.deviceIp || item.ip;
         return item;
       });
@@ -546,11 +547,11 @@ export default {
       if (row.extInfo.source === "local") {
         // this.serviceList(this.viewType);
         this.$emit("showEdit", row.deviceUuid, row.netStatus);
-        this.serviceList(this.viewType);
-        this.DType(this.viewType);
       } else {
         this.$emit("showEdit", row.deviceUuid, row.netStatus);
       }
+      this.serviceList(this.viewType);
+      this.DType(this.viewType);
       // this.editEquipMentDialgoVisible = true;
     },
     deleteEquip(row) {
@@ -609,11 +610,11 @@ export default {
       for (let index = 0; index < array.length; index++) {
         const element = array[index];
         if (val.deviceUuid === element.deviceUuid) {
-          this.$set(this.tableData[index], 'netStatus', val.stateValue);
+          this.$set(this.tableData[index], "netStatus", val.stateValue);
           break;
         }
       }
-    },
+    }
   }
 };
 </script>

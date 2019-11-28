@@ -31,12 +31,13 @@
                  @check-change="devhandleCheckChange">
           <div class="custom-tree-node"
                slot-scope="{ node,data }">
-            <div class="channelStatus"
-                 v-if="data.nodeType==='chnNode'&&data.icon">
+            <div class="channelStatus">
               <img :src="data.icon"
+                   v-if="data.icon"
                    alt="">
+              <span :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
             </div>
-            <span>{{ node.label }}</span>
+
           </div>
         </el-tree>
       </el-tab-pane>
@@ -61,8 +62,8 @@
                  v-if="data.icon">
               <img :src="data.icon"
                    alt="">
+              <span :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
             </div>
-            <span>{{ node.label }}</span>
           </div>
         </el-tree>
 
@@ -321,10 +322,11 @@ export default {
       );
       data = data.map(item => {
         item.leaf = !item.openFlag;
+        item.isOnline = true;
         if (item.nodeType === "chnNode") {
           item.isOnline = item.extInfo.chnOnlineOrNot === "online";
-          item.icon = this.getIcon(item.isOnline, item.realType);
         }
+        item.icon = this.getIcon(item.isOnline, item.realType);
         return item;
       });
       // data = [
@@ -521,7 +523,7 @@ export default {
   height: 100%;
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
-  padding: 0px 40px;
+  padding: 0px 26px 25px;
   overflow: auto;
   .videoTree {
     height: calc(100vh - 380px);
@@ -537,12 +539,16 @@ export default {
     font-size: 14px;
     padding-right: 8px;
     .channelStatus {
-      float: left;
-      width: 12px;
-      height: 12px;
-      margin-right: 7px;
       img {
-        height: 100%;
+        width: 12px;
+        height: 12px;
+        margin-right: 7px;
+      }
+      span {
+        color: #fff;
+      }
+      .channelOffline {
+        color: #999999;
       }
     }
     .span {

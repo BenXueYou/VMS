@@ -61,7 +61,7 @@ export default {
   created() {},
   activated() {},
   mounted() {
-    this.height = this.blockHeight;
+    // this.height = this.blockHeight;
     this.isShowMoreButton();
   },
   methods: {

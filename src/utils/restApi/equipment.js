@@ -81,27 +81,27 @@ export default {
   getDoorUrl: uuid => `${ycPrefix}deviceDoor/${uuid}`,
   setDoorUrl: uuid => `${ycPrefix}deviceDoor/${uuid}`,
   getNetUrl: `${ycPrefix}deviceNet`,
-  setNetUrl: `${ycPrefix}deviceNet`,
+  setNetUrl: `${sbPrefix}deviceNet`,
   getJiaoXiaoUrl: deviceUuid => `${ycPrefix}deviceTime/${deviceUuid}`,
-  setJiaoXiaoUrl: deviceUuid => `${ycPrefix}deviceTime/${deviceUuid}`,
+  setJiaoXiaoUrl: deviceUuid => `${sbPrefix}deviceTime/${deviceUuid}`,
   getRelayUrl: deviceUuid => `${ycPrefix}deviceRelay/${deviceUuid}`,
   setRelayUrl: `${ycPrefix}deviceRelay`,
   getFaceUrl: deviceUuid => `${ycPrefix}deviceFaceRecognition/${deviceUuid}`,
-  setFaceUrl: `${ycPrefix}device/faceRecognitionConfig`,
+  setFaceUrl: `${sbPrefix}device/faceRecognitionConfig`,
   getDoorListUrl: deviceUuid => `${ycPrefix}deviceDoorList/${deviceUuid}/`,
   getDoorDutouUrl: channelUuid => `${ycPrefix}deviceDoor/${channelUuid}`,
-  setDoorDutouUrl: channelUuid => `${ycPrefix}deviceDoor/${channelUuid}`,
+  setDoorDutouUrl: channelUuid => `${sbPrefix}deviceDoor/${channelUuid}`,
   // 根据类型来获取耳机菜单
   getScondUrl: viewType =>
     `${ycPrefix}project/${projectUuid}/chnType/select/list`,
   // 获取设备的时段列表
   getTimeUrl: `${ycPrefix}device/passthrough/periodList`,
-  setTimeUrl: `${ycPrefix}device/passthrough/periodList`,
+  setTimeUrl: `${sbPrefix}device/passthrough/periodList`,
   // 根据设备来获取下面的通道
   getChnByDUrl: deviceUuid => `${sbPrefix}deviceChannelTypeList/${deviceUuid}`,
   // 获取和设置报警配置
   getAlarmUrl: deviceUuid => `${ycPrefix}deviceAlarm/${deviceUuid}`,
-  setAlarmUrl: `${ycPrefix}deviceAlarm`,
+  setAlarmUrl: `${sbPrefix}deviceAlarm`,
   deleteFailTaskUrl: `${xfPrefix}issueTask`,
   // 远程控制 设备升级那块
   upgradeDeviceUrl: `${zwzPrefix}operation/operation/upgrade`,

@@ -271,9 +271,13 @@ export default {
     },
     handleTypeChange() {
       if (this.typeRadio === "picture") {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 27;
+        this.pageInfo.currentPage = 1;
       } else {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 14;
+        this.pageInfo.currentPage = 1;
       }
       this.getJudgeList();
     },
@@ -363,7 +367,7 @@ export default {
   width: 100%;
   height: 100%;
   .main-container {
-    padding: 1.8% 3%;
+    padding: 1% 3%;
     box-sizing: border-box;
     background: #212325;
     width: 100%;

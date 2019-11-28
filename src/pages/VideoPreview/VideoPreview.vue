@@ -437,7 +437,13 @@ export default {
         this.$refs.leftTree.getPreset(true);
       });
     },
-    playRtsp(channelUuid, streamType = "string", adata, operator = -1) {
+    playRtsp(
+      channelUuid,
+      streamType = "string",
+      adata,
+      operator = -1,
+      isDrag = false
+    ) {
       console.log(channelUuid, streamType, adata, operator);
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
@@ -453,20 +459,34 @@ export default {
           if (operator === -1) {
             this.playVideo(data.rtspUrl, channelUuid, streamType, adata);
           } else {
-            this.setData(data.rtspUrl, channelUuid, streamType, adata);
+            if (isDrag) {
+              this.setData(
+                operator,
+                data.rtspUrl,
+                channelUuid,
+                streamType,
+                adata
+              );
+            } else {
+              this.setData(
+                this.operatorIndex,
+                data.rtspUrl,
+                channelUuid,
+                streamType,
+                adata
+              );
+            }
           }
         })
         .catch(err => {
           console.log(err);
         });
     },
-    setData(rtspUrl, channelUuid, streamType, operatorData) {
-      console.log(this.operatorIndex);
-      console.log(rtspUrl, channelUuid, operatorData, operatorData);
-      this.videoArr[this.operatorIndex].streamType = streamType;
-      this.videoArr[this.operatorIndex].operatorData = operatorData;
-      this.videoArr[this.operatorIndex].channelUuid = channelUuid;
-      this.videoArr[this.operatorIndex].rtspUrl = rtspUrl;
+    setData(index, rtspUrl, channelUuid, streamType, operatorData) {
+      this.videoArr[index].streamType = streamType;
+      this.videoArr[index].operatorData = operatorData;
+      this.videoArr[index].channelUuid = channelUuid;
+      this.videoArr[index].rtspUrl = rtspUrl;
     },
     judgeEnoughBoard() {},
     playVideo(rtspUrl, channelUuid, streamType, data) {
@@ -483,8 +503,9 @@ export default {
         }
         return;
       }
-      this.setData(rtspUrl, channelUuid, streamType, data);
+      this.setData(this.operatorIndex, rtspUrl, channelUuid, streamType, data);
       console.log(this.operatorIndex);
+      // 这里还要判断如果后面的视频框，如果有打开的视频，则进行跳过,未写
       if (
         ++this.operatorIndex >= this.fenlu[this.fenluIndex] &&
         this.fenluIndex <= 5
@@ -944,9 +965,10 @@ export default {
       ) {
         return false;
       }
+      console.log(this.videoArr[this.operatorIndex].operatorData.realType);
       return (
         ["bullet_camera_ptz", "ball_camera"].indexOf(
-          this.videoArr[this.operatorIndex].operatorData.relType
+          this.videoArr[this.operatorIndex].operatorData.realType
         ) !== -1
       );
     }
