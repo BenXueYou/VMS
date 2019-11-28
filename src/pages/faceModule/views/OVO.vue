@@ -157,14 +157,12 @@ export default {
   methods: {
     dbclickAct(index) {
       if (index < this.shootPhotoList.length) {
-        if (this.imageUrl2) {
-          this.imageUrl1 = this.shootPhotoList[index].url;
-          this.imageBase641 = this.shootPhotoList[index].base64Url;
-          return;
-        }
         if (this.imageUrl1) {
           this.imageUrl2 = this.shootPhotoList[index].url;
           this.imageBase642 = this.shootPhotoList[index].base64Url;
+        } else {
+          this.imageUrl1 = this.shootPhotoList[index].url;
+          this.imageBase641 = this.shootPhotoList[index].base64Url;
         }
       }
     },
