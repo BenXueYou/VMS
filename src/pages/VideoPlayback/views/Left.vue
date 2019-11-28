@@ -326,6 +326,9 @@ export default {
         if (item.nodeType === "chnNode") {
           item.isOnline = item.extInfo.chnOnlineOrNot === "online";
         }
+        if (item.nodeType === "devNode") {
+          item.isOnline = item.extInfo.devOnlineOrNot === "online";
+        }
         item.icon = this.getIcon(item.isOnline, item.realType);
         return item;
       });
@@ -413,6 +416,11 @@ export default {
           })
           .then(res => {
             let list = res.data.data.list || [];
+            list = list.map(item => {
+              item.isOnline = true;
+              item.icon = require(`@/assets/images/treeIcons/doc.png`);
+              return item;
+            });
             resolve(list);
           });
       });
@@ -484,9 +492,12 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
+  .el-tabs__content {
+    width: 500px;
+  }
   .mypanel {
     .el-tree-node {
-      width: 500px;
+      // width: 500px;
     }
   }
   .el-tree-node__label {
@@ -510,7 +521,10 @@ export default {
     }
   }
   .el-tree {
-    overflow: auto;
+    // overflow: auto;
+  }
+  .el-input__inner {
+    padding-left: 40px;
   }
 }
 </style>
@@ -523,12 +537,12 @@ export default {
   height: 100%;
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
-  padding: 0px 26px 25px;
-  overflow: auto;
+  // padding: 0px 26px 25px;
+  // overflow: auto;
   .videoTree {
-    height: calc(100vh - 380px);
+    // height: calc(100vh - 380px);
     // width:500px;
-    overflow: auto;
+    // overflow: auto;
   }
   .custom-tree-node {
     width: 100%;
@@ -564,7 +578,7 @@ export default {
     }
   }
   .timeSelect {
-    margin-top: 20px;
+    padding: 45px 26px 25px;
     .startWrap {
       display: flex;
       margin-bottom: 10px;
@@ -585,11 +599,11 @@ export default {
     }
   }
   .treeWrap,
-  // .tabs {
-  //   height: calc(100vh - 350px);
-  //   overflow: auto;
-  // }
-
+  .tabs {
+    height: calc(100vh - 350px);
+    padding: 0px 26px 25px;
+    overflow: auto;
+  }
   .treeSwitchTabs {
     ul {
       display: flex;
@@ -610,10 +624,10 @@ export default {
     }
   }
   .searchWrap {
-    padding: 25px 0px 10px 0px;
+    padding: 25px 26px 10px;
     .el-input {
       position: relative;
-      width: calc(100% - 30px);
+      width: calc(100% - 40px);
     }
     $addIconWidth: 14px;
     img {

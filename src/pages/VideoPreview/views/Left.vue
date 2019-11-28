@@ -17,6 +17,7 @@
 
     <el-tabs v-model="activeName"
              class="tabs"
+             :class="{'tabsPanel':showCloudControl}"
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
@@ -25,7 +26,6 @@
                  :load="devloadNode"
                  ref="tree1"
                  class='videoTree'
-                 :class="{'tabsPanel':showCloudControl}"
                  lazy>
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
@@ -668,6 +668,9 @@ export default {
         if (item.nodeType === "chnNode") {
           item.isOnline = item.extInfo.chnOnlineOrNot === "online";
         }
+        if (item.nodeType === "devNode") {
+          item.isOnline = item.extInfo.devOnlineOrNot === "online";
+        }
         item.icon = this.getIcon(item.isOnline, item.realType);
         return item;
       });
@@ -773,6 +776,7 @@ export default {
           .then(res => {
             let list = res.data.data.list || [];
             list = list.map(item => {
+              item.isOnline = true;
               item.icon = require(`@/assets/images/treeIcons/doc.png`);
               return item;
             });
@@ -1618,13 +1622,11 @@ export default {
   background-color: rgba(35, 38, 41, 0.8);
   .videoTree {
     //  height: calc(100vh - 150px);
-    height: calc(100vh - 250px);
+    // height: calc(100vh - 250px);
     // width:500px;
-    overflow: auto;
+    // overflow: auto;
   }
-  .tabsPanel {
-    height: calc(100vh - 550px);
-  }
+
   .custom-tree-node {
     flex: 1;
     display: flex;
@@ -1683,17 +1685,23 @@ export default {
     }
   }
   .tabs {
-    // height: calc(100vh - 150px);
+    height: calc(100vh - 170px);
     // overflow-y: auto;
     padding: 0px 26px 25px;
+    overflow: auto;
+  }
+  .tabsPanel {
+    height: calc(100vh - 550px);
+    overflow: auto;
   }
   .tabsPanel {
     // height: calc(100vh - 550px);
+    position: relative;
   }
   .mypanel {
     // height: calc(100vh - 60px - 70px - 80px);
-    overflow: auto;
-    width: 228px;
+    // overflow: auto;
+    // position: absolute;\
   }
   .cloundControlPannel {
     padding: 30px 30px 0px 30px;

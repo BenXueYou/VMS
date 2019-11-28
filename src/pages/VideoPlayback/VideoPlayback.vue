@@ -14,11 +14,13 @@
                     :key="index"
                     :index="index"
                     :isActive="operatorIndex===index"
-                    :width="videoWidth"
-                    :height="videoHeight"
+                    :width="item.width"
+                    :height="item.height"
                     :IsShowMenu="!!item.rtspUrl"
                     :rtspUrl="item.rtspUrl"
                     :streamType="item.streamType"
+                    :left="item.left"
+                    :top="item.top"
                     action="playback"
                     :position="item.position"
                     :fenlu="fenluIndex+1"
@@ -146,7 +148,7 @@ export default {
         return item;
       }),
       icons,
-      fenlu: [1, 4, 9, 16],
+      fenlu: [1, 4, 8, 9, 16],
       fenluIndex: 0,
       operatorIndex: 0,
       videoWidth: 0,
@@ -510,7 +512,7 @@ export default {
         this.videoArr.splice(this.operatorIndex++, 1, videos);
         if (
           this.operatorIndex >= this.fenlu[this.fenluIndex] &&
-          this.fenluIndex <= 4
+          this.fenluIndex < 4
         ) {
           this.chooseFenlu(this.fenluIndex + 1);
         }
@@ -558,13 +560,52 @@ export default {
     },
     initWrapDom() {
       let vedioWrapDom = this.$refs.vedioWrap;
-      let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
-      this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
-      this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
-
-      this.videoArr = this.videoArr.map(item => {
-        item.width = this.videoWidth;
-        item.height = this.videoHeight;
+      let fen = 1,
+        fenlu = this.fenlu[this.fenluIndex];
+      if (fenlu === 8) {
+        fen = 3;
+      } else {
+        fen = Math.sqrt(fenlu);
+      }
+      let videoWrapWidth = vedioWrapDom.clientWidth,
+        videoWrapHeight = vedioWrapDom.clientHeight;
+      this.videoWidth = Math.floor((videoWrapWidth - 1) / fen);
+      this.videoHeight = Math.floor((videoWrapHeight - 1) / fen);
+      let data = JSON.parse(JSON.stringify(this.videoArr));
+      this.videoArr = data.map((item, index) => {
+        if (index !== this.isAutoScreen) {
+          item.width = this.videoWidth;
+          item.height = this.videoHeight;
+          item.left = (item.position % fen) * item.width;
+          item.top = Math.floor(item.position / fen) * item.height;
+        }
+        // 这里8分路视频的布局不是等分的，所以需要不同的计算方式
+        // 中间一个大视频，围绕7个小视频，默认中间大视频的宽高占比70%;
+        if (fenlu === 8) {
+          let percent = 0.75;
+          if (item.position === 0) {
+            item.width = videoWrapWidth * percent;
+            // item.height = ~~((videoWrapHeight * 9) / 16);
+            item.height = videoWrapHeight * percent;
+            item.left = 0;
+            item.top = 0;
+          } else {
+            item.width = videoWrapWidth * (1 - percent);
+            // item.height = ~~((item.width * 9) / 16);
+            item.height = videoWrapHeight * (1 - percent);
+            if (item.position < 5) {
+              item.left = videoWrapWidth * percent;
+              item.top = ~~(
+                videoWrapHeight *
+                (1 - percent) *
+                (item.position - 1)
+              );
+            } else {
+              item.left = (item.position - 5) * item.width;
+              item.top = videoWrapHeight - item.height;
+            }
+          }
+        }
         return item;
       });
       // console.log(this.videoArr);

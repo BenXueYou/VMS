@@ -35,6 +35,8 @@
                     :streamType="item.streamType"
                     :IsShowMenu="!!item.rtspUrl"
                     :position="item.position"
+                    :left="item.left"
+                    :top="item.top"
                     :isRecord="!!item.isRecord"
                     :isStopVoice="!!item.isStopVoice"
                     :fenlu="fenluIndex+1"
@@ -142,7 +144,7 @@ export default {
         return item;
       }),
       icons,
-      fenlu: [1, 4, 9, 16, 25, 36],
+      fenlu: [1, 4, 8, 9, 16, 25, 36],
       fenluIndex: 0,
       operatorIndex: 0,
       operatorChannelUuid: "",
@@ -222,16 +224,17 @@ export default {
     // 监听F11事件
 
     // 下面是MDZZ代码
-    // this.timer = setInterval(() => {
-    //   that.initWrapDom();
-    // }, 100);
   },
   destroyed() {
     clearInterval(this.timer);
     this.timer = null;
   },
   activated() {
+    window.onresize = function() {
+      alert(1);
+    };
     const that = this;
+    // 下面的定时器是为了刷新页面的每个video框，
     if (!this.timer) {
       this.timer = setInterval(() => {
         if (this.fullscreen) {
@@ -250,18 +253,18 @@ export default {
       );
     },
     dblclickhandler(index) {
+      if (this.fenluIndex === 2) {
+        // 在8分格的时候不进行放大缩小的操作
+        return;
+      }
       if (this.isAutoScreen === index) {
         // 已经满屏则退出满屏
         this.isAutoScreen = -1;
-        this.videoArr[index].width = this.videoWidth;
-        this.videoArr[index].height = this.videoHeight;
       } else {
         // 设置满屏
         this.isAutoScreen = index;
-        this.videoArr[index].width = this.videoWidth * (this.fenluIndex + 1);
-        this.videoArr[index].height = this.videoHeight * (this.fenluIndex + 1);
       }
-      this.videoArr.concat();
+      this.initWrapDom();
     },
     jugdeJump() {
       if (
@@ -538,6 +541,23 @@ export default {
       //   this.videoArr[this.dragStartIndex]
       // ];
       // 优化之后的写法
+      // 当每个视频的宽度不同的时候，这里也要交换宽高
+      // const exchange = (v1, v2) => {
+      //   [v1, v2] = [v2, v1];
+      // };
+      // exchange(
+      //   this.videoArr[this.dragStartIndex].position,
+      //   this.videoArr[this.dragEndIndex].position
+      // );
+      // exchange(
+      //   this.videoArr[this.dragStartIndex].width,
+      //   this.videoArr[this.dragEndIndex].width
+      // );
+      // exchange(
+      //   this.videoArr[this.dragStartIndex].height,
+      //   this.videoArr[this.dragEndIndex].height
+      // );
+      // 这里不交换rtsp的url，
       [
         this.videoArr[this.dragStartIndex].position,
         this.videoArr[this.dragEndIndex].position
@@ -545,7 +565,8 @@ export default {
         this.videoArr[this.dragEndIndex].position,
         this.videoArr[this.dragStartIndex].position
       ];
-      this.videoArr = this.videoArr;
+      this.videoArr.concat();
+      this.initWrapDom();
       this.dragStartIndex = -1;
       console.log(this.videoArr);
     },
@@ -581,7 +602,7 @@ export default {
       // 获取系统的高度，然后减去多余的部分
 
       let vedioWrapDom = this.$refs.vedioWrap;
-      let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
+
       // this.videoWidth = ~~(
       //   (Math.min(this.$refs.right.clientWidth, this.maxRightWidth) -
       //     window.innerWidth * 0.04 -
@@ -589,22 +610,66 @@ export default {
       //   fen
       // );
       // this.videoHeight = ~~((maxHeight - 60 - 1) / fen);
-      this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
-      this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
+
+      // 这里计算每块视频的长高，因为正方形，且等分，所以
+      let fen = 1,
+        fenlu = this.fenlu[this.fenluIndex];
+      if (fenlu === 8) {
+        fen = 3;
+      } else {
+        fen = Math.sqrt(fenlu);
+      }
+      let videoWrapWidth = vedioWrapDom.clientWidth,
+        videoWrapHeight = vedioWrapDom.clientHeight;
+      this.videoWidth = Math.floor((videoWrapWidth - 1) / fen);
+      this.videoHeight = Math.floor((videoWrapHeight - 1) / fen);
       let data = JSON.parse(JSON.stringify(this.videoArr));
       this.videoArr = data.map((item, index) => {
         if (index !== this.isAutoScreen) {
           item.width = this.videoWidth;
           item.height = this.videoHeight;
+          item.left = (item.position % fen) * item.width;
+          item.top = Math.floor(item.position / fen) * item.height;
+        } else {
+          item.width = videoWrapWidth;
+          item.height = videoWrapHeight;
+          item.left = 0;
+          item.top = 0;
+        }
+        // 这里8分路视频的布局不是等分的，所以需要不同的计算方式
+        // 中间一个大视频，围绕7个小视频，默认中间大视频的宽高占比70%;
+        if (fenlu === 8) {
+          let percent = 0.75;
+          if (item.position === 0) {
+            item.width = videoWrapWidth * percent;
+            // item.height = ~~((videoWrapHeight * 9) / 16);
+            item.height = videoWrapHeight * percent;
+            item.left = 0;
+            item.top = 0;
+          } else {
+            item.width = videoWrapWidth * (1 - percent);
+            // item.height = ~~((item.width * 9) / 16);
+            item.height = videoWrapHeight * (1 - percent);
+            if (item.position < 5) {
+              item.left = videoWrapWidth * percent;
+              item.top = ~~(
+                videoWrapHeight *
+                (1 - percent) *
+                (item.position - 1)
+              );
+            } else {
+              item.left = (item.position - 5) * item.width;
+              item.top = videoWrapHeight - item.height;
+            }
+          }
         }
         return item;
       });
     },
     chooseFenlu(index) {
       // this.operatorIndex = 0;
-
       this.fenluIndex = index;
-      this.isAutoScreen = -1;
+      this.isAutoScreen = -1; // 切换分路 将单个视频的全屏删除掉
       this.initWrapDom();
       let dataArr = JSON.parse(JSON.stringify(this.videoArr));
       dataArr.sort((a, b) => {
@@ -965,7 +1030,6 @@ export default {
       ) {
         return false;
       }
-      console.log(this.videoArr[this.operatorIndex].operatorData.realType);
       return (
         ["bullet_camera_ptz", "ball_camera"].indexOf(
           this.videoArr[this.operatorIndex].operatorData.realType

@@ -75,6 +75,12 @@ export default {
     fenlu: {
       type: Number
     },
+    left: {
+      type: Number
+    },
+    top: {
+      type: Number
+    },
     position: {
       type: Number
     },
@@ -163,20 +169,6 @@ export default {
           name: "关闭"
         }
       ];
-    },
-    left() {
-      // console.log((this.index % this.fenlu) * this.width);
-      if (this.isAutoScreen) {
-        return 0;
-      }
-      return (this.position % this.fenlu) * this.width;
-    },
-    top() {
-      if (this.isAutoScreen) {
-        return 0;
-      }
-      // console.log((this.index % this.fenlu) * this.height);
-      return Math.floor(this.position / this.fenlu) * this.height;
     }
   },
   mounted() {
@@ -198,16 +190,11 @@ export default {
     },
     width(val) {
       // 宽度变化 则更新canvas的大小
-      if (this.width && this.canvas) {
-        this.canvas.width = this.width;
-        // this.canvas.height = this.calcHeight;
-      }
+      this.calcHeight();
       // 宽度和高度变化，不需要重新播放
     },
     height(val) {
-      if (this.height && this.canvas) {
-        this.canvas.height = this.height;
-      }
+      this.calcHeight();
     },
     rtspUrl(val) {
       console.log("码流的视频url改变了：   " + val);
@@ -266,12 +253,23 @@ export default {
     calcHeight() {
       // 这里让视频的宽高比是*16:9；
       // return this.height;
-      return ~~((9 / 16) * this.width);
+      if (this.canvas) {
+        // 如果宽高比大于16:9 则按照高计算宽
+        if (this.width / this.height >= 16 / 9) {
+          let width = ~~((16 / 9) * this.height);
+          this.canvas.width = width;
+          this.canvas.height = this.height;
+        } else {
+          let height = ~~((9 / 16) * this.width);
+          this.canvas.width = this.width;
+          this.canvas.height = height;
+        }
+        console.log(this.canvas.width + " " + this.canvas.height);
+      }
     },
     async playVideo() {
       this.canvas = document.createElement("canvas");
-      this.canvas.width = this.width;
-      this.canvas.height = this.calcHeight();
+      this.calcHeight();
       let { jMedia, jSignal } = this.$store.getters;
       console.log(jMedia, jSignal);
       // let w, h;
@@ -377,8 +375,8 @@ export default {
   canvas {
     position: absolute;
     top: 50%;
-    left: 0px;
-    transform: translateY(-50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 </style>
