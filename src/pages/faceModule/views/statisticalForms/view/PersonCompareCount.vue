@@ -4,7 +4,8 @@
       <div class="search">
         <span>统计方式：</span>
         <el-radio-group v-model="formType"
-                        @change="handleFormTypeChange">
+                        @change="handleFormTypeChange"
+                        style="margin-left: 3px;">
           <el-radio label="all">全部</el-radio>
           <el-radio label="one">单一</el-radio>
         </el-radio-group>
@@ -17,7 +18,7 @@
         <el-radio-group v-model="sort"
                         v-if="formType === 'all'"
                         @change="handleSortChange"
-                        style="margin: 2px 0 0 0">
+                        style="margin: 2px 0 0 3px">
           <el-radio label="desc">升序</el-radio>
           <el-radio label="asc">降序</el-radio>
         </el-radio-group>
@@ -41,7 +42,7 @@
         <span>报表类型：</span>
         <el-radio-group v-model="typeRadio"
                         @change="handleTypeChange"
-                        style="margin: 4px 0 0 0;">
+                        style="margin: 4px 0 0 3px;">
           <el-radio :label="1">日报表</el-radio>
           <el-radio :label="2">月报表</el-radio>
         </el-radio-group>

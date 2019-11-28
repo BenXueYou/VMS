@@ -166,13 +166,14 @@ export default {
   },
   created() {},
   activated() {
-    this.init();
+    // this.init();
   },
   mounted() {
-    this.statusOptions = this.$common.getEnumByGroupStr("model_analysis_s");
+    this.init();
   },
   methods: {
     init() {
+      this.statusOptions = this.$common.getEnumByGroupStr("model_analysis_s");
       this.startTime = this.getStartTime();
       this.endTime = this.$common.getCurrentTime();
       this.getJudgeList();
@@ -271,9 +272,13 @@ export default {
     },
     handleTypeChange() {
       if (this.typeRadio === "picture") {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 27;
+        this.pageInfo.currentPage = 1;
       } else {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 14;
+        this.pageInfo.currentPage = 1;
       }
       this.getJudgeList();
     },
@@ -363,7 +368,7 @@ export default {
   width: 100%;
   height: 100%;
   .main-container {
-    padding: 1.8% 3%;
+    padding: 1% 3%;
     box-sizing: border-box;
     background: #212325;
     width: 100%;

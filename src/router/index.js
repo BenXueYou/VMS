@@ -52,6 +52,14 @@ export const constantRouterMap = [
         type: "config"
       },
       {
+        path: "/ResidentManage",
+        name: "ResidentManage",
+        component: resident,
+        title: "居民管理",
+        icon: "residentManage",
+        type: "config"
+      },
+      {
         path: "/VistorMange",
         name: "VistorMange",
         component: VistorMangeSubRoute,
@@ -82,14 +90,6 @@ export const constantRouterMap = [
         component: buildingHouse,
         title: "楼栋房屋",
         icon: "buildingsHouse",
-        type: "config"
-      },
-      {
-        path: "/ResidentManage",
-        name: "ResidentManage",
-        component: resident,
-        title: "居民管理",
-        icon: "residentManage",
         type: "config"
       },
       {

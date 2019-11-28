@@ -325,7 +325,6 @@ export default {
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
     this.getDeviceList();
-    this.getTaskList();
   },
 
   destroyed: function() {
@@ -335,6 +334,10 @@ export default {
     }
     this.stompClient = null;
     this.websocket = null;
+  },
+  deactivated: function() {},
+  activated: function() {
+    this.getTaskList();
   },
   watch: {
     CapturePhotoArr(val) {

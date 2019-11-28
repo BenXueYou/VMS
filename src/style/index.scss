@@ -160,18 +160,18 @@ img,
   background-color: transparent !important;
   // border: 1px solid rgba(255, 255, 255, 0.4);
   color: #ffffff;
-  height: 30px;
+  height: 34px;
   border: 1px solid rgba($color: #ffffff, $alpha: 0.15);
   border-radius: 2px;
 }
 
 .el-input__icon {
-  line-height: 30px;
+  line-height: 34px;
 }
 
 .el-input--small .el-input__inner {
-  height: 30px;
-  line-height: 30px;
+  height: 34px;
+  line-height: 34px;
 }
 
 .el-button--default,
@@ -376,7 +376,7 @@ img,
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 15px;
   border-radius: 5px;
-  background: rgba(144, 147, 153, 0.3);
+  background: rgba(144, 147, 153, 0.1);
   box-shadow: inset 0 0 6px rgba(144, 147, 153, 0.3);
   -webkit-box-shadow: inset 0 0 6px rgba(144, 147, 153, 0.3);
 }
@@ -467,17 +467,22 @@ img,
   background: #26d39d;
 }
 
-$el-switch-size: 11px;
+$el-switch-size: 13px;
 $el-switch-circle-size: 13px;
 
 .el-switch__core {
   height: $el-switch-size;
+  width: 36px !important;
 }
 
 .el-switch__core:after {
   top: -2px;
   height: $el-switch-circle-size;
   width: $el-switch-circle-size;
+}
+
+.el-switch.is-checked .el-switch__core::after {
+  margin-left: -14px;
 }
 
 // $selecthoverColor:rgb(28, 40, 39);
@@ -745,9 +750,9 @@ input[type="number"] {
 .el-tree {
   position: relative;
   cursor: default;
-  background: rgba(35, 38, 41, 0.8);
   color: #dee5f4;
-  background: rgba($color: #232629, $alpha: 0.8);
+  // background: rgba($color: #232629, $alpha: 0.8);
+  background: transparent;
   font-family: PingFangSC-Regular;
   font-size: 14px;
   color: #dddddd;

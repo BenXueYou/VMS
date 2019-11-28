@@ -70,7 +70,7 @@
                    width="40%"
                    v-if="libraryType === 'captureFaceLib'"
                    class="img-fill">
-              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+              <img :src="$common.setPictureShow(item.faceCapturePhotoUrl)"
                    height="100%"
                    width="40%"
                    v-else
@@ -180,8 +180,9 @@ export default {
   },
   created() {},
   activated() {
-    if (this.$route.query.imgObj) {
-      this.turnSearchCommon(this.$route.query.imgObj);
+    console.log("this.$route.params.imgObj: ", this.$route.params.imgObj);
+    if (this.$route.params.imgObj) {
+      this.turnSearchCommon(this.$route.params.imgObj);
     }
   },
   mounted() {
@@ -382,7 +383,7 @@ export default {
       if (!item.hasOwnProperty("faceUuid")) {
         item.faceUuid = "";
       }
-      this.$router.push({ name: "PersonTrace", query: { imgObj: item } });
+      this.$router.push({ name: "PersonTrace", params: { imgObj: item } });
     },
     lookAllView(item) {
       this.selectedItem = this.$common.copyObject(item, this.selectedItem);
@@ -554,12 +555,12 @@ export default {
             position: absolute;
             left: 2px;
             bottom: 2px;
+            background: rgba($color: #111111, $alpha: 0.9);
             border-radius: 1px;
             display: none;
             .menu-elem {
               display: flex;
               align-items: center;
-              background: rgba($color: #111111, $alpha: 0.9);
               width: 120px;
               height: 32px;
               padding: 0 13px;

@@ -63,12 +63,6 @@
         </template>
       </div>
     </div>
-    <div slot="footer"
-         class="dialog-footer">
-      <el-button type="primary"
-                 @click="onClickCancel"
-                 size="small">取消</el-button>
-    </div>
   </el-dialog>
 </template>
 
@@ -189,7 +183,7 @@ export default {
 .dialog-content {
   padding: 3% 5% 0 5%;
   box-sizing: border-box;
-  height: 620px;
+  height: 570px;
   overflow-y: auto;
   .content-title {
     font-family: PingFangSC-Regular;
@@ -218,7 +212,7 @@ export default {
     }
   }
   .content-list {
-    height: 370px;
+    height: 395px;
     width: 100%;
     border: 1px solid #254a43;
     margin-top: 15px;

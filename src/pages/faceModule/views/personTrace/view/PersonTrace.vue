@@ -333,8 +333,8 @@ export default {
       this.$factTragicHttp
         .getTragicList({
           imageBase64: this.imageBase64,
-          faceUuid: this.$route.query.imgObj
-            ? this.$route.query.imgObj.faceUuid
+          faceUuid: this.$route.params.imgObj
+            ? this.$route.params.imgObj.faceUuid
             : "",
           // faceUuid: "28334ca055b54a428fc6c63e56d24da4",
           startTime: this.startTime,
@@ -398,8 +398,8 @@ export default {
   watch: {},
   destroyed() {},
   activated() {
-    if (this.$route.query.imgObj) {
-      this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
+    if (this.$route.params.imgObj) {
+      this.imageUrl = this.$route.params.imgObj.faceCapturePhotoUrl;
       this.$common.imageToBase64(this.imageUrl, base64 => {
         this.imageBase64 = base64;
       });

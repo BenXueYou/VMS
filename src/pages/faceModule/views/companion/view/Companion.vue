@@ -6,13 +6,13 @@
           <div class="face-img"
                @click="onClickTurnToGetFace">
             <div class="avatar">
-              <img v-if="!$route.query.imgObj"
+              <img v-if="!imageUrl"
                    src="@/assets/images/addImg2.png"
                    class="ovo-card-img add-icon" />
-              <i v-if="!$route.query.imgObj"
+              <i v-if="!imageUrl"
                  class="el-icon-circle-plus-outline font-color">添加图片</i>
-              <img v-if="$route.query.imgObj"
-                   :src="$common.setPictureShow($route.query.imgObj.faceCapturePhotoUrl, 'facelog')"
+              <img v-if="imageUrl"
+                   :src="$common.setPictureShow(imageUrl, 'facelog')"
                    style="width: 100%; height: 100%" />
             </div>
           </div>
@@ -23,13 +23,13 @@
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="startTime"
                             type="datetime"
-                            style="width: 190px"
+                            style="width: 205px"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
-            <span class="timeText">—</span>
+            <span class="timeText" style="margin: 0 3px;">—</span>
             <el-date-picker v-model="endTime"
                             type="datetime"
-                            style="width: 190px"
+                            style="width: 205px"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <span class="topTitleTxt left-space">抓拍设备：</span>
@@ -113,6 +113,7 @@ export default {
       travelTogetherFrequency: 2,
       travelTogetherChannel: 2,
       isLoading: false,
+      imageUrl: ""
     };
   },
   created() {},
@@ -129,7 +130,7 @@ export default {
       this.endTime = this.$common.formatDate(new Date());
     },
     queryAct() {
-      if (!this.$route.query.imgObj) {
+      if (!this.$route.params.imgObj) {
         this.$cToast.warn("请添加图片");
       } else {
         this.getCompanionList();
@@ -148,7 +149,7 @@ export default {
       this.isLoading = true;
       this.$factTragicHttp
         .getCompanionList({
-          faceUuid: this.$route.query.imgObj.faceUuid,
+          faceUuid: this.$route.params.imgObj.faceUuid,
           channelUuids: this.channelUuids ? this.channelUuids.join(",") : "",
           startTime: this.startTime,
           endTime: this.endTime,
@@ -185,13 +186,9 @@ export default {
   watch: {},
   destroyed() {},
   activated() {
-    this.resetData();
-    // if (this.$route.query.imgObj) {
-    //   this.$nextTick(() => {
-    //     this.checkedChannelKeys.push(this.$route.query.imgObj.channelUuid);
-    //     console.log("this.checkedChannelKeys: ", this.checkedChannelKeys);
-    //   });
-    // }
+    if (this.$route.params.imgObj) {
+      this.imageUrl = this.$route.params.imgObj.faceCapturePhotoUrl;
+    }
   }
 };
 </script>
@@ -307,7 +304,6 @@ export default {
   font-family: PingFangSC-Regular;
   font-size: 14px;
   color: #888888;
-  width: 28px;
 }
 .topTitleTxt {
   font-family: PingFangSC-Regular;
@@ -346,8 +342,7 @@ export default {
 .ovo-card-img {
   margin-top: 22%;
   vertical-align: middle;
-  width: 55%;
-  height: 45px;
+  width: 45%;
   color: #20735c;
 }
 .font-color {
