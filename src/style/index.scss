@@ -750,9 +750,9 @@ input[type="number"] {
 .el-tree {
   position: relative;
   cursor: default;
-  background: rgba(35, 38, 41, 0.8);
   color: #dee5f4;
-  background: rgba($color: #232629, $alpha: 0.8);
+  // background: rgba($color: #232629, $alpha: 0.8);
+  background: transparent;
   font-family: PingFangSC-Regular;
   font-size: 14px;
   color: #dddddd;
