@@ -146,7 +146,10 @@ export default {
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.initData();
+    this.getFaceAnalysisTable();
+  },
   methods: {
     initData() {
       this.startTime = this.$common.formatDate(
@@ -229,8 +232,8 @@ export default {
   watch: {},
   destroyed() {},
   activated() {
-    this.initData();
-    this.getFaceAnalysisTable();
+    // this.initData();
+    // this.getFaceAnalysisTable();
   }
 };
 </script>

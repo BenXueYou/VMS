@@ -180,8 +180,9 @@ export default {
   },
   created() {},
   activated() {
-    if (this.$route.query.imgObj) {
-      this.turnSearchCommon(this.$route.query.imgObj);
+    console.log("this.$route.params.imgObj: ", this.$route.params.imgObj);
+    if (this.$route.params.imgObj) {
+      this.turnSearchCommon(this.$route.params.imgObj);
     }
   },
   mounted() {
@@ -382,7 +383,7 @@ export default {
       if (!item.hasOwnProperty("faceUuid")) {
         item.faceUuid = "";
       }
-      this.$router.push({ name: "PersonTrace", query: { imgObj: item } });
+      this.$router.push({ name: "PersonTrace", params: { imgObj: item } });
     },
     lookAllView(item) {
       this.selectedItem = this.$common.copyObject(item, this.selectedItem);

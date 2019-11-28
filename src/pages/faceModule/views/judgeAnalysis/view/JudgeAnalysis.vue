@@ -166,13 +166,14 @@ export default {
   },
   created() {},
   activated() {
-    this.init();
+    // this.init();
   },
   mounted() {
-    this.statusOptions = this.$common.getEnumByGroupStr("model_analysis_s");
+    this.init();
   },
   methods: {
     init() {
+      this.statusOptions = this.$common.getEnumByGroupStr("model_analysis_s");
       this.startTime = this.getStartTime();
       this.endTime = this.$common.getCurrentTime();
       this.getJudgeList();

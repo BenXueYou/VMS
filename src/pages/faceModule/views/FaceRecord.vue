@@ -124,16 +124,16 @@
 					<el-row class="FRelPopoverRow" justify="space-between">
 						<el-col
 							class="FRelPopoverCol"
-							@click.native="searchImageToFace(o,index,'/FaceManage/searchFaceWithFace')"
+							@click.native="searchImageToFace(o,index,'searchFaceWithFace')"
 						>
 							<img src="@/assets/images/faceModule/2.png" />
 							以脸搜脸
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'/FaceManage/Companion')">
+						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'Companion')">
 							<img src="@/assets/images/faceModule/2.png" />
 							同行人分析
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="judgeStaffTrace(o,'/FaceManage/PersonTrace')">
+						<el-col class="FRelPopoverCol" @click.native="judgeStaffTrace(o,'PersonTrace')">
 							<img src="@/assets/images/faceModule/4.png" />
 							人员轨迹
 						</el-col>
@@ -361,7 +361,11 @@ export default {
           if (res.data.success) {
             item.faceUuid = res.data.data;
             this.$set(item, "CellVisiblePopver", false);
-            this.$router.push({ path: routeName, query: { imgObj: item } });
+            // this.$router.push({ path: routeName, query: { imgObj: item } });
+            this.$router.push({
+              name: routeName,
+              params: { imgObj: item }
+            });
           } else {
             this.$message({ type: "warning", message: res.data.msg });
           }
@@ -382,7 +386,11 @@ export default {
           if (res.data.success) {
             o.faceUuid = res.data.data;
             this.$set(o, "CellVisiblePopver", false);
-            this.$router.push({ path: routeName, query: { imgObj: o } });
+            // this.$router.push({ path: routeName, query: { imgObj: o } });
+            this.$router.push({
+              name: routeName,
+              params: { imgObj: o }
+            });
           } else {
             this.$message({
               message: "未找到分析记录",
@@ -396,7 +404,11 @@ export default {
     },
     searchImageToFace(o, index, routeName) {
       this.$set(o, "CellVisiblePopver", false);
-      this.$router.push({ path: routeName, query: { imgObj: o } });
+      // this.$router.push({ path: routeName, query: { imgObj: o } });
+      this.$router.push({
+        name: routeName,
+        params: { imgObj: o }
+      });
     },
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
