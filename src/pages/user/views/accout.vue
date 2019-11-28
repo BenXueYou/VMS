@@ -264,7 +264,7 @@ export default {
     // 获取分配角色弹窗内树列表数据
     getRoleList() {
       api
-        .getUserList({
+        .getRoleList({
           limt: 10000000, // 不分页
           page: 1
         })
