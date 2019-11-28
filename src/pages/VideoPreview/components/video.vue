@@ -323,7 +323,14 @@ export default {
         let channelUuid = operatorData.id;
         console.log(operatorData);
         if (operatorData.isOnline) {
-          this.$emit("playRtsp", channelUuid, "main", operatorData);
+          this.$emit(
+            "playRtsp",
+            channelUuid,
+            "main",
+            operatorData,
+            this.index,
+            true
+          );
         } else {
           this.$message.error("设备不在线！");
         }

@@ -106,6 +106,11 @@ var resourceType = {
 };
 let treeIcons = [
   {
+    label: "文件",
+    value: "device",
+    icon: "doc"
+  },
+  {
     label: "IPC",
     value: "ipc",
     icon: "ip"
@@ -219,7 +224,7 @@ window.config = {
       strValue: "http://www.gato.com.cn/News/index.html"
     }
   ],
-  door_machine: [{ value: "door_machine", label: "门口机" }],
+  door_machine: [],
   video: [{ value: "ipc", label: "IPC" }],
   alarm: [],
   vistor: [

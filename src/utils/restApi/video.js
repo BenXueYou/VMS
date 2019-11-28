@@ -53,6 +53,8 @@ export default {
   }${ip}/media-stream/v1.0/media_stream_transfer/video/previewInfo`,
   // 获取视频通道树
   getPlayTreeUrl: `${zwUrlPrefix}/video/playback/tree`,
+  // 根据组织或者设备获取下面的在线通道
+  getOnlineChannelUrl: `${zwUrlPrefix}/open/video/channel/list `,
   getPreviewTreeUrl: `${zwUrlPrefix}/auth/organization/tree`
   // 先使用下面的url测试
   // videoTreeUrl: `http://192.168.9.164:9000/project/a2445ed3830b4a3d9607ef502e8333bf/organization/video/children`
