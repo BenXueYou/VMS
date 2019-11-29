@@ -2,7 +2,7 @@
 	<el-dialog
 		:title="title"
 		@close="close"
-		width="1000px"
+		width="1100px"
 		:class="{'dialogCenter':true}"
 		:close-on-click-modal="false"
 		:append-to-body="true"
@@ -45,7 +45,7 @@
 				</el-tabs>
 			</div>
 			<div class="right">
-				<el-radio-group v-model="channelType">
+				<el-radio-group v-model="resourceType" @change="resourceTypeChange">
 					<template v-for="(item,index) in rightTabArr">
 						<el-radio-button :key="index" :label="item.id" :name="item.id">{{item.label}}</el-radio-button>
 					</template>
@@ -134,6 +134,7 @@ export default {
   },
   data() {
     return {
+      resourceTypeArr: window.config.resourceType,
       isShow: false,
       activeName: "video",
       defaultProps: {
@@ -146,7 +147,7 @@ export default {
       cnt: 0,
       checkedChannelArr: [],
       rightTabArr: data["video"],
-      channelType: "device"
+      resourceType: "device"
     };
   },
   methods: {
@@ -160,19 +161,26 @@ export default {
     },
     // 通道资源的静态资源权限
     getChannelAuth() {
-      // api.
+      api
+        .getResource({ resourceType: this.resourceType })
+        .then(res => {
+          if (res.data.success) {
+            console.log(res.data.data);
+          }
+        })
+        .catch(() => {});
     },
     // 处理选中的数据源
     handleCheckChannelData(data, isBool) {
       if (isBool) {
         // 判断树类型
         // 构造当前资源类型权限对象
-        let channelAuthObj = this.rightTabArr.filter(item => {
-          return item.id === this.channelType;
-        })[0].children;
-        Object.assign(data, channelAuthObj);
+        // let channelAuthObj = this.rightTabArr.filter(item => {
+        //   return item.id === this.resourceType;
+        // })[0].children;
+        // Object.assign(data, channelAuthObj);
         this.checkedChannelArr.push(data);
-        console.log(this.checkedChannelArr);
+        // console.log(this.checkedChannelArr);
       } else {
         // 删除
         this.checkedChannelArr.splice(
@@ -236,11 +244,13 @@ export default {
     },
     // 点击tab筛选树的类型
     handleClick(tab, event) {
-      console.log(tab, event);
-      // 这里添加判断，如果点击的不是要选中的节点类型，则不进行处理
-      this.rightTabArr = data[tab.name];
-      this.channelType = this.rightTabArr[0].id;
-      console.log(this.channelType);
+      this.rightTabArr = this.resourceTypeArr[tab.name];
+      this.resourceType = this.rightTabArr[0].id;
+      // TODO:筛选通道类型，左侧选中的树的节点
+    },
+    // 点击右边按钮，改变资源类型
+    resourceTypeChange() {
+      this.getChannelAuth();
     },
     close() {
       this.$emit("update:visible", false);
@@ -258,6 +268,7 @@ export default {
 	color: #dddddd;
 }
 .showResource .right .el-radio-group {
+  width: 70%;
 	display: flex;
 	justify-content: space-between;
 }
