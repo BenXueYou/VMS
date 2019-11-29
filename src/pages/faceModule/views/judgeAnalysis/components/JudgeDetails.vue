@@ -215,6 +215,7 @@ export default {
       this.$judgeHttp
         .getJudgeDetails({
           faceUuid: this.modelItem.faceUuid,
+          faceModelUuid: this.modelItem.faceModelUuid,
           channelUuids: this.checkedDevices ? this.checkedDevices.join(",") : ""
         })
         .then(res => {
