@@ -1,6 +1,5 @@
 <template>
-<<<<<<< HEAD
-  <el-dialog :title='title'
+  <el-dialog :title="title"
              @close="close"
              width="1000px"
              :class="{'dialogCenter':true}"
@@ -10,17 +9,13 @@
              :visible.sync="isShow">
     <div class="mywrap">
       <div class="left">
-        <el-input v-model="treeFilter"
-                  @change="changeFilterText"
-                  placeholder="搜索关键词"></el-input>
         <el-tabs v-model="activeName"
-                 @tab-click="handleClickaaa">
+                 @tab-click="handleClick">
           <el-tab-pane label="视频"
                        class="i-tree"
                        name="video">
             <el-tree :load="getNewTree"
                      node-key="id"
-                     v-if="isShow"
                      :show-checkbox="false"
                      :props="defaultProps"
                      :expand-on-click-node="false"
@@ -28,7 +23,7 @@
                      :filter-node-method="filterNode"
                      lazy>
               <div class="custom-tree-node i-tree-item"
-                   slot-scope="{ node}">
+                   slot-scope="node">
                 <div class="i-tree-item-icon">
                   {{ node.label }}
                   <template>
@@ -36,170 +31,31 @@
                          src="@/assets/images/doorAccess/checked_icon.png"
                          width="10.9px"
                          height="9px"
-                         style="margin-right: 20%;">
+                         style="margin-right: 20%;" />
                   </template>
                 </div>
               </div>
             </el-tree>
           </el-tab-pane>
           <el-tab-pane label="门禁"
-                       name="door">
-            <el-tree :load="getNewTree"
-                     node-key="id"
-                     v-if="isShow"
-                     :show-checkbox="false"
-                     :props="defaultProps"
-                     :expand-on-click-node="false"
-                     @node-click="nodeClick"
-                     :filter-node-method="filterNode"
-                     lazy>
-              <div class="custom-tree-node i-tree-item"
-                   slot-scope="{ node}">
-                <div class="i-tree-item-icon">
-                  {{ node.label }}
-                  <template>
-                    <img v-if="(node.checked)"
-                         src="@/assets/images/doorAccess/checked_icon.png"
-                         width="10.9px"
-                         height="9px"
-                         style="margin-right: 20%;">
-                  </template>
-                </div>
-              </div>
-            </el-tree>
-          </el-tab-pane>
+                       name="door"></el-tab-pane>
           <el-tab-pane label="报警"
-                       name="alarm">
-            <el-tree :load="getNewTree"
-                     node-key="id"
-                     v-if="isShow"
-                     :show-checkbox="false"
-                     :props="defaultProps"
-                     :expand-on-click-node="false"
-                     @node-click="nodeClick"
-                     :filter-node-method="filterNode"
-                     lazy>
-              <div class="custom-tree-node i-tree-item"
-                   slot-scope="{ node}">
-                <div class="i-tree-item-icon">
-                  {{ node.label }}
-                  <template>
-                    <img v-if="(node.checked)"
-                         src="@/assets/images/doorAccess/checked_icon.png"
-                         width="10.9px"
-                         height="9px"
-                         style="margin-right: 20%;">
-                  </template>
-                </div>
-              </div>
-            </el-tree>
-          </el-tab-pane>
+                       name="alarm"></el-tab-pane>
           <el-tab-pane label="访客机"
-                       name="visitor">
-            <el-tree :load="getNewTree"
-                     node-key="id"
-                     v-if="isShow"
-                     :show-checkbox="false"
-                     :props="defaultProps"
-                     :expand-on-click-node="false"
-                     @node-click="nodeClick"
-                     :filter-node-method="filterNode"
-                     lazy>
-              <div class="custom-tree-node i-tree-item"
-                   slot-scope="{ node}">
-                <div class="i-tree-item-icon">
-                  {{ node.label }}
-                  <template>
-                    <img v-if="(node.checked)"
-                         src="@/assets/images/doorAccess/checked_icon.png"
-                         width="10.9px"
-                         height="9px"
-                         style="margin-right: 20%;">
-                  </template>
-                </div>
-              </div>
-            </el-tree>
-          </el-tab-pane>
+                       name="visitor"></el-tab-pane>
         </el-tabs>
       </div>
-      <div class="right">
-        <el-tabs v-model="myname"
-                 @tab-click="handleClick">
-          <el-tab-pane :label="item.label"
-                       class="i-tree"
-                       v-for="(item,index) in switchTabs"
-                       :key="index"
-                       :name="item.id">
-            <choose-pannel :enumArr="allData"
-                           :allData="defaultExpandedKeys"></choose-pannel>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+      <div class="right">2</div>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import * as api from "@/pages/user/http/ajax.js";
-import choosePannel from "@/pages/user/components/choosePannel";
-=======
-	<el-dialog
-		:title="title"
-		@close="close"
-		width="1000px"
-		:class="{'dialogCenter':true}"
-		:close-on-click-modal="false"
-		:append-to-body="true"
-		class="showResource"
-		:visible.sync="isShow"
-	>
-		<div class="mywrap">
-			<div class="left">
-				<el-tabs v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane label="视频" class="i-tree" name="video">
-						<el-tree
-							:load="getNewTree"
-							node-key="id"
-							:show-checkbox="false"
-							:props="defaultProps"
-							:expand-on-click-node="false"
-							@node-click="nodeClick"
-							:filter-node-method="filterNode"
-							lazy
-						>
-							<div class="custom-tree-node i-tree-item" slot-scope="node">
-								<div class="i-tree-item-icon">
-									{{ node.label }}
-									<template>
-										<img
-											v-if="(node.checked)"
-											src="@/assets/images/doorAccess/checked_icon.png"
-											width="10.9px"
-											height="9px"
-											style="margin-right: 20%;"
-										/>
-									</template>
-								</div>
-							</div>
-						</el-tree>
-					</el-tab-pane>
-					<el-tab-pane label="门禁" name="door"></el-tab-pane>
-					<el-tab-pane label="报警" name="alarm"></el-tab-pane>
-					<el-tab-pane label="访客机" name="visitor"></el-tab-pane>
-				</el-tabs>
-			</div>
-			<div class="right">2</div>
-		</div>
-	</el-dialog>
-</template>
-
-<script>
 import * as api from "../http/ajax";
->>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
 export default {
   name: "resouceTree",
   components: {
-    choosePannel
+    // choosePannel
   },
   props: {
     visible: {
@@ -346,18 +202,15 @@ export default {
     },
     getTreeData(obj) {
       return new Promise(resolve => {
-<<<<<<< HEAD
-=======
         let obj = {
           viewType: "video", // 不填则查所有类型资源 门禁 door、视频 video、报警 alarm、访客机 visitor
           treeStructure:
-						"orgNode$orgType|devNode[$...devType]|chnNode[[$...chnType]]", // 树结构，指定树的类型及树的结构
+            "orgNode$orgType|devNode[$...devType]|chnNode[[$...chnType]]", // 树结构，指定树的类型及树的结构
           authEnable: false, // 是否开启权限过滤，默认开启true
           parentUuid: "fb6a1a0ad9b444bba4d5b5be1015c43d", // 查询的树节点UUID，默认根节点
           parentType: "orgNode", // 查询的树节点类型。组织 org[默认]、设备 dev、通道 chn
           recursiveEnable: true // 是否递归查询子节点的资源，默认不查询false
         };
->>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
         api
           .getNewTree(obj)
           .then(res => {
@@ -436,51 +289,36 @@ $width: 300px;
   box-sizing: border-box;
 }
 .showResource {
-<<<<<<< HEAD
   .mywrap {
     display: flex;
     min-height: 500px;
     .left {
       flex: 3;
-      @include paddinga;
     }
     .right {
       flex: 7;
-      @include paddinga;
     }
   }
-=======
-	.mywrap {
-		display: flex;
-		min-height: 500px;
-		.left {
-			flex: 3;
-		}
-		.right {
-			flex: 7;
-		}
-	}
->>>>>>> 1f4d166c50330c1f6910fd5b444d94d687a0c11d
 }
 .i-tree {
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	padding: 10px 0;
-	box-sizing: border-box;
-	overflow: auto;
-	.i-tree-item {
-		width: 100%;
-		.i-tree-item-icon {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			.action-icon {
-				margin-left: auto;
-				margin-right: 10px;
-				cursor: pointer;
-			}
-		}
-	}
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 10px 0;
+  box-sizing: border-box;
+  overflow: auto;
+  .i-tree-item {
+    width: 100%;
+    .i-tree-item-icon {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .action-icon {
+        margin-left: auto;
+        margin-right: 10px;
+        cursor: pointer;
+      }
+    }
+  }
 }
 </style>
