@@ -1,5 +1,5 @@
 <template>
-	<div class="control-main-add">
+	<div class="model-main-add">
 		<select-face
 			:isShow="isShowAddFaceDB"
 			ref="selectFace"
@@ -69,6 +69,7 @@
 										v-model="item.startTime"
 										style="width: 100px"
 										v-if="index === 0"
+                    :clearable="false"
                     @change="changeStartTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
@@ -80,6 +81,7 @@
 										v-model="item.startTime"
 										style="width: 100px"
 										v-else
+                    :clearable="false"
                     @change="changeStartTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
@@ -91,6 +93,7 @@
 									<el-time-picker
 										v-model="item.endTime"
 										style="width: 100px"
+                    :clearable="false"
                     @change="changeEndTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
@@ -688,12 +691,15 @@ export default {
 };
 </script>
 <style lang="scss">
-.control-main-add {
+.model-main-add {
 	.el-form-item__label {
 		font-family: PingFangSC-Regular;
 		font-size: 12px !important;
 		color: #dddddd;
 	}
+  .el-input__prefix {
+    transform: translateX(-130%);
+  }
 }
 .popverClass {
 	width: 50%;
@@ -716,7 +722,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-.control-main-add {
+.model-main-add {
 	width: 100%;
 	height: 100%;
 	padding: 1.2% 1.5%;
