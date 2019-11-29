@@ -58,7 +58,7 @@
 				<el-table-column prop="moduleName" label="模块" :show-overflow-tooltip="true"></el-table-column>
 				<el-table-column prop="eventType" label="类型">
 					<template slot-scope="scope">
-						{{$common.getEnumItemName('system_log_event',scope.row.eventType)}}
+						{{$common.getEnumItemName('config',scope.row.eventType)}}
 					</template>
 				</el-table-column>
 				<el-table-column prop="detail" label="操作内容"></el-table-column>
