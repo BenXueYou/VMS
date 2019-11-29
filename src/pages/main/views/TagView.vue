@@ -115,6 +115,10 @@ export default {
   .el-menu.el-menu--horizontal {
     border-bottom: 0px !important;
   }
+  .el-menu--horizontal>.el-menu-item {
+    height: 50px;
+    line-height: 50px;
+  }
   .el-menu-demo {
     .el-menu-item {
       font-family: PingFangSC-Regular;
