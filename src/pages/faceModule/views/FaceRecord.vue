@@ -192,14 +192,12 @@
 		<!-- ======================================================= 人脸 弹 窗 ========================================================== -->
 		<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
 			<div class="leftImgBox">
-				<!-- <img :src="$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)" alt /> -->
 				<el-image
 					:src="$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)"
 					:preview-src-list="[$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)]"
 				></el-image>
 			</div>
 			<div class="rightImgBox">
-				<!-- <img :src="$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)" alt /> -->
 				<el-image
 					:src="$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)"
 					:preview-src-list="[$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)]"
@@ -605,7 +603,7 @@ export default {
 	height: 100%;
 }
 .faceRecord .reccordCellClass .FRelPopoverClass {
-	min-width: 118px;
+	min-width: 112px;
 	position: absolute !important;
 	bottom: 0px !important;
 	color: #ffffff !important;
@@ -768,8 +766,8 @@ export default {
 	width: 800px;
 	height: 540px;
 }
-.el-pagination button,
-.el-pagination span:not([class*="suffix"]) {
+.faceRecord .el-pagination button,
+.faceRecord .el-pagination span:not([class*="suffix"]) {
 	display: inline-block;
 	font-size: 14px;
 	min-width: 35.5px;
@@ -828,7 +826,7 @@ export default {
 	height: 28px;
 	padding: 2px;
 }
-.el-picker-panel__footer {
+.faceRecord .el-picker-panel__footer {
 	border-top: 1px solid #e4e4e4;
 	padding: 4px;
 	text-align: right;
@@ -842,18 +840,18 @@ export default {
 	-ms-transform: rotate(90deg);
 	-webkit-transform: rotate(90deg);
 }
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+.faceRecord .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
 	color: #28ffbb;
 	background-color: transparent;
 }
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+.faceRecord.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
 	background: transparent;
 }
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+.faceRecord .el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
 	background: rgba(40, 255, 187, 0.15);
 }
-.el-select-dropdown__item.hover,
-.el-select-dropdown__item:hover {
+.faceRecord .el-select-dropdown__item.hover,
+.faceRecord .el-select-dropdown__item:hover {
 	background-color: transparent;
 }
 
@@ -871,7 +869,7 @@ export default {
 	box-sizing: border-box;
 	cursor: pointer;
 }
-.el-select-dropdown {
+.faceRecord .el-select-dropdown {
 	position: absolute;
 	z-index: 1001;
 	border: 1px solid #e4e7ed;
@@ -884,12 +882,12 @@ export default {
 	box-sizing: border-box;
 	margin: 5px 0;
 }
-.el-select {
+.faceRecord .el-select {
 	width: 50%;
 	display: inline-block;
 	position: relative;
 }
-.el-select .el-tag {
+.faceRecord .el-select .el-tag {
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	border-color: transparent;
@@ -897,7 +895,7 @@ export default {
 	color: #e4e7ed;
 	background-color: transparent;
 }
-.el-picker-panel {
+.faceRecord .el-picker-panel {
 	background: #202127;
 	box-shadow: 2px 2px 16px 0 rgba(2, 0, 14, 0.3);
 	color: #606266;
@@ -924,7 +922,6 @@ export default {
 	outline: 0;
 	padding: 0 0px 0 15px;
 	/* text-align: center; */
-	-webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 	transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 	width: 100%;
 }
@@ -965,7 +962,7 @@ export default {
 	flex-wrap: wrap;
 	justify-content: flex-start;
 	background: rgba(36, 39, 42, 1);
-	padding: 10px 0px 0px 10px;
+	padding: 10px 0px 0px 1.5%;
 	box-sizing: border-box;
 	align-content: flex-start;
 }
@@ -981,7 +978,7 @@ export default {
 }
 .reccordCellClass {
 	display: inline-block;
-	border: 1px solid rgba(11, 33, 38, 1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	margin: 7px 8px;
 	background: rgba(2, 0, 14, 0.2);
 	position: relative;

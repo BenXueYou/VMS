@@ -446,9 +446,9 @@ export default {
 .OVOBodyLeft,
 .OVOBodyRight,
 .OVOBodyMiddle {
-	width: 14%;
-	min-width: 165px;
-	height: 75%;
+	width: 220px;
+	/* min-width: 165px; */
+	height: 280px;
 }
 .clearImageIcon {
 	position: absolute;

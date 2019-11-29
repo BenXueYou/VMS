@@ -30,16 +30,17 @@
 						<el-table-column label="操作">
 							<template slot-scope="scope">
 								<el-button @click.stop="editFaceLib(scope.row)" type="text" size="small">
-									<i class="el-icon-edit-outline"></i>
+									<!-- <i class="el-icon-edit-outline"></i> -->
 									编辑
 								</el-button>
 
 								<el-button
 									type="text"
 									size="small"
+									class="deleteBtnClass"
 									@click.stop="openDeleteDialog('deletefaceLib',scope.row)"
 								>
-									<i class="el-icon-delete"></i>
+									<!-- <i class="el-icon-delete"></i> -->
 									删除
 								</el-button>
 							</template>
@@ -52,30 +53,32 @@
 			<div v-show="!faceDBDialogAddVisible" class="rightheader">
 				<ul>
 					<li>
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<!-- <img src="@/assets/images/faceModule/onepeople.png" alt /> -->
+						<div class="header-line"></div>
 						{{libraryName?libraryName:'库名称'}}
 					</li>
 					<li>
 						<el-checkbox v-model="selectall" @change="selectAll">本页全选</el-checkbox>
 					</li>
 					<li class="active" @click="addfile">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/add.png" alt />
 						<span>新增</span>
 					</li>
 					<li class="active" @click="deletefile">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+            <!-- <i class="el-icon-delete"></i> -->
+						<img src="@/assets/images/delete2.png" alt />
 						<span>删除</span>
 					</li>
 					<li class="active" @click="exportExcel2">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/expert.png" alt />
 						<span>导出</span>
 					</li>
 					<li class="active" @click="faceLibUpdateRecord">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/facedb_update_history.png" alt />
 						<span>更新历史</span>
 					</li>
 					<li class="active" @click="updateLibraryTask">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/facedb_update.png" alt />
 						<span>库更新</span>
 					</li>
 
@@ -301,7 +304,7 @@ export default {
         console.log(newVal, "this.selectLibRow====", this.selectLibRow);
       },
       deep: true
-    },
+    }
   },
   methods: {
     queryAct(data) {

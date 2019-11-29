@@ -39,6 +39,14 @@
 		</div>
 		<div class="FAMTableListFooter">
 			<el-pagination
+				@current-change="currentChange"
+				:current-page="pageNow"
+				layout="total,prev, pager, next,jumper"
+				:page-size="pageSize"
+				:total="pageCount"
+				background
+			></el-pagination>
+			<!-- <el-pagination
 				background
 				layout="prev, pager, next"
 				:page-size="pageSize"
@@ -57,7 +65,7 @@
 					@keyup.enter.native="blur"
 					type="number"
 				></el-input>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </template>
@@ -155,7 +163,7 @@ export default {
 		margin-top: 17px;
 	}
 	.el-pagination {
-		margin-right: 180px;
+		margin-right: 2px;
 		margin-top: 10px;
 		float: right;
 	}

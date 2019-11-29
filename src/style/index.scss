@@ -312,19 +312,20 @@ img,
   content: "下一页";
   font-size: 12px;
   font-weight: 100;
-  color: #999999;
+  color: #888888;
 }
 
 .el-pagination__total {
   font-size: 12px;
   font-weight: 100;
-  color: #999999;
+  color: #888888;
   /*margin: 0 27px 0 27px;*/
 }
 
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.1);
+  background:rgba(40,255,187,0.15);
+  border: 1px solid rgba(32,204,150,0.80);
 }
 
 .el-pagination.is-background .btn-next,
