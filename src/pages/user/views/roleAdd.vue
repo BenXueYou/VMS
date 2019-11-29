@@ -163,7 +163,7 @@ import treePanelDialog from "@/pages/user/components/treePanelDialog";
 import authTree from "@/pages/user/components/authTree";
 import resouceTree from "@/pages/user/components/resouceTree";
 export default {
-  name: "accountAdd",
+  name: "roleAdd",
   components: {
     treePanelDialog,
     authTree,
@@ -221,7 +221,7 @@ export default {
       this.authTreeVisible = true;
     },
     getResource() {
-      this.showResouce = true;
+      this.showResouce = !this.showResouce;
       // api.getResource({
       //   roleUuid: this.roleUuid,
       //   resourceType: ""
@@ -231,6 +231,7 @@ export default {
       this.submit(false);
     },
     confirm() {
+      debugger;
       this.submit();
     },
     close() {
@@ -271,7 +272,7 @@ export default {
       // 通过判断roleUuid是否为空，来判断是新增还是修改
       let data = this.rebaseData();
       if (!this.roleUuid) {
-        api.addUserDetailUrl(data).then(res => {
+        api.addRoleDetailUrl(data).then(res => {
           if (res.data.success) {
             this.$message.success("添加成功!");
             if (isBackTableList) {
@@ -282,7 +283,7 @@ export default {
           }
         });
       } else {
-        api.editUserDetailUrl(data).then(res => {
+        api.editRoleDetailUrl(data).then(res => {
           if (res.data.success) {
             this.$mesage.success("保存成功！");
             if (isBackTableList) {
@@ -296,7 +297,7 @@ export default {
     },
     getData() {
       // 根据roleUuid来获取数据
-      api.getUserDetail({ roleUuid: this.roleUuid }).then(res => {
+      api.getRoleDetail({ roleUuid: this.roleUuid }).then(res => {
         if (res.data.success) {
           let data = res.data.data;
           // "roleUuid": "string",  // 角色uuid

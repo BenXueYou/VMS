@@ -194,9 +194,12 @@ export default {
       this.isCurrentShow = val;
       if (val) {
         this.treeList = this.treeData;
-        this.formatData();
       }
-    }
+      this.formatData();
+    },
+    // initSelectData(val){
+    //   this.formatData();
+    // },
   }
 };
 </script>

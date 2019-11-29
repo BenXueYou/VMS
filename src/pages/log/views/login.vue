@@ -149,7 +149,7 @@ export default {
       console.log(that.pageSize);
     });
     // this.initData();
-    this.eventTypeOptions = this.$common.getEnumByGroupStr("system_log_event");
+    this.eventTypeOptions = this.$common.getEnumByGroupStr("config");
   },
   activated() {
     this.currentPage = 1;

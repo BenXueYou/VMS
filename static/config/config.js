@@ -1,4 +1,3 @@
-// GatoCloud_V1.1_h5_iac_Build(5730)
 var protocolHeader = window.location.protocol;
 var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
@@ -8,8 +7,10 @@ var DEBUG = "TEST";
 if (DEBUG == "DEBUG") {
   // 测试环境
   // ip = '180.167.210.2:51880';
-  ip = "192.168.9.190:15000";
-  websocketIp = "192.168.9.190:15007";
+  // ip = "192.168.9.190:15000";
+  // websocketIp = "192.168.9.190:15007";
+  ip = "192.168.9.102:15000";
+  websocketIp = "192.168.9.102:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -30,18 +31,15 @@ if (DEBUG == "DEBUG") {
   if (protocolHeader === "https:") {
     ip = hostname;
     websocketIp = hostname;
-    if (window.location.port) ip += ":443";
-    if (window.location.port) websocketIp += ":443";
   } else {
-    ip = hostname + ":51880";
-    websocketIp = "180.167.210.2:51881";
+    ip = hostname + ":15000";
+    websocketIp = hostname + ":80";
   }
   var imgUrlStr = protocolHeader + "//" + ip;
   imageUrl =
     imgUrlStr +
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
-// 设备资源的类型前端字典表:front end so difficult
 var resourceType = {
   video: [
     {
@@ -67,7 +65,7 @@ var resourceType = {
       label: "门禁设备"
     },
     {
-      id: "auth_door_access",
+      id: "auth_door_monitor",
       label: "门禁点"
     },
     {
@@ -77,6 +75,10 @@ var resourceType = {
     {
       id: "auth_door_output",
       label: "输出"
+    },
+    {
+      id: "auth_door_readhead",
+      label: "读头"
     }
   ],
   alarm: [
@@ -105,7 +107,8 @@ var resourceType = {
   ]
 };
 window.config = {
-  resourceType,
+  resourceType: resourceType,
+  DeBug: true,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",
@@ -125,6 +128,7 @@ window.config = {
   imageUrl: imageUrl,
   forbidBtnArr: ["uncome", "unleave"],
   signOffBtnArr: ["unleave", "leave_overtime"],
+  PicSourceType: "facelog",
   alinkArr: [
     {
       strName: "关于广拓",

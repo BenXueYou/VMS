@@ -51,15 +51,17 @@
 				@selection-change="handleSelectionChange"
 			>
 				<el-table-column type="index" :index="tableIndex" label="序号" width="95"></el-table-column>
-				<el-table-column prop="visitorName" label="账号" width="120"></el-table-column>
-				<el-table-column prop="gender" label="姓名" width="128">
-					<template slot-scope="scope">{{$common.getEnumItemName("gender", scope.row.gender)}}</template>
+				<el-table-column prop="accountName" label="账号" width="120"></el-table-column>
+				<el-table-column prop="userName" label="姓名" width="128">
+					<!-- <template slot-scope="scope">{{$common.getEnumItemName("gender", scope.row.gender)}}</template> -->
 				</el-table-column>
-				<el-table-column prop="phoneNo" label="配置IP"></el-table-column>
-				<el-table-column prop="plateNo" label="模块" :show-overflow-tooltip="true"></el-table-column>
-				<el-table-column prop="reason" label="类型"></el-table-column>
-				<el-table-column prop="reason" label="详情"></el-table-column>
-				<el-table-column prop="reason" label="配置时间"></el-table-column>
+				<el-table-column prop="clientIp" label="配置IP"></el-table-column>
+				<el-table-column prop="moduleName" label="模块" :show-overflow-tooltip="true"></el-table-column>
+				<el-table-column label="类型">
+				<template slot-scope="scope">{{$common.getEnumItemName("config", scope.row.eventType)}}</template>
+				</el-table-column>
+				<el-table-column prop="detail" label="详情"></el-table-column>
+				<el-table-column prop="eventTime" label="配置时间"></el-table-column>
 			</el-table>
 			<!----------------------------------表格分页器---------------------------------->
 			<div class="footer">
@@ -143,11 +145,11 @@ export default {
         endTime: this.validateTimeEnd,
         pageSize: this.pageSize,
         page: this.currentPage,
-        accountName: this.accountName,
+        ccountName: this.accountName,
         logType: 'config',
         IP: this.loginIp,
         modelUuid: null,
-        eventType: this.eventType
+        eventType: this.eventTypea
       };
       Object.assign(params, this.otherSearchData);
       console.log(params);

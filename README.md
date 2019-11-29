@@ -1,44 +1,135 @@
 ## 项目结构
-    ├─assets                图片 css 等一些资源文件
-    ├─common                公共组件组件   
-    ├─pages                 项目模块资源
-    │  ├─doorControl          门禁模块资源
-    │  │  ├─components          模块组件
-    │  │  ├─utils               模块数据交互
-    │  │  └─views               模块页面
-    │  ├─equipmentMange       设备模块
-    │  │  ├─components       
-    │  │  ├─utils          
-    │  │  └─views
-    │  ├─home                 首页
+    ├─assets                                  图片资源
+    │  ├─icon
+    │  └─images
+    │      ├─building
+    │      ├─doorAccess
+    │      ├─equipment
+    │      ├─faceModule
+    │      ├─login
+    │      ├─personMange
+    │      ├─resident
+    │      └─vistorManage
+    ├─common                                 公共组件
+    │  ├─baseComponent
+    │  ├─js
+    │  └─package                             自定义树控件
+    │      ├─GtBigImage
+    │      │  └─src
+    │      ├─GtButton
+    │      │  └─src
+    │      ├─GtContextMenu
+    │      │  └─src
+    │      ├─GtScroll
+    │      │  └─src
+    │      ├─GtTimePicker
+    │      │  └─src
+    │      └─GtTree
+    │          └─src
+    ├─pages                                  模块代码
+    │  ├─alarmDialog                         报警弹窗
+    │  ├─buildingsHouse                      楼栋房屋
     │  │  ├─components
     │  │  ├─utils
     │  │  └─views
-    │  ├─main                 主页
+    │  ├─doorControl                         门禁控制
+    │  │  ├─components
+    │  │  │  ├─doorAccessConfig
+    │  │  │  └─doorAccessSetting
+    │  │  ├─utils
+    │  │  └─views
+    │  │      ├─doorAccessConfig
+    │  │      ├─doorAccessSetting
+    │  │      ├─doorStatus
+    │  │      └─recordSearch
+    │  ├─equipmentMange                       设备管理
+    │  │  ├─components
+    │  │  │  └─RemoteControlDialogContent     远程控制
+    │  │  ├─utils
+    │  │  └─views
+    │  ├─faceModule                           人脸识别
+    │  │  ├─components
+    │  │  └─views
+    │  │      ├─companion                     同行人
+    │  │      │  ├─util
+    │  │      │  └─view
+    │  │      ├─facealarm                     人脸报警
+    │  │      │  └─basic
+    │  │      ├─faceControl                   人脸布控
+    │  │      │  ├─components
+    │  │      │  ├─utils
+    │  │      │  └─view
+    │  │      ├─facedb                        人脸库
+    │  │      │  └─basic
+    │  │      ├─intelModel                    智能模型
+    │  │      │  ├─components
+    │  │      │  ├─utils
+    │  │      │  └─view
+    │  │      ├─judgeAnalysis                 研判报警
+    │  │      │  ├─components
+    │  │      │  ├─utils
+    │  │      │  └─view
+    │  │      ├─moduleCount                    模型统计
+    │  │      │  ├─components
+    │  │      │  ├─utils
+    │  │      │  └─view
+    │  │      ├─personTrace                    人员轨迹
+    │  │      │  ├─components
+    │  │      │  ├─utils
+    │  │      │  └─view
+    │  │      ├─searchFaceWithFace             以脸搜脸
+    │  │      │  ├─utils
+    │  │      │  └─view
+    │  │      ├─settings                       基础设置
+    │  │      │  ├─util
+    │  │      │  └─view
+    │  │      └─statisticalForms               统计分析
+    │  │          ├─util
+    │  │          └─view
+    │  ├─home                              首页tab组件                             
     │  │  ├─components
     │  │  ├─utils
     │  │  └─views
-    │  |─personMange          员工
-    │  |  ├─components
-    │  |  ├─utils
-    │  |  └─views
-    │  |─unitMange            单位
-    │  |  ├─components
-    │  |  ├─utils
-    │  |  └─views
-    │  |─buildingsHouse       楼栋房屋
-    │  |  ├─components
-    │  |  ├─utils
-    │  |  └─views
-    │  └─residentManage       居民
-    │     ├─components
-    │     ├─utils
-    │     └─views
-    ├─router                  路由资源
-    ├─store                   数据持久化资源
-    │  └─modules              模块数据持久化
-    ├─style                   公共组件样式
-    └─utils                   公共js资源
+    │  ├─login                             登陆页
+    │  │  ├─utils
+    │  │  └─views
+    │  ├─main                              首页顶部tab组件
+    │  │  ├─components
+    │  │  ├─utils
+    │  │  └─views
+    │  ├─personMange                       员工管理
+    │  │  ├─components
+    │  │  ├─utils
+    │  │  └─views
+    │  ├─projectManage                     多项目弹窗
+    │  ├─residentManage                    居民管理
+    │  │  ├─components
+    │  │  ├─utils
+    │  │  └─views
+    │  ├─unitMange                         单位管理
+    │  │  ├─components
+    │  │  ├─utils
+    │  │  └─views
+    │  └─vistorMange                       访客管理
+    │      ├─components
+    │      │  ├─vistorAccess
+    │      │  ├─vistorBlacklist
+    │      │  ├─vistorRecord
+    │      │  └─vistorSet
+    │      ├─utils
+    │      │  └─vistorAccess
+    │      └─views
+    │          ├─vistorAccess
+    │          ├─vistorBlacklist
+    │          ├─vistorRecord
+    │          └─vistorSet
+    ├─router                              路由
+    │  └─modules
+    ├─store                               vuex
+    │  └─modules                          
+    ├─style                               全局样式  
+    └─utils                               全局函数
+        └─restApi                         全局API
 
 
 ## common目录下面公共组件的使用方法
@@ -71,11 +162,11 @@
 
 ### props属性
 | 参数        | 说明                   | 类型    |
-| ----------- | ---------------------- | ------- |
+| ----------- | ----------------------| --------|
 | title       | 弹窗标题               | string  |
 | width       | 弹窗宽度               | string  |
 | visible     | 是否显示弹窗           | boolean |
-| confirmText | 提示用户是否确定的文本 | string  |
+| confirmText | 提示用户是否确定的文本  | string  |
 ### 事件
 
 | 事件名称 | 说明               | 回调参数 |
@@ -218,21 +309,21 @@ clickmenu监听点击右边菜单事件：返回个对象({isLastOne,node,value,
       2. label 表示树类型文字描述，在tab按键显示
       3. isTag 表示树类型是否是标签树 true 表示为标签树 ，默认false
       4. treeType 表示树的类型
-        > 1、person     表示该树为 员工管理 组织架构树
-        > 2、orgAndDev  表示该树为 设备 组织架构树
-        > 3、resident   表示该树为 楼栋房屋 基建树
-        > 4、department 表示该树为 员工管理 组织架构树 末节点为部门
+        - person     表示该树为 员工管理 组织架构树
+        - orgAndDev  表示该树为 设备 组织架构树
+        - resident   表示该树为 楼栋房屋 基建树
+        - department 表示该树为 员工管理 组织架构树 末节点为部门
         * 当isTag为true时 树不展开 没有末节点
-        > 5、staff      表示该标签树为 员工管理 标签树 
-        > 6、resident   表示该标签树为 居民管理 标签树 
-        > 7、person     表示该标签树为 员工和居民 标签树
-        > 8、device     表示该标签树为 员工和居民 标签树
+        - staff      表示该标签树为 员工管理 标签树 
+        - resident   表示该标签树为 居民管理 标签树 
+        - person     表示该标签树为 员工和居民 标签树
+        - device     表示该标签树为 设备 标签树
 
       *** treeNodeType 表示末节点类型 区分组织架构树的资源类型
-      > 1、door     // 楼栋房屋基建树节点到 门
-      > 2、device   // 组织架构树节点到 设备
-      > 3、staff    // 组织架构树节点到 人员
-      > 4、channel  // 组织树节点到通道 读头
+       - door     // 楼栋房屋基建树节点到 门
+       - device   // 组织架构树节点到 设备
+       - staff    // 组织架构树节点到 人员
+       - channel  // 组织树节点到通道 读头
 
       *** treeLeafType 
           只有treeNodeType === door时 

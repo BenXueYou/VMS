@@ -45,7 +45,7 @@ export function getResource(params) {
     params
   });
 }
-export function getUserList(params) {
+export function getRoleList(params) {
   console.log(params);
   let { getUserListUrl: url } = userUrl;
   console.log(url);
@@ -55,7 +55,7 @@ export function getUserList(params) {
     params
   });
 }
-export function getUserDetail(params) {
+export function getRoleDetail(params) {
   let { getUserDetailUrl: url } = userUrl;
   return axios({
     method: "get",
@@ -63,15 +63,7 @@ export function getUserDetail(params) {
     params
   });
 }
-export function getResourceAuth(params) {
-  let { getResourceAuthUrl: url } = userUrl;
-  return axios({
-    method: "get",
-    url,
-    params
-  });
-}
-export function addUserDetailUrl(data) {
+export function addRoleDetailUrl(data) {
   let { addUserDetailUrl: url } = userUrl;
   return axios({
     method: "POST",
@@ -87,7 +79,7 @@ export function distruiAccout(data) {
     data
   });
 }
-export function editUserDetailUrl(data) {
+export function editRoleDetailUrl(data) {
   let { editUserDetailUrl: url } = userUrl;
   return axios({
     method: "PUT",
@@ -95,7 +87,7 @@ export function editUserDetailUrl(data) {
     data
   });
 }
-export function deleteUser(data) {
+export function deleteRole(data) {
   let { deleteUserUrl: url } = userUrl;
   return axios({
     method: "delete",
@@ -103,7 +95,7 @@ export function deleteUser(data) {
     data
   });
 }
-export function updateUserStatus(data) {
+export function updateRoleStatus(data) {
   let { updateUserStatusUrl: url } = userUrl;
   return axios({
     method: "PUT",
@@ -137,7 +129,7 @@ export function getAccountListApi(data) {
 export function getAccountDetail(data) {
   let url = accountApi.getAccountDetailApi;
   return axios({
-    method: "GET",
+    method: 'GET',
     url,
     params: data
   });
@@ -188,19 +180,17 @@ export function deleteAccountApi(data) {
 export function switchAccountApi(data) {
   let url = accountApi.switchAccountApi;
   return axios({
-    method: "POST",
+    method: "PUT",
     url,
     data
   });
 }
 
 // 账号分配角色
-
 export function parcelRoleAccountApi(data) {
   let url = accountApi.editRoleAccountApi;
-  debugger;
   return axios({
-    method: "POST",
+    method: 'POST',
     url,
     data
   });
