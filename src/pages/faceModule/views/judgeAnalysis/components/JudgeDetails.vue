@@ -228,7 +228,7 @@ export default {
         });
     },
     getJudgeDetailsSuccess(body) {
-      this.infoList = body.data.list;
+      this.infoList = body.data;
     }
   },
   watch: {
