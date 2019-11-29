@@ -299,6 +299,8 @@ export default {
       );
       this.$refs.modelDetails.startTime = this.startTime;
       this.$refs.modelDetails.endTime = this.endTime;
+      this.$refs.modelDetails.faceSimilarity = this.threshold;
+      this.$refs.modelDetails.photoQualitieList = this.photoQualitieList;
       this.isShowDetail = true;
     },
     onCancelDetail() {

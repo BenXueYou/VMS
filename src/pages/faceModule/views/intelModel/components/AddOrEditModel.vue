@@ -1,5 +1,5 @@
 <template>
-	<div class="control-main-add">
+	<div class="model-main-add">
 		<select-face
 			:isShow="isShowAddFaceDB"
 			ref="selectFace"
@@ -69,6 +69,8 @@
 										v-model="item.startTime"
 										style="width: 100px"
 										v-if="index === 0"
+                    :clearable="false"
+                    @change="changeStartTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
 										:picker-options="{
@@ -79,6 +81,8 @@
 										v-model="item.startTime"
 										style="width: 100px"
 										v-else
+                    :clearable="false"
+                    @change="changeStartTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
 										:picker-options="{
@@ -89,6 +93,8 @@
 									<el-time-picker
 										v-model="item.endTime"
 										style="width: 100px"
+                    :clearable="false"
+                    @change="changeEndTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
 										:picker-options="{
@@ -575,7 +581,6 @@ export default {
     },
     transferCheckedChannel(checkedChannel, item) {
       item.channelList = [];
-      console.log(checkedChannel, item);
       item.checkedChannel = this.$common.copyArray(
         checkedChannel,
         item.checkedChannel
@@ -662,7 +667,17 @@ export default {
       if (source.leastNumberOfChannel) {
         allSourceItem.leastNumberOfChannel = source.leastNumberOfChannel;
       }
-    }
+    },
+    changeStartTime(item) {
+      if (item.startTime) {
+        this.$set(item, "startTime", item.startTime.substr(0, 6) + "00");
+      }
+    },
+    changeEndTime(item) {
+      if (item.endTime) {
+        this.$set(item, "endTime", item.endTime.substr(0, 6) + "59");
+      }
+    },
   },
   watch: {
     "formLabelAlign.qualities": {
@@ -676,12 +691,15 @@ export default {
 };
 </script>
 <style lang="scss">
-.control-main-add {
+.model-main-add {
 	.el-form-item__label {
 		font-family: PingFangSC-Regular;
 		font-size: 12px !important;
 		color: #dddddd;
 	}
+  .el-input__prefix {
+    transform: translateX(-130%);
+  }
 }
 .popverClass {
 	width: 50%;
@@ -704,7 +722,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-.control-main-add {
+.model-main-add {
 	width: 100%;
 	height: 100%;
 	padding: 1.2% 1.5%;
