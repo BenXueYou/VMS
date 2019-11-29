@@ -3,7 +3,7 @@
     <div class='table'
          v-show="!isShowEdit">
       <div class="title">
-        账户管理
+        角色管理
       </div>
 
       <div class="content">
@@ -101,13 +101,12 @@
         </div>
       </div>
     </div>
-    <accout-add class='editDiv'
+    <role-add class='editDiv'
                 :roleUuid.sync="roleUuid"
                 :visible="isShowEdit"
                 @close="isShowEdit=false"
                 v-show="isShowEdit">
-
-    </accout-add>
+    </role-add>
     <reset-password :visible.sync="resetPasswordVisible"></reset-password>
     <confirm-dialog :visible.sync="isConfirm"
                     title="提示"
@@ -129,12 +128,12 @@
 import * as api from "@/pages/user/http/ajax.js";
 import treePanelDialog from "@/pages/user/components/treePanelDialog";
 import ConfirmDialog from "@/common/ConfirmDialog";
-import accoutAdd from "@/pages/user/views/accoutAdd";
+import roleAdd from "@/pages/user/views/roleAdd";
 import resetPassword from "@/pages/user/components/resetPassword";
 export default {
   name: "role",
   components: {
-    accoutAdd,
+    roleAdd,
     resetPassword,
     ConfirmDialog,
     treePanelDialog
@@ -223,7 +222,7 @@ export default {
         this.$message.error(`请选中要${enable ? "启用" : "禁用"}的数据！`);
         return;
       }
-      this.updateUserStatus({
+      this.updateRoleStatus({
         roleUuids: this.multipleSelection.map(i => {
           return i.roleUuid;
         }),
@@ -263,7 +262,7 @@ export default {
     getHadAccout(roleUuid) {
       return new Promise((resolve, reject) => {
         api
-          .getUserDetail({ roleUuid: roleUuid })
+          .getRoleDetail({ roleUuid: roleUuid })
           .then(res => {
             if (res.data.success) {
               let data = res.data.data || {};
@@ -294,7 +293,7 @@ export default {
       });
     },
     enableRow(row) {
-      this.updateUserStatus({
+      this.updateRoleStatus({
         roleUuids: [row.roleUuid],
         enalble: 0
       });
@@ -309,7 +308,7 @@ export default {
     },
     getData() {
       api
-        .getUserList({
+        .getRoleList({
           limt: this.pageSize,
           page: this.pageNow,
           roleName: this.roleName || undefined
@@ -323,7 +322,7 @@ export default {
         });
     },
     confirmDelete() {
-      api.deleteUser(this.deleteData).then(res => {
+      api.deleteRole(this.deleteData).then(res => {
         if (res.data.success) {
           this.$message.success("删除成功！");
           this.getData();
@@ -334,8 +333,8 @@ export default {
       this.deleteData = data;
       this.isConfirm = true;
     },
-    updateUserStatus(data) {
-      api.updateUserStatus(data).then(res => {
+    updateRoleStatus(data) {
+      api.updateRoleStatus(data).then(res => {
         if (res.data.success) {
           this.$message.success("修改成功！");
           this.getData();
