@@ -214,7 +214,8 @@ export default {
       this.isLoading = true;
       this.$judgeHttp
         .getJudgeDetails({
-          faceModelAnalysisResultUuid: this.modelItem.faceModelAnalysisResultUuid,
+          faceUuid: this.modelItem.faceUuid,
+          faceModelUuid: this.modelItem.faceModelUuid,
           channelUuids: this.checkedDevices ? this.checkedDevices.join(",") : ""
         })
         .then(res => {
@@ -227,7 +228,7 @@ export default {
         });
     },
     getJudgeDetailsSuccess(body) {
-      this.infoList = body.data.list;
+      this.infoList = body.data;
     }
   },
   watch: {

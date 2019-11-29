@@ -8,9 +8,10 @@
 					:style="`background-color:${recoginizeItem.taskColour?recoginizeItem.taskColour:'#26D39D'};opacity: 0.1`"
 				></div>
 				<el-col :span="18" class="asidListRowFooter textclipsClass">
+					<div class="header-line"></div>
 					<span
 						class="textclipsClass"
-						style="font-size:14px;opacity:1;padding-left:8px;color:#FFFFFF;border-left:2px solid #FFFFFF"
+						style="font-size:14px;opacity:1;padding-left:8px;color:#FFFFFF;"
 						@mouseover="mymouseover"
 						@mouseout="mymouseout"
 						@mousemove="mymousemove"
@@ -54,7 +55,7 @@
 					</div>
 					<div class="asidFontClass">布控照</div>
 				</div>
-				<div class="asidCompareTxtClass" :style="`width:${imgWidth>95?1.2*imgWidth:84}px;`">
+				<div class="asidCompareTxtClass" :style="`width:${imgWidth>95?1.1*imgWidth:84}px;`">
 					<div class="asidFontClass">{{recoginizeItem.staffName||'姓名:-- --'}}</div>
 					<div
 						class="asidFontClass"
@@ -146,6 +147,12 @@ export default {
 };
 </script>
 <style lang="postcss">
+.RecognizeCardClass .header-line {
+	border-left: 2px solid #ffffff;
+	height: 10px;
+	display: inline-block;
+	margin-bottom: 3px
+}
 .RecognizeCardClass .alarmStateTxt {
 	font-family: PingFangSC-Regular;
 	font-size: 12px;
@@ -158,7 +165,7 @@ export default {
 .RecognizeCardClass {
 	height: 100%;
 	box-sizing: border-box;
-	background: rgba(0, 0, 0, 0.13);
+	background: rgba(0, 0, 0, 0.09);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	/* overflow: auto; */
 }
@@ -217,7 +224,7 @@ export default {
 	letter-spacing: 0;
 }
 .RecognizeCardClass .asidListRowBody {
-	padding: 12px 15px 0px;
+	padding: 12px 15px 10px;
 	box-sizing: border-box;
 	display: flex;
 	justify-content: flex-start;
@@ -226,7 +233,6 @@ export default {
 .RecognizeCardClass .asidListRowHeader {
 	height: 35px;
 	box-sizing: border-box;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 	padding: 1.5% 5% 1%;
 }
 .RecognizeCardClass .asidCompareImgBox {

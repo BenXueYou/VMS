@@ -48,7 +48,12 @@
 										:label="channelItem"
 										:key="index"
 									>
-										<img class="radioIcon" :src="getIcon(channelItem.chnOnlineOrNot,channelItem.channelType)" alt srcset />
+										<img
+											class="radioIcon"
+											:src="getIcon(channelItem.chnOnlineOrNot,channelItem.channelType)"
+											alt
+											srcset
+										/>
 										{{channelItem.nickName}}
 									</el-radio>
 								</el-radio-group>
@@ -78,7 +83,7 @@
 					<el-row type="flex" justify="space-between" class="footer-top-row">
 						<el-col :span="8" class="imgTxtClass" style="min-width: 115px;text-align:left;">
 							<img
-								style="margin-right:24px"
+								style="margin-right:12px"
 								:src="footerLiftType?require('@/assets/icon/stream-people.png'):require('@/assets/icon/face-photo.png')"
 							/>
 							<span>{{!footerLiftType?"人脸抓拍数：":"人流量统计结果"}}</span>
@@ -159,7 +164,8 @@
 										@mousemove="mymousemove"
 									>{{asidDropdownMednu}}</span>
 								</el-button>
-								<img src="@/assets/drop-down.png" alt />
+								<!-- <img src="@/assets/drop-down.png" alt /> -->
+								<i class="el-icon-caret-bottom"></i>
 							</el-row>
 						</el-popover>
 					</el-col>
@@ -234,7 +240,7 @@ export default {
       imageHeader: RestApi.api.imageUrl,
       isIndeterminate: false,
       canvsWidth: "300px",
-      footerHeight: "",
+      footerHeight: "300px",
       asideWidth: "60px",
       asidDropdownMednu: "全部任务", // 选中的任务
       deviceTreeList: [], // 设备树
@@ -301,25 +307,25 @@ export default {
     this.vlc = null;
     let w = this.WIDTH();
     let h = this.HEIGHT();
-    h = h - 65; // 不知道为什么会差5个像素
+    h = h - 50; // 不知道为什么会差5个像素
     w = w - 200;
     this.$refs.heightBox.$el.style.height = h + "px";
     this.asideWidth = 0.3 * w + "px";
-    this.$refs.mainHeightBox.$el.style.height = (0.7 * w * 9) / 16 + "px";
-    // this.footerHeight = h - ((0.7 * 9) / 16) * w - 30 + "px";
+    this.$refs.mainHeightBox.$el.style.height = h - 300 + "px";
     // 当窗口发生变化时
     let that = this;
     window.addEventListener("resize", function() {
       let w = that.WIDTH();
       let h = that.HEIGHT();
       w = w - 200;
-      h = h - 65;
+      h = h - 50;
       that.$nextTick(() => {
         that.$refs.heightBox.$el.style.height = h + "px";
-        that.$refs.mainHeightBox.$el.style.height = ((0.7 * 9) / 16) * w + "px";
+        that.asideWidth = 0.3 * w + "px";
+        that.$refs.mainHeightBox.$el.style.height = h - 300 + "px";
+        that.canvas.width = (16 * (that.HEIGHT() - 350 - 100)) / 9 - 50;
+        that.canvas.height = that.HEIGHT() - 450;
       });
-      // that.footerHeight = h - ((0.7 * 9) / 16) * w - 30 + "px";
-      that.asideWidth = w * 0.3 + "px";
       that.drawLine();
     });
     this.startTime = this.$common.getStartTime();
@@ -434,7 +440,7 @@ export default {
         icon = "";
       for (let i = 0; i < treeIcons.length; i++) {
         if (treeIcons[i].value === type) {
-          if (isOnline === 'offline') {
+          if (isOnline === "offline") {
             icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
           } else {
             icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
@@ -535,8 +541,8 @@ export default {
     // 选中某通道
     handleCheckedCitiesChange(value) {
       console.log("选中某通道------", this.checkedChannel);
-      if (this.checkedChannel.chnOnlineOrNot === 'offline') {
-        this.$message.warning('该设备离线！');
+      if (this.checkedChannel.chnOnlineOrNot === "offline") {
+        this.$message.warning("该设备离线！");
         return;
       }
       // 获取rtspUlrl
@@ -587,8 +593,8 @@ export default {
       if (!this.canvas) {
         this.canvas = document.createElement("canvas");
       }
-      this.canvas.width = 0.7 * (this.WIDTH() - 200) - 120;
-      this.canvas.height = ((0.7 * 9) / 16) * (this.WIDTH() - 200) - 60;
+      this.canvas.width = (16 * (this.HEIGHT() - 350 - 100)) / 9 - 50;
+      this.canvas.height = this.HEIGHT() - 450;
       // 设置新的视频对象播放参数
       this.video = await this.video_mgr.setup(
         JSON.stringify(jSignal),
@@ -797,11 +803,10 @@ export default {
       let dom = document.getElementById("bar_bot");
       let w = this.WIDTH();
       let h = this.HEIGHT();
-      h = h - 65; // 不知道为什么会差5个像素
+      h = h - 50; // 不知道为什么会差5个像素
       w = w - 200;
-      this.$refs.canvsWidth.$el.style.width = 0.7 * w - 60 + "px";
-      this.$refs.canvsWidth.$el.style.height =
-				((0.7 * 7) / 16) * h - 100 + "px";
+      this.$refs.canvsWidth.$el.style.width = 0.7 * w - 80 + "px";
+      this.$refs.canvsWidth.$el.style.height = ((0.7 * 7) / 16) * h - 80 + "px";
       console.log(this.$refs.canvsWidth.$el.style.width);
       if (!dom) {
         return;
@@ -931,6 +936,9 @@ export default {
       mousemove(event);
     },
     WIDTH: function() {
+      // console.log("window.innerWidth:", window.innerWidth, "document.documentElement.clientWidth:",
+      //   document.documentElement.clientWidth, 'document.body.clientWidth:',
+      //   document.body.clientWidth);
       return (
         window.innerWidth ||
 				document.documentElement.clientWidth ||
@@ -938,6 +946,9 @@ export default {
       );
     },
     HEIGHT: function() {
+      // console.log("window.innerHeight:", window.innerHeight, "document.documentElement.clientHeight:",
+      //   document.documentElement.clientHeight, 'document.body.clientHeight:',
+      //   document.body.clientHeight);
       return (
         window.innerHeight ||
 				document.documentElement.clientHeight ||
@@ -948,13 +959,18 @@ export default {
 };
 </script>
 <style>
+#bar_bot {
+	background: rgba(33, 35, 37, 1);
+	padding: 10px 20px;
+	box-sizing: border-box;
+}
 #player {
 	text-align: center;
 	height: 100%;
 	object-fit: fill;
 	width: 100%;
 	z-index: 2;
-	background: transparent;
+	background: rgba(33, 35, 37, 1);
 }
 .el-radio-myclass {
 	margin: 10px 0px 9px;
@@ -1006,10 +1022,10 @@ export default {
 	background: transparent !important;
 	overflow: auto;
 }
-.radioIcon{
-  width: 12px;
-  height: 12px;
-  margin-right:5px;
+.radioIcon {
+	width: 12px;
+	height: 12px;
+	margin-right: 5px;
 }
 .asidRowProgress {
 	margin: auto;
@@ -1022,9 +1038,10 @@ export default {
 }
 .RTask .asidListBox {
 	width: 100%;
-	height: calc(100% - 60px);
+	height: calc(100% - 50px);
 	overflow: auto;
 	min-height: 450px;
+  padding-right: 8px;
 }
 .RTask .asidListBox .el-progress__text {
 	font-size: 14px !important;
@@ -1117,10 +1134,6 @@ export default {
 	align-items: center;
 	color: #ffffff;
 	font-family: "PingFangSC-Medium";
-}
-.RTask .asidFontColor {
-	color: #bbbbbb;
-	font-size: 14px;
 }
 .RTask .HomeFooterChannelName {
 	font-size: 12px;
@@ -1236,11 +1249,11 @@ export default {
 	box-sizing: border-box;
 }
 .elPopoverClass {
-	width: calc(70% - 220px);
-	height: calc(70% - 120px);
+	width: calc(70% - 210px);
+	height: calc(100% - 420px);
 	position: absolute;
-	left: 235px !important;
-	top: 125px !important;
+	left: 225px !important;
+	top: 115px !important;
 	background-color: #2a2e319c !important;
 	z-index: 10 !important;
 	-webkit-box-sizing: border-box;
@@ -1281,7 +1294,7 @@ export default {
 }
 .RTask .asidListRow {
 	width: 100%;
-	margin-top: 2.5%;
+	margin-bottom: 2%;
 	/* height: 18%; */
 	color: #fff;
 	background-color: rgba(0, 0, 0, 0.15);
@@ -1318,7 +1331,7 @@ export default {
 }
 .RTask .footerRowClass {
 	width: calc(100% + 0px);
-	height: calc(100% - 40px);
+	/* height: calc(100% - 40px); */
 	line-height: 24px;
 	color: #fff;
 	display: flex;
@@ -1326,7 +1339,7 @@ export default {
 	align-items: flex-end;
 	box-sizing: border-box;
 	padding: 1% 0px 1% 15px;
-	background: rgba(36, 39, 42, 1);
+	background: rgba(33, 35, 37, 1);
 }
 .RTask .footerCardClass {
 	margin: auto 3px;
@@ -1354,12 +1367,13 @@ export default {
 	text-align: center;
 	box-sizing: border-box;
 	background-color: rgb(28, 29, 32);
-	padding: 0 0 0 2.5%;
+	padding: 0 0 0 30px;
 }
 .RTask .el-header {
 	padding-top: 20px;
 	text-align: left;
 	box-sizing: border-box;
+	padding-left: 0;
 }
 .RTask .el-footer {
 	color: #333;
@@ -1378,10 +1392,11 @@ export default {
 .leftflexButton,
 .leftflexButton:focus,
 .leftflexButton:hover {
-	background-color: transparent !important;
-	color: #ffffff !important;
-	border: 0 !important;
-	padding: 10px 14px !important;
+	background-color: transparent;
+	color: #ffffff;
+	border: 0;
+	padding: 10px 12px;
+	font-size: 14px;
 }
 .font12 {
 	font-size: 12px;
@@ -1400,17 +1415,16 @@ export default {
 .RTask .el-aside {
 	color: #333;
 	text-align: center;
-	/* background: rgba(0, 0, 0, 0.15); */
-	background-color: #212325;
-	/* border-left: 1px solid rgba(255, 255, 255, 0.1); */
+	background: rgba(33, 35, 37, 1);
 	box-sizing: border-box;
-	padding: 0 2%;
+	padding: 0 25px;
 }
 
 .RTask .el-main {
 	color: #333;
 	text-align: center;
-	background: rgba(36, 39, 42, 1);
+	/* background: rgba(36, 39, 42, 1); */
+	background: rgba(33, 35, 37, 1);
 	padding: 20px 25px;
 }
 
@@ -1424,7 +1438,7 @@ export default {
 	background: rgba(36, 39, 42, 1);
 }
 .RTask .el-container {
-	padding-right: 2%;
+	padding-right: 24px;
 	box-sizing: border-box;
 }
 </style>

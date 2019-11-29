@@ -29,12 +29,19 @@
 					@mousemove="mymousemove"
 					class="textclipsClass adress"
 				>{{item.credentialNo||'----'}}</p>
-				<!-- </el-tooltip> -->
 			</div>
 			<!-- <div class="box hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
 		</div>
 		<div class="faceDBImageFooter">
 			<el-pagination
+				@current-change="currentChange"
+				:current-page="pageNow"
+				layout="total,prev, pager, next,jumper"
+				:page-size="pageSize"
+				:total="total"
+				background
+			></el-pagination>
+			<!-- <el-pagination
 				background
 				layout="prev, pager, next"
 				:page-size="imagePageSize"
@@ -53,7 +60,7 @@
 					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
 					type="number"
 				></el-input>
-			</div>
+			</div>-->
 		</div>
 	</div>
 </template>
@@ -111,8 +118,7 @@ export default {
     };
   },
   computed: {},
-  mounted() {
-  },
+  mounted() {},
   methods: {
     blur() {
       if (this.pageIndex !== "") {
@@ -366,7 +372,7 @@ $fontcolor: #aaa;
 		margin-top: 17px;
 	}
 	.el-pagination {
-		margin-right: 180px;
+		margin-right: 18px;
 		margin-top: 10px;
 		float: right;
 	}

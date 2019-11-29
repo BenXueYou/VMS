@@ -6,7 +6,6 @@
 					<img src="@/assets/images/logo.png" />
 				</div>
 				<tag-view />
-
 				<el-dropdown trigger="click" @command="handleCommand" class="quit-btn">
 					<span class="el-dropdown-link myAccountHeader">
 						<img src="@/assets/images/header.png" alt />
@@ -383,6 +382,7 @@ export default {
 			);
 			box-shadow: 0 6px 25px 0 rgba(0, 0, 0, 0.4);
 			z-index: 1;
+      height: 50px!important;
 			.header-title {
 				margin-right: 20px;
 				margin-left: 10px;

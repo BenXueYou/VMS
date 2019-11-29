@@ -14,7 +14,7 @@
 			</div>
 		</div>
 		<div class="FAMImageListFooter">
-			<el-pagination
+			<!-- <el-pagination
 				background
 				layout="prev, pager, next"
 				:page-size="pageSize"
@@ -33,7 +33,17 @@
 					class="yeshu"
 					type="number"
 				></el-input>
-			</div>
+			</div>-->
+			<!-- <el-col :span="24" class="footerPages" style="text-align:right"> -->
+			<el-pagination
+				@current-change="currentChange"
+				:current-page="pageNow"
+				layout="total,prev, pager, next,jumper"
+				:page-size="pageSize"
+				:total="pageCount"
+				background
+			></el-pagination>
+			<!-- </el-col> -->
 		</div>
 		<the-face-alarm-dialog
 			title="对比详情"
@@ -321,7 +331,7 @@ export default {
 		margin-top: 17px;
 	}
 	.el-pagination {
-		margin-right: 180px;
+		margin-right: 22px;
 		margin-top: 10px;
 		float: right;
 	}

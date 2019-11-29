@@ -22,7 +22,7 @@
           <el-checkbox v-for="dev in devices"
                        :label="dev.channelUuid"
                        :key="dev.channelUuid">
-            {{dev.channelName}}
+            {{dev.nickName}}
             <div class="device-dot"
                  style="background: #F6C620;"></div>
           </el-checkbox>
@@ -87,6 +87,8 @@ export default {
       isLoading: false,
       startTime: "",
       endTime: "",
+      faceSimilarity: "",
+      photoQualitieList: "",
     };
   },
   created() {},
@@ -143,6 +145,8 @@ export default {
         channelList: this.checkedDevices.toString(),
         snapshotTimeStart: this.startTime,
         snapshotTimeEnd: this.endTime,
+        faceSimilarity: this.faceSimilarity,
+        photoQualitieList: this.photoQualitieList.toString(),
       }).then(res => {
         let body = res.data;
         this.getCompareDetailSuccess(body);
