@@ -1189,7 +1189,7 @@ export default {
       this.dynamicAuthTags = [];
       this.dynamicVistorAuthTags = [];
       this.icdPhotofileData = null;
-      this.houseName = '';
+      this.houseName = "";
     },
     transferCheckedData(data) {
       console.log("获取到选中的节点：", data);
@@ -1199,6 +1199,7 @@ export default {
   watch: {
     addResidentDialogVisible(val) {
       this.checkeTreedNodes = [];
+      console.log(this.defaultResident);
     },
     visible(val) {
       if (val) {
@@ -1221,7 +1222,7 @@ export default {
         }
         this.dynamicAuthTags = [];
         this.dynamicTags = [];
-        this.houseName = '';
+        this.houseName = "";
         if (val.addressOrgList && val.addressOrgList.length) {
           let aName = [];
           val.addressOrgList.forEach(element => {

@@ -143,7 +143,8 @@ export default {
       canvas: null,
       video: null,
       video_list: [],
-      speed: 1 // 视频播放速度
+      speed: 1, // 视频播放速度
+      isPause: false // 0表示正在播放，1表示
     };
   },
   destroyed() {
@@ -211,21 +212,42 @@ export default {
   },
   methods: {
     async speedUp() {
+      if (!this.video || !this.video_mgr) {
+        this.$message.error("该选中框没有视频在播放！");
+        return;
+      }
+      if (this.speed >= 8) {
+        return;
+      }
       this.speed = this.speed * 2;
       await this.video_mgr.speedControl(this.video, this.speed);
     },
     async slowDown() {
+      if (!this.video || !this.video_mgr) {
+        this.$message.error("该选中框没有视频在播放！");
+        return;
+      }
       if (this.speed <= 1) {
         return;
       }
-      await this.video_mgr.speedControl(this.video, --this.speed);
+      this.speed = this.speed / 2;
+      await this.video_mgr.speedControl(this.video, this.speed);
     },
     async pause() {
-      await this.video_mgr.pause(this.video);
+      if (!this.video || !this.video_mgr) {
+        this.$message.error("该选中框没有视频在播放！");
+        return;
+      }
+      if (!this.isPause) {
+        await this.video_mgr.pause(this.video);
+        this.$message.success("暂停视频");
+      } else {
+        await this.video_mgr.resume(this.video);
+        this.$message.success("继续播放视频");
+      }
+      this.isPause = !this.isPause;
     },
-    async resume() {
-      await this.video_mgr.resume(this.video);
-    },
+    async resume() {},
     async singleFrame() {},
     setPlayTime(startTime, endTime) {},
     dblclickhandler() {
