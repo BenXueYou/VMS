@@ -4,7 +4,7 @@
       <ul>
         <li>
           <img :src="icons.play"
-               @play="play"
+               @click="play"
                alt="">
         </li>
         <li>

@@ -24,7 +24,7 @@
                     action="playback"
                     :position="item.position"
                     :fenlu="fenluIndex+1"
-                    @closeVideo="closeVideo"
+                    @closeVideo="closeVideoAA"
                     @startRecord="startRecord"
                     @stopRecord="stopRecord"
                     @openVideoVoice="openVideoVoice"
@@ -40,7 +40,7 @@
                        @saveView="saveView"
                        @choosetime="choosetime"
                        @play="pasueVideo"
-                       @stop="resumeVideo"
+                       @stop="stopVideo"
                        @singleFrame="videoSingleFrame"
                        @speedUp="videoSpeedUp"
                        @slowDown="videoSpeedDown"
@@ -316,7 +316,8 @@ export default {
         this.videoArr[this.dragEndIndex].position,
         this.videoArr[this.dragStartIndex].position
       ];
-      this.videoArr = this.videoArr;
+      this.videoArr.concat();
+      this.initWrapDom();
       this.dragStartIndex = -1;
       console.log(this.videoArr);
     },
@@ -673,39 +674,41 @@ export default {
         }
       });
     },
+    closeVideoAA() {
+      if (!this.videoArr[this.operatorIndex].channelUuid) {
+        this.$message.error("该分路上没有通道！");
+      } else {
+        this.$confirm(
+          `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            distinguishCancelAndClose: true,
+            confirmButtonClass: "confirm-button",
+            cancelButtonClass: "cancel-button",
+            center: true,
+            dangerouslyUseHTMLString: true,
+            customClass: "isCloseDialog"
+          }
+        )
+          .then(() => {
+            this.videoArr[this.operatorIndex].rtspUrl = "";
+            this.videoArr[this.operatorIndex].channelUuid = "";
+            this.videoArr[this.operatorIndex].startTime = "";
+            this.videoArr[this.operatorIndex].endTime = "";
+            this.videoArr[this.operatorIndex].timeData = [];
+            this.videoArr.concat();
+          })
+          .catch(() => {});
+      }
+    },
     // 处理
     dealContextMenu(value) {
       console.log(value);
       switch (value) {
         case "关闭窗口":
           // 清空rtspUrl，则触发video组件stop事件
-          if (!this.videoArr[this.operatorIndex].channelUuid) {
-            this.$message.error("该分路上没有通道！");
-          } else {
-            this.$confirm(
-              `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
-              {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                distinguishCancelAndClose: true,
-                confirmButtonClass: "confirm-button",
-                cancelButtonClass: "cancel-button",
-                center: true,
-                dangerouslyUseHTMLString: true,
-                customClass: "isCloseDialog"
-              }
-            )
-              .then(() => {
-                this.videoArr[this.operatorIndex].rtspUrl = "";
-                this.videoArr[this.operatorIndex].channelUuid = "";
-                this.videoArr[this.operatorIndex].startTime = "";
-                this.videoArr[this.operatorIndex].endTime = "";
-                this.videoArr[this.operatorIndex].timeData = [];
-                this.videoArr.concat();
-              })
-              .catch(() => {});
-          }
-
+          this.closeVideoAA();
           break;
         case "关闭所有窗口":
           this.$confirm(
@@ -815,6 +818,7 @@ export default {
     openVideoVoice(index) {},
     getVideoSpeed() {
       this.videoSpeed = this.$refs["video" + this.operatorIndex][0].speed;
+      console.log(this.videoSpeed);
     },
     videoSpeedUp() {
       this.$refs["video" + this.operatorIndex][0].speedUp();
@@ -827,8 +831,8 @@ export default {
     pasueVideo() {
       this.$refs["video" + this.operatorIndex][0].pause();
     },
-    resumeVideo() {
-      this.$refs["video" + this.operatorIndex][0].resume();
+    stopVideo() {
+      this.closeVideoAA();
     },
     videoSingleFrame() {
       this.$refs["video" + this.operatorIndex][0].singleFrame();

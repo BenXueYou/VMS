@@ -69,6 +69,7 @@
 
       </el-tab-pane>
       <el-tab-pane label="视图"
+                   style="width:228px;"
                    name="view">
 
         <el-tree :props="viewProps"
@@ -493,7 +494,7 @@ export default {
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
   .el-tabs__content {
-    width: 500px;
+    width: 300px;
   }
   .mypanel {
     .el-tree-node {

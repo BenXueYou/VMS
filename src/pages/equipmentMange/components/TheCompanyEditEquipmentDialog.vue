@@ -871,9 +871,9 @@ export default {
           item.vehicleSnap = item.ability.indexOf("vehicleSnap") !== -1 ? 1 : 0;
           item.bodySnap = item.ability.indexOf("bodySnap") !== -1 ? 1 : 0;
           delete item.ability;
-          item.extInfo.latitude = item.latitude;
-          item.extInfo.longitude = item.longitude;
-          item.extInfo.gBCode = item.gBCode;
+          item.extInfo.remarks.latitude = item.latitude;
+          item.extInfo.remarks.longitude = item.longitude;
+          item.extInfo.remarks.gBCode = item.gBCode;
           // channelList.push({
           //   nickName: item.nickName,
           //   channelUuid: item.channelUuid,
@@ -1019,9 +1019,15 @@ export default {
         }
         const deal = arr => {
           return arr.map(val => {
-            val.gBCode = val.extInfo.gBCode || "";
-            val.latitude = val.extInfo.latitude || "";
-            val.longitude = val.extInfo.longitude || "";
+            if (!val.extInfo) {
+              val.extInfo = {};
+            }
+            if (!val.extInfo.remarks) {
+              val.extInfo.remarks = {};
+            }
+            val.gBCode = val.extInfo.remarks.gBCode || "";
+            val.latitude = val.extInfo.remarks.latitude || "";
+            val.longitude = val.extInfo.remarks.longitude || "";
             val.tagPOList = val.tagPOList || [];
             val.ability = [];
             if (val.extInfo.faceSnap === 1) {
