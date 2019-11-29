@@ -69,6 +69,7 @@
 										v-model="item.startTime"
 										style="width: 100px"
 										v-if="index === 0"
+                    @change="changeStartTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
 										:picker-options="{
@@ -79,6 +80,7 @@
 										v-model="item.startTime"
 										style="width: 100px"
 										v-else
+                    @change="changeStartTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
 										:picker-options="{
@@ -89,6 +91,7 @@
 									<el-time-picker
 										v-model="item.endTime"
 										style="width: 100px"
+                    @change="changeEndTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
 										:picker-options="{
@@ -575,7 +578,6 @@ export default {
     },
     transferCheckedChannel(checkedChannel, item) {
       item.channelList = [];
-      console.log(checkedChannel, item);
       item.checkedChannel = this.$common.copyArray(
         checkedChannel,
         item.checkedChannel
@@ -662,7 +664,17 @@ export default {
       if (source.leastNumberOfChannel) {
         allSourceItem.leastNumberOfChannel = source.leastNumberOfChannel;
       }
-    }
+    },
+    changeStartTime(item) {
+      if (item.startTime) {
+        this.$set(item, "startTime", item.startTime.substr(0, 6) + "00");
+      }
+    },
+    changeEndTime(item) {
+      if (item.endTime) {
+        this.$set(item, "endTime", item.endTime.substr(0, 6) + "59");
+      }
+    },
   },
   watch: {
     "formLabelAlign.qualities": {

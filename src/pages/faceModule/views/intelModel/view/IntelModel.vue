@@ -312,7 +312,7 @@ export default {
     },
     onConfirmEditOrAddModel() {
       this.isShowMain = true;
-      this.getIntelModelList();
+      this.getIntelModelList("add");
     },
     onCancelEditOrAddModel() {
       this.isShowMain = true;
@@ -430,7 +430,7 @@ export default {
     onCancelDetailDialog() {
       this.isShowDetailDialog = false;
     },
-    getIntelModelList() {
+    getIntelModelList(type) {
       this.isLoading = true;
       this.$intelModelHttp
         .getIntelModelList({
@@ -438,17 +438,20 @@ export default {
         })
         .then(res => {
           let body = res.data;
-          this.getIntelModelListSuccess(body);
+          this.getIntelModelListSuccess(body, type);
           this.isLoading = false;
         })
         .catch(() => {
           this.isLoading = false;
         });
     },
-    getIntelModelListSuccess(body) {
+    getIntelModelListSuccess(body, type) {
       this.menuList = body.data;
       this.formatMenuList();
       if (this.menuList && this.menuList.length !== 0) {
+        if (type === "add") {
+          this.faceModelUuid = "";
+        }
         if (!this.faceModelUuid) {
           this.check(this.menuList[0]);
         } else {

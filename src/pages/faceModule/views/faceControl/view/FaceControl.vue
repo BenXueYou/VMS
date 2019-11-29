@@ -324,7 +324,7 @@ export default {
     },
     onConfirmEditOrAddControl() {
       this.isShowMain = true;
-      this.getMonitoringTaskList();
+      this.getMonitoringTaskList("add");
     },
     onCancelEditOrAddControl() {
       this.isShowMain = true;
@@ -420,7 +420,7 @@ export default {
           this.faceImgDialogVisible = !this.faceImgDialogVisible;
         });
     },
-    getMonitoringTaskList() {
+    getMonitoringTaskList(type) {
       this.isLoading = true;
       this.$faceControlHttp
         .getMonitoringTaskList({
@@ -428,17 +428,20 @@ export default {
         })
         .then(res => {
           let body = res.data;
-          this.getMonitoringTaskListSuccess(body);
+          this.getMonitoringTaskListSuccess(body, type);
           this.isLoading = false;
         })
         .catch(() => {
           this.isLoading = false;
         });
     },
-    getMonitoringTaskListSuccess(body) {
+    getMonitoringTaskListSuccess(body, type) {
       this.menuList = body.data;
       this.formatMenuList();
       if (this.menuList && this.menuList.length !== 0) {
+        if (type === "add") {
+          this.faceMonitorUuid = "";
+        }
         if (!this.faceMonitorUuid) {
           this.check(this.menuList[0]);
         } else {
