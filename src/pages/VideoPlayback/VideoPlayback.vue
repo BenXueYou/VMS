@@ -336,7 +336,7 @@ export default {
     },
     jumpVideo(id, name) {
       let d = new Date();
-      let ymd = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDay();
+      let ymd = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
       let hms = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
       this.$refs.leftTree.setKeys(id);
       this.playVideo(
