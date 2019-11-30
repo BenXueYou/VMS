@@ -112,7 +112,7 @@
           <el-date-picker v-model="startDate"
                           type="datetime"
                           @change="changeTime"
-                          style='width:200px;'
+                          style='width:175px;'
                           placeholder="选择日期时间">
           </el-date-picker>
         </div>
@@ -125,7 +125,7 @@
           <el-date-picker v-model="endDate"
                           type="datetime"
                           @change="changeTime"
-                          style='width:200px;'
+                          style='width:175px;'
                           placeholder="选择日期时间">
           </el-date-picker>
         </div>
@@ -518,14 +518,24 @@ export default {
     left: 43px;
     top: 0px;
     img {
-      margin-top: 9px;
+      margin-top: 12px;
     }
   }
+  // .el-input {
+  //   width: 175px !important;
+  // }
   .el-tree {
     // overflow: auto;
   }
   .el-input__inner {
-    padding-left: 40px;
+    padding-left: 30px;
+    &::-webkit-input-placeholder {
+      /* WebKit browsers */
+      font-size: 12px;
+    }
+  }
+  .el-tree-node__content > .el-tree-node__expand-icon {
+    padding: 6px 2px 6px 0px;
   }
 }
 </style>
@@ -533,7 +543,7 @@ export default {
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .VideoPlaybackContentLeft {
-  width: 280px;
+  width: 220px;
   box-sizing: border-box;
   height: 100%;
   $iconWidth: 40px;
@@ -560,7 +570,8 @@ export default {
         margin-right: 7px;
       }
       span {
-        color: #fff;
+        font-size: 12px;
+        color: #ddd;
       }
       .channelOffline {
         color: #999999;
@@ -579,7 +590,8 @@ export default {
     }
   }
   .timeSelect {
-    padding: 45px 26px 25px;
+    padding: 25px 12px 25px;
+    box-sizing: border-box;
     .startWrap {
       display: flex;
       margin-bottom: 10px;
@@ -602,8 +614,9 @@ export default {
   .treeWrap,
   .tabs {
     height: calc(100vh - 350px);
-    padding: 0px 26px 25px;
+    padding: 0px 12px 25px;
     overflow: auto;
+    // overflow-y: auto;
   }
   .treeSwitchTabs {
     ul {
@@ -624,17 +637,17 @@ export default {
       }
     }
   }
-  .searchWrap {
-    padding: 25px 26px 10px;
+.searchWrap {
+    padding: 25px 12px 10px;
     .el-input {
       position: relative;
-      width: calc(100% - 40px);
+      width: calc(100%);
     }
     $addIconWidth: 14px;
     img {
       display: inline-block;
       vertical-align: middle;
-      width: $addIconWidth;
+      width: 12px;
       margin-left: 4px;
       cursor: pointer;
     }

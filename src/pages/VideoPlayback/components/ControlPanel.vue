@@ -51,6 +51,18 @@
                      class='center'>
           </el-slider>
         </li>
+        <li style="width:106px;">
+          <!-- <el-input class='speed'
+                    v-model='speed'></el-input> -->
+          <el-select class='videoMode'
+                     @change="changeMode"
+                     v-model='videoMode'>
+            <el-option v-for="(item) in viewArr"
+                       :key="item.id"
+                       :label="item.label"
+                       :value="item.id"></el-option>
+          </el-select>
+        </li>
         <li style="width:60px;">
           <!-- <el-input class='speed'
                     v-model='speed'></el-input> -->
@@ -198,6 +210,12 @@ export default {
       default() {
         return 1;
       }
+    },
+    mode: {
+      type: String,
+      default() {
+        return "";
+      }
     }
   },
   data() {
@@ -210,7 +228,18 @@ export default {
       move: 0,
       left: 0,
       fenluIndex: 1,
-      controlData: []
+      controlData: [],
+      videoMode: "original",
+      viewArr: [
+        {
+          id: "original",
+          label: "原始比例"
+        },
+        {
+          id: "fullscreen",
+          label: "充满屏幕"
+        }
+      ]
     };
   },
   computed: {
@@ -246,6 +275,10 @@ export default {
     this.getMaxTime();
   },
   methods: {
+    changeMode() {
+      console.log(this.videoMode);
+      this.$emit("changeMode", this.videoMode);
+    },
     play() {
       this.$emit("play");
     },
@@ -334,6 +367,10 @@ export default {
     }
   },
   watch: {
+    mode(val) {
+      // console.log(val);
+      this.videoMode = val;
+    },
     fenlnWW() {
       this.fenluIndex = this.fenlnWW;
     },
@@ -371,8 +408,8 @@ export default {
     cursor: pointer;
   }
   .timePanel {
-    margin-top: 10px;
-    height: calc(100% - 60px);
+    margin-top: 4px;
+    height: calc(100% - 56px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 2px;
     display: flex;
@@ -478,6 +515,12 @@ export default {
         color: #26d39d;
         .speed {
           width: 60px;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+        .videoMode {
+          width: 106px;
           position: absolute;
           top: 50%;
           transform: translateY(-50%);

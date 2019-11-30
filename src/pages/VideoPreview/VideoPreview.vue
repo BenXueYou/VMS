@@ -19,8 +19,8 @@
                   :showCloudControl="showCloudControl"
                   :channelUuid="operatorChannelUuid"></left-content>
     <div class='right'
-         :style="{'max-width':maxRightWidth+'px'}"
          ref='right'>
+      <!-- :style="{'max-width':maxRightWidth+'px'}" -->
       <div class='vedioWrap'
            :class="{'fullVideoWrap':fullscreen}"
            ref='vedioWrap'>
@@ -41,6 +41,7 @@
                     :isStopVoice="!!item.isStopVoice"
                     :fenlu="fenluIndex+1"
                     :isAutoScreen="isAutoScreen===index"
+                    :mode="item.mode"
                     @playRtsp="playRtsp"
                     @dblclickhandler="dblclickhandler"
                     @closeVideo="closeVideo"
@@ -65,9 +66,21 @@
           </ul>
         </div>
         <div class="operator">
+
           <gt-button class='button'
                      @click='saveShiTu'
                      :showClose="false">保存视图</gt-button>
+          <el-dropdown @command="changeView">
+            <gt-button class='button'
+                       :showClose="false">
+              {{videoMode}}
+              <i class='el-icon-caret-bottom'></i></gt-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="original">原始比例</el-dropdown-item>
+              <el-dropdown-item command="fullscreen">充满屏幕</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
           <gt-button class='button'
                      :icon="icons.fullScreen"
                      @click="PreviewAreafullScreen"
@@ -109,6 +122,13 @@ export default {
   computed: {
     showFenlu() {
       return this.videoArr.slice(0, this.fenlu[this.fenluIndex]);
+    },
+    videoMode() {
+      let name = {
+        original: "原始比例",
+        fullscreen: "充满屏幕"
+      };
+      return name[this.videoArr[this.operatorIndex].mode];
     }
   },
   components: {
@@ -139,7 +159,8 @@ export default {
           width: 0,
           height: 0,
           rtspUrl: "",
-          position: index
+          position: index,
+          mode: "original"
         };
         return item;
       }),
@@ -236,6 +257,11 @@ export default {
     };
   },
   methods: {
+    changeView(val) {
+      this.videoArr[this.operatorIndex].mode = val;
+      // this.initWrapDom();
+      this.videoArr.concat();
+    },
     jishi() {
       const that = this;
       that.cnt = 0;
@@ -246,10 +272,15 @@ export default {
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
-        that.initWrapDom();
-        if (that.cnt++ > 100) {
+        if (
+          that.cnt++ > 100 ||
+          this.$route.fullPath.toLocaleLowerCase().indexOf("/videopreview") !==
+            -1
+        ) {
           clearInterval(that.timer);
           that.timer = null;
+        } else {
+          that.initWrapDom();
         }
         // console.log(this.fullscreen);
       }, 100);
@@ -527,6 +558,7 @@ export default {
         this.operatorIndex = 35;
       }
       console.log(this.videoArr);
+      this.updateCloud();
       // 逻辑更改，直接根据用户选中的视频进行播放
     },
     dragstart(index, e) {
@@ -781,6 +813,7 @@ export default {
                 this.videoArr[this.operatorIndex].channelUuid = "";
                 this.videoArr[this.operatorIndex].startTime = "";
                 this.videoArr[this.operatorIndex].endTime = "";
+                this.videoArr[this.operatorIndex].mode = "original";
                 this.videoArr[this.operatorIndex].timeData = [];
                 this.videoArr.concat();
               })
@@ -807,6 +840,7 @@ export default {
                 item.rtspUrl = "";
                 item.startTime = "";
                 item.endTime = "";
+                item.mode = "original";
                 item.timeData = [];
                 return item;
               });
@@ -1093,23 +1127,28 @@ export default {
   box-sizing: border-box;
 
   .right {
-    width: calc(100% - #{$equLeftMenuWidth});
+    width: calc(100% - 220px);
     height: 100%;
-    padding: $rightContentMargin;
+    // padding: 0px;
     box-sizing: border-box;
     user-select: none;
+    padding: 0px;
+    box-sizing: border-box;
     .vedioWrap {
       position: relative;
       // height: calc(100% - 80px);
-      padding-top: 56.25%;
+      // padding-top: 56.25%;
+      height: calc(100vh - 122px);
+      margin: 2px 0px 0px;
     }
     .footer {
-      height: 60px;
-      margin: 10px;
+      height: 70px;
+      // margin: 10px;
       display: flex;
       justify-content: space-between;
       .operator {
-        margin-top: 10px;
+        margin-top: 16px;
+        margin-right: 40px;
         .button {
           background: rgba(40, 255, 187, 0.2);
           border: 0 solid rgba(38, 211, 157, 0.8);
@@ -1150,8 +1189,8 @@ export default {
     margin: 0px !important;
     left: 0px;
     top: 0px;
-    width: 100vw;
-    height: 100vh;
+    width: 100vw !important;
+    height: 100vh !important;
     z-index: 10;
   }
 }

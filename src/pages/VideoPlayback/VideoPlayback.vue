@@ -21,6 +21,7 @@
                     :streamType="item.streamType"
                     :left="item.left"
                     :top="item.top"
+                    :mode="item.mode"
                     action="playback"
                     :position="item.position"
                     :fenlu="fenluIndex+1"
@@ -46,6 +47,8 @@
                        @slowDown="videoSpeedDown"
                        @PreviewAreafullScreen="PreviewAreafullScreen"
                        @chooseFenlu="chooseFenlu"
+                       @changeMode="changeMode"
+                       :mode="videoMode"
                        :speed="videoSpeed"
                        :operatorIndex.sync="operatorIndex"
                        :fenlu="fenlu"
@@ -134,6 +137,7 @@ export default {
           // endTime: "2019-11-19 23:59:59",
           startTime: "",
           endTime: "",
+          mode: "original",
           timeData: [
             // {
             //   startTime: "2019-11-12 00:00:00", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
@@ -214,6 +218,9 @@ export default {
   computed: {
     showFenlu() {
       return this.videoArr.slice(0, this.fenlu[this.fenluIndex]);
+    },
+    videoMode() {
+      return this.videoArr[this.operatorIndex].mode;
     }
   },
   mounted() {
@@ -235,6 +242,10 @@ export default {
     window.onresize = null;
   },
   methods: {
+    changeMode(mode) {
+      this.videoArr[this.operatorIndex].mode = mode;
+      this.videoArr.concat();
+    },
     jishi() {
       const that = this;
       that.cnt = 0;
@@ -245,10 +256,15 @@ export default {
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
-        that.initWrapDom();
-        if (that.cnt++ > 100) {
+        if (
+          that.cnt++ > 100 ||
+          this.$route.fullPath.toLocaleLowerCase().indexOf("/videoplayback") !==
+            -1
+        ) {
           clearInterval(that.timer);
           that.timer = null;
+        } else {
+          that.initWrapDom();
         }
         // console.log(this.fullscreen);
       }, 100);
@@ -947,9 +963,10 @@ export default {
   box-sizing: border-box;
 
   .right {
-    width: calc(100% - #{$equLeftMenuWidth});
+    width: calc(100% - 220px);
     height: 100%;
-    padding: $rightContentMargin;
+    // padding: 2px 0px;
+    padding-top: 2px;
     box-sizing: border-box;
     user-select: none;
     .vedioWrap {
@@ -957,8 +974,8 @@ export default {
       position: relative;
     }
     .footer {
-      height: 240px;
-      margin: 10px 0px 0px;
+      height: 236px;
+      padding-top: 4px;
       display: flex;
       justify-content: space-between;
       .operator {

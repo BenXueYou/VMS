@@ -3,6 +3,7 @@
        class="treeLaa">
     <div class="searchWrap">
       <el-input :placeholder="orgType=='staff'?'搜索组织/标签/名称':'搜索设备/标签/名称'"
+                class='mysearchText'
                 v-model="searchText">
         <img slot="prefix"
              class="image"
@@ -492,9 +493,8 @@ export default {
       e.preventDefault();
       e.stopPropagation();
       this.operatorData = data;
-      console.log(data);
       // 不在线的通道 ，双击进行展示
-      if (data.isOnline || data.type === "tag") {
+      if (data.hasOwnProperty("channelUuid") || data.nodeType === "chnNode") {
         this.chuliData();
       } else {
         if (data.isOnline === false) {
@@ -543,8 +543,8 @@ export default {
     },
     // 根据组织或者设备来获取
     getOnlineChannelList(parentUuid, parentType, streamType) {
-      api
-        .getTDByOrgUuid({
+      api2
+        .getOnlineChannel({
           parentUuid,
           parentType
         })
@@ -554,7 +554,7 @@ export default {
           // 这里获取到通道UUid
           for (let i = 0; i < data.length; i++) {
             data[i].realType = data[i].type;
-            this.getPreviewInfo(data[i].id, data[i], streamType, -1);
+            this.getPreviewInfo(data[i].channelUuid, data[i], streamType, -1);
           }
         });
     },
@@ -1595,7 +1595,7 @@ export default {
     left: 43px;
     top: 0px;
     img {
-      margin-top: 9px;
+      margin-top: 12px;
     }
   }
   // .el-tree,
@@ -1606,7 +1606,14 @@ export default {
     overflow: auto;
   }
   .el-input__inner {
-    padding-left: 40px;
+    padding-left: 30px;
+    &::-webkit-input-placeholder {
+      /* WebKit browsers */
+      font-size: 12px;
+    }
+  }
+  .el-tree-node__content > .el-tree-node__expand-icon {
+    padding: 6px 2px 6px 0px;
   }
 }
 </style>
@@ -1615,7 +1622,7 @@ export default {
 @import "@/style/variables.scss";
 
 .treeLaa {
-  width: 280px;
+  width: 220px;
   box-sizing: border-box;
   height: 100%;
   $iconWidth: 40px;
@@ -1625,6 +1632,8 @@ export default {
     // height: calc(100vh - 250px);
     // width:500px;
     // overflow: auto;
+  }
+  .mysearchText {
   }
 
   .custom-tree-node {
@@ -1645,7 +1654,8 @@ export default {
         height: 12px;
       }
       span {
-        color: #fff;
+        font-size: 12px;
+        color: #dddddd;
       }
       .channelOffline {
         color: #999999;
@@ -1670,16 +1680,16 @@ export default {
   }
 
   .searchWrap {
-    padding: 25px 26px 10px;
+    padding: 25px 12px 10px;
     .el-input {
       position: relative;
-      width: calc(100% - 40px);
+      width: calc(100%);
     }
     $addIconWidth: 14px;
     img {
       display: inline-block;
       vertical-align: middle;
-      width: $addIconWidth;
+      width: 12px;
       margin-left: 4px;
       cursor: pointer;
     }
@@ -1687,7 +1697,7 @@ export default {
   .tabs {
     height: calc(100vh - 170px);
     // overflow-y: auto;
-    padding: 0px 26px 25px;
+    padding: 0px 12px 25px;
     overflow: auto;
   }
   .tabsPanel {
