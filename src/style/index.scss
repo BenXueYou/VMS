@@ -226,7 +226,6 @@ img,
   white-space: nowrap;
   cursor: pointer;
   background: transparent;
-  border: 1px solid #dcdfe6;
   -webkit-appearance: none;
   text-align: center;
   -webkit-box-sizing: border-box;
@@ -305,20 +304,20 @@ img,
   content: "上一页";
   font-size: 12px;
   font-weight: 100;
-  color: #999999;
+  color: #bebebe;
 }
 
 .el-icon-arrow-right:before {
   content: "下一页";
   font-size: 12px;
   font-weight: 100;
-  color: #888888;
+  color: #bebebe;
 }
 
 .el-pagination__total {
   font-size: 12px;
   font-weight: 100;
-  color: #888888;
+  color: #bebebe;
   /*margin: 0 27px 0 27px;*/
 }
 
@@ -981,4 +980,31 @@ input::-webkit-input-placeholder {
 }
 .el-select .el-tag__close.el-icon-close {
   background-color: #b8b9ba;
+}
+.el-submenu.is-opened>.el-submenu__title .el-submenu__icon-arrow {
+  transform: none;
+}
+.el-date-picker__header-label {
+  color: #bebebe;
+}
+.el-date-table th {
+  color: #bebebe;
+}
+.el-date-picker__time-header {
+  border-bottom: 1px solid rgba(
+    $color: #e4e4e4,
+    $alpha: 0.3
+  )
+}
+.el-date-table th {
+  border-bottom: 1px solid rgba(
+    $color: #EBEEF5,
+    $alpha: 0.3
+  )
+}
+.el-picker-panel__footer {
+  border-top: 1px solid rgba(
+    $color: #e4e4e4,
+    $alpha: 0.3
+  )
 }
