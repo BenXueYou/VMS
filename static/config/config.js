@@ -3,29 +3,15 @@ var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
 var Authorization = "Basic YXBwOjEyMzQ1Ng==";
-var DEBUG = "TEST";
+var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
-  // ip = '180.167.210.2:51880';
-  // ip = "192.168.9.190:15000";
-  // websocketIp = "192.168.9.190:15007";
   ip = "192.168.9.102:15000";
   websocketIp = "192.168.9.102:15007";
-  imageUrl =
-    protocolHeader +
-    "//" +
-    ip +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  ip = "192.168.9.102:15000";
-  // ip = '192.168.6.191:51880';
+  ip = "192.168.6.111:15000";
   websocketIp = "192.168.9.102:15007";
-  imageUrl =
-    protocolHeader +
-    "//" +
-    ip +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 } else {
   // 部署环境
   if (protocolHeader === "https:") {
@@ -35,10 +21,6 @@ if (DEBUG == "DEBUG") {
     ip = hostname + ":15000";
     websocketIp = hostname + ":80";
   }
-  var imgUrlStr = protocolHeader + "//" + ip;
-  imageUrl =
-    imgUrlStr +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
 var resourceType = {
   video: [
