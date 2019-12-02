@@ -3,9 +3,9 @@
 		<div class="dialogHeader">
 			<span>{{staffDetail.faceLibraryName}}-{{staffDetail.faceUuid?"修改人脸":'新增人脸'}}</span>
 			<div class="dialogHeaderBtn">
-				<el-button @click="cancelAct">返回</el-button>
-				<el-button :loading="isloading" @click="confirmAct">确认</el-button>
-				<el-button @click="cancelAct">取消</el-button>
+				<el-button @click="cancelAct" type="primary" size="small">返回</el-button>
+				<el-button :loading="isloading" @click="confirmAct" type="primary" size="small">确认</el-button>
+				<el-button @click="cancelAct" type="primary" size="small">取消</el-button>
 			</div>
 		</div>
 		<div class="bodyBox">
@@ -142,9 +142,9 @@
 		</div>
 		<div class="dialogFooter">
 			<div class="dialogHeaderBtn">
-				<el-button @click="cancelAct">返回</el-button>
-				<el-button :loading="isloading" @click="confirmAct">确认</el-button>
-				<el-button @click="cancelAct">取消</el-button>
+				<el-button @click="cancelAct" type="primary" size="small">返回</el-button>
+				<el-button :loading="isloading" @click="confirmAct" type="primary" size="small">确认</el-button>
+				<el-button @click="cancelAct" type="primary" size="small">取消</el-button>
 			</div>
 		</div>
 		<snap-shoot-photo :visible="isSnapShoot" @close="shootPhoto" @snapPhotoAct="snapPhotoAct"></snap-shoot-photo>
@@ -395,16 +395,16 @@ export default {
 	.dialogHeaderBtn {
 		display: inline-block;
 		text-align: right;
-		.el-button {
-			font-family: "PingFangSC-Regular";
-			font-size: 13px;
-			color: #ffffff;
-			text-align: justify;
-			padding: 7px 27px;
-			background: rgba(40, 255, 187, 0.08);
-			border: 0 solid rgba(38, 211, 157, 0.8);
-			border-radius: 2px;
-		}
+		// .el-button {
+		// 	font-family: "PingFangSC-Regular";
+		// 	font-size: 13px;
+		// 	color: #ffffff;
+		// 	text-align: justify;
+		// 	padding: 7px 27px;
+		// 	background: rgba(40, 255, 187, 0.08);
+		// 	border: 0 solid rgba(38, 211, 157, 0.8);
+		// 	border-radius: 2px;
+		// }
 	}
 	.dialogHeader {
 		display: flex;

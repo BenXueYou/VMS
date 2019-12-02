@@ -214,9 +214,8 @@ export default {
       this.isLoading = true;
       this.$judgeHttp
         .getJudgeDetails({
-          faceUuid: this.modelItem.faceUuid,
-          faceModelUuid: this.modelItem.faceModelUuid,
-          channelUuids: this.checkedDevices ? this.checkedDevices.join(",") : ""
+          faceModelAnalysisResultUuid: this.modelItem.faceModelAnalysisResultUuid,
+          channelUuidList: this.checkedDevices ? this.checkedDevices.join(",") : ""
         })
         .then(res => {
           let body = res.data;
