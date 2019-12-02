@@ -230,6 +230,14 @@ export default {
             "setProjectUuid",
             body.data.adminUser.projects[0].projectUuid
           );
+          this.$loginAjax
+	        .setLogUuid({
+	          logUuid: localStorage.getItem("logUuid")
+	        })
+	        .then(res => {
+	          // let body = res.data;
+	          // this.loginSuccessResponse(body);
+	        });
           // 以下是测试代码 projectUuid 299fc6dfa7104483bcee8d71e59957cd
           /** ***********测试代码*************** */
           this.$store.dispatch(
