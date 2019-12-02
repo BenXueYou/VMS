@@ -262,7 +262,6 @@ export default {
 			this.checkedNodeName = str.join(",");
 		},
 		visiblePopverAct() {
-			return ;
 			if (this.treeType === "residentTree") {
 				if (this.initData && this.initData.length) {
 					this.treeData = this.initData;
@@ -274,12 +273,6 @@ export default {
 			}
 			this.checkedNodeName = this.houseName;
 			if (this.checkedNodes.length === 0) {
-				console.log(
-					"this.house==",
-					this.houseName,
-					"this.nodeArr===",
-					this.nodeArr
-				);
 				this.nodeArr = [];
 			}
 		}
