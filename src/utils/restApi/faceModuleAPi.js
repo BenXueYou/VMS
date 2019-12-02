@@ -19,6 +19,9 @@ export default {
     getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
     // 根据通道ID获取rtspUrl
     getRtspUrlByChannelUuidApi: projectUuid => `${URLHeaderVideoServer}/${projectUuid}/video/previewInfo`,
+
+    // 人流量统计
+    getStaticsPeopleApi:projectUuid=>`${URLHeaderFaceLog}/${projectUuid}/traffic/statistical/list`
   },
 
   baseConfigApi: {

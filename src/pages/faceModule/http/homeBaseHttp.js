@@ -34,3 +34,8 @@ export function getRtspUrlByChannelUuidApi(data) {
     params: data
   });
 }
+// 人流量统计
+export function getStaticsPeopleAPi(xhr) {
+  let url = FaceModuleApi.baseDataApi.getStaticsPeopleApi(store.state.home.projectUuid);
+  return Axios({ method: "GET", url, params: xhr });
+}

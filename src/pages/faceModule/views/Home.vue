@@ -675,21 +675,16 @@ export default {
     // 获取人流量分布统计
     getPhotoStaticList() {
       if (!this.notCheckAll) {
-        this.getFaceCaptureSumByDay();
+        this.getStaticsPeopleAPi({channelUuid: null});
       } else {
-        this.getSingleFaceCapSumByDay();
+        this.getStaticsPeopleAPi({channelUuid: this.checkedChannelsUuidList[0]});
       }
     },
-    // 今日全部抓拍
-    getFaceCaptureSumByDay() {
+    // 人流量抓拍
+    getStaticsPeopleAPi(data) {
       this.fullscreenLoading = !this.fullscreenLoading;
-      this.$statisticHttp
-        .getFaceCaptureAll({
-          sort: "desc",
-          faceCapturePhotoQuality: ["HIGH", "NORMAL", "LOW"].toString(),
-          reportType: "faceDailyReport",
-          searchDate: this.$common.getCurrentTime()
-        })
+      api
+        .getStaticsPeopleAPi(data)
         .then(res => {
           this.fullscreenLoading = !this.fullscreenLoading;
           let body = res.data;
@@ -697,41 +692,9 @@ export default {
             let arr = body.data;
             let num = [];
             arr.forEach((item, index) => {
-              num[index] = 0;
-              item.forEach(o => {
-                num[index] += o.snapshotTotal;
-              });
+              num[index] = item.count;
             });
             this.photoStaticList = num;
-          }
-          this.drawLine();
-        })
-        .catch(() => {
-          this.fullscreenLoading = !this.fullscreenLoading;
-        });
-    },
-    // 今日单一摄像头全部抓拍
-    getSingleFaceCapSumByDay() {
-      this.fullscreenLoading = !this.fullscreenLoading;
-
-      this.$statisticHttp
-        .getFaceCaptureOne({
-          channelUuid: this.checkedChannelsUuidList[0],
-          reportType: "faceDailyReport",
-          faceCapturePhotoQuality: ["HIGH", "NORMAL", "LOW"].toString(),
-          searchDate: this.$common.getCurrentTime()
-        })
-        .then(res => {
-          this.fullscreenLoading = !this.fullscreenLoading;
-          let body = res.data;
-          this.photoStaticList = [];
-          if (body.data) {
-            for (let i = 0; i < 25; i++) {
-              this.photoStaticList.push(0);
-            }
-            body.data.forEach((v, i) => {
-              this.photoStaticList[i + 1] = v;
-            });
           }
           this.drawLine();
         })
@@ -761,7 +724,6 @@ export default {
       this.getRecongizeList();
     },
     doRecoginizeDetail(e) {
-      console.log("右侧的弹窗事件index", e);
       if (e >= 0 && this.comparePhotoList[e]) {
         console.log(this.comparePhotoList[e]);
         this.dialogParama = this.comparePhotoList[e];
@@ -1389,9 +1351,9 @@ export default {
 	box-sizing: border-box;
 }
 
-.leftflexButton,
-.leftflexButton:focus,
-.leftflexButton:hover {
+.RTask .leftflexButton,
+.RTask .leftflexButton:focus,
+.RTask .leftflexButton:hover {
 	background-color: transparent;
 	color: #ffffff;
 	border: 0;
