@@ -25,6 +25,7 @@
                     action="playback"
                     :position="item.position"
                     :fenlu="fenluIndex+1"
+                    :isRecord="!!item.isRecord"
                     @closeVideo="closeVideoAA"
                     @startRecord="startRecord"
                     @stopRecord="stopRecord"
@@ -48,6 +49,7 @@
                        @PreviewAreafullScreen="PreviewAreafullScreen"
                        @chooseFenlu="chooseFenlu"
                        @changeMode="changeMode"
+                       :isPlaying="isPlaying"
                        :mode="videoMode"
                        :speed="videoSpeed"
                        :operatorIndex.sync="operatorIndex"
@@ -138,6 +140,7 @@ export default {
           startTime: "",
           endTime: "",
           mode: "original",
+          status: true,
           timeData: [
             // {
             //   startTime: "2019-11-12 00:00:00", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
@@ -193,8 +196,8 @@ export default {
           value: "切换至实时"
         },
         {
-          label: "下载",
-          value: "下载"
+          label: "开始录像",
+          value: "开始录像"
         },
         {
           label: "图像调节",
@@ -221,6 +224,10 @@ export default {
     },
     videoMode() {
       return this.videoArr[this.operatorIndex].mode;
+    },
+    isPlaying() {
+      // 视频处于播放还是暂停状态
+      return this.videoArr[this.operatorIndex].status;
     }
   },
   mounted() {
@@ -287,8 +294,6 @@ export default {
       this.videoArr[index].streamType = "";
       this.videoArr[index].channelUuid = "";
     },
-    startRecord() {},
-    stopRecord() {},
     openVideo() {},
     screenShot(index) {
       // 抓图
@@ -812,10 +817,13 @@ export default {
         case "抓图":
           // this.screenShotVisible = true;
           break;
-        case "下载":
-          this.download();
+        case "开始录像":
+          // this.jumpToPlayback();
+          this.startRecord(this.operatorIndex);
           break;
-
+        case "停止录像":
+          this.stopRecord(this.operatorIndex);
+          break;
         case "全屏":
           this.PreviewAreafullScreen();
           break;
@@ -830,6 +838,45 @@ export default {
           }
           break;
       }
+    },
+    startRecord(index) {
+      if (!this.videoArr[index].channelUuid) {
+        this.$message.error("该分路上没有播放的视频");
+        return;
+      }
+      this.menuData = this.menuData.map(item => {
+        if (item.label === "开始录像") {
+          return {
+            value: "停止录像",
+            label: "停止录像"
+          };
+        }
+        return item;
+      });
+      let item = this.videoArr[index];
+      item.isRecord = true;
+      this.videoArr.splice(index, 1, item);
+
+      this.$refs["video" + index][0].record();
+    },
+    stopRecord(index) {
+      if (!this.videoArr[index].channelUuid) {
+        this.$message.error("该分路上没有播放的视频");
+        return;
+      }
+      this.menuData = this.menuData.map(item => {
+        if (item.label === "停止录像") {
+          return {
+            value: "开始录像",
+            label: "开始录像"
+          };
+        }
+        return item;
+      });
+      let item = this.videoArr[index];
+      item.isRecord = false;
+      this.videoArr.splice(index, 1, item);
+      this.$refs["video" + index][0].stopRecord();
     },
     openVideoVoice(index) {},
     getVideoSpeed() {
@@ -846,6 +893,9 @@ export default {
     },
     pasueVideo() {
       this.$refs["video" + this.operatorIndex][0].pause();
+      this.videoArr[this.operatorIndex].status = this.$refs[
+        "video" + this.operatorIndex
+      ][0].isPause;
     },
     stopVideo() {
       this.closeVideoAA();

@@ -4,6 +4,12 @@
       <ul>
         <li>
           <img :src="icons.play"
+               v-if="isPlaying"
+               @click="play"
+               alt="">
+          <img :src="icons.pause"
+               style="height:16px;width:16px;"
+               v-else
                @click="play"
                alt="">
         </li>
@@ -205,6 +211,12 @@ export default {
         return 1;
       }
     },
+    isPlaying: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
     fenlnWW: {
       type: Number,
       default() {
@@ -376,7 +388,11 @@ export default {
     },
     data(val) {
       // console.log(val);
-      this.controlData = this.data;
+      let newData = JSON.parse(JSON.stringify(this.data));
+      newData.sort((a, b) => {
+        return a.position - b.position;
+      });
+      this.controlData = newData;
       this.getMaxTime();
     },
     zoom(newVal, oldVal) {

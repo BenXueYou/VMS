@@ -110,8 +110,8 @@ export default {
       // 这里需要判断时间在右边会被遮挡的情况
       let allWidth = this.$refs.timeBG.clientWidth;
       let moveWidth = e.offsetX;
-      console.log(allWidth);
-      console.log();
+      // console.log(allWidth);
+      // console.log();
       let left1 = e.target.getBoundingClientRect().left;
       let left2 = this.$refs.timeBG.getBoundingClientRect().left;
       let cha = left1 - left2;
@@ -157,8 +157,8 @@ export default {
       // 点击计算时间
       let start = this.getTime(this.timeData[index].startTime);
       let end = this.getTime(this.timeData[index].endTime);
-      console.log(this.timeData[index].startTime);
-      console.log(this.timeData[index].endTime);
+      // console.log(this.timeData[index].startTime);
+      // console.log(this.timeData[index].endTime);
       let now = this.getFormatTime(
         parseInt(start) + Math.floor((end - start) * fenlv)
       );
