@@ -46,6 +46,7 @@ import zhen from "@/assets/images/Video/zhen.png";
 import stop from "@/assets/images/Video/stop.png";
 import download from "@/assets/images/Video/download.png";
 import play from "@/assets/images/Video/play.png";
+import pause from "@/assets/images/Video/pause.png";
 import backward from "@/assets/images/Video/backward.png";
 import forward from "@/assets/images/Video/forward.png";
 import save from "@/assets/images/Video/save.png";
@@ -71,6 +72,7 @@ export default {
   zoomOut,
   download,
   play,
+  pause,
   backward,
   forward,
   save,
