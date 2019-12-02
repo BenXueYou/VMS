@@ -215,6 +215,8 @@ export default {
         localStorage.setItem("username", body.data.adminUser.username);
         // 这里存储userUuid, 后面调用菜单的时候会使用到
         localStorage.setItem("useruuid", body.data.adminUser.useruuid);
+        // 这里存储logUuid, 后面选择项目的时候会使用到
+        localStorage.setItem("logUuid", body.data.adminUser.logUuid);
         // this.$store.dispatch("setUserName", body.data.adminUser.username);
 
         if (projects.length > 1) {

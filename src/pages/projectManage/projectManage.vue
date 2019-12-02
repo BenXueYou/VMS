@@ -36,6 +36,14 @@ export default {
     selectRow(index) {
       let uuid = this.data[index].projectUuid;
       this.$store.dispatch("setProjectUuid", uuid);
+      this.$ProjectManageAjax.setLogUuid({
+	      logUuid: localStorage.getItem("logUuid")
+	    })
+	    .then(res => {
+	    	
+	      // let body = res.data;
+	      // this.loginSuccessResponse(body);
+	    });
       // 刷新页面以便于更新projectUuid
       this.$nextTick(() => {
         this.$router.push("/home");

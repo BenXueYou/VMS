@@ -55,7 +55,8 @@ export default {
      * 登录模块
      */
     login: {
-      login: `oauth-v1/authentication/iac`
+      login: `oauth-v1/authentication/iac`,
+      setLogUuid: `sysLog-v1/project/${store.state.home.projectUuid}/log`
     },
 
     /**
