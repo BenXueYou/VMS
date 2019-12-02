@@ -12,7 +12,13 @@
 		<div class="mywrap">
 			<div class="left">
 				<el-tabs v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane label="视频" class="i-tree" name="video">
+					<el-tab-pane
+						v-for="(treeTab,i) in treeTypeArr"
+						:key="i"
+						:label="treeTab.label"
+						class="i-tree"
+						:name="treeTab.id"
+					>
 						<el-tree
 							:load="getNewTree"
 							node-key="id"
@@ -39,21 +45,42 @@
 							</div>
 						</el-tree>
 					</el-tab-pane>
-					<el-tab-pane label="门禁" name="door"></el-tab-pane>
+					<!-- <el-tab-pane label="门禁" name="door"></el-tab-pane>
 					<el-tab-pane label="报警" name="alarm"></el-tab-pane>
-					<el-tab-pane label="访客机" name="visitor"></el-tab-pane>
+					<el-tab-pane label="访客机" name="visitor"></el-tab-pane>-->
 				</el-tabs>
 			</div>
 			<div class="right">
+				<!---- 资源类型 ----->
 				<el-radio-group v-model="resourceType" @change="resourceTypeChange">
 					<template v-for="(item,index) in rightTabArr">
 						<el-radio-button :key="index" :label="item.id" :name="item.id">{{item.label}}</el-radio-button>
 					</template>
 				</el-radio-group>
+				<!---- 资源权限 ----->
+				<template v-for="(channelItem,i) in checkedChannelArr">
+					<div v-if="resourceType.indexOf(channelItem.resType)" class="channelItemClass" :key="i">
+						<span class="channelItemSpan">{{channelItem.label}}</span>
+						<el-checkbox
+							:indeterminate="channelItem.isIndeterminate"
+							v-model="channelItem.checkAll"
+							@change="handleCheckAllChange(channelItem)"
+						>全选</el-checkbox>
+						<el-checkbox-group v-model="channelItem.checkedAuthUuids">
+							<template v-for="(authItem,j) in channelItem.authArr">
+								<el-checkbox
+									:key="j"
+									:label="authItem.authUuid"
+									:name="authItem.authUuid"
+								>{{authItem.authName}}</el-checkbox>
+							</template>
+						</el-checkbox-group>
+					</div>
+				</template>
 			</div>
 		</div>
 		<div slot="footer" class="dialog-footer">
-			<el-button type="primary" @click="isShow = false">确 定</el-button>
+			<el-button type="primary" @click="onConfirmBtn">确 定</el-button>
 			<el-button type="primary" @click="isShow = false">取 消</el-button>
 		</div>
 	</el-dialog>
@@ -61,61 +88,6 @@
 
 <script>
 import * as api from "../http/ajax";
-const data = {
-  video: [
-    {
-      id: "device",
-      label: "视频设备",
-      children: [
-        { id: "see", label: "查看" },
-        { id: "say", label: "设备对讲" },
-        { id: "reveive", label: "事件接受" }
-      ]
-    },
-    { id: "videoChannel", label: "监控点" },
-    { id: "inputChannel", label: "输入" },
-    { id: "outputChannel", label: "输出" }
-  ],
-  door: [
-    {
-      id: "device",
-      label: "门禁设备",
-      children: [
-        { id: "see", label: "查看" },
-        { id: "say", label: "设备对讲" },
-        { id: "reveive", label: "事件接受" }
-      ]
-    },
-    { id: "doorChannel", label: "门禁点" },
-    { id: "inputChannel", label: "输入" },
-    { id: "outputChannel", label: "输出" }
-  ],
-  alarm: [
-    {
-      id: "device",
-      label: "报警设备",
-      children: [
-        { id: "see", label: "查看" },
-        { id: "say", label: "设备对讲" },
-        { id: "reveive", label: "事件接受" }
-      ]
-    },
-    { id: "videoChannel", label: "防区" },
-    { id: "inputChannel", label: "报警输入" },
-    { id: "outputChannel", label: "报警输出" }
-  ],
-  visitor: [
-    {
-      id: "device",
-      label: "访客机设备",
-      children: [
-        { id: "see", label: "查看" },
-        { id: "say", label: "设备对讲" },
-        { id: "reveive", label: "事件接受" }
-      ]
-    }
-  ]
-};
 export default {
   name: "resouceTree",
   props: {
@@ -146,16 +118,60 @@ export default {
       defaultExpandedKeys: [2],
       cnt: 0,
       checkedChannelArr: [],
-      rightTabArr: data["video"],
-      resourceType: "device"
+      rightTabArr: [],
+      resourceType: "",
+      resourceAuthArr: [],
+      treeTypeArr: []
     };
   },
+  mounted: function() {
+    this.treeTypeArr = [
+      { id: "video", label: "视频" },
+      { id: "door", label: "门禁" },
+      { id: "alarm", label: "报警" },
+      { id: "visitor", label: "访客机" }
+    ];
+    this.rightTabArr = this.resourceTypeArr[this.activeName];
+    this.resourceType = this.rightTabArr[0].id;
+    this.getChannelAuth();
+  },
   methods: {
+    // 点击资源的全选按钮
+    handleCheckAllChange(channelItem) {
+      let arr = [];
+      if (channelItem.checkAll) {
+        channelItem.authArr.filter(item => {
+          arr.push(item.authUuid);
+        });
+        channelItem.isIndeterminate = false;
+      } else {
+        channelItem.isIndeterminate = true;
+      }
+      this.$set(channelItem, "checkedAuthUuids", arr);
+    },
+    // 点击角色确定按钮
+    onConfirmBtn() {
+      this.isShow = !this.isShow;
+      let dataArr = [];
+      this.checkedChannelArr
+        .filter((item, i) => {
+          return item.checkedAuthUuids.length;
+        })
+        .map(o => {
+          dataArr.push({
+            resourceUuid: o.id,
+            resourceType: o.resType,
+            resourceAuthUuids: o.checkedAuthUuids
+          });
+        });
+      this.$emit("transferResourceAuth", dataArr);
+    },
+    // 输入框的筛选按钮
     filterNode(obj, data) {},
     // 点击树节点响应事件
     nodeClick(data, node, nodeTree) {
       //  新增节点的类型字段
-      // console.log(data, node, nodeTree);
+      // TODO:此处需要有过滤只选择通道
       this.$set(node, "checked", !node.checked);
       this.handleCheckChannelData(data, node.checked);
     },
@@ -165,7 +181,20 @@ export default {
         .getResource({ resourceType: this.resourceType })
         .then(res => {
           if (res.data.success) {
-            console.log(res.data.data);
+            res.data.data = res.data.data || [];
+            let data = res.data.data[0];
+            this.resourceAuthArr = data.auth;
+            let obj = {
+              id: "all",
+              label: "资源名称",
+              authArr: JSON.parse(JSON.stringify(this.resourceAuthArr))
+            };
+            this.$set(this.checkedChannelArr, "0", obj);
+          } else {
+            this.$messsage({
+              type: "warning",
+              messsage: res.data.msg
+            });
           }
         })
         .catch(() => {});
@@ -173,14 +202,18 @@ export default {
     // 处理选中的数据源
     handleCheckChannelData(data, isBool) {
       if (isBool) {
-        // 判断树类型
         // 构造当前资源类型权限对象
-        // let channelAuthObj = this.rightTabArr.filter(item => {
-        //   return item.id === this.resourceType;
-        // })[0].children;
-        // Object.assign(data, channelAuthObj);
+        data.authArr = JSON.parse(JSON.stringify(this.resourceAuthArr));
+        let checkedAuthUuids = [];
+        // 默认资源权限全选
+        data.authArr.filter(v => {
+          checkedAuthUuids.push(v.authUuid);
+        });
+        this.$set(data, "checkedAuthUuids", checkedAuthUuids);
+        data.checkAll = true;
+        data.isIndeterminate = false;
         this.checkedChannelArr.push(data);
-        // console.log(this.checkedChannelArr);
+        console.log(this.checkedChannelArr);
       } else {
         // 删除
         this.checkedChannelArr.splice(
@@ -191,6 +224,7 @@ export default {
         );
       }
     },
+    // 获取树节点数据的HTPP
     getTreeData(obj) {
       return new Promise(resolve => {
         api
@@ -198,6 +232,11 @@ export default {
           .then(res => {
             console.log(res);
             let data = res.data.data || [];
+            data.forEach(element => {
+              if (!element.openFlag) {
+                element.isLeaf = true;
+              }
+            });
             resolve(data);
           })
           .catch(() => {
@@ -205,48 +244,42 @@ export default {
           });
       });
     },
+    // 树的懒加载动作
     async getNewTree(node, resolve) {
       this.$set(node, "checked", false);
-      // let obj = {
-      //   viewType: "video", // 不填则查所有类型资源 门禁 door、视频 video、报警 alarm、访客机 visitor
-      //   treeStructure:
-      // 		"orgNode$orgType|devNode[$...devType]|chnNode[[$...chnType]]", // 树结构，指定树的类型及树的结构
-      //   authEnable: false, // 是否开启权限过滤，默认开启true
-      //   parentUuid: "fb6a1a0ad9b444bba4d5b5be1015c43d", // 查询的树节点UUID，默认根节点
-      //   parentType: "orgNode", // 查询的树节点类型。组织 org[默认]、设备 dev、通道 chn
-      //   recursiveEnable: true // 是否递归查询子节点的资源，默认不查询false
-      // };
+      let obj = {
+        viewType: this.activeName, // 不填则查所有类型资源 门禁 door、视频 video、报警 alarm、访客机 visitor
+        treeStructure: "orgNode$device|devNode|chnNode", // 树结构，指定树的类型及树的结构
+        authEnable: false, // 是否开启权限过滤，默认开启true
+        recursiveEnable: false // 是否递归查询子节点的资源，默认不查询false
+      };
       // 先判断是不是根节点
       if (node) {
         // 非根节点
-      } else {
-        // 根节点
+        obj.parentType = node.nodeType;
+        obj.parentUuid = node.parentUuid;
       }
-      // let data = await this.getTreeData(obj);
-      // 以下为测试代码
-      this.cnt++;
-      let obj = [
-        {
-          id: "string" + this.cnt /* 节点UUID */,
-          label: "string" + this.cnt /* 节点名称 */,
-          nodeType: "org" /* 当前节点类型[组织 org、设备 dev、通道 chn] */,
-          resType: "int" /* 节点的资源类型 */,
-          realType: "string" /* 节点的真实类型 */,
-          openFlag: true /* 节点是否有下一级 */,
-          extInfo: {
-            // 当前节点类型为通道
-            channelDivideType:
-							"string" /* 监控点monitor、输入input、输出output、门禁点access、防区zone、子系统subsystem */
-          }
-        }
-      ];
-      resolve(obj);
+      let data = await this.getTreeData(obj);
+      resolve(data);
     },
-    // 点击tab筛选树的类型
+    // 点击tab按钮，切换树的类型
     handleClick(tab, event) {
       this.rightTabArr = this.resourceTypeArr[tab.name];
       this.resourceType = this.rightTabArr[0].id;
-      // TODO:筛选通道类型，左侧选中的树的节点
+      let topChannelItem = {
+        id: "all",
+        label: "资源名称",
+        authArr: JSON.parse(JSON.stringify(this.resourceAuthArr))
+      };
+      this.$set(this.checkedChannelArr, "0", topChannelItem);
+      // 切换树的类型
+      let obj = {
+        viewType: this.activeName, // 不填则查所有类型资源 门禁 door、视频 video、报警 alarm、访客机 visitor
+        treeStructure: "orgNode$device|devNode|chnNode", // 树结构，指定树的类型及树的结构
+        authEnable: false, // 是否开启权限过滤，默认开启true
+        recursiveEnable: false // 是否递归查询子节点的资源，默认不查询false
+      };
+      this.getTreeData(obj);
     },
     // 点击右边按钮，改变资源类型
     resourceTypeChange() {
@@ -264,11 +297,33 @@ export default {
 };
 </script>
 <style>
-.showResource .el-tabs__item {
+.showResource .right .channelItemClass {
+	border-bottom: 1px dashed rgb(69, 71, 74);
+}
+.showResource .right .channelItemClass .channelItemSpan {
+	display: inline-block;
+	width: 90px;
+	line-height: 49px;
+}
+.showResource .right .channelItemClass span {
+	font-family: "PingFangSC-Regular";
+	font-size: 12px;
 	color: #dddddd;
 }
+.showResource .right .el-checkbox-group {
+	display: inline;
+}
+.showResource .el-tabs__nav {
+	display: inline-block;
+	width: 100%;
+	color: #dddddd;
+}
+.showResource .el-tabs__item {
+	color: #dddddd;
+	width: 25%;
+}
 .showResource .right .el-radio-group {
-  width: 70%;
+	width: 70%;
 	display: flex;
 	justify-content: space-between;
 }
