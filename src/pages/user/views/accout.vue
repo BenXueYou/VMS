@@ -126,6 +126,7 @@ export default {
   mounted() {
     // this.initData();
     this.onlineStatusOptions = this.$common.getEnumByGroupStr("onoffline");
+    this.onlineStatusOptions.unshift({ typeName: "全部", typeStr: null });
     console.log("onlineStatusOptions==", this.onlineStatusOptions);
   },
   data() {
