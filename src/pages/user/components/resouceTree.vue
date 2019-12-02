@@ -59,8 +59,8 @@
 				</el-radio-group>
 				<!---- 资源权限 ----->
 				<template v-for="(channelItem,i) in checkedChannelArr">
-					<div v-if="resourceType === channelItem.resType" class="channelItemClass" :key="i">
-						<span>{{channelItem.label}}</span>
+					<div v-if="resourceType.indexOf(channelItem.resType)" class="channelItemClass" :key="i">
+						<span class="channelItemSpan">{{channelItem.label}}</span>
 						<el-checkbox
 							:indeterminate="channelItem.isIndeterminate"
 							v-model="channelItem.checkAll"
@@ -145,7 +145,6 @@ export default {
         });
         channelItem.isIndeterminate = false;
       } else {
-        arr = channelItem.checkedChannelArr;
         channelItem.isIndeterminate = true;
       }
       this.$set(channelItem, "checkedAuthUuids", arr);
@@ -172,6 +171,7 @@ export default {
     // 点击树节点响应事件
     nodeClick(data, node, nodeTree) {
       //  新增节点的类型字段
+      // TODO:此处需要有过滤只选择通道
       this.$set(node, "checked", !node.checked);
       this.handleCheckChannelData(data, node.checked);
     },
@@ -185,7 +185,7 @@ export default {
             let data = res.data.data[0];
             this.resourceAuthArr = data.auth;
             let obj = {
-              id: "",
+              id: "all",
               label: "资源名称",
               authArr: JSON.parse(JSON.stringify(this.resourceAuthArr))
             };
@@ -267,7 +267,7 @@ export default {
       this.rightTabArr = this.resourceTypeArr[tab.name];
       this.resourceType = this.rightTabArr[0].id;
       let topChannelItem = {
-        id: "",
+        id: "all",
         label: "资源名称",
         authArr: JSON.parse(JSON.stringify(this.resourceAuthArr))
       };
@@ -300,8 +300,27 @@ export default {
 .showResource .right .channelItemClass {
 	border-bottom: 1px dashed rgb(69, 71, 74);
 }
+.showResource .right .channelItemClass .channelItemSpan {
+	display: inline-block;
+	width: 90px;
+	line-height: 49px;
+}
+.showResource .right .channelItemClass span {
+	font-family: "PingFangSC-Regular";
+	font-size: 12px;
+	color: #dddddd;
+}
+.showResource .right .el-checkbox-group {
+	display: inline;
+}
+.showResource .el-tabs__nav {
+	display: inline-block;
+	width: 100%;
+	color: #dddddd;
+}
 .showResource .el-tabs__item {
 	color: #dddddd;
+	width: 25%;
 }
 .showResource .right .el-radio-group {
 	width: 70%;

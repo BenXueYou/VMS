@@ -2,7 +2,7 @@
 	<div class="SearchLog">
 		<div class="form-item">
 			<label for>账号：</label>
-			<el-input class="input" v-model="SearchObj.IP"></el-input>
+			<el-input class="input" v-model="SearchObj.accountName"></el-input>
 		</div>
 		<div class="form-item">
 			<label for>模块：</label>
@@ -66,7 +66,8 @@ export default {
         modelUuid: null,
         eventType: null,
         openDoorResult: null,
-        verifyResult: null
+        verifyResult: null,
+        accountName: null
       }
     };
   },
@@ -77,7 +78,7 @@ export default {
     this.modelUuidOptions.unshift({ typeName: "全部", typeStr: null });
     this.SearchObj.modelUuid = this.modelUuidOptions[0].typeStr;
     this.eventTypeOptions = this.$common.getEnumByGroupStr(
-      "system_log_event"
+      "config"
     );
     this.eventTypeOptions.unshift({ typeName: "全部", typeStr: null });
     this.SearchObj.eventType = this.eventTypeOptions[0].typeStr;
@@ -93,7 +94,8 @@ export default {
         modelUuid: this.modelUuidOptions[0].typeStr,
         eventType: this.eventTypeOptions[0].typeStr,
         verifyResult: this.resultOptions[0].typeStr,
-        openDoorResult: this.resultOptions[0].typeStr
+        openDoorResult: this.resultOptions[0].typeStr,
+        accountName: this.resultOptions[0].typeStr
       };
       this.$emit("query", this.SearchObj);
     }

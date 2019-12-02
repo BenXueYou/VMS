@@ -130,8 +130,7 @@ export const constantRouterMap = [
     path: "/",
     name: "MainLayout",
     component: MainLayout,
-    redirect: "Home",
-    children:[]
+    redirect: "Home"
   },
   {
     path: "/Login",

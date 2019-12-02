@@ -154,5 +154,3 @@ window.config = {
     { value: "vistor_machine", label: "测试访客机" }
   ]
 };
-
-// tableData: Array.from({ length: 15 }, (v, i) => ({ id: i, staffName: '李怡婷', createTime: '2017-06-20 12:00:00', gender: '女', deviceName: '广拓门禁', address: '上海地铁恒通大厦' })),
