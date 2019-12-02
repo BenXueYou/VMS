@@ -120,6 +120,12 @@ export default {
         return "";
       }
     },
+    mode: {
+      type: String,
+      default() {
+        return "original";
+      }
+    },
     action: {
       type: String,
       default() {
@@ -182,6 +188,9 @@ export default {
     }
   },
   watch: {
+    mode(val) {
+      this.calcHeight();
+    },
     position(val) {
       console.log(val);
     },
@@ -276,6 +285,13 @@ export default {
       // 这里让视频的宽高比是*16:9；
       // return this.height;
       if (this.canvas) {
+        // 如果视频的mode等于original 则按照下面的比例进行播放
+        // 如果是fullscreen则按照充满屏幕来播放
+        if (this.mode === "fullscreen") {
+          this.canvas.width = this.width;
+          this.canvas.height = this.height;
+          return;
+        }
         // 如果宽高比大于16:9 则按照高计算宽
         if (this.width / this.height >= 16 / 9) {
           let width = ~~((16 / 9) * this.height);
@@ -407,8 +423,8 @@ export default {
 @import "@/style/variables.scss";
 .displayWrap {
   position: absolute;
-  background: #242527;
-  border: 2px solid #1b1b1b;
+  background: rgb(22, 22, 22);
+  border: 1px solid rgba(255,255,255,0.10);
   box-sizing: border-box;
   overflow: hidden;
   z-index: 1;

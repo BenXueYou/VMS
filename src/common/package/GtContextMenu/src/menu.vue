@@ -60,17 +60,17 @@ export default {
     transform: translateX(100%);
     .next {
       position: relative;
-      &::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        right: 15px;
-        width: 7px;
-        height: 7px;
-        border-top: 1px solid #ddd;
-        border-right: 1px solid #ddd;
-        transform: translateY(-50%) rotate(45deg);
-      }
+      // &::after {
+      //   content: "";
+      //   position: absolute;
+      //   top: 50%;
+      //   right: 15px;
+      //   width: 7px;
+      //   height: 7px;
+      //   border-top: 1px solid #ddd;
+      //   border-right: 1px solid #ddd;
+      //   transform: translateY(-50%) rotate(45deg);
+      // }
     }
     .submenu-li {
       position: relative;

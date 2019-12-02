@@ -13,7 +13,7 @@
                    type="primary">取消</el-button>
       </div>
     </div>
-    <gt-scroll class="body"
+    <div class="body"
                ref='scroll'>
       <el-form :model="ruleForm"
                :rules="rules"
@@ -451,7 +451,7 @@
                        :checkedNodeArr="checkedNode"
                        @onCancel="onCancel"
                        @onConfirm="onConfirm"></person-tree-tag>
-    </gt-scroll>
+    </div>
     <div slot="footer"
          class="footer">
       <el-button @click="confirm"
