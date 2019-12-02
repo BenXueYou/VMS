@@ -148,6 +148,8 @@ export default {
   created() {
     let script = document.createElement("script");
     script.src = "./static/utils/BMap_min.js";
+    // script.type = "text/javascript";
+    // script.src = "http://api.map.baidu.com/api?v=3.0&ak=EnRctIH3RAgwGZGN0P1xlyIoBaOVw86i";
     document.body.appendChild(script);
     script.onload = () => {
       let scriptDraw = document.createElement("script");
@@ -330,6 +332,7 @@ export default {
       }
       this.menuData = [];
       this.itemData = [];
+      this.map.clearOverlays();
       this.$factTragicHttp
         .getTragicList({
           imageBase64: this.imageBase64,

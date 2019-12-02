@@ -180,7 +180,11 @@ export default {
   },
   mounted() {
     /* eslint-disable */
-    this.video_mgr = new CVideoMgrSdk();
+    const _this = this;
+    const onStreamBreak = video => {
+      _video_mgr.stop(_this.video);
+    };
+    this.video_mgr = new CVideoMgrSdk(onStreamBreak);
     if (this.rtspUrl) {
       setTimeout(() => {
         this.playVideo();
@@ -277,8 +281,9 @@ export default {
       // if (!this.canvas) {
       //   this.playVideo();
       // }
+      start = start.replace(/-|:|\s/g, "");
       console.log(this.rtspUrl);
-      console.log(this.drag);
+      console.log(start);
       this.video_mgr.drag(this.video, start);
     },
     calcHeight() {
@@ -424,7 +429,7 @@ export default {
 .displayWrap {
   position: absolute;
   background: rgb(22, 22, 22);
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
   overflow: hidden;
   z-index: 1;
