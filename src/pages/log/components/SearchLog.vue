@@ -6,9 +6,9 @@
 		</div>
 		<div class="form-item">
 			<label for>模块：</label>
-			<el-select v-model="SearchObj.modelUuid" placeholder="请选择验证">
+			<el-select v-model="SearchObj.modelName" placeholder="请选择验证">
 				<el-option
-					v-for="item in modelUuidOptions"
+					v-for="item in modelNameOptions"
 					:key="item.typeStr"
 					:label="item.typeName"
 					:value="item.typeStr"
@@ -54,7 +54,7 @@ export default {
       phone: "",
       address: "",
       registerTime: "",
-      modelUuidOptions: [],
+      modelNameOptions: [{ typeName: "全部", typeStr: null }],
       eventTypeOptions: [],
       resultOptions: [
         { typeName: "全部", typeStr: null },
@@ -63,24 +63,46 @@ export default {
       ],
       SearchObj: {
         IP: null,
-        modelUuid: null,
+        modelName: null,
         eventType: null,
         openDoorResult: null,
         verifyResult: null,
         accountName: null
-      }
+      },
+      setEvents: [
+        { typeName: "全部", typeStr: null },
+        { typeName: "设备管理", typeStr: "设备管理" },
+        { typeName: "单位管理", typeStr: "单位管理"},
+        { typeName: "楼栋房屋", typeStr: "楼栋房屋"},
+        { typeName: "居民管理", typeStr: "居民管理" },
+        { typeName: "员工管理", typeStr: "员工管理"},
+        { typeName: "用户管理", typeStr: "用户管理"},
+        { typeName: "门禁管理", typeStr: "门禁管理" },
+        { typeName: "访客管理", typeStr: "访客管理"},
+        { typeName: "视频预览", typeStr: "视频预览"},
+        { typeName: "人脸识别", typeStr: "人脸识别"}
+      ],
+      operationEvents: [
+        { typeName: "全部", typeStr: null},
+        { typeName: "视频预览", typeStr: "视频预览" },
+        { typeName: "视频回放", typeStr: "视频回放" },
+        { typeName: "门禁管理", typeStr: "门禁管理"},
+        { typeName: "访客管理", typeStr: "访客管理" },
+        { typeName: "人脸识别", typeStr: "人脸识别" }
+      ]
+
     };
   },
   mounted() {
     this.SearchObj.verifyResult = this.resultOptions[0].typeStr;
     this.SearchObj.openDoorResult = this.resultOptions[0].typeStr;
-    this.modelUuidOptions = this.$common.getEnumByGroupStr("pass");
-    this.modelUuidOptions.unshift({ typeName: "全部", typeStr: null });
-    this.SearchObj.modelUuid = this.modelUuidOptions[0].typeStr;
-    this.eventTypeOptions = this.$common.getEnumByGroupStr(
-      "config"
-    );
+    this.eventTypeOptions = this.$common.getEnumByGroupStr("SystemLogEventEnum");
     this.eventTypeOptions.unshift({ typeName: "全部", typeStr: null });
+    this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
+    // this.eventTypeOptions = this.$common.getEnumByGroupStr(
+    //   "config"
+    // );
+    // this.eventTypeOptions.unshift({ typeName: "全部", typeStr: null });
     this.SearchObj.eventType = this.eventTypeOptions[0].typeStr;
   },
   methods: {
@@ -91,7 +113,7 @@ export default {
     resetValue() {
       this.SearchObj = {
         IP: null,
-        modelUuid: this.modelUuidOptions[0].typeStr,
+        modelName: this.modelNameOptions[0].typeStr,
         eventType: this.eventTypeOptions[0].typeStr,
         verifyResult: this.resultOptions[0].typeStr,
         openDoorResult: this.resultOptions[0].typeStr,
@@ -99,6 +121,20 @@ export default {
       };
       this.$emit("query", this.SearchObj);
     }
+  },
+  watch: {
+    visible(val) {
+      if (localStorage.getItem("eventType")==="set") {
+        this.modelNameOptions = this.setEvents;
+        // this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
+      } else if (localStorage.getItem("eventType")==="operation") {
+        this.modelNameOptions = this.operationEvents;
+        // this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
+      }   
+    },
+    // initSelectData(val){
+    //   this.formatData();
+    // },
   }
 };
 </script>

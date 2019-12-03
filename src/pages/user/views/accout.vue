@@ -126,6 +126,7 @@ export default {
   mounted() {
     // this.initData();
     this.onlineStatusOptions = this.$common.getEnumByGroupStr("onoffline");
+    this.onlineStatusOptions.unshift({ typeName: "全部", typeStr: null });
     console.log("onlineStatusOptions==", this.onlineStatusOptions);
   },
   data() {
@@ -174,6 +175,8 @@ export default {
       } else if (this.isAddRole === "add") {
         console.log("defaultRoleData==", this.defaultRoleData);
         this.showTreeAdd = false;
+      } else if (this.isAddRole === "editRole"){
+        this.editAccountRoleApi();
       }
     },
     // 账号分配角色
@@ -226,8 +229,13 @@ export default {
     },
     // 修改角色
     editRoleClick(rowData) {
+      // this.getRoleDetail(rowData);
+      this.isAddRole = "editRole";
       this.accountUuid = rowData.accountUuid;
       this.getRoleList();
+      // this.$emit("addRole", rowData);
+      this.getRoleDetail(rowData);
+      // this.$set(this.rowData, 'roles', this.defaultRoleData);
       console.log("rowData===", rowData);
     },
     // 分配角色
@@ -255,6 +263,23 @@ export default {
             this.addDialogVisible = !this.addDialogVisible;
             this.rowData = res.data.data;
             this.defaultRoleData = this.rowData.roles;
+            this.rowData.password = "********";
+            console.log('rowData===', this.rowData)
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(() => {});
+    },
+    // 查看角色详情
+    getRoleDetail(data) {
+      api
+        .getAccountDetail(data)
+        .then(res => {
+          if (res.data.success) {
+            this.rowData = res.data.data;
+            this.defaultRoleData = this.rowData.roles;
+            this.$set(this.rowData, 'roles', this.defaultRoleData);
           } else {
             this.$message.warning(res.data.msg);
           }

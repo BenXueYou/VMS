@@ -107,7 +107,7 @@ export function updateRoleStatus(data) {
 // add
 export function addAccountApi(data) {
   let url = accountApi.addAccountApi;
-  data.accountType = "management_platform";
+  data.accountType = "normal";
   return axios({
     method: "POST",
     url,
@@ -137,7 +137,7 @@ export function getAccountDetail(data) {
 
 // put修改账号
 export function putAccountApi(data) {
-  data.accountType = "management_platform";
+  data.accountType = null;
   let url = accountApi.putAccountApi(data.accountUuid);
   return axios({
     method: "PUT",

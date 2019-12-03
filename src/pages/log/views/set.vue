@@ -37,8 +37,9 @@
 						:visible-arrow="false"
 						width="300"
 						trigger="click"
+						v-model='visible'
 					>
-						<search-option-view @query="queryAct"></search-option-view>
+						<search-option-view :visible='visible' @query="queryAct"></search-option-view>
 					</el-popover>
 				</div>
 				<!-- </div> -->
@@ -58,7 +59,7 @@
 				<el-table-column prop="clientIp" label="配置IP"></el-table-column>
 				<el-table-column prop="moduleName" label="模块" :show-overflow-tooltip="true"></el-table-column>
 				<el-table-column label="类型">
-				<template slot-scope="scope">{{$common.getEnumItemName("config", scope.row.eventType)}}</template>
+				<template slot-scope="scope">{{$common.getEnumItemName("SystemLogEventEnum", scope.row.eventType)}}</template>
 				</el-table-column>
 				<el-table-column prop="detail" label="详情"></el-table-column>
 				<el-table-column prop="eventTime" label="配置时间"></el-table-column>
@@ -89,6 +90,7 @@ export default {
   props: {},
   data() {
     return {
+      visible: false,
       tableData: [],
       selectDate: "",
       validateTimeStart: null,
@@ -128,6 +130,7 @@ export default {
     this.initData();
   },
   activated() {
+  	localStorage.setItem("eventType","set");
     console.log(this.$route.params.data, "---------openDoor-------");
     var params = this.$route.params.data;
     var data = {};
@@ -148,7 +151,7 @@ export default {
         ccountName: this.accountName,
         logType: 'config',
         IP: this.loginIp,
-        modelUuid: null,
+        modelName: null,
         eventType: this.eventTypea
       };
       Object.assign(params, this.otherSearchData);

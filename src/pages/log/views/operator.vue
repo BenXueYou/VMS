@@ -36,9 +36,10 @@
 						placement="bottom-end"
 						:visible-arrow="false"
 						width="300"
+						v-model='visible'
 						trigger="click"
 					>
-						<search-option-view @query="queryAct"></search-option-view>
+						<search-option-view :visible='visible' @query="queryAct"></search-option-view>
 					</el-popover>
 				</div>
 				<!-- </div> -->
@@ -58,11 +59,11 @@
 				<el-table-column prop="moduleName" label="模块" :show-overflow-tooltip="true"></el-table-column>
 				<el-table-column prop="eventType" label="类型">
 					<template slot-scope="scope">
-						{{$common.getEnumItemName('config',scope.row.eventType)}}
+						{{$common.getEnumItemName('SystemLogEventEnum',scope.row.eventType)}}
 					</template>
 				</el-table-column>
 				<el-table-column prop="detail" label="操作内容"></el-table-column>
-				<el-table-column prop="time" label="操作时间"></el-table-column>
+				<el-table-column prop="eventTime" label="操作时间"></el-table-column>
 			</el-table>
 			<!----------------------------------表格分页器---------------------------------->
 			<div class="footer">
@@ -90,6 +91,7 @@ export default {
   props: {},
   data() {
     return {
+      visible: false,
       tableData: [],
       selectDate: "",
       validateTimeStart: null,
@@ -104,6 +106,7 @@ export default {
   },
   created() {},
   mounted() {
+  	localStorage.setItem("eventType","operation");
     let h =
 			window.innerHeight ||
 			document.documentElement.clientHeight ||
@@ -126,6 +129,7 @@ export default {
     this.initData();
   },
   activated() {
+  	localStorage.setItem("eventType","operation");
     this.currentPage = 1;
     this.initData();
   },
@@ -139,7 +143,7 @@ export default {
         accountName: this.accountName,
         logType: 'operation',
         IP: this.loginIp,
-        modelUuid: null,
+        modelName: null,
         eventType: this.eventType
       };
       Object.assign(params, this.otherSearchData);

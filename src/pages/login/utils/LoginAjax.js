@@ -16,6 +16,17 @@ export var LoginAjax = {
       }
     });
   },
+   setLogUuid(holder) {
+    let api = `${window.location.protocol}//${ip}/${
+      RestApi.api.login.setLogUuid
+    }`;
+    return axios.post(api, `logUuid=${holder.logUuid}`, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+        // "Authorization": "Basic d2ViOjEyMzQ1Ng=="
+      }
+    });
+  }
 };
 
 function install(Vue) {

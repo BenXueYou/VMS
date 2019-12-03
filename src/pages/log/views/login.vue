@@ -54,7 +54,7 @@
 						value-format="yyyy-MM-dd HH:mm:ss"
 					></el-date-picker>
 					<el-button type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
-					<el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
+					<!-- <el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button> -->
 					<el-popover
 						ref="popover1"
 						placement="bottom-end"
@@ -78,7 +78,7 @@
 				<el-table-column prop="accountName" label="账号" width="120"></el-table-column>
 				<el-table-column prop="userName" label="姓名" width="128"></el-table-column>
 				<el-table-column prop="clientIp" label="登陆IP"></el-table-column>
-				<el-table-column prop="time" label="时间" :show-overflow-tooltip="true"></el-table-column>
+				<el-table-column prop="eventTime" label="时间" :show-overflow-tooltip="true"></el-table-column>
 				<el-table-column prop="eventType" label="事件">
 					<template
 						slot-scope="scope"
@@ -165,7 +165,7 @@ export default {
         accountName: this.accountName,
         logType: "login",
         IP: this.loginIp,
-        modelUuid: null,
+        modelName: null,
         eventType: this.eventType
       };
       Object.assign(params, this.otherSearchData);
@@ -307,7 +307,7 @@ export default {
 				}
 			}
 			.rightgroup {
-				min-width: 600px;
+				// min-width: 600px;
 			}
 		}
 		.footer {

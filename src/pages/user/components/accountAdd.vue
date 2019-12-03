@@ -2,7 +2,7 @@
 	<div class="AccountAdd">
 		<div class="mainBox">
 			<el-header class="headerBox">
-				<div class="headerTxt">添加账号</div>
+				<div class="headerTxt">{{title}}</div>
 				<div>
 					<el-button class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
 					<el-button @click="editBtnAct" v-loading="isload">确认</el-button>
@@ -28,13 +28,13 @@
 						<el-input v-model="queryBody.accountName"></el-input>
 					</div>
 					<div>
-						<el-input v-model="queryBody.password"></el-input>
+						<el-input v-model="queryBody.password" :disabled="isEditPassWord"></el-input>
 					</div>
 					<div>
-						<el-input v-model="queryBody.confirmPassword"></el-input>
+						<el-input v-model="queryBody.confirmPassword" :disabled="isEditPassWord"></el-input>
 					</div>
 					<p style="margin:17px 0">
-						<el-radio-group v-model="queryBody.enableValue">
+						<el-radio-group v-model="queryBody.enable">
 							<el-radio :label="1">启用</el-radio>
 							<el-radio :label="0">禁用</el-radio>
 						</el-radio-group>
@@ -47,16 +47,16 @@
 						></el-switch>
 					</p>
 					<div>
-						<el-input v-model="queryBody.staffName"></el-input>
+						<el-input :disabled="!isAssociateSwitch" v-model="queryBody.staffName"></el-input>
 						<span class="cursorClass" v-if="isAssociateSwitch" @click="addSystemStaff">
 							<img class="img" src="@/assets/images/resident/modify_icon.png" alt srcset />请选择
 						</span>
 					</div>
 					<div>
-						<el-input v-model="queryBody.phoneNumber"></el-input>
+						<el-input :disabled="!isAssociateSwitch" v-model="queryBody.phoneNumber"></el-input>
 					</div>
 					<div>
-						<el-input v-model="queryBody.emailNumber"></el-input>
+						<el-input :disabled="!isAssociateSwitch" v-model="queryBody.emailNumber"></el-input>
 					</div>
 					<p style="margin:17px 0">
 						<el-radio-group v-model="isLongTIme">
@@ -137,6 +137,8 @@ export default {
   },
   data() {
     return {
+      isEditPassWord: true,
+      title: '添加账号',
       icons,
       isload: false,
       showTreeAdd: false,
@@ -184,6 +186,8 @@ export default {
     };
   },
   created() {},
+  activated() {
+  },
   mounted() {
     this.invalidTimeVal = new Date();
     // this.queryBody.invalidTime = this.$common.timestampToFormatter(new Date(), "yyyy-mm-dd HH:mm:ss");
@@ -191,8 +195,25 @@ export default {
   methods: {
     // 点击确定按钮
     editBtnAct() {
+	    console.log("queryBody==", this.queryBody)
+	    if(this.queryBody.roles) {
+	    	let roleUuids= [];
+		    this.queryBody.roles.filter(i => {
+		       roleUuids.push(i.roleUuid);
+		    });
+		    this.queryBody.roleUuids = roleUuids;
+	    }
       if (this.rowData.accountUuid) {
         // 修改
+        // console.log("queryBody==", this.queryBody)
+        // let roleUuids= [];
+        // this.queryBody.roles.filter(i => {
+        //    roleUuids.push(i.roleUuid);
+        // });
+        // this.queryBody.roleUuids = roleUuids;
+        // console.log("roleUuids==", this.queryBody)
+        // debugger;
+        // return;
         this.isload = !this.isload;
         api
           .putAccountApi(this.queryBody)
@@ -220,11 +241,11 @@ export default {
         } else {
           parms.invalidTime = this.$common.timestampToFormatter(this.invalidTimeVal, "yyyy-mm-dd HH:mm:ss");
         }
-        if (parms.enableValue === 1) {
-          parms.enable = true;
-        } else {
-          parms.enable = false;
-        }
+        // if (parms.enableValue === 1) {
+        //   parms.enable = true;
+        // } else {
+        //   parms.enable = false;
+        // }
         console.log("parms===", parms);
         // 新增
         this.isload = !this.isload;
@@ -270,6 +291,19 @@ export default {
   watch: {
     rowData: {
       handler(newVal, old) {
+      	if (this.rowData.accountUuid) {
+	  		this.title = "编辑账号";
+	  		this.queryBody.confirmPassword = "********";
+	  		this.isEditPassWord = true;
+	        if (this.rowData.isAssociateStaff===1) {
+	          this.isAssociateSwitch = true;
+	        } else {
+	          this.isAssociateSwitch = false;
+	        }
+	  	} else {
+	  		this.title = "添加账号";
+	  		this.isEditPassWord = false;
+	  	}
         console.log(newVal);
         Object.assign(this.queryBody, newVal);
         console.log("--------------------", this.queryBody);
