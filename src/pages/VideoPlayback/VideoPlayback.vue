@@ -55,7 +55,7 @@
                        :operatorIndex.sync="operatorIndex"
                        :fenlu="fenlu"
                        :fenlnWW="fenluIndex"
-                       :data="showFenlu">
+                       :data="oneRoad">
 
         </control-panel>
       </div>
@@ -222,10 +222,16 @@ export default {
     showFenlu() {
       return this.videoArr.slice(0, this.fenlu[this.fenluIndex]);
     },
+    oneRoad() {
+      return [this.videoArr[this.operatorIndex]];
+    },
     videoMode() {
       return this.videoArr[this.operatorIndex].mode;
     },
     isPlaying() {
+      if (this.operatorIndex > this.videoArr.length) {
+        return true;
+      }
       // 视频处于播放还是暂停状态
       return this.videoArr[this.operatorIndex].status;
     }
@@ -236,17 +242,25 @@ export default {
       this.chooseFenlu(1);
     });
     window.addEventListener("resize", this.initWrapDom);
-  },
-  activated() {
     const that = this;
     window.onresize = function() {
       that.jishi();
     };
   },
+  activated() {
+    this.$nextTick(() => {
+      let data = JSON.parse(JSON.stringify(this.videoArr));
+      this.videoArr = [];
+      setTimeout(() => {
+        this.videoArr = data;
+      }, 0);
+      this.initWrapDom();
+    });
+  },
   destroyed() {
-    clearInterval(this.timer);
-    this.timer = null;
-    window.onresize = null;
+    // clearInterval(this.timer);
+    // this.timer = null;
+    // window.onresize = null;
   },
   methods: {
     changeMode(mode) {
@@ -263,11 +277,7 @@ export default {
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
-        if (
-          that.cnt++ > 100 ||
-          this.$route.fullPath.toLocaleLowerCase().indexOf("/videoplayback") !==
-            -1
-        ) {
+        if (that.cnt++ > 100) {
           clearInterval(that.timer);
           that.timer = null;
         } else {
@@ -370,11 +380,21 @@ export default {
       );
     },
     // 录像播放跳转时间
-    choosetime(index, chooseTime) {
-      // this.videoArr[index].rtspUrl = this.controlData[index].rtspUrl;
-      // this.videoArr.concat();
+    async choosetime(index, chooseTime) {
+      // eslint-disable-next-line
+      let { channelUuid, videoType, endTime, streamType } = this.videoArr[
+        index
+      ];
+      let data = await this.backup(
+        channelUuid,
+        chooseTime,
+        endTime,
+        videoType,
+        streamType
+      );
       this.operatorIndex = index;
-      this.$refs["video" + index][0].drag(chooseTime);
+      console.log(data);
+      this.$refs["video" + index][0].drag(data.rtspUrl);
       this.getVideoSpeed();
     },
     updateView(viewData) {
@@ -983,6 +1003,12 @@ export default {
     "$route.path": function(newVal, oldVal) {
       // 监听路由，查看params是否携带参数rtsp，从而判断是否跳转播放码流
       this.jugdeJump();
+      if (
+        this.$route.fullPath.toLocaleLowerCase().indexOf("/videoplayback") !==
+        -1
+      ) {
+        clearInterval(this.timer);
+      }
     }
   }
 };
@@ -1016,16 +1042,18 @@ export default {
     width: calc(100% - 220px);
     height: 100%;
     // padding: 2px 0px;
-    padding-top: 2px;
+    // padding-top: 2px;
+    padding: 0px;
     box-sizing: border-box;
     user-select: none;
+    box-sizing: border-box;
     .vedioWrap {
-      height: calc(100% - 240px);
+      height: calc(100% - 120px);
       position: relative;
     }
     .footer {
-      height: 236px;
-      padding-top: 4px;
+      height: 120px;
+      // padding-top: 4px;
       display: flex;
       justify-content: space-between;
       .operator {

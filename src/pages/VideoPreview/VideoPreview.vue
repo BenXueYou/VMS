@@ -121,14 +121,21 @@ export default {
   name: "VideoPreview",
   computed: {
     showFenlu() {
-      return this.videoArr.slice(0, this.fenlu[this.fenluIndex]);
+      return this.videoArr.slice(
+        0,
+        Math.min(this.fenlu[this.fenluIndex], this.videoArr.length)
+      );
     },
     videoMode() {
       let name = {
         original: "原始比例",
         fullscreen: "充满屏幕"
       };
-      return name[this.videoArr[this.operatorIndex].mode];
+      if (this.operatorIndex >= this.videoArr.length) {
+        return "原始比例";
+      } else {
+        return name[this.videoArr[this.operatorIndex].mode];
+      }
     }
   },
   components: {
@@ -244,17 +251,26 @@ export default {
     // 监听F11事件
 
     // 下面是MDZZ代码
-  },
-  destroyed() {
-    clearInterval(this.timer);
-    this.timer = null;
-    window.onresize = null;
-  },
-  activated() {
     const that = this;
     window.onresize = function() {
       that.jishi();
     };
+    this.initWrapDom();
+  },
+  destroyed() {
+    // clearInterval(this.timer);
+    // this.timer = null;
+    // window.onresize = null;
+  },
+  activated() {
+    this.$nextTick(() => {
+      let data = JSON.parse(JSON.stringify(this.videoArr));
+      this.videoArr = [];
+      setTimeout(() => {
+        this.videoArr = data;
+      }, 0);
+      this.initWrapDom();
+    });
   },
   methods: {
     changeView(val) {
@@ -272,11 +288,7 @@ export default {
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
-        if (
-          that.cnt++ > 100 ||
-          this.$route.fullPath.toLocaleLowerCase().indexOf("/videopreview") !==
-            -1
-        ) {
+        if (that.cnt++ > 100) {
           clearInterval(that.timer);
           that.timer = null;
         } else {
@@ -529,6 +541,7 @@ export default {
       this.videoArr[index].operatorData = operatorData;
       this.videoArr[index].channelUuid = channelUuid;
       this.videoArr[index].rtspUrl = rtspUrl;
+      this.showCloudControl = this.updateCloud();
     },
     judgeEnoughBoard() {},
     playVideo(rtspUrl, channelUuid, streamType, data) {
@@ -1090,6 +1103,11 @@ export default {
     "$route.path": function(newVal, oldVal) {
       // 监听路由，查看params是否携带参数rtsp，从而判断是否跳转播放码流
       this.jugdeJump();
+      if (
+        this.$route.fullPath.toLocaleLowerCase().indexOf("/videopriview") !== -1
+      ) {
+        clearInterval(this.timer);
+      }
     }
   }
 };

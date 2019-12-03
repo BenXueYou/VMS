@@ -158,7 +158,7 @@ export default {
   position: relative;
   height: 36px;
   width: 100%;
-  margin: 3px;
+  margin: 0px 3px;
   overflow: hidden;
   .timeSelectWrap {
     position: relative;

@@ -123,7 +123,7 @@
           <div class="windowItem"
                v-for="(item,index)  in controlData"
                :key="index">
-            {{item.rtspUrl?(item.fileName):('窗口'+(index+1))}}&nbsp;
+            {{item.rtspUrl?(item.fileName):('窗口'+(operatorIndex+1))}}&nbsp;
           </div>
         </div>
       </div>
@@ -424,8 +424,7 @@ export default {
     cursor: pointer;
   }
   .timePanel {
-    margin-top: 4px;
-    height: calc(100% - 56px);
+    height: 80px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 2px;
     display: flex;

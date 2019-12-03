@@ -26,6 +26,8 @@
         <el-tree :props="devprops"
                  :load="devloadNode"
                  ref="tree1"
+                 :default-expanded-keys="defaultExpKeys"
+                 node-key="id"
                  class='videoTree'
                  lazy>
           <div class="custom-tree-node"
@@ -58,6 +60,8 @@
         <el-tree :props="props"
                  class='videoTree'
                  :load="loadNode"
+                 :default-expanded-keys="defaultExpKeys"
+                 node-key="id"
                  :expand-on-click-node="false"
                  lazy
                  @node-click="handleNodeClick">
@@ -359,6 +363,7 @@ export default {
         label: "label",
         isLeaf: "leaf"
       },
+      defaultExpKeys: [],
       data3: [
         {
           label: "自定义视图",
@@ -661,7 +666,9 @@ export default {
         node.data && node.data.id,
         node.data && node.data.nodeType
       );
-
+      if (node.level === 0) {
+        this.defaultExpKeys.push(data[0].id);
+      }
       data = data.map(item => {
         item.leaf = !item.openFlag;
         item.isOnline = true;
@@ -737,6 +744,9 @@ export default {
       if (node.level === 0) {
         let data = await this.getTagTreeData();
         console.log(data);
+        if (node.level === 0) {
+          this.defaultExpKeys.push(data[0].id);
+        }
         return resolve(data);
       } else if (node.level === 1) {
         let data = await this.getChannelByNode(node.data.id);

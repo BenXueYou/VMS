@@ -275,16 +275,14 @@ export default {
     getCanvas() {
       return this.canvas || this.$refs.displayWrap;
     },
-    drag(start) {
+    drag(url) {
       // 时间跳转
       // console.log(start);
       // if (!this.canvas) {
       //   this.playVideo();
       // }
-      start = start.replace(/-|:|\s/g, "");
-      console.log(this.rtspUrl);
-      console.log(start);
-      this.video_mgr.drag(this.video, start);
+      console.log(url);
+      this.video_mgr.drag(this.video, url);
     },
     calcHeight() {
       // 这里让视频的宽高比是*16:9；
@@ -311,7 +309,7 @@ export default {
       }
     },
     async playVideo() {
-      this.canvas = document.createElement("canvas");
+      this.canvas = document.createElement("video");
       this.calcHeight();
       let { jMedia, jSignal } = this.$store.getters;
       console.log(jMedia, jSignal);
@@ -328,15 +326,26 @@ export default {
       // }
       // console.log(w, h);
       console.log("播放的url" + this.rtspUrl);
-      this.video = await this.video_mgr.setup(
-        JSON.stringify(jSignal),
-        JSON.stringify(jMedia),
-        this.rtspUrl,
-        "rtsp",
-        this.action,
-        this.speed,
-        this.canvas
-      );
+      // this.video = await this.video_mgr.setup(
+      //   JSON.stringify(jSignal),
+      //   JSON.stringify(jMedia),
+      //   this.rtspUrl,
+      //   "rtsp",
+      //   this.action,
+      //   this.speed,
+      //   this.canvas
+      // );
+      this.video = await this.video_mgr.setup({
+        element: this.canvas,
+        decodeMod: "video",
+        jSignal: JSON.stringify(jSignal),
+        jMedia: JSON.stringify(jMedia),
+        url: this.rtspUrl,
+        protocol: "rtsp",
+        action: this.action,
+        speed: this.speed,
+        file: ""
+      });
       if (this.video) {
         await this.video_mgr.play(this.video);
       }
@@ -346,7 +355,7 @@ export default {
       if (this.video && this.video_mgr) {
         this.video_mgr.stop(this.video);
       }
-      if (this.canvas) {
+      if (this.canvas && this.$refs.canvasRefs) {
         this.$refs.canvasRefs.removeChild(this.canvas);
         this.canvas = null;
       }
@@ -415,7 +424,8 @@ export default {
 <style lang="scss">
 #canvasWrap {
   //让canvas垂直居中
-  canvas {
+  canvas,
+  video {
     position: absolute;
     top: 50%;
     left: 50%;

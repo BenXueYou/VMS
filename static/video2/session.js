@@ -250,13 +250,13 @@ CSession.prototype.speedControl = async function(speed)
     return b;
 }
 
-CSession.prototype.drag = async function(url)
+CSession.prototype.drag = async function(position)
 {
     var b = false;
     let dragReq = {"msgType": "dragReq"};
     dragReq.context = this.m_context;
     dragReq.sessionId = this.m_sessionId;
-    dragReq.url = url;
+    dragReq.position = position;
     if (this.m_connected == true)
     {
         let response = await this.m_wsSignal.send(dragReq);
