@@ -1133,5 +1133,16 @@
     "model_analysis_s": {
       "model_to_be_processed": "待处理",
       "model_processed": "已处理"
+    },
+    "SystemLogEventEnum": {
+      "login": "登陆",
+      "add": "增加",
+      "edit": "修改",
+      "delete": "删除",
+      "query": "查看",
+      "input": "导入",
+      "export": "导出",
+      "open_close_door": "开关门",
+      "remove_alarm": "门消警"
     }
 }

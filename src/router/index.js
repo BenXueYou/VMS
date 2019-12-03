@@ -89,7 +89,7 @@ let allChildrenRouter = [
     path: "/log",
     name: "log",
     component: log.component,
-    title: "日志管理",
+    title: "系统日志",
     children: log.children,
     icon: "log",
     type: "app"

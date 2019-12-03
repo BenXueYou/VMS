@@ -28,6 +28,7 @@ import DoorSetAjax from "@/pages/doorControl/utils/DoorAccessSetHttp.js";
 
 import ResidentHttp from "@/pages/residentManage/utils/ResidentHttp.js";
 import LoginAjax from "@/pages/login/utils/LoginAjax.js";
+import ProjectManageAjax from "@/pages/projectManage/utils/ProjectManageAjax.js";
 
 Vue.prototype.$echarts = echarts;
 
@@ -49,6 +50,7 @@ Vue.use(LogSearchHttp);
 Vue.use(DoorSetAjax);
 Vue.use(ResidentHttp);
 Vue.use(LoginAjax);
+Vue.use(ProjectManageAjax);
 
 /* eslint-disable no-new */
 new Vue({
