@@ -19,8 +19,11 @@
 						class="i-tree"
 						:name="treeTab.id"
 					>
+						<!-- v-if="treeTab.id === activeName" -->
+						<!-- :load="loadNode($event,treeTab.id)" -->
+						<!-- v-if="treeTab.id === activeName" -->
 						<el-tree
-							:load="getNewTree"
+							:load="loadNode"
 							node-key="id"
 							:show-checkbox="false"
 							:props="defaultProps"
@@ -45,9 +48,6 @@
 							</div>
 						</el-tree>
 					</el-tab-pane>
-					<!-- <el-tab-pane label="门禁" name="door"></el-tab-pane>
-					<el-tab-pane label="报警" name="alarm"></el-tab-pane>
-					<el-tab-pane label="访客机" name="visitor"></el-tab-pane>-->
 				</el-tabs>
 			</div>
 			<div class="right">
@@ -58,9 +58,32 @@
 					</template>
 				</el-radio-group>
 				<!---- 资源权限 ----->
+				<div class="channelItemClass">
+					<span class="channelItemSpan textClips">资源名称</span>
+					<el-checkbox
+						:indeterminate="isIndeterminate"
+						v-model="checkAll"
+						@change="TopAllHandleCheckAllChange"
+					>全选</el-checkbox>
+					<el-checkbox-group v-model="checkedAuthUuids">
+						<template v-for="(authItem,j) in resourceAuthArr">
+							<el-checkbox
+								@change="TopAllChangeAuthItem($event,authItem)"
+								:key="j"
+								:label="authItem.authUuid"
+								:name="authItem.authUuid"
+							>{{authItem.authName}}</el-checkbox>
+						</template>
+					</el-checkbox-group>
+				</div>
 				<template v-for="(channelItem,i) in checkedChannelArr">
-					<div v-if="resourceType.indexOf(channelItem.resType)" class="channelItemClass" :key="i">
-						<span class="channelItemSpan">{{channelItem.label}}</span>
+					<div v-if="justifyIsShowCheckedChannel(channelItem)" class="channelItemClass" :key="i">
+						<span
+							class="channelItemSpan textClips"
+							@mouseover="mymouseover"
+							@mouseout="mymouseout"
+							@mousemove="mymousemove"
+						>{{channelItem.label}}</span>
 						<el-checkbox
 							:indeterminate="channelItem.isIndeterminate"
 							v-model="channelItem.checkAll"
@@ -75,6 +98,9 @@
 								>{{authItem.authName}}</el-checkbox>
 							</template>
 						</el-checkbox-group>
+						<span @click="handleCheckChannelData(channelItem,false)">
+							<img src alt srcset />
+						</span>
 					</div>
 				</template>
 			</div>
@@ -88,6 +114,7 @@
 
 <script>
 import * as api from "../http/ajax";
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 export default {
   name: "resouceTree",
   props: {
@@ -106,6 +133,8 @@ export default {
   },
   data() {
     return {
+      isIndeterminate: false,
+      checkAll: true,
       resourceTypeArr: window.config.resourceType,
       isShow: false,
       activeName: "video",
@@ -121,7 +150,8 @@ export default {
       rightTabArr: [],
       resourceType: "",
       resourceAuthArr: [],
-      treeTypeArr: []
+      treeTypeArr: [],
+      checkedAuthUuids: []
     };
   },
   mounted: function() {
@@ -136,6 +166,61 @@ export default {
     this.getChannelAuth();
   },
   methods: {
+    TopAllHandleCheckAllChange(val) {
+      // 顶部的全选事件
+      this.checkedChannelArr.map(channelItem => {
+        // 过滤树类型以及资源类型
+        let flag = this.justifyIsShowCheckedChannel(channelItem);
+        if (flag) {
+          let arr = [];
+          if (val) {
+            arr = channelItem.authArr.map(item => item.authUuid);
+          }
+          this.$set(channelItem, "checkedAuthUuids", arr);
+          this.$set(channelItem, "checkAll", Boolean(arr.length));
+        } else {
+          console.log(channelItem);
+        }
+      });
+      /* eslint-disable */
+			this.checkedAuthUuids = val
+				? this.resourceAuthArr.map(item => {
+						return item.authUuid;
+				  })
+				: [];
+			/* eslint-enable */
+    },
+    TopAllChangeAuthItem(val, authItem) {
+      // 右侧按钮事件的全选
+      this.checkedChannelArr.map(channelItem => {
+        let flag = this.justifyIsShowCheckedChannel(channelItem);
+        if (flag) {
+          if (!val) {
+            channelItem.checkedAuthUuids.splice(
+              channelItem.checkedAuthUuids.findIndex(
+                item => item === authItem.authUuid
+              ),
+              1
+            );
+          } else {
+            channelItem.checkedAuthUuids.push(authItem.authUuid);
+          }
+        }
+      });
+    },
+    // 过滤当前的通道，是否是当前选中的
+    justifyIsShowCheckedChannel(channelItem) {
+      if (channelItem.viewType === this.activeName) {
+        if (this.resourceType !== this.rightTabArr[0].id) {
+          return (
+            channelItem.extInfo &&
+						this.resourceType === channelItem.extInfo.channelDivideType
+          );
+        }
+        return true;
+      }
+      return false;
+    },
     // 点击资源的全选按钮
     handleCheckAllChange(channelItem) {
       let arr = [];
@@ -158,46 +243,26 @@ export default {
           return item.checkedAuthUuids.length;
         })
         .map(o => {
-          dataArr.push({
+          let data = {
             resourceUuid: o.id,
             resourceType: o.resType,
-            resourceAuthUuids: o.checkedAuthUuids
-          });
+            resourceAuthUuids: o.checkedAuthUuids,
+          };
+          Object.assign(data, o);
+          dataArr.push(data);
         });
+      console.log(dataArr);
       this.$emit("transferResourceAuth", dataArr);
     },
     // 输入框的筛选按钮
     filterNode(obj, data) {},
     // 点击树节点响应事件
     nodeClick(data, node, nodeTree) {
-      //  新增节点的类型字段
       // TODO:此处需要有过滤只选择通道
-      this.$set(node, "checked", !node.checked);
-      this.handleCheckChannelData(data, node.checked);
-    },
-    // 通道资源的静态资源权限
-    getChannelAuth() {
-      api
-        .getResource({ resourceType: this.resourceType })
-        .then(res => {
-          if (res.data.success) {
-            res.data.data = res.data.data || [];
-            let data = res.data.data[0];
-            this.resourceAuthArr = data.auth;
-            let obj = {
-              id: "all",
-              label: "资源名称",
-              authArr: JSON.parse(JSON.stringify(this.resourceAuthArr))
-            };
-            this.$set(this.checkedChannelArr, "0", obj);
-          } else {
-            this.$messsage({
-              type: "warning",
-              messsage: res.data.msg
-            });
-          }
-        })
-        .catch(() => {});
+      if (!data.openFlag && data.nodeType.indexOf("chn") !== -1) {
+        this.$set(node, "checked", !node.checked);
+        this.handleCheckChannelData(data, node.checked);
+      }
     },
     // 处理选中的数据源
     handleCheckChannelData(data, isBool) {
@@ -212,30 +277,26 @@ export default {
         this.$set(data, "checkedAuthUuids", checkedAuthUuids);
         data.checkAll = true;
         data.isIndeterminate = false;
+        data.viewType = this.activeName;
         this.checkedChannelArr.push(data);
-        console.log(this.checkedChannelArr);
       } else {
         // 删除
         this.checkedChannelArr.splice(
-          this.checkedChannelArr.findIndex(
-            item => item.channelUuid === data.channelUuid
-          ),
+          this.checkedChannelArr.findIndex(item => item.id === data.id),
           1
         );
       }
     },
-    // 获取树节点数据的HTPP
+    // 获取树节点数据的HTTP
     getTreeData(obj) {
       return new Promise(resolve => {
         api
           .getNewTree(obj)
           .then(res => {
-            console.log(res);
             let data = res.data.data || [];
-            data.forEach(element => {
-              if (!element.openFlag) {
-                element.isLeaf = true;
-              }
+            data.map(element => {
+              element.isLeaf = false;
+              this.$set(element, "isLeaf", !element.openFlag);
             });
             resolve(data);
           })
@@ -245,19 +306,27 @@ export default {
       });
     },
     // 树的懒加载动作
-    async getNewTree(node, resolve) {
+    async loadNode(node, resolve) {
       this.$set(node, "checked", false);
       let obj = {
         viewType: this.activeName, // 不填则查所有类型资源 门禁 door、视频 video、报警 alarm、访客机 visitor
         treeStructure: "orgNode$device|devNode|chnNode", // 树结构，指定树的类型及树的结构
         authEnable: false, // 是否开启权限过滤，默认开启true
-        recursiveEnable: false // 是否递归查询子节点的资源，默认不查询false
+        recursiveEnable: false, // 是否递归查询子节点的资源，默认不查询false
+        extInfo: {
+          aimType: "chnSubType"
+        }
       };
+      if (node.id < 4) {
+        obj.viewType = this.treeTypeArr[node.id].id;
+      } else {
+        obj.viewType = this.activeName;
+      }
       // 先判断是不是根节点
-      if (node) {
+      if (node.data) {
         // 非根节点
-        obj.parentType = node.nodeType;
-        obj.parentUuid = node.parentUuid;
+        obj.parentType = node.data.nodeType;
+        obj.parentUuid = node.data.id;
       }
       let data = await this.getTreeData(obj);
       resolve(data);
@@ -266,35 +335,65 @@ export default {
     handleClick(tab, event) {
       this.rightTabArr = this.resourceTypeArr[tab.name];
       this.resourceType = this.rightTabArr[0].id;
-      let topChannelItem = {
-        id: "all",
-        label: "资源名称",
-        authArr: JSON.parse(JSON.stringify(this.resourceAuthArr))
-      };
-      this.$set(this.checkedChannelArr, "0", topChannelItem);
-      this.checkedChannelArr = this.checkedChannelArr.filter(item => {
-        return this.resourceType.indexOf(item.realType) !== -1;
-      });
       // 切换树的类型
       let obj = {
+        extInfo: {
+          aimType: "chnSubType"
+        },
         viewType: this.activeName, // 不填则查所有类型资源 门禁 door、视频 video、报警 alarm、访客机 visitor
         treeStructure: "orgNode$device|devNode|chnNode", // 树结构，指定树的类型及树的结构
         authEnable: false, // 是否开启权限过滤，默认开启true
         recursiveEnable: false // 是否递归查询子节点的资源，默认不查询false
       };
       this.getTreeData(obj);
+      this.getChannelAuth();
     },
     // 点击右边按钮，改变资源类型
     resourceTypeChange() {
       this.getChannelAuth();
     },
+    // 通道资源的静态资源权限
+    getChannelAuth() {
+      api
+        .getResource({ resourceType: this.resourceType })
+        .then(res => {
+          if (res.data.success) {
+            res.data.data = res.data.data || [];
+            let data = res.data.data[0];
+            this.resourceAuthArr = data.auth;
+            this.checkedAuthUuids = this.resourceAuthArr.map(item => {
+              return item.authUuid;
+            });
+          } else {
+            this.$messsage({
+              type: "warning",
+              messsage: res.data.msg
+            });
+          }
+        })
+        .catch(() => {});
+    },
     close() {
       this.$emit("update:visible", false);
+    },
+    mymouseover: event => {
+      mouseover(event);
+    },
+    mymouseout(event) {
+      mouseout(event);
+    },
+    mymousemove(event) {
+      mousemove(event);
     }
   },
   watch: {
     visible() {
       this.isShow = this.visible;
+    },
+    checkedChannelArr: {
+      handler() {},
+      deep: true,
+      immediate: true
     }
   }
 };
@@ -302,11 +401,13 @@ export default {
 <style>
 .showResource .right .channelItemClass {
 	border-bottom: 1px dashed rgb(69, 71, 74);
+	display: flex;
+	line-height: 49px;
 }
 .showResource .right .channelItemClass .channelItemSpan {
 	display: inline-block;
 	width: 90px;
-	line-height: 49px;
+	padding-right: 15px;
 }
 .showResource .right .channelItemClass span {
 	font-family: "PingFangSC-Regular";
@@ -364,13 +465,13 @@ $width: 300px;
 		display: flex;
 		min-height: 500px;
 		.left {
-			flex: 3;
+			flex: 2;
 			padding: 20px 25px;
 			border-right: 1px solid rgba(255, 255, 255, 0.05);
-      max-width: 420px;
+			max-width: 420px;
 		}
 		.right {
-			flex: 7;
+			flex: 8;
 			padding: 10px 25px;
 		}
 	}

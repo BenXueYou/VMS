@@ -76,7 +76,7 @@
 						class="bilibili"
 						@close="deleteChannelAuth(index)"
 						:key="index"
-					>{{item.resourceName}}</gt-button>
+					>{{item.label}}</gt-button>
 				</div>
 			</div>
 		</div>
