@@ -230,7 +230,7 @@ export default {
         resourceAuthUuids: this.resourceAuth, // 关联的通道资源
         accountUuids: this.account.map(i => {
           return i.accountUuid;
-        }) // 账号uuid列表
+        })
       };
       if (this.roleUuid) {
         data.roleUuid = this.roleUuid;
@@ -254,7 +254,7 @@ export default {
       } else {
         api.editRoleDetailUrl(data).then(res => {
           if (res.data.success) {
-            this.$mesage.success("保存成功！");
+            this.$message.success("保存成功！");
             if (isBackTableList) {
               this.resetAddDialog();
             } else {
@@ -269,31 +269,6 @@ export default {
       api.getRoleDetail({ roleUuid: this.roleUuid }).then(res => {
         if (res.data.success) {
           let data = res.data.data;
-          // "roleUuid": "string",  // 角色uuid
-          // "roleName": "string",  // 角色名称
-          // "enable": 0,           // 0禁用、1启用
-          // "invalidTime": "string",  // 失效时间
-          //     "description": "string",  // 账号描述
-          // "account": [
-          //   {
-          //     "accountUuid": "string",  // 账号uuid
-          //     "accountName": "string" ,  // 账号名称
-          //             "staffName":"string" //人员名称
-          //   }
-          // ],
-          // "featureAuth": [
-          //   {
-          //     "featureUuid": "string",  // 功能uuid
-          //     "featureName": "string"   // 功能名称
-          //   }
-          // ],
-          // "resourceAuth": [
-          //   {
-          //             "resourceUuid": "string", // 资源uuid
-          //             "resourceType": "string",  // 资源类型
-          //             "resourceName":"string"   // 资源名称
-          //   }
-          // ]
           this.roleName = data.roleName;
           this.enable = parseInt(data.enable) === 1 ? "enable" : "disable";
           if (!data.invalidTime || data.invalidTime === "long") {
@@ -303,7 +278,7 @@ export default {
             this.invalidTime = data.invalidTime;
           }
           this.description = data.description;
-          this.account = data.account || {};
+          this.account = data.account || [];
           this.featureAuth = data.featureAuth || [];
           this.resourceAuth = data.resourceAuth || [];
         }

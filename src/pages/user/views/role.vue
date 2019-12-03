@@ -295,7 +295,7 @@ export default {
     enableRow(row) {
       this.updateRoleStatus({
         roleUuids: [row.roleUuid],
-        enalble: 0
+        enable: 0
       });
     },
     deleteRow(row) {

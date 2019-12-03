@@ -81,6 +81,7 @@ export function distruiAccout(data) {
 }
 export function editRoleDetailUrl(data) {
   let { editUserDetailUrl: url } = userUrl;
+  url = `${url}/${data.roleUuid}`;
   return axios({
     method: "PUT",
     url,
