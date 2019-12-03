@@ -2,7 +2,7 @@
 	<el-dialog
 		:title="title"
 		@close="close"
-		width="1100px"
+		width="1280px"
 		:class="{'dialogCenter':true}"
 		:close-on-click-modal="false"
 		:append-to-body="true"
@@ -272,6 +272,9 @@ export default {
         authArr: JSON.parse(JSON.stringify(this.resourceAuthArr))
       };
       this.$set(this.checkedChannelArr, "0", topChannelItem);
+      this.checkedChannelArr = this.checkedChannelArr.filter(item => {
+        return this.resourceType.indexOf(item.realType) !== -1;
+      });
       // 切换树的类型
       let obj = {
         viewType: this.activeName, // 不填则查所有类型资源 门禁 door、视频 video、报警 alarm、访客机 visitor
@@ -364,6 +367,7 @@ $width: 300px;
 			flex: 3;
 			padding: 20px 25px;
 			border-right: 1px solid rgba(255, 255, 255, 0.05);
+      max-width: 420px;
 		}
 		.right {
 			flex: 7;
