@@ -36,10 +36,10 @@
 						placement="bottom-end"
 						:visible-arrow="false"
 						width="300"
-						v-model='visible'
+						v-model="visible"
 						trigger="click"
 					>
-						<search-option-view :visible='visible' @query="queryAct"></search-option-view>
+						<search-option-view :visible="visible" @query="queryAct"></search-option-view>
 					</el-popover>
 				</div>
 				<!-- </div> -->
@@ -53,14 +53,13 @@
 			>
 				<el-table-column type="index" :index="tableIndex" label="序号" width="95"></el-table-column>
 				<el-table-column prop="accountName" label="账号" width="120"></el-table-column>
-				<el-table-column prop="userName" label="姓名" width="128">
-				</el-table-column>
+				<el-table-column prop="userName" label="姓名" width="128"></el-table-column>
 				<el-table-column prop="clientIp" label="登陆IP"></el-table-column>
 				<el-table-column prop="moduleName" label="模块" :show-overflow-tooltip="true"></el-table-column>
 				<el-table-column prop="eventType" label="类型">
-					<template slot-scope="scope">
-						{{$common.getEnumItemName('SystemLogEventEnum',scope.row.eventType)}}
-					</template>
+					<template
+						slot-scope="scope"
+					>{{$common.getEnumItemName('SystemLogEventEnum',scope.row.eventType)}}</template>
 				</el-table-column>
 				<el-table-column prop="detail" label="操作内容"></el-table-column>
 				<el-table-column prop="eventTime" label="操作时间"></el-table-column>
@@ -86,7 +85,7 @@ import SearchOptionView from "@/pages/log/components/SearchLog";
 import * as api from "../http/logHttp";
 export default {
   components: {
-    SearchOptionView,
+    SearchOptionView
   },
   props: {},
   data() {
@@ -106,7 +105,7 @@ export default {
   },
   created() {},
   mounted() {
-  	localStorage.setItem("eventType","operation");
+    localStorage.setItem("eventType", "operation");
     let h =
 			window.innerHeight ||
 			document.documentElement.clientHeight ||
@@ -129,7 +128,7 @@ export default {
     this.initData();
   },
   activated() {
-  	localStorage.setItem("eventType","operation");
+    localStorage.setItem("eventType", "operation");
     this.currentPage = 1;
     this.initData();
   },
@@ -141,7 +140,7 @@ export default {
         pageSize: this.pageSize,
         page: this.currentPage,
         accountName: this.accountName,
-        logType: 'operation',
+        logType: "operation",
         IP: this.loginIp,
         modelName: null,
         eventType: this.eventType
@@ -195,8 +194,7 @@ export default {
       return val < 10 ? "0" + val : val;
     }
   },
-  watch: {
-  },
+  watch: {},
   destroyed() {}
 };
 </script>

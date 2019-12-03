@@ -37,9 +37,9 @@
 						:visible-arrow="false"
 						width="300"
 						trigger="click"
-						v-model='visible'
+						v-model="visible"
 					>
-						<search-option-view :visible='visible' @query="queryAct"></search-option-view>
+						<search-option-view :visible="visible" @query="queryAct"></search-option-view>
 					</el-popover>
 				</div>
 				<!-- </div> -->
@@ -59,7 +59,9 @@
 				<el-table-column prop="clientIp" label="配置IP"></el-table-column>
 				<el-table-column prop="moduleName" label="模块" :show-overflow-tooltip="true"></el-table-column>
 				<el-table-column label="类型">
-				<template slot-scope="scope">{{$common.getEnumItemName("SystemLogEventEnum", scope.row.eventType)}}</template>
+					<template
+						slot-scope="scope"
+					>{{$common.getEnumItemName("SystemLogEventEnum", scope.row.eventType)}}</template>
 				</el-table-column>
 				<el-table-column prop="detail" label="详情"></el-table-column>
 				<el-table-column prop="eventTime" label="配置时间"></el-table-column>
@@ -85,7 +87,7 @@ import SearchOptionView from "@/pages/log/components/SearchLog";
 import * as api from "../http/logHttp";
 export default {
   components: {
-    SearchOptionView,
+    SearchOptionView
   },
   props: {},
   data() {
@@ -130,7 +132,7 @@ export default {
     this.initData();
   },
   activated() {
-  	localStorage.setItem("eventType","set");
+    localStorage.setItem("eventType", "set");
     console.log(this.$route.params.data, "---------openDoor-------");
     var params = this.$route.params.data;
     var data = {};
@@ -149,7 +151,7 @@ export default {
         pageSize: this.pageSize,
         page: this.currentPage,
         ccountName: this.accountName,
-        logType: 'config',
+        logType: "config",
         IP: this.loginIp,
         modelName: null,
         eventType: this.eventTypea

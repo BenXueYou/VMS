@@ -175,7 +175,7 @@ export default {
       } else if (this.isAddRole === "add") {
         console.log("defaultRoleData==", this.defaultRoleData);
         this.showTreeAdd = false;
-      } else if (this.isAddRole === "editRole"){
+      } else if (this.isAddRole === "editRole") {
         this.editAccountRoleApi();
       }
     },
@@ -264,7 +264,7 @@ export default {
             this.rowData = res.data.data;
             this.defaultRoleData = this.rowData.roles;
             this.rowData.password = "********";
-            console.log('rowData===', this.rowData)
+            console.log('rowData===', this.rowData);
           } else {
             this.$message.warning(res.data.msg);
           }

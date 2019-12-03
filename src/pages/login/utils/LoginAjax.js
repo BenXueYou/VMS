@@ -16,7 +16,7 @@ export var LoginAjax = {
       }
     });
   },
-   setLogUuid(holder) {
+  setLogUuid(holder) {
     let api = `${window.location.protocol}//${ip}/${
       RestApi.api.login.setLogUuid
     }`;

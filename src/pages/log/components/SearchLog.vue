@@ -72,31 +72,32 @@ export default {
       setEvents: [
         { typeName: "全部", typeStr: null },
         { typeName: "设备管理", typeStr: "设备管理" },
-        { typeName: "单位管理", typeStr: "单位管理"},
-        { typeName: "楼栋房屋", typeStr: "楼栋房屋"},
+        { typeName: "单位管理", typeStr: "单位管理" },
+        { typeName: "楼栋房屋", typeStr: "楼栋房屋" },
         { typeName: "居民管理", typeStr: "居民管理" },
-        { typeName: "员工管理", typeStr: "员工管理"},
-        { typeName: "用户管理", typeStr: "用户管理"},
+        { typeName: "员工管理", typeStr: "员工管理" },
+        { typeName: "用户管理", typeStr: "用户管理" },
         { typeName: "门禁管理", typeStr: "门禁管理" },
-        { typeName: "访客管理", typeStr: "访客管理"},
-        { typeName: "视频预览", typeStr: "视频预览"},
-        { typeName: "人脸识别", typeStr: "人脸识别"}
+        { typeName: "访客管理", typeStr: "访客管理" },
+        { typeName: "视频预览", typeStr: "视频预览" },
+        { typeName: "人脸识别", typeStr: "人脸识别" }
       ],
       operationEvents: [
-        { typeName: "全部", typeStr: null},
+        { typeName: "全部", typeStr: null },
         { typeName: "视频预览", typeStr: "视频预览" },
         { typeName: "视频回放", typeStr: "视频回放" },
-        { typeName: "门禁管理", typeStr: "门禁管理"},
+        { typeName: "门禁管理", typeStr: "门禁管理" },
         { typeName: "访客管理", typeStr: "访客管理" },
         { typeName: "人脸识别", typeStr: "人脸识别" }
       ]
-
     };
   },
   mounted() {
     this.SearchObj.verifyResult = this.resultOptions[0].typeStr;
     this.SearchObj.openDoorResult = this.resultOptions[0].typeStr;
-    this.eventTypeOptions = this.$common.getEnumByGroupStr("SystemLogEventEnum");
+    this.eventTypeOptions = this.$common.getEnumByGroupStr(
+      "SystemLogEventEnum"
+    );
     this.eventTypeOptions.unshift({ typeName: "全部", typeStr: null });
     this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
     // this.eventTypeOptions = this.$common.getEnumByGroupStr(
@@ -124,14 +125,14 @@ export default {
   },
   watch: {
     visible(val) {
-      if (localStorage.getItem("eventType")==="set") {
+      if (localStorage.getItem("eventType") === "set") {
         this.modelNameOptions = this.setEvents;
         // this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
-      } else if (localStorage.getItem("eventType")==="operation") {
+      } else if (localStorage.getItem("eventType") === "operation") {
         this.modelNameOptions = this.operationEvents;
         // this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
-      }   
-    },
+      }
+    }
     // initSelectData(val){
     //   this.formatData();
     // },

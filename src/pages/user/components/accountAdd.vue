@@ -138,7 +138,7 @@ export default {
   data() {
     return {
       isEditPassWord: true,
-      title: '添加账号',
+      title: "添加账号",
       icons,
       isload: false,
       showTreeAdd: false,
@@ -181,13 +181,12 @@ export default {
         description: null, // 描述
         roleUuids: [], // 角色uuid数组
         isAssociateStaff: "",
-        invalidTime: "", // 失效时间 (可选)
+        invalidTime: "" // 失效时间 (可选)
       }
     };
   },
   created() {},
-  activated() {
-  },
+  activated() {},
   mounted() {
     this.invalidTimeVal = new Date();
     // this.queryBody.invalidTime = this.$common.timestampToFormatter(new Date(), "yyyy-mm-dd HH:mm:ss");
@@ -195,14 +194,14 @@ export default {
   methods: {
     // 点击确定按钮
     editBtnAct() {
-	    console.log("queryBody==", this.queryBody)
-	    if(this.queryBody.roles) {
-	    	let roleUuids= [];
-		    this.queryBody.roles.filter(i => {
-		       roleUuids.push(i.roleUuid);
-		    });
-		    this.queryBody.roleUuids = roleUuids;
-	    }
+      console.log("queryBody==", this.queryBody);
+      if (this.queryBody.roles) {
+        let roleUuids = [];
+        this.queryBody.roles.filter(i => {
+          roleUuids.push(i.roleUuid);
+        });
+        this.queryBody.roleUuids = roleUuids;
+      }
       if (this.rowData.accountUuid) {
         // 修改
         // console.log("queryBody==", this.queryBody)
@@ -239,7 +238,10 @@ export default {
         if (this.isLongTIme === 1) {
           parms.invalidTime = "long";
         } else {
-          parms.invalidTime = this.$common.timestampToFormatter(this.invalidTimeVal, "yyyy-mm-dd HH:mm:ss");
+          parms.invalidTime = this.$common.timestampToFormatter(
+            this.invalidTimeVal,
+            "yyyy-mm-dd HH:mm:ss"
+          );
         }
         // if (parms.enableValue === 1) {
         //   parms.enable = true;
@@ -291,19 +293,19 @@ export default {
   watch: {
     rowData: {
       handler(newVal, old) {
-      	if (this.rowData.accountUuid) {
-	  		this.title = "编辑账号";
-	  		this.queryBody.confirmPassword = "********";
-	  		this.isEditPassWord = true;
-	        if (this.rowData.isAssociateStaff===1) {
-	          this.isAssociateSwitch = true;
-	        } else {
-	          this.isAssociateSwitch = false;
-	        }
-	  	} else {
-	  		this.title = "添加账号";
-	  		this.isEditPassWord = false;
-	  	}
+        if (this.rowData.accountUuid) {
+          this.title = "编辑账号";
+          this.queryBody.confirmPassword = "********";
+          this.isEditPassWord = true;
+          if (this.rowData.isAssociateStaff === 1) {
+            this.isAssociateSwitch = true;
+          } else {
+            this.isAssociateSwitch = false;
+          }
+        } else {
+          this.title = "添加账号";
+          this.isEditPassWord = false;
+        }
         console.log(newVal);
         Object.assign(this.queryBody, newVal);
         console.log("--------------------", this.queryBody);
