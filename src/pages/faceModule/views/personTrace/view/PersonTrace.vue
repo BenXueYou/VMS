@@ -192,8 +192,8 @@ export default {
       /* eslint-disable */
       this.map.clearOverlays();
       this.pois = [];
-      for (let v of this.traceData) {
-        let pt = new BMap.Point(v.longitude, v.latitude);
+      for (let i = this.traceData.length - 1; i >= 0 ; i--) {
+        let pt = new BMap.Point(this.traceData[i].longitude, this.traceData[i].latitude);
         this.pois.push(pt);
         let myIcon = new BMap.Icon(
           require("@/assets/images/faceModule/trace.png"),
@@ -202,13 +202,30 @@ export default {
         let marker = new BMap.Marker(pt, { icon: myIcon });
         marker.setOffset(new BMap.Size(0, -30));
         this.map.addOverlay(marker);
-        let ItemOverlay = new this.Overlay.ItemOverlay(pt, v);
+        let ItemOverlay = new this.Overlay.ItemOverlay(pt, this.traceData[i]);
         this.map.addOverlay(ItemOverlay);
         ItemOverlay.addEventListener("click", () => {
-          this.getSamePlaceArr(v.longitude, v.latitude);
+          this.getSamePlaceArr(this.traceData[i].longitude, this.traceData[i].latitude);
           this.isShowSamePlaDialog = true;
         });
-      };
+      }
+      // for (let v of this.traceData) {
+      //   let pt = new BMap.Point(v.longitude, v.latitude);
+      //   this.pois.push(pt);
+      //   let myIcon = new BMap.Icon(
+      //     require("@/assets/images/faceModule/trace.png"),
+      //     new BMap.Size(48, 60)
+      //   );
+      //   let marker = new BMap.Marker(pt, { icon: myIcon });
+      //   marker.setOffset(new BMap.Size(0, -30));
+      //   this.map.addOverlay(marker);
+      //   let ItemOverlay = new this.Overlay.ItemOverlay(pt, v);
+      //   this.map.addOverlay(ItemOverlay);
+      //   ItemOverlay.addEventListener("click", () => {
+      //     this.getSamePlaceArr(v.longitude, v.latitude);
+      //     this.isShowSamePlaDialog = true;
+      //   });
+      // };
       let sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_CLOSED_ARROW, {
         scale: 0.8, //图标缩放大小
         strokeColor: "#E63434", //设置矢量图标的线填充颜色
