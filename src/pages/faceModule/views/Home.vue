@@ -249,7 +249,6 @@ export default {
       footerLiftType: false, // 抓拍記錄與車流量統計的切換
       taskList: [],
       visible_popver: false, // task弹窗是否弹出，默认隐藏
-      rtspAddress: "",
       channelInfoList: [], // 所有通道名称和ID的二元list
       notCheckAll: false, // 通道勾选的list的长度
       checkTaskAll: true,
@@ -260,10 +259,9 @@ export default {
       photoList: [], // 抓拍列表
       comparePhotoList: [], // 人臉對比列表
       photoStaticList: Array.from({ length: 24 }, () => 0), // 人流量统计
-      socketIP: this.$store.state.socketIP, //
       todayShootCount: 0, // 今日抓拍次数
       todayCompareCount: 0, // 今日对比次数
-      streamType: "sub",
+      streamType: "main",
       streamTypeOptions: [
         { typeStr: "main", typeName: "主码流" },
         { typeStr: "sub", typeName: "辅码流" },
@@ -271,9 +269,8 @@ export default {
       ],
       fullscreenLoading: false, // 局部遮罩是否显示
       mainVideoScreenLoading: false, // 视频遮罩是否显示
-      checkTimeConst: 3600000, // 轮询时间1小时获取一次数据统计分布图 3600000
-      startTime: "",
-      endTime: "",
+      startTime: null,
+      endTime: null,
       shootPhotoList: [],
       defaultTreeProps: {
         label: "faceMonitorName",
@@ -311,7 +308,7 @@ export default {
     this.vlc = null;
     let w = this.WIDTH();
     let h = this.HEIGHT();
-    h = h - 50; // 不知道为什么会差5个像素
+    h = h - 50;
     w = w - 200;
     this.$refs.heightBox.$el.style.height = h + "px";
     this.asideWidth = 0.3 * w + "px";
@@ -353,6 +350,7 @@ export default {
         this.video_mgr.stop(this.video);
       }
       if (this.canvas) {
+        console.log(this.$refs.canvasRefs);
         this.$refs.canvasRefs.removeChild(this.canvas);
         this.canvas = null;
       }
@@ -403,7 +401,11 @@ export default {
       for (let index = 0; index < array.length; index++) {
         const element = array[index];
         if (val.deviceUuid === element.deviceUuid) {
-          this.$set(this.channelInfoList[index], "chnOnlineOrNot", val.stateValue);
+          this.$set(
+            this.channelInfoList[index],
+            "chnOnlineOrNot",
+            val.stateValue
+          );
           break;
         }
       }
@@ -454,6 +456,10 @@ export default {
               });
             }
             this.getPhotoList();
+            if (this.channelInfoList[0].chnOnlineOrNot === "offline") {
+              this.$message.warning("设备离线");
+              return;
+            }
             this.getRtspInChannelUuid(this.channelInfoList[0].channelUuid);
           } else {
             console.log(res.data.data);
@@ -567,7 +573,6 @@ export default {
     },
     // 选中某通道
     handleCheckedCitiesChange(value) {
-      console.log("选中某通道------", this.checkedChannel);
       if (this.checkedChannel.chnOnlineOrNot === "offline") {
         this.$message.warning("该设备离线！");
         return;
@@ -619,7 +624,7 @@ export default {
           rtspUrl: this.lastRstpUrl
         };
       }
-
+      // 获取流媒体服务地址参数
       let { jMedia, jSignal } = this.$store.getters;
       if (!this.video_mgr) {
         // eslint-disable-next-line
@@ -631,15 +636,6 @@ export default {
       this.canvas.width = (16 * (this.HEIGHT() - 350 - 100)) / 9 - 50;
       this.canvas.height = this.HEIGHT() - 450;
       // 设置新的视频对象播放参数
-      // this.video = await this.video_mgr.setup(
-      //   JSON.stringify(jSignal),canvas
-      //   JSON.stringify(jMedia),
-      //   data.rtspUrl,
-      //   "rtsp",
-      //   "preview",
-      //   1,
-      //   this.canvas
-      // );
       console.log(jSignal);
       this.video = await this.video_mgr.setup({
         element: this.canvas,
@@ -721,7 +717,7 @@ export default {
         })
         .catch(() => {});
     },
-    // 获取人流量分布统计
+    // 获取人流量分布统计，判断参数是否单一相机
     getPhotoStaticList() {
       if (!this.notCheckAll) {
         this.getStaticsPeopleAPi({ channelUuid: null });
@@ -731,7 +727,7 @@ export default {
         });
       }
     },
-    // 人流量抓拍
+    // 人流量抓拍ＨＴＴＰ统计
     getStaticsPeopleAPi(data) {
       this.fullscreenLoading = !this.fullscreenLoading;
       api
@@ -815,11 +811,9 @@ export default {
     drawLine() {
       let dom = document.getElementById("bar_bot");
       let w = this.WIDTH();
-      let h = this.HEIGHT();
-      h = h - 50; // 不知道为什么会差5个像素
       w = w - 200;
-      this.$refs.canvsWidth.$el.style.width = 0.7 * w - 80 + "px";
-      this.$refs.canvsWidth.$el.style.height = ((0.7 * 7) / 16) * h - 80 + "px";
+      this.$refs.canvsWidth.$el.style.width = 0.7 * w - 60 + "px";
+      this.$refs.canvsWidth.$el.style.height = 240 + "px";
       console.log(this.$refs.canvsWidth.$el.style.width);
       if (!dom) {
         return;

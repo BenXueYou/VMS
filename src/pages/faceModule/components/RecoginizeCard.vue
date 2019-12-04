@@ -224,6 +224,7 @@ export default {
 	letter-spacing: 0;
 }
 .RecognizeCardClass .asidListRowBody {
+	width: 100%;
 	padding: 12px 15px 10px;
 	box-sizing: border-box;
 	display: flex;
