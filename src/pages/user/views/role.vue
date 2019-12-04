@@ -103,7 +103,7 @@
     </div>
     <role-add class='editDiv'
                 :roleUuid.sync="roleUuid"
-                :visible="isShowEdit"
+                :visible.sync="isShowEdit"
                 @close="isShowEdit=false"
                 v-show="isShowEdit">
     </role-add>
@@ -244,7 +244,7 @@ export default {
         console.log(api);
         api
           .getAccountListApi({
-            limt: 12345679,
+            limit: 12345679,
             page: 1,
             roleName: ""
           })
