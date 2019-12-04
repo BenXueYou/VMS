@@ -143,6 +143,7 @@ export default {
       isShowSamePlaDialog: false,
       isShowMenuList: false,
       Overlay: null,
+      numShowArr: []
     };
   },
   created() {
@@ -192,8 +193,12 @@ export default {
       /* eslint-disable */
       this.map.clearOverlays();
       this.pois = [];
-      for (let i = this.traceData.length - 1; i >= 0 ; i--) {
-        let pt = new BMap.Point(this.traceData[i].longitude, this.traceData[i].latitude);
+      this.numShowArr = [];
+      for (let i = this.traceData.length - 1; i >= 0; i--) {
+        let pt = new BMap.Point(
+          this.traceData[i].longitude,
+          this.traceData[i].latitude
+        );
         this.pois.push(pt);
         let myIcon = new BMap.Icon(
           require("@/assets/images/faceModule/trace.png"),
@@ -202,30 +207,41 @@ export default {
         let marker = new BMap.Marker(pt, { icon: myIcon });
         marker.setOffset(new BMap.Size(0, -30));
         this.map.addOverlay(marker);
-        let ItemOverlay = new this.Overlay.ItemOverlay(pt, this.traceData[i]);
-        this.map.addOverlay(ItemOverlay);
-        ItemOverlay.addEventListener("click", () => {
-          this.getSamePlaceArr(this.traceData[i].longitude, this.traceData[i].latitude);
+        let itemOverlay = new this.Overlay.ItemOverlay(pt, this.traceData[i]);
+        this.map.addOverlay(itemOverlay);
+        itemOverlay.addEventListener("click", () => {
+          this.getSamePlaceArr(
+            this.traceData[i].longitude,
+            this.traceData[i].latitude
+          );
           this.isShowSamePlaDialog = true;
         });
+        if (i !== this.traceData.length - 1) {
+          let longitude =
+            (Number(this.traceData[i].longitude) +
+              Number(this.traceData[i + 1].longitude)) /
+            2;
+          let latitude =
+            (Number(this.traceData[i].latitude) +
+              Number(this.traceData[i + 1].latitude)) /
+            2;
+          let numStr = this.traceData.length - 1 - i;
+          let numObj = {
+            longitude,
+            latitude,
+            numStr
+          };
+          this.numShowArr.forEach((v) => {
+            if (numObj.longitude === v.longitude && numObj.latitude === v.latitude) {
+              numObj.numStr = v.numStr + "/" + numObj.numStr;
+            }
+          });
+          this.numShowArr.push(numObj);
+          let point = new BMap.Point(numObj.longitude, numObj.latitude);
+          let numOverlay = new this.Overlay.NumOverlay(point, numObj.numStr);
+          this.map.addOverlay(numOverlay);
+        }
       }
-      // for (let v of this.traceData) {
-      //   let pt = new BMap.Point(v.longitude, v.latitude);
-      //   this.pois.push(pt);
-      //   let myIcon = new BMap.Icon(
-      //     require("@/assets/images/faceModule/trace.png"),
-      //     new BMap.Size(48, 60)
-      //   );
-      //   let marker = new BMap.Marker(pt, { icon: myIcon });
-      //   marker.setOffset(new BMap.Size(0, -30));
-      //   this.map.addOverlay(marker);
-      //   let ItemOverlay = new this.Overlay.ItemOverlay(pt, v);
-      //   this.map.addOverlay(ItemOverlay);
-      //   ItemOverlay.addEventListener("click", () => {
-      //     this.getSamePlaceArr(v.longitude, v.latitude);
-      //     this.isShowSamePlaDialog = true;
-      //   });
-      // };
       let sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_CLOSED_ARROW, {
         scale: 0.8, //图标缩放大小
         strokeColor: "#E63434", //设置矢量图标的线填充颜色
@@ -315,7 +331,7 @@ export default {
     },
     initData() {
       this.startTime = this.$common.formatDate(
-        new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
+        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       );
       this.endTime = this.$common.formatDate(new Date());
       this.libraryTypeOption = this.$common.getEnumByGroupStr(
@@ -404,6 +420,7 @@ export default {
       this.menuData = [];
       this.traceData = [];
       this.pois = [];
+      this.numShowArr = [];
       this.samePlaArr = [];
       this.isShowSamePlaDialog = false;
       this.isShowMenuList = false;
