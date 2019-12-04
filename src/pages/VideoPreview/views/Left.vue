@@ -494,16 +494,16 @@ export default {
       console.log(this.$refs.tree3.getCheckedNodes());
     },
     openVidoeByDBClick(node, data, e) {
-      console.log(e);
+      // console.log(node, data, e);
       e.preventDefault();
       e.stopPropagation();
       this.operatorData = data;
       // 不在线的通道 ，双击进行展示
-      if (data.hasOwnProperty("channelUuid") || data.nodeType === "chnNode") {
-        this.chuliData();
+      if (data.isOnline === false) {
+        this.$message.error("设备不在线");
       } else {
-        if (data.isOnline === false) {
-          this.$message.error("设备不在线");
+        if (data.hasOwnProperty("channelUuid") || data.nodeType === "chnNode") {
+          this.chuliData();
         }
       }
     },
