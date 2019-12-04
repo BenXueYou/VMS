@@ -180,6 +180,7 @@ export default {
       // this.$emit("onConfirm", this.checkedTreeList.map(v => delete v.checked));
       this.$emit("onConfirm", this.checkedTreeList);
       this.$emit("onCancel");
+      this.onClickCancel();
     },
     onClickCancel() {
       this.$emit("update:isShow", false);
@@ -190,13 +191,17 @@ export default {
     onChangeInput() {}
   },
   watch: {
+    treeData() {
+      this.treeList = this.treeData;
+      this.formatData();
+    },
     isShow(val) {
       this.isCurrentShow = val;
       if (val) {
-        this.treeList = this.treeData;
+        // this.treeList = this.treeData;
       }
       this.formatData();
-    },
+    }
     // initSelectData(val){
     //   this.formatData();
     // },
