@@ -322,7 +322,10 @@ export default {
         });
     },
     confirmDelete() {
-      api.deleteRole(this.deleteData).then(res => {
+      let param = {
+        "roleUuids": this.deleteData
+      }
+      api.deleteRole(param).then(res => {
         if (res.data.success) {
           this.$message.success("删除成功！");
           this.getData();
