@@ -117,7 +117,8 @@ export default {
       importTaksUuid: "",
       startProgress: false,
       resultMsg: "",
-      successResultMsg: ""
+      successResultMsg: "",
+      fileName: "",
     };
   },
   created() {},
@@ -270,6 +271,7 @@ export default {
               file.percent = 0;
               _this.fileIdNum.push(file); //这里在外面使用个全局的数组来记录上传了多少个文件然后进行处理操作。
               console.log(_this.fileIdNum);
+              _this.fileName = _this.fileIdNum.length ? _this.fileIdNum[0].name : "";
             });
             // alert("文件选择成功");
           },
@@ -381,10 +383,10 @@ export default {
     onClickImportFile() {}
   },
   computed: {
-    fileName() {
-      let name = this.fileIdNum.length ? this.fileIdNum[0].name : "";
-      return name;
-    }
+    // fileName() {
+    //   let name = this.fileIdNum.length ? this.fileIdNum[0].name : "";
+    //   return name;
+    // }
   },
   watch: {
     isShow(val) {
