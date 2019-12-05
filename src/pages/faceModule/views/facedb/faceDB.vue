@@ -73,11 +73,11 @@
 						<img src="@/assets/images/faceModule/expert.png" alt />
 						<span>导出</span>
 					</li>
-					<li class="active" @click="faceLibUpdateRecord">
+					<li class="active" @click="faceLibUpdateRecord" v-if="selectLibRow.faceLibraryType === 'staticFaceLib'">
 						<img src="@/assets/images/faceModule/facedb_update_history.png" alt />
 						<span>更新历史</span>
 					</li>
-					<li class="active" @click="updateLibraryTask">
+					<li class="active" @click="updateLibraryTask" v-if="selectLibRow.faceLibraryType === 'staticFaceLib'">
 						<img src="@/assets/images/faceModule/facedb_update.png" alt />
 						<span>库更新</span>
 					</li>
@@ -150,19 +150,13 @@
 		<!-- 库更新弹窗 -->
 		<the-face-d-b-d-k-dialog
 			:faceDBDialogVisible="faceDBDialogDKVisible"
-			:libraryarr="libraryarr"
-			:libraryuuid="taofanlibraryuuid"
-			@getstafflirary="getstafflirary"
+			:libraryuuid="selectLibRow.faceLibraryUuid ? selectLibRow.faceLibraryUuid : ''"
 			@close="faceDBDialogDKVisible=false"
-			@addDaoKuTask="addDaoKuTask"
+      @confirm="confirmDBUpdate"
 		></the-face-d-b-d-k-dialog>
 		<!-- 更新历史弹窗 -->
 		<the-face-d-b-update-history-dialog
 			:faceDBDialogVisible="faceDBDialogUpdateHistoryVisible"
-			:uploadstatusZnarr="uploadstatusZnarr"
-			:libraryname="libraryName"
-			:libraryuuid="faceLibraryUuid"
-			:realtimeNum="realtimeNum"
 			@close="faceDBDialogUpdateHistoryVisible=false"
 		></the-face-d-b-update-history-dialog>
 
@@ -589,27 +583,13 @@ export default {
       }
       this.deleteStaffFace(num);
     },
-    addDaoKuTask({ time, data, num, uploader }) {
-      if (!this.ws) {
-        // alert("建立socket库了！");
-        // this.conSocket(); //建立socket,本来想延迟建立socket
-      }
-      api.addDaoKuTask(data).then(res => {
-        console.log(res);
-        if (res.data.success) {
-          this.taskNum.push({
-            time: time,
-            num: num,
-            uploader: uploader,
-            isUpload: false
-          });
-          console.log(this.taskNum);
-          this.faceDBDialogDKVisible = false;
+    addDaoKuTask(params) {
+      faceApi
+        .addDaoKuTask(params[0], params[1])
+        .then(res => {
           this.$message.success("任务添加完成，请不要关闭客户端！");
-        } else {
-          this.$message.error(res.data.msg);
-        }
-      });
+          this.faceDBDialogDKVisible = false;
+        });
     },
     getstafflirary() {
       // 获取到所有的人员库
@@ -812,6 +792,10 @@ export default {
       this.ws.onclose = function() {
         console.log("socket关闭了");
       };
+    },
+    confirmDBUpdate() {
+      this.faceDBDialogDKVisible = false;
+      this.getStaffLibList();
     }
   },
   mounted() {
