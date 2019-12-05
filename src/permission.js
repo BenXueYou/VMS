@@ -30,6 +30,11 @@ router.beforeEach((to, from, next) => {
       if (!isInitRoute) {
         isInitRoute = true;
         // 这里去请求用户的权限菜单
+        console.log("projectUuid===", store.state.home.projectUuid)
+        // debugger;
+        // if (store.state.home.projectUuid==="") {
+        //   return;
+        // }
         api
           .getHomeMenu({
             accountUuid: window.localStorage.getItem("useruuid").trim()

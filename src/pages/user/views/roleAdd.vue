@@ -3,7 +3,7 @@
     <div class="headera">
       <span class="shuline">添加角色</span>
       <div class="buttongroup">
-        <el-button @click="saveAndAdd"
+        <el-button v-if="!roleUuid" @click="saveAndAdd"
                    size="small"
                    type="primary">保存并继续添加</el-button>
         <el-button @click="confirm"
@@ -142,7 +142,7 @@
     <div class="dash-line"></div>
     <div class="headera">
       <div class="buttongroup">
-        <el-button @click="saveAndAdd"
+        <el-button v-if="!roleUuid" @click="saveAndAdd"
                    size="small"
                    type="primary">保存并继续添加</el-button>
         <el-button @click="confirm"
@@ -299,10 +299,11 @@ export default {
         	let obj ={
         		resourceUuid: i.resourceUuid,
         		resourceType: i.resourceType,
-        		authUuids: i.resourceAuthUuids
+        		authUuids: i.authUuids?i.authUuids:i.resourceAuthUuids
         	}
         	return resourceAuth.push(obj);
         })
+      console.log("resourceAuth===", resourceAuth)
       let data = {
         roleName: this.roleName, // 角色名称
         invalidTime: this.time === "forever" ? "long" : this.invalidTime, // 到期时间，当类型为短期时传时间字符串，永久时传枚举值
@@ -326,7 +327,8 @@ export default {
       if (!this.roleUuid) {
         api.addRoleDetailUrl(data).then(res => {
           if (res.data.success) {
-          	this.$emit("close", true);
+            // console.log("isBackTableList===", isBackTableList)
+          	// this.$emit("close", true);
             this.$message.success("添加成功!");
             if (isBackTableList) {
               this.resetAddDialog();
@@ -338,7 +340,8 @@ export default {
       } else {
         api.editRoleDetailUrl(data).then(res => {
           if (res.data.success) {
-          	this.$emit("close", true);
+            // console.log("isBackTableList===", isBackTableList)
+          	// this.$emit("close", true);
             this.$message.success("保存成功！");
             if (isBackTableList) {
               this.resetAddDialog();

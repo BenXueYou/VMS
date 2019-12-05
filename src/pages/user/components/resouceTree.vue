@@ -295,8 +295,8 @@ export default {
           .then(res => {
             let data = res.data.data || [];
             data.map(element => {
-              element.isLeaf = false;
-              this.$set(element, "isLeaf", !element.openFlag);
+              element.isLeaf = !element.openFlag;
+              // this.$set(element, "isLeaf", !element.openFlag);
             });
             resolve(data);
           })

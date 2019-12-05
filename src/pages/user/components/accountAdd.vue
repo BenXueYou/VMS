@@ -4,8 +4,8 @@
 			<el-header class="headerBox">
 				<div class="headerTxt">{{title}}</div>
 				<div>
-					<el-button class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
-					<el-button @click="editBtnAct" v-loading="isload">确认</el-button>
+					<el-button v-if="!rowData.accountUuid" @click="editBtnAct('again')" class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
+					<el-button @click="editBtnAct('save')" v-loading="isload">确认</el-button>
 					<el-button @click="close">取消</el-button>
 				</div>
 			</el-header>
@@ -102,8 +102,8 @@
 				</div>
 			</div>
 			<div class="footerClass">
-				<el-button class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
-				<el-button @click="editBtnAct" v-loading="isload">确认</el-button>
+				<el-button v-if="!rowData.accountUuid" @click="editBtnAct('again')" class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
+				<el-button @click="editBtnAct('save')" v-loading="isload">确认</el-button>
 				<el-button @click="close">取消</el-button>
 			</div>
 		</div>
@@ -186,14 +186,34 @@ export default {
     };
   },
   created() {},
-  activated() {},
+  activated() {
+  },
   mounted() {
     this.invalidTimeVal = new Date();
     // this.queryBody.invalidTime = this.$common.timestampToFormatter(new Date(), "yyyy-mm-dd HH:mm:ss");
   },
   methods: {
+  	initData() {
+  	  this.invalidTimeVal = null, // 失效时间 (可选)
+      this.isAssociateSwitch = false,
+      this.isLongTIme = 1,
+      this.queryBody.accountName = null, // 用户账号
+      this.queryBody.accountType = null, // 账号类型
+      this.queryBody.password = null, // 用户密码
+      this.queryBody.confirmPassword = null, // 用户确认密码
+      this.queryBody.enable = 1, // 使能状态
+      this.queryBody.enableValue = 1, // 使能状态
+      this.queryBody.staffUuid = null, // 人员UUID (可选)
+      this.queryBody.staffName = null, // 用户名
+      this.queryBody.phoneNumber = null, // 电话号码
+      this.queryBody.emailNumber = null, // 邮箱号码
+      this.queryBody.description = null, // 描述
+      this.queryBody.roleUuids = [], // 角色uuid数组
+      this.queryBody.isAssociateStaff = "",
+      this.queryBody.invalidTime = "" // 失效时间 (可选)
+  	},
     // 点击确定按钮
-    editBtnAct() {
+    editBtnAct(status) {
       console.log("queryBody==", this.queryBody);
       if (this.queryBody.roles) {
         let roleUuids = [];
@@ -219,8 +239,8 @@ export default {
           .then(res => {
             this.isload = !this.isload;
             if (res.data.success) {
-              this.$message.success(res.data.msg);
-              this.$emit("close", true);
+		      this.$emit("close", true);
+              this.$message.success(resdata.msg);
             } else {
               this.$message.warning(res.data.msg);
             }
@@ -256,8 +276,14 @@ export default {
           .then(res => {
             this.isload = !this.isload;
             if (res.data.success) {
+              console.log("status55555==", status);
+              if (status==="again") {
+                this.initData();
+		      } else if (status==="save"){
+		      	this.$emit("close", true);
+		      }
               this.$message.success(res.data.msg);
-              this.$emit("close", true);
+              // this.$emit("close", true);
             } else {
               this.$message.warning(res.data.msg);
             }
@@ -295,6 +321,7 @@ export default {
       handler(newVal, old) {
         if (this.rowData.accountUuid) {
           this.title = "编辑账号";
+          // this.initData();
           this.queryBody.confirmPassword = "********";
           this.isEditPassWord = true;
           if (this.rowData.isAssociateStaff === 1) {
@@ -306,7 +333,10 @@ export default {
           this.title = "添加账号";
           this.isEditPassWord = false;
         }
-        console.log(newVal);
+        if (!newVal.roles) {
+          this.initData();
+        }
+        console.log("newVal====", newVal);
         Object.assign(this.queryBody, newVal);
         console.log("--------------------", this.queryBody);
       },

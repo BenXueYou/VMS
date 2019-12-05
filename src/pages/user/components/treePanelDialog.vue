@@ -9,18 +9,23 @@
       <!--内容-->
       <div class="content-left">
         <div class="block-left">
-          <el-input class="search-input"
-                    v-model="titleText"
+        <!--   <el-input class="search-input"
+                    v-model="filterText"
                     size="small"
                     clearable
-                    @change="onChangeInput"
                     :placeholder="placeholder">
-            <img slot="prefix"
-                 src="@/assets/images/search_s.png">
-          </el-input>
+          </el-input> -->
+            <el-input
+              v-model="filterText"
+              size="small"
+              clearable
+              class="search-input"
+              :placeholder="placeholder">
+              <img slot="prefix" src="@/assets/images/search_s.png">
+            </el-input>
           <div class="faceDB-list">
             <div :key="index"
-                 v-for="(item, index) in treeList"
+                 v-for="(item, index) in treeSearchList"
                  class="faceDB-item"
                  @click="onClickItem(item,index)">
               <img :src="itemicon"
@@ -129,6 +134,7 @@ export default {
   },
   data() {
     return {
+      filterText: '',
       isCurrentShow: false,
       titleText: "",
       treeList: []
@@ -139,6 +145,11 @@ export default {
       return this.treeList.filter(i => {
         return i.checked;
       });
+    },
+    treeSearchList(){
+      return this.treeList.filter(i=>{
+        return i[this.props.label].indexOf(this.filterText)!=-1;
+      })
     }
   },
   created() {},
