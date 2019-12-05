@@ -47,16 +47,16 @@
 						></el-switch>
 					</p>
 					<div>
-						<el-input :disabled="!isAssociateSwitch" v-model="queryBody.staffName"></el-input>
+						<el-input :disabled="isAssociateSwitch" v-model="queryBody.staffName"></el-input>
 						<span class="cursorClass" v-if="isAssociateSwitch" @click="addSystemStaff">
 							<img class="img" src="@/assets/images/resident/modify_icon.png" alt srcset />请选择
 						</span>
 					</div>
 					<div>
-						<el-input :disabled="!isAssociateSwitch" v-model="queryBody.phoneNumber"></el-input>
+						<el-input :disabled="isAssociateSwitch" v-model="queryBody.phoneNumber"></el-input>
 					</div>
 					<div>
-						<el-input :disabled="!isAssociateSwitch" v-model="queryBody.emailNumber"></el-input>
+						<el-input :disabled="isAssociateSwitch" v-model="queryBody.emailNumber"></el-input>
 					</div>
 					<p style="margin:17px 0">
 						<el-radio-group v-model="isLongTIme">

@@ -91,7 +91,7 @@
         </div>
         <div class="fenye">
           <el-pagination @current-change="handleCurrentChange"
-                         :current-page.sync="pageNow"
+                         :current-page="pageNow"
                          :page-size="pageSize"
                          background
                          class="pagination"
@@ -104,13 +104,13 @@
     <role-add class='editDiv'
                 :roleUuid.sync="roleUuid"
                 :visible.sync="isShowEdit"
-                @close="isShowEdit=false"
+                @close="close"
                 v-show="isShowEdit">
     </role-add>
     <reset-password :visible.sync="resetPasswordVisible"></reset-password>
     <confirm-dialog :visible.sync="isConfirm"
                     title="提示"
-                    confirmText="是否删除账号"
+                    confirmText="是否删除角色"
                     @confirm="confirmDelete"></confirm-dialog>
     <tree-panel-dialog :isShow.sync="showtreeadad"
                        :treeData="treeList"
@@ -195,7 +195,10 @@ export default {
     this.getData();
   },
   methods: {
-    handleCurrentChange(val) {},
+    handleCurrentChange(val) {
+      this.pageNow = val;
+      this.getData();
+    },
     handleSelectionChange(val) {
       // 获取选中的table数据的事件回调
       this.multipleSelection = val;
@@ -299,17 +302,27 @@ export default {
       });
     },
     deleteRow(row) {
-      this.deleteUser({
-        roleUuids: [row.roleUuid]
+      // this.deleteUser({
+      //   roleUuids: [row.roleUuid]
+      // });
+      let param = {
+        "roleUuids": [row.roleUuid]
+      }
+      api.deleteRole(param).then(res => {
+        if (res.data.success) {
+          this.$message.success("删除成功！");
+          this.getData();
+        }
       });
     },
     serach() {
       this.getData();
     },
     getData() {
+      this.tableData = [];
       api
         .getRoleList({
-          limt: this.pageSize,
+          limit: this.pageSize,
           page: this.pageNow,
           roleName: this.roleName || undefined
         })
@@ -343,7 +356,15 @@ export default {
           this.getData();
         }
       });
-    }
+    },
+    close(is) {
+      this.isShowEdit=false;
+      this.getData();
+      // this.addDialogVisible = !this.addDialogVisible;
+      // if (is) {
+      //   this.initData();
+      // }
+    },
   }
 };
 </script>

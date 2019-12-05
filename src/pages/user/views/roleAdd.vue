@@ -49,6 +49,7 @@
         <el-date-picker v-model="invalidTime"
                         type="datetime"
                         style="width:220px"
+                        value-format="yyyy-MM-dd HH:mm:ss"
                         placeholder="选择日期时间"></el-date-picker>
       </div>
     </div>
@@ -270,7 +271,11 @@ export default {
       this.submit();
     },
     confirm() {
-      this.submit(false);
+      if(this.roleName==="") {
+      	this.$message.error("请输入姓名!");
+      } else {
+      	this.submit(false);
+      }
     },
     close() {
       this.$emit("close");
@@ -288,6 +293,16 @@ export default {
       this.showquanAccoutArr = [];
     },
     rebaseData() {
+      let resourceAuth = [];
+        this.resourceAuth.map(i => {
+        	console.log("i===", i)
+        	let obj ={
+        		resourceUuid: i.resourceUuid,
+        		resourceType: i.resourceType,
+        		authUuids: i.resourceAuthUuids
+        	}
+        	return resourceAuth.push(obj);
+        })
       let data = {
         roleName: this.roleName, // 角色名称
         invalidTime: this.time === "forever" ? "long" : this.invalidTime, // 到期时间，当类型为短期时传时间字符串，永久时传枚举值
@@ -295,7 +310,7 @@ export default {
         enable: this.enable === "enable" ? 1 : 0, // 0禁用、1启用
         featureAuthUuids: this.featureAuthUuids,
         // 关联的功能模块
-        resourceAuthUuids: this.resourceAuth, // 关联的通道资源
+        resourceAuthUuids: resourceAuth, // 关联的通道资源
         accountUuids: this.shouquanSelectedArr.map(i => {
           return i.accountUuid;
         })
@@ -311,6 +326,7 @@ export default {
       if (!this.roleUuid) {
         api.addRoleDetailUrl(data).then(res => {
           if (res.data.success) {
+          	this.$emit("close", true);
             this.$message.success("添加成功!");
             if (isBackTableList) {
               this.resetAddDialog();
@@ -322,6 +338,7 @@ export default {
       } else {
         api.editRoleDetailUrl(data).then(res => {
           if (res.data.success) {
+          	this.$emit("close", true);
             this.$message.success("保存成功！");
             if (isBackTableList) {
               this.resetAddDialog();
@@ -351,6 +368,11 @@ export default {
           this.description = data.description;
           this.account = data.account || [];
           this.featureAuth = data.featureAuth || [];
+          if (data.resourceAuth) {
+            data.resourceAuth.map(i => {
+                return i.label = i.resourceName;
+            })
+          }
           this.resourceAuth = data.resourceAuth || [];
           this.shouquanSelectedArr = data.account || [];
         }
