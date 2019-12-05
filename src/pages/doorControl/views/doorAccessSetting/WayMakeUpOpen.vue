@@ -235,7 +235,7 @@ export default {
 
     },
     initDeviceTree() {
-      this.$http.get(this.api + "/basedata-v1/project/" + this.projectUuid + "/device/list?limit=900000000&page=1",
+      this.$http.get(this.api + "/basedata-v1/project/" + this.projectUuid + "/device/list?viewType=door&limit=900000000&page=1",
       ).then((res) => {
         console.log("获取设备通道====", res);
         if (res.status === 200) {
