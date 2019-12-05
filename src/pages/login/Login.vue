@@ -172,8 +172,24 @@ export default {
       let suffix = window.location.href.substring(0, index + 1);
       window.location.href = suffix + "Home";
     }
+    window.addEventListener("beforeunload", e => this.browerStatus(e));
+    window.addEventListener("onunload", e => this.browerStatusOff(e));
   },
   methods: {
+    browerStatus(e) {
+      e = window.event || e;
+      e.returnValue = "确定离开当前页面吗？";
+      console.log("---------------");
+    },
+    browerStatusOff() {
+      console.log("完善登出事件");
+      this.$loginAjax
+        .loginOut()
+        .then(res => {
+          console.log(res.data.msg);
+        })
+        .catch(() => {});
+    },
     login() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
@@ -247,7 +263,10 @@ export default {
           /** ***********测试结束*************** */
           // 刷新页面以便于更新projectUuid
           this.$nextTick(() => {
-            window.location.reload();
+            // window.location.reload();
+            let index = window.location.href.lastIndexOf("/");
+            let suffix = window.location.href.substring(0, index + 1);
+            window.location.href = suffix + "Home";
           });
         }
       }

@@ -26,7 +26,15 @@ export var LoginAjax = {
         // "Authorization": "Basic d2ViOjEyMzQ1Ng=="
       }
     });
-  }
+  },
+  loginOut(data) {
+    let api = `${window.config.protocolHeader}/${ip}/${RestApi.api.login.loginOutApi}`;
+    return axios({
+      method: 'DELETE',
+      url: api,
+      data: data
+    });
+  },
 };
 
 function install(Vue) {

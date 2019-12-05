@@ -56,7 +56,8 @@ export default {
      */
     login: {
       login: `oauth-v1/authentication/iac`,
-      setLogUuid: `sysLog-v1/project/${store.state.home.projectUuid}/log`
+      setLogUuid: `sysLog-v1/project/${store.state.home.projectUuid}/log`,
+      loginOutApi:`oauth-v1/exit`
     },
 
     /**
