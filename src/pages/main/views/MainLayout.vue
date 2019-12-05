@@ -110,11 +110,27 @@ export default {
       "SET_CARDOPTIONS",
       this.$common.getEnumByGroupStr("card_u")
     );
+    window.addEventListener("beforeunload", e => this.browerStatus(e));
+    window.addEventListener("onunload", e => this.browerStatusOff(e));
   },
   activated() {
     console.log(this.$store);
   },
   methods: {
+    browerStatus(e) {
+      e = window.event || e;
+      e.returnValue = "确定离开当前页面吗？";
+      console.log("---------------");
+    },
+    browerStatusOff() {
+      console.log("完善登出事件");
+      this.$loginAjax
+        .loginOut()
+        .then(res => {
+          console.log(res.data.msg);
+        })
+        .catch(() => {});
+    },
     handleCommand(command) {
       console.log(this.$store.state);
       if (command === "tuichu") {
@@ -142,7 +158,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error('退出失败');
+          this.$message.error("退出失败");
         });
     },
     queryBaseTypeByGroup() {
