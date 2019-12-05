@@ -17,7 +17,7 @@ import "./directives";
 // import './dir';
 
 import echarts from "echarts";
-import { EventBusPlugin as EventBus } from "@/utils/Eventbus";
+import { EventBusPlugin as EventBus } from "@/utils/eventbus";
 import Common from "@/utils/Common.js";
 import Toast from "@/utils/Toast.js";
 import HomeAjax from "@/pages/home/utils/HomeAjax.js";

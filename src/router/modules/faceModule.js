@@ -2,7 +2,7 @@ const FaceManage = () =>
   import(/* webpackChunkName: "FaceModule" */ "@/pages/faceModule/FaceManage");
 const FaceControl = () =>
   import(
-    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/faceControl/view/FaceControl"
+    /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/faceControl/view/faceControl"
   );
 const FaceHome = () =>
   import(/* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/Home");
