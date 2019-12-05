@@ -224,7 +224,7 @@ export default {
       }
       if (this.rowData.accountUuid) {
         // 修改
-        // console.log("queryBody==", this.queryBody)
+        console.log("queryBody==", this.queryBody)
         // let roleUuids= [];
         // this.queryBody.roles.filter(i => {
         //    roleUuids.push(i.roleUuid);
@@ -233,9 +233,23 @@ export default {
         // console.log("roleUuids==", this.queryBody)
         // debugger;
         // return;
+        let parms = this.queryBody;
+        if (this.isAssociateSwitch === true) {
+          parms.isAssociateStaff = 1;
+        } else {
+          parms.isAssociateStaff = 0;
+        }
+        if (this.isLongTIme === 1) {
+          parms.invalidTime = "long";
+        } else {
+          parms.invalidTime = this.$common.timestampToFormatter(
+            this.invalidTimeVal,
+            "yyyy-mm-dd HH:mm:ss"
+          );
+        }
         this.isload = !this.isload;
         api
-          .putAccountApi(this.queryBody)
+          .putAccountApi(parms)
           .then(res => {
             this.isload = !this.isload;
             if (res.data.success) {
@@ -322,12 +336,18 @@ export default {
         if (this.rowData.accountUuid) {
           this.title = "编辑账号";
           // this.initData();
+          console.log("rowData==", this.rowData)
           this.queryBody.confirmPassword = "********";
           this.isEditPassWord = true;
           if (this.rowData.isAssociateStaff === 1) {
             this.isAssociateSwitch = true;
           } else {
             this.isAssociateSwitch = false;
+          }
+          if(this.rowData.invalidTime==="long") {
+              this.rowData.enable=1;
+          } else {
+              this.rowData.enable=0;
           }
         } else {
           this.title = "添加账号";

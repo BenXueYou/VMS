@@ -27,7 +27,7 @@
             <div :key="index"
                  v-for="(item, index) in treeSearchList"
                  class="faceDB-item"
-                 @click="onClickItem(item,index)">
+                 @click="onClickItem(item,item.position)">
               <img :src="itemicon"
                    width="11px"
                    height="11px">
@@ -203,7 +203,10 @@ export default {
   },
   watch: {
     treeData() {
-      this.treeList = this.treeData;
+      this.treeList = this.treeData.map((item,index)=>{
+        item.position=index;
+        return item;
+      });
       this.formatData();
     },
     isShow(val) {

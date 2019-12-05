@@ -46,9 +46,7 @@ export function getResource(params) {
   });
 }
 export function getRoleList(params) {
-  console.log(params);
   let { getUserListUrl: url } = userUrl;
-  console.log(url);
   return axios({
     method: "get",
     url,

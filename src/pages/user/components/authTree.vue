@@ -370,7 +370,7 @@ let data = [
     ]
   }
 ];
-console.log(data);
+// console.log(data);
 export default {
   name: "TreeChangeNameDialog.vue",
   props: {
@@ -408,6 +408,12 @@ export default {
       type: Boolean,
       default() {
         return true;
+      }
+    },
+    selectAuthUuid:{
+      type:Array,
+      default(){
+        return [];
       }
     }
   },
@@ -548,9 +554,16 @@ export default {
       }
     },
     getCheckedNodes(data) {
+      // 这里新增判断外面传进来的selectAuthUuid数组，根据里面的uuid判断选不选中
+      console.log(data);
+      data=data.sort((v1,v2)=>{
+        return v1.authName-v2.authName;
+      })
       let arr = [];
       for (let i = 0, len = data.length; i < len; i++) {
-        if (data[i].isOwn === 1) {
+        // console.log(this.selectAuthUuid);
+        // if (data[i].isOwn === 1) {
+        if(this.selectAuthUuid.indexOf(data[i].authUuid)!=-1){
           arr.push(data[i].authName);
         }
       }
@@ -574,6 +587,9 @@ export default {
         }
         // 表示这个是叶子节点了F
         if (data[i].auth.length) {
+          data[i].auth=data[i].auth.sort((v1,v2)=>{
+            return v1.authNo-v2.authNo;
+          })
           data[i].checkAuth = this.getCheckedNodes(data[i].auth);
           data[i].checkAll = data[i].checkAuth.length === data[i].auth.length;
           data[i].isIndeterminate =
@@ -635,12 +651,14 @@ export default {
           this.getAllCheckedLeafUuid(data[i].childNodes);
         } else {
           let num = this.getUuid(data[i].auth, data[i].checkAuth);
+          console.log(num);
           this.checkedNum.push(...num);
           if (num.length) {
             // num有长度则表示要显示
             this.showNum.push({
               featureName: data[i].nodeName,
-              featureUuid: data[i].featureUuid
+              featureUuid: data[i].featureUuid,
+              authUuids:num
             });
           }
         }
@@ -651,8 +669,8 @@ export default {
       this.checkedNum = [];
       this.showNum = [];
       this.getAllCheckedLeafUuid(this.data);
-      console.log(this.checkedNum);
-      console.log(this.showNum);
+      // console.log(this.checkedNum);
+      // console.log(this.showNum);
 
       this.$emit("confirm", this.checkedNum, this.showNum);
       this.close();
@@ -667,7 +685,7 @@ export default {
           roleUuid: this.roleUuid
         })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           let data = res.data.data || [];
           this.data = data;
           this.initData();

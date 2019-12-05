@@ -8,7 +8,7 @@
 					<el-button @click="volumeDelete">删除</el-button>
 					<el-button @click="switchData(1)">启用</el-button>
 					<el-button @click="switchData(0)">禁用</el-button>
-					<el-button @click="resetPasswordVisible=true">密码重置</el-button>
+					<el-button @click="resetPassword">密码重置</el-button>
 				</div>
 				<div class="topBoxRight">
 					<span class="tipsTxt">姓名：</span>
@@ -324,6 +324,13 @@ export default {
     forbidBtnClick(rowData) {
       this.accountUuids = [rowData.accountUuid];
       this.switchData(0);
+    },
+    resetPassword(){
+       if (!this.accountUuids.length) {
+        this.$message.warning("请选择账号！");
+        return;
+      }
+      this.resetPasswordVisible=true
     },
     switchData(enable) {
       if (!this.accountUuids.length) {

@@ -41,6 +41,10 @@ service.interceptors.response.use(
         router.replace({
           name: "Login"
         });
+      } else if (response.data.msg === "令牌无效") {
+        router.replace({
+          name: "Login"
+        });
       } else {
         Toast.error(response.data.msg);
         return Promise.reject("error");
