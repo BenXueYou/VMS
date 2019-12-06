@@ -31,6 +31,7 @@
                  class='videoTree'
                  lazy>
           <div class="custom-tree-node"
+               @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
             <div class="channelStatus">
               <img :src="data.icon"
@@ -39,19 +40,19 @@
               <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
                     class="span "
                     :draggable="data.nodeType==='chnNode'"
-                    @click.stop="saveClickData('', data)"
                     @dragstart="dragstart(data,$event)"
                     :class="{'channelOffline':!data.isOnline}"
                     :title="node.label">{{ node.label }}</span>
+
+              <span class="el-dropdown-link  "
+                    v-if="data.isOnline||data.nodeType!='chnNode'"
+                    @click.stop="saveClickData(node, data,$event)">
+                <img class="checked-img threelinemenu"
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                     style="margin-right: 20%;">
+              </span>
             </div>
 
-            <span class="el-dropdown-link  "
-                  v-if="data.isOnline||data.nodeType!='chnNode'"
-                  @click.stop="saveClickData(node, data,$event)">
-              <img class="checked-img threelinemenu"
-                   src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                   style="margin-right: 20%;">
-            </span>
           </div>
         </el-tree>
       </el-tab-pane>
@@ -66,6 +67,7 @@
                  lazy
                  @node-click="handleNodeClick">
           <div class="custom-tree-node"
+               @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
             <div class="channelStatus">
               <img :src="data.icon"
@@ -78,24 +80,24 @@
                     @dragstart="dragstart(data,$event)"
                     :title="node.label"
                     :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
+              <el-dropdown trigger="click"
+                           @command="handleCommand"
+                           placement="bottom"
+                           class='threelinemenu'>
+                <span class="el-dropdown-link"
+                      v-if="data.isOnline||!data.hasOwnProperty('channelType')"
+                      @click="saveClickData(node, data,$event)">
+                  <img class="checked-img"
+                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                       style="margin-right: 20%;">
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="video">打开视频</el-dropdown-item>
+                  <el-dropdown-item command="playback">查看录像</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </div>
 
-            <el-dropdown trigger="click"
-                         @command="handleCommand"
-                         placement="bottom"
-                         class='threelinemenu'>
-              <span class="el-dropdown-link"
-                    v-if="data.isOnline||!data.hasOwnProperty('channelType')"
-                    @click="saveClickData(node, data)">
-                <img class="checked-img"
-                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                     style="margin-right: 20%;">
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="video">打开视频</el-dropdown-item>
-                <el-dropdown-item command="playback">查看录像</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
           </div>
         </el-tree>
 
@@ -109,25 +111,27 @@
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node"
                slot-scope="{ node, data }">
-            <span class="span"
-                  @dblclick.stop="openVidewTu(node,data,$event)"
-                  :title="node.label">{{ node.label }}</span>
-            <el-dropdown trigger="click"
-                         @command="handleCommand"
-                         placement="bottom"
-                         class='threelinemenu'>
-              <span class="el-dropdown-link"
-                    @click="saveClickData(node, data)">
-                <img class="checked-img"
-                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                     style="margin-right: 20%;">
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="view">打开视图</el-dropdown-item>
-                <el-dropdown-item command="renameView">重命名</el-dropdown-item>
-                <el-dropdown-item command="deleteView">删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+            <div>
+              <span class="span"
+                    style='min-width:150px;display:inline-block;'
+                    @dblclick.stop="openVidewTu(node,data,$event)"
+                    :title="node.label">{{ node.label }}</span>
+              <el-dropdown trigger="click"
+                           @command="handleCommand"
+                           placement="bottom"
+                           class='threelinemenu'>
+                <span class="el-dropdown-link">
+                  <img class="checked-img"
+                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                       style="margin-right: 20%;">
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="view">打开视图</el-dropdown-item>
+                  <el-dropdown-item command="renameView">重命名</el-dropdown-item>
+                  <el-dropdown-item command="deleteView">删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
           </div>
         </el-tree>
       </el-tab-pane>
@@ -215,7 +219,7 @@
         <!-- 点击就去这个点的设置位置 -->
         <div class="button"
              @click="chooseItem"
-             v-show="((value=='yuzhi'&&yuzhi)||(value=='xunhang'&&xunhang))&&!isChoose"
+             v-show="((value=='yuzhi'&&yuzhi!=='')||(value=='xunhang'&&xunhang!==''))&&!isChoose"
              title="">
           <img :src="icons.center"
                alt="">
@@ -485,7 +489,7 @@ export default {
           num[list[i].presetNo] = list[i];
           num[list[i].presetNo].isNew = false;
         }
-        console.log(num);
+        // console.log(num);
         this.yuzhi = "";
         this.yuzhiOptions = num;
       });
@@ -511,6 +515,8 @@ export default {
       // 点击三角菜单保存树节点信息
       this.operatorData = data;
       if (event) {
+        event.preventDefault();
+        event.stopPropagation();
         const _this = this;
         this.$ContextMenu({
           data: [
@@ -1591,6 +1597,9 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #treeLaa {
+  .el-tabs__content {
+    width: 380px;
+  }
   .el-tabs__item {
     color: #dddddd;
   }
@@ -1613,7 +1622,7 @@ export default {
   .custom-tree-node {
     // width: 500px;
     height: 100%;
-    overflow: auto;
+    // overflow: auto;
   }
   .el-input__inner {
     padding-left: 30px;
@@ -1659,6 +1668,12 @@ export default {
     // text-overflow: ellipsis;
     width: calc(100% - 30px);
     .channelStatus {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-basis: 20px;
+      flex-shrink: 20px;
+      flex-flow: 20px;
       img {
         width: 12px;
         height: 12px;
@@ -1676,8 +1691,13 @@ export default {
       // overflow: hidden;
       // display: block;
       // text-overflow: ellipsis;
+      margin-left: 10px;
       white-space: nowrap;
+      user-select: none;
       // float: left;
+    }
+    .el-dropdown-link {
+      margin-left: 5px;
     }
     .threelinemenu {
       display: none;
@@ -1724,7 +1744,8 @@ export default {
     // position: absolute;\
   }
   .cloundControlPannel {
-    padding: 30px 30px 0px 30px;
+    user-select: none;
+    padding: 30px 12px 0px 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
     @include font-s;

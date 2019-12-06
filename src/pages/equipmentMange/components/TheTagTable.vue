@@ -19,10 +19,10 @@
             <span class='title'>类型：</span>
             <el-select v-model="devMode"
                        @change="modeChange">
-              <el-option v-for="item in cnOptions"
-                         :key="item.value"
-                         :label="item.label"
-                         :value="item.value">
+              <el-option v-for="item in options"
+                         :key="item.key"
+                         :label="item.value"
+                         :value="item.key">
               </el-option>
             </el-select>
             <span class='title'>所属设备：</span>
@@ -288,17 +288,7 @@ export default {
       //   return;
       // }
       // 导入通道的时候去获取下拉列表
-      api.getScond(this.viewType).then(res => {
-        console.log(res);
-        if (res.data.data) {
-          let data = res.data.data || [];
-          data.unshift({
-            value: null,
-            label: "全部通道类型"
-          });
-          this.options = data;
-        }
-      });
+
       this.checkedNode = [];
       this.exportDialogVisible = true;
     },
@@ -382,6 +372,17 @@ export default {
     //     status: "移出"
     //   });
     // }
+    api.getScond(this.viewType).then(res => {
+      console.log(res);
+      if (res.data.data) {
+        let data = res.data.data || [];
+        data.unshift({
+          key: null,
+          value: "全部通道类型"
+        });
+        this.options = data;
+      }
+    });
   },
   watch: {
     tagUuid(val) {

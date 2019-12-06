@@ -182,7 +182,7 @@ export default {
     /* eslint-disable */
     const _this = this;
     const onStreamBreak = video => {
-      _video_mgr.stop(_this.video);
+      // _this.video_mgr.stop(_this.video);
     };
     this.video_mgr = new CVideoMgrSdk(onStreamBreak);
     if (this.rtspUrl) {
