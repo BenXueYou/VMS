@@ -474,19 +474,19 @@ export default {
       downData,
       upData
     }) {
-      // console.log({
-      //   index,
-      //   version,
-      //   rankOrder,
-      //   orgUuid,
-      //   sliblings,
-      //   isLastOne,
-      //   node,
-      //   value,
-      //   e,
-      //   downData,
-      //   upData
-      // });
+      console.log({
+        index,
+        version,
+        rankOrder,
+        orgUuid,
+        sliblings,
+        isLastOne,
+        node,
+        value,
+        e,
+        downData,
+        upData
+      });
 
       // console.log(downData);
       // console.log(upData);
@@ -644,8 +644,18 @@ export default {
       return maxSn;
     },
     addchildren(name, node) {
-      // console.log(this.options);
+      console.log(this.options);
+      console.log(name, node);
+      for (let i = 0; i < this.options.length; i++) {
+        if (this.options[i].id === node) {
+          this.Treeparent =
+            this.Treeparent.substr(0, this.Treeparent.length - 1) + i;
+        }
+      }
+
+      console.log(this.Treeparent);
       // console.log(this.getMaxOrgSn());
+      // this.parentOrgUuid = node;
       let data = {
         orgName: name,
         // orgSn: this.getMaxOrgSn(),
@@ -655,7 +665,7 @@ export default {
       api.addOrgTree(data).then(res => {
         if (res.data.success) {
           // 添加子结点成功之后，展开添加的节点
-          this.getChidrendata(this.orgUuid, true, this.Treeparent);
+          this.getChidrendata(node, true, this.Treeparent);
           // this.getOrgTree();
         }
       });
