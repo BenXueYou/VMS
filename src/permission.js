@@ -30,7 +30,7 @@ router.beforeEach((to, from, next) => {
       if (!isInitRoute) {
         isInitRoute = true;
         // 这里去请求用户的权限菜单
-        console.log("projectUuid===", store.state.home.projectUuid)
+        console.log("projectUuid===", store.state.home.projectUuid);
         // debugger;
         // if (store.state.home.projectUuid==="") {
         //   return;
@@ -110,4 +110,4 @@ router.afterEach(() => {
  * 格式化路由映射 服务器返回的类 变成路由所需要的类
  */
 // eslint-disable-next-line no-unused-vars
-function formateRouterMap() {}
+function formateRouterMap() { }

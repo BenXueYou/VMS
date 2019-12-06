@@ -38,17 +38,13 @@
 					</el-dropdown-menu>
 				</el-dropdown>
 				<!-- <div class="quit-btn">
-          <el-button type="text"
-                     size="mini"
-                     @click="onClickQuit">
-            <div class="quit-btn-icon">
-              <img src="@/assets/images/quit.png"
-                   width="14px"
-                   height="14px">
-              <div class="quit-btn-text">退出</div>
-            </div>
-          </el-button>
-				</div>-->
+					<el-button type="text" size="mini" @click="onClickQuit">
+						<div class="quit-btn-icon">
+							<img src="@/assets/images/quit.png" width="14px" height="14px" />
+							<div class="quit-btn-text">退出</div>
+						</div>
+					</el-button>
+				</div> -->
 			</el-header>
 			<el-main class="main-container-main">
 				<!-- <router-view></router-view> -->

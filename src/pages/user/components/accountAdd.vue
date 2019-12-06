@@ -4,7 +4,12 @@
 			<el-header class="headerBox">
 				<div class="headerTxt">{{title}}</div>
 				<div>
-					<el-button v-if="!rowData.accountUuid" @click="editBtnAct('again')" class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
+					<el-button
+						v-if="!rowData.accountUuid"
+						@click="editBtnAct('again')"
+						class="firstBtnClass"
+						v-loading="isload"
+					>保存并继续添加</el-button>
 					<el-button @click="editBtnAct('save')" v-loading="isload">确认</el-button>
 					<el-button @click="close">取消</el-button>
 				</div>
@@ -102,7 +107,12 @@
 				</div>
 			</div>
 			<div class="footerClass">
-				<el-button v-if="!rowData.accountUuid" @click="editBtnAct('again')" class="firstBtnClass" v-loading="isload">保存并继续添加</el-button>
+				<el-button
+					v-if="!rowData.accountUuid"
+					@click="editBtnAct('again')"
+					class="firstBtnClass"
+					v-loading="isload"
+				>保存并继续添加</el-button>
 				<el-button @click="editBtnAct('save')" v-loading="isload">确认</el-button>
 				<el-button @click="close">取消</el-button>
 			</div>
@@ -186,32 +196,31 @@ export default {
     };
   },
   created() {},
-  activated() {
-  },
+  activated() {},
   mounted() {
     this.invalidTimeVal = new Date();
     // this.queryBody.invalidTime = this.$common.timestampToFormatter(new Date(), "yyyy-mm-dd HH:mm:ss");
   },
   methods: {
-  	initData() {
-  	  this.invalidTimeVal = null, // 失效时间 (可选)
-      this.isAssociateSwitch = false,
-      this.isLongTIme = 1,
-      this.queryBody.accountName = null, // 用户账号
-      this.queryBody.accountType = null, // 账号类型
-      this.queryBody.password = null, // 用户密码
-      this.queryBody.confirmPassword = null, // 用户确认密码
-      this.queryBody.enable = 1, // 使能状态
-      this.queryBody.enableValue = 1, // 使能状态
-      this.queryBody.staffUuid = null, // 人员UUID (可选)
-      this.queryBody.staffName = null, // 用户名
-      this.queryBody.phoneNumber = null, // 电话号码
-      this.queryBody.emailNumber = null, // 邮箱号码
-      this.queryBody.description = null, // 描述
-      this.queryBody.roleUuids = [], // 角色uuid数组
-      this.queryBody.isAssociateStaff = "",
-      this.queryBody.invalidTime = "" // 失效时间 (可选)
-  	},
+    initData() {
+      this.invalidTimeVal = null; // 失效时间 (可选)
+      this.isAssociateSwitch = false;
+      this.isLongTIme = 1;
+      this.queryBody.accountName = null; // 用户账号
+      this.queryBody.accountType = null; // 账号类型
+      this.queryBody.password = null; // 用户密码
+      this.queryBody.confirmPassword = null; // 用户确认密码
+      this.queryBody.enable = 1; // 使能状态
+      this.queryBody.enableValue = 1; // 使能状态
+      this.queryBody.staffUuid = null; // 人员UUID (可选)
+      this.queryBody.staffName = null; // 用户名
+      this.queryBody.phoneNumber = null; // 电话号码
+      this.queryBody.emailNumber = null; // 邮箱号码
+      this.queryBody.description = null; // 描述
+      this.queryBody.roleUuids = []; // 角色uuid数组
+      this.queryBody.isAssociateStaff = "";
+      this.queryBody.invalidTime = ""; // 失效时间 (可选)
+    },
     // 点击确定按钮
     editBtnAct(status) {
       console.log("queryBody==", this.queryBody);
@@ -224,7 +233,7 @@ export default {
       }
       if (this.rowData.accountUuid) {
         // 修改
-        console.log("queryBody==", this.queryBody)
+        console.log("queryBody==", this.queryBody);
         // let roleUuids= [];
         // this.queryBody.roles.filter(i => {
         //    roleUuids.push(i.roleUuid);
@@ -253,8 +262,8 @@ export default {
           .then(res => {
             this.isload = !this.isload;
             if (res.data.success) {
-		      this.$emit("close", true);
-              this.$message.success(resdata.msg);
+              this.$emit("close", true);
+              this.$message.success(res.data.msg);
             } else {
               this.$message.warning(res.data.msg);
             }
@@ -291,11 +300,11 @@ export default {
             this.isload = !this.isload;
             if (res.data.success) {
               console.log("status55555==", status);
-              if (status==="again") {
+              if (status === "again") {
                 this.initData();
-		      } else if (status==="save"){
-		      	this.$emit("close", true);
-		      }
+              } else if (status === "save") {
+                this.$emit("close", true);
+              }
               this.$message.success(res.data.msg);
               // this.$emit("close", true);
             } else {
@@ -336,7 +345,7 @@ export default {
         if (this.rowData.accountUuid) {
           this.title = "编辑账号";
           // this.initData();
-          console.log("rowData==", this.rowData)
+          console.log("rowData==", this.rowData);
           this.queryBody.confirmPassword = "********";
           this.isEditPassWord = true;
           if (this.rowData.isAssociateStaff === 1) {
@@ -344,10 +353,10 @@ export default {
           } else {
             this.isAssociateSwitch = false;
           }
-          if(this.rowData.invalidTime==="long") {
-              this.rowData.enable=1;
+          if (this.rowData.invalidTime === "long") {
+            this.rowData.enable = 1;
           } else {
-              this.rowData.enable=0;
+            this.rowData.enable = 0;
           }
         } else {
           this.title = "添加账号";

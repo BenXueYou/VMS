@@ -32,14 +32,14 @@
 				class="tableBoxClass"
 				@selection-change="handleSelectionChange"
 			>
-      <el-table-column type="selection" width="55"></el-table-column>
+				<el-table-column type="selection" width="55"></el-table-column>
 				<el-table-column type="index" :index="tableIndex" label="序号" width="95">
 					<!-- <template slot-scope="scope">
 						<el-checkbox
 							v-model="scope.row.checked"
 							@change="selectchange"
 						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
-					</template> -->
+					</template>-->
 				</el-table-column>
 				<el-table-column prop="accountName" label="账户" width="120"></el-table-column>
 				<el-table-column prop="staffName" label="姓名" width="120"></el-table-column>
@@ -169,7 +169,7 @@ export default {
       console.log(arr);
       this.defaultRoleData = arr;
       // this.rowData.roles = arr;
-      this.$set(this.rowData, 'roles', arr);
+      this.$set(this.rowData, "roles", arr);
       if (this.isAddRole === "edit") {
         this.editAccountRoleApi();
       } else if (this.isAddRole === "add") {
@@ -251,7 +251,7 @@ export default {
       //   this.rowData = {};
       // }
 
-      this.$set(this.rowData, 'roles', this.defaultRoleData);
+      this.$set(this.rowData, "roles", this.defaultRoleData);
       this.getRoleList();
     },
     // 查详情
@@ -264,7 +264,7 @@ export default {
             this.rowData = res.data.data;
             this.defaultRoleData = this.rowData.roles;
             this.rowData.password = "********";
-            console.log('rowData===', this.rowData);
+            console.log("rowData===", this.rowData);
           } else {
             this.$message.warning(res.data.msg);
           }
@@ -279,7 +279,7 @@ export default {
           if (res.data.success) {
             this.rowData = res.data.data;
             this.defaultRoleData = this.rowData.roles;
-            this.$set(this.rowData, 'roles', this.defaultRoleData);
+            this.$set(this.rowData, "roles", this.defaultRoleData);
           } else {
             this.$message.warning(res.data.msg);
           }
@@ -325,12 +325,12 @@ export default {
       this.accountUuids = [rowData.accountUuid];
       this.switchData(0);
     },
-    resetPassword(){
-       if (!this.accountUuids.length) {
+    resetPassword() {
+      if (!this.accountUuids.length) {
         this.$message.warning("请选择账号！");
         return;
       }
-      this.resetPasswordVisible=true
+      this.resetPasswordVisible = true;
     },
     switchData(enable) {
       if (!this.accountUuids.length) {
@@ -388,8 +388,7 @@ export default {
       });
       console.log("accountUuids==", this.accountUuids);
     },
-    handleSizeChange() {
-    },
+    handleSizeChange() {},
     handleCurrentChange(val) {
       this.currentPage = val;
       this.initData();

@@ -1,112 +1,9 @@
 <template>
-  <div class="roleEditWrap">
-    <div class="headera">
-      <span class="shuline">添加角色</span>
-      <div class="buttongroup">
-        <el-button v-if="!roleUuid" @click="saveAndAdd"
-                   size="small"
-                   type="primary">保存并继续添加</el-button>
-        <el-button @click="confirm"
-                   class="button"
-                   size="small"
-                   type="primary">确认</el-button>
-        <el-button @click="close"
-                   class="button"
-                   size="small"
-                   type="primary">取消</el-button>
-      </div>
-    </div>
-    <div class="dash-line"></div>
-    <div class="k-form">
-      <label for>角色名称：</label>
-      <div class="aa">
-        <el-input class="inpaaa"
-                  v-model="roleName"></el-input>
-      </div>
-    </div>
-    <div class="k-form">
-      <label for>状态：</label>
-      <div class="aa">
-        <el-radio-group v-model="enable">
-          <el-radio label="enable">启用</el-radio>
-          <el-radio label="disable">禁用</el-radio>
-        </el-radio-group>
-      </div>
-    </div>
-    <div class="k-form">
-      <label for>到期时间：</label>
-      <div class="aa">
-        <el-radio-group v-model="time">
-          <el-radio label="forever">永久</el-radio>
-          <el-radio label="shorttime">短期</el-radio>
-        </el-radio-group>
-      </div>
-    </div>
-    <div class="k-form"
-         v-show="time==='shorttime'">
-      <label for></label>
-      <div class="aa">
-        <el-date-picker v-model="invalidTime"
-                        type="datetime"
-                        style="width:220px"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                        placeholder="选择日期时间"></el-date-picker>
-      </div>
-    </div>
-    <div class="k-form">
-      <label for>角色描述：</label>
-      <div class="aa">
-        <el-input class="inpaaa"
-                  type="textarea"
-                  :rows="3"
-                  v-model="description"></el-input>
-      </div>
-    </div>
-    <div class="dash-line"></div>
-    <div class="k-form">
-      <div class="label">
-        <span class="adasaaaaF">
-          <img src="../../../assets/images/auth/auth.png"
-               alt />
-          权限信息
-        </span>
-        <label for>关联的功能模块：</label>
-      </div>
-      <div class="aa">
-        <el-button type="text"
-                   size="small"
-                   @click="addFunction"
-                   icon="el-icon-circle-plus-outline">新增</el-button>
-        <div>
-          <gt-button v-for="(item,index) in featureAuth"
-                     class="bilibili"
-                     @close="deleteFeatureAuth(index)"
-                     :key="index">{{item.featureName}}</gt-button>
-        </div>
-      </div>
-    </div>
-    <div class="k-form">
-      <label for>关联的通道资源：</label>
-      <div class="aa">
-        <el-button type="text"
-                   size="small"
-                   @click="getResource"
-                   icon="el-icon-circle-plus-outline">新增</el-button>
-        <div>
-          <gt-button v-for="(item,index) in resourceAuth"
-                     class="bilibili"
-                     @close="deleteChannelAuth(index)"
-                     :key="index">{{item.label}}</gt-button>
-        </div>
-      </div>
-    </div>
-    <!-- <div class="k-form">
-=======
 	<div class="roleEditWrap">
 		<div class="headera">
 			<span class="shuline">添加角色</span>
 			<div class="buttongroup">
-				<el-button @click="saveAndAdd" size="small" type="primary">保存并继续添加</el-button>
+				<el-button v-if="!roleUuid" @click="saveAndAdd" size="small" type="primary">保存并继续添加</el-button>
 				<el-button @click="confirm" class="button" size="small" type="primary">确认</el-button>
 				<el-button @click="close" class="button" size="small" type="primary">取消</el-button>
 			</div>
@@ -189,78 +86,59 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div class="k-form">
->>>>>>> c43b48a6561d5e413289854a3abd631955ba7a43
-      <label for>关联的APP权限：</label>
-      <div class="aa">
-        <el-button type="text"
-                   size="small"
-                   @click="addFunction"
-                   icon="el-icon-circle-plus-outline">新增</el-button>
-        <div>
-          <gt-button v-for="(item,index) in account "
-                     class="bilibili"
-                     @close="deleteAPPAuth(index)"
-                     :key="index">{{item.staffName}}</gt-button>
-        </div>
-      </div>
-<<<<<<< HEAD
-    </div> -->
-    <div class="dash-line"></div>
-    <div class="k-form">
-      <div class="label">
-        <span class="adasaaaaF">
-          <img src="../../../assets/images/auth/shouquan.png"
-               alt />
-          授权账号
-        </span>
-        <label for>授权账号：</label>
-      </div>
-      <div class="aa">
-        <el-button type="text"
-                   style="margin-bottom:20px;"
-                   size="small"
-                   @click="addAccout"
-                   icon="el-icon-circle-plus-outline">新增</el-button>
-        <div>
-          <gt-button v-for="(item,index) in shouquanSelectedArr"
-                     class="bilibili"
-                     @close="deleteShouQuan(index)"
-                     :key="index">{{item.accountName}}</gt-button>
-        </div>
-      </div>
-    </div>
-    <div class="dash-line"></div>
-    <div class="headera">
-      <div class="buttongroup">
-        <el-button v-if="!roleUuid" @click="saveAndAdd"
-                   size="small"
-                   type="primary">保存并继续添加</el-button>
-        <el-button @click="confirm"
-                   class="button"
-                   size="small"
-                   type="primary">确认</el-button>
-        <el-button @click="close"
-                   class="button"
-                   size="small"
-                   type="primary">取消</el-button>
-      </div>
-    </div>
-    <auth-tree :visible.sync="authTreeVisible"
-               :roleUuid="roleUuid"
-               :selectAuthUuid="featureAuthUuids"
-               @confirm="setFeatureData"></auth-tree>
-    <resouce-tree :visible.sync="showResouce"
-                  @transferResourceAuth="transferResourceAuth"></resouce-tree>
-    <tree-panel-dialog :isShow.sync="showtreeadad"
-                       title="选择授权账号"
-                       placeholder="搜索授权账号"
-                       checkedText="已选中授权账号"
-                       :props="shouquanProps"
-                       :treeData="showquanAccoutArr"
-                       @onConfirm="selectShouquan"
-                       :initSelectData="shouquanSelectedArr"></tree-panel-dialog>
-  </div>
+		<div class="dash-line"></div>
+		<div class="k-form">
+			<div class="label">
+				<span class="adasaaaaF">
+					<img src="../../../assets/images/auth/shouquan.png" alt />
+					授权账号
+				</span>
+				<label for>授权账号：</label>
+			</div>
+			<div class="aa">
+				<el-button
+					type="text"
+					style="margin-bottom:20px;"
+					size="small"
+					@click="addAccout"
+					icon="el-icon-circle-plus-outline"
+				>新增</el-button>
+				<div>
+					<gt-button
+						v-for="(item,index) in shouquanSelectedArr"
+						class="bilibili"
+						@close="deleteShouQuan(index)"
+						:key="index"
+					>{{item.accountName}}</gt-button>
+				</div>
+			</div>
+		</div>
+		<div class="dash-line"></div>
+		<div class="headera">
+			<div class="buttongroup">
+				<el-button v-if="!roleUuid" @click="saveAndAdd" size="small" type="primary">保存并继续添加</el-button>
+				<el-button @click="confirm" class="button" size="small" type="primary">确认</el-button>
+				<el-button @click="close" class="button" size="small" type="primary">取消</el-button>
+			</div>
+		</div>
+		<auth-tree
+			:visible.sync="authTreeVisible"
+			:roleUuid="roleUuid"
+			:selectAuthUuid="featureAuthUuids"
+			@confirm="setFeatureData"
+		></auth-tree>
+		<resouce-tree :visible.sync="showResouce" @transferResourceAuth="transferResourceAuth"></resouce-tree>
+		<tree-panel-dialog
+			:isShow.sync="showtreeadad"
+			title="选择授权账号"
+			placeholder="搜索授权账号"
+			checkedText="已选中授权账号"
+			:props="shouquanProps"
+			:treeData="showquanAccoutArr"
+			@onConfirm="selectShouquan"
+			:initSelectData="shouquanSelectedArr"
+		></tree-panel-dialog>
+	</div>
 </template>
 
 <script>
@@ -351,12 +229,12 @@ export default {
     },
     addFunction() {
       console.log(this.featureAuth);
-      let featureAuthUuids=[];
-      for(let i=0,len=this.featureAuth.length;i<len;i++){
+      let featureAuthUuids = [];
+      for (let i = 0, len = this.featureAuth.length; i < len; i++) {
         featureAuthUuids.push(...this.featureAuth[i].authUuids);
       }
       console.log(featureAuthUuids);
-      this.featureAuthUuids=featureAuthUuids;
+      this.featureAuthUuids = featureAuthUuids;
       this.authTreeVisible = true;
     },
     getResource() {
@@ -393,18 +271,18 @@ export default {
     },
     rebaseData() {
       let resourceAuth = [];
-        this.resourceAuth.map(i => {
-        	console.log("i===", i)
-        	let obj ={
-        		resourceUuid: i.resourceUuid,
-        		resourceType: i.resourceType,
-        		authUuids: i.authUuids?i.authUuids:i.resourceAuthUuids
-        	}
-        	return resourceAuth.push(obj);
-        })
-      console.log("resourceAuth===", resourceAuth)
-      let featureAuthUuids=[];
-      for(let i=0,len=this.featureAuth.length;i<len;i++){
+      this.resourceAuth.map(i => {
+        console.log("i===", i);
+        let obj = {
+          resourceUuid: i.resourceUuid,
+          resourceType: i.resourceType,
+          authUuids: i.authUuids ? i.authUuids : i.resourceAuthUuids
+        };
+        return resourceAuth.push(obj);
+      });
+      console.log("resourceAuth===", resourceAuth);
+      let featureAuthUuids = [];
+      for (let i = 0, len = this.featureAuth.length; i < len; i++) {
         featureAuthUuids.push(...this.featureAuth[i].authUuids);
       }
       let data = {
@@ -431,7 +309,7 @@ export default {
         api.addRoleDetailUrl(data).then(res => {
           if (res.data.success) {
             // console.log("isBackTableList===", isBackTableList)
-          	// this.$emit("close", true);
+            // this.$emit("close", true);
             this.$message.success("添加成功!");
             if (isBackTableList) {
               this.resetAddDialog();
@@ -444,7 +322,7 @@ export default {
         api.editRoleDetailUrl(data).then(res => {
           if (res.data.success) {
             // console.log("isBackTableList===", isBackTableList)
-          	// this.$emit("close", true);
+            // this.$emit("close", true);
             this.$message.success("保存成功！");
             if (isBackTableList) {
               this.resetAddDialog();
@@ -474,8 +352,8 @@ export default {
           this.description = data.description;
           this.account = data.account || [];
 
-          this.featureAuth = (data.featureAuth || []).map((item,index)=>{
-            item.authUuids=data.featureAuthUuidsList[index].authUuids;
+          this.featureAuth = (data.featureAuth || []).map((item, index) => {
+            item.authUuids = data.featureAuthUuidsList[index].authUuids;
             return item;
           });
 

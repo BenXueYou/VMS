@@ -1,56 +1,58 @@
 <template>
-  <el-dialog :title='title'
-             @close="close"
-             :width="width"
-             :class="{'dialogCenter':center}"
-             :close-on-click-modal="false"
-             :append-to-body="true"
-             :visible.sync="TreechangeNameDialogVisible">
-    <div class='c'>
-      <el-tree :data="data"
-               node-key="featureUuid"
-               :props="props"
-               default-expand-all
-               :expand-on-click-node="false">
-        <span class="custom-tree-node"
-              slot-scope="{ node, data }">
-          <div class='labelName'>{{ node.label }}
-          </div>
-          <div class='groupButton'>
-            <el-checkbox :indeterminate="data.isIndeterminate"
-                         v-model="data.checkAll"
-                         style="float:left;"
-                         @change="handleCheckAllChange(node,data)">全选</el-checkbox>
-            <el-checkbox-group v-model="data.checkAuth"
-                               v-if="data.auth.length"
-                               style="float:left;"
-                               @change="handleCheckedCitiesChange(node,data)">
-              <el-checkbox v-for="city in data.auth"
-                           :label="city.authName"
-                           :key="city.authName">{{city.authName}}</el-checkbox>
-            </el-checkbox-group>
-          </div>
-        </span>
-      </el-tree>
-    </div>
-    <div class="ss">
-      <el-button type="primary"
-                 class="butttt"
-                 @click="close"
-                 size="small">取消</el-button>
-      <el-button type="primary"
-                 class="butttt"
-                 @click="confirm"
-                 size="small">确定</el-button>
-    </div>
-  </el-dialog>
+	<el-dialog
+		:title="title"
+		@close="close"
+		:width="width"
+		:class="{'dialogCenter':center}"
+		:close-on-click-modal="false"
+		:append-to-body="true"
+		:visible.sync="TreechangeNameDialogVisible"
+	>
+		<div class="c">
+			<el-tree
+				:data="data"
+				node-key="featureUuid"
+				:props="props"
+				default-expand-all
+				:expand-on-click-node="false"
+			>
+				<span class="custom-tree-node" slot-scope="{ node, data }">
+					<div class="labelName">{{ node.label }}</div>
+					<div class="groupButton">
+						<el-checkbox
+							:indeterminate="data.isIndeterminate"
+							v-model="data.checkAll"
+							style="float:left;"
+							@change="handleCheckAllChange(node,data)"
+						>全选</el-checkbox>
+						<el-checkbox-group
+							v-model="data.checkAuth"
+							v-if="data.auth.length"
+							style="float:left;"
+							@change="handleCheckedCitiesChange(node,data)"
+						>
+							<el-checkbox
+								v-for="city in data.auth"
+								:label="city.authName"
+								:key="city.authName"
+							>{{city.authName}}</el-checkbox>
+						</el-checkbox-group>
+					</div>
+				</span>
+			</el-tree>
+		</div>
+		<div class="ss">
+			<el-button type="primary" class="butttt" @click="close" size="small">取消</el-button>
+			<el-button type="primary" class="butttt" @click="confirm" size="small">确定</el-button>
+		</div>
+	</el-dialog>
 </template>
 
 <script>
 import * as api from "@/pages/user/http/ajax.js";
 let id = 1000;
-let string = "string",
-  int = "int";
+// let string = "string";
+let int = "int";
 let auth = [
   {
     authUuid: "a1",
@@ -105,271 +107,271 @@ let auth = [
     // 是否拥有该权限0无，1有
   }
 ];
-let auth2 = [
-  {
-    authUuid: "a1",
-    authName: "新增",
-    authNo: int,
-    isOwn: 0
-  },
-  {
-    authUuid: "a2",
-    authName: "修改",
-    authNo: int,
-    isOwn: 0
-  },
-  {
-    authUuid: "a3",
-    // 功能权限uuid
-    authName: "删除",
-    // 功能权限名称
-    authNo: int,
-    // 权限序号
-    isOwn: 0
-    // 是否拥有该权限0无，1有
-  },
-  {
-    authUuid: "a4",
-    // 功能权限uuid
-    authName: "查看",
-    // 功能权限名称
-    authNo: int,
-    // 权限序号
-    isOwn: 0
-    // 是否拥有该权限0无，1有
-  },
-  {
-    authUuid: "a5",
-    // 功能权限uuid
-    authName: "导入",
-    // 功能权限名称
-    authNo: int,
-    // 权限序号
-    isOwn: 1
-    // 是否拥有该权限0无，1有
-  },
-  {
-    authUuid: "a6",
-    // 功能权限uuid
-    authName: "导出",
-    // 功能权限名称
-    authNo: int,
-    // 权限序号
-    isOwn: 1
-    // 是否拥有该权限0无，1有
-  }
-];
-let auth3 = [
-  {
-    authUuid: "a1",
-    authName: "新增",
-    authNo: int,
-    isOwn: 0
-  },
-  {
-    authUuid: "a2",
-    authName: "修改",
-    authNo: int,
-    isOwn: 1
-  },
-  {
-    authUuid: "a3",
-    // 功能权限uuid
-    authName: "删除",
-    // 功能权限名称
-    authNo: int,
-    // 权限序号
-    isOwn: 1
-    // 是否拥有该权限0无，1有
-  },
-  {
-    authUuid: "a4",
-    // 功能权限uuid
-    authName: "查看",
-    // 功能权限名称
-    authNo: int,
-    // 权限序号
-    isOwn: 1
-    // 是否拥有该权限0无，1有
-  },
-  {
-    authUuid: "a5",
-    // 功能权限uuid
-    authName: "导入",
-    // 功能权限名称
-    authNo: int,
-    // 权限序号
-    isOwn: 1
-    // 是否拥有该权限0无，1有
-  },
-  {
-    authUuid: "a6",
-    // 功能权限uuid
-    authName: "导出",
-    // 功能权限名称
-    authNo: int,
-    // 权限序号
-    isOwn: 1
-    // 是否拥有该权限0无，1有
-  }
-];
-let data = [
-  {
-    featureUuid: "string1",
-    // 功能uuid
-    parentUuid: string,
-    // 父节点uuid
-    nodeName: "门禁管理",
-    // 节点名称
-    nodeType: string,
-    // 节点类型
-    nodeNo: int,
-    checkAuth: [],
-    // 节点序号
-    auth: [
-      // 非叶子节点时，此数组size为0
-    ],
-    childNodes: [
-      {
-        featureUuid: "string2",
-        // 功能uuid
-        parentUuid: string,
-        // 父节点uuid
-        nodeName: "权限组",
-        // 节点名称
-        nodeType: string,
-        // 节点类型
-        nodeNo: int,
-        checkAuth: [],
-        // 节点序号
-        auth: [],
-        childNodes: [
-          {
-            featureUuid: "string3",
-            // 功能uuid
-            parentUuid: string,
-            // 父节点uuid
-            nodeName: "权限组",
-            // 节点名称
-            nodeType: string,
-            checkAuth: [],
-            // 节点类型
-            nodeNo: int,
-            // 节点序号
-            auth: auth,
-            childNodes: []
-          },
-          {
-            featureUuid: "string4",
-            // 功能uuid
-            parentUuid: string,
-            // 父节点uuid
-            nodeName: "通行时间段",
-            // 节点名称
-            nodeType: string,
-            checkAuth: [],
-            // 节点类型
-            nodeNo: int,
-            // 节点序号
-            auth: auth2,
-            childNodes: []
-          },
-          {
-            featureUuid: "string5",
-            // 功能uuid
-            parentUuid: string,
-            // 父节点uuid
-            nodeName: "特殊日期",
-            // 节点名称
-            nodeType: string,
-            checkAuth: [],
-            // 节点类型
-            nodeNo: int,
-            // 节点序号
-            auth: auth3,
-            childNodes: []
-          }
-        ]
-      },
-      {
-        featureUuid: "string11",
-        // 功能uuid
-        parentUuid: string,
-        // 父节点uuid
-        nodeName: "高级配置",
-        // 节点名称
-        nodeType: string,
-        // 节点类型
-        nodeNo: int,
-        checkAuth: [],
-        // 节点序号
-        auth: [],
-        childNodes: [
-          {
-            featureUuid: "string13",
-            // 功能uuid
-            parentUuid: string,
-            // 父节点uuid
-            nodeName: "互锁",
-            // 节点名称
-            nodeType: string,
-            checkAuth: [],
-            // 节点类型
-            nodeNo: int,
-            // 节点序号
-            auth: auth,
-            childNodes: []
-          },
-          {
-            featureUuid: "string14",
-            // 功能uuid
-            parentUuid: string,
-            // 父节点uuid
-            nodeName: "反潜回",
-            // 节点名称
-            nodeType: string,
-            checkAuth: [],
-            // 节点类型
-            nodeNo: int,
-            // 节点序号
-            auth: auth2,
-            childNodes: []
-          },
-          {
-            featureUuid: "string15",
-            // 功能uuid
-            parentUuid: string,
-            // 父节点uuid
-            nodeName: "首卡开门",
-            // 节点名称
-            nodeType: string,
-            checkAuth: [],
-            // 节点类型
-            nodeNo: int,
-            // 节点序号
-            auth: auth3,
-            childNodes: []
-          },
-          {
-            featureUuid: "string35",
-            // 功能uuid
-            parentUuid: string,
-            // 父节点uuid
-            nodeName: "多人组合开门",
-            // 节点名称
-            nodeType: string,
-            checkAuth: [],
-            // 节点类型
-            nodeNo: int,
-            // 节点序号
-            auth: auth3,
-            childNodes: []
-          }
-        ]
-      }
-    ]
-  }
-];
+// let auth2 = [
+//   {
+//     authUuid: "a1",
+//     authName: "新增",
+//     authNo: int,
+//     isOwn: 0
+//   },
+//   {
+//     authUuid: "a2",
+//     authName: "修改",
+//     authNo: int,
+//     isOwn: 0
+//   },
+//   {
+//     authUuid: "a3",
+//     // 功能权限uuid
+//     authName: "删除",
+//     // 功能权限名称
+//     authNo: int,
+//     // 权限序号
+//     isOwn: 0
+//     // 是否拥有该权限0无，1有
+//   },
+//   {
+//     authUuid: "a4",
+//     // 功能权限uuid
+//     authName: "查看",
+//     // 功能权限名称
+//     authNo: int,
+//     // 权限序号
+//     isOwn: 0
+//     // 是否拥有该权限0无，1有
+//   },
+//   {
+//     authUuid: "a5",
+//     // 功能权限uuid
+//     authName: "导入",
+//     // 功能权限名称
+//     authNo: int,
+//     // 权限序号
+//     isOwn: 1
+//     // 是否拥有该权限0无，1有
+//   },
+//   {
+//     authUuid: "a6",
+//     // 功能权限uuid
+//     authName: "导出",
+//     // 功能权限名称
+//     authNo: int,
+//     // 权限序号
+//     isOwn: 1
+//     // 是否拥有该权限0无，1有
+//   }
+// ];
+// let auth3 = [
+//   {
+//     authUuid: "a1",
+//     authName: "新增",
+//     authNo: int,
+//     isOwn: 0
+//   },
+//   {
+//     authUuid: "a2",
+//     authName: "修改",
+//     authNo: int,
+//     isOwn: 1
+//   },
+//   {
+//     authUuid: "a3",
+//     // 功能权限uuid
+//     authName: "删除",
+//     // 功能权限名称
+//     authNo: int,
+//     // 权限序号
+//     isOwn: 1
+//     // 是否拥有该权限0无，1有
+//   },
+//   {
+//     authUuid: "a4",
+//     // 功能权限uuid
+//     authName: "查看",
+//     // 功能权限名称
+//     authNo: int,
+//     // 权限序号
+//     isOwn: 1
+//     // 是否拥有该权限0无，1有
+//   },
+//   {
+//     authUuid: "a5",
+//     // 功能权限uuid
+//     authName: "导入",
+//     // 功能权限名称
+//     authNo: int,
+//     // 权限序号
+//     isOwn: 1
+//     // 是否拥有该权限0无，1有
+//   },
+//   {
+//     authUuid: "a6",
+//     // 功能权限uuid
+//     authName: "导出",
+//     // 功能权限名称
+//     authNo: int,
+//     // 权限序号
+//     isOwn: 1
+//     // 是否拥有该权限0无，1有
+//   }
+// ];
+// let data = [
+//   {
+//     featureUuid: "string1",
+//     // 功能uuid
+//     parentUuid: string,
+//     // 父节点uuid
+//     nodeName: "门禁管理",
+//     // 节点名称
+//     nodeType: string,
+//     // 节点类型
+//     nodeNo: int,
+//     checkAuth: [],
+//     // 节点序号
+//     auth: [
+//       // 非叶子节点时，此数组size为0
+//     ],
+//     childNodes: [
+//       {
+//         featureUuid: "string2",
+//         // 功能uuid
+//         parentUuid: string,
+//         // 父节点uuid
+//         nodeName: "权限组",
+//         // 节点名称
+//         nodeType: string,
+//         // 节点类型
+//         nodeNo: int,
+//         checkAuth: [],
+//         // 节点序号
+//         auth: [],
+//         childNodes: [
+//           {
+//             featureUuid: "string3",
+//             // 功能uuid
+//             parentUuid: string,
+//             // 父节点uuid
+//             nodeName: "权限组",
+//             // 节点名称
+//             nodeType: string,
+//             checkAuth: [],
+//             // 节点类型
+//             nodeNo: int,
+//             // 节点序号
+//             auth: auth,
+//             childNodes: []
+//           },
+//           {
+//             featureUuid: "string4",
+//             // 功能uuid
+//             parentUuid: string,
+//             // 父节点uuid
+//             nodeName: "通行时间段",
+//             // 节点名称
+//             nodeType: string,
+//             checkAuth: [],
+//             // 节点类型
+//             nodeNo: int,
+//             // 节点序号
+//             auth: auth2,
+//             childNodes: []
+//           },
+//           {
+//             featureUuid: "string5",
+//             // 功能uuid
+//             parentUuid: string,
+//             // 父节点uuid
+//             nodeName: "特殊日期",
+//             // 节点名称
+//             nodeType: string,
+//             checkAuth: [],
+//             // 节点类型
+//             nodeNo: int,
+//             // 节点序号
+//             auth: auth3,
+//             childNodes: []
+//           }
+//         ]
+//       },
+//       {
+//         featureUuid: "string11",
+//         // 功能uuid
+//         parentUuid: string,
+//         // 父节点uuid
+//         nodeName: "高级配置",
+//         // 节点名称
+//         nodeType: string,
+//         // 节点类型
+//         nodeNo: int,
+//         checkAuth: [],
+//         // 节点序号
+//         auth: [],
+//         childNodes: [
+//           {
+//             featureUuid: "string13",
+//             // 功能uuid
+//             parentUuid: string,
+//             // 父节点uuid
+//             nodeName: "互锁",
+//             // 节点名称
+//             nodeType: string,
+//             checkAuth: [],
+//             // 节点类型
+//             nodeNo: int,
+//             // 节点序号
+//             auth: auth,
+//             childNodes: []
+//           },
+//           {
+//             featureUuid: "string14",
+//             // 功能uuid
+//             parentUuid: string,
+//             // 父节点uuid
+//             nodeName: "反潜回",
+//             // 节点名称
+//             nodeType: string,
+//             checkAuth: [],
+//             // 节点类型
+//             nodeNo: int,
+//             // 节点序号
+//             auth: auth2,
+//             childNodes: []
+//           },
+//           {
+//             featureUuid: "string15",
+//             // 功能uuid
+//             parentUuid: string,
+//             // 父节点uuid
+//             nodeName: "首卡开门",
+//             // 节点名称
+//             nodeType: string,
+//             checkAuth: [],
+//             // 节点类型
+//             nodeNo: int,
+//             // 节点序号
+//             auth: auth3,
+//             childNodes: []
+//           },
+//           {
+//             featureUuid: "string35",
+//             // 功能uuid
+//             parentUuid: string,
+//             // 父节点uuid
+//             nodeName: "多人组合开门",
+//             // 节点名称
+//             nodeType: string,
+//             checkAuth: [],
+//             // 节点类型
+//             nodeNo: int,
+//             // 节点序号
+//             auth: auth3,
+//             childNodes: []
+//           }
+//         ]
+//       }
+//     ]
+//   }
+// ];
 // console.log(data);
 export default {
   name: "TreeChangeNameDialog.vue",
@@ -410,9 +412,9 @@ export default {
         return true;
       }
     },
-    selectAuthUuid:{
-      type:Array,
-      default(){
+    selectAuthUuid: {
+      type: Array,
+      default() {
         return [];
       }
     }
@@ -462,7 +464,7 @@ export default {
       node.data.checkAuth = checkAuth;
       node.data.checkAll = checkAuth.length === auth.length;
       node.data.isIndeterminate =
-        checkAuth.length > 0 && checkAuth.length < auth.length;
+				checkAuth.length > 0 && checkAuth.length < auth.length;
       let arr = checkAuth;
       let last = node;
       let previous = node;
@@ -489,7 +491,7 @@ export default {
         data[i].data.checkAuth = checkAuth;
         data[i].data.checkAll = checkAuth.length === auth.length;
         data[i].data.isIndeterminate =
-          checkAuth.length > 0 && checkAuth.length < auth.length;
+					checkAuth.length > 0 && checkAuth.length < auth.length;
         if (data[i].childNodes.length) {
           this.dealParentOperator(data[i].childNodes, checkAuth);
         }
@@ -499,7 +501,7 @@ export default {
       // console.log(node);
       data.checkAll = data.checkAuth.length === data.auth.length;
       data.isIndeterminate =
-        data.checkAuth.length > 0 && data.checkAuth.length < data.auth.length;
+				data.checkAuth.length > 0 && data.checkAuth.length < data.auth.length;
       // 点击选项不是叶子点击的情况
       if (node.childNodes.length) {
         let xxx = this.getDifferent(data.checkAuth, data.lastCheckCities);
@@ -528,7 +530,7 @@ export default {
         data[i].data.checkAuth = checkAuth;
         data[i].data.checkAll = checkAuth.length === auth.length;
         data[i].data.isIndeterminate =
-          checkAuth.length > 0 && checkAuth.length < auth.length;
+					checkAuth.length > 0 && checkAuth.length < auth.length;
         if (data[i].childNodes.length) {
           this.dealParentOperator222(data[i].childNodes, name, isAdd);
         }
@@ -556,14 +558,14 @@ export default {
     getCheckedNodes(data) {
       // 这里新增判断外面传进来的selectAuthUuid数组，根据里面的uuid判断选不选中
       console.log(data);
-      data=data.sort((v1,v2)=>{
-        return v1.authName-v2.authName;
-      })
+      data = data.sort((v1, v2) => {
+        return v1.authName - v2.authName;
+      });
       let arr = [];
       for (let i = 0, len = data.length; i < len; i++) {
         // console.log(this.selectAuthUuid);
         // if (data[i].isOwn === 1) {
-        if(this.selectAuthUuid.indexOf(data[i].authUuid)!=-1){
+        if (this.selectAuthUuid.indexOf(data[i].authUuid) !== -1) {
           arr.push(data[i].authName);
         }
       }
@@ -587,14 +589,14 @@ export default {
         }
         // 表示这个是叶子节点了F
         if (data[i].auth.length) {
-          data[i].auth=data[i].auth.sort((v1,v2)=>{
-            return v1.authNo-v2.authNo;
-          })
+          data[i].auth = data[i].auth.sort((v1, v2) => {
+            return v1.authNo - v2.authNo;
+          });
           data[i].checkAuth = this.getCheckedNodes(data[i].auth);
           data[i].checkAll = data[i].checkAuth.length === data[i].auth.length;
           data[i].isIndeterminate =
-            data[i].checkAuth.length > 0 &&
-            data[i].checkAuth.length < data[i].auth.length;
+						data[i].checkAuth.length > 0 &&
+						data[i].checkAuth.length < data[i].auth.length;
         } else {
           // console.log(checkAuth);
           data[i].auth = auth;
@@ -602,7 +604,7 @@ export default {
           data[i].lastCheckCities = checkAuth;
           data[i].checkAll = checkAuth.length === data[i].auth.length;
           data[i].isIndeterminate =
-            checkAuth.length > 0 && checkAuth.length < data[i].auth.length;
+						checkAuth.length > 0 && checkAuth.length < data[i].auth.length;
         }
         if (!arr.length) {
           arr = data[i].checkAuth;
@@ -658,7 +660,7 @@ export default {
             this.showNum.push({
               featureName: data[i].nodeName,
               featureUuid: data[i].featureUuid,
-              authUuids:num
+              authUuids: num
             });
           }
         }
@@ -705,76 +707,76 @@ export default {
 </script>
 <style lang="scss">
 .c {
-  .input {
-    input {
-      height: 30px;
-      line-height: 30px;
-    }
-  }
+	.input {
+		input {
+			height: 30px;
+			line-height: 30px;
+		}
+	}
 }
 </style>
 <style lang="scss" scoped>
 .custom-tree-node {
-  display: flex;
-  .labelName {
-    width: 200px;
-  }
-  .groupButton {
-    width: calc(100% - 200px);
-  }
+	display: flex;
+	.labelName {
+		width: 200px;
+	}
+	.groupButton {
+		width: calc(100% - 200px);
+	}
 }
 
 $labelwidth: 5em;
 .ss {
-  padding: 15px;
-  .butttt {
-    float: right;
-    margin-right: 30px;
-  }
-  &::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
+	padding: 15px;
+	.butttt {
+		float: right;
+		margin-right: 30px;
+	}
+	&::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
 }
 .c {
-  overflow: auto;
-  max-height: 65vh;
-  min-height: 30vh;
-  padding: 10px 20px;
-  .body {
-    max-width: 300px;
-    width: 80%;
-    margin: 30px auto;
-    display: flex;
-    flex-wrap: wrap;
-    .label {
-      width: $labelwidth;
-      text-align: right;
-      line-height: 30px;
-      font-family: "PingFangSC-Regular";
-      padding-right: 5px;
-      box-sizing: border-box;
-      font-size: 13px;
-      color: #dddddd;
-      text-align: right;
-    }
-    .input {
-      width: calc(100% - #{$labelwidth});
-      box-sizing: border-box;
-      button {
-        height: 30px;
-        padding: 7px 21px;
-        background: rgba(40, 255, 187, 0.12);
-        border: 1px solid rgba(40, 255, 187, 0.8);
-        border-radius: 2px;
-        border-radius: 2px;
-        font-family: "PingFangSC-Regular";
-        font-size: 12px;
-        color: #ffffff;
-        letter-spacing: 0;
-      }
-    }
-  }
+	overflow: auto;
+	max-height: 65vh;
+	min-height: 30vh;
+	padding: 10px 20px;
+	.body {
+		max-width: 300px;
+		width: 80%;
+		margin: 30px auto;
+		display: flex;
+		flex-wrap: wrap;
+		.label {
+			width: $labelwidth;
+			text-align: right;
+			line-height: 30px;
+			font-family: "PingFangSC-Regular";
+			padding-right: 5px;
+			box-sizing: border-box;
+			font-size: 13px;
+			color: #dddddd;
+			text-align: right;
+		}
+		.input {
+			width: calc(100% - #{$labelwidth});
+			box-sizing: border-box;
+			button {
+				height: 30px;
+				padding: 7px 21px;
+				background: rgba(40, 255, 187, 0.12);
+				border: 1px solid rgba(40, 255, 187, 0.8);
+				border-radius: 2px;
+				border-radius: 2px;
+				font-family: "PingFangSC-Regular";
+				font-size: 12px;
+				color: #ffffff;
+				letter-spacing: 0;
+			}
+		}
+	}
 }
 </style>

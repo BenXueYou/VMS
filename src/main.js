@@ -15,7 +15,7 @@ import router from "./router";
 import "./permission";
 
 import echarts from "echarts";
-import { EventBusPlugin as EventBus } from "@/utils/Eventbus";
+import { EventBusPlugin as EventBus } from "@/utils/EventBus";
 import Common from "@/utils/Common.js";
 import Toast from "@/utils/Toast.js";
 import HomeAjax from "@/pages/home/utils/HomeAjax.js";

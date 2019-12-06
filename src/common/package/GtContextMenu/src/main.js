@@ -1,4 +1,4 @@
-import Vue from 'Vue'
+import Vue from 'vue'
 import Main from './main.vue'
 
 let ContextMenuDom = Vue.extend(Main);
