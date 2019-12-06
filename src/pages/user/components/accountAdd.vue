@@ -199,6 +199,7 @@ export default {
   activated() {},
   mounted() {
     this.invalidTimeVal = new Date();
+    console.log("queryBody==", this.queryBody)
     // this.queryBody.invalidTime = this.$common.timestampToFormatter(new Date(), "yyyy-mm-dd HH:mm:ss");
   },
   methods: {
@@ -343,6 +344,7 @@ export default {
     rowData: {
       handler(newVal, old) {
         if (this.rowData.accountUuid) {
+          this.initData();
           this.title = "编辑账号";
           // this.initData();
           console.log("rowData==", this.rowData);
@@ -353,12 +355,8 @@ export default {
           } else {
             this.isAssociateSwitch = false;
           }
-          if (this.rowData.invalidTime === "long") {
-            this.rowData.enable = 1;
-          } else {
-            this.rowData.enable = 0;
-          }
         } else {
+          this.initData();
           this.title = "添加账号";
           this.isEditPassWord = false;
         }
@@ -368,6 +366,14 @@ export default {
         console.log("newVal====", newVal);
         Object.assign(this.queryBody, newVal);
         console.log("--------------------", this.queryBody);
+        if (this.rowData.accountUuid) {
+		    if (this.queryBody.invalidTime === "long") {
+		        this.isLongTIme = 1;
+		    } else {
+		    	this.invalidTimeVal = this.queryBody.invalidTime;
+		        this.isLongTIme = 0;
+		    }
+		}
       },
       deep: true,
       immediate: true

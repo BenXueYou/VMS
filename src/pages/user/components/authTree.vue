@@ -589,9 +589,10 @@ export default {
         }
         // 表示这个是叶子节点了F
         if (data[i].auth.length) {
-          data[i].auth = data[i].auth.sort((v1, v2) => {
-            return v1.authNo - v2.authNo;
-          });
+          data[i].auth = data[i].auth;
+          // .sort((v1, v2) => {
+          //   return v1.authNo - v2.authNo;
+          // });
           data[i].checkAuth = this.getCheckedNodes(data[i].auth);
           data[i].checkAll = data[i].checkAuth.length === data[i].auth.length;
           data[i].isIndeterminate =

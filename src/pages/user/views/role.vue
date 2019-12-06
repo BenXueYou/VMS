@@ -277,6 +277,7 @@ export default {
       });
     },
     serach() {
+      this.pageNow = 1;
       this.getData();
     },
     getData() {

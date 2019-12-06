@@ -262,6 +262,12 @@ export default {
           if (res.data.success) {
             this.addDialogVisible = !this.addDialogVisible;
             this.rowData = res.data.data;
+            // debugger;
+            // if (this.rowData.invalidTime === "long") {
+            //   this.rowData.isLongTIme = 1;
+            // } else {
+            //   this.rowData.isLongTIme = 0;
+            // }
             this.defaultRoleData = this.rowData.roles;
             this.rowData.password = "********";
             console.log("rowData===", this.rowData);

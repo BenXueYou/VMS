@@ -290,7 +290,7 @@ export default {
         invalidTime: this.time === "forever" ? "long" : this.invalidTime, // 到期时间，当类型为短期时传时间字符串，永久时传枚举值
         description: this.description, // 角色描述
         enable: this.enable === "enable" ? 1 : 0, // 0禁用、1启用
-        featureAuthUuids: this.featureAuthUuids,
+        featureAuthUuids: featureAuthUuids,
         // 关联的功能模块
         resourceAuthUuids: resourceAuth, // 关联的通道资源
         accountUuids: this.shouquanSelectedArr.map(i => {
@@ -309,7 +309,7 @@ export default {
         api.addRoleDetailUrl(data).then(res => {
           if (res.data.success) {
             // console.log("isBackTableList===", isBackTableList)
-            // this.$emit("close", true);
+            this.$emit("close", true);
             this.$message.success("添加成功!");
             if (isBackTableList) {
               this.resetAddDialog();
@@ -322,7 +322,7 @@ export default {
         api.editRoleDetailUrl(data).then(res => {
           if (res.data.success) {
             // console.log("isBackTableList===", isBackTableList)
-            // this.$emit("close", true);
+            this.$emit("close", true);
             this.$message.success("保存成功！");
             if (isBackTableList) {
               this.resetAddDialog();
@@ -352,12 +352,12 @@ export default {
           this.description = data.description;
           this.account = data.account || [];
 
-          this.featureAuth = (data.featureAuth || []).map((item, index) => {
-            item.authUuids = data.featureAuthUuidsList[index].authUuids;
-            return item;
-          });
+          this.featureAuth = data.featureAuthUuidsList||[];
 
-          this.featureAuthUuids = data.authUuids;
+          // this.featureAuthUuids =(data.featureAuthUuidsList; || []).map((item, index) => {
+          //   item.authUuids = data.featureAuthUuidsList[index].authUuids;
+          //   return item;
+          // }); data.authUuids;
           if (data.resourceAuth) {
             data.resourceAuth.map(i => {
               return (i.label = i.resourceName);
