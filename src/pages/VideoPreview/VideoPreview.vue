@@ -120,6 +120,13 @@ import icons from "@/common/icon.js";
 export default {
   name: "VideoPreview",
   computed: {
+    operatorChannelUuid() {
+      if (this.videoArr.length) {
+        return this.videoArr[this.operatorIndex].channelUuid;
+      } else {
+        return "";
+      }
+    },
     showFenlu() {
       return this.videoArr.slice(
         0,
@@ -175,7 +182,6 @@ export default {
       fenlu: [1, 4, 8, 9, 16, 25, 36],
       fenluIndex: 0,
       operatorIndex: 0,
-      operatorChannelUuid: "",
       videoWidth: 0,
       videoHeight: 0,
       menuData: [
@@ -251,10 +257,6 @@ export default {
     // 监听F11事件
 
     // 下面是MDZZ代码
-    const that = this;
-    window.onresize = function() {
-      that.jishi();
-    };
     this.initWrapDom();
   },
   destroyed() {
@@ -280,21 +282,12 @@ export default {
     },
     jishi() {
       const that = this;
-      that.cnt = 0;
       // 下面的定时器是为了刷新页面的每个video框，
-      clearInterval(that.timer);
-      that.timer = null;
       this.timer = setInterval(() => {
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
-        if (that.cnt++ > 100) {
-          clearInterval(that.timer);
-          that.timer = null;
-        } else {
-          that.initWrapDom();
-        }
-        // console.log(this.fullscreen);
+        that.initWrapDom();
       }, 100);
     },
     checkFull() {
@@ -1073,7 +1066,7 @@ export default {
     },
     getChannleUuid() {
       // eslint-disable-next-line
-      this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
+      // this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
     },
     updateCloud() {
       if (this.operatorIndex < 0 || !this.videoArr[this.operatorIndex]) {
@@ -1103,11 +1096,6 @@ export default {
     "$route.path": function(newVal, oldVal) {
       // 监听路由，查看params是否携带参数rtsp，从而判断是否跳转播放码流
       this.jugdeJump();
-      if (
-        this.$route.fullPath.toLocaleLowerCase().indexOf("/videopriview") !== -1
-      ) {
-        clearInterval(this.timer);
-      }
     }
   }
 };

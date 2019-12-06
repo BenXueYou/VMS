@@ -86,7 +86,8 @@
                @click="download"
                style='cursor:pointer;'><img :src="icons.download"
                  alt="">
-            下载</div>
+            {{downloadStatus}}
+          </div>
         </li>
         <li style='width:70px;'>
           <div class='center'
@@ -224,6 +225,12 @@ export default {
       }
     },
     mode: {
+      type: String,
+      default() {
+        return "";
+      }
+    },
+    downloadStatus: {
       type: String,
       default() {
         return "";

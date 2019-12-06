@@ -22,6 +22,7 @@
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
+                 :default-expanded-keys="defaultExpKeys"
                  ref="tree1"
                  lazy
                  show-checkbox
@@ -47,6 +48,7 @@
         <el-tree :props="tagprops"
                  :load="tagloadNode"
                  :expand-on-click-node="false"
+                 :default-expanded-keys="defaultExpKeys"
                  lazy
                  node-key="id"
                  class='videoTree'
@@ -171,6 +173,7 @@ export default {
     d.setMinutes(0);
     d.setSeconds(0);
     return {
+      defaultExpKeys: [],
       defaultExpandedKeys: [],
       changeNameDialogVisible: false,
       isDeleteVisible: false,
@@ -321,6 +324,9 @@ export default {
         node.data && node.data.id,
         node.data && node.data.nodeType
       );
+      if (node.level === 0) {
+        this.defaultExpKeys.push(data[0].id);
+      }
       data = data.map(item => {
         item.leaf = !item.openFlag;
         item.isOnline = true;
@@ -379,6 +385,7 @@ export default {
       console.log(node);
       if (node.level === 0) {
         let data = await this.getTagTreeData();
+        this.defaultExpKeys.push(data[0].id);
         console.log(data);
         return resolve(data);
       } else if (node.level === 1) {
@@ -398,7 +405,6 @@ export default {
           .then(res => {
             let list = (res.data.data.list || []).map(item => {
               item.label = item.channelName;
-              item.id = item.channelUuid;
               // item.id = item.deviceUuid;
               item.leaf = true;
               item.isOnline = item.extInfo.chnOnlineOrNot === "online";
@@ -494,7 +500,7 @@ export default {
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
   .el-tabs__content {
-    width: 300px;
+    width: 380px;
   }
   .mypanel {
     .el-tree-node {
@@ -637,7 +643,7 @@ export default {
       }
     }
   }
-.searchWrap {
+  .searchWrap {
     padding: 25px 12px 10px;
     .el-input {
       position: relative;

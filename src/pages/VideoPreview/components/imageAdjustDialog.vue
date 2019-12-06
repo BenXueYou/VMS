@@ -92,10 +92,10 @@ export default {
   },
   data() {
     return {
-      light: 0,
-      contrast: 0,
-      saturation: 0,
-      tonal: 0,
+      light: 50,
+      contrast: 50,
+      saturation: 50,
+      tonal: 50,
       TreechangeNameDialogVisible: false,
       name: "",
       selectValue: ""

@@ -49,6 +49,7 @@
                        @PreviewAreafullScreen="PreviewAreafullScreen"
                        @chooseFenlu="chooseFenlu"
                        @changeMode="changeMode"
+                       :downloadStatus="downloadStatus"
                        :isPlaying="isPlaying"
                        :mode="videoMode"
                        :speed="videoSpeed"
@@ -219,17 +220,36 @@ export default {
     };
   },
   computed: {
+    downloadStatus() {
+      if (!this.showFenlu.length) {
+        return "下载";
+      }
+      if (this.showFenlu[0].isRecord) {
+        return "停止下载";
+      } else {
+        return "下载";
+      }
+    },
     showFenlu() {
+      if (this.operatorIndex >= this.videoArr.length) {
+        return [];
+      }
       return this.videoArr.slice(0, this.fenlu[this.fenluIndex]);
     },
     oneRoad() {
+      if (this.operatorIndex >= this.videoArr.length) {
+        return [];
+      }
       return [this.videoArr[this.operatorIndex]];
     },
     videoMode() {
+      if (this.operatorIndex >= this.videoArr.length) {
+        return "original";
+      }
       return this.videoArr[this.operatorIndex].mode;
     },
     isPlaying() {
-      if (this.operatorIndex > this.videoArr.length) {
+      if (this.operatorIndex >= this.videoArr.length) {
         return true;
       }
       // 视频处于播放还是暂停状态
@@ -269,21 +289,12 @@ export default {
     },
     jishi() {
       const that = this;
-      that.cnt = 0;
       // 下面的定时器是为了刷新页面的每个video框，
-      clearInterval(that.timer);
-      that.timer = null;
       this.timer = setInterval(() => {
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
-        if (that.cnt++ > 100) {
-          clearInterval(that.timer);
-          that.timer = null;
-        } else {
-          that.initWrapDom();
-        }
-        // console.log(this.fullscreen);
+        that.initWrapDom();
       }, 100);
     },
     checkFull() {
@@ -715,7 +726,8 @@ export default {
         }
       });
     },
-    closeVideoAA() {
+    closeVideoAA(index) {
+      this.operatorIndex = index;
       if (!this.videoArr[this.operatorIndex].channelUuid) {
         this.$message.error("该分路上没有通道！");
       } else {
@@ -942,7 +954,12 @@ export default {
       });
     },
     download() {
-      this.downloadVisible = true;
+      // this.downloadVisible = true;
+      if (this.videoArr[this.operatorIndex].isRecord) {
+        this.startRecord(this.operatorIndex);
+      } else {
+        this.stopRecord(this.operatorIndex);
+      }
     },
     switchMaLiu(index, streamType) {
       if (!this.videoArr[index].rtspUrl) {
