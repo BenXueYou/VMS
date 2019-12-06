@@ -231,11 +231,12 @@ export default {
             latitude,
             numStr
           };
-          this.numShowArr.forEach((v) => {
-            if (numObj.longitude === v.longitude && numObj.latitude === v.latitude) {
-              numObj.numStr = v.numStr + "/" + numObj.numStr;
+          for (let i = this.numShowArr.length - 1; i >= 0; i--) {
+            if (numObj.longitude === this.numShowArr[i].longitude && numObj.latitude === this.numShowArr[i].latitude) {
+              numObj.numStr = this.numShowArr[i].numStr + "/" + numObj.numStr;
+              break;
             }
-          });
+          }
           this.numShowArr.push(numObj);
           let point = new BMap.Point(numObj.longitude, numObj.latitude);
           let numOverlay = new this.Overlay.NumOverlay(point, numObj.numStr);
