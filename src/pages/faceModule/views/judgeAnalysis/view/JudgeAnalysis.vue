@@ -69,7 +69,7 @@
                 <div class="other-span">{{item.faceModelName}}</div>
                 <div class="other-span">{{item.createTime}}</div>
                 <div class="other-span desc">{{item.analysisResultDescribe}}</div>
-                <div class="other-span">{{item.staffName}}
+                <div class="other-span desc">{{item.staffName}}
                   <span :style="item.staffName ? 'margin-left: 5px;' : ''">{{item.faceLibraryName}}</span>
                 </div>
                 <div class="other-span"

@@ -20,7 +20,7 @@
                  width="10.9px"
                  height="9px"
                  style="margin-right: 4px;">
-            {{ node.label }}
+            <span class="text-show">{{node.label}}</span>
           </div>
         </div>
       </el-tree>
@@ -263,4 +263,24 @@ export default {
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
+.left-list-build {
+  height: 85%;
+  overflow-x: auto;
+  .i-tree-item {
+    width: 190px;
+    .i-tree-item-icon {
+      display: flex;
+      align-items: center;
+      .action-icon {
+        margin-left: auto;
+        margin-right: 5px;
+        .img-div {
+          cursor: pointer;
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+    }
+  }
+}
 </style>

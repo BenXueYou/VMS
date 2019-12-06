@@ -876,7 +876,8 @@
     "staff_temp": {
         "e_prisoner": "逃犯模板",
         "scalper": "黄牛模板",
-        "staff": "员工模板"
+        "staff": "员工模板",
+        "static_person": "静态人员模板"
     },
     "staff_i_u_m": {
         "once": "本次",
@@ -1209,5 +1210,23 @@
     "mask_s": {
         "normal": "戴口罩",
         "none": "不戴"
+    },
+    "auth_video": {
+        "auth_video_monitor": "监控点",
+        "auth_video_input": "输入",
+        "auth_video_output": "输出"
+    },
+    "auth_door": {
+        "auth_door_access": "门禁点",
+        "auth_door_input": "输入",
+        "auth_door_output": "输出"
+    },
+    "auth_alarm": {
+        "auth_alarm_zone": "防区",
+        "auth_alarm_subsystem": "子系统",
+        "auth_alarm_output": "输出"
+    },
+    "auth_visitor": {
+        "": ""
     }
 }

@@ -115,7 +115,7 @@ export const constantRouterMap = [
         name: "VideoPlayback",
         component: VideoPlayback,
         title: "视频回放",
-        icon: "vistorMange",
+        icon: "VideoPlayback",
         type: "config"
       }
     ]

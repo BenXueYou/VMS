@@ -54,6 +54,12 @@ export default {
     getFaceLibDetailUrl: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib`,
     getFaceLibOptionsUrl: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/select/list`,
     getFaceQualityUrl: (projectUuid, libraryuuid, faceUuid) => `${URLHeader}/${projectUuid}/faceInfo/${libraryuuid}/staff/${faceUuid}`,
+    addDaoKuTask: (projectUuid, faceLibUuid) => `${URLHeader}/${projectUuid}/faceLib/import/faceLib/${faceLibUuid}`,
+    getTaskList: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/list`,
+    getTaskErrorList: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/error/list`,
+    deleteTask: (projectUuid, importTaskUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/${importTaskUuid}`,
+    downloadDBTemp: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/download/templateType`,
+    downloadErrTemp: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/list`,
   },
 
   searchLogApi: {

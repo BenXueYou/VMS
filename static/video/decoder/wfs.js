@@ -1123,7 +1123,7 @@ var h264Demuxer = function (_EventHandler) {
     key: 'onH264DataParsed',
     value: function onH264DataParsed(event) {
       this._parseAVCTrack(event.data);
-      if (this.browserType === 1 || this._avcTrack.samples.length >= 25) {
+      if (this.browserType === 1 || this._avcTrack.samples.length >= 6) {
         // Firefox
         this.remuxer.pushVideo(0, this.sn, this._avcTrack, this.timeOffset, this.contiguous);
         this.sn += 1;

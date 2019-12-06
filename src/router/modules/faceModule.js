@@ -1,5 +1,5 @@
 const FaceManage = () =>
-  import(/* webpackChunkName: "FaceModule" */ "@/pages/faceModule/FaceManage");
+  import(/* webpackChunkName: "FaceModule" */ "@/pages/faceModule/faceManage");
 const FaceControl = () =>
   import(
     /* webpackChunkName: "FaceModule" */ "@/pages/faceModule/views/faceControl/view/FaceControl"
