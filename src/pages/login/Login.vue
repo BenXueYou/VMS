@@ -247,10 +247,10 @@ export default {
           /** ***********测试结束*************** */
           // 刷新页面以便于更新projectUuid
           this.$nextTick(() => {
-            window.location.reload();
-            // let index = window.location.href.lastIndexOf("/");
-            // let suffix = window.location.href.substring(0, index + 1);
-            // window.location.href = suffix + "Home";
+            // window.location.reload();
+            let index = window.location.href.lastIndexOf("/");
+            let suffix = window.location.href.substring(0, index + 1);
+            window.location.href = suffix + "Home";
           });
         }
       }

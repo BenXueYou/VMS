@@ -52,7 +52,7 @@
 					<template slot-scope="scope">{{$common.getEnumItemName("gender", scope.row.onofflineStatus)}}</template>
 				</el-table-column>
 				<el-table-column prop="description" label="账号描述"></el-table-column>
-				<el-table-column prop="reason" label="操作">
+				<el-table-column prop="reason" label="操作" width="200">
 					<template slot-scope="scope">
 						<el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
 						<el-button
@@ -117,6 +117,7 @@ import treePanelDialog from "@/pages/user/components/treePanelDialog";
 import * as api from "../http/ajax";
 import resetPassword from "@/pages/user/components/resetPassword";
 import ConfirmDialog from "@/common/ConfirmDialog";
+import RestApi from "@/utils/RestApi";
 export default {
   name: "accout",
   components: { AccountAdd, treePanelDialog, resetPassword, ConfirmDialog },
@@ -221,6 +222,29 @@ export default {
           }
         })
         .catch(() => {});
+    },
+    axiosRequest() {
+      this.$loginAjax
+        .loginOut()
+        .then(res => {
+          console.log("------------------");
+        })
+        .catch(() => {
+          this.$message.error("退出失败");
+        });
+    },
+    test() {
+      let ip = window.config.ip,
+        httpHeader = window.config.protocolHeader;
+      let url = `${httpHeader}/${ip}/${RestApi.api.login.loginOutApi}`;
+      let xhr = new XMLHttpRequest();
+      xhr.open("detete", url, true);
+      xhr.setRequestHeader(
+        "Authorization",
+        this.$store.state.home.Authorization
+      );
+      xhr.setRequestHeader("projectUuid", this.$store.state.home.projectUuid);
+      xhr.send();
     },
     // 编辑
     handleEditClick(rowData) {
