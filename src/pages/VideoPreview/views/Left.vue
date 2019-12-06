@@ -110,11 +110,11 @@
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node"
+               @dblclick.stop="openVidewTu(data)"
                slot-scope="{ node, data }">
             <div>
               <span class="span"
                     style='min-width:150px;display:inline-block;'
-                    @dblclick.stop="openVidewTu(node,data,$event)"
                     :title="node.label">{{ node.label }}</span>
               <el-dropdown trigger="click"
                            @command="handleCommand"
@@ -603,8 +603,11 @@ export default {
         });
       }
     },
-    openVidewTu() {
-      this.$emit("openView", this.operatorData);
+    openVidewTu(data) {
+      if (!data) {
+        data = this.operatorData;
+      }
+      this.$emit("openView", data);
     },
     handleCommand(command) {
       console.log(command);

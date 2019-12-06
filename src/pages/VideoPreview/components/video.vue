@@ -8,7 +8,7 @@
        @dragover="dragover"
        @dblclick="dblclickhandler"
        draggable="true"
-       :class="{'VideoActive':isActive,'isAutoScreen':isAutoScreen}"
+       :class="{'VideoActive':isActive&&mode === 'fullscreen','isAutoScreen':isAutoScreen}"
        :style="{height:height+'px',width:width+'px',left:left+'px',top:top+'px'}">
     <!-- 视频信息展示菜单 -->
     <div class="header"

@@ -80,9 +80,9 @@
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node"
+               @dblclick.stop="openView(data,$event)"
                slot-scope="{ node, data }">
             <span class="span"
-                  @dblclick.stop="openVidewTu(node,data,$event)"
                   :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
                          @command="handleCommand"
@@ -242,13 +242,19 @@ export default {
         // this.getPreviewInfo(this.operatorData.channelUuid);
       } else if (command === "playback") {
       } else if (command === "view") {
-        this.$emit("openView", this.operatorData);
+        this.openView();
       } else if (command === "renameView") {
         this.nodeValue = this.operatorData.viewName;
         this.changeNameDialogVisible = true;
       } else if (command === "deleteView") {
         this.isDeleteVisible = true;
       }
+    },
+    openView(data) {
+      if (!data) {
+        data = this.operatorData;
+      }
+      this.$emit("openView", data);
     },
     getPreviewInfo(channelUuid) {
       api2
