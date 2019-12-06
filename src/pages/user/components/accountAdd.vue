@@ -157,7 +157,7 @@ export default {
         {
           id: "1",
           label: "组织架构",
-          treeType: "resident",
+          treeType: "person",
           treeRef: "tree1",
           nodeKey: "id",
           treeNodeType: "staff",
@@ -167,7 +167,7 @@ export default {
         {
           id: "2",
           label: "标签",
-          treeType: "resident",
+          treeType: "person",
           treeRef: "tree2",
           nodeKey: "tagUuid",
           isTag: true
