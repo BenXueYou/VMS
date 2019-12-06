@@ -68,10 +68,7 @@ module.exports = {
     // View the bundle analyzer report after build finishes:
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
-<<<<<<< HEAD
     // bundleAnalyzerReport: process.env.npm_config_report
-=======
->>>>>>> 72f19b73b927662013c2e05582bbeb3d99a51721
     bundleAnalyzerReport: false
   }
 };
