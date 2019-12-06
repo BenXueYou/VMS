@@ -222,7 +222,22 @@ export default {
   }
 };
 </script>
-
+<style lang="scss">
+.dialogwrap .el-button--default, .el-button--default:active, .el-button--default:focus, .el-button--default:hover {
+  width: 80px;
+  padding: 6px 27px;
+  position: absolute;
+  right: 61px;
+  border: 0px;
+  height: 32px;
+  top: 4px;
+  font-family: "PingFangSC-Regular";
+  font-size: 13px;
+  color: #dddddd;
+  background: rgba($color: #ffffff, $alpha: 0.1);
+  border-radius: 2px;
+}
+</style>
 <style lang='scss' scoped>
 .color {
   display: inline-block;
