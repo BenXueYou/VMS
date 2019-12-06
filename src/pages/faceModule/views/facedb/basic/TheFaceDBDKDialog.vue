@@ -29,25 +29,21 @@
           </span>
         </div>
         <el-form-item label="文件路径：">
-          <!-- <el-input class="buttoninput"
+          <el-input class="buttoninput"
                     :value="filename"
                     readonly></el-input>
           <el-button id="fileSelect"
                      ref="fileSelect"
                      type="info"
-                     size="small"
-                     class="mybutton">浏览</el-button> -->
-          <el-input class="buttoninput"
+                     style="height: 33.5px;margin-left: -61px;"
+                     size="small">浏览</el-button>
+          <!-- <el-input class="buttoninput"
                     :value="filename"
                     readonly>
-            <template slot="append">
-              <el-button id="fileSelect"
-                         ref="fileSelect"
-                         type="info"
-                         size="small"
-                         class="mybutton">浏览</el-button>
-            </template>
-          </el-input>
+            <el-button id="fileSelect"
+                       ref="fileSelect"
+                       slot="append">浏览</el-button>
+          </el-input> -->
         </el-form-item>
       </el-form>
       <span class="dialog-footer button-div btnBox">
