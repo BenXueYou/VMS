@@ -21,7 +21,8 @@
 
         <div class="daorutips">
           注：格式必须与模板一致
-          <span @click="downloadtempalte($event)" style="cursor: pointer;">
+          <span @click="downloadtempalte($event)"
+                style="cursor: pointer;">
             <!-- <a id="alink"
                download>模板下载</a> -->
             模板下载
@@ -33,7 +34,16 @@
                     readonly></el-input>
           <el-button id="fileSelect"
                      ref="fileSelect"
-                     class="mybutton">浏览</el-button>
+                     type="info"
+                     style="height: 33.5px;margin-left: -61px;"
+                     size="small">浏览</el-button>
+          <!-- <el-input class="buttoninput"
+                    :value="filename"
+                    readonly>
+            <el-button id="fileSelect"
+                       ref="fileSelect"
+                       slot="append">浏览</el-button>
+          </el-input> -->
         </el-form-item>
       </el-form>
       <span class="dialog-footer button-div btnBox">
@@ -65,7 +75,7 @@ export default {
       default: function() {
         return true;
       }
-    },
+    }
   },
   mounted() {
     // this.templatetypearr = window.face.kutemplate;
@@ -119,7 +129,12 @@ export default {
       } else {
         let alink = document.createElement("a");
         alink.download = "person.xlsx";
-        alink.href = RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(this.$store.state.home.projectUuid) + "?templateType=" + this.templatetype;
+        alink.href =
+          RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(
+            this.$store.state.home.projectUuid
+          ) +
+          "?templateType=" +
+          this.templatetype;
         alink.click();
       }
     },
@@ -148,7 +163,10 @@ export default {
       /* eslint-disable */
       this.uploader = new plupload.Uploader({
         browse_button: "fileSelect", // 这里填写触发元素的按钮ID
-        url: RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(_this.$store.state.home.projectUuid, this.libraryuuid), // 上传的地址
+        url: RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
+          _this.$store.state.home.projectUuid,
+          this.libraryuuid
+        ), // 上传的地址
         // url: "http://192.168.9.166:9220/v1/face/escaped/pluploadUpload",
         headers: {
           Authorization: _this.$store.state.home.Authorization
@@ -222,7 +240,6 @@ export default {
   }
 };
 </script>
-
 <style lang='scss' scoped>
 .color {
   display: inline-block;
@@ -253,20 +270,6 @@ export default {
       color: #28ffbb;
     }
   }
-}
-.mybutton {
-  width: 80px;
-  padding: 6px 27px;
-  position: absolute;
-  right: 61px;
-  border: 0px;
-  height: 32px;
-  top: 4px;
-  font-family: "PingFangSC-Regular";
-  font-size: 13px;
-  color: #dddddd;
-  background: rgba($color: #ffffff, $alpha: 0.1);
-  border-radius: 2px;
 }
 .customize {
   border-top: 1px dashed #666;
@@ -314,10 +317,7 @@ export default {
   .el-form-item {
     margin-bottom: 10px;
     .buttoninput {
-      width: 400px;
-      .el-input__inner {
-        width: 320px;
-      }
+      width: 320px;
     }
   }
   .el-input__inner {
