@@ -223,7 +223,11 @@ export default {
             // if (!this.tagUuid) {
             // this.tagUuid = result[0].tagUuid;
             // this.commit("tagUuid",result[0].tagUuid);
-            // alert(1);
+            if (!result[0]) {
+              this.data2 = result;
+              return;
+            }
+
             // 新增节点之后，不会去刷新右边第一个节点的列表
             if (!uuid) {
               this.$store.commit("setTagUuid", result[0].tagUuid);
