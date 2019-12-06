@@ -29,12 +29,13 @@ router.beforeEach((to, from, next) => {
     } else {
       if (!isInitRoute) {
         isInitRoute = true;
-        // 这里去请求用户的权限菜单
-        console.log("projectUuid===", store.state.home.projectUuid);
-        // debugger;
-        // if (store.state.home.projectUuid==="") {
-        //   return;
-        // }
+        // 判断改账户是否选择了项目
+        if (to.path === '/projectManage') {
+          console.log("projectUuid===", store.state.home.projectUuid);
+          // next();
+          return;
+        }
+        // 这里根据项目的uuid去请求用户的权限菜单
         api
           .getHomeMenu({
             accountUuid: window.localStorage.getItem("useruuid").trim()
