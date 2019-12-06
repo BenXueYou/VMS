@@ -120,7 +120,8 @@
                            @command="handleCommand"
                            placement="bottom"
                            class='threelinemenu'>
-                <span class="el-dropdown-link">
+                <span class="el-dropdown-link"
+                      @click="saveClickData(node, data)">
                   <img class="checked-img"
                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                        style="margin-right: 20%;">
@@ -569,7 +570,7 @@ export default {
           }
         });
     },
-    chuliData(streamType = "main") {
+    chuliData(streamType = "") {
       if (this.operatorData.nodeType === "chnNode") {
         this.getPreviewInfo(
           this.operatorData.id,

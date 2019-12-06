@@ -137,6 +137,12 @@ export default {
       default() {
         return "main";
       }
+    },
+    decodeMod: {
+      type: String,
+      default() {
+        return "video";
+      }
     }
   },
   data() {
@@ -290,20 +296,34 @@ export default {
       if (this.canvas) {
         // 如果视频的mode等于original 则按照下面的比例进行播放
         // 如果是fullscreen则按照充满屏幕来播放
-        if (this.mode === "fullscreen") {
+        if (this.mode === "fullscreen" && this.decodeMod !== "video") {
           this.canvas.width = this.width;
           this.canvas.height = this.height;
           return;
         }
         // 如果宽高比大于16:9 则按照高计算宽
         if (this.width / this.height >= 16 / 9) {
-          let width = ~~((16 / 9) * this.height);
-          this.canvas.width = width;
-          this.canvas.height = this.height;
+          let width = this.width;
+          if (this.mode === "fullscreen") {
+            this.canvas.width = this.width;
+            let height = ~~((9 / 16) * width);
+            this.canvas.height = height;
+            return;
+          } else {
+            this.canvas.width = width;
+            this.canvas.height = this.height;
+          }
         } else {
-          let height = ~~((9 / 16) * this.width);
-          this.canvas.width = this.width;
-          this.canvas.height = height;
+          let height = this.height;
+          if (this.mode === "fullscreen") {
+            this.canvas.height=height;
+            let width = ~~((16 /9 ) * height);
+            this.canvas.width = width;
+            return;
+          } else {
+            this.canvas.width = this.width;
+            this.canvas.height = height;
+          }
         }
         console.log(this.canvas.width + " " + this.canvas.height);
       }
@@ -337,7 +357,7 @@ export default {
       // );
       this.video = await this.video_mgr.setup({
         element: this.canvas,
-        decodeMod: "video",
+        decodeMod: this.decodeMod,
         jSignal: JSON.stringify(jSignal),
         jMedia: JSON.stringify(jMedia),
         url: this.rtspUrl,
@@ -376,7 +396,7 @@ export default {
           this.$emit(
             "playRtsp",
             channelUuid,
-            "main",
+            "",
             operatorData,
             this.index,
             true

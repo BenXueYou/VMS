@@ -486,11 +486,18 @@ export default {
     },
     playRtsp(
       channelUuid,
-      streamType = "string",
+      streamType = "",
       adata,
       operator = -1,
       isDrag = false
     ) {
+      // 这里做个判断，判断streamType是否为空，为空则判断是不是第一个播放，是则主码流，不是则辅码流
+      if (streamType === "") {
+        let flag = !!this.videoArr.filter(item => {
+          return item.rtspUrl !== "";
+        }).length;
+        streamType = flag ? "sub" : "main";
+      }
       console.log(channelUuid, streamType, adata, operator);
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放

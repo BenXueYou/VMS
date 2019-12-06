@@ -11,9 +11,9 @@
         <el-button size="small">下载</el-button>
         <el-button size="small">删除</el-button>
       </div>
-      <el-table :data="tableData"
+      <el-table :data="showData"
                 style="width: 100%">
-        <el-table-column prop="filename"
+        <el-table-column prop="fileName"
                          label="文件名称"
                          show-overflow-tooltip
                          width="100">
@@ -74,6 +74,7 @@
 </template>
 
 <script>
+import * as api2 from "@/pages/VideoPreview/ajax.js";
 export default {
   props: {
     visible: {
@@ -82,14 +83,15 @@ export default {
     tableData: {
       type: Array,
       default() {
-        return Array.from({ length: 10 }).fill({
-          fileName: "tradecore1",
-          devicename: "设备1-通道1",
-          videoPeriod: "2018-02-03 02:01:06 ～ 2018-02-03 02:01:06",
-          progress: 50,
-          status: "done",
-          taskAddTime: "2016-07-24  19:23"
-        });
+        return [];
+        // return Array.from({ length: 10 }).fill({
+        //   fileName: "tradecore1",
+        //   devicename: "设备1-通道1",
+        //   videoPeriod: "2018-02-03 02:01:06 ～ 2018-02-03 02:01:06",
+        //   progress: 50,
+        //   status: "done",
+        //   taskAddTime: "2016-07-24  19:23"
+        // });
       }
     }
   },
@@ -97,13 +99,61 @@ export default {
     return {
       dialogVisible: false,
       currentPage: 1,
-      pageSize: 20,
-      total: 100
+      pageSize: 10
     };
+  },
+  computed: {
+    total() {
+      return this.tableData.length;
+    },
+    showData() {
+      let start = (this.currentPage - 1) * this.pageSize;
+      let end = start + this.pageSize - 1;
+      return this.tableData.slice(start, end);
+    }
   },
   methods: {
     handleCurrentChange(val) {},
-    downloadVideo(device) {},
+    backup(channelUuid, startTime, endTime, videoType, streamType) {
+      return new Promise((resolve, reject) => {
+        api2
+          .backup({
+            channelUuid,
+            startTime,
+            endTime,
+            videoType,
+            streamType
+          })
+          .then(res => {
+            let data = res.data.data;
+            resolve(data);
+          });
+      });
+    },
+    async downloadVideo(row) {
+      console.log(row);
+      let { rtspUrl: url } = await this.backup(
+        row.channelUuid,
+        row.startTime,
+        row.endTime,
+        row.videoType,
+        row.streamType
+      );
+      console.log(url);
+      // eslint-disable-next-line
+      var video_mgr = new Window.CVideoMgrSdk(function() {});
+      let { jMedia, jSignal } = this.$store.getters;
+      console.log(jMedia, jSignal);
+      var video = await video_mgr.setup({
+        jSignal: JSON.stringify(jSignal),
+        jMedia: JSON.stringify(jMedia),
+        url: url,
+        protocol: "rtsp",
+        action: "download",
+        speed: 4
+      });
+      video_mgr.play(video);
+    },
     deleteVideo(device) {},
     close() {
       this.$emit("update:visible", false);

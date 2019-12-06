@@ -1098,7 +1098,7 @@ var h264Demuxer = function (_EventHandler) {
     _this.TIMESCALE = 90000;
     _this.timestamp = 0;
     _this.scaleFactor = _this.TIMESCALE / 1000;
-    _this.H264_TIMEBASE = 3400;
+    _this.H264_TIMEBASE = 3600;
     _this._avcTrack = { container: 'video/mp2t', type: 'video', id: 1, sequenceNumber: 0,
       samples: [], len: 0, nbNalu: 0, dropped: 0, count: 0 };
     _this.browserType = 0;
@@ -1123,7 +1123,7 @@ var h264Demuxer = function (_EventHandler) {
     key: 'onH264DataParsed',
     value: function onH264DataParsed(event) {
       this._parseAVCTrack(event.data);
-      if (this.browserType === 1 || this._avcTrack.samples.length >= 5) {
+      if (this.browserType === 1 || this._avcTrack.samples.length >= 10) {
         // Firefox
         this.remuxer.pushVideo(0, this.sn, this._avcTrack, this.timeOffset, this.contiguous);
         this.sn += 1;
@@ -1516,7 +1516,7 @@ var EventHandler = function () {
       try {
         eventToFunction.call(this, event, data).call();
       } catch (err) {
-        console.log('internal error happened while processing ' + event + ':' + err.message);
+        // console.log('internal error happened while processing ' + event + ':' + err.message);
         //   this.hls.trigger(Event.ERROR, {type: ErrorTypes.OTHER_ERROR, details: ErrorDetails.INTERNAL_EXCEPTION, fatal: false, event : event, err : err});
       }
     }
@@ -2310,7 +2310,7 @@ var MP4Remuxer = function () {
     this.PES_TIMESCALE = 90000;
     this.MP4_TIMESCALE = this.PES_TIMESCALE / this.PES2MP4SCALEFACTOR;
     this.nextAvcDts = 90300;
-    this.H264_TIMEBASE = 3400;
+    this.H264_TIMEBASE = 3600;
   }
 
   _createClass(MP4Remuxer, [{

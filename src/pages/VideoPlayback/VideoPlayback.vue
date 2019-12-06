@@ -70,13 +70,13 @@
     <screenshot-dialog :visible.sync="screenShotVisible">
 
     </screenshot-dialog>
-    <download-dialog :visible.sync="downloadVisible"></download-dialog>
+    <download-dialog :visible.sync="downloadVisible"
+                     :tableData="downloadData"></download-dialog>
     <local-broadcast-dialog :visible.sync="showBroadCastVisible"></local-broadcast-dialog>
     <tree-append-tag-dialog @confirm="addView"
                             title="添加视图"
                             labelName="视图名称"
                             :visible.sync="appendViewVisible"></tree-append-tag-dialog>
-    <download-dialog :visible.sync="downloadVisible"></download-dialog>
     <set-play-time-dialog :visible.sync="setTimeVisible"
                           @confirm="setPlayTime"></set-play-time-dialog>
   </div>
@@ -163,6 +163,7 @@ export default {
       videoHeight: 0,
       timer: null,
       cnt: 0,
+      downloadData: [],
       menuData: [
         {
           label: "关闭窗口",
@@ -197,8 +198,8 @@ export default {
           value: "切换至实时"
         },
         {
-          label: "开始录像",
-          value: "开始录像"
+          label: "下载",
+          value: "下载"
         },
         {
           label: "图像调节",
@@ -305,10 +306,11 @@ export default {
     },
     setPlayTime(startTime, endTime) {
       // 设置回放时间
-      this.$refs["video" + this.operatorIndex][0].setPlayTime(
-        startTime,
-        endTime
-      );
+      this.choosetime(this.operatorIndex, startTime, endTime);
+      // this.$refs["video" + this.operatorIndex][0].setPlayTime(
+      //   startTime,
+      //   endTime
+      // );
     },
     closeVideo(index) {
       this.videoArr[index].rtspUrl = "";
@@ -391,11 +393,12 @@ export default {
       );
     },
     // 录像播放跳转时间
-    async choosetime(index, chooseTime) {
+    async choosetime(index, chooseTime, endTime = "") {
       // eslint-disable-next-line
-      let { channelUuid, videoType, endTime, streamType } = this.videoArr[
-        index
-      ];
+      let { channelUuid, videoType, streamType } = this.videoArr[index];
+      if (!endTime) {
+        endTime = this.videoArr[this.operatorIndex].endTime;
+      }
       let data = await this.backup(
         channelUuid,
         chooseTime,
@@ -849,6 +852,9 @@ export default {
         case "抓图":
           // this.screenShotVisible = true;
           break;
+        case "下载":
+          this.download();
+          break;
         case "开始录像":
           // this.jumpToPlayback();
           this.startRecord(this.operatorIndex);
@@ -953,13 +959,51 @@ export default {
         params: { channelUuid }
       });
     },
+    getFormatTime(t) {
+      const change = t => {
+        return ("0" + t).slice(-2);
+      };
+      const d = new Date(t);
+      let year = d.getFullYear();
+      let month = change(d.getMonth() + 1);
+      let day = change(d.getDate());
+      let hour = change(d.getHours());
+      let minute = change(d.getMinutes());
+      let second = change(d.getSeconds());
+      return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    },
     download() {
-      // this.downloadVisible = true;
-      if (this.videoArr[this.operatorIndex].isRecord) {
-        this.startRecord(this.operatorIndex);
-      } else {
-        this.stopRecord(this.operatorIndex);
+      if (!this.videoArr[this.operatorIndex].rtspUrl) {
+        this.$message.error("该分路上没有通道！");
+        return;
       }
+      console.log(this.videoArr[this.operatorIndex]);
+      //
+      let { fileName, channelUuid, streamType, videoType } = this.videoArr[
+        this.operatorIndex
+      ];
+      let timeData = (this.videoArr[this.operatorIndex].timeData || []).map(
+        item => {
+          item.streamType = streamType;
+          item.videoType = videoType;
+          item.devicename = fileName;
+          item.channelUuid = channelUuid;
+          item.videoPeriod = `${item.startTime} ${item.endTime}`;
+          item.progress = 0;
+          item.status = "done";
+          item.taskAddTime = this.getFormatTime(new Date().getTime());
+          return item;
+        }
+      );
+      this.downloadData = timeData;
+      console.log(this.downloadData);
+      // 下载
+      this.downloadVisible = true;
+      // if (this.videoArr[this.operatorIndex].isRecord) {
+      //   this.startRecord(this.operatorIndex);
+      // } else {
+      //   this.stopRecord(this.operatorIndex);
+      // }
     },
     switchMaLiu(index, streamType) {
       if (!this.videoArr[index].rtspUrl) {
