@@ -91,7 +91,7 @@ export default {
 //         console.log("-------等待退出接口响应---------", this.flag);
 //       }
 // =======
-          // console.log("------------------");
+          console.log("------------------");
         })
         .catch(() => {
           this.$message.error("退出失败");

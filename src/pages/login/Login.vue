@@ -240,10 +240,10 @@ export default {
             });
           // 以下是测试代码 projectUuid 299fc6dfa7104483bcee8d71e59957cd
           /** ***********测试代码*************** */
-          this.$store.dispatch(
-            "setProjectUuid",
-            "fb55b7b7e9ee49209da83df20b7bcfea"
-          );
+          // this.$store.dispatch(
+          //   "setProjectUuid",
+          //    body.data.adminUser.projects[0].projectUuid
+          // );
           /** ***********测试结束*************** */
           // 刷新页面以便于更新projectUuid
           this.$nextTick(() => {
