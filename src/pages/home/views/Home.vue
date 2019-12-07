@@ -27,7 +27,7 @@
 <script>
 // import { constantRouterMap } from "@/router";
 import MenuItem from "@/pages/home/components/MenuItem";
-
+import RestApi from "@/utils/RestApi";
 export default {
   components: {
     MenuItem
@@ -37,6 +37,8 @@ export default {
     return {
       flag: true,
       tagViewArr: [],
+      beforeUnload_time: "",
+      gap_time: "",
       menuArr: [{ children: [] }]
     };
   },
@@ -50,26 +52,70 @@ export default {
     window.addEventListener("beforeunload", e => this.browerStatus(e));
     window.addEventListener("unload", e => this.browerStatusOff(e));
   },
+  destroyed() {
+    window.removeEventListener("beforeunload", e => this.browerStatus(e));
+    window.removeEventListener("unload", e => this.browerStatusOff(e));
+  },
+
   methods: {
     browerStatus(e) {
+
       e = window.event || e;
       e.returnValue = "确定离开当前页面吗？";
+      this.beforeUnload_time = new Date().getTime();
+      this.axiosRequest();
     },
     browerStatusOff(e) {
-      console.log("完善登出事件", e);
-      this.flag = true;
+      // 加一段同步代码阻塞一下，不然刷新会发不出去异步请求
+      // let now = new Date();
+      // while (new Date() - now < 15000) {
+      //   console.log("------------");
+      // }
+      this.gap_time = new Date().getTime() - this.beforeUnload_time;
+      if (this._gap_time <= 15) {
+        this.axiosRequest();
+      }
+    },
+    axiosRequest() {
       this.$loginAjax
         .loginOut()
         .then(res => {
-          debugger;
-          this.flag = false;
-          console.log('==============', this.flag);
+// <<<<<<< HEAD
+//           debugger;
+//           this.flag = false;
+//           console.log('==============', this.flag);
+//         })
+//         .catch(() => {});
+//       let date = new Date();
+//       while (new Date() - date < 10000) {
+//         console.log("-------等待退出接口响应---------", this.flag);
+//       }
+// =======
+          // console.log("------------------");
         })
-        .catch(() => {});
-      let date = new Date();
-      while (new Date() - date < 10000) {
-        console.log("-------等待退出接口响应---------", this.flag);
-      }
+        .catch(() => {
+          this.$message.error("退出失败");
+        });
+    },
+    httpRequest() {
+      let ip = window.config.ip,
+        httpHeader = window.config.protocolHeader;
+      let url = `${httpHeader}/${ip}/${RestApi.api.login.loginOutApi}`;
+      console.log(
+        this.$store.state.home.projectUuid,
+        "----",
+        this.$store.state.home.Authorization,
+        "onunload！！！！！",
+        url
+      );
+      let xhr = new XMLHttpRequest();
+      xhr.open("detete", url, true);
+      xhr.setRequestHeader(
+        "Authorization",
+        this.$store.state.home.Authorization
+      );
+      xhr.setRequestHeader("projectUuid", this.$store.state.home.projectUuid);
+      xhr.send();
     },
     initData() {
       // 这里暂时将访客功能页面给注释掉
@@ -91,8 +137,7 @@ export default {
       this.$router.push({ name: compomentItem.name });
     }
   },
-  watch: {},
-  destroyed() {}
+  watch: {}
 };
 </script>
 
