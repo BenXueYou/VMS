@@ -27,6 +27,17 @@ export var LoginAjax = {
       }
     });
   },
+  setLogUuidByNoPrjectUuid(holder) {
+    let api = `${window.location.protocol}//${ip}/${
+      RestApi.api.login.setLogUuidByNoPrjectUuid(holder.projectUuid)
+    }`;
+    return axios.post(api, `logUuid=${holder.logUuid}`, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+        // "Authorization": "Basic d2ViOjEyMzQ1Ng=="
+      }
+    });
+  },
   loginOut(data) {
     let api = `${window.config.protocolHeader}/${ip}/${RestApi.api.login.loginOutApi}`;
     return axios({

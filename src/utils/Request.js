@@ -38,10 +38,14 @@ service.interceptors.response.use(
       if (response.data.success) {
         return response;
       } else if (response.data.errCode === 7000) {
+        sessionStorage.setItem("Authorization","");
+        sessionStorage.setItem("projectUuid","");
         router.replace({
           name: "Login"
         });
       } else if (response.data.msg === "令牌无效") {
+        sessionStorage.setItem("Authorization","");
+        sessionStorage.setItem("projectUuid","");
         router.replace({
           name: "Login"
         });

@@ -50,7 +50,9 @@ export var Storage = {
     let data = null;
     let jsonStr = window.sessionStorage.getItem(key);
     try {
-      data = JSON.parse(jsonStr);
+      if(jsonStr!==""){
+        data = JSON.parse(jsonStr);
+      }
     } catch (error) {
       console.log(error);
     }

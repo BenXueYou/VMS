@@ -49,8 +49,13 @@ export default {
     }, 0);
   },
   mounted() {
-    window.addEventListener("beforeunload", e => this.browerStatus(e));
-    window.addEventListener("unload", e => this.browerStatusOff(e));
+     if (
+      this.$route.fullPath.toLocaleLowerCase().indexOf("/projectmanage") !== -1 &&  
+      this.$route.fullPath.toLocaleLowerCase().indexOf("/home") !== -1){
+          window.addEventListener("beforeunload", e => this.browerStatus(e));
+          window.addEventListener("unload", e => this.browerStatusOff(e));
+      }
+  
   },
   destroyed() {
     window.removeEventListener("beforeunload", e => this.browerStatus(e));

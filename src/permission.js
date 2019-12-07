@@ -19,7 +19,8 @@ router.beforeEach((to, from, next) => {
   // eslint-disable-next-line no-constant-condition
   if (
     store.state.home.Authorization &&
-    store.state.home.Authorization.substr(0, 5) !== "Basic"
+    store.state.home.Authorization.substr(0, 5) !== "Basic" && 
+    !!sessionStorage.getItem("Authorization")
   ) {
     // 判断是否有token 目前先置为 true !!!!
     if (to.path === "/Login") {
@@ -27,40 +28,42 @@ router.beforeEach((to, from, next) => {
       next();
       // NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
     } else {
-      if (!isInitRoute) {
-        isInitRoute = true;
-        // 判断改账户是否选择了项目
+      // 判断改账户是否选择了项目
         if (to.path === '/projectManage') {
           console.log("projectUuid===", store.state.home.projectUuid);
-          // next();
-          return;
+          next();
+          // return;
         }
-        // 这里根据项目的uuid去请求用户的权限菜单
-        api
-          .getHomeMenu({
-            accountUuid: window.localStorage.getItem("useruuid").trim()
-          })
-          .then(res => {
-            console.log(res);
-            if (res.data.success) {
-              let data = res.data.data || [];
-              let getAllData = true; // 测试用的，先显示全部的菜单那
-              let routerData = getRoute(data, getAllData);
+      if (!isInitRoute && to.path !== '/projectManage') {
+        if(sessionStorage.getItem("projectUuid")!=""){
+          isInitRoute = true;
+           // 这里根据项目的uuid去请求用户的权限菜单
+          api
+            .getHomeMenu({
+              accountUuid: window.localStorage.getItem("useruuid").trim()
+            })
+            .then(res => {
+              console.log(res);
+              if (res.data.success) {
+                let data = res.data.data || [];
+                let getAllData = true; // 测试用的，先显示全部的菜单那
+                let routerData = getRoute(data, getAllData);
+                window.localStorage.setItem(
+                  "routerData",
+                  JSON.stringify(routerData)
+                );
+                router.addRoutes(routerData);
+              }
+            })
+            .catch(() => {
+              let routerData = getRoute([], true);
               window.localStorage.setItem(
                 "routerData",
                 JSON.stringify(routerData)
               );
               router.addRoutes(routerData);
-            }
-          })
-          .catch(() => {
-            let routerData = getRoute([], true);
-            window.localStorage.setItem(
-              "routerData",
-              JSON.stringify(routerData)
-            );
-            router.addRoutes(routerData);
-          });
+            });
+          }
       }
 
       /* console.log("topath : ", to.path);
