@@ -16,8 +16,8 @@ if (DEBUG == "DEBUG") {
 } else if (DEBUG == "TEST") {
   // 提测环境
   // ip = "192.168.9.141:15000";
-  ip = "192.168.6.111:15000";   
-  websocketIp = "192.168.6.111:80";
+  ip = "192.168.9.230:15000";   
+  websocketIp = "192.168.9.230:80";
   imageUrl =
     protocolHeader +
     "//" +
