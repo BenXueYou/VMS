@@ -61,11 +61,14 @@ export default {
       this.$loginAjax
         .loginOut()
         .then(res => {
+          debugger;
           this.flag = false;
+          console.log('==============', this.flag);
         })
         .catch(() => {});
-      while (this.flag) {
-        console.log("-------等待退出接口响应---------");
+      let date = new Date();
+      while (new Date() - date < 10000) {
+        console.log("-------等待退出接口响应---------", this.flag);
       }
     },
     initData() {

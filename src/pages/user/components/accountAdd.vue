@@ -96,12 +96,18 @@
 						<img class="img" src="@/assets/images/add.png" alt srcset />新增
 					</div>
 					<div>
-						<gt-button
+						<!-- <gt-button
 							:icon="icons.door"
 							v-for="(item,index) in rowData.roles || []"
 							class="person"
 							:key="index"
 							:show-close="false"
+						>{{item.roleName}}</gt-button> -->
+					    <gt-button
+							v-for="(item,index) in rowData.roles || []"
+							class="bilibili"
+							@close="deleteChannelAuth(index)"
+							:key="index"
 						>{{item.roleName}}</gt-button>
 					</div>
 				</div>
@@ -338,7 +344,10 @@ export default {
     },
     close() {
       this.$emit("close");
-    }
+    },
+    deleteChannelAuth(index) {
+      this.rowData.roles.splice(index, 1);
+    },
   },
   watch: {
     rowData: {

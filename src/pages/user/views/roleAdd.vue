@@ -245,7 +245,7 @@ export default {
       // });
     },
     saveAndAdd() {
-      this.submit();
+      this.submit(true);
     },
     confirm() {
       if (this.roleName === "") {
@@ -302,19 +302,18 @@ export default {
       }
       return data;
     },
-    submit(isBackTableList = true) {
+    submit(isBackTableList) {
       // 通过判断roleUuid是否为空，来判断是新增还是修改
       let data = this.rebaseData();
       if (!this.roleUuid) {
         api.addRoleDetailUrl(data).then(res => {
           if (res.data.success) {
-            // console.log("isBackTableList===", isBackTableList)
-            this.$emit("close", true);
+            console.log("isBackTableList===", isBackTableList)
             this.$message.success("添加成功!");
             if (isBackTableList) {
               this.resetAddDialog();
             } else {
-              this.clsoe();
+              this.$emit("close", true);
             }
           }
         });
@@ -324,11 +323,12 @@ export default {
             // console.log("isBackTableList===", isBackTableList)
             this.$emit("close", true);
             this.$message.success("保存成功！");
-            if (isBackTableList) {
-              this.resetAddDialog();
-            } else {
-              this.clsoe();
-            }
+            // this.clsoe();
+            // if (isBackTableList) {
+            //   this.resetAddDialog();
+            // } else {
+            //   this.clsoe();
+            // }
           }
         });
       }
