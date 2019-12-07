@@ -44,6 +44,7 @@ CDecoder.prototype.drag = function() {
 };
 
 CDecoder.prototype.media = function(data) {
+  
   if (this.m_cache != null && this.m_cache.empty()) {
     // 缓存中无数据 写入解码
     var ret = 0;

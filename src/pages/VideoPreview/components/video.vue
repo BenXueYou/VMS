@@ -8,7 +8,7 @@
        @dragover="dragover"
        @dblclick="dblclickhandler"
        draggable="true"
-       :class="{'VideoActive':isActive&&mode === 'fullscreen','isAutoScreen':isAutoScreen}"
+       :class="{'VideoActive':isActive,'isAutoScreen':isAutoScreen}"
        :style="{height:height+'px',width:width+'px',left:left+'px',top:top+'px'}">
     <!-- 视频信息展示菜单 -->
     <div class="header"
@@ -316,8 +316,8 @@ export default {
         } else {
           let height = this.height;
           if (this.mode === "fullscreen") {
-            this.canvas.height=height;
-            let width = ~~((16 /9 ) * height);
+            this.canvas.height = height;
+            let width = ~~((16 / 9) * height);
             this.canvas.width = width;
             return;
           } else {

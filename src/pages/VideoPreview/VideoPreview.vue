@@ -340,7 +340,7 @@ export default {
       this.initWrapDom();
     },
     updateView(viewData) {
-      console.log(viewData);
+      // console.log(viewData);
       // 首先判断下视图有没有重复的名字
       let da = this.$refs.leftTree.viewTreeData.filter(i => {
         return i.viewName === viewData.viewInfo.view_name;
@@ -443,8 +443,8 @@ export default {
       });
     },
     updatePreset(data) {
-      console.log(this.operatorIndex);
-      console.log(this.videoArr);
+      // console.log(this.operatorIndex);
+      // console.log(this.videoArr);
       api2.updatePreset(data).then(res => {
         if (res.data.success) {
           this.$message.success("预置点修改成功！");
@@ -467,7 +467,7 @@ export default {
       //   });
     },
     updatePeraaaaaa(data) {
-      console.log(data);
+      // console.log(data);
       api2.updatePreset(data).then(res => {
         if (res.data.success) {
           this.$message.success("预置点修改成功！");
@@ -498,7 +498,7 @@ export default {
         }).length;
         streamType = flag ? "sub" : "main";
       }
-      console.log(channelUuid, streamType, adata, operator);
+      // console.log(channelUuid, streamType, adata, operator);
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
       api2
@@ -507,7 +507,7 @@ export default {
           streamType
         })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           let data = res.data.data;
           // 这里会得到rtsp的码流地址，然后进行一些操作,默认是主码流
           if (operator === -1) {
@@ -1094,7 +1094,7 @@ export default {
   },
   watch: {
     operatorIndex(val) {
-      console.log(this.videoArr);
+      // console.log(this.videoArr);
       this.showCloudControl = this.updateCloud();
     },
     videoArr(val) {
