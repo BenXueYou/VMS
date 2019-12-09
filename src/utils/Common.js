@@ -624,11 +624,14 @@ export var COMMON = {
 
     return data;
   },
-  funBuildFile(url, name) {
+  funBuildFile(url, name, method = "GET", data) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true); // 也可以使用POST方式，根据接口
+    xhr.open(method, url, true); // 也可以使用POST方式，根据接口
     xhr.setRequestHeader("Authorization", store.state.home.Authorization);
     xhr.responseType = "blob"; // 返回类型blob
+    if(method=='POST'){
+      xhr.setRequestHeader("Content-type","application/json");
+    }
     xhr.onload = function () {
       // 请求完成
       if (this.status == 200) {
@@ -646,7 +649,11 @@ export var COMMON = {
       }
     };
     // 发送ajax请求
-    xhr.send();
+    if (data) {
+      xhr.send(JSON.stringify(data));
+    } else {
+      xhr.send();
+    }
   },
   throttle(func, wait, options) {
     // options中的leading:false 表示禁用第一次执行
@@ -712,7 +719,7 @@ export var COMMON = {
 
     const event = new MouseEvent('click');
     $a.dispatchEvent(event);
-  },
+  }
 }
 function install(Vue) {
   Vue.prototype.$common = COMMON;

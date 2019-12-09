@@ -4074,6 +4074,9 @@ export default {
   padding-bottom: 20px;
   box-sizing: border-box;
 }
+.personMange .el-dialog {
+  margin-top: 1vh !important;
+}
 .personMange .el-dialog__footer {
   padding-bottom: 15px;
   margin-top: -15px;
