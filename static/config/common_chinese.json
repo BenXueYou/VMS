@@ -300,7 +300,7 @@
         "courier": "快递人员",
         "take-out": "外卖人员",
         "other": "其他人员",
-        "": ""
+        "cleaning_worker": "保洁"
     },
     "cred": {
         "id_card": "身份证",
