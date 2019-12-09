@@ -59,7 +59,7 @@ export default {
     getTaskErrorList: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/error/list`,
     deleteTask: (projectUuid, importTaskUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/${importTaskUuid}`,
     downloadDBTemp: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/download/templateType`,
-    downloadErrTemp: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/list`,
+    downloadErrTemp: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/download/errorInfo`,
     downloadFace: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/download/faceInfo`,
   },
 
