@@ -179,12 +179,12 @@
 			:visible.sync="exportdialogVisible"
 		>
 			<div style="margin:50px auto;">
-				<el-select v-model="choosetemplate" collapse-tags placeholder="请选择" class="ExportDialogInput">
+				<el-select v-model="choosetemplate" placeholder="请选择" class="ExportDialogInput">
 					<el-option
 						v-for="item in templatetypearr"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
+						:key="item.typeStr"
+						:label="item.typeName"
+						:value="item.typeStr"
 					></el-option>
 				</el-select>
 			</div>
@@ -206,8 +206,10 @@ import TheFaceDBDKDialog from "@/pages/faceModule/views/facedb/basic/TheFaceDBDK
 import TheFaceDBUpdateHistoryDialog from "@/pages/faceModule/views/facedb/basic/TheFaceDBUpdateHistoryDialog";
 import TheFaceDBAdd from "@/pages/faceModule/views/facedb/basic/TheFaceDBAdd";
 import SearchOptionView from "./basic/SearchOptionView";
-import * as api from "@/pages/faceModule/api.js";
+// import * as api from "@/pages/faceModule/api.js";
 import * as faceApi from "@/pages/faceModule/http/faceDBHttp.js";
+import RestApi from "@/utils/RestApi";
+
 export default {
   name: "faceDB",
   components: {
@@ -224,7 +226,7 @@ export default {
       taofanlibraryuuid: "", // 逃犯库的UUID记录
       issuoxiao: false,
       rightarrow: require("@/assets/images/faceModule/rightarrow.png"),
-      choosetemplate: "scalper",
+      choosetemplate: "static_person",
       templatetypearr: [],
       exportdialogVisible: false,
       faceDBDialogVisible: false, // 新建人脸库的
@@ -317,29 +319,43 @@ export default {
       }
     },
     sureExport() {
-      var num = [];
+      let dataArr = [];
       if (this.typeradio === "TheFaceDBImageTable") {
         for (let i = 0, len = this.imageTableData.length; i < len; i++) {
           if (this.imageTableData[i].checked) {
-            num.push(this.imageTableData[i].staffUuid);
+            // num.push(this.imageTableData[i].staffUuid);
+            dataArr.push({
+              faceUuid: this.imageTableData[i].faceUuid,
+              facePhotoUuid: this.imageTableData[i].facePhotoUuid
+            });
           }
         }
       } else {
         for (let i = 0, len = this.listTableData.length; i < len; i++) {
           if (this.listTableData[i].checked) {
-            num.push(this.listTableData[i].staffUuid);
+            // num.push(this.listTableData[i].staffUuid);
+            dataArr.push({
+              faceUuid: this.listTableData[i].faceUuid,
+              facePhotoUuid: this.listTableData[i].facePhotoUuid
+            });
           }
         }
       }
       this.exportdialogVisible = false;
-      if (!num.length) {
+      if (!dataArr.length) {
         return;
       }
-      window.location.href = api.getExcel({
-        staffuuidList: num.toString(),
-        libraryuuid: this.faceLibraryUuid,
-        templatetype: this.choosetemplate
-      });
+      // window.location.href = api.getExcel({
+      //   staffuuidList: num.toString(),
+      //   libraryuuid: this.faceLibraryUuid,
+      //   templatetype: this.choosetemplate
+      // });
+      this.$common.excel_export("post", RestApi.api.faceModuleAPi.faceDBApi.downloadFace(this.$store.state.home.projectUuid), "人脸库", dataArr);
+      // faceApi
+      //   .downloadFace(dataArr)
+      //   .then(res => {
+      //     this.$cToast.success(res.data.msg);
+      //   });
     },
     // 后端导出方法
     exportExcel2() {
@@ -358,14 +374,14 @@ export default {
         }
       }
       if (!num.length) {
-        this.$message.error("未选中人员");
+        this.$message.warning("未选中人员");
         return;
       }
       this.exportdialogVisible = true;
     },
     openDeleteDialog(way, row) {
       if (!row.deletable) {
-        this.$message.error(`不可以删除${row.faceLibraryName}数据`);
+        this.$message.warning(`不可以删除${row.faceLibraryName}数据`);
         return;
       }
       if (row.faceLibraryUuid) {
@@ -800,6 +816,7 @@ export default {
   },
   mounted() {
     // this.templatetypearr = window.face.kutemplate;
+    this.templatetypearr = this.$common.getEnumByGroupStr("staff_temp");
     this.$nextTick(function() {
       // var el = this.$refs.dataWrap;
       // var w = el.offsetWidth;

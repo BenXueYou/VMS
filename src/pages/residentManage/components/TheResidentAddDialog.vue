@@ -1351,6 +1351,9 @@ export default {
 .dialogBoxClass .el-dialog--center .el-dialog__body {
   text-align: center;
 }
+.dialogBoxClass .el-dialog {
+  margin-top: 1vh !important;
+}
 .dialogBoxClass .el-input__icon {
   line-height: 30px;
   /* color: #26d39d; */

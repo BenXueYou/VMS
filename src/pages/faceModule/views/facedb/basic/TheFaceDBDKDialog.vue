@@ -84,7 +84,7 @@ export default {
   data() {
     return {
       diglogvisible: false,
-      templatetype: "",
+      templatetype: "static_person",
       templatetypearr: [],
       uploader: "", // 文件插件实例化对象
       fileIdNum: [], // 用来保存文件数组

@@ -159,3 +159,12 @@ export function downloadErrTemp(data) {
     params: data,
   });
 }
+// 库导入错误信息下载
+export function downloadFace(data) {
+  let url = FaceModuleApi.faceDBApi.downloadFace(store.state.home.projectUuid);
+  return Axios({
+    method: 'POST',
+    url,
+    data,
+  });
+}
