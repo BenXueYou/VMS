@@ -1131,7 +1131,7 @@
         }, {
           key: 'onH264DataParsed',
           value: function onH264DataParsed(event) {
-            this.m_cache.push_back(event.data);
+            // this.m_cache.push_back(event.data);
             var tmpThis = this;
             tmpThis._parseAVCTrack(event.data);
             if (tmpThis.browserType === 1 || tmpThis._avcTrack.samples.length >= 10) {

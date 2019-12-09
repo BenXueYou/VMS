@@ -375,10 +375,12 @@ export default {
       if (this.video && this.video_mgr) {
         this.video_mgr.stop(this.video);
       }
-      if (this.canvas && this.$refs.canvasRefs) {
-        this.$refs.canvasRefs.removeChild(this.canvas);
-        this.canvas = null;
-      }
+      this.canvas = null;
+      this.$nextTick(() => {
+        if (this.canvas && this.$refs.canvasRefs) {
+          this.$refs.canvasRefs.removeChild(this.canvas);
+        }
+      });
     },
     dragstart(e) {
       e.dataTransfer.setData("whereform", "video");

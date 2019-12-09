@@ -730,7 +730,9 @@ export default {
       });
     },
     closeVideoAA(index) {
+      console.log(index);
       this.operatorIndex = index;
+      console.log(this.videoArr[this.operatorIndex]);
       if (!this.videoArr[this.operatorIndex].channelUuid) {
         this.$message.error("该分路上没有通道！");
       } else {
@@ -764,7 +766,7 @@ export default {
       switch (value) {
         case "关闭窗口":
           // 清空rtspUrl，则触发video组件stop事件
-          this.closeVideoAA();
+          this.closeVideoAA(this.operatorIndex);
           break;
         case "关闭所有窗口":
           this.$confirm(
