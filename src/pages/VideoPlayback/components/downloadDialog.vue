@@ -7,10 +7,10 @@
              @close="close"
              :append-to-body="true">
     <div class="body">
-      <div>
+      <!-- <div>
         <el-button size="small">下载</el-button>
         <el-button size="small">删除</el-button>
-      </div>
+      </div> -->
       <el-table :data="showData"
                 style="width: 100%">
         <el-table-column prop="fileName"
@@ -139,9 +139,15 @@ export default {
         row.videoType,
         row.streamType
       );
+      // 下载的时候判断是海康还是大华的设备
+      // 大华NVR不暂停视频 进行下载
+      // 海康IPC暂停视频在进行下载
+      if (row.deviceType === "ipc") {
+        this.$emit("shutdownVideo");
+      }
       console.log(url);
       // eslint-disable-next-line
-      var video_mgr = new Window.CVideoMgrSdk(function() {});
+      var video_mgr = new window.CVideoMgrSdk(function() {});
       let { jMedia, jSignal } = this.$store.getters;
       console.log(jMedia, jSignal);
       var video = await video_mgr.setup({

@@ -71,6 +71,7 @@
 
     </screenshot-dialog>
     <download-dialog :visible.sync="downloadVisible"
+                     @shutdownVideo="shutdownVideo"
                      :tableData="downloadData"></download-dialog>
     <local-broadcast-dialog :visible.sync="showBroadCastVisible"></local-broadcast-dialog>
     <tree-append-tag-dialog @confirm="addView"
@@ -95,6 +96,7 @@ import localBroadcastDialog from "@/pages/VideoPlayback/components/localBroadcas
 import setPlayTimeDialog from "@/pages/VideoPlayback/components/setPlayTimeDialog";
 
 import icons from "@/common/icon.js";
+import * as api from "@/pages/equipmentMange/ajax.js";
 import * as api2 from "@/pages/VideoPreview/ajax.js";
 
 export default {
@@ -292,6 +294,12 @@ export default {
       const that = this;
       // 下面的定时器是为了刷新页面的每个video框，
       this.timer = setInterval(() => {
+        if (
+          this.$route.fullPath.toLocaleLowerCase().indexOf("videoplayback") ===
+          -1
+        ) {
+          return;
+        }
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
@@ -428,6 +436,7 @@ export default {
       let newdata = JSON.parse(JSON.stringify(data));
       let elements = newdata.elements.map((item, index) => {
         item.position = index;
+        item.mode = "original";
         return item;
       });
       for (let i = 0, len = elements.length; i < len; i++) {
@@ -635,6 +644,9 @@ export default {
     },
     initWrapDom() {
       let vedioWrapDom = this.$refs.vedioWrap;
+      if (!vedioWrapDom) {
+        return;
+      }
       let fen = 1,
         fenlu = this.fenlu[this.fenluIndex];
       if (fenlu === 8) {
@@ -750,15 +762,18 @@ export default {
           }
         )
           .then(() => {
-            this.videoArr[this.operatorIndex].rtspUrl = "";
-            this.videoArr[this.operatorIndex].channelUuid = "";
-            this.videoArr[this.operatorIndex].startTime = "";
-            this.videoArr[this.operatorIndex].endTime = "";
-            this.videoArr[this.operatorIndex].timeData = [];
-            this.videoArr.concat();
+            this.shutdownVideo();
           })
           .catch(() => {});
       }
+    },
+    shutdownVideo() {
+      this.videoArr[this.operatorIndex].rtspUrl = "";
+      this.videoArr[this.operatorIndex].channelUuid = "";
+      this.videoArr[this.operatorIndex].startTime = "";
+      this.videoArr[this.operatorIndex].endTime = "";
+      this.videoArr[this.operatorIndex].timeData = [];
+      this.videoArr.concat();
     },
     // 处理
     dealContextMenu(value) {
@@ -974,7 +989,17 @@ export default {
       let second = change(d.getSeconds());
       return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
     },
-    download() {
+    getDeviceInfoByChannel(channelUuid) {
+      return new Promise(resolve => {
+        api.getDeviceInfoByChannel(channelUuid).then(res => {
+          console.log(res);
+          if (res.data.success) {
+            resolve(res.data.data.deviceType);
+          }
+        });
+      });
+    },
+    async download() {
       if (!this.videoArr[this.operatorIndex].rtspUrl) {
         this.$message.error("该分路上没有通道！");
         return;
@@ -984,8 +1009,10 @@ export default {
       let { fileName, channelUuid, streamType, videoType } = this.videoArr[
         this.operatorIndex
       ];
+      let deviceType = await this.getDeviceInfoByChannel(channelUuid);
       let timeData = (this.videoArr[this.operatorIndex].timeData || []).map(
         item => {
+          item.deviceType = deviceType;
           item.streamType = streamType;
           item.videoType = videoType;
           item.devicename = fileName;

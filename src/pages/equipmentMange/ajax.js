@@ -52,6 +52,14 @@ export function getTDByType(resUuid, resType) {
     url
   });
 }
+// 编辑权限组接口
+export function getDeviceInfoByChannel(channelUuid) {
+  let url = sbUrl.getDeviceInfoByChannelUrl(channelUuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
 // 添加组织树节点
 export function addOrgTree(param) {
   let url = sbUrl.addOrgUrl;

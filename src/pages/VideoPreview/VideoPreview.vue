@@ -284,6 +284,12 @@ export default {
       const that = this;
       // 下面的定时器是为了刷新页面的每个video框，
       this.timer = setInterval(() => {
+        // if (
+        //   this.$route.fullPath.toLocaleLowerCase().indexOf("videopreview") ===
+        //   -1
+        // ) {
+        //   return;
+        // }
         if (this.fullscreen) {
           this.fullscreen = this.checkFull();
         }
@@ -330,6 +336,7 @@ export default {
       let newdata = JSON.parse(JSON.stringify(data));
       let elements = newdata.elements.map((item, index) => {
         item.position = index;
+        item.mode = "original";
         return item;
       });
       for (let i = 0, len = elements.length; i < len; i++) {
@@ -640,6 +647,9 @@ export default {
       //   const rightRect = this.$refs.right.getBoundingClientRect();
       //   // console.log(rightRect);
       // }
+      if (!this.$refs.right) {
+        return;
+      }
       const rightHeight = ~~(
         this.$refs.right.clientHeight -
         window.innerWidth * 0.03 -

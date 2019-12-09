@@ -157,6 +157,9 @@ export default {
   tokeGoodsUrl: `${fkPrefix}carryItem`,
   // 下发之前判断是否有下发任务了
   judgeTaskUrl: `${xfPrefix}checkConfigIssue`,
+  // 根据通道来获取设备的信息
+  getDeviceInfoByChannelUrl: channelUuid =>
+    `${sbPrefix}channel/${channelUuid}/deviceInfo`,
   // 获取本地服务列表
   serviceListUrl: `${sbPrefix}belong/server/list`,
 
