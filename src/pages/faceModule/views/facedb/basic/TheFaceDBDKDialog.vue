@@ -127,15 +127,24 @@ export default {
         this.$message.info("请选择模板类型!");
         e.preventDefault();
       } else {
-        let alink = document.createElement("a");
-        alink.download = "person.xlsx";
-        alink.href =
+        // let alink = document.createElement("a");
+        // alink.download = "person.xlsx";
+        // alink.href =
+        //   RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(
+        //     this.$store.state.home.projectUuid
+        //   ) +
+        //   "?templateType=" +
+        //   this.templatetype;
+        // alink.click();
+        this.$common.funBuildFile(
           RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(
             this.$store.state.home.projectUuid
           ) +
-          "?templateType=" +
-          this.templatetype;
-        alink.click();
+            "?templateType=" +
+            this.templatetype,
+          "模板.xlsx",
+          "GET"
+        );
       }
     },
     init() {

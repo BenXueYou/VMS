@@ -157,7 +157,7 @@ export default {
       },
       stompClient: null,
       selectedTabRow: null,
-      interval: null,
+      interval: null
     };
   },
   methods: {
@@ -299,24 +299,45 @@ export default {
         this.tableData.forEach((v, i) => {
           if (data.importTaskUuid === v.importTaskUuid) {
             this.$nextTick(() => {
-              this.$set(this.tableData[i], "importProgress", data.importProgress);
+              this.$set(
+                this.tableData[i],
+                "importProgress",
+                data.importProgress
+              );
               this.$set(this.tableData[i], "importState", data.importState);
-              this.$set(this.tableData[i], "importStateDetails", data.importStateDetails);
+              this.$set(
+                this.tableData[i],
+                "importStateDetails",
+                data.importStateDetails
+              );
               this.$set(this.tableData[i], "faceTotal", data.faceTotal);
               this.$set(this.tableData[i], "repeatCount", data.repeatCount);
               this.$set(this.tableData[i], "addCount", data.addCount);
               this.$set(this.tableData[i], "failedCount", data.failedCount);
-              this.$set(this.tableData[i], "regFailedCount", data.regFailedCount);
+              this.$set(
+                this.tableData[i],
+                "regFailedCount",
+                data.regFailedCount
+              );
             });
           }
         });
       }
     },
     downloadErrTemp() {
-      let alink = document.createElement("a");
-      alink.download = "error.xlsx";
-      alink.href = RestApi.api.faceModuleAPi.faceDBApi.downloadErrTemp(this.$store.state.home.projectUuid) + "?importTaskUuid=" + this.importTaskUuid;
-      alink.click();
+      // let alink = document.createElement("a");
+      // alink.download = "error.xlsx";
+      // alink.href = RestApi.api.faceModuleAPi.faceDBApi.downloadErrTemp(this.$store.state.home.projectUuid) + "?importTaskUuid=" + this.importTaskUuid;
+      // alink.click();
+      this.$common.funBuildFile(
+        RestApi.api.faceModuleAPi.faceDBApi.downloadErrTemp(
+          this.$store.state.home.projectUuid
+        ) +
+          "?importTaskUuid=" +
+          this.importTaskUuid,
+        "错误信息.xlsx",
+        "GET"
+      );
     },
     setIntervalMethod() {
       if (this.selectedTabRow.importProgress < 100) {
