@@ -624,11 +624,14 @@ export var COMMON = {
 
     return data;
   },
-  funBuildFile(url, name) {
+  funBuildFile(url, name, method = "GET", data) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true); // 也可以使用POST方式，根据接口
+    xhr.open(method, url, true); // 也可以使用POST方式，根据接口
     xhr.setRequestHeader("Authorization", store.state.home.Authorization);
     xhr.responseType = "blob"; // 返回类型blob
+    if(method=='POST'){
+      xhr.setRequestHeader("Content-type","application/json");
+    }
     xhr.onload = function () {
       // 请求完成
       if (this.status == 200) {
@@ -646,7 +649,11 @@ export var COMMON = {
       }
     };
     // 发送ajax请求
-    xhr.send();
+    if (data) {
+      xhr.send(JSON.stringify(data));
+    } else {
+      xhr.send();
+    }
   },
   throttle(func, wait, options) {
     // options中的leading:false 表示禁用第一次执行
@@ -712,63 +719,6 @@ export var COMMON = {
 
     const event = new MouseEvent('click');
     $a.dispatchEvent(event);
-  },
-  /**
-   * 公共导出功能
-   * url：请求后台地址
-   * name：下载文件名称
-   * data: 请求参数
-   * type: 请求类型  post get
-   * */
-  excel_export(type, url, name, data) {
-    //var layerIndex=layer.msg('正在导出文件，请稍后...', {icon: 16,shade: 0.01,time: 100000 });
-    var xhr = null;
-    if (window.XMLHttpRequest) {//Mozilla 浏览器
-      xhr = new XMLHttpRequest();
-    } else {
-      if (window.ActiveXObject) {//IE 浏览器
-        try {
-          xhr = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        catch (e) {
-          try {//IE 浏览器
-            xhr = new ActiveXObject("Msxml2.XMLHTTP");
-          }
-          catch (e) {
-          }
-        }
-      }
-    }
-    xhr.open(type, url, true);
-    xhr.responseType = "blob";
-    xhr.setRequestHeader("Authorization", store.state.home.Authorization);
-    //post请求一定要添加请求头才行不然会报错
-    if (type == 'POST') {
-      xhr.setRequestHeader("Content-type", "application/json");
-    }
-    xhr.onload = function () {
-      if (this.status == 200) {
-        // console.info(this.getResponseHeader("content-disposition"));
-        // var fileName = this.getResponseHeader("content-disposition").split(";")[1].split("filename=")[1];
-        var blob = this.response;// this.response也就是请求的返回就是Blob对象
-        var a = document.createElement('a');
-        //一个字符串，表明该Blob对象所包含数据的MIME类型
-        blob.type = "application/excel";
-        var url = URL.createObjectURL(blob);
-        a.href = url;
-        $("body").append(a);
-        a.download = name;
-        if (!!window.ActiveXObject || "ActiveXObject" in window) {
-          window.navigator.msSaveOrOpenBlob(blob, name)
-        } else {
-          a.click()
-        }
-        window.URL.revokeObjectURL(url);
-      } else {
-        //  layer.msg('导出错误！')
-      }
-    }
-    xhr.send(data);
   }
 }
 function install(Vue) {

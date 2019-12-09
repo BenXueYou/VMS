@@ -1,202 +1,231 @@
 <template>
-	<div id="noteaacx" class="wrap">
-		<transition name="slide-fade">
-			<div class="left" :style="{'margin-left':(issuoxiao?-470:0)+'px'}">
-				<div class="rightarrow" @click="suoxiao">
-					<img :src="rightarrow" :style="{'transform':(issuoxiao?'rotate(180deg)':'rotate(0deg)')}" alt />
-				</div>
-				<div class="leftHeader">
-					<img src="@/assets/images/faceModule/twopeople.png" alt />
-					人脸库
-				</div>
-				<div class="title button-div">
-					<el-button type="primary" icon="el-icon-plus" class="addnewdb" @click="addfacedb">新建人像库</el-button>
-					<span class="tips">人像库总数：{{tableData.length}} &nbsp;&nbsp;&nbsp;&nbsp; 总人脸数：{{totalrenshu}}</span>
-				</div>
-				<div class="leftasda">
-					<!-- :current-row-key="selectLibRow.index" -->
-					<el-table
-						:data="tableData"
-						border
-						ref="multipleTable"
-						v-loading="loadding"
-						:current-row-key="0"
-						highlight-current-row
-						@row-click="selectedRow"
-						style="width: 100%"
-					>
-						<el-table-column prop="faceLibraryName" label="库名称" width="180"></el-table-column>
-						<el-table-column prop="faceTotal" label="人员数量" width="100"></el-table-column>
-						<el-table-column label="操作">
-							<template slot-scope="scope">
-								<el-button @click.stop="editFaceLib(scope.row)" type="text" size="small">
-									<!-- <i class="el-icon-edit-outline"></i> -->
-									编辑
-								</el-button>
+  <div id="noteaacx"
+       class="wrap">
+    <transition name="slide-fade">
+      <div class="left"
+           :style="{'margin-left':(issuoxiao?-470:0)+'px'}">
+        <div class="rightarrow"
+             @click="suoxiao">
+          <img :src="rightarrow"
+               :style="{'transform':(issuoxiao?'rotate(180deg)':'rotate(0deg)')}"
+               alt />
+        </div>
+        <div class="leftHeader">
+          <img src="@/assets/images/faceModule/twopeople.png"
+               alt />
+          人脸库
+        </div>
+        <div class="title button-div">
+          <el-button type="primary"
+                     icon="el-icon-plus"
+                     class="addnewdb"
+                     @click="addfacedb">新建人像库</el-button>
+          <span class="tips">人像库总数：{{tableData.length}} &nbsp;&nbsp;&nbsp;&nbsp; 总人脸数：{{totalrenshu}}</span>
+        </div>
+        <div class="leftasda">
+          <!-- :current-row-key="selectLibRow.index" -->
+          <el-table :data="tableData"
+                    border
+                    ref="multipleTable"
+                    v-loading="loadding"
+                    :current-row-key="0"
+                    highlight-current-row
+                    @row-click="selectedRow"
+                    style="width: 100%">
+            <el-table-column prop="faceLibraryName"
+                             label="库名称"
+                             width="180"></el-table-column>
+            <el-table-column prop="faceTotal"
+                             label="人员数量"
+                             width="100"></el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button @click.stop="editFaceLib(scope.row)"
+                           type="text"
+                           size="small">
+                  <!-- <i class="el-icon-edit-outline"></i> -->
+                  编辑
+                </el-button>
 
-								<el-button
-									type="text"
-									size="small"
-									class="deleteBtnClass"
-									@click.stop="openDeleteDialog('deletefaceLib',scope.row)"
-								>
-									<!-- <i class="el-icon-delete"></i> -->
-									删除
-								</el-button>
-							</template>
-						</el-table-column>
-					</el-table>
-				</div>
-			</div>
-		</transition>
-		<div class="right" :style="{'width': 'calc(100% - '+(issuoxiao?30:500)+'px)'}">
-			<div v-show="!faceDBDialogAddVisible" class="rightheader">
-				<ul>
-					<li>
-						<!-- <img src="@/assets/images/faceModule/onepeople.png" alt /> -->
-						<div class="header-line"></div>
-						{{libraryName?libraryName:'库名称'}}
-					</li>
-					<li>
-						<el-checkbox v-model="selectall" @change="selectAll">本页全选</el-checkbox>
-					</li>
-					<li class="active" @click="addfile">
-						<img src="@/assets/images/faceModule/add.png" alt />
-						<span>新增</span>
-					</li>
-					<li class="active" @click="deletefile">
+                <el-button type="text"
+                           size="small"
+                           class="deleteBtnClass"
+                           @click.stop="openDeleteDialog('deletefaceLib',scope.row)">
+                  <!-- <i class="el-icon-delete"></i> -->
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+    </transition>
+    <div class="right"
+         :style="{'width': 'calc(100% - '+(issuoxiao?30:500)+'px)'}">
+      <div v-show="!faceDBDialogAddVisible"
+           class="rightheader">
+        <ul>
+          <li>
+            <!-- <img src="@/assets/images/faceModule/onepeople.png" alt /> -->
+            <div class="header-line"></div>
+            {{libraryName?libraryName:'库名称'}}
+          </li>
+          <li>
+            <el-checkbox v-model="selectall"
+                         @change="selectAll">本页全选</el-checkbox>
+          </li>
+          <li class="active"
+              @click="addfile">
+            <img src="@/assets/images/faceModule/add.png"
+                 alt />
+            <span>新增</span>
+          </li>
+          <li class="active"
+              @click="deletefile">
             <!-- <i class="el-icon-delete"></i> -->
-						<img src="@/assets/images/delete2.png" alt />
-						<span>删除</span>
-					</li>
-					<li class="active" @click="exportExcel2">
-						<img src="@/assets/images/faceModule/expert.png" alt />
-						<span>导出</span>
-					</li>
-					<li class="active" @click="faceLibUpdateRecord" v-if="selectLibRow.faceLibraryType === 'staticFaceLib'">
-						<img src="@/assets/images/faceModule/facedb_update_history.png" alt />
-						<span>更新历史</span>
-					</li>
-					<li class="active" @click="updateLibraryTask" v-if="selectLibRow.faceLibraryType === 'staticFaceLib'">
-						<img src="@/assets/images/faceModule/facedb_update.png" alt />
-						<span>库更新</span>
-					</li>
+            <img src="@/assets/images/delete2.png"
+                 alt />
+            <span>删除</span>
+          </li>
+          <li class="active"
+              @click="exportExcel2">
+            <img src="@/assets/images/faceModule/expert.png"
+                 alt />
+            <span>导出</span>
+          </li>
+          <li class="active"
+              @click="faceLibUpdateRecord"
+              v-if="selectLibRow.faceLibraryType === 'staticFaceLib'">
+            <img src="@/assets/images/faceModule/facedb_update_history.png"
+                 alt />
+            <span>更新历史</span>
+          </li>
+          <li class="active"
+              @click="updateLibraryTask"
+              v-if="selectLibRow.faceLibraryType === 'staticFaceLib'">
+            <img src="@/assets/images/faceModule/facedb_update.png"
+                 alt />
+            <span>库更新</span>
+          </li>
 
-					<li class="rightoperat button-div">
-						<div class="searchInputClass">
-							姓名：
-							<el-input class="searchinput" label="姓名" v-model="staffName" placeholder="请输入"></el-input>
-						</div>
-						<el-button type="primary" v-popover:popover>其他检索条件</el-button>
-						<el-popover
-							ref="popover"
-							placement="bottom-end"
-							:visible-arrow="false"
-							width="300"
-							trigger="click"
-						>
-							<search-option-view @query="queryAct"></search-option-view>
-						</el-popover>
-						<el-button type="primary" @click="search">检索</el-button>
-					</li>
-				</ul>
-			</div>
+          <li class="rightoperat button-div">
+            <div class="searchInputClass">
+              姓名：
+              <el-input class="searchinput"
+                        label="姓名"
+                        v-model="staffName"
+                        placeholder="请输入"></el-input>
+            </div>
+            <el-button type="primary"
+                       v-popover:popover>其他检索条件</el-button>
+            <el-popover ref="popover"
+                        placement="bottom-end"
+                        :visible-arrow="false"
+                        width="300"
+                        trigger="click">
+              <search-option-view @query="queryAct"></search-option-view>
+            </el-popover>
+            <el-button type="primary"
+                       @click="search">检索</el-button>
+          </li>
+        </ul>
+      </div>
 
-			<div v-show="!faceDBDialogAddVisible" class="typeoperator">
-				<el-radio v-model="typeradio" @change="changetype" label="TheFaceDBImageTable">图片</el-radio>
-				<el-radio v-model="typeradio" @change="changetype" label="TheFaceDBListTable">列表</el-radio>
-			</div>
+      <div v-show="!faceDBDialogAddVisible"
+           class="typeoperator">
+        <el-radio v-model="typeradio"
+                  @change="changetype"
+                  label="TheFaceDBImageTable">图片</el-radio>
+        <el-radio v-model="typeradio"
+                  @change="changetype"
+                  label="TheFaceDBListTable">列表</el-radio>
+      </div>
 
-			<div v-show="!faceDBDialogAddVisible" class="dataWrap" ref="dataWrap">
-				<!-- 这里面有用了双变量 保存切换视图，保存另一个的状态 -->
-				<keep-alive>
-					<component
-						:is="currentcomponents"
-						:selectall="selectall"
-						:listPageSize="listPageSize"
-						:imagePageSize="imagePageSize"
-						:total="total"
-						:pageNow="pageNow"
-						:listTableData="listTableData"
-						:imageTableData="imageTableData"
-						:listtableloadding="listtableloadding"
-						:listTableColumns="listTableColumns"
-						@getFaceDetail="editstaff"
-						@deleteStaffFace="deleteStaffFace"
-						@checkall="selectAll"
-						@changepage="changepage"
-					></component>
-				</keep-alive>
-			</div>
-			<!-- 人脸增加弹窗 -->
-			<the-face-d-b-add
-				:faceDBDialogVisible="faceDBDialogAddVisible"
-				:libraryarr="libraryarr"
-				:libraryuuid="faceLibraryUuid"
-				:isUpdate="isUpdate"
-				:staffDetail="staffDetail"
-				:title="addtitle"
-				@getstafflirary="getstafflirary"
-				@closeAddAct="closeStaffAddDialogAct"
-			></the-face-d-b-add>
-		</div>
+      <div v-show="!faceDBDialogAddVisible"
+           class="dataWrap"
+           ref="dataWrap">
+        <!-- 这里面有用了双变量 保存切换视图，保存另一个的状态 -->
+        <keep-alive>
+          <component :is="currentcomponents"
+                     :selectall="selectall"
+                     :listPageSize="listPageSize"
+                     :imagePageSize="imagePageSize"
+                     :total="total"
+                     :pageNow="pageNow"
+                     :listTableData="listTableData"
+                     :imageTableData="imageTableData"
+                     :listtableloadding="listtableloadding"
+                     :listTableColumns="listTableColumns"
+                     @getFaceDetail="editstaff"
+                     @deleteStaffFace="deleteStaffFace"
+                     @checkall="selectAll"
+                     @changepage="changepage"></component>
+        </keep-alive>
+      </div>
+      <!-- 人脸增加弹窗 -->
+      <the-face-d-b-add :faceDBDialogVisible="faceDBDialogAddVisible"
+                        :libraryarr="libraryarr"
+                        :libraryuuid="faceLibraryUuid"
+                        :isUpdate="isUpdate"
+                        :staffDetail="staffDetail"
+                        :title="addtitle"
+                        @getstafflirary="getstafflirary"
+                        @closeAddAct="closeStaffAddDialogAct"></the-face-d-b-add>
+    </div>
 
-		<!-- 新建人脸库弹窗 -->
-		<the-face-d-b-dialog
-			:faceDBDialogVisible="faceDBDialogVisible"
-			:updatefacedata="updatefacedata"
-			@close="closeFaceDBDialogAct"
-		></the-face-d-b-dialog>
-		<!-- 库更新弹窗 -->
-		<the-face-d-b-d-k-dialog
-			:faceDBDialogVisible="faceDBDialogDKVisible"
-			:libraryuuid="selectLibRow.faceLibraryUuid ? selectLibRow.faceLibraryUuid : ''"
-			@close="faceDBDialogDKVisible=false"
-      @confirm="confirmDBUpdate"
-		></the-face-d-b-d-k-dialog>
-		<!-- 更新历史弹窗 -->
-		<the-face-d-b-update-history-dialog
-			:faceDBDialogVisible="faceDBDialogUpdateHistoryVisible"
-			@close="faceDBDialogUpdateHistoryVisible=false"
-		></the-face-d-b-update-history-dialog>
+    <!-- 新建人脸库弹窗 -->
+    <the-face-d-b-dialog :faceDBDialogVisible="faceDBDialogVisible"
+                         :updatefacedata="updatefacedata"
+                         @close="closeFaceDBDialogAct"></the-face-d-b-dialog>
+    <!-- 库更新弹窗 -->
+    <the-face-d-b-d-k-dialog :faceDBDialogVisible="faceDBDialogDKVisible"
+                             :libraryuuid="selectLibRow.faceLibraryUuid ? selectLibRow.faceLibraryUuid : ''"
+                             @close="faceDBDialogDKVisible=false"
+                             @confirm="confirmDBUpdate"></the-face-d-b-d-k-dialog>
+    <!-- 更新历史弹窗 -->
+    <the-face-d-b-update-history-dialog :faceDBDialogVisible="faceDBDialogUpdateHistoryVisible"
+                                        @close="faceDBDialogUpdateHistoryVisible=false"></the-face-d-b-update-history-dialog>
 
-		<!-- 人脸删除弹窗 -->
-		<el-dialog title="提示" width="30%" class="DeleteDialogClass" :visible.sync="dialogVisible">
-			<p class="mydelete">
-				<img src="@/assets/delete.png" alt />
-				<span>是否确定删除</span>
-			</p>
-			<span slot="footer" class="dialog-footer DeleteDialogClass">
-				<el-button type="primary" @click="deletesurt">确 定</el-button>
-				<el-button type="primary" @click="dialogVisible = false">取 消</el-button>
-			</span>
-		</el-dialog>
-		<!-- 导出模板选择弹窗 -->
-		<el-dialog
-			class="ExportDialogClass"
-			title="导出模板选择"
-			width="350px"
-			:visible.sync="exportdialogVisible"
-		>
-			<div style="margin:50px auto;">
-				<el-select v-model="choosetemplate" placeholder="请选择" class="ExportDialogInput">
-					<el-option
-						v-for="item in templatetypearr"
-						:key="item.typeStr"
-						:label="item.typeName"
-						:value="item.typeStr"
-					></el-option>
-				</el-select>
-			</div>
-			<div style="height:80px;">
-				<el-button
-					type="primary"
-					style="width:120px;display:block;margin:0px auto 30px;"
-					@click="sureExport"
-				>确定</el-button>
-			</div>
-		</el-dialog>
-	</div>
+    <!-- 人脸删除弹窗 -->
+    <el-dialog title="提示"
+               width="30%"
+               class="DeleteDialogClass"
+               :visible.sync="dialogVisible">
+      <p class="mydelete">
+        <img src="@/assets/delete.png"
+             alt />
+        <span>是否确定删除</span>
+      </p>
+      <span slot="footer"
+            class="dialog-footer DeleteDialogClass">
+        <el-button type="primary"
+                   @click="deletesurt">确 定</el-button>
+        <el-button type="primary"
+                   @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <!-- 导出模板选择弹窗 -->
+    <el-dialog class="ExportDialogClass"
+               title="导出模板选择"
+               width="350px"
+               :visible.sync="exportdialogVisible">
+      <div style="margin:50px auto;">
+        <el-select v-model="choosetemplate"
+                   placeholder="请选择"
+                   class="ExportDialogInput">
+          <el-option v-for="item in templatetypearr"
+                     :key="item.typeStr"
+                     :label="item.typeName"
+                     :value="item.typeStr"></el-option>
+        </el-select>
+      </div>
+      <div style="height:80px;">
+        <el-button type="primary"
+                   style="width:120px;display:block;margin:0px auto 30px;"
+                   @click="sureExport">确定</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import TheFaceDBDialog from "@/pages/faceModule/views/facedb/basic/TheFaceDBDialog";
@@ -345,17 +374,14 @@ export default {
       if (!dataArr.length) {
         return;
       }
-      // window.location.href = api.getExcel({
-      //   staffuuidList: num.toString(),
-      //   libraryuuid: this.faceLibraryUuid,
-      //   templatetype: this.choosetemplate
-      // });
-      this.$common.excel_export("post", RestApi.api.faceModuleAPi.faceDBApi.downloadFace(this.$store.state.home.projectUuid), "人脸库", dataArr);
-      // faceApi
-      //   .downloadFace(dataArr)
-      //   .then(res => {
-      //     this.$cToast.success(res.data.msg);
-      //   });
+      this.$common.funBuildFile(
+        RestApi.api.faceModuleAPi.faceDBApi.downloadFace(
+          this.$store.state.home.projectUuid
+        ) + "?templateType=" + this.choosetemplate,
+        "人脸库.zip",
+        "POST",
+        dataArr
+      );
     },
     // 后端导出方法
     exportExcel2() {
@@ -418,8 +444,8 @@ export default {
           let staffTableData = [];
           if (
             !res.data.success ||
-						!res.data.data ||
-						!res.data.data.list.length
+            !res.data.data ||
+            !res.data.data.list.length
           ) {
             this.$message.success(this.libraryName + "没有数据");
           } else {
@@ -530,7 +556,7 @@ export default {
         if (document.getElementsByClassName("el-table__row")[index]) {
           if (
             !document.querySelector(".index") &&
-						document.getElementsByClassName("el-table__row")[index].classList
+            document.getElementsByClassName("el-table__row")[index].classList
           ) {
             let dom = document.getElementsByClassName("el-table__row")[index];
             dom.classList.add("index");
@@ -600,12 +626,10 @@ export default {
       this.deleteStaffFace(num);
     },
     addDaoKuTask(params) {
-      faceApi
-        .addDaoKuTask(params[0], params[1])
-        .then(res => {
-          this.$message.success("任务添加完成，请不要关闭客户端！");
-          this.faceDBDialogDKVisible = false;
-        });
+      faceApi.addDaoKuTask(params[0], params[1]).then(res => {
+        this.$message.success("任务添加完成，请不要关闭客户端！");
+        this.faceDBDialogDKVisible = false;
+      });
     },
     getstafflirary() {
       // 获取到所有的人员库
@@ -739,7 +763,7 @@ export default {
           try {
             if (
               JSON.parse(e.data) &&
-							JSON.parse(e.data).topic === "TOPIC_FILE_UPLOAD_PROCESS"
+              JSON.parse(e.data).topic === "TOPIC_FILE_UPLOAD_PROCESS"
             ) {
               let data = JSON.parse(JSON.parse(e.data).data);
               console.log(data);
@@ -751,8 +775,8 @@ export default {
                   for (var j = 0; j < _this.taskNum.length; j++) {
                     if (
                       _this.taskNum[j].isUpload === false &&
-											_this.taskNum[j].time ===
-												data.clientImportInfoDTO.filepath
+                      _this.taskNum[j].time ===
+                        data.clientImportInfoDTO.filepath
                     ) {
                       // 去除需要上传的文件
                       for (let i = 0; i < _this.taskNum[j].num.length; i++) {
@@ -770,7 +794,7 @@ export default {
                         } else {
                           console.log(
                             "-------------------------" +
-															_this.taskNum[j].num[i].name
+                              _this.taskNum[j].num[i].name
                           );
                         }
                       }
@@ -853,49 +877,49 @@ export default {
 
 <style lang="scss">
 #noteaacx {
-	.el-checkbox__label {
-		color: rgba(255, 255, 255, 0.8);
-	}
-	.el-checkbox__inner::after {
-		box-sizing: content-box;
-		border: 1px solid #26d39d;
-		border-left: 0;
-		border-top: 0;
-		height: 7px;
-		left: 4px;
-		position: absolute;
-		top: 1px;
-	}
-	.DeleteDialogClass {
-		.mydelete {
-			text-align: center;
-			font-size: 0px;
-			line-height: 150px;
-			img {
-				display: inline-block;
-				vertical-align: middle;
-			}
-			span {
-				display: inline-block;
-				font-family: " PingFangSC-Regular";
-				font-size: 16px;
-				color: #ffffff;
-				letter-spacing: 0;
-				padding-left: 30px;
-				vertical-align: middle;
-			}
-		}
-		.el-dialog__footer {
-			text-align: center;
-		}
-		.el-dialog {
-			height: 300px;
-		}
-	}
-	.ExportDialogInput {
-		width: 150px;
-		display: block;
-		margin: 0px auto;
-	}
+  .el-checkbox__label {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .el-checkbox__inner::after {
+    box-sizing: content-box;
+    border: 1px solid #26d39d;
+    border-left: 0;
+    border-top: 0;
+    height: 7px;
+    left: 4px;
+    position: absolute;
+    top: 1px;
+  }
+  .DeleteDialogClass {
+    .mydelete {
+      text-align: center;
+      font-size: 0px;
+      line-height: 150px;
+      img {
+        display: inline-block;
+        vertical-align: middle;
+      }
+      span {
+        display: inline-block;
+        font-family: " PingFangSC-Regular";
+        font-size: 16px;
+        color: #ffffff;
+        letter-spacing: 0;
+        padding-left: 30px;
+        vertical-align: middle;
+      }
+    }
+    .el-dialog__footer {
+      text-align: center;
+    }
+    .el-dialog {
+      height: 300px;
+    }
+  }
+  .ExportDialogInput {
+    width: 150px;
+    display: block;
+    margin: 0px auto;
+  }
 }
 </style>
