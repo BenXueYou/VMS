@@ -300,7 +300,11 @@ export default {
       uploadstatusZnarr: [],
       defaultHeader: require("@/assets/user.png"),
       listTableColumns: [], // 右边表格，显示哪些数据
-      ws: "" // 定义全局的websocket对象
+      ws: "", // 定义全局的websocket对象,
+      currentRowIndex: "",
+      importProgress: 100,
+      stompClient: null,
+      interval: null
     };
   },
   computed: {
@@ -540,6 +544,7 @@ export default {
       faceApi.deleteFaceLib({ faceLibraryUuid: this.row }).then(res => {
         if (res.data.success) {
           this.$message.success("删除成功！");
+          this.faceLibraryUuid = "";
           this.getStaffLibList();
         }
       });
@@ -663,7 +668,8 @@ export default {
       this.selectLibRow = row;
       this.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
       this.libraryName = this.selectLibRow.faceLibraryName;
-      this.currentRowStyle(this.selectLibRow.index);
+      // this.currentRowStyle(this.selectLibRow.index);
+      this.currentRowIndex = this.getIndexById(row);
       this.selectall = false;
       this.resetall();
       this.pageNow = 1;
@@ -729,6 +735,7 @@ export default {
     // 查询人员库列表
     getStaffLibList(flag = false) {
       this.loadding = true;
+      this.tableData = [];
       faceApi
         .getFaceLib()
         .then(res => {
@@ -736,11 +743,15 @@ export default {
           if (res.data.success && res.data.data) {
             this.tableData = res.data.data;
             if (this.tableData && !this.tableData.length) return;
-            this.selectLibRow = this.tableData[0];
-            this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
-            this.libraryName = res.data.data[0].faceLibraryName;
-            this.$refs.multipleTable.setCurrentRow(this.selectLibRow);
-            this.getStaffLibStaffData();
+            if (!flag) {
+              this.selectLibRow = this.tableData[0];
+              this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
+              this.libraryName = res.data.data[0].faceLibraryName;
+              this.$refs.multipleTable.setCurrentRow(this.selectLibRow);
+              this.getStaffLibStaffData();
+            } else {
+              this.handleDefaultChooseFirstData();
+            }
           } else {
             this.$message.warning(res.data.msg);
           }
@@ -749,93 +760,82 @@ export default {
           this.loadding = false;
         });
     },
-    conSocket() {
-      const _this = this;
-      console.log(window.config.socketIP);
-      this.ws = new WebSocket(window.config.socketIP);
-      this.ws.onopen = function() {};
-      // test
-      this.ws.onmessage = function(e) {
-        console.log("socket有数据过来了!");
-        if (!e.data) {
-          console.log("暂无消息推送");
-        } else {
-          try {
-            if (
-              JSON.parse(e.data) &&
-              JSON.parse(e.data).topic === "TOPIC_FILE_UPLOAD_PROCESS"
-            ) {
-              let data = JSON.parse(JSON.parse(e.data).data);
-              console.log(data);
-              if (data.socketType === "startStaffImport") {
-                var needdata = data.clientImportInfoDTO.allNeedFileNamelist;
-                console.log(needdata);
-                console.log(_this.taskNum);
-                if (needdata.length) {
-                  for (var j = 0; j < _this.taskNum.length; j++) {
-                    if (
-                      _this.taskNum[j].isUpload === false &&
-                      _this.taskNum[j].time ===
-                        data.clientImportInfoDTO.filepath
-                    ) {
-                      // 去除需要上传的文件
-                      for (let i = 0; i < _this.taskNum[j].num.length; i++) {
-                        var flag = false;
-                        for (var k = 0; k < needdata.length; k++) {
-                          if (_this.taskNum[j].num[i].name === needdata[k]) {
-                            flag = true;
-                            break;
-                          }
-                        }
-                        if (!flag) {
-                          _this.taskNum[j].uploader.removeFile(
-                            _this.taskNum[j].num[i].id
-                          );
-                        } else {
-                          console.log(
-                            "-------------------------" +
-                              _this.taskNum[j].num[i].name
-                          );
-                        }
-                      }
-                      console.log("找到相同时间戳的任务了，我要开始上传了。");
-                      _this.taskNum[j].uploader.start();
-                      _this.taskNum[j].isUpload = true;
-                      break;
-                    }
-                  }
-                } else {
-                  // console.log("上传完毕，调用分析接口");
-                  // api.fenxi().then(res => {});
-                }
-              } else if (data.socketType === " staffImportProcess") {
-                // var data = data.clientImportInfoDTO;
-                // var needdata = data.allNeedFileNamelist;
-                // if (data.progress === 0.33 && !needdata.length) {
-                //   console.log("上传完毕，调用分析接口");
-                //   api.fenxi().then(res => {});
-                // }
-
-                _this.getStaffLibList();
-                _this.realtimeNum.push({
-                  progress: data.progress,
-                  taskuuid: data.taskuuid,
-                  status: data.status
-                });
-              }
-            }
-          } catch (error) {
-            console.log(error);
-          }
+    getIndexById(row) {
+      if (!row || this.tableData.length === 0) {
+        return -1;
+      }
+      for (let i = 0; i < this.tableData.length; i++) {
+        if (row.faceLibraryUuid === this.tableData[i].faceLibraryUuid) {
+          return i;
         }
-      };
-      this.ws.onclose = function() {
-        console.log("socket关闭了");
-      };
+      }
+      return -1;
+    },
+    handleDefaultChooseFirstData() {
+      if (!this.tableData || this.tableData.length === 0) {
+        return;
+      }
+      let index = 0;
+      if (this.currentRowIndex && this.currentRowIndex >= 0) {
+        index = this.currentRowIndex;
+      }
+      this.setCurrentRow(index);
+      this.getStaffLibStaffData();
+    },
+    setCurrentRow(index) {
+      if (this.$refs.multipleTable) {
+        this.$refs.multipleTable.setCurrentRow(this.tableData[index]);
+      }
     },
     confirmDBUpdate() {
       this.faceDBDialogDKVisible = false;
-      this.getStaffLibList();
+      // this.getStaffLibList();
+      setTimeout(() => {
+        this.$refs.multipleTable.setCurrentRow(this.selectLibRow);
+        this.getStaffLibStaffData();
+      }, 10);
+    },
+    connectSocket() {
+      /* eslint-disable */
+      let socket = new SockJS(
+        window.config.protocolHeader + window.config.socketIP
+      );
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect(
+        { projectUuid: this.$store.state.home.projectUuid },
+        frame => {
+          console.log("connect success: ", frame);
+          this.stompClient.subscribe(
+            "/user/topic/face-1.3/client/faceLibImportTaskProgress",
+            greeting => {
+              this.handleSubscribe(JSON.parse(greeting.body));
+            }
+          );
+        },
+        err => {
+          console.log("error, errMsg: ", err);
+        }
+      );
+      /* eslint-enable */
+    },
+    disConnectSocket() {
+      if (this.stompClient != null) {
+        this.stompClient.disconnect();
+        console.log("Disconnected");
+      }
+    },
+    handleSubscribe(data) {
+      if (!data) {
+        return;
+      }
+      this.importProgress = data.importProgress;
+    },
+    setIntervalMethod() {
+      if (this.importProgress < 100) {
+        this.interval = setInterval(() => {
+          this.getStaffLibList(true);
+        }, 3000);
+      }
     }
   },
   mounted() {
@@ -855,14 +855,15 @@ export default {
     } else {
       // this.getStaffLibList(true);
     }
-    this.getStaffLibList(true);
-    // this.conSocket(); // 建立socket
+    this.getStaffLibList();
+    this.setIntervalMethod();
+    this.connectSocket(); // 建立socket
   },
   deactivated() {
-    if (this.ws) {
-      this.ws.close();
-      this.ws = "";
+    if (this.interval) {
+      clearInterval(this.interval);
     }
+    this.disConnectSocket();
   },
   destroyed() {
     // alert('destroyed')
