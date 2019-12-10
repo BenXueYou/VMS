@@ -62,15 +62,14 @@ export default {
   },
   mounted() {
     console.log(this.$route);
-    if (
-      this.$route.fullPath.indexOf("/DoorControl") !== -1
-    ) {
+    if (this.$route.fullPath.indexOf("/DoorControl") !== -1) {
       this.doorRoute = this.$route.fullPath;
     }
-    if (
-      this.$route.fullPath.indexOf("/VistorMange") !== -1
-    ) {
+    if (this.$route.fullPath.indexOf("/VistorMange") !== -1) {
       this.vistorRoute = this.$route.fullPath;
+    }
+    if (this.$route.fullPath.indexOf("/FaceHome") !== -1) {
+      this.faceRoute = this.$route.fullPath;
     }
     if (this.$route.fullPath.indexOf("/log") !== -1) {
       this.logRoute = this.$route.fullPath;
@@ -95,6 +94,9 @@ export default {
       if (newVal === "/log") {
         this.$router.push(this.logRoute);
       }
+      if (newVal === "/FaceManage") {
+        this.$router.push(this.faceRoute);
+      }
       // 恢复门禁控制的上一次的操作路径
       if (newVal.indexOf("/DoorControl") !== -1) {
         this.doorRoute = newVal;
@@ -105,6 +107,9 @@ export default {
       // 恢复访客管理的上一次的操作路径
       if (newVal.toLocaleLowerCase().indexOf("/vistormange") !== -1) {
         this.vistorRoute = newVal;
+      }
+      if (newVal.indexOf("/FaceManage") !== -1) {
+        this.faceRoute = newVal;
       }
       if (newVal.indexOf("/FaceManage") !== -1) {
         this.faceRoute = newVal;

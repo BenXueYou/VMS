@@ -501,7 +501,7 @@ export default {
       // 这里做个判断，判断streamType是否为空，为空则判断是不是第一个播放，是则主码流，不是则辅码流
       if (streamType === "") {
         let flag = !!this.videoArr.filter(item => {
-          return item.rtspUrl !== "";
+          return item.rtspUrl !== "" && item.streamType === "main";
         }).length;
         streamType = flag ? "sub" : "main";
       }
