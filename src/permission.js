@@ -19,7 +19,7 @@ router.beforeEach((to, from, next) => {
   // eslint-disable-next-line no-constant-condition
   if (
     store.state.home.Authorization &&
-    store.state.home.Authorization.substr(0, 5) !== "Basic" && 
+    store.state.home.Authorization.substr(0, 5) !== "Basic" &&
     !!sessionStorage.getItem("Authorization")
   ) {
     // 判断是否有token 目前先置为 true !!!!
@@ -29,15 +29,15 @@ router.beforeEach((to, from, next) => {
       // NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
     } else {
       // 判断改账户是否选择了项目
-        if (to.path === '/projectManage') {
-          console.log("projectUuid===", store.state.home.projectUuid);
-          next();
-          // return;
-        }
+      if (to.path === '/projectManage') {
+        console.log("projectUuid===", store.state.home.projectUuid);
+        next();
+        // return;
+      }
       if (!isInitRoute && to.path !== '/projectManage') {
-        if(sessionStorage.getItem("projectUuid")!=""){
+        if (sessionStorage.getItem("projectUuid") !== "") {
           isInitRoute = true;
-           // 这里根据项目的uuid去请求用户的权限菜单
+          // 这里根据项目的uuid去请求用户的权限菜单
           api
             .getHomeMenu({
               accountUuid: window.localStorage.getItem("useruuid").trim()
@@ -63,7 +63,7 @@ router.beforeEach((to, from, next) => {
               );
               router.addRoutes(routerData);
             });
-          }
+        }
       }
 
       /* console.log("topath : ", to.path);

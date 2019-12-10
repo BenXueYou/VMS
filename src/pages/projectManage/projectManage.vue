@@ -24,15 +24,14 @@ export default {
     };
   },
   activated() {
-
     // console.log(this.$store.state.home.projectList);
     this.$nextTick(() => {
       // alert(1);
       // this.data = this.$store.state.home.projectList;
       this.data = this.$store.state.home.projectList;
       console.log(this.data);
-      if(!this.data||!this.data.length){
-        this.data=JSON.parse(localStorage.projectList);
+      if (!this.data || !this.data.length) {
+        this.data = JSON.parse(localStorage.projectList);
       }
     });
   },
