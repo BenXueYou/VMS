@@ -214,7 +214,7 @@ export default {
       rules: {
         nickName: [
           { required: true, message: "请输入设备名称", trigger: "blur" },
-          { min: 1, max: 32, message: "长度在 4 到 32 个字符", trigger: "blur" }
+          { min: 4, max: 32, message: "长度在 4 到 32 个字符", trigger: "blur" }
         ],
         belongServiceUuid: [
           { required: true, message: "请选择设备子服务", trigger: "blur" }
@@ -229,22 +229,23 @@ export default {
           }
         ],
         deviceIp: [
-          { required: false, message: "请填写设备ip", trigger: "blur" }
+          { required: true, message: "请填写设备ip", trigger: "blur" },
+          { min: 1, max: 32, message: "长度在 1 到 32 个字符", trigger: "blur" }
         ],
         devicePort: [
-          { required: false, message: "请填写设备端口", trigger: "blur" }
+          { required: true, message: "请填写设备端口", trigger: "blur" }
         ],
         deviceUsername: [
-          { required: false, message: "请填写用户名", trigger: "blur" }
+          { required: true, message: "请输入设备名称", trigger: "blur" }
         ],
         devicePassword: [
-          { required: false, message: "请填写密码", trigger: "blur" }
+          { required: true, message: "请填写密码", trigger: "blur" }
         ],
         deviceType: [
-          { required: false, message: "请填写设备类型", trigger: "blur" }
+          { required: true, message: "请填写设备类型", trigger: "blur" }
         ],
         orgUuid: [
-          { required: false, message: "请选择选择架构", trigger: "change" }
+          { required: true, message: "请选择选择架构", trigger: "change" }
         ],
         infrastructureUuid: [
           { required: false, message: "请选择楼栋房屋", trigger: "change" }
@@ -355,6 +356,7 @@ export default {
           return v.belongServiceUuid === uuid;
         })[0].belongServiceName;
       };
+
       let data = {
         belongServiceName: getServiceNameByUuid(
           this.ruleForm.belongServiceUuid
@@ -424,7 +426,7 @@ export default {
 
         this.houseName = this.row.infrastructureName;
         this.houseUuid = this.row.infrastructureUuid;
-        console.log(this.doorData);
+        console.log(this.ruleForm);
         this.$nextTick(() => {
           this.$refs.scroll.initBar();
         });

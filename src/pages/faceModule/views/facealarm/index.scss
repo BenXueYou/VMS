@@ -1,0 +1,127 @@
+@mixin basicfont {
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #fff;
+}
+
+@mixin basicfont2 {
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #ccc;
+}
+
+@mixin info {
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #aaaaaa;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.switchBtn {
+  overflow: hidden;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 43px;
+  text-align: left;
+  font-size: 0px;
+  line-height: 43px;
+
+  .imagebtn {
+    display: inline-block;
+    width: 100px;
+    line-height: 40px;
+    background: rgb(45, 47, 50);
+    border: 1px solid rgba(136, 136, 136, 0.6);
+    text-align: center;
+    box-sizing: border-box;
+    cursor: pointer;
+    @include info;
+  }
+
+  .active {
+    background: rgb(37, 56, 54);
+    border: 1px solid rgba(40, 255, 187, 0.6);
+  }
+}
+.faceAlarmBg {
+  width: 100%;
+  height: 100%;
+  background: rgb(27, 28, 31);
+  padding: 40px 30px 40px 30px;
+  box-sizing: border-box;
+  .facealarm {
+    width: 100%;
+    height: 100%;
+    background: #202326;
+    // padding: 40px 30px 40px 30px;
+    box-sizing: border-box;
+    text-align: left;
+    .facealarm-table {
+      width: 100%;
+      padding: 0 30px 20px;
+      box-sizing: border-box;
+      background-color: rgb(32, 35, 38);
+      overflow: auto;
+      height: calc(100% - 124px);
+    }
+
+    .facealarm-header {
+      //   width: 1700px;
+      width: 100%;
+      height: 160px;
+      background-color: rgb(32, 35, 38);
+      padding: 30px;
+      box-sizing: border-box;
+
+      .header-line {
+        height: 40px;
+        width: 100%;
+        overflow: hidden;
+
+        &:not(&:first-child) {
+          margin-bottom: 20px;
+        }
+
+        .header-line-label {
+          text-align: right;
+          display: inline-block;
+          // min-width: 40px;
+          @include basicfont2;
+        }
+
+        .header-line-input {
+          display: inline-block;
+          width: 8%;
+          max-width: 200px;
+          // margin-right: 30px;
+        }
+
+        .addwidth {
+          width: 220px;
+        }
+
+        .header-line-time-label {
+          text-align: center;
+          display: inline-block;
+          width: 20px;
+          @include basicfont2;
+        }
+
+        .header-line-time {
+          display: inline-block;
+          width: 14%;
+        }
+
+        .search {
+          float: right;
+          span {
+            @include basicfont;
+          }
+        }
+      }
+    }
+  }
+}

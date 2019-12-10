@@ -9,8 +9,10 @@ import logAPi from "@/utils/restApi/logAPi";
 import userUrl from "@/utils/restApi/user";
 import pmUrl from "@/utils/restApi/permission";
 import vistorManageApi from "@/utils/restApi/vistorManageApi";
-import store from "@/store/store.js";
+import faceModuleAPi from "@/utils/restApi/faceModuleAPi";
+import videoUrl from "@/utils/restApi/video";
 import axios from "@/utils/Request";
+import store from '@/store/store.js';
 export default {
   api: {
     /**
@@ -20,14 +22,14 @@ export default {
       window.config.protocolHeader +
       window.config.ip +
       `/fileforward-server-v1/project/${
-        store.state.home.projectUuid
+      store.state.home.projectUuid
       }/fileforward/fileByUrl?fileUrl=`,
     imageHeadUrl(param) {
       let url =
         window.config.protocolHeader +
         window.config.ip +
         `/fileforward-server-v1/project/${
-          store.state.home.projectUuid
+        store.state.home.projectUuid
         }/fileforward/fileByUrl?fileUrl=${param}`;
       //  let api = 'http://192.168.9.44:15000/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=http://192.168.9.44:9333/11,02821297cc4772.jpeg';
       function getData() {
@@ -57,8 +59,8 @@ export default {
     login: {
       login: `oauth-v1/authentication/iac`,
       setLogUuid: `sysLog-v1/project/${store.state.home.projectUuid}/log`,
-      setLogUuidByNoPrjectUuid: (projectUuid)=>`sysLog-v1/project/${projectUuid}/log`,
-      loginOutApi:`oauth-v1/exit`
+      setLogUuidByNoPrjectUuid: (projectUuid) => `sysLog-v1/project/${projectUuid}/log`,
+      loginOutApi: `oauth-v1/exit`
     },
 
     /**
@@ -69,123 +71,123 @@ export default {
       // 互锁
       getInterlockingApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/interlock`,
+        }/interlock`,
       getInterlockDetailApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/interlock/`,
+        }/interlock/`,
       postInterlockApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/interlockingGroup/interlockingGroup`,
+        }/advancedConf/interlockingGroup/interlockingGroup`,
       putInterlockApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/interlockingGroup/interlockingGroup/`,
+        }/advancedConf/interlockingGroup/interlockingGroup/`,
       deleteInterlockApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/interlockingGroup/interlockingGroup/`,
+        }/advancedConf/interlockingGroup/interlockingGroup/`,
       operatorInterlockApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/interlockingGroup/interlockingGroup/`,
+        }/advancedConf/interlockingGroup/interlockingGroup/`,
       // 反潜回
       getAntiBackApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/antisubmarine`,
+        }/antisubmarine`,
       getAntiBackDetailApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/antisubmarine/`,
+        }/antisubmarine/`,
       postAntiBackApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/antisubmarineGroup/antisubmarineGroup`,
+        }/advancedConf/antisubmarineGroup/antisubmarineGroup`,
       putAntiBackApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/antisubmarineGroup/antisubmarineGroup/`,
+        }/advancedConf/antisubmarineGroup/antisubmarineGroup/`,
       deleteAntiBackApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/antisubmarineGroup/antisubmarineGroup/`,
+        }/advancedConf/antisubmarineGroup/antisubmarineGroup/`,
       operaAntiBackApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/antisubmarineGroup/antisubmarineGroup/`,
+        }/advancedConf/antisubmarineGroup/antisubmarineGroup/`,
       // 首卡
       getFirstCardApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/firstcard`,
+        }/firstcard`,
       getFirstCardDetailApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/firstcard/`,
+        }/firstcard/`,
       postFirstCardApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/firstCardDoorOpen/firstCardDoorOpen`,
+        }/advancedConf/firstCardDoorOpen/firstCardDoorOpen`,
       putFirstCardApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/firstCardDoorOpen/firstCardDoorOpen/`,
+        }/advancedConf/firstCardDoorOpen/firstCardDoorOpen/`,
       deleteFirstCardApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/firstCardDoorOpen/firstCardDoorOpen/`,
+        }/advancedConf/firstCardDoorOpen/firstCardDoorOpen/`,
       operaFirstCardApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/firstCardDoorOpen/firstCardDoorOpen/`,
+        }/advancedConf/firstCardDoorOpen/firstCardDoorOpen/`,
       // 联动
       getLinkageActApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/linkageInfo`,
+        }/linkageInfo`,
       getLinkageActDetailApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/linkageInfo/`,
+        }/linkageInfo/`,
       postLinkageActApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/linkageInfo/linkageInfo`,
+        }/advancedConf/linkageInfo/linkageInfo`,
       putLinkageActApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/linkageInfo/linkageInfo/`,
+        }/advancedConf/linkageInfo/linkageInfo/`,
       deleteLinkageActApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/linkageInfo/linkageInfo/`,
+        }/advancedConf/linkageInfo/linkageInfo/`,
       // 组合
       getManMakeUpApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/staffgroup`,
+        }/staffgroup`,
       getManMakeUpDetailApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/staffgroup/`,
+        }/staffgroup/`,
       postManMakeUpApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/combinationDoorOpen/combinationDoorOpen`,
+        }/advancedConf/combinationDoorOpen/combinationDoorOpen`,
       putManMakeUpApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/combinationDoorOpen/combinationDoorOpen/`,
+        }/advancedConf/combinationDoorOpen/combinationDoorOpen/`,
       deleteManMakeUpApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/combinationDoorOpen/combinationDoorOpen/`,
+        }/advancedConf/combinationDoorOpen/combinationDoorOpen/`,
       // 多方式验证
       WayMakeUpApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/checkCombinationDoorOpen/channelInfo/`,
+        }/advancedConf/checkCombinationDoorOpen/channelInfo/`,
       // 发布公告
       getPublicMessageListApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/notice`,
+        }/notice`,
       getPublicMessageApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/notice/`,
+        }/notice/`,
       postPublicMessageApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/notice/notice`,
+        }/advancedConf/notice/notice`,
       deletePublicMessageApi: `/iacconfig-v1/project/${
         store.state.home.projectUuid
-      }/advancedConf/notice/notice/`,
+        }/advancedConf/notice/notice/`,
 
       // 获取组织设备树下设备连接的读头（该读头关联门的开关状态）
       getDeviceReadingHeadApi: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/deviceReadHeadList/`,
+        }/deviceReadHeadList/`,
 
       // 获取基建树下的门的读头 （该读头关联门的进出方向）
       getDoorReadingHeadApi: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure/`,
+        }/infrastructure/`,
       getDeviceDoorVO(deviceUuid) {
         return `/basedata-v1/project/${
           store.state.home.projectUuid
-        }/device/${deviceUuid}/linkageChannelList`;
+          }/device/${deviceUuid}/linkageChannelList`;
       }
     },
 
@@ -195,73 +197,73 @@ export default {
     residentManage: {
       getResidentListApi: `/sppc-iacapp-service-v1/project/${
         store.state.home.projectUuid
-      }/sysStaff/info/list`,
+        }/sysStaff/info/list`,
       postResidentApi: `/sppc-iacapp-service-v1/project/${
         store.state.home.projectUuid
-      }/sysStaff/info`,
+        }/sysStaff/info`,
       putResidentApi: `/sppc-iacapp-service-v1/project/${
         store.state.home.projectUuid
-      }/sysStaff/info`,
+        }/sysStaff/info`,
       deleteResidentApi: `/sppc-iacapp-service-v1/project/${
         store.state.home.projectUuid
-      }/sysStaff/info/`,
+        }/sysStaff/info/`,
       getResidentDetailApi: `/sppc-iacapp-service-v1/project/${
         store.state.home.projectUuid
-      }/sysStaff/info/`,
+        }/sysStaff/info/`,
       getResidentTreeDataApi: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/areaStruct`, //初始化居民组织
+        }/areaStruct`, //初始化居民组织
 
       getResidentTreeSubDataApi: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure/house`, //点击树节点获取子节点
+        }/infrastructure/house`, //点击树节点获取子节点
       getResidentLeftMenuSubDataApi: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure/`, // 居民管理左侧菜单点击获取子节点
+        }/infrastructure/`, // 居民管理左侧菜单点击获取子节点
       getResidentTreeNodeDataApi: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructureList/`,
+        }/infrastructureList/`,
       getDoorAccessAuthListApi: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/permission/list`,
+        }/permission/list`,
       getResidentTreeStaffNodeApi: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure/staff`,
+        }/infrastructure/staff`,
       getResidentTagDetailApi: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/tagElement/channelList`,
+        }/tagElement/channelList`,
       addElementToTag: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/tagElement/add`,
+        }/tagElement/add`,
       putElementToTag: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/tag/element`,
+        }/tag/element`,
       deleteElementFromTag: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/tagElement/del`,
+        }/tagElement/del`,
       getResidentFromDevice: `/iacserv-v1/project/${
         store.state.home.projectUuid
-      }/personManage/deviceUploadPerson/deviceUploadPerson`,
+        }/personManage/deviceUploadPerson/deviceUploadPerson`,
 
       // 获取身份证信息
       getIcdIdCardApi: `${
         window.config.protocolHeader
-      }${hostname}:${port}/${version}/icd/idcard`,
+        }${hostname}:${port}/${version}/icd/idcard`,
 
       // 获取单元(楼栋)基建下的层与房屋展开信息
       getFloorAndHouse: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure/`,
+        }/infrastructure/`,
 
       // 统计居民管理信息 /project/{store.state.home.projectUuid}/staff/statistics/resident
       getResidentStaticData: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/staff/statistics/resident`,
+        }/staff/statistics/resident`,
 
       // 居民标签概要详情 /project/{store.state.home.projectUuid}/Resident/tagElement/tag/{tagUuid}
       getResidentTagBriefDetail: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/tag/`
+        }/tag/`
     },
 
     /**
@@ -270,24 +272,24 @@ export default {
     recordSearch: {
       getDoorLog: `/iaclog-v1/project/${
         store.state.home.projectUuid
-      }/ioclog/info/list`,
+        }/ioclog/info/list`,
       getAlarmLog: `/alarmlog-v1/project/${store.state.home.projectUuid}/alarm`,
       getChannelStatusList: `/iaclog-v1/project/${
         store.state.home.projectUuid
-      }/channelStatus`,
+        }/channelStatus`,
       getOrgDevTree: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/organization/children`,
+        }/organization/children`,
       handleDoorStatus: (channelUuid, action) =>
         `/iacserv-v1/operation/operation/opendoor/channel/${channelUuid}/action/${action}`,
       getStatistics: `/iacapp-v1/project/${
         store.state.home.projectUuid
-      }/door/statistics`,
+        }/door/statistics`,
       removeAlarm: channelUuid =>
         `/iacserv-v1/operation/operation/removeAlarm/channel/${channelUuid}`,
       allOperation: `/iacserv-v1/operation/project/${
         store.state.home.projectUuid
-      }/device/toMgr`
+        }/device/toMgr`
     },
 
     /**
@@ -297,58 +299,58 @@ export default {
       initArea: `/basedata-v1/project/${store.state.home.projectUuid}/initArea`,
       getAreaStruct: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/areaStruct`,
+        }/areaStruct`,
       getInfrastructure: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure`,
+        }/infrastructure`,
       getInfrastructureToHouse: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure/house`,
+        }/infrastructure/house`,
       getInfrastructureToUnit: infrastructureUuid =>
         `/basedata-v1/project/${
-          store.state.home.projectUuid
+        store.state.home.projectUuid
         }/infrastructure/${infrastructureUuid}/unit`,
       getInfrastructureToDevice(infrastructureUuid) {
         return `/basedata-v1/project/${
           store.state.home.projectUuid
-        }/infrastructure/${infrastructureUuid}/device`;
+          }/infrastructure/${infrastructureUuid}/device`;
       },
       addInfrastructure: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure`,
+        }/infrastructure`,
       editInfrastructureName(infrastructureUuid) {
         return `/basedata-v1/project/${
           store.state.home.projectUuid
-        }/infrastructure/${infrastructureUuid}`;
+          }/infrastructure/${infrastructureUuid}`;
       },
       deleteInfrastructure(infrastructureUuid) {
         return `/basedata-v1/project/${
           store.state.home.projectUuid
-        }/infrastructure/${infrastructureUuid}`;
+          }/infrastructure/${infrastructureUuid}`;
       },
       moveInfrastructure: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure/move`,
+        }/infrastructure/move`,
       getHouseList(infrastructureUuid) {
         return `/basedata-v1/project/${
           store.state.home.projectUuid
-        }/infrastructure/${infrastructureUuid}/house`;
+          }/infrastructure/${infrastructureUuid}/house`;
       },
       addHouse(infrastructureUuid) {
         return `/basedata-v1/project/${
           store.state.home.projectUuid
-        }/infrastructure/${infrastructureUuid}/house`;
+          }/infrastructure/${infrastructureUuid}/house`;
       },
       addUnit: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure/unit`,
+        }/infrastructure/unit`,
       deleteHouse: `/basedata-v1/project/${
         store.state.home.projectUuid
-      }/infrastructure`,
+        }/infrastructure`,
       copyInfrastructure(infrastructureUuid) {
         return `/basedata-v1/project/${
           store.state.home.projectUuid
-        }/infrastructure/${infrastructureUuid}`;
+          }/infrastructure/${infrastructureUuid}`;
       }
     },
 
@@ -358,20 +360,26 @@ export default {
     unitMange: {
       getAllUnits: `/basedata-v1/${
         store.state.home.projectUuid
-      }/units/allUnits`,
+        }/units/allUnits`,
       delUnits: `/basedata-v1/${store.state.home.projectUuid}/units/delUnits`,
       addUnits: `/basedata-v1/${store.state.home.projectUuid}/units/addUnits`,
       updateUnits: `/basedata-v1/${
         store.state.home.projectUuid
-      }/units/updateUnits`,
+        }/units/updateUnits`,
       selPeople: `/basedata-v1/${store.state.home.projectUuid}/units/selPeople`
     },
     sbUrl,
     userUrl,
     pmUrl,
     logAPi,
+    videoUrl,
+    // 访客管理
     vistorManageApi,
     //人脸图片质量检测
-    faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`
+    faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`,
+    /**
+   * 人脸模块（fengyw）
+   */
+    faceModuleAPi,
   }
 };

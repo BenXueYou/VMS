@@ -117,7 +117,9 @@ export default {
 			nodeArr: [] // 用来存储被选中的节点数据
 		};
 	},
-	mounted() {},
+	mounted() {
+		console.log(this.initData);
+	},
 	watch: {
 		filterText(val) {
 			this.$refs["roomTree"].filter(val);
@@ -136,6 +138,8 @@ export default {
 			}
 		},
 		initData(val) {
+			console.log("00000000000000000000000000");
+			console.log(val);
 			if (val && val.length) {
 				this.defaultExpandedKeys = [];
 				this.checkedNodeName = "";
@@ -269,12 +273,6 @@ export default {
 			}
 			this.checkedNodeName = this.houseName;
 			if (this.checkedNodes.length === 0) {
-				console.log(
-					"this.house==",
-					this.houseName,
-					"this.nodeArr===",
-					this.nodeArr
-				);
 				this.nodeArr = [];
 			}
 		}

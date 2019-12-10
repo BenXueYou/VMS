@@ -223,7 +223,11 @@ export default {
             // if (!this.tagUuid) {
             // this.tagUuid = result[0].tagUuid;
             // this.commit("tagUuid",result[0].tagUuid);
-            // alert(1);
+            if (!result[0]) {
+              this.data2 = result;
+              return;
+            }
+
             // 新增节点之后，不会去刷新右边第一个节点的列表
             if (!uuid) {
               this.$store.commit("setTagUuid", result[0].tagUuid);
@@ -470,19 +474,19 @@ export default {
       downData,
       upData
     }) {
-      // console.log({
-      //   index,
-      //   version,
-      //   rankOrder,
-      //   orgUuid,
-      //   sliblings,
-      //   isLastOne,
-      //   node,
-      //   value,
-      //   e,
-      //   downData,
-      //   upData
-      // });
+      console.log({
+        index,
+        version,
+        rankOrder,
+        orgUuid,
+        sliblings,
+        isLastOne,
+        node,
+        value,
+        e,
+        downData,
+        upData
+      });
 
       // console.log(downData);
       // console.log(upData);
@@ -640,8 +644,18 @@ export default {
       return maxSn;
     },
     addchildren(name, node) {
-      // console.log(this.options);
+      console.log(this.options);
+      console.log(name, node);
+      for (let i = 0; i < this.options.length; i++) {
+        if (this.options[i].id === node) {
+          this.Treeparent =
+            this.Treeparent.substr(0, this.Treeparent.length - 1) + i;
+        }
+      }
+
+      console.log(this.Treeparent);
       // console.log(this.getMaxOrgSn());
+      // this.parentOrgUuid = node;
       let data = {
         orgName: name,
         // orgSn: this.getMaxOrgSn(),
@@ -651,7 +665,7 @@ export default {
       api.addOrgTree(data).then(res => {
         if (res.data.success) {
           // 添加子结点成功之后，展开添加的节点
-          this.getChidrendata(this.orgUuid, true, this.Treeparent);
+          this.getChidrendata(node, true, this.Treeparent);
           // this.getOrgTree();
         }
       });

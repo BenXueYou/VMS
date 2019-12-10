@@ -12,14 +12,12 @@ const playerStatePlaying        = 1;
 const playerStatePausing        = 2;
 */
 
-function Player(width, height) {
+function Player() {
     this.canvas             = null;
     this.webglPlayer        = null;
     this.callback           = null;
     this.pixFmt             = 0;
 	this.duration			= 0;
-    this.videoWidth         = width;
-    this.videoHeight        = height;
     this.yLength            = 0;
     this.uvLength           = 0;
     this.videoQueue         = [];
@@ -38,7 +36,7 @@ Player.prototype.setCanvas = function (canvas) {
 
 Player.prototype.initDecodeWorker = function () {
     var self = this;
-    this.decodeWorker = new Worker("./static/video/decoder/decoder.js");
+    this.decodeWorker = new Worker("./decoder/decoder.js");
     this.decodeWorker.onmessage = function (evt) {
         var objData = evt.data;
         switch (objData.t) {
@@ -57,14 +55,8 @@ Player.prototype.initDecodeWorker = function () {
         }
     }
     
-    
-    var width = this.videoWidth;
-    var height = this.videoHeight;
-    this.logger.logInfo("this.videoWidth: " + this.videoWidth + " this.videoWidth: " + this.videoWidth + ".");
 	var req = {
-		t: kSetWidthAndHeight,
-		w: width,
-		h: height
+		t: kSetPlayInit,
 	};
     this.decodeWorker.postMessage(req);
     
@@ -98,7 +90,7 @@ Player.prototype.h264AVFrmaeData = function(data, size) {
 Player.prototype.onOpenDecoder = function (objData) {
     //this.logger.logInfo("Open decoder response " + objData.e + ".");
     if (objData.e == 0) {
-        this.onVideoParam(objData.v);
+        //this.onVideoParam(objData.v);
         this.logger.logInfo("Decoder ready now.");
     }
 };
@@ -116,35 +108,19 @@ Player.prototype.onVideoFrame = function (frame) {
 	this.displayVideoFrame(frame);
 };
 
-Player.prototype.onVideoParam = function (v) {
-    //this.logger.logInfo("Video param duation:" + v.d + " pixFmt:" + v.p + " width:" + v.w + " height:" + v.h + ".");
-    //this.duration = v.d;
-    //this.pixFmt = v.p;
-    //this.canvas.width = v.w;
-    //this.canvas.height = v.h;
-    //this.videoWidth = v.w;
-    //this.videoHeight = v.h;
-    this.yLength = this.videoWidth * this.videoHeight;
-    this.logger.logInfo("this.videoWidth: " + this.videoWidth + " this.videoHeight: " + this.videoHeight + ".");
-    this.uvLength = (this.videoWidth / 2) * (this.videoHeight / 2);
-    //this.logger.logInfo("Byte rate:" + byteRate + " target speed:" + targetSpeed + " chunk interval:" + this.chunkInterval + ".");
-};
 
 Player.prototype.displayVideoFrame = function (frame) {
     var data = new Uint8Array(frame.d);
-    this.renderVideoFrame(data);
+    this.renderVideoFrame(data, frame.w, frame.h);
 };
 
-Player.prototype.renderVideoFrame = function (data) {
-	//this.videoWidth = 1920;
-    //this.videoHeight = 1080;
-	//this.videoWidth = 2560;
-    //this.videoHeight = 1440;
-    this.yLength = this.videoWidth * this.videoHeight;
-    this.uvLength = (this.videoWidth / 2) * (this.videoHeight / 2);
-    this.logger.logInfo("this.videoWidth: " + this.videoWidth + " this.videoHeight: " + this.videoHeight + ".");
-    this.webglPlayer.renderFrame(data, this.videoWidth, this.videoHeight, this.yLength, this.uvLength);
+Player.prototype.renderVideoFrame = function (data, width, height) {
+//    this.logger.logInfo("display width: " + width + " height: " + height + ".");
+    this.yLength = width * height;
+    this.uvLength = (width / 2) * (height / 2);
+    this.webglPlayer.renderFrame(data, width, height, this.yLength, this.uvLength);
 };
+
 
 Player.prototype.formatTime = function (s) {
     var h = Math.floor(s / 3600) < 10 ? '0' + Math.floor(s / 3600) : Math.floor(s / 3600);

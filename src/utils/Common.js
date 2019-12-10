@@ -1,6 +1,268 @@
 import store from "@/store/store.js";
+import { callbackify } from "util";
 export var COMMON = {
+  // 校验手机号格式
+  isPhoneNum(PhoneNum) {
+    let prep = /^1[3456789]\d{9}$/;
+    return prep.test(PhoneNum);
+  },
 
+  //校验身份证号
+  isCredentialNo(value) {
+
+    var num = value.toUpperCase();
+    // 身份证号码为15位或者18位，15位时全为数字，18位前17位为数字，最后一位是校验位，可能为数字或字符X。
+    var reg = /^(\d{18,18}|\d{15,15}|\d{17,17}X)$/;
+    if (!reg.test(num)) {
+      return false;
+    }
+    // 校验位按照ISO 7064:1983.MOD 11-2的规定生成，X可以认为是数字10。
+    // 下面分别分析出生日期和校验位
+    var len, re;
+    len = num.length;
+    if (len == 15) {
+      re = new RegExp(
+        /^(\d{6})(\d{2})(\d{2})(\d{2})(\d{3})$/);
+      var arrSplit = num.match(re);
+      // 检查生日日期是否正确
+      var dtmBirth = new Date('19' + arrSplit[2] +
+        '/' + arrSplit[3] + '/' + arrSplit[4]);
+      var bGoodDay;
+      bGoodDay = (dtmBirth.getYear() == Number(arrSplit[2])) &&
+        ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) &&
+        (dtmBirth.getDate() == Number(arrSplit[4]));
+      if (!bGoodDay) {
+        return false;
+      }
+    }
+    if (len == 18) {
+      re = new RegExp(/^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X)$/);
+      var arrSplit = num.match(re);
+      // 检查生日日期是否正确
+      var dtmBirth = new Date(arrSplit[2] + "/" +
+        arrSplit[3] + "/" + arrSplit[4]);
+      var bGoodDay;
+      bGoodDay = (dtmBirth.getFullYear() == Number(arrSplit[2])) &&
+        ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) &&
+        (dtmBirth.getDate() == Number(arrSplit[4]));
+      if (!bGoodDay) {
+        return false;
+      } else {
+        // 检验18位身份证的校验码是否正确。
+        // 校验位按照ISO 7064:1983.MOD
+        // 11-2的规定生成，X可以认为是数字10。
+        var valnum;
+        var arrInt = new Array(7, 9, 10, 5, 8, 4,
+          2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
+        var arrCh = new Array('1', '0', 'X', '9',
+          '8', '7', '6', '5', '4', '3', '2');
+        var nTemp = 0,
+          i;
+        for (var i = 0; i < 17; i++) {
+          nTemp += num.substr(i, 1) * arrInt[i];
+        }
+        valnum = arrCh[nTemp % 11];
+        if (valnum != num.substr(17, 1)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  },
+  exportImageAct(dialogPanoramaImgUrl, itemData) {
+    if (!!window.ActiveXObject || "ActiveXObject" in window) {
+      this.aLinkDownload(dialogPanoramaImgUrl, itemData); // IE浏览器
+    } else if (navigator.userAgent.indexOf("Firefox") !== -1) {
+      this.imageCanvasAlink(dialogPanoramaImgUrl, itemData); // 火狐浏览器
+    } else if (navigator.userAgent.indexOf("Chrome") !== -1) {
+      this.fileUrlDownload(dialogPanoramaImgUrl, itemData); // Chrome内核浏览器
+    } else {
+      this.aLinkDownload(dialogPanoramaImgUrl, itemData);
+    }
+  },
+  // 下载图片的几种方式
+  // 接口返回文件流 chrome 浏览器会识别不了类型
+  aLinkDownload(url, itemData) {
+    url = this.setPictureShow(url, window.config.PicSourceType);
+    console.log(url);
+    var a = document.createElement("a");
+    let event = new MouseEvent("click");
+    a.href = url;
+    if (itemData && itemData.staffName) {
+      a.download = itemData.staffName + ".jpg";
+    } else {
+      a.download = "down_load.jpg";
+    }
+    // a.click();火狐浏览器不触发
+    a.dispatchEvent(event);
+  },
+  // 下载文件流的方式 火狐浏览器会默认XML格式，无法定义文件类型
+  fileUrlDownload(url, itemData) {
+    url = this.setPictureShow(url, window.config.PicSourceType);
+    console.log(url, itemData);
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = "blob"; // 返回类型blob
+    xhr.onload = function () {
+      // 定义请求完成的处理函数
+      if (this.status === 200) {
+        var blob = this.response;
+        var reader = new FileReader();
+        reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签href
+        reader.onload = function (e) {
+          var str = e.target.result;
+          var type = str.substring(str.indexOf("/") + 1, str.indexOf(";"));
+          var a = document.createElement("a"); // 转换完成，创建一个a标签用于下载
+          let event = new MouseEvent("click");
+          if (itemData && itemData.staffName) {
+            a.download = itemData.staffName + "." + type;
+          } else {
+            a.download = "down_load.jpg";
+          }
+          a.href = e.target.result;
+          a.dispatchEvent(event);
+        };
+      } else if (this.status === 504) {
+        alert("导出失败，请求超时");
+      } else {
+        alert("导出失败");
+      }
+    };
+    xhr.open("get", url, true);
+    xhr.setRequestHeader(
+      "Accept",
+      "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
+    );
+    xhr.send();
+  },
+  // 通过canvas转换
+  imageCanvasAlink(src, itemData) {
+    src = this.setPictureShow(src, window.config.PicSourceType);
+    console.log(src);
+    // 通过Images对象
+    let image = new Image();
+    image.setAttribute("crossOrigin", "anonymous");
+    image.onload = function (e) {
+      let canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      let context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, image.width, image.height);
+      // window.navigator.msSaveBlob(canvas.msToBlob(), 'image.jpg');
+      let url = canvas.toDataURL("image/png");
+      let a = document.createElement("a");
+      let event = new MouseEvent("click");
+      if (itemData && itemData.staffName) {
+        a.download = itemData.staffInfo.staffName + ".jpg";
+      } else {
+        a.download = "down_load.jpg";
+      }
+      a.href = url;
+      // 触发a的单击事件
+      a.dispatchEvent(event);
+    };
+    // 获取img上的src值，赋值之后，完成之后会调用onload事件
+    image.src = src;
+  },
+  // 获取当前一小时前的时间
+  getBeforeTimeOneHour() {
+    var new111 = new Date();
+    var hours = new111.getHours();
+    if (hours > 1) {
+      return (
+        new111.getFullYear() +
+        "-" +
+        addZero(new111.getMonth() + 1) +
+        "-" +
+        addZero(new111.getDate()) +
+        " " +
+        addZero(hours - 1) +
+        ":" +
+        addZero(new111.getMinutes()) +
+        ":" +
+        addZero(new111.getSeconds())
+      );
+    } else {
+      return (
+        new111.getFullYear() +
+        "-" +
+        addZero(new111.getMonth() + 1) +
+        "-" +
+        addZero(new111.getDate()) +
+        " " +
+        "00:00:00"
+      );
+    }
+    function addZero(num) {
+      if (num < 10) return "0" + num;
+      return num;
+    }
+  },
+  /**
+   * image url 转 base64
+   * @param {imageUrl }  
+   */
+  imageToBase64(url, callback) {
+    url = window.config.protocolHeader +
+      window.config.ip +
+      `/fileforward-server-v1/project/${
+      store.state.home.projectUuid
+      }/fileforward/fileByUrl?asgName=${store.state.home.projectUuid}&fileUrl=` +
+      url;
+
+    let httpRequest = null;
+    if (window.XMLHttpRequest) {
+      // 除了IE外的其它浏览器
+      httpRequest = new XMLHttpRequest();
+    } else {
+      httpRequest = new ActiveXObject("MsXml2.XmlHttp");
+    }
+    httpRequest.responseType = "blob";
+    httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState === 4) {
+        if (httpRequest.status === 200) {
+          var value = this.response;
+          var reader = new window.FileReader();
+          reader.readAsDataURL(value);
+          reader.onloadend = function () {
+            var base64data = reader.result;
+            base64data = base64data
+              .replace("data:image/jpeg;base64,", "jpeg:")
+              .replace("data:image/png;base64,", "png:")
+              .replace("data:image/jpg;base64,", "jpg:");
+            callback(base64data);
+          };
+        } else {
+          callback();
+        }
+      }
+    };
+    httpRequest.open("GET", url, true);
+    httpRequest.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
+    httpRequest.send(null);
+    // this.getJSON(url).then(function (data) {
+    //   console.log(data);
+    // },
+    //   function (status) {
+    //     alert('Something went wrong.');
+    //     console.log(status);
+    //   })
+  },
+  getJSON(url) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', url, true);
+      xhr.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
+      xhr.onload = function () {
+        var status = xhr.status;
+        if (status == 200) {
+          resolve(xhr.response);
+        } else {
+          reject(status);
+        }
+      };
+      xhr.send();
+    });
+  },
   /**
    * 判断 object 的所有属性是不是全部为空
    */
@@ -188,10 +450,18 @@ export var COMMON = {
   },
 
   // 设置图片显示，若无则显示 默认图片
-  setPictureShow(imgUrl) {
+  setPictureShow(imgUrl, picType) {
     let imgUrlReturn;
     if (imgUrl == null || !imgUrl || imgUrl === "" || imgUrl === undefined) {
       imgUrlReturn = require("@/assets/images/user.png");
+    } else if (picType === 'facelog') {
+      imgUrlReturn =
+        window.config.protocolHeader +
+        window.config.ip +
+        `/fileforward-server-v1/project/${
+        store.state.home.projectUuid
+        }/fileforward/fileByUrl?asgName=${store.state.home.projectUuid}&fileUrl=` +
+        imgUrl;
     } else {
       imgUrlReturn =
         window.config.protocolHeader +
@@ -238,15 +508,6 @@ export var COMMON = {
 
   // 一维大数组，等分为多个二维数组
   getSubArrayFromArray(data, arrSize) {
-    // data = [3, 6, 4, 5, 6, 99, 55, 45, 33, 22, 90, 12, 54, 23, 33, 243, 2324, 12, 335, 23, 21, 22, 22];
-    // arrSize = 12;
-    // var dataArr = new Array(Math.ceil(data.length / arrSize));
-    // for (let i = 0; i < dataArr.length; i++) {
-    //   dataArr[i] = new Array();
-    // }
-    // for (let i = 0; i < data.length; i++) {
-    //   dataArr[parseInt(i / arrSize)][i % arrSize] = data[i];
-    // }
     let len = Math.ceil(data.length / arrSize);
     return [...Array(len).keys()].map((v, i) => {
       return data.slice(i * arrSize, (i + 1) * arrSize);
@@ -363,11 +624,14 @@ export var COMMON = {
 
     return data;
   },
-  funBuildFile(url, name) {
+  funBuildFile(url, name, method = "GET", data) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true); // 也可以使用POST方式，根据接口
+    xhr.open(method, url, true); // 也可以使用POST方式，根据接口
     xhr.setRequestHeader("Authorization", store.state.home.Authorization);
     xhr.responseType = "blob"; // 返回类型blob
+    if(method=='POST'){
+      xhr.setRequestHeader("Content-type","application/json");
+    }
     xhr.onload = function () {
       // 请求完成
       if (this.status == 200) {
@@ -385,7 +649,11 @@ export var COMMON = {
       }
     };
     // 发送ajax请求
-    xhr.send();
+    if (data) {
+      xhr.send(JSON.stringify(data));
+    } else {
+      xhr.send();
+    }
   },
   throttle(func, wait, options) {
     // options中的leading:false 表示禁用第一次执行
@@ -435,8 +703,24 @@ export var COMMON = {
     };
 
     return throttled;
+  },
+  /**
+   * 前端生成不重复的ID
+   */
+  genLocalId() {
+    let idStr = Date.now().toString(36);
+    idStr += Math.random().toString(36).substr(3);
+    return idStr;
+  },
+  downloadImage(src) {
+    const $a = document.createElement('a');
+    $a.setAttribute("href", src);
+    $a.setAttribute("download", "");
+
+    const event = new MouseEvent('click');
+    $a.dispatchEvent(event);
   }
-};
+}
 function install(Vue) {
   Vue.prototype.$common = COMMON;
 }

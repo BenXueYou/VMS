@@ -170,6 +170,8 @@ export default {
   },
   mounted() {
     this.formLabelAlign.username = this.$store.state.home.account;
+    window.addEventListener("beforeunload", e => this.browerStatus(e));
+    window.addEventListener("onunload", e => this.browerStatusOff(e));
     if (this.$store.state.home.projectUuid) {
       let index = window.location.href.lastIndexOf("/");
       let suffix = window.location.href.substring(0, index + 1);
@@ -177,6 +179,14 @@ export default {
     }
   },
   methods: {
+    browerStatus(e) {
+      e = window.event || e;
+      //   e.returnValue = "确定离开当前页面吗？";
+      console.log("---------------");
+    },
+    browerStatusOff() {
+      console.log("完善登出事件");
+    },
     login() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
@@ -255,6 +265,9 @@ export default {
             // let suffix = window.location.href.substring(0, index + 1);
             // window.location.href = suffix + "Home";
             window.location.reload();
+            // let index = window.location.href.lastIndexOf("/");
+            // let suffix = window.location.href.substring(0, index + 1);
+            // window.location.href = suffix + "Home";
           });
         }
       }
@@ -264,8 +277,6 @@ export default {
         window.config.protocolHeader +
         window.location.host +
         "/project/#/Login";
-      // window.location.href = "https://www.guangtuo.com/project/#/Login";
-      // window.open("http://192.168.6.191:8081/");
     }
   },
   watch: {},

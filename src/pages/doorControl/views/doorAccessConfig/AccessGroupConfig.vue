@@ -1,6 +1,6 @@
 <template>
   <div class="wrap adasjdka">
-    <gt-scroll class="left">
+    <div class="left">
       <div class="button_group">
         <el-button type="primary"
                    size="small"
@@ -25,7 +25,7 @@
                          width="100"
                          label="人员数量"></el-table-column>
       </el-table>
-    </gt-scroll>
+    </div>
     <div class="right"
          v-show="!powerDialogVisible">
       <div class="button_group">

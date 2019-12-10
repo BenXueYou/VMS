@@ -6,6 +6,8 @@ import MainLayout from "@/pages/main/views/MainLayout";
 import Home from "@/pages/home/views/Home";
 import projectManage from "@/pages/projectManage/projectManage";
 import VistorMangeSubRoute from "@/pages/vistorMange/VistorMange";
+import VideoPreview from "@/pages/VideoPreview/VideoPreview";
+import VideoPlayback from "@/pages/VideoPlayback/VideoPlayback";
 // 子系统系统路由
 import vistorManage from "./modules/vistorManage";
 import unitManage from "./modules/unitManage";
@@ -14,6 +16,7 @@ import personManage from "./modules/personManage";
 import equipmentManage from "./modules/equipmentManage";
 import doorAccess from "./modules/doorAccess";
 import buildingHouse from "./modules/buildingHouse";
+import faceModule from './modules/faceModule';
 import log from "./modules/log";
 import user from "./modules/auth";
 
@@ -102,6 +105,32 @@ let allChildrenRouter = [
     children: user.children,
     icon: "userManage",
     type: "app"
+  },
+  {
+    path: "/FaceManage",
+    name: "FaceManage",
+    component: faceModule.component,
+    title: "人脸识别",
+    children: faceModule.children,
+    icon: "FaceManage",
+    type: "app",
+    // redirect: "/FaceManage" //设置默认子路由
+  },
+  {
+    path: "/VideoPreview",
+    name: "VideoPreview",
+    component: VideoPreview,
+    title: "视频预览",
+    icon: "VideoPreview",
+    type: "config"
+  },
+  {
+    path: "/VideoPlayback",
+    name: "VideoPlayback",
+    component: VideoPlayback,
+    title: "视频回放",
+    icon: "VideoPlayback",
+    type: "config"
   }
 ];
 
@@ -143,6 +172,7 @@ export const constantRouterMap = [
     component: projectManage
   }
 ];
+
 
 export default new Router({
   // mode: 'history', //后端支持可开

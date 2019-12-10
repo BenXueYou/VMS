@@ -7,6 +7,7 @@
                  @updateTree="updateTree"
                  @switch="changeDevTypeArr"
                  @serverList="serverList"
+                 :viewType="viewType"
                  :is="tabMap[tabName]"></component>
     </keep-alive>
     <the-company-edit-equipment-dialog v-show="isShowEdit"
@@ -50,7 +51,7 @@ export default {
   components: { TheTagTable, TheCompanyTable, TheCompanyEditEquipmentDialog },
   data() {
     return {
-      deviceTypeArr: window.config.door_machine,
+      deviceTypeArr: [],
       localService: [],
       isShowEdit: false,
       editEquipMentDialgoVisible: true,
@@ -62,6 +63,9 @@ export default {
     };
   },
   methods: {
+    changeViewType(viewType) {
+      this.viewType = viewType;
+    },
     serverList(arr, viewType) {
       this.localService = arr;
       this.viewType = viewType;

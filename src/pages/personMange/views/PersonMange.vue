@@ -1,804 +1,818 @@
 <template>
-	<div class="personMange" id="personMange">
-		<the-leftmenu
-			@changetab="changetab"
-			ref="leftMenu"
-			@clickNode="clickNodeAll"
-			needType
-			tagType="staff"
-			orgType="staff"
-			style="margin-right: 30px"
-		></the-leftmenu>
-		<div
-			class="rightmenu"
-			v-loading="mainListLoading1"
-			element-loading-background="rgba(0, 0, 0, 0.8)"
-		>
-			<div v-show="isOrganiza">
-				<div class="listForm" v-show="isListForm" @click.stop="isOtherSearch=false">
-					<div class="head">
-						<div class="title">{{viewGroupName}}&nbsp;&nbsp;({{totalStaff}})</div>
-						<div class="carte">
-							<div @click="changeLeftMenu('1')" style="cursor:pointer;">
-								<img src="./../../../assets/images/personMange/edit.png" />
-								<span>修改名称</span>
-							</div>
-							<div @click="changeLeftMenu('2')" style="cursor:pointer;">
-								<img src="./../../../assets/images/personMange/add.png" />
-								<span>添加子部门</span>
-							</div>
-							<div @click="setApartmentLeader" style="cursor:pointer;">
-								<img src="./../../../assets/images/personMange/set.png" />
-								<span>设置上级</span>
-							</div>
-						</div>
-					</div>
-					<div class="listWrap">
-						<div class="bthWrap">
-							<div class="left">
-								<el-button
-									style="width: 90px;"
-									@click="addEditMembers=true,isListForm=false,newPersonList(),addEditMember='add'"
-								>添加成员</el-button>
-								<el-button style="width: 90px;" @click="importDialog=true">批量导入</el-button>
-								<el-button style="width: 90px;" @click="exportDialog=true">批量导出</el-button>
-								<el-button
-									style="width: 110px;"
-									@click="getMsgToDeviceDialogVisiable=!getMsgToDeviceDialogVisiable"
-								>设置所在部门</el-button>
-								<el-button style="width: 80px;" @click="peopleStatistics">统计</el-button>
-								<el-button style="width: 80px;" @click="deleteDialog=true">删除</el-button>
-							</div>
-							<div class="right">
-								<span class="sp">姓名：</span>
-								<el-input style="width: 160px;height: 32px;margin-right: 10px;" v-model="searchName"></el-input>
-								<el-button
-									style="width: 80px;"
-									class="search"
-									@click="isOtherSearch=false,clearSearchInfo(),clickNodeList()"
-								>
-									<img src="./../../../assets/images/personMange/search.png" />检索
-								</el-button>
-								<div class="otherSearch" @click.stop="isOtherSearch=true">
-									<el-button
-										style="width: 110px;"
-										@click.stop="clearSearchInfo(),isOtherSearch=!isOtherSearch"
-									>其他检索条件</el-button>
-									<div class="conditionWrap" v-show="isOtherSearch">
-										<div class="infoWrap">
-											<div class="left">性别：</div>
-											<div class="right">
-												<el-select v-model="searchSexVal" style="width: 120px;">
-													<el-option
-														v-for="item in sexArr"
-														:key="item.typeStr"
-														:label="item.typeName"
-														:value="item.typeStr"
-													></el-option>
-												</el-select>
-											</div>
-										</div>
-										<div class="infoWrap">
-											<div class="left">创建时间：</div>
-											<div class="right">
-												<el-date-picker
-													v-model="searchStartTime"
-													type="date"
-													value-format="yyyy-MM-dd HH:mm:ss"
-													placeholder="选择日期"
-													style="width: 120px;"
-												></el-date-picker>
-												<span style="margin: 0 6px; color: rgba(255,255,255,0.15);">-</span>
-												<el-date-picker
-													v-model="searchEndTime"
-													type="date"
-													value-format="yyyy-MM-dd HH:mm:ss"
-													placeholder="选择日期"
-													style="width: 120px;"
-												></el-date-picker>
-											</div>
-										</div>
-										<div class="infoWrap">
-											<div class="left">手机：</div>
-											<div class="right">
-												<el-input style="width: 160px;height: 30px;" v-model="searchPhone"></el-input>
-											</div>
-										</div>
-										<div class="infoWrap">
-											<div class="left">部门：</div>
-											<div class="right">
-												<el-input style="width: 160px;height: 30px;" v-model="searchApartment"></el-input>
-											</div>
-										</div>
-										<div class="infoWrap">
-											<div class="left"></div>
-											<div class="right">
-												<el-button style="width: 66px;" @click.stop="clickNodeList(),isOtherSearch=false">检索</el-button>
-												<span class="reset" @click="clearSearchInfo">重置</span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<el-button style="width: 100px;" class="switch" @click="isTableStyle=false,getImageList()">
-									<img src="./../../../assets/images/personMange/switch.png" />切换视图
-								</el-button>
-							</div>
-						</div>
-						<div class="tableWrap">
-							<el-table
-								ref="multipleTable"
-								:data="tableData"
-								tooltip-effect="dark"
-								style="width: 100%"
-								@selection-change="handleSelectionChange1"
-							>
-								<el-table-column type="selection" width="55"></el-table-column>
-								<el-table-column prop="staffName" label="姓名" width="120" show-overflow-tooltip></el-table-column>
-								<el-table-column prop="orgName" label="部门" width="160" show-overflow-tooltip></el-table-column>
-								<el-table-column label="性别" width="80">
-									<template slot-scope="scope">
-										<div>
-											<span v-if="scope.row.gender==='male'">男</span>
-											<span v-if="scope.row.gender==='female'">女</span>
-										</div>
-									</template>
-								</el-table-column>
-								<el-table-column prop="cellphone" label="手机" show-overflow-tooltip width="180"></el-table-column>
-								<el-table-column prop="fixedLine" label="座机" show-overflow-tooltip width="150"></el-table-column>
-								<el-table-column prop="netStatus" label="凭证" show-overflow-tooltip width="220">
-									<template slot-scope="scope">
-										<div
-											style="display: flex;flex-direction: row;align-items: center;justify-content: center;"
-										>
-											<span style="display: flex;flex-direction: row;align-items: center;">
-												<img
-													v-if="scope.row.voucher.faceNum!==0"
-													src="./../../../assets/images/personMange/face.png"
-													style="margin-right: 10px"
-												/>
-												<img
-													v-if="scope.row.voucher.faceNum===0"
-													src="./../../../assets/images/personMange/faceFade.png"
-													style="margin-right: 10px"
-												/>
-												<!-- {{scope.row.voucher.faceNum}} -->
-											</span>
-											<span
-												style="margin: 0 15px 0 7px;display: flex;flex-direction: row;align-items: center;"
-											>
-												<img
-													v-if="true"
-													src="./../../../assets/images/personMange/fingerprint.png"
-													style="margin:0 10.2px 0 13px;"
-												/>
-												{{scope.row.voucher.fingerprintNum}}
-											</span>
-											<span style="display: flex;flex-direction: row;align-items: center;">
-												<img
-													v-if="true"
-													src="./../../../assets/images/personMange/card.png"
-													style="margin-right: 11.5px"
-												/>
-												{{scope.row.voucher.cardNum}}
-											</span>
-										</div>
-									</template>
-								</el-table-column>
-								<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
-								<el-table-column label="操作" width="200">
-									<template slot-scope="scope">
-										<div
-											style="display: flex;flex-direction: row;align-items: center;justify-content: center;"
-										>
-											<span
-												style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #26D39D;display: flex;flex-direction: row;align-items: center;"
-												@click="viewSingleDetail(scope.row)"
-											>
-												<img src="./../../../assets/images/personMange/detail.png" style="margin-right: 5.9px" />详情
-											</span>
-											<span
-												style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #26D39D;margin: 0 22px;"
-												@click="editPersonSingle(scope.row)"
-											>编辑</span>
-											<span
-												style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #FF5F5F;"
-												@click="deletePersonSingle(scope.row)"
-											>删除</span>
-										</div>
-									</template>
-								</el-table-column>
-							</el-table>
-						</div>
-					</div>
-				</div>
-				<div
-					class="imageForm"
-					style="min-width: 950px;"
-					v-show="isImageForm"
-					@click.stop="isOtherSearch=false"
-				>
-					<div class="head">
-						<div class="title">{{viewGroupName}}&nbsp;&nbsp;({{totalStaff}})</div>
-						<div class="carte">
-							<div @click="changeLeftMenu('1')">
-								<img src="./../../../assets/images/personMange/edit.png" />
-								<span>修改名称</span>
-							</div>
-							<div @click="changeLeftMenu('2')">
-								<img src="./../../../assets/images/personMange/add.png" />
-								<span>添加子部门</span>
-							</div>
-							<div @click="setApartmentLeader">
-								<img src="./../../../assets/images/personMange/set.png" />
-								<span>设置上级</span>
-							</div>
-						</div>
-					</div>
-					<div class="listWrap">
-						<div class="bthWrap">
-							<div class="left">
-								<el-button
-									style="width: 90px;"
-									@click="addEditMembers=true,isImageForm=false,newPersonList(),addEditMember='add'"
-								>添加成员</el-button>
-								<el-button style="width: 90px;" @click="importDialog=true">批量导入</el-button>
-								<el-button style="width: 90px;" @click="exportDialog=true">批量导出</el-button>
-								<el-button
-									style="width: 110px;"
-									@click="getMsgToDeviceDialogVisiable=!getMsgToDeviceDialogVisiable"
-								>设置所在部门</el-button>
-								<el-button style="width: 80px;" @click="peopleStatistics">统计</el-button>
-								<el-button style="width: 80px;" @click="deleteDialog=true">删除</el-button>
-							</div>
-							<div class="right">
-								<div class="otherSearch" @click.stop="isOtherSearch=true">
-									<el-button style="width: 100px;" class="search">
-										<img
-											src="./../../../assets/images/personMange/search.png"
-											@click.stop="isOtherSearch=!isOtherSearch"
-										/>人员检索
-									</el-button>
-									<div class="conditionWrap" v-show="isOtherSearch">
-										<div class="infoWrap">
-											<div class="left">性别：</div>
-											<div class="right">
-												<el-select v-model="searchSexVal" style="width: 120px;">
-													<el-option
-														v-for="item in sexArr"
-														:key="item.typeStr"
-														:label="item.typeName"
-														:value="item.typeStr"
-													></el-option>
-												</el-select>
-											</div>
-										</div>
-										<div class="infoWrap">
-											<div class="left">创建时间：</div>
-											<div class="right">
-												<el-date-picker
-													v-model="searchStartTime"
-													type="date"
-													value-format="yyyy-MM-dd HH:mm:ss"
-													placeholder="选择日期"
-													style="width: 120px;"
-												></el-date-picker>
-												<span style="margin: 0 6px; color: rgba(255,255,255,0.15);">-</span>
-												<el-date-picker
-													v-model="searchEndTime"
-													type="date"
-													value-format="yyyy-MM-dd HH:mm:ss"
-													placeholder="选择日期"
-													style="width: 120px;"
-												></el-date-picker>
-											</div>
-										</div>
-										<div class="infoWrap">
-											<div class="left">手机：</div>
-											<div class="right">
-												<el-input style="width: 160px;height: 30px;" v-model="searchPhone" maxlength="11"></el-input>
-											</div>
-										</div>
-										<div class="infoWrap">
-											<div class="left">部门：</div>
-											<div class="right">
-												<el-input style="width: 160px;height: 30px;" v-model="searchApartment"></el-input>
-											</div>
-										</div>
-										<div class="infoWrap">
-											<div class="left"></div>
-											<div class="right">
-												<el-button style="width: 66px;" @click="clickNodeList(),isOtherSearch=false">检索</el-button>
-												<span class="reset" @click="clearSearchInfo">重置</span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<el-button style="width: 100px;" class="switch" @click="isTableStyle=true,getFormList()">
-									<img src="./../../../assets/images/personMange/switch.png" />切换视图
-								</el-button>
-							</div>
-						</div>
-						<div class="tableWrap">
-							<div class="selectWrap">
-								<el-checkbox v-model="seleactAll" @change="checkedAllChange">本页全选</el-checkbox>
-							</div>
-							<div class="inforWrap">
-								<div
-									class="singleCell"
-									id="singleCell"
-									v-for="(o, index) in tableData"
-									:key="index"
-									@mouseover.stop="idx = index, isOperationMask=true"
-									@mouseleave.stop="isOperationMask=false"
-								>
-									<el-checkbox
-										class="box"
-										v-model="o.checked"
-										@change="checkBoxChange(tableData[tableData.length-index-1])"
-									></el-checkbox>
-									<img
-										:src="tableData.length>index?(tableData[tableData.length-index-1].photoUri?WIamgeurl + tableData[tableData.length-index-1].photoUri:require('@/assets/images/user.png')):require('@/assets/images/user.png')"
-										class="mainImg"
-										id="mainImg"
-									/>
-									<div style="height: 16px">
-										{{tableData.length>index?tableData[tableData.length-index-1].staffName:"姓名"}}
-										<span v-if="tableData.length>index">
-											<span v-if="tableData[tableData.length-index-1].gender=='male'">男</span>
-											<span v-if="tableData[tableData.length-index-1].gender=='female'">女</span>
-										</span>
-										<span v-if="tableData.length<=index">性别</span>
-										{{tableData.length>index?tableData[tableData.length-index-1].orgName:"部门"}}
-									</div>
-									<div
-										style="height: 16px"
-									>{{tableData.length>index?tableData[tableData.length-index-1].cellphone:"手机"}}</div>
-									<div
-										style="height: 16px"
-									>{{tableData.length>index?tableData[tableData.length-index-1].fixedLine:"座机"}}</div>
-									<div class="operationMask" v-if="isOperationMask&idx == index">
-										<div
-											@click.stop="isOperationMask=false,viewSingleDetail(tableData[tableData.length-index-1])"
-										>
-											<img src="./../../../assets/images/personMange/detail1.png" />
-											<span>详情</span>
-										</div>
-										<div
-											@click.stop="isOperationMask=false,editPersonSingle(tableData[tableData.length-index-1])"
-										>
-											<img src="./../../../assets/images/personMange/edit.png" />
-											<span>编辑</span>
-										</div>
-										<div
-											@click.stop="isOperationMask=false,deletePersonSingle(tableData[tableData.length-index-1])"
-										>
-											<img src="./../../../assets/images/personMange/delete1.png" />
-											<span>删除</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div
-					class="addMembers"
-					id="addMembers"
-					v-show="addEditMembers"
-					@click.stop="isAccessChoose=false,isAccessChoose1=false"
-					style="min-width: 1200px;"
-				>
-					<el-scrollbar style="width: 64%;height: 100%">
-						<div
-							style="width: 100%;background: #212325;padding: 0 44px;box-sizing: border-box;overflow: hidden;"
-						>
-							<div class="title">
-								<div class="text">
-									<span></span>
-									<span v-show="addEditMember==='add'">添加成员</span>
-									<span v-show="addEditMember==='edit'">编辑员工</span>
-								</div>
-								<div class="btnWrap">
-									<el-button
-										style="width: 120px;"
-										@click="addPersonMember('continue')"
-										v-show="addEditMember==='add'"
-									>保存并继续添加</el-button>
-									<el-button style="width: 80px;" @click="addEditPerson()">确认</el-button>
-									<el-button style="width: 80px;margin-right: 15px;" @click="closeAddEdit">取消</el-button>
-								</div>
-							</div>
-							<div class="requireInfo">
-								<div class="photoWrap infoWrap">
-									<div class="left">
-										<div class="leftCon">
-											<el-upload
-												class="upload-multiple"
-												:action="frontPhotoUrl"
-                        accept="image/jpg,image/jpeg"
-												:headers="myHeaders"
-												:show-file-list="false"
-												:auto-upload="true"
-												:http-request="httpRequest"
-												:on-change="changeFile"
-											>
-												<div class="uploadWrap">
-													<div class="first imgWrap">
-														<img src="./../../../assets/images/personMange/localPhoto.png" />
-														<span>本地</span>
-													</div>
-													<div class="imgWrap" @click.stop="shootPhoto">
-														<img src="./../../../assets/images/personMange/shootPhoto.png" />
-														<span>拍摄</span>
-													</div>
-												</div>
-											</el-upload>
-											<div class="alreadyUploaded" v-show="frontUploaded">
-												<img :src="frontPhoto" />
-												<div class="delete" @click="deleteUpload"></div>
-											</div>
-										</div>
-									</div>
-									<div class="right1">
-										<div>
-											<el-input
-												style="width: 120px;height: 32px;margin-right: 10px;"
-												placeholder="姓名"
-												v-model="staffName"
-											></el-input>
-											<span>*</span>
-										</div>
-										<div>
-											<el-radio v-model="sexVal" label="male">男</el-radio>
-											<el-radio v-model="sexVal" label="female">女</el-radio>
-										</div>
-										<div>
-											<el-input
-												style="width: 220px;height: 32px;margin-right: 10px;"
-												placeholder="手机号"
-												v-model="phoneNum"
-												maxlength="11"
-											></el-input>
-										</div>
-									</div>
-								</div>
-								<div class="infoWrap" style="height: auto;">
-									<div class="left">部门：</div>
-									<div class="right apartment">
-										<div
-											class="cellComponet"
-											v-for="(item,index) in checkedNode5"
-											:key="index"
-											style="margin-right: 10px;"
-										>
-											<img src="./../../../assets/images/personMange/document.png" />
-											<el-popover
-												placement="top-start"
-												title="标题"
-												width="200"
-												trigger="hover"
-												:content="item.label"
-											>
-												<span
-													slot="reference"
-													style=" white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 60px;display: block;"
-												>{{item.label}}</span>
-											</el-popover>
-											<div class="delete" @click="deleteAprtment(index,item)"></div>
-										</div>
-										<div class="edit" @click="getMsgToDeviceDialogVisiable5=!getMsgToDeviceDialogVisiable5">
-											<img src="./../../../assets/images/personMange/edit.png" />
-											<span v-show="addEditMember==='edit'">修改</span>
-											<span v-show="addEditMember==='add'">新增</span>
-										</div>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">职务：</div>
-									<div class="right">
-										<el-input style="width: 120px;height: 32px;" v-model="duty"></el-input>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left"></div>
-									<div class="right">
-										<el-radio v-model="staffInfo" label="0">普通员工</el-radio>
-										<el-radio v-model="staffInfo" label="1">上级</el-radio>
-									</div>
-								</div>
-								<div class="infoWrap" style="height: auto;" v-show="staffInfo=='1'">
-									<div class="left">负责部门：</div>
-									<div class="right apartment">
-										<el-select v-model="leaderOrgUuid" multiple collapse-tags placeholder="请选择部门">
-											<el-option
-												v-for="item in checkedNode5"
-												:key="item.id"
-												:label="item.label"
-												:value="item.id"
-											></el-option>
-										</el-select>
-									</div>
-								</div>
-								<div class="infoWrap" style="height: auto;margin-bottom: 50px;position: relative;">
-									<div class="left">标签：</div>
-									<div class="right apartment">
-										<div
-											class="cellComponet"
-											v-for="(item,index) in checkedNode2"
-											:key="index"
-											style="margin-right: 10px;"
-										>
-											<img src="./../../../assets/images/personMange/document.png" />
-											<span>{{item.label}}</span>
-											<div class="delete" @click="deleteAddCell(index,item)"></div>
-										</div>
-										<div class="edit" @click="addMsgToDeviceDialogVisiable=!addMsgToDeviceDialogVisiable">
-											<img src="./../../../assets/images/personMange/edit.png" />
-											<span v-show="addEditMember==='edit'">修改</span>
-											<span v-show="addEditMember==='add'">新增</span>
-										</div>
-									</div>
-									<div class="more" v-show="isAdditional" @click="isAdditional=false" style="top: 20px;">
-										<span>收起</span>
-										<img src="./../../../assets/images/personMange/more.png" />
-									</div>
-									<div class="more" v-show="!isAdditional" @click="isAdditional=true" style="top: 20px;">
-										<span>展开</span>
-										<img src="./../../../assets/images/personMange/more.png" />
-									</div>
-								</div>
-							</div>
-							<div class="additionalInfo" v-show="isAdditional">
-								<div class="infoWrap">
-									<div class="left">别名：</div>
-									<div class="right">
-										<el-input style="width: 120px;height: 30px;margin-right: 10px;" v-model="nickName"></el-input>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">证件类型：</div>
-									<div class="right">
-										<el-select v-model="idType" placeholder="请选择" style="width: 120px;">
-											<el-option
-												v-for="item in idTypeArr"
-												:key="item.typeStr"
-												:label="item.typeName"
-												:value="item.typeStr"
-											></el-option>
-										</el-select>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">证件号码：</div>
-									<div class="right">
-										<el-input
-											style="width: 200px;height: 30px;margin-right: 10px;"
-											v-model="idNumber"
-											placeholder="证件号码"
-										></el-input>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">民族：</div>
-									<div class="right">
-										<el-select v-model="nation" placeholder="请选择" style="width: 120px;">
-											<el-option
-												v-for="item in nationArr"
-												:key="item.typeStr"
-												:label="item.typeName"
-												:value="item.typeStr"
-											></el-option>
-										</el-select>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">文化程度：</div>
-									<div class="right">
-										<el-select v-model="degree" placeholder="学历" style="width: 120px;">
-											<el-option
-												v-for="item in degreeArr"
-												:key="item.typeStr"
-												:label="item.typeName"
-												:value="item.typeStr"
-											></el-option>
-										</el-select>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">婚姻状况：</div>
-									<div class="right">
-										<el-select v-model="marital" style="width: 120px;">
-											<el-option
-												v-for="item in maritalArr"
-												:key="item.typeStr"
-												:label="item.typeName"
-												:value="item.typeStr"
-											></el-option>
-										</el-select>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">国籍：</div>
-									<div class="right">
-										<el-select v-model="nationality" style="width: 120px;">
-											<el-option
-												v-for="item in nationalityArr"
-												:key="item.typeStr"
-												:label="item.typeName"
-												:value="item.typeStr"
-											></el-option>
-										</el-select>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">籍贯：</div>
-									<div class="right">
-										<el-input style="width: 200px;height: 30px;margin-right: 10px;" v-model="nativePlace"></el-input>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">户籍：</div>
-									<div class="right">
-										<el-input style="width: 200px;height: 30px;margin-right: 10px;" v-model="censusRegister"></el-input>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">电子邮件：</div>
-									<div class="right">
-										<el-input style="width: 200px;height: 30px;margin-right: 10px;" v-model="email"></el-input>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">座机：</div>
-									<div class="right">
-										<el-input style="width: 200px;height: 30px;margin-right: 10px;" v-model="telephone"></el-input>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">备注：</div>
-									<div class="right">
-										<el-input style="width: 200px;height: 30px;margin-right: 10px;" v-model="remark"></el-input>
-									</div>
-								</div>
-							</div>
-							<div class="accessCon1" style="margin-bottom: 20px;">
-								<div class="accessTitle">
-									<img src="./../../../assets/images/personMange/passAcces.png" />
-									<span>通行权限</span>
-								</div>
-								<div class="infoWrap">
-									<div class="left">门禁权限组：</div>
-									<div class="right">
-										<div style="width: 260px;position: relative;">
-											<div
-												class="chooseMask"
-												@click.stop="isAccessChoose=!isAccessChoose,isAccessChoose1=false"
-											></div>
-											<el-input v-model="doorAccess" placeholder="请选择门禁权限" style="width: 260px;" disabled></el-input>
-										</div>
-										<div class="accessChoose" v-show="isAccessChoose" @click.stop="isAccessChoose=true">
-											<!-- <div class="wrap">
+  <div class="personMange"
+       id="personMange">
+    <the-leftmenu @changetab="changetab"
+                  ref="leftMenu"
+                  @clickNode="clickNodeAll"
+                  needType
+                  tagType="staff"
+                  orgType="staff"
+                  style="margin-right: 30px"></the-leftmenu>
+    <div class="rightmenu"
+         v-loading="mainListLoading1"
+         element-loading-background="rgba(0, 0, 0, 0.8)">
+      <div v-show="isOrganiza">
+        <div class="listForm"
+             v-show="isListForm"
+             @click.stop="isOtherSearch=false">
+          <div class="head">
+            <div class="title">{{viewGroupName}}&nbsp;&nbsp;({{totalStaff}})</div>
+            <div class="carte">
+              <div @click="changeLeftMenu('1')"
+                   style="cursor:pointer;">
+                <img src="./../../../assets/images/personMange/edit.png" />
+                <span>修改名称</span>
+              </div>
+              <div @click="changeLeftMenu('2')"
+                   style="cursor:pointer;">
+                <img src="./../../../assets/images/personMange/add.png" />
+                <span>添加子部门</span>
+              </div>
+              <div @click="setApartmentLeader"
+                   style="cursor:pointer;">
+                <img src="./../../../assets/images/personMange/set.png" />
+                <span>设置上级</span>
+              </div>
+            </div>
+          </div>
+          <div class="listWrap">
+            <div class="bthWrap">
+              <div class="left">
+                <el-button style="width: 90px;"
+                           @click="addEditMembers=true,isListForm=false,newPersonList(),addEditMember='add'">添加成员</el-button>
+                <el-button style="width: 90px;"
+                           @click="importDialog=true">批量导入</el-button>
+                <el-button style="width: 90px;"
+                           @click="exportDialog=true">批量导出</el-button>
+                <el-button style="width: 110px;"
+                           @click="getMsgToDeviceDialogVisiable=!getMsgToDeviceDialogVisiable">设置所在部门</el-button>
+                <el-button style="width: 80px;"
+                           @click="peopleStatistics">统计</el-button>
+                <el-button style="width: 80px;"
+                           @click="deleteDialog=true">删除</el-button>
+              </div>
+              <div class="right">
+                <span class="sp">姓名：</span>
+                <el-input style="width: 160px;height: 32px;margin-right: 10px;"
+                          v-model="searchName"></el-input>
+                <el-button style="width: 80px;"
+                           class="search"
+                           @click="isOtherSearch=false,clearSearchInfo(),clickNodeList()">
+                  <img src="./../../../assets/images/personMange/search.png" />检索
+                </el-button>
+                <div class="otherSearch"
+                     @click.stop="isOtherSearch=true">
+                  <el-button style="width: 110px;"
+                             @click.stop="clearSearchInfo(),isOtherSearch=!isOtherSearch">其他检索条件</el-button>
+                  <div class="conditionWrap"
+                       v-show="isOtherSearch">
+                    <div class="infoWrap">
+                      <div class="left">性别：</div>
+                      <div class="right">
+                        <el-select v-model="searchSexVal"
+                                   style="width: 120px;">
+                          <el-option v-for="item in sexArr"
+                                     :key="item.typeStr"
+                                     :label="item.typeName"
+                                     :value="item.typeStr"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                    <div class="infoWrap">
+                      <div class="left">创建时间：</div>
+                      <div class="right">
+                        <el-date-picker v-model="searchStartTime"
+                                        type="date"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        style="width: 120px;"></el-date-picker>
+                        <span style="margin: 0 6px; color: rgba(255,255,255,0.15);">-</span>
+                        <el-date-picker v-model="searchEndTime"
+                                        type="date"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        style="width: 120px;"></el-date-picker>
+                      </div>
+                    </div>
+                    <div class="infoWrap">
+                      <div class="left">手机：</div>
+                      <div class="right">
+                        <el-input style="width: 160px;height: 30px;"
+                                  v-model="searchPhone"></el-input>
+                      </div>
+                    </div>
+                    <div class="infoWrap">
+                      <div class="left">部门：</div>
+                      <div class="right">
+                        <el-input style="width: 160px;height: 30px;"
+                                  v-model="searchApartment"></el-input>
+                      </div>
+                    </div>
+                    <div class="infoWrap">
+                      <div class="left"></div>
+                      <div class="right">
+                        <el-button style="width: 66px;"
+                                   @click.stop="clickNodeList(),isOtherSearch=false">检索</el-button>
+                        <span class="reset"
+                              @click="clearSearchInfo">重置</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <el-button style="width: 100px;"
+                           class="switch"
+                           @click="isTableStyle=false,getImageList()">
+                  <img src="./../../../assets/images/personMange/switch.png" />切换视图
+                </el-button>
+              </div>
+            </div>
+            <div class="tableWrap">
+              <el-table ref="multipleTable"
+                        :data="tableData"
+                        tooltip-effect="dark"
+                        style="width: 100%"
+                        @selection-change="handleSelectionChange1">
+                <el-table-column type="selection"
+                                 width="55"></el-table-column>
+                <el-table-column prop="staffName"
+                                 label="姓名"
+                                 width="120"
+                                 show-overflow-tooltip></el-table-column>
+                <el-table-column prop="orgName"
+                                 label="部门"
+                                 width="160"
+                                 show-overflow-tooltip></el-table-column>
+                <el-table-column label="性别"
+                                 width="80">
+                  <template slot-scope="scope">
+                    <div>
+                      <span v-if="scope.row.gender==='male'">男</span>
+                      <span v-if="scope.row.gender==='female'">女</span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="cellphone"
+                                 label="手机"
+                                 show-overflow-tooltip
+                                 width="180"></el-table-column>
+                <el-table-column prop="fixedLine"
+                                 label="座机"
+                                 show-overflow-tooltip
+                                 width="150"></el-table-column>
+                <el-table-column prop="netStatus"
+                                 label="凭证"
+                                 show-overflow-tooltip
+                                 width="220">
+                  <template slot-scope="scope">
+                    <div style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+                      <span style="display: flex;flex-direction: row;align-items: center;">
+                        <img v-if="scope.row.voucher.faceNum!==0"
+                             src="./../../../assets/images/personMange/face.png"
+                             style="margin-right: 10px" />
+                        <img v-if="scope.row.voucher.faceNum===0"
+                             src="./../../../assets/images/personMange/faceFade.png"
+                             style="margin-right: 10px" />
+                        <!-- {{scope.row.voucher.faceNum}} -->
+                      </span>
+                      <span style="margin: 0 15px 0 7px;display: flex;flex-direction: row;align-items: center;">
+                        <img v-if="true"
+                             src="./../../../assets/images/personMange/fingerprint.png"
+                             style="margin:0 10.2px 0 13px;" />
+                        {{scope.row.voucher.fingerprintNum}}
+                      </span>
+                      <span style="display: flex;flex-direction: row;align-items: center;">
+                        <img v-if="true"
+                             src="./../../../assets/images/personMange/card.png"
+                             style="margin-right: 11.5px" />
+                        {{scope.row.voucher.cardNum}}
+                      </span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="createTime"
+                                 label="创建时间"
+                                 show-overflow-tooltip></el-table-column>
+                <el-table-column label="操作"
+                                 width="200">
+                  <template slot-scope="scope">
+                    <div style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+                      <span style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #26D39D;display: flex;flex-direction: row;align-items: center;"
+                            @click="viewSingleDetail(scope.row)">
+                        <img src="./../../../assets/images/personMange/detail.png"
+                             style="margin-right: 5.9px" />详情
+                      </span>
+                      <span style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #26D39D;margin: 0 22px;"
+                            @click="editPersonSingle(scope.row)">编辑</span>
+                      <span style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #FF5F5F;"
+                            @click="deletePersonSingle(scope.row)">删除</span>
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+        </div>
+        <div class="imageForm"
+             style="min-width: 950px;"
+             v-show="isImageForm"
+             @click.stop="isOtherSearch=false">
+          <div class="head">
+            <div class="title">{{viewGroupName}}&nbsp;&nbsp;({{totalStaff}})</div>
+            <div class="carte">
+              <div @click="changeLeftMenu('1')">
+                <img src="./../../../assets/images/personMange/edit.png" />
+                <span>修改名称</span>
+              </div>
+              <div @click="changeLeftMenu('2')">
+                <img src="./../../../assets/images/personMange/add.png" />
+                <span>添加子部门</span>
+              </div>
+              <div @click="setApartmentLeader">
+                <img src="./../../../assets/images/personMange/set.png" />
+                <span>设置上级</span>
+              </div>
+            </div>
+          </div>
+          <div class="listWrap">
+            <div class="bthWrap">
+              <div class="left">
+                <el-button style="width: 90px;"
+                           @click="addEditMembers=true,isImageForm=false,newPersonList(),addEditMember='add'">添加成员</el-button>
+                <el-button style="width: 90px;"
+                           @click="importDialog=true">批量导入</el-button>
+                <el-button style="width: 90px;"
+                           @click="exportDialog=true">批量导出</el-button>
+                <el-button style="width: 110px;"
+                           @click="getMsgToDeviceDialogVisiable=!getMsgToDeviceDialogVisiable">设置所在部门</el-button>
+                <el-button style="width: 80px;"
+                           @click="peopleStatistics">统计</el-button>
+                <el-button style="width: 80px;"
+                           @click="deleteDialog=true">删除</el-button>
+              </div>
+              <div class="right">
+                <div class="otherSearch"
+                     @click.stop="isOtherSearch=true">
+                  <el-button style="width: 100px;"
+                             class="search">
+                    <img src="./../../../assets/images/personMange/search.png"
+                         @click.stop="isOtherSearch=!isOtherSearch" />人员检索
+                  </el-button>
+                  <div class="conditionWrap"
+                       v-show="isOtherSearch">
+                    <div class="infoWrap">
+                      <div class="left">性别：</div>
+                      <div class="right">
+                        <el-select v-model="searchSexVal"
+                                   style="width: 120px;">
+                          <el-option v-for="item in sexArr"
+                                     :key="item.typeStr"
+                                     :label="item.typeName"
+                                     :value="item.typeStr"></el-option>
+                        </el-select>
+                      </div>
+                    </div>
+                    <div class="infoWrap">
+                      <div class="left">创建时间：</div>
+                      <div class="right">
+                        <el-date-picker v-model="searchStartTime"
+                                        type="date"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        style="width: 120px;"></el-date-picker>
+                        <span style="margin: 0 6px; color: rgba(255,255,255,0.15);">-</span>
+                        <el-date-picker v-model="searchEndTime"
+                                        type="date"
+                                        value-format="yyyy-MM-dd HH:mm:ss"
+                                        placeholder="选择日期"
+                                        style="width: 120px;"></el-date-picker>
+                      </div>
+                    </div>
+                    <div class="infoWrap">
+                      <div class="left">手机：</div>
+                      <div class="right">
+                        <el-input style="width: 160px;height: 30px;"
+                                  v-model="searchPhone"
+                                  maxlength="11"></el-input>
+                      </div>
+                    </div>
+                    <div class="infoWrap">
+                      <div class="left">部门：</div>
+                      <div class="right">
+                        <el-input style="width: 160px;height: 30px;"
+                                  v-model="searchApartment"></el-input>
+                      </div>
+                    </div>
+                    <div class="infoWrap">
+                      <div class="left"></div>
+                      <div class="right">
+                        <el-button style="width: 66px;"
+                                   @click="clickNodeList(),isOtherSearch=false">检索</el-button>
+                        <span class="reset"
+                              @click="clearSearchInfo">重置</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <el-button style="width: 100px;"
+                           class="switch"
+                           @click="isTableStyle=true,getFormList()">
+                  <img src="./../../../assets/images/personMange/switch.png" />切换视图
+                </el-button>
+              </div>
+            </div>
+            <div class="tableWrap">
+              <div class="selectWrap">
+                <el-checkbox v-model="seleactAll"
+                             @change="checkedAllChange">本页全选</el-checkbox>
+              </div>
+              <div class="inforWrap">
+                <div class="singleCell"
+                     id="singleCell"
+                     v-for="(o, index) in tableData"
+                     :key="index"
+                     @mouseover.stop="idx = index, isOperationMask=true"
+                     @mouseleave.stop="isOperationMask=false">
+                  <el-checkbox class="box"
+                               v-model="o.checked"
+                               @change="checkBoxChange(tableData[tableData.length-index-1])"></el-checkbox>
+                  <img :src="tableData.length>index?(tableData[tableData.length-index-1].photoUri?WIamgeurl + tableData[tableData.length-index-1].photoUri:require('@/assets/images/user.png')):require('@/assets/images/user.png')"
+                       class="mainImg"
+                       id="mainImg" />
+                  <div style="height: 16px">
+                    {{tableData.length>index?tableData[tableData.length-index-1].staffName:"姓名"}}
+                    <span v-if="tableData.length>index">
+                      <span v-if="tableData[tableData.length-index-1].gender=='male'">男</span>
+                      <span v-if="tableData[tableData.length-index-1].gender=='female'">女</span>
+                    </span>
+                    <span v-if="tableData.length<=index">性别</span>
+                    {{tableData.length>index?tableData[tableData.length-index-1].orgName:"部门"}}
+                  </div>
+                  <div style="height: 16px">{{tableData.length>index?tableData[tableData.length-index-1].cellphone:"手机"}}</div>
+                  <div style="height: 16px">{{tableData.length>index?tableData[tableData.length-index-1].fixedLine:"座机"}}</div>
+                  <div class="operationMask"
+                       v-if="isOperationMask&idx == index">
+                    <div @click.stop="isOperationMask=false,viewSingleDetail(tableData[tableData.length-index-1])">
+                      <img src="./../../../assets/images/personMange/detail1.png" />
+                      <span>详情</span>
+                    </div>
+                    <div @click.stop="isOperationMask=false,editPersonSingle(tableData[tableData.length-index-1])">
+                      <img src="./../../../assets/images/personMange/edit.png" />
+                      <span>编辑</span>
+                    </div>
+                    <div @click.stop="isOperationMask=false,deletePersonSingle(tableData[tableData.length-index-1])">
+                      <img src="./../../../assets/images/personMange/delete1.png" />
+                      <span>删除</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="addMembers"
+             id="addMembers"
+             v-show="addEditMembers"
+             @click.stop="isAccessChoose=false,isAccessChoose1=false"
+             style="min-width: 1200px;">
+          <el-scrollbar style="width: 64%;height: 100%">
+            <div style="width: 100%;background: #212325;padding: 0 44px;box-sizing: border-box;overflow: hidden;">
+              <div class="title">
+                <div class="text">
+                  <span></span>
+                  <span v-show="addEditMember==='add'">添加成员</span>
+                  <span v-show="addEditMember==='edit'">编辑员工</span>
+                </div>
+                <div class="btnWrap">
+                  <el-button style="width: 120px;"
+                             @click="addPersonMember('continue')"
+                             v-show="addEditMember==='add'">保存并继续添加</el-button>
+                  <el-button style="width: 80px;"
+                             @click="addEditPerson()">确认</el-button>
+                  <el-button style="width: 80px;margin-right: 15px;"
+                             @click="closeAddEdit">取消</el-button>
+                </div>
+              </div>
+              <div class="requireInfo">
+                <div class="photoWrap infoWrap">
+                  <div class="left">
+                    <div class="leftCon">
+                      <el-upload class="upload-multiple"
+                                 :action="frontPhotoUrl"
+                                 accept="image/jpg,image/jpeg"
+                                 :headers="myHeaders"
+                                 :show-file-list="false"
+                                 :auto-upload="true"
+                                 :http-request="httpRequest"
+                                 :on-change="changeFile">
+                        <div class="uploadWrap">
+                          <div class="first imgWrap">
+                            <img src="./../../../assets/images/personMange/localPhoto.png" />
+                            <span>本地</span>
+                          </div>
+                          <div class="imgWrap"
+                               @click.stop="shootPhoto">
+                            <img src="./../../../assets/images/personMange/shootPhoto.png" />
+                            <span>拍摄</span>
+                          </div>
+                        </div>
+                      </el-upload>
+                      <div class="alreadyUploaded"
+                           v-show="frontUploaded">
+                        <img :src="frontPhoto" />
+                        <div class="delete"
+                             @click="deleteUpload"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="right1">
+                    <div>
+                      <el-input style="width: 120px;height: 32px;margin-right: 10px;"
+                                placeholder="姓名"
+                                v-model="staffName"></el-input>
+                      <span>*</span>
+                    </div>
+                    <div>
+                      <el-radio v-model="sexVal"
+                                label="male">男</el-radio>
+                      <el-radio v-model="sexVal"
+                                label="female">女</el-radio>
+                    </div>
+                    <div>
+                      <el-input style="width: 220px;height: 32px;margin-right: 10px;"
+                                placeholder="手机号"
+                                v-model="phoneNum"
+                                maxlength="11"></el-input>
+                    </div>
+                  </div>
+                </div>
+                <div class="infoWrap"
+                     style="height: auto;">
+                  <div class="left">部门：</div>
+                  <div class="right apartment">
+                    <div class="cellComponet"
+                         v-for="(item,index) in checkedNode5"
+                         :key="index"
+                         style="margin-right: 10px;">
+                      <img src="./../../../assets/images/personMange/document.png" />
+                      <el-popover placement="top-start"
+                                  title="标题"
+                                  width="200"
+                                  trigger="hover"
+                                  :content="item.label">
+                        <span slot="reference"
+                              style=" white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 60px;display: block;">{{item.label}}</span>
+                      </el-popover>
+                      <div class="delete"
+                           @click="deleteAprtment(index,item)"></div>
+                    </div>
+                    <div class="edit"
+                         @click="getMsgToDeviceDialogVisiable5=!getMsgToDeviceDialogVisiable5">
+                      <img src="./../../../assets/images/personMange/edit.png" />
+                      <span v-show="addEditMember==='edit'">修改</span>
+                      <span v-show="addEditMember==='add'">新增</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">职务：</div>
+                  <div class="right">
+                    <el-input style="width: 120px;height: 32px;"
+                              v-model="duty"></el-input>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left"></div>
+                  <div class="right">
+                    <el-radio v-model="staffInfo"
+                              label="0">普通员工</el-radio>
+                    <el-radio v-model="staffInfo"
+                              label="1">上级</el-radio>
+                  </div>
+                </div>
+                <div class="infoWrap"
+                     style="height: auto;"
+                     v-show="staffInfo=='1'">
+                  <div class="left">负责部门：</div>
+                  <div class="right apartment">
+                    <el-select v-model="leaderOrgUuid"
+                               multiple
+                               collapse-tags
+                               placeholder="请选择部门">
+                      <el-option v-for="item in checkedNode5"
+                                 :key="item.id"
+                                 :label="item.label"
+                                 :value="item.id"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="infoWrap"
+                     style="height: auto;margin-bottom: 50px;position: relative;">
+                  <div class="left">标签：</div>
+                  <div class="right apartment">
+                    <div class="cellComponet"
+                         v-for="(item,index) in checkedNode2"
+                         :key="index"
+                         style="margin-right: 10px;">
+                      <img src="./../../../assets/images/personMange/document.png" />
+                      <span>{{item.label}}</span>
+                      <div class="delete"
+                           @click="deleteAddCell(index,item)"></div>
+                    </div>
+                    <div class="edit"
+                         @click="addMsgToDeviceDialogVisiable=!addMsgToDeviceDialogVisiable">
+                      <img src="./../../../assets/images/personMange/edit.png" />
+                      <span v-show="addEditMember==='edit'">修改</span>
+                      <span v-show="addEditMember==='add'">新增</span>
+                    </div>
+                  </div>
+                  <div class="more"
+                       v-show="isAdditional"
+                       @click="isAdditional=false"
+                       style="top: 20px;">
+                    <span>收起</span>
+                    <img src="./../../../assets/images/personMange/more.png" />
+                  </div>
+                  <div class="more"
+                       v-show="!isAdditional"
+                       @click="isAdditional=true"
+                       style="top: 20px;">
+                    <span>展开</span>
+                    <img src="./../../../assets/images/personMange/more.png" />
+                  </div>
+                </div>
+              </div>
+              <div class="additionalInfo"
+                   v-show="isAdditional">
+                <div class="infoWrap">
+                  <div class="left">别名：</div>
+                  <div class="right">
+                    <el-input style="width: 120px;height: 30px;margin-right: 10px;"
+                              v-model="nickName"></el-input>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">证件类型：</div>
+                  <div class="right">
+                    <el-select v-model="idType"
+                               placeholder="请选择"
+                               style="width: 120px;">
+                      <el-option v-for="item in idTypeArr"
+                                 :key="item.typeStr"
+                                 :label="item.typeName"
+                                 :value="item.typeStr"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">证件号码：</div>
+                  <div class="right">
+                    <el-input style="width: 200px;height: 30px;margin-right: 10px;"
+                              v-model="idNumber"
+                              placeholder="证件号码"></el-input>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">民族：</div>
+                  <div class="right">
+                    <el-select v-model="nation"
+                               placeholder="请选择"
+                               style="width: 120px;">
+                      <el-option v-for="item in nationArr"
+                                 :key="item.typeStr"
+                                 :label="item.typeName"
+                                 :value="item.typeStr"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">文化程度：</div>
+                  <div class="right">
+                    <el-select v-model="degree"
+                               placeholder="学历"
+                               style="width: 120px;">
+                      <el-option v-for="item in degreeArr"
+                                 :key="item.typeStr"
+                                 :label="item.typeName"
+                                 :value="item.typeStr"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">婚姻状况：</div>
+                  <div class="right">
+                    <el-select v-model="marital"
+                               style="width: 120px;">
+                      <el-option v-for="item in maritalArr"
+                                 :key="item.typeStr"
+                                 :label="item.typeName"
+                                 :value="item.typeStr"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">国籍：</div>
+                  <div class="right">
+                    <el-select v-model="nationality"
+                               style="width: 120px;">
+                      <el-option v-for="item in nationalityArr"
+                                 :key="item.typeStr"
+                                 :label="item.typeName"
+                                 :value="item.typeStr"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">籍贯：</div>
+                  <div class="right">
+                    <el-input style="width: 200px;height: 30px;margin-right: 10px;"
+                              v-model="nativePlace"></el-input>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">户籍：</div>
+                  <div class="right">
+                    <el-input style="width: 200px;height: 30px;margin-right: 10px;"
+                              v-model="censusRegister"></el-input>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">电子邮件：</div>
+                  <div class="right">
+                    <el-input style="width: 200px;height: 30px;margin-right: 10px;"
+                              v-model="email"></el-input>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">座机：</div>
+                  <div class="right">
+                    <el-input style="width: 200px;height: 30px;margin-right: 10px;"
+                              v-model="telephone"></el-input>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">备注：</div>
+                  <div class="right">
+                    <el-input style="width: 200px;height: 30px;margin-right: 10px;"
+                              v-model="remark"></el-input>
+                  </div>
+                </div>
+              </div>
+              <div class="accessCon1"
+                   style="margin-bottom: 20px;">
+                <div class="accessTitle">
+                  <img src="./../../../assets/images/personMange/passAcces.png" />
+                  <span>通行权限</span>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">门禁权限组：</div>
+                  <div class="right">
+                    <div style="width: 260px;position: relative;">
+                      <div class="chooseMask"
+                           @click.stop="isAccessChoose=!isAccessChoose,isAccessChoose1=false"></div>
+                      <el-input v-model="doorAccess"
+                                placeholder="请选择门禁权限"
+                                style="width: 260px;"
+                                disabled></el-input>
+                    </div>
+                    <div class="accessChoose"
+                         v-show="isAccessChoose"
+                         @click.stop="isAccessChoose=true">
+                      <!-- <div class="wrap">
                         <div class="chooseWrap"><el-checkbox>权限组</el-checkbox></div>
                         <div class="chooseWrap"><el-checkbox>权限组</el-checkbox></div>
 											</div>-->
-											<div style="position: relative;">
-												<el-scrollbar style="height: 315px">
-													<el-tree
-														ref="tree2"
-														class="filter-tree"
-														:data="data2"
-														:props="defaultProps1"
-														default-expand-all
-														:filter-node-method="filterNode1"
-														show-checkbox
-														:expand-on-click-node="false"
-														:default-checked-keys="InitnickName()"
-														@check-change="handleCheckChange"
-														node-key="groupUuid"
-													></el-tree>
-												</el-scrollbar>
-												<el-input placeholder="输入关键字检索" v-model="filterText" class="filterText1"></el-input>
-												<div class="search-icon"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="infoWrap" style="height: auto;position: relative;">
-									<div class="left"></div>
-									<div class="right apartment accessAdd">
-										<div class="cellComponet" v-for="(item,index) in cellArr" :key="index">
-											<img src="./../../../assets/images/personMange/document.png" />
-											<span>{{item.groupName}}</span>
-											<div class="delete" @click="deleteCell(item,index)"></div>
-										</div>
-									</div>
-									<div class="more">
-										<span v-show="isAccessCon" @click="isAccessCon=false">收起</span>
-										<span v-show="!isAccessCon" @click="isAccessCon=true">展开</span>
-										<img src="./../../../assets/images/personMange/more.png" />
-									</div>
-								</div>
-							</div>
-							<div class="accessCon2" v-show="isAccessCon">
-								<div class="infoWrap">
-									<div class="left">延迟时间：</div>
-									<div class="right">
-										<el-input style="width: 60px;height: 30px;margin-right: 10px;" v-model="delayTime"></el-input>秒
-										<span class="sp">注：</span>为行动不便的人员增加通过门禁的时间。
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">有效期：</div>
-									<div class="right">
-										<el-radio v-model="timeRange" label="1">长期</el-radio>
-										<el-radio v-model="timeRange" label="0">短期</el-radio>
-									</div>
-								</div>
-								<div class="infoWrap" v-show="timeRange==='0'">
-									<div class="left"></div>
-									<div class="right">
-										<el-date-picker
-											v-model="startTime"
-											type="date"
-											value-format="yyyy-MM-dd HH:mm:ss"
-											placeholder="选择日期"
-											style="width: 160px;"
-										></el-date-picker>
-										<span style="margin: 0 6px;">-</span>
-										<el-date-picker
-											v-model="endTime"
-											type="date"
-											value-format="yyyy-MM-dd HH:mm:ss"
-											placeholder="选择日期"
-											style="width: 160px;"
-										></el-date-picker>
-									</div>
-								</div>
-								<div class="infoWrap">
-									<div class="left">访客权限：</div>
-									<div class="right">
-										<div style="width: 260px;position: relative;">
-											<div
-												class="chooseMask"
-												@click.stop="isAccessChoose1=!isAccessChoose1,isAccessChoose=false"
-											></div>
-											<el-input v-model="visitorAccess" placeholder="请选择访客权限" style="width: 260px;" disabled></el-input>
-										</div>
-										<div class="accessChoose" v-show="isAccessChoose1" @click.stop="isAccessChoose1=true">
-											<div style="position: relative;">
-												<el-scrollbar style="height: 315px">
-													<el-tree
-														ref="tree3"
-														class="filter-tree"
-														:data="data3"
-														:props="defaultProps2"
-														default-expand-all
-														:filter-node-method="filterNode2"
-														show-checkbox
-														:expand-on-click-node="false"
-														@check-change="handleCheckChange1"
-														:default-checked-keys="InitnickName1()"
-														node-key="groupUuid"
-													></el-tree>
-												</el-scrollbar>
-												<el-input placeholder="输入关键字检索" v-model="filterText3" class="filterText1"></el-input>
-												<div class="search-icon"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="infoWrap" style="height: auto;position: relative;">
-									<div class="left"></div>
-									<div class="right apartment accessAdd">
-										<div class="cellComponet" v-for="(item,index) in cellArr1" :key="index">
-											<img src="./../../../assets/images/personMange/document.png" />
-											<span>{{item.groupName}}</span>
-											<div class="delete" @click="deleteCell1(item,index)"></div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- <div class="cardTitle">
+                      <div style="position: relative;">
+                        <el-scrollbar style="height: 315px">
+                          <el-tree ref="tree2"
+                                   class="filter-tree"
+                                   :data="data2"
+                                   :props="defaultProps1"
+                                   default-expand-all
+                                   :filter-node-method="filterNode1"
+                                   show-checkbox
+                                   :expand-on-click-node="false"
+                                   :default-checked-keys="InitnickName()"
+                                   @check-change="handleCheckChange"
+                                   node-key="groupUuid"></el-tree>
+                        </el-scrollbar>
+                        <el-input placeholder="输入关键字检索"
+                                  v-model="filterText"
+                                  class="filterText1"></el-input>
+                        <div class="search-icon"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="infoWrap"
+                     style="height: auto;position: relative;">
+                  <div class="left"></div>
+                  <div class="right apartment accessAdd">
+                    <div class="cellComponet"
+                         v-for="(item,index) in cellArr"
+                         :key="index">
+                      <img src="./../../../assets/images/personMange/document.png" />
+                      <span>{{item.groupName}}</span>
+                      <div class="delete"
+                           @click="deleteCell(item,index)"></div>
+                    </div>
+                  </div>
+                  <div class="more">
+                    <span v-show="isAccessCon"
+                          @click="isAccessCon=false">收起</span>
+                    <span v-show="!isAccessCon"
+                          @click="isAccessCon=true">展开</span>
+                    <img src="./../../../assets/images/personMange/more.png" />
+                  </div>
+                </div>
+              </div>
+              <div class="accessCon2"
+                   v-show="isAccessCon">
+                <div class="infoWrap">
+                  <div class="left">延迟时间：</div>
+                  <div class="right">
+                    <el-input style="width: 60px;height: 30px;margin-right: 10px;"
+                              v-model="delayTime"></el-input>秒
+                    <span class="sp">注：</span>为行动不便的人员增加通过门禁的时间。
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">有效期：</div>
+                  <div class="right">
+                    <el-radio v-model="timeRange"
+                              label="1">长期</el-radio>
+                    <el-radio v-model="timeRange"
+                              label="0">短期</el-radio>
+                  </div>
+                </div>
+                <div class="infoWrap"
+                     v-show="timeRange==='0'">
+                  <div class="left"></div>
+                  <div class="right">
+                    <el-date-picker v-model="startTime"
+                                    type="date"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    placeholder="选择日期"
+                                    style="width: 160px;"></el-date-picker>
+                    <span style="margin: 0 6px;">-</span>
+                    <el-date-picker v-model="endTime"
+                                    type="date"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    placeholder="选择日期"
+                                    style="width: 160px;"></el-date-picker>
+                  </div>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">访客权限：</div>
+                  <div class="right">
+                    <div style="width: 260px;position: relative;">
+                      <div class="chooseMask"
+                           @click.stop="isAccessChoose1=!isAccessChoose1,isAccessChoose=false"></div>
+                      <el-input v-model="visitorAccess"
+                                placeholder="请选择访客权限"
+                                style="width: 260px;"
+                                disabled></el-input>
+                    </div>
+                    <div class="accessChoose"
+                         v-show="isAccessChoose1"
+                         @click.stop="isAccessChoose1=true">
+                      <div style="position: relative;">
+                        <el-scrollbar style="height: 315px">
+                          <el-tree ref="tree3"
+                                   class="filter-tree"
+                                   :data="data3"
+                                   :props="defaultProps2"
+                                   default-expand-all
+                                   :filter-node-method="filterNode2"
+                                   show-checkbox
+                                   :expand-on-click-node="false"
+                                   @check-change="handleCheckChange1"
+                                   :default-checked-keys="InitnickName1()"
+                                   node-key="groupUuid"></el-tree>
+                        </el-scrollbar>
+                        <el-input placeholder="输入关键字检索"
+                                  v-model="filterText3"
+                                  class="filterText1"></el-input>
+                        <div class="search-icon"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="infoWrap"
+                     style="height: auto;position: relative;">
+                  <div class="left"></div>
+                  <div class="right apartment accessAdd">
+                    <div class="cellComponet"
+                         v-for="(item,index) in cellArr1"
+                         :key="index">
+                      <img src="./../../../assets/images/personMange/document.png" />
+                      <span>{{item.groupName}}</span>
+                      <div class="delete"
+                           @click="deleteCell1(item,index)"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="cardTitle">
                 <img src="./../../../assets/images/personMange/card1.png" />
                 <span>卡片：</span>
                 <div class="addWrap"
@@ -808,86 +822,92 @@
                 </div>
                 <span class="sp">发卡器配置</span>
 							</div>-->
-							<div class="accessCon1 accessAdd" style="margin-bottom: 20px;">
-								<div class="accessTitle">
-									<img src="./../../../assets/images/personMange/certificate.png" />
-									<span>通行凭证</span>
-								</div>
-								<div class="infoWrap">
-									<div class="left">卡片：</div>
-									<div class="right">
-										<div @click="addCards">
-											<img src="./../../../assets/images/personMange/addCard.png" />
-											<span>
-												新增卡片&nbsp;&nbsp;
-												<span class="addWrap">|</span>&nbsp;&nbsp;发卡器配置
-											</span>
-										</div>
-									</div>
-								</div>
-								<div class="cardInfo">
-									<div class="listWrap" v-show="islListWrap1">
-										<div class="left">
-											<span>{{cardNameWrap1}}</span>
-											<span>{{cardNoWrap1}}</span>
-											<span>{{isSwitch1}}</span>
-											<span>{{cardFuncWrap1}}</span>
-										</div>
-										<div class="right">
-											<span @click="editCards('1')">编辑</span>
-											<span @click="deleteCard('1')">删除</span>
-										</div>
-									</div>
-									<div class="listWrap" v-show="islListWrap2">
-										<div class="left">
-											<span>{{cardNameWrap2}}</span>
-											<span>{{cardNoWrap2}}</span>
-											<span>{{isSwitch2}}</span>
-											<span>{{cardFuncWrap2}}</span>
-										</div>
-										<div class="right">
-											<span @click="editCards('2')">编辑</span>
-											<span @click="deleteCard('2')">删除</span>
-										</div>
-									</div>
-									<div class="listWrap" v-show="islListWrap3">
-										<div class="left">
-											<span>{{cardNameWrap3}}</span>
-											<span>{{cardNoWrap3}}</span>
-											<span>{{isSwitch3}}</span>
-											<span>{{cardFuncWrap3}}</span>
-										</div>
-										<div class="right">
-											<span @click="editCards('3')">编辑</span>
-											<span @click="deleteCard('3')">删除</span>
-										</div>
-									</div>
-									<div class="listWrap" v-show="islListWrap4">
-										<div class="left">
-											<span>{{cardNameWrap4}}</span>
-											<span>{{cardNoWrap4}}</span>
-											<span>{{isSwitch4}}</span>
-											<span>{{cardFuncWrap4}}</span>
-										</div>
-										<div class="right">
-											<span @click="editCards('4')">编辑</span>
-											<span @click="deleteCard('4')">删除</span>
-										</div>
-									</div>
-									<div class="listWrap" v-show="islListWrap5">
-										<div class="left">
-											<span>{{cardNameWrap5}}</span>
-											<span>{{cardNoWrap5}}</span>
-											<span>{{isSwitch5}}</span>
-											<span>{{cardFuncWrap5}}</span>
-										</div>
-										<div class="right">
-											<span @click="editCards('5')">编辑</span>
-											<span @click="deleteCard('5')">删除</span>
-										</div>
-									</div>
-								</div>
-								<!--  <div class="cardTitle">
+              <div class="accessCon1 accessAdd"
+                   style="margin-bottom: 20px;">
+                <div class="accessTitle">
+                  <img src="./../../../assets/images/personMange/certificate.png" />
+                  <span>通行凭证</span>
+                </div>
+                <div class="infoWrap">
+                  <div class="left">卡片：</div>
+                  <div class="right">
+                    <div @click="addCards">
+                      <img src="./../../../assets/images/personMange/addCard.png" />
+                      <span>
+                        新增卡片&nbsp;&nbsp;
+                        <span class="addWrap">|</span>&nbsp;&nbsp;发卡器配置
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="cardInfo">
+                  <div class="listWrap"
+                       v-show="islListWrap1">
+                    <div class="left">
+                      <span>{{cardNameWrap1}}</span>
+                      <span>{{cardNoWrap1}}</span>
+                      <span>{{isSwitch1}}</span>
+                      <span>{{cardFuncWrap1}}</span>
+                    </div>
+                    <div class="right">
+                      <span @click="editCards('1')">编辑</span>
+                      <span @click="deleteCard('1')">删除</span>
+                    </div>
+                  </div>
+                  <div class="listWrap"
+                       v-show="islListWrap2">
+                    <div class="left">
+                      <span>{{cardNameWrap2}}</span>
+                      <span>{{cardNoWrap2}}</span>
+                      <span>{{isSwitch2}}</span>
+                      <span>{{cardFuncWrap2}}</span>
+                    </div>
+                    <div class="right">
+                      <span @click="editCards('2')">编辑</span>
+                      <span @click="deleteCard('2')">删除</span>
+                    </div>
+                  </div>
+                  <div class="listWrap"
+                       v-show="islListWrap3">
+                    <div class="left">
+                      <span>{{cardNameWrap3}}</span>
+                      <span>{{cardNoWrap3}}</span>
+                      <span>{{isSwitch3}}</span>
+                      <span>{{cardFuncWrap3}}</span>
+                    </div>
+                    <div class="right">
+                      <span @click="editCards('3')">编辑</span>
+                      <span @click="deleteCard('3')">删除</span>
+                    </div>
+                  </div>
+                  <div class="listWrap"
+                       v-show="islListWrap4">
+                    <div class="left">
+                      <span>{{cardNameWrap4}}</span>
+                      <span>{{cardNoWrap4}}</span>
+                      <span>{{isSwitch4}}</span>
+                      <span>{{cardFuncWrap4}}</span>
+                    </div>
+                    <div class="right">
+                      <span @click="editCards('4')">编辑</span>
+                      <span @click="deleteCard('4')">删除</span>
+                    </div>
+                  </div>
+                  <div class="listWrap"
+                       v-show="islListWrap5">
+                    <div class="left">
+                      <span>{{cardNameWrap5}}</span>
+                      <span>{{cardNoWrap5}}</span>
+                      <span>{{isSwitch5}}</span>
+                      <span>{{cardFuncWrap5}}</span>
+                    </div>
+                    <div class="right">
+                      <span @click="editCards('5')">编辑</span>
+                      <span @click="deleteCard('5')">删除</span>
+                    </div>
+                  </div>
+                </div>
+                <!--  <div class="cardTitle">
                 <img src="./../../../assets/images/personMange/fingerprint1.png" />
                 <span>指纹：</span>
                 <div class="addWrap"
@@ -896,367 +916,378 @@
                   <span>新增指纹</span>
                 </div>
 								</div>-->
-								<div class="infoWrap">
-									<div class="left">指纹：</div>
-									<div class="right">
-										<img src="./../../../assets/images/personMange/addCard.png" />&nbsp;
-										<span>新增指纹</span>
-									</div>
-								</div>
-							</div>
-							<div class="bottomTitle">
-								<div class="text">信息来源：<span v-if="source!='platform'">{{this.source}}设备</span><span v-if="source=='platform'">平台录入</span></div>
-								<div class="btnWrap">
-									<el-button
-										style="width: 120px;"
-										@click="addPersonMember('continue')"
-										v-show="addEditMember==='add'"
-									>保存并继续添加</el-button>
-									<el-button style="width: 80px;" @click="addEditPerson()">确认</el-button>
-									<el-button style="width: 80px;margin-right: 15px;" @click="closeAddEdit">取消</el-button>
-								</div>
-							</div>
-						</div>
-					</el-scrollbar>
-				</div>
-			</div>
-			<div class="labelForm" v-show="!isOrganiza">
-				<div class="head">
-					<div class="title">{{labelName}}&nbsp;&nbsp;({{labelNumber}})</div>
-					<div class="carte">
-						<div @click="changeLeftMenu('1')">
-							<img src="./../../../assets/images/personMange/edit.png" />
-							<span>修改名称</span>
-						</div>
-						<div @click="viewLabelDetail">
-							<img src="./../../../assets/images/personMange/labelDetail.png" />
-							<span>标签详情</span>
-						</div>
-					</div>
-				</div>
-				<div class="listWrap">
-					<div class="bthWrap">
-						<el-button style="width: 110px;" @click="addDeparentment">添加部门/员工</el-button>
-						<el-button style="width: 80px;" @click="deleteDialog=true">移出</el-button>
-					</div>
-					<div class="tableWrap">
-						<el-table
-							ref="multipleTable"
-							:data="tableData1"
-							tooltip-effect="dark"
-							style="width: 60%"
-							@selection-change="handleSelectionChange2"
-						>
-							<el-table-column type="selection" width="100"></el-table-column>
-							<el-table-column prop="staffName" label="姓名"></el-table-column>
-							<el-table-column prop="orgName" label="部门"></el-table-column>
-						</el-table>
-					</div>
-				</div>
-			</div>
-			<!--列表分页-->
-			<div class="page-export" v-show="isOrganiza&&isListForm">
-				<div class="exportWrap">
-					<el-pagination
-						@size-change="handleSizeChange1"
-						@current-change="handleCurrentChange1"
-						:current-page="currentPage1"
-						layout="total,prev, pager, next, jumper"
-						:page-size="pageSize1"
-						:pager-count="5"
-						:total="pageTotal1"
-						background
-					></el-pagination>
-				</div>
-			</div>
-			<!--图片分页-->
-			<div class="page-export" v-show="isOrganiza&&isImageForm">
-				<div class="exportWrap">
-					<el-pagination
-						@size-change="handleSizeChange1"
-						@current-change="handleCurrentChange1"
-						:current-page="currentPage1"
-						layout="total,prev, pager, next, jumper"
-						:page-size="pageSize1"
-						:pager-count="5"
-						:total="pageTotal1"
-						background
-					></el-pagination>
-				</div>
-			</div>
-			<!--右边标签分页-->
-			<div class="page-export page-export1" v-show="!isOrganiza">
-				<div class="exportWrap">
-					<el-pagination
-						@size-change="handleSizeChange2"
-						@current-change="handleCurrentChange2"
-						:current-page="currentPage2"
-						layout="total,prev, pager, next, jumper"
-						:page-size="pageSize2"
-						:pager-count="5"
-						:total="pageTotal2"
-						background
-					></el-pagination>
-				</div>
-			</div>
-		</div>
-		<!--详情弹窗-->
-		<el-dialog
-			class="detailDialog"
-			:title="'员工详情'"
-			:visible.sync="detailDialog"
-			@close="closeDialog"
-			width="580px"
-		>
-			<div class="detailWrap">
-				<div class="linkInfo" style="height: 160px;">
-					<div class="inforWrap">
-						<div class="left">姓名：</div>
-						<div class="right">{{this.viewStaffName}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">性别：</div>
-						<div class="right">{{this.viewSexVal}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">民族：</div>
-						<div class="right">{{this.viewNation}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">证件号：</div>
-						<div class="right">{{this.viewIdNumber}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">别名：</div>
-						<div class="right">{{this.viewNickName}}</div>
-					</div>
-					<div class="leftImage">
-						<img :src="viewFontPhoto? viewFontPhoto : require('@/assets/images/user.png')" />
-					</div>
-				</div>
-				<div class="linkInfo">
-					<div class="inforWrap">
-						<div class="left">手机：</div>
-						<div class="right">{{this.viewPhoneNum}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">座机：</div>
-						<div class="right">{{this.viewTelephone}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">电子邮件：</div>
-						<div class="right">{{this.viewEmail}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">文化程度：</div>
-						<div class="right">{{this.viewDegree}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">婚姻状况：</div>
-						<div class="right">{{this.viewMaritalStatus}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">国籍：</div>
-						<div class="right">{{this.viewNationality}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">籍贯：</div>
-						<div class="right">{{this.viewNativePlace}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">户籍：</div>
-						<div class="right">{{this.viewAdress}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">备注：</div>
-						<div class="right">{{this.viewRemarks}}</div>
-					</div>
-				</div>
-				<div class="jobInfo">
-					<div class="inforWrap">
-						<div class="left">部门：</div>
-						<div class="right">
-							<span
-								v-for="(item,index) in viewOrgUuid"
-								:key="index"
-								style="margin-right: 5px;"
-							>{{item.orgName}}</span>
-						</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">标签：</div>
-						<div class="right">
-							<span v-for="(item,index) in viewTagUuids" :key="index" style="margin-right: 5px;">
-								<img class="img1" src="./../../../assets/images/personMange/equipment.png" />
-								{{item.tagName}}
-							</span>
-						</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">职务：</div>
-						<div class="right">{{this.viewDuty}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">身份：</div>
-						<div class="right">{{this.viewIdentity}}</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">负责部门：</div>
-						<div class="right">
-							<span
-								style="margin-right: 5px;"
-								v-for="(item,index) in viewApartment"
-								:key="index"
-							>{{item.orgName}}</span>
-						</div>
-					</div>
-				</div>
-				<div class="accessInfo">
-					<div class="inforWrap">
-						<div class="left">卡：</div>
-						<div class="right">
-							<span class="sp1" v-for="(item,index) in viewCardList" :key="index">
-								<img class="img1" src="./../../../assets/images/personMange/card.png" />
-								{{item.cardId}}
-							</span>
-						</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">指纹：</div>
-						<div class="right">
-							<span class="sp1">
-								<img class="img1" src="./../../../assets/images/personMange/fingerprint1.png" />
-							</span>
-						</div>
-					</div>
-					<div class="inforWrap colm1Wrap" id="trafficAuthList">
-						<div class="left">通行权限组：</div>
-						<div class="right colm1">
-							<span v-for="(item,index) in viewTrafficAuthList" :key="index">{{item.groupName}}</span>
-						</div>
-					</div>
-					<div class="inforWrap colm1Wrap">
-						<div class="left">访客权限组：</div>
-						<div class="right colm1">
-							<span v-for="(item,index) in viewVisitorAuthList" :key="index">{{item.groupName}}</span>
-						</div>
-					</div>
-					<div class="inforWrap" style="margin-top: 20px;">
-						<div class="left">延长时间：</div>
-						<div class="right">{{this.viewDelayTime}}s</div>
-					</div>
-					<div class="inforWrap">
-						<div class="left">有效期：</div>
-						<div class="right">
-							<span v-if="viewTimeRange">长期有效</span>
-							<span v-if="!viewTimeRange">{{this.viewBeginTime}} - {{this.viewEndTime}}</span>
-						</div>
-					</div>
-				</div>
-				<div class="closeBthWrap">
-					<el-button style="width: 66px;" @click="detailDialog=false">关闭</el-button>
-				</div>
-			</div>
-		</el-dialog>
-		<!--删除弹窗-->
-		<el-dialog class="deleteDialog" :visible.sync="deleteDialog" width="400px">
-			<div class="con">
-				<div class="title">
-					<img src="./../../../assets/images/personMange/delete2.png" />
-					<span>是否确定删除选中员工？</span>
-				</div>
-				<div class="btnWrap">
-					<el-button style="width: 76px;" @click="deletePerson">确定</el-button>
-					<el-button style="width: 76px;" @click="deleteDialog=false">取消</el-button>
-				</div>
-			</div>
-		</el-dialog>
-		<!--修改名称弹窗-->
-		<el-dialog
-			class="editDialog"
-			:title="'修改名称'"
-			:visible.sync="editDialog"
-			close="closeDialog"
-			width="440px"
-		>
-			<div class="con">
-				<div class="nameWrap">
-					<div class="title">部门名称：</div>
-					<el-input v-model="apartmentName" style="width: 260px;height: 30px;"></el-input>
-				</div>
-				<div class="btnWrap">
-					<el-button style="width: 76px;">确定</el-button>
-					<el-button style="width: 76px;">取消</el-button>
-				</div>
-			</div>
-		</el-dialog>
-		<!--修改标签弹窗-->
-		<el-dialog
-			class="editDialog"
-			:title="'修改标签'"
-			:visible.sync="editLabelDialog"
-			close="closeDialog"
-			width="440px"
-		>
-			<div class="con">
-				<div class="nameWrap">
-					<div class="title">标签名称：</div>
-					<el-input v-model="apartmentName" style="width: 260px;height: 30px;"></el-input>
-				</div>
-				<div class="btnWrap">
-					<el-button style="width: 76px;">保存</el-button>
-					<el-button style="width: 76px;">取消</el-button>
-				</div>
-			</div>
-		</el-dialog>
-		<!--新建部门弹窗-->
-		<el-dialog
-			class="editDialog"
-			:title="'新建部门'"
-			:visible.sync="newDialog"
-			@close="closeDialog"
-			width="440px"
-		>
-			<div class="con">
-				<div class="nameWrap">
-					<div class="title">部门名称：</div>
-					<el-input v-model="apartmentName" style="width: 260px;height: 30px;"></el-input>
-				</div>
-				<div class="btnWrap">
-					<el-button style="width: 76px;">确定</el-button>
-					<el-button style="width: 76px;">取消</el-button>
-				</div>
-			</div>
-		</el-dialog>
-		<!--标签详情弹窗-->
-		<el-dialog
-			class="labelDetailDialog"
-			:title="'标签详情'"
-			:visible.sync="labelDetailDialog"
-			@close="closeDialog"
-			width="500px"
-		>
-			<div class="con">
-				<div class="detail1">
-					<div class="left">
-						<img src="./../../../assets/images/personMange/label.png" />
-						<span>{{labelName}}：</span>
-					</div>
-					<div class="right">包含员工 {{viewLalelMember}}人</div>
-				</div>
-				<div class="detail2">包含部门 {{viewLalelApartment}}个</div>
-				<!-- <div class="detail2">包含公司   {{viewLalelCompany}}个</div> -->
-				<div class="btnWrap1">
-					<el-button style="width: 66px;" @click="labelDetailDialog=false">确定</el-button>
-					<el-button style="width: 66px;" @click="labelDetailDialog=false">取消</el-button>
-				</div>
-			</div>
-		</el-dialog>
-		<!--Excel批量导入人员-->
-		<!--------------------------- 导入弹窗 TheResidentImportDialog ---------------------->
-		<the-resident-import-dialog :isShow.sync="importDialog" title="批量导入员工" type="personnel"></the-resident-import-dialog>
+                <div class="infoWrap">
+                  <div class="left">指纹：</div>
+                  <div class="right">
+                    <img src="./../../../assets/images/personMange/addCard.png" />&nbsp;
+                    <span>新增指纹</span>
+                  </div>
+                </div>
+              </div>
+              <div class="bottomTitle">
+                <div class="text">信息来源：<span v-if="source!='platform'">{{this.source}}设备</span><span v-if="source=='platform'">平台录入</span></div>
+                <div class="btnWrap">
+                  <el-button style="width: 120px;"
+                             @click="addPersonMember('continue')"
+                             v-show="addEditMember==='add'">保存并继续添加</el-button>
+                  <el-button style="width: 80px;"
+                             @click="addEditPerson()">确认</el-button>
+                  <el-button style="width: 80px;margin-right: 15px;"
+                             @click="closeAddEdit">取消</el-button>
+                </div>
+              </div>
+            </div>
+          </el-scrollbar>
+        </div>
+      </div>
+      <div class="labelForm"
+           v-show="!isOrganiza">
+        <div class="head">
+          <div class="title">{{labelName}}&nbsp;&nbsp;({{labelNumber}})</div>
+          <div class="carte">
+            <div @click="changeLeftMenu('1')">
+              <img src="./../../../assets/images/personMange/edit.png" />
+              <span>修改名称</span>
+            </div>
+            <div @click="viewLabelDetail">
+              <img src="./../../../assets/images/personMange/labelDetail.png" />
+              <span>标签详情</span>
+            </div>
+          </div>
+        </div>
+        <div class="listWrap">
+          <div class="bthWrap">
+            <el-button style="width: 110px;"
+                       @click="addDeparentment">添加部门/员工</el-button>
+            <el-button style="width: 80px;"
+                       @click="deleteDialog=true">移出</el-button>
+          </div>
+          <div class="tableWrap">
+            <el-table ref="multipleTable"
+                      :data="tableData1"
+                      tooltip-effect="dark"
+                      style="width: 60%"
+                      @selection-change="handleSelectionChange2">
+              <el-table-column type="selection"
+                               width="100"></el-table-column>
+              <el-table-column prop="staffName"
+                               label="姓名"></el-table-column>
+              <el-table-column prop="orgName"
+                               label="部门"></el-table-column>
+            </el-table>
+          </div>
+        </div>
+      </div>
+      <!--列表分页-->
+      <div class="page-export"
+           v-show="isOrganiza&&isListForm">
+        <div class="exportWrap">
+          <el-pagination @size-change="handleSizeChange1"
+                         @current-change="handleCurrentChange1"
+                         :current-page="currentPage1"
+                         layout="total,prev, pager, next, jumper"
+                         :page-size="pageSize1"
+                         :pager-count="5"
+                         :total="pageTotal1"
+                         background></el-pagination>
+        </div>
+      </div>
+      <!--图片分页-->
+      <div class="page-export"
+           v-show="isOrganiza&&isImageForm">
+        <div class="exportWrap">
+          <el-pagination @size-change="handleSizeChange1"
+                         @current-change="handleCurrentChange1"
+                         :current-page="currentPage1"
+                         layout="total,prev, pager, next, jumper"
+                         :page-size="pageSize1"
+                         :pager-count="5"
+                         :total="pageTotal1"
+                         background></el-pagination>
+        </div>
+      </div>
+      <!--右边标签分页-->
+      <div class="page-export page-export1"
+           v-show="!isOrganiza">
+        <div class="exportWrap">
+          <el-pagination @size-change="handleSizeChange2"
+                         @current-change="handleCurrentChange2"
+                         :current-page="currentPage2"
+                         layout="total,prev, pager, next, jumper"
+                         :page-size="pageSize2"
+                         :pager-count="5"
+                         :total="pageTotal2"
+                         background></el-pagination>
+        </div>
+      </div>
+    </div>
+    <!--详情弹窗-->
+    <el-dialog class="detailDialog"
+               :title="'员工详情'"
+               :visible.sync="detailDialog"
+               @close="closeDialog"
+               width="580px">
+      <div class="detailWrap">
+        <div class="linkInfo"
+             style="height: 160px;">
+          <div class="inforWrap">
+            <div class="left">姓名：</div>
+            <div class="right">{{this.viewStaffName}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">性别：</div>
+            <div class="right">{{this.viewSexVal}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">民族：</div>
+            <div class="right">{{this.viewNation}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">证件号：</div>
+            <div class="right">{{this.viewIdNumber}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">别名：</div>
+            <div class="right">{{this.viewNickName}}</div>
+          </div>
+          <div class="leftImage">
+            <img :src="viewFontPhoto? viewFontPhoto : require('@/assets/images/user.png')" />
+          </div>
+        </div>
+        <div class="linkInfo">
+          <div class="inforWrap">
+            <div class="left">手机：</div>
+            <div class="right">{{this.viewPhoneNum}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">座机：</div>
+            <div class="right">{{this.viewTelephone}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">电子邮件：</div>
+            <div class="right">{{this.viewEmail}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">文化程度：</div>
+            <div class="right">{{this.viewDegree}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">婚姻状况：</div>
+            <div class="right">{{this.viewMaritalStatus}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">国籍：</div>
+            <div class="right">{{this.viewNationality}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">籍贯：</div>
+            <div class="right">{{this.viewNativePlace}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">户籍：</div>
+            <div class="right">{{this.viewAdress}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">备注：</div>
+            <div class="right">{{this.viewRemarks}}</div>
+          </div>
+        </div>
+        <div class="jobInfo">
+          <div class="inforWrap">
+            <div class="left">部门：</div>
+            <div class="right">
+              <span v-for="(item,index) in viewOrgUuid"
+                    :key="index"
+                    style="margin-right: 5px;">{{item.orgName}}</span>
+            </div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">标签：</div>
+            <div class="right">
+              <span v-for="(item,index) in viewTagUuids"
+                    :key="index"
+                    style="margin-right: 5px;">
+                <img class="img1"
+                     src="./../../../assets/images/personMange/equipment.png" />
+                {{item.tagName}}
+              </span>
+            </div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">职务：</div>
+            <div class="right">{{this.viewDuty}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">身份：</div>
+            <div class="right">{{this.viewIdentity}}</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">负责部门：</div>
+            <div class="right">
+              <span style="margin-right: 5px;"
+                    v-for="(item,index) in viewApartment"
+                    :key="index">{{item.orgName}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="accessInfo">
+          <div class="inforWrap">
+            <div class="left">卡：</div>
+            <div class="right">
+              <span class="sp1"
+                    v-for="(item,index) in viewCardList"
+                    :key="index">
+                <img class="img1"
+                     src="./../../../assets/images/personMange/card.png" />
+                {{item.cardId}}
+              </span>
+            </div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">指纹：</div>
+            <div class="right">
+              <span class="sp1">
+                <img class="img1"
+                     src="./../../../assets/images/personMange/fingerprint1.png" />
+              </span>
+            </div>
+          </div>
+          <div class="inforWrap colm1Wrap"
+               id="trafficAuthList">
+            <div class="left">通行权限组：</div>
+            <div class="right colm1">
+              <span v-for="(item,index) in viewTrafficAuthList"
+                    :key="index">{{item.groupName}}</span>
+            </div>
+          </div>
+          <div class="inforWrap colm1Wrap">
+            <div class="left">访客权限组：</div>
+            <div class="right colm1">
+              <span v-for="(item,index) in viewVisitorAuthList"
+                    :key="index">{{item.groupName}}</span>
+            </div>
+          </div>
+          <div class="inforWrap"
+               style="margin-top: 20px;">
+            <div class="left">延长时间：</div>
+            <div class="right">{{this.viewDelayTime}}s</div>
+          </div>
+          <div class="inforWrap">
+            <div class="left">有效期：</div>
+            <div class="right">
+              <span v-if="viewTimeRange">长期有效</span>
+              <span v-if="!viewTimeRange">{{this.viewBeginTime}} - {{this.viewEndTime}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="closeBthWrap">
+          <el-button style="width: 66px;"
+                     @click="detailDialog=false">关闭</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!--删除弹窗-->
+    <el-dialog class="deleteDialog"
+               :visible.sync="deleteDialog"
+               width="400px">
+      <div class="con">
+        <div class="title">
+          <img src="./../../../assets/images/personMange/delete2.png" />
+          <span>是否确定删除选中员工？</span>
+        </div>
+        <div class="btnWrap">
+          <el-button style="width: 76px;"
+                     @click="deletePerson">确定</el-button>
+          <el-button style="width: 76px;"
+                     @click="deleteDialog=false">取消</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!--修改名称弹窗-->
+    <el-dialog class="editDialog"
+               :title="'修改名称'"
+               :visible.sync="editDialog"
+               close="closeDialog"
+               width="440px">
+      <div class="con">
+        <div class="nameWrap">
+          <div class="title">部门名称：</div>
+          <el-input v-model="apartmentName"
+                    style="width: 260px;height: 30px;"></el-input>
+        </div>
+        <div class="btnWrap">
+          <el-button style="width: 76px;">确定</el-button>
+          <el-button style="width: 76px;">取消</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!--修改标签弹窗-->
+    <el-dialog class="editDialog"
+               :title="'修改标签'"
+               :visible.sync="editLabelDialog"
+               close="closeDialog"
+               width="440px">
+      <div class="con">
+        <div class="nameWrap">
+          <div class="title">标签名称：</div>
+          <el-input v-model="apartmentName"
+                    style="width: 260px;height: 30px;"></el-input>
+        </div>
+        <div class="btnWrap">
+          <el-button style="width: 76px;">保存</el-button>
+          <el-button style="width: 76px;">取消</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!--新建部门弹窗-->
+    <el-dialog class="editDialog"
+               :title="'新建部门'"
+               :visible.sync="newDialog"
+               @close="closeDialog"
+               width="440px">
+      <div class="con">
+        <div class="nameWrap">
+          <div class="title">部门名称：</div>
+          <el-input v-model="apartmentName"
+                    style="width: 260px;height: 30px;"></el-input>
+        </div>
+        <div class="btnWrap">
+          <el-button style="width: 76px;">确定</el-button>
+          <el-button style="width: 76px;">取消</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!--标签详情弹窗-->
+    <el-dialog class="labelDetailDialog"
+               :title="'标签详情'"
+               :visible.sync="labelDetailDialog"
+               @close="closeDialog"
+               width="500px">
+      <div class="con">
+        <div class="detail1">
+          <div class="left">
+            <img src="./../../../assets/images/personMange/label.png" />
+            <span>{{labelName}}：</span>
+          </div>
+          <div class="right">包含员工 {{viewLalelMember}}人</div>
+        </div>
+        <div class="detail2">包含部门 {{viewLalelApartment}}个</div>
+        <!-- <div class="detail2">包含公司   {{viewLalelCompany}}个</div> -->
+        <div class="btnWrap1">
+          <el-button style="width: 66px;"
+                     @click="labelDetailDialog=false">确定</el-button>
+          <el-button style="width: 66px;"
+                     @click="labelDetailDialog=false">取消</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!--Excel批量导入人员-->
+    <!--------------------------- 导入弹窗 TheResidentImportDialog ---------------------->
+    <the-resident-import-dialog :isShow.sync="importDialog"
+                                title="批量导入员工"
+                                type="personnel"></the-resident-import-dialog>
 
-		<!-- <el-dialog class='importDialog'
+    <!-- <el-dialog class='importDialog'
                :title="'Excel批量导入人员'"
                :visible.sync="importDialog"
                @close="closeDialog"
@@ -1286,226 +1317,234 @@
       </div>
 		</el-dialog>-->
 
-		<!--Excel批量导出人员-->
-		<el-dialog
-			class="exportDialog"
-			:title="'Excel批量导出人员'"
-			:visible.sync="exportDialog"
-			@close="closeDialog"
-			width="540px"
-		>
-			<div class="con">
-				<div class="save">
-					<div class="title">保存路径：</div>
-					<el-input style="width: 280px;height: 30px;margin-right: 10px;" v-model="delayTime"></el-input>
-					<div>
-						<img src="./../../../assets/images/personMange/path.png" />
-						<span class="sp1">选择地址</span>
-					</div>
-				</div>
-				<div class="text">
-					<img
-						src="./../../../assets/images/personMange/attention.png"
-						style="width: 12px;height: 12px;margin-right: 8px;"
-					/>
-					<span>注意：本操作将导出所有人员</span>
-				</div>
-				<div class="btnWrap">
-					<el-button style="width: 66px;">导出</el-button>
-					<el-button style="width: 66px;">取消</el-button>
-				</div>
-			</div>
-		</el-dialog>
+    <!--Excel批量导出人员-->
+    <el-dialog class="exportDialog"
+               :title="'Excel批量导出人员'"
+               :visible.sync="exportDialog"
+               @close="closeDialog"
+               width="540px">
+      <div class="con">
+        <div class="save">
+          <div class="title">保存路径：</div>
+          <el-input style="width: 280px;height: 30px;margin-right: 10px;"
+                    v-model="delayTime"></el-input>
+          <div>
+            <img src="./../../../assets/images/personMange/path.png" />
+            <span class="sp1">选择地址</span>
+          </div>
+        </div>
+        <div class="text">
+          <img src="./../../../assets/images/personMange/attention.png"
+               style="width: 12px;height: 12px;margin-right: 8px;" />
+          <span>注意：本操作将导出所有人员</span>
+        </div>
+        <div class="btnWrap">
+          <el-button style="width: 66px;">导出</el-button>
+          <el-button style="width: 66px;">取消</el-button>
+        </div>
+      </div>
+    </el-dialog>
 
-		<!--数据统计弹窗-->
-		<el-dialog
-			class="StaticsViewDialogClass"
-			width="550px"
-			:title="chartTitle"
-			:visible.sync="dataChartDialog"
-			:before-close="onClickCancel"
-			:close-on-click-modal="false"
-		>
-			<el-main>
-				<el-row type="flex" justify="space-between">
-					<el-col :span="14">
-						<div id="canvasPie"></div>
-					</el-col>
-					<el-col :span="10" style="margin: auto;">
-						<div class="legendBox" v-for="(item,index) in pieData" :key="index">
-							<p class="name" :style="{color:color[index]}">
-								<span>{{item.name}}</span>
-							</p>
-							<p style="text-align:center">{{item.value}}</p>
-						</div>
-					</el-col>
-				</el-row>
-			</el-main>
+    <!--数据统计弹窗-->
+    <el-dialog class="StaticsViewDialogClass"
+               width="550px"
+               :title="chartTitle"
+               :visible.sync="dataChartDialog"
+               :before-close="onClickCancel"
+               :close-on-click-modal="false">
+      <el-main>
+        <el-row type="flex"
+                justify="space-between">
+          <el-col :span="14">
+            <div id="canvasPie"></div>
+          </el-col>
+          <el-col :span="10"
+                  style="margin: auto;">
+            <div class="legendBox"
+                 v-for="(item,index) in pieData"
+                 :key="index">
+              <p class="name"
+                 :style="{color:color[index]}">
+                <span>{{item.name}}</span>
+              </p>
+              <p style="text-align:center">{{item.value}}</p>
+            </div>
+          </el-col>
+        </el-row>
+      </el-main>
 
-			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" size="mini" class="footer-button" @click="dataChartDialog=false">确定</el-button>
-				<el-button type="primary" size="mini" class="footer-button" @click="dataChartDialog=false">取消</el-button>
-			</div>
-		</el-dialog>
-		<!--新增卡片弹窗-->
-		<el-dialog
-			class="addCardDialog"
-			:title="'新增卡片'"
-			:visible.sync="addCardDialog"
-			@close="closeDialog"
-			width="380px"
-		>
-			<div class="con">
-				<div class="detail">
-					<div class="left">卡片名称：</div>
-					<div class="right">
-						<el-input v-model="addCardName" style="width: 220px;height: 30px;"></el-input>
-					</div>
-				</div>
-				<div class="detail">
-					<div class="left">卡片：</div>
-					<div class="right">
-						<el-input v-model="addCard" style="width: 220px;height: 30px;"></el-input>
-					</div>
-				</div>
-				<div class="detail">
-					<div class="left">启用/禁用：</div>
-					<div class="right">
-						<el-switch
-							v-model="addCardSwitch"
-							active-color="rgba(32,204,150,0.2)"
-							inactive-color="rgba(255,255,255,0.2)"
-							style="width: 35px;"
-						></el-switch>
-					</div>
-				</div>
-				<div class="detail">
-					<div class="left">卡片功能：</div>
-					<div class="right">
-						<el-select v-model="addCardFunc" placeholder="请选择" style="width: 220px;">
-							<el-option
-								v-for="item in cardFuncArr"
-								:key="item.typeStr"
-								:label="item.typeName"
-								:value="item.typeStr"
-							></el-option>
-						</el-select>
-					</div>
-				</div>
-				<div class="btnWrap">
-					<el-button style="width: 66px;" @click="addCardConfirm">确认</el-button>
-					<el-button style="width: 66px;" @click="addCardDialog=false">取消</el-button>
-				</div>
-			</div>
-		</el-dialog>
-		<!--编辑卡片弹窗-->
-		<el-dialog
-			class="addCardDialog"
-			:title="'编辑卡片'"
-			:visible.sync="editCardDialog"
-			@close="closeDialog"
-			width="380px"
-		>
-			<div class="con">
-				<div class="detail">
-					<div class="left">卡片名称：</div>
-					<div class="right">
-						<el-input v-model="editCardName" style="width: 220px;height: 30px;"></el-input>
-					</div>
-				</div>
-				<div class="detail">
-					<div class="left">卡片：</div>
-					<div class="right">
-						<el-input v-model="editCard" style="width: 220px;height: 30px;"></el-input>
-					</div>
-				</div>
-				<div class="detail">
-					<div class="left">启用/禁用：</div>
-					<div class="right">
-						<el-switch
-							v-model="editCardSwitch"
-							active-color="rgba(32,204,150,0.2)"
-							inactive-color="rgba(255,255,255,0.2)"
-							style="width: 35px;"
-						></el-switch>
-					</div>
-				</div>
-				<div class="detail">
-					<div class="left">卡片功能：</div>
-					<div class="right">
-						<el-select v-model="editCardFunc" placeholder="请选择" style="width: 220px;">
-							<el-option
-								v-for="item in cardFuncArr"
-								:key="item.typeStr"
-								:label="item.typeName"
-								:value="item.typeStr"
-							></el-option>
-						</el-select>
-					</div>
-				</div>
-				<div class="btnWrap">
-					<el-button style="width: 66px;" @click="editCardConfirm">确认</el-button>
-					<el-button style="width: 66px;" @click="editCardDialog=false">取消</el-button>
-				</div>
-			</div>
-		</el-dialog>
-		<!--h5拍照-->
-		<el-dialog title="拍照" center :visible.sync="shootPhotoDialogVisible" width="400px">
-			<video v-show="!shootPhotoShow" id="video" ref="video" width="350" height="350"></video>
-			<img v-show="shootPhotoShow" id="img" src />
-			<span slot="footer" style="padding:15px">
-				<el-button type="primary" @click="shootPhotoDialogVisible = false">取 消</el-button>
-				<!-- <el-button type="primary" @click="resetShootAct">重拍</el-button> -->
-				<el-button type="primary" @click="shootAct">拍摄</el-button>
-			</span>
-		</el-dialog>
-		<!--设置部门上级-->
-		<tab-tree-tag
-			title="设置部门上级"
-			rightTxt="已选择的员工"
-			:isShow="setAprtmentDialogVisiable"
-			@onCancel="onCancel2"
-			@onConfirm="onConfirm2"
-		></tab-tree-tag>
-		<person-tree-tag
-			title="添加部门/员工到标签"
-			rightTxt="已选择的部门或员工"
-			:isShow="addLabelDialogVisiable"
-			treeType="person"
-			:checkedNodeArr="checkedNode3"
-			@onCancel="onCancel4"
-			@onConfirm="onConfirm4"
-		></person-tree-tag>
-		<person-tree-tag
-			title="添加部门/员工到标签"
-			rightTxt="已选择的部门或员工"
-			:isShow="addMsgToDeviceDialogVisiable"
-			treeType="staff"
-			:checkedNodeArr="checkedNode2"
-			:isTag="true"
-			@onCancel="onCancel3"
-			@onConfirm="onConfirm3"
-		></person-tree-tag>
-		<!-----------------------------------------添加地址居民到标签----------------------------------->
-		<person-tree-tag
-			title="设置所在部门"
-			rightTxt="员工将属于以下部门"
-			:isShow="getMsgToDeviceDialogVisiable"
-			treeType="department"
-			:checkedNodeArr="checkedNode1"
-			@onCancel="onCancel"
-			@onConfirm="onConfirm"
-		></person-tree-tag>
-		<person-tree-tag
-			title="设置所在部门"
-			rightTxt="员工将属于以下部门"
-			:isShow="getMsgToDeviceDialogVisiable5"
-			treeType="department"
-			:checkedNodeArr="checkedNode5"
-			@onCancel="onCancel5"
-			@onConfirm="onConfirm5"
-		></person-tree-tag>
-	</div>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button type="primary"
+                   size="mini"
+                   class="footer-button"
+                   @click="dataChartDialog=false">确定</el-button>
+        <el-button type="primary"
+                   size="mini"
+                   class="footer-button"
+                   @click="dataChartDialog=false">取消</el-button>
+      </div>
+    </el-dialog>
+    <!--新增卡片弹窗-->
+    <el-dialog class="addCardDialog"
+               :title="'新增卡片'"
+               :visible.sync="addCardDialog"
+               @close="closeDialog"
+               width="380px">
+      <div class="con">
+        <div class="detail">
+          <div class="left">卡片名称：</div>
+          <div class="right">
+            <el-input v-model="addCardName"
+                      style="width: 220px;height: 30px;"></el-input>
+          </div>
+        </div>
+        <div class="detail">
+          <div class="left">卡片：</div>
+          <div class="right">
+            <el-input v-model="addCard"
+                      style="width: 220px;height: 30px;"></el-input>
+          </div>
+        </div>
+        <div class="detail">
+          <div class="left">启用/禁用：</div>
+          <div class="right">
+            <el-switch v-model="addCardSwitch"
+                       active-color="rgba(32,204,150,0.2)"
+                       inactive-color="rgba(255,255,255,0.2)"
+                       style="width: 35px;"></el-switch>
+          </div>
+        </div>
+        <div class="detail">
+          <div class="left">卡片功能：</div>
+          <div class="right">
+            <el-select v-model="addCardFunc"
+                       placeholder="请选择"
+                       style="width: 220px;">
+              <el-option v-for="item in cardFuncArr"
+                         :key="item.typeStr"
+                         :label="item.typeName"
+                         :value="item.typeStr"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="btnWrap">
+          <el-button style="width: 66px;"
+                     @click="addCardConfirm">确认</el-button>
+          <el-button style="width: 66px;"
+                     @click="addCardDialog=false">取消</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!--编辑卡片弹窗-->
+    <el-dialog class="addCardDialog"
+               :title="'编辑卡片'"
+               :visible.sync="editCardDialog"
+               @close="closeDialog"
+               width="380px">
+      <div class="con">
+        <div class="detail">
+          <div class="left">卡片名称：</div>
+          <div class="right">
+            <el-input v-model="editCardName"
+                      style="width: 220px;height: 30px;"></el-input>
+          </div>
+        </div>
+        <div class="detail">
+          <div class="left">卡片：</div>
+          <div class="right">
+            <el-input v-model="editCard"
+                      style="width: 220px;height: 30px;"></el-input>
+          </div>
+        </div>
+        <div class="detail">
+          <div class="left">启用/禁用：</div>
+          <div class="right">
+            <el-switch v-model="editCardSwitch"
+                       active-color="rgba(32,204,150,0.2)"
+                       inactive-color="rgba(255,255,255,0.2)"
+                       style="width: 35px;"></el-switch>
+          </div>
+        </div>
+        <div class="detail">
+          <div class="left">卡片功能：</div>
+          <div class="right">
+            <el-select v-model="editCardFunc"
+                       placeholder="请选择"
+                       style="width: 220px;">
+              <el-option v-for="item in cardFuncArr"
+                         :key="item.typeStr"
+                         :label="item.typeName"
+                         :value="item.typeStr"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="btnWrap">
+          <el-button style="width: 66px;"
+                     @click="editCardConfirm">确认</el-button>
+          <el-button style="width: 66px;"
+                     @click="editCardDialog=false">取消</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <!--h5拍照-->
+    <el-dialog title="拍照"
+               center
+               :visible.sync="shootPhotoDialogVisible"
+               :width="`${canvWidth ? canvWidth + 50 : '1300'}px`"
+               :before-close="handleClosePhoto">
+      <video v-show="!shootPhotoShow"
+             id="video"
+             :height="`${canvHeight ? canvHeight : '800'}px`"
+             ref="video"></video>
+      <img v-show="shootPhotoShow"
+           id="img"
+           src>
+      <span slot="footer"
+            style="padding:15px">
+        <el-button type="primary"
+                   @click="shootAct">拍摄</el-button>
+        <el-button type="primary"
+                   @click="handleClosePhoto">取消</el-button>
+      </span>
+    </el-dialog>
+    <!--设置部门上级-->
+    <tab-tree-tag title="设置部门上级"
+                  rightTxt="已选择的员工"
+                  :isShow="setAprtmentDialogVisiable"
+                  @onCancel="onCancel2"
+                  @onConfirm="onConfirm2"></tab-tree-tag>
+    <person-tree-tag title="添加部门/员工到标签"
+                     rightTxt="已选择的部门或员工"
+                     :isShow="addLabelDialogVisiable"
+                     treeType="person"
+                     :checkedNodeArr="checkedNode3"
+                     @onCancel="onCancel4"
+                     @onConfirm="onConfirm4"></person-tree-tag>
+    <person-tree-tag title="添加部门/员工到标签"
+                     rightTxt="已选择的部门或员工"
+                     :isShow="addMsgToDeviceDialogVisiable"
+                     treeType="staff"
+                     :checkedNodeArr="checkedNode2"
+                     :isTag="true"
+                     @onCancel="onCancel3"
+                     @onConfirm="onConfirm3"></person-tree-tag>
+    <!-----------------------------------------添加地址居民到标签----------------------------------->
+    <person-tree-tag title="设置所在部门"
+                     rightTxt="员工将属于以下部门"
+                     :isShow="getMsgToDeviceDialogVisiable"
+                     treeType="department"
+                     :checkedNodeArr="checkedNode1"
+                     @onCancel="onCancel"
+                     @onConfirm="onConfirm"></person-tree-tag>
+    <person-tree-tag title="设置所在部门"
+                     rightTxt="员工将属于以下部门"
+                     :isShow="getMsgToDeviceDialogVisiable5"
+                     treeType="department"
+                     :checkedNodeArr="checkedNode5"
+                     @onCancel="onCancel5"
+                     @onConfirm="onConfirm5"></person-tree-tag>
+  </div>
 </template>
 <script>
 import * as api from "@/pages/equipmentMange/ajax.js";
@@ -1784,7 +1823,10 @@ export default {
       chartTitle: "",
       viewLalelCompany: 0,
       isResize: true,
-      source: ""
+      source: "",
+      canvWidth: "",
+      canvHeight: "",
+      mediaStreamTrack: null
     };
   },
   created() {},
@@ -2863,9 +2905,11 @@ export default {
     },
     shootAct() {
       var canvas = document.createElement("canvas");
-      canvas.width = "350";
-      canvas.height = "260";
-      canvas.getContext("2d").drawImage(this.video, 0, 0, 350, 260);
+      canvas.width = this.canvWidth;
+      canvas.height = this.canvHeight;
+      canvas
+        .getContext("2d")
+        .drawImage(this.video, 0, 0, this.canvWidth, this.canvHeight);
       // 把canvas图像转为img图片
       this.img = document.getElementById("img");
       this.img.src = canvas.toDataURL("image/jpeg");
@@ -2876,8 +2920,9 @@ export default {
         .replace("data:image/jpeg;base64,", "jpeg:")
         .replace("data:image/png;base64,", "png:")
         .replace("data:image/jpg;base64,", "jpg:");
-      this.shootPhotoDialogVisible = false;
       this.checkImageQuality(this.imageFileData);
+      this.mediaStreamTrack.stop();
+      this.shootPhotoDialogVisible = false;
       // console.log(this.imageFileData);
     },
     shootPhoto() {
@@ -2897,16 +2942,24 @@ export default {
         if (window.navigator.getMedia) {
           window.navigator.getMedia(
             {
-              video: true, // 使用摄像头对象
+              video: {
+                width: { min: 1024, ideal: 1280, max: 1920 },
+                height: { min: 776, ideal: 720, max: 1080 }
+              },
               audio: false // 不适用音频
             },
             function(strem) {
+              _this.mediaStreamTrack = strem.getTracks()[0];
               try {
                 _this.video.src = _this.vendorUrl.createObjectURL(strem);
               } catch (e) {
                 _this.video.srcObject = strem;
               }
               _this.video.play();
+              _this.video.addEventListener("loadedmetadata", function() {
+                _this.canvWidth = this.videoWidth;
+                _this.canvHeight = this.videoHeight;
+              });
             },
             function(error) {
               console.log(error);
@@ -2919,6 +2972,10 @@ export default {
           _this.shootPhotoDialogVisible = false;
         }
       }, 100);
+    },
+    handleClosePhoto() {
+      this.mediaStreamTrack.stop();
+      this.shootPhotoDialogVisible = false;
     },
     viewSingleDetail(row) {
       function addZero(num) {
@@ -3999,1727 +4056,1738 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .personMange {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	flex-wrap: row;
-	justify-content: space-between;
-	box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: row;
+  justify-content: space-between;
+  box-sizing: border-box;
 }
 .personMange .rightmenu {
-	flex: 1;
-	margin-right: 15px;
-	background: #212325;
-	margin-bottom: 30px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	padding-bottom: 20px;
-	box-sizing: border-box;
+  flex: 1;
+  margin-right: 15px;
+  background: #212325;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+}
+.personMange .el-dialog {
+  margin-top: 1vh !important;
+}
+.personMange .el-dialog__footer {
+  padding-bottom: 15px;
+  margin-top: -15px;
+}
+.personMange .el-dialog__wrapper {
+  overflow: auto;
 }
 .personMange .rightmenu .listForm {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 .personMange .rightmenu .listForm .head {
-	width: 100%;
-	height: 50px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-	background: #1b1b1b;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background: #1b1b1b;
 }
 .personMange .rightmenu .listForm .head .title {
-	font-family: PingFangSC-Regular;
-	font-size: 16px;
-	color: #dddddd;
-	text-align: justify;
-	padding-left: 10px;
-	box-sizing: border-box;
+  font-family: PingFangSC-Regular;
+  font-size: 16px;
+  color: #dddddd;
+  text-align: justify;
+  padding-left: 10px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .listForm .head .carte {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #26d39d;
-	text-align: justify;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #26d39d;
+  text-align: justify;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .listForm .head .carte div:nth-child(1) {
-	padding-right: 25px;
-	border-right: 1px solid rgba(255, 255, 255, 0.1);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  padding-right: 25px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .listForm .head .carte div:nth-child(1) img {
-	width: 12px;
-	height: 12px;
-	margin-right: 8px;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
 }
 .personMange .rightmenu .listForm .head .carte div:nth-child(2) {
-	padding: 0 24px 0 21px;
-	border-right: 1px solid rgba(255, 255, 255, 0.1);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  padding: 0 24px 0 21px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .listForm .head .carte div:nth-child(2) img {
-	width: 13px;
-	height: 11.4px;
-	margin-right: 7px;
+  width: 13px;
+  height: 11.4px;
+  margin-right: 7px;
 }
 .personMange .rightmenu .listForm .head .carte div:nth-child(3) {
-	padding: 0 26px 0 21px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  padding: 0 26px 0 21px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .listForm .head .carte div:nth-child(3) img {
-	width: 12px;
-	height: 12px;
-	margin-right: 6px;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
 }
 .personMange .rightmenu .listForm .listWrap {
-	width: 100%;
-	height: 100%;
-	background: #212325;
-	border-radius: 2px 2px 2px 2px 0px 0px;
-	padding: 0 30px;
-	box-sizing: border-box;
-	margin-bottom: 30px;
+  width: 100%;
+  height: 100%;
+  background: #212325;
+  border-radius: 2px 2px 2px 2px 0px 0px;
+  padding: 0 30px;
+  box-sizing: border-box;
+  margin-bottom: 30px;
 }
 .personMange .rightmenu .listForm .listWrap .bthWrap {
-	width: 100%;
-	height: 70px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 .personMange .rightmenu .listForm .listWrap .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .rightmenu .listForm .listWrap .el-input__inner {
-	height: 32px;
+  height: 32px;
 }
 .personMange .rightmenu .listForm .listWrap .bthWrap .right {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .listForm .listWrap .sp {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #fff;
-	text-align: right;
-	margin-right: 4px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #fff;
+  text-align: right;
+  margin-right: 4px;
 }
 .personMange .rightmenu .listForm .listWrap .search {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 .personMange .rightmenu .listForm .listWrap .search span {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 .personMange .rightmenu .listForm .listWrap .search img {
-	margin: 0 7px 0 13px;
+  margin: 0 7px 0 13px;
 }
 .personMange .rightmenu .listForm .listWrap .switch {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 .personMange .rightmenu .listForm .listWrap .switch span {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 .personMange .rightmenu .listForm .listWrap .switch img {
-	margin: 0 5px 0 16px;
+  margin: 0 5px 0 16px;
 }
 .personMange .el-table--enable-row-transition .el-table__body td {
-	height: 50px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #dddddd;
+  height: 50px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #dddddd;
 }
 .personMange .el-table th.is-leaf {
-	height: 36px;
+  height: 36px;
 }
 .personMange .rightmenu .addMembers {
-	width: 100%;
-	height: auto;
-	border-radius: 2px 2px 2px 2px 0px 0px;
-	background: #1b1b1b;
+  width: 100%;
+  height: auto;
+  border-radius: 2px 2px 2px 2px 0px 0px;
+  background: #1b1b1b;
 }
 .personMange .rightmenu .addMembers .title {
-	width: 100%;
-	height: 70px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
+  width: 100%;
+  height: 70px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 .personMange .rightmenu .addMembers .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .rightmenu .addMembers .el-input__inner {
-	height: 30px;
+  height: 30px;
 }
 .personMange .rightmenu .addMembers .title .text {
-	font-family: PingFangSC-Regular;
-	font-size: 14px;
-	color: #ffffff;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	padding-left: 4px;
-	box-sizing: border-box;
+  font-family: PingFangSC-Regular;
+  font-size: 14px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 4px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .addMembers .title .text span:first-child {
-	display: block;
-	width: 3px;
-	height: 14px;
-	background: #20cc96;
-	margin-right: 10px;
+  display: block;
+  width: 3px;
+  height: 14px;
+  background: #20cc96;
+  margin-right: 10px;
 }
 .personMange .rightmenu .addMembers .requireInfo {
-	width: 100%;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding-top: 20px;
-	box-sizing: border-box;
+  width: 100%;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .addMembers .infoWrap {
-	width: 100%;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 15px;
+  width: 100%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 15px;
 }
 .personMange .rightmenu .addMembers .infoWrap .left {
-	width: 200px;
-	height: 100%;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
-	font-family: PingFangSC-Regular;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #dddddd;
-	text-align: right;
+  width: 200px;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: PingFangSC-Regular;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #dddddd;
+  text-align: right;
 }
 .personMange .rightmenu .addMembers .infoWrap .right1 {
-	flex: 1;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	padding: 0 0 5px 23px;
-	box-sizing: border-box;
-	justify-content: space-between;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 0 5px 23px;
+  box-sizing: border-box;
+  justify-content: space-between;
 }
 .personMange .rightmenu .addMembers .infoWrap .right {
-	flex: 1;
-	height: 100%;
-	display: flex;
-	flex-direction: row;
-	padding: 0 0 5px 23px;
-	align-items: center;
-	box-sizing: border-box;
-	position: relative;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  padding: 0 0 5px 23px;
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
 }
 .personMange .rightmenu .addMembers .infoWrap .apartment {
-	display: block;
-	flex: none;
-	width: 70%;
+  display: block;
+  flex: none;
+  width: 70%;
 }
 .personMange .rightmenu .addMembers .photoWrap {
-	height: 112px;
+  height: 112px;
 }
 .personMange .rightmenu .addMembers .photoWrap .left {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
 }
 .personMange .rightmenu .addMembers .photoWrap .leftCon {
-	width: 92px;
-	height: 100%;
-	border: 1px dashed rgba(255, 255, 255, 0.1);
-	background: rgba(0, 0, 0, 0.1);
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: center;
-	padding-top: 30px;
-	box-sizing: border-box;
-	position: relative;
+  width: 92px;
+  height: 100%;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 30px;
+  box-sizing: border-box;
+  position: relative;
 }
 .personMange .rightmenu .addMembers .photoWrap .leftCon .imgWrap {
-	width: 100%;
-	height: 17px;
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
+  width: 100%;
+  height: 17px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 .personMange .rightmenu .addMembers .photoWrap .leftCon .first {
-	margin: 30px 0 16px 0;
+  margin: 30px 0 16px 0;
 }
 .personMange .rightmenu .addMembers .photoWrap .leftCon .imgWrap img {
-	width: 14px;
-	margin-right: 8px;
+  width: 14px;
+  margin-right: 8px;
 }
 .personMange .rightmenu .addMembers .photoWrap .upload-multiple {
-	width: 92px;
-	height: 112px;
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 500;
+  width: 92px;
+  height: 112px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 500;
 }
 .personMange .rightmenu .addMembers .photoWrap .upload-multiple .uploadWrap {
-	width: 92px;
-	height: 112px;
-	position: absolute;
-	left: 0;
-	top: 0;
+  width: 92px;
+  height: 112px;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 .personMange .rightmenu .addMembers .photoWrap .alreadyUploaded {
-	width: 94px;
-	height: 114px;
-	position: absolute;
-	left: -2px;
-	top: -2px;
-	z-index: 2000;
+  width: 94px;
+  height: 114px;
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  z-index: 2000;
 }
 .personMange .rightmenu .addMembers .photoWrap .alreadyUploaded img {
-	width: 94px;
-	height: 114px;
+  width: 94px;
+  height: 114px;
 }
 .personMange .rightmenu .addMembers .photoWrap .alreadyUploaded .delete {
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
-	background: red;
-	position: absolute;
-	right: 4px;
-	top: 4px;
-	background: url("./../../../assets/images/personMange/delete.png") no-repeat;
-	background-position: center center;
-	z-index: 2000;
-	background-size: 10px 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: red;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  background: url("./../../../assets/images/personMange/delete.png") no-repeat;
+  background-position: center center;
+  z-index: 2000;
+  background-size: 10px 10px;
 }
 .personMange .rightmenu .addMembers .infoWrap .right1 div:first-child span {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ff5f5f;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ff5f5f;
 }
 .personMange .rightmenu .addMembers .infoWrap .right .el-radio {
-	margin-right: 12px;
+  margin-right: 12px;
 }
 .personMange .cellComponet {
-	width: 100px;
-	height: 30px;
-	background: rgba(255, 255, 255, 0.05);
-	border-radius: 3px;
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
-	padding-left: 9px;
-	box-sizing: border-box;
-	position: relative;
+  width: 100px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
+  padding-left: 9px;
+  box-sizing: border-box;
+  position: relative;
 }
 .personMange .apartment .cellComponet {
-	float: left;
-	margin-bottom: 10px;
+  float: left;
+  margin-bottom: 10px;
 }
 .personMange .cellComponet img {
-	margin-right: 7px;
+  margin-right: 7px;
 }
 .personMange .cellComponet .delete {
-	width: 13px;
-	height: 13px;
-	background: red;
-	position: absolute;
-	right: -5px;
-	top: -5px;
-	background: url("./../../../assets/images/personMange/delete.png") no-repeat;
-	background-position: center center;
-	z-index: 2000;
-	background-size: 13px 13px;
+  width: 13px;
+  height: 13px;
+  background: red;
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  background: url("./../../../assets/images/personMange/delete.png") no-repeat;
+  background-position: center center;
+  z-index: 2000;
+  background-size: 13px 13px;
 }
 .personMange .rightmenu .addMembers .infoWrap .right .edit {
-	margin-left: 14px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	cursor: pointer;
-	margin-top: 7px;
+  margin-left: 14px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  cursor: pointer;
+  margin-top: 7px;
 }
 .personMange .rightmenu .addMembers .infoWrap .right .edit img {
-	width: 9.9px;
-	height: 9.9px;
-	shape-margin: 7px;
+  width: 9.9px;
+  height: 9.9px;
+  shape-margin: 7px;
 }
 .personMange .rightmenu .addMembers .infoWrap .more {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	position: absolute;
-	bottom: 10px;
-	right: 10px;
-	cursor: pointer;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
 }
 .personMange .rightmenu .addMembers .infoWrap .more img {
-	width: 10px;
-	height: 10px;
-	margin-left: 4px;
+  width: 10px;
+  height: 10px;
+  margin-left: 4px;
 }
 .personMange .rightmenu .addMembers .additionalInfo {
-	width: 100%;
-	height: 565px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding-top: 20px;
-	box-sizing: border-box;
-	background: #212325;
+  width: 100%;
+  height: 565px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  box-sizing: border-box;
+  background: #212325;
 }
 .personMange .rightmenu .addMembers .accessTitle {
-	width: 100px;
-	height: 51px;
-	box-sizing: border-box;
-	background: #212325;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	padding-left: 5px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #dddddd;
-	position: absolute;
-	top: 10px;
-	left: 0;
+  width: 100px;
+  height: 51px;
+  box-sizing: border-box;
+  background: #212325;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 5px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #dddddd;
+  position: absolute;
+  top: 10px;
+  left: 0;
 }
 .personMange .rightmenu .addMembers .accessTitle img {
-	width: 10px;
-	height: 12px;
-	margin-right: 12px;
+  width: 10px;
+  height: 12px;
+  margin-right: 12px;
 }
 .personMange .rightmenu .addMembers .accessCon1 {
-	width: 100%;
-	height: auto;
-	box-sizing: border-box;
-	background: #212325;
-	padding-top: 20px;
-	position: relative;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  background: #212325;
+  padding-top: 20px;
+  position: relative;
 }
 .personMange .rightmenu .addMembers .accessCon1 .cellComponet {
-	float: left;
-	margin: 0 15px 10px 0;
+  float: left;
+  margin: 0 15px 10px 0;
 }
 .personMange .rightmenu .addMembers .cellComponet {
-	float: left;
-	margin: 0 15px 10px 0;
+  float: left;
+  margin: 0 15px 10px 0;
 }
 .personMange .rightmenu .addMembers .accessCon1 .cellComponet span {
-	width: 100%;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .personMange .rightmenu .addMembers .accessCon2 {
-	width: 100%;
-	height: 195px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	box-sizing: border-box;
-	background: #212325;
-	padding-top: 20px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
+  width: 100%;
+  height: 195px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+  background: #212325;
+  padding-top: 20px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
 }
 .personMange .rightmenu .addMembers .accessCon2 .sp {
-	color: #ff5f5f;
-	margin-left: 17px;
+  color: #ff5f5f;
+  margin-left: 17px;
 }
 .personMange .rightmenu .el-input--prefix .el-input__inner {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
 }
 .personMange .rightmenu .el-input--prefix .el-input__inner {
-	padding-left: 12px;
+  padding-left: 12px;
 }
 .personMange .el-date-editor .el-input__prefix {
-	left: 103%;
-	-webkit-transform: translateX(-200%);
-	transform: translateX(-200%);
-	top: -20%;
-	background: url("./../../../assets/images/personMange/calendar.png") no-repeat;
-	background-position: center 15px;
-	z-index: 2000;
-	background-size: 11.9px 10.1px;
+  left: 103%;
+  -webkit-transform: translateX(-200%);
+  transform: translateX(-200%);
+  top: -20%;
+  background: url("./../../../assets/images/personMange/calendar.png") no-repeat;
+  background-position: center 15px;
+  z-index: 2000;
+  background-size: 11.9px 10.1px;
 }
 .personMange .el-icon-date:before {
-	content: "";
+  content: "";
 }
 .personMange .rightmenu .addMembers .cardTitle {
-	width: 100%;
-	height: 51px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	box-sizing: border-box;
-	background: #212325;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	padding-left: 5px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #dddddd;
+  width: 100%;
+  height: 51px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+  background: #212325;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 5px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #dddddd;
 }
 .personMange .rightmenu .addMembers .cardTitle img {
-	width: 12px;
-	height: 10px;
-	margin-right: 12px;
+  width: 12px;
+  height: 10px;
+  margin-right: 12px;
 }
 .personMange .rightmenu .addMembers .cardTitle .addWrap {
-	padding: 0 10px;
-	border-right: 1px solid rgba(255, 255, 255, 0.1);
-	margin-right: 13px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	letter-spacing: 0;
-	cursor: pointer;
+  padding: 0 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  margin-right: 13px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  letter-spacing: 0;
+  cursor: pointer;
 }
 .personMange .rightmenu .addMembers .cardTitle .sp {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	letter-spacing: 0;
-	cursor: pointer;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  letter-spacing: 0;
+  cursor: pointer;
 }
 .personMange .rightmenu .addMembers .cardInfo {
-	width: 100%;
-	height: auto;
-	padding-top: 21px;
-	box-sizing: border-box;
-	background: #212325;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	padding-left: 5px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #dddddd;
-	padding-left: 166px;
-	box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  padding-top: 21px;
+  box-sizing: border-box;
+  background: #212325;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 5px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #dddddd;
+  padding-left: 166px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .addMembers .cardInfo .listWrap {
-	width: 540px;
-	height: 36px;
-	background: rgba(255, 255, 255, 0.03);
-	border-radius: 2px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 17px 0 20px;
-	box-sizing: border-box;
-	margin-bottom: 21px;
+  width: 540px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 17px 0 20px;
+  box-sizing: border-box;
+  margin-bottom: 21px;
 }
 .personMange .rightmenu .addMembers .cardInfo .listWrap .left {
-	display: flex;
+  display: flex;
 }
 .personMange .rightmenu .addMembers .cardInfo .listWrap .left span {
-	display: block;
-	margin-right: 6px;
+  display: block;
+  margin-right: 6px;
 }
 .personMange
-	.rightmenu
-	.addMembers
-	.cardInfo
-	.listWrap
-	.right
-	span:first-child {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	margin-right: 12px;
+  .rightmenu
+  .addMembers
+  .cardInfo
+  .listWrap
+  .right
+  span:first-child {
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  margin-right: 12px;
 }
 .personMange .rightmenu .addMembers .cardInfo .listWrap .right span:last-child {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #ff5f5f;
-	margin-right: 12px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #ff5f5f;
+  margin-right: 12px;
 }
 .personMange .rightmenu .addMembers .bottomTitle {
-	width: 100%;
-	height: 107px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
+  width: 100%;
+  height: 107px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 .personMange .rightmenu .addMembers .bottomTitle .text {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #999999;
-	padding-left: 21px;
-	box-sizing: border-box;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #999999;
+  padding-left: 21px;
+  box-sizing: border-box;
 }
 .personMange .accessChoose {
-	position: absolute;
-	left: 24px;
-	top: 29px;
-	width: 260px;
-	height: 350px;
-	background: #2a2e31;
-	box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.3);
-	z-index: 3000;
-	padding: 12px 23px 0;
-	box-sizing: border-box;
+  position: absolute;
+  left: 24px;
+  top: 29px;
+  width: 260px;
+  height: 350px;
+  background: #2a2e31;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.3);
+  z-index: 3000;
+  padding: 12px 23px 0;
+  box-sizing: border-box;
 }
 .personMange .accessChoose .chooseWrap {
-	padding-bottom: 8px;
+  padding-bottom: 8px;
 }
 .personMange .accessChoose .wrap {
-	margin-bottom: 13px;
+  margin-bottom: 13px;
 }
 .personMange .accessChoose .wrap .chooseWrap:last-child {
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 }
 .personMange .accessChoose .el-icon-caret-right:before {
-	content: none;
+  content: none;
 }
 .personMange .accessChoose .el-tree {
-	background: none;
+  background: none;
 }
 .personMange .accessChoose .el-tree-node__content > .el-tree-node__expand-icon {
-	padding-left: 0;
+  padding-left: 0;
 }
 .personMange .accessChoose .el-tree-node.is-expanded > .el-tree-node__children {
-	margin-left: -18px;
+  margin-left: -18px;
 }
 .personMange .accessChoose .el-tree div div div:nth-child(1) div:nth-child(1) {
-	margin-top: 19px;
+  margin-top: 19px;
 }
 .personMange .accessChoose .el-tree .el-tree-node__content {
-	height: 30px;
+  height: 30px;
 }
 .personMange .accessChoose .el-tree-node__content > .el-tree-node__expand-icon {
-	padding: 0;
+  padding: 0;
 }
 .personMange .accessChoose .filterText1 {
-	width: 140px;
-	height: 30px;
-	position: absolute;
-	right: 0;
-	top: 0;
+  width: 140px;
+  height: 30px;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 .personMange .accessChoose .search-icon {
-	width: 12px;
-	height: 12px;
-	position: absolute;
-	left: 82px;
-	top: 10px;
-	background: url("./../../../assets/images/personMange/searchTree.png")
-		no-repeat;
-	background-position: center center;
-	background-size: contain;
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  left: 82px;
+  top: 10px;
+  background: url("./../../../assets/images/personMange/searchTree.png")
+    no-repeat;
+  background-position: center center;
+  background-size: contain;
 }
 .personMange .accessChoose .el-input__inner {
-	font-size: 12px;
-	padding-left: 26px;
+  font-size: 12px;
+  padding-left: 26px;
 }
 .personMange .accessChoose .el-tree__empty-text {
-	top: 100%;
+  top: 100%;
 }
 .personMange .chooseMask {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 32px;
-	z-index: 1000;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 32px;
+  z-index: 1000;
 }
 .personMange .otherSearch {
-	margin: 0 15px;
-	position: relative;
+  margin: 0 15px;
+  position: relative;
 }
 .personMange .otherSearch .conditionWrap {
-	width: 380px;
-	height: 260px;
-	background: #2a2e31;
-	box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.2);
-	position: absolute;
-	right: 0;
-	top: 32px;
-	z-index: 1000;
-	padding-top: 20px;
-	box-sizing: border-box;
+  width: 380px;
+  height: 260px;
+  background: #2a2e31;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.2);
+  position: absolute;
+  right: 0;
+  top: 32px;
+  z-index: 1000;
+  padding-top: 20px;
+  box-sizing: border-box;
 }
 .personMange .otherSearch .conditionWrap .infoWrap {
-	width: 100%;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 15px;
+  width: 100%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 15px;
 }
 .personMange .otherSearch .conditionWrap .infoWrap .left {
-	width: 94px;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #dddddd;
-	text-align: right;
-	padding-right: 10px;
-	box-sizing: border-box;
+  width: 94px;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #dddddd;
+  text-align: right;
+  padding-right: 10px;
+  box-sizing: border-box;
 }
 .personMange .otherSearch .conditionWrap .infoWrap .right {
-	flex: 1;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-start;
+  flex: 1;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 .personMange .otherSearch .conditionWrap .infoWrap .right .reset {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #26d39d;
-	letter-spacing: 0;
-	margin-left: 19px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #26d39d;
+  letter-spacing: 0;
+  margin-left: 19px;
 }
 .personMange .rightmenu .imageForm {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 .personMange .rightmenu .imageForm .head {
-	width: 100%;
-	height: 50px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-	background: #1b1b1b;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background: #1b1b1b;
 }
 .personMange .rightmenu .imageForm .head .title {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #dddddd;
-	text-align: justify;
-	padding-left: 10px;
-	box-sizing: border-box;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #dddddd;
+  text-align: justify;
+  padding-left: 10px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .imageForm .head .carte {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #26d39d;
-	text-align: justify;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #26d39d;
+  text-align: justify;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .imageForm .head .carte div:nth-child(1) {
-	padding-right: 25px;
-	border-right: 1px solid rgba(255, 255, 255, 0.1);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  padding-right: 25px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .imageForm .head .carte div:nth-child(1) img {
-	width: 12px;
-	height: 12px;
-	margin-right: 8px;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
 }
 .personMange .rightmenu .imageForm .head .carte div:nth-child(2) {
-	padding: 0 24px 0 21px;
-	border-right: 1px solid rgba(255, 255, 255, 0.1);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  padding: 0 24px 0 21px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .imageForm .head .carte div:nth-child(2) img {
-	width: 13px;
-	height: 11.4px;
-	margin-right: 7px;
+  width: 13px;
+  height: 11.4px;
+  margin-right: 7px;
 }
 .personMange .rightmenu .imageForm .head .carte div:nth-child(3) {
-	padding: 0 26px 0 21px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  padding: 0 26px 0 21px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .imageForm .head .carte div:nth-child(3) img {
-	width: 12px;
-	height: 12px;
-	margin-right: 6px;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
 }
 .personMange .rightmenu .imageForm .listWrap {
-	width: 100%;
-	height: 100%;
-	background: #212325;
-	border-radius: 2px 2px 2px 2px 0px 0px;
-	padding: 0 30px;
-	box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background: #212325;
+  border-radius: 2px 2px 2px 2px 0px 0px;
+  padding: 0 30px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .imageForm .listWrap .bthWrap {
-	width: 100%;
-	height: 70px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+  width: 100%;
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
 }
 .personMange .rightmenu .imageForm .listWrap .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .rightmenu .imageForm .listWrap .el-input__inner {
-	height: 32px;
+  height: 32px;
 }
 .personMange .rightmenu .imageForm .listWrap .bthWrap .right {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .imageForm .listWrap .sp {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #fff;
-	text-align: right;
-	margin-right: 4px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #fff;
+  text-align: right;
+  margin-right: 4px;
 }
 .personMange .rightmenu .imageForm .listWrap .search {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 .personMange .rightmenu .imageForm .listWrap .search span {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 .personMange .rightmenu .imageForm .listWrap .search img {
-	margin: 0 7px 0 13px;
+  margin: 0 7px 0 13px;
 }
 .personMange .rightmenu .imageForm .listWrap .switch {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 .personMange .rightmenu .imageForm .listWrap .switch span {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 .personMange .rightmenu .imageForm .listWrap .switch img {
-	margin: 0 5px 0 16px;
+  margin: 0 5px 0 16px;
 }
 .personMange .rightmenu .imageForm .tableWrap .selectWrap {
-	width: 100%;
-	height: 40px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .imageForm .tableWrap .selectWrap .el-checkbox__label {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #dddddd;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #dddddd;
 }
 .personMange .rightmenu .imageForm .tableWrap .inforWrap {
-	width: 100%;
+  width: 100%;
 }
 .personMange .rightmenu .imageForm .tableWrap .inforWrap .singleCell {
-	width: 8.9%;
-	// height: 200px;
-	background: rgba(0, 0, 0, 0.1);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 2px;
-	padding: 8px 8px 0 8px;
-	box-sizing: border-box;
-	position: relative;
-	float: left;
-	margin-right: 1.22%;
-	margin-bottom: 30px;
+  width: 8.9%;
+  // height: 200px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  padding: 8px 8px 0 8px;
+  box-sizing: border-box;
+  position: relative;
+  float: left;
+  margin-right: 1.22%;
+  margin-bottom: 30px;
+  overflow: hidden;
 }
 .personMange
-	.rightmenu
-	.imageForm
-	.tableWrap
-	.inforWrap
-	.singleCell:nth-child(10n) {
-	margin-right: 0;
+  .rightmenu
+  .imageForm
+  .tableWrap
+  .inforWrap
+  .singleCell:nth-child(10n) {
+  margin-right: 0;
 }
 .personMange .rightmenu .imageForm .tableWrap .inforWrap .singleCell .mainImg {
-	// width: 100%;
-	// min-height: 50px;
-	margin-bottom: 5px;
+  // width: 100%;
+  // min-height: 50px;
+  margin-bottom: 5px;
 }
 .personMange .rightmenu .imageForm .tableWrap .inforWrap .singleCell div {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
-	letter-spacing: 0;
-	text-align: center;
-	margin-bottom: 2px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
+  letter-spacing: 0;
+  text-align: center;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .personMange .rightmenu .imageForm .tableWrap .inforWrap .singleCell .box {
-	position: absolute;
-	left: 16px;
-	top: 16px;
+  position: absolute;
+  left: 16px;
+  top: 16px;
 }
 .personMange
-	.rightmenu
-	.imageForm
-	.tableWrap
-	.inforWrap
-	.singleCell
-	.operationMask {
-	width: 120px;
-	height: 108px;
-	background: #2a2e31;
-	box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.2);
-	position: absolute;
-	left: 40px;
-	top: 80px;
-	z-index: 8000;
+  .rightmenu
+  .imageForm
+  .tableWrap
+  .inforWrap
+  .singleCell
+  .operationMask {
+  width: 120px;
+  height: 108px;
+  background: #2a2e31;
+  box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.2);
+  position: absolute;
+  left: 40px;
+  top: 80px;
+  z-index: 8000;
 }
 .personMange
-	.rightmenu
-	.imageForm
-	.tableWrap
-	.inforWrap
-	.singleCell
-	.operationMask
-	div {
-	width: 100%;
-	height: 36px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	padding-left: 16px;
-	box-sizing: border-box;
+  .rightmenu
+  .imageForm
+  .tableWrap
+  .inforWrap
+  .singleCell
+  .operationMask
+  div {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 16px;
+  box-sizing: border-box;
 }
 .personMange
-	.rightmenu
-	.imageForm
-	.tableWrap
-	.inforWrap
-	.singleCell
-	.operationMask
-	div:hover {
-	background: rgba(40, 255, 187, 0.05);
+  .rightmenu
+  .imageForm
+  .tableWrap
+  .inforWrap
+  .singleCell
+  .operationMask
+  div:hover {
+  background: rgba(40, 255, 187, 0.05);
 }
 .personMange
-	.rightmenu
-	.imageForm
-	.tableWrap
-	.inforWrap
-	.singleCell
-	.operationMask
-	img {
-	margin-right: 10px;
+  .rightmenu
+  .imageForm
+  .tableWrap
+  .inforWrap
+  .singleCell
+  .operationMask
+  img {
+  margin-right: 10px;
 }
 .personMange .detailWrap {
-	width: 580px;
-	padding: 0 40px;
-	box-sizing: border-box;
-	overflow: auto;
-	height: 70vh;
+  width: 580px;
+  padding: 0 40px;
+  box-sizing: border-box;
+  overflow: auto;
+  height: 70vh;
 }
 .personMange .detailWrap .imageInfo {
-	width: 100%;
-	height: 140px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  width: 100%;
+  height: 140px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .detailWrap .imageInfo .left {
-	width: 96px;
-	height: 140px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
+  width: 96px;
+  height: 140px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 }
 .personMange .detailWrap .imageInfo .left img {
-	width: 90px;
-	height: 100px;
+  width: 90px;
+  height: 100px;
 }
 .personMange .detailWrap .imageInfo .right {
-	flex: 1;
-	height: 140px;
-	padding: 21px 0 0 25px;
-	box-sizing: border-box;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
+  flex: 1;
+  height: 140px;
+  padding: 21px 0 0 25px;
+  box-sizing: border-box;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
 }
 .personMange .detailWrap .imageInfo .right div {
-	margin-bottom: 8px;
+  margin-bottom: 8px;
 }
 .personMange .detailWrap .linkInfo {
-	width: 100%;
-	height: 260px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding: 21px 0 22px 0;
-	box-sizing: border-box;
-	position: relative;
+  width: 100%;
+  height: 260px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding: 21px 0 22px 0;
+  box-sizing: border-box;
+  position: relative;
 }
 .personMange .detailWrap .linkInfo .leftImage {
-	width: 90px;
-	height: 100px;
-	position: absolute;
-	top: 20px;
-	right: 25px;
-	background: rgba(0, 0, 0, 0.1);
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
+  width: 90px;
+  height: 100px;
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 .personMange .detailWrap .linkInfo .leftImage img {
-	width: 76px;
-	height: 86px;
+  width: 76px;
+  height: 86px;
 }
 .personMange .detailWrap .inforWrap {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 9px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 9px;
 }
 .personMange .detailWrap .inforWrap .left {
-	width: 96px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
-	padding-right: 2px;
-	box-sizing: border-box;
+  width: 96px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 2px;
+  box-sizing: border-box;
 }
 .personMange .detailWrap .inforWrap .right {
-	flex: 1;
-	padding-left: 25px;
-	box-sizing: border-box;
+  flex: 1;
+  padding-left: 25px;
+  box-sizing: border-box;
 }
 .personMange .detailWrap .jobInfo {
-	width: 100%;
-	height: 158px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding: 20px 0;
-	box-sizing: border-box;
+  width: 100%;
+  height: 158px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding: 20px 0;
+  box-sizing: border-box;
 }
 .personMange .detailWrap .accessInfo {
-	width: 100%;
-	padding: 20px 0 0px 0;
-	box-sizing: border-box;
+  width: 100%;
+  padding: 20px 0 0px 0;
+  box-sizing: border-box;
 }
 .personMange .detailWrap .inforWrap .right .sp1 {
-	width: 142px;
-	margin-right: 32px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	float: left;
+  width: 142px;
+  margin-right: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  float: left;
 }
 .personMange .detailWrap .inforWrap .right .img1 {
-	margin-right: 8px;
-	width: 14px;
+  margin-right: 8px;
+  width: 14px;
 }
 .personMange .detailWrap .inforWrap .colm1 {
-	height: 12px;
-	display: flex;
-	flex-direction: column;
+  height: 12px;
+  display: flex;
+  flex-direction: column;
 }
 .personMange .detailWrap .inforWrap .colm1 div {
-	margin-bottom: 8px;
+  margin-bottom: 8px;
 }
 .personMange .detailWrap .colm1Wrap {
-	height: 40px;
+  height: 40px;
 }
 .personMange .deleteDialog .con {
-	width: 400px;
-	height: 170px;
-	padding-bottom: 57px;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-end;
+  width: 400px;
+  height: 170px;
+  padding-bottom: 57px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 .personMange .deleteDialog .con .title {
-	font-family: PingFangSC-Regular;
-	font-size: 16px;
-	color: #ffffff;
-	height: 21px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  font-family: PingFangSC-Regular;
+  font-size: 16px;
+  color: #ffffff;
+  height: 21px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .deleteDialog .con .title img {
-	width: 20px;
-	height: 20.9px;
-	margin-right: 10px;
+  width: 20px;
+  height: 20.9px;
+  margin-right: 10px;
 }
 .personMange .deleteDialog .con .btnWrap {
-	margin-top: 37px;
+  margin-top: 37px;
 }
 .personMange .deleteDialog .con .btnWrap .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .deleteDialog .el-dialog__title {
-	border-left: none;
+  border-left: none;
 }
 .personMange .deleteDialog .el-dialog__header {
-	border-bottom: none;
+  border-bottom: none;
 }
 .personMange .editDialog .con {
-	width: 440px;
-	height: 190px;
-	padding-bottom: 73px;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-end;
+  width: 440px;
+  height: 190px;
+  padding-bottom: 73px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 .personMange .editDialog .con .nameWrap {
-	width: 440px;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  width: 440px;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .editDialog .con .nameWrap .title {
-	width: 104px;
-	height: 30px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
-	padding-right: 12px;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
+  width: 104px;
+  height: 30px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
+  padding-right: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 }
 .personMange .editDialog .con .btnWrap {
-	width: 440px;
-	height: 30px;
-	margin-top: 26px;
-	padding-left: 104px;
-	box-sizing: border-box;
+  width: 440px;
+  height: 30px;
+  margin-top: 26px;
+  padding-left: 104px;
+  box-sizing: border-box;
 }
 .personMange .editDialog .con .btnWrap .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .importDialog .con {
-	width: 540px;
-	height: 270px;
-	padding: 37px 0 56px 0;
-	box-sizing: border-box;
+  width: 540px;
+  height: 270px;
+  padding: 37px 0 56px 0;
+  box-sizing: border-box;
 }
 .personMange .importDialog .con .download {
-	width: 540px;
-	height: 80px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
-	display: flex;
-	flex-direction: row;
+  width: 540px;
+  height: 80px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
+  display: flex;
+  flex-direction: row;
 }
 .personMange .importDialog .con .download .left {
-	width: 137px;
-	height: 80px;
-	line-height: 17px;
-	text-align: right;
+  width: 137px;
+  height: 80px;
+  line-height: 17px;
+  text-align: right;
 }
 .personMange .importDialog .con .download .middle {
-	width: 200px;
-	height: 80px;
-	padding-left: 12px;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	border-right: 1px solid rgba(255, 255, 255, 0.15);
+  width: 200px;
+  height: 80px;
+  padding-left: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
 }
 .personMange .importDialog .con .download .right {
-	flex: 1;
-	height: 80px;
-	padding-top: 7px;
-	box-sizing: border-box;
+  flex: 1;
+  height: 80px;
+  padding-top: 7px;
+  box-sizing: border-box;
 }
 .personMange .importDialog .con .download .righ img {
-	width: 42px;
-	height: 42px;
+  width: 42px;
+  height: 42px;
 }
 .personMange .importDialog .con .download .right div:first-child {
-	width: 100%;
-	padding-left: 54px;
+  width: 100%;
+  padding-left: 54px;
 }
 .personMange .importDialog .con .download .right div:last-child {
-	width: 100%;
-	padding-left: 39px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	margin-top: 14px;
+  width: 100%;
+  padding-left: 39px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  margin-top: 14px;
 }
 .personMange .importDialog .con .file {
-	width: 540px;
-	height: 17px;
-	margin-top: 30px;
-	display: flex;
-	flex-direction: row;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
-	text-align: right;
+  width: 540px;
+  height: 17px;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
+  text-align: right;
 }
 .personMange .importDialog .con .file .title {
-	width: 137px;
-	height: 17px;
-	line-height: 17px;
-	text-align: right;
+  width: 137px;
+  height: 17px;
+  line-height: 17px;
+  text-align: right;
 }
 .personMange .importDialog .con .file .choose {
-	flex: 1;
-	height: 17px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	letter-spacing: 0;
-	padding-left: 12px;
-	box-sizing: border-box;
+  flex: 1;
+  height: 17px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  letter-spacing: 0;
+  padding-left: 12px;
+  box-sizing: border-box;
 }
 .personMange .importDialog .con .file .choose img {
-	width: 10.5px;
-	height: 10.5px;
-	margin-right: 5.7px;
+  width: 10.5px;
+  height: 10.5px;
+  margin-right: 5.7px;
 }
 .personMange .importDialog .con .btnWrap {
-	width: 540px;
-	height: 32px;
-	padding-left: 149px;
-	box-sizing: border-box;
-	margin-top: 20px;
+  width: 540px;
+  height: 32px;
+  padding-left: 149px;
+  box-sizing: border-box;
+  margin-top: 20px;
 }
 .personMange .importDialog .con .btnWrap .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .exportDialog .con {
-	width: 540px;
-	height: 230px;
-	padding: 30px 0 77px 0;
-	box-sizing: border-box;
+  width: 540px;
+  height: 230px;
+  padding: 30px 0 77px 0;
+  box-sizing: border-box;
 }
 .personMange .exportDialog .con .save {
-	width: 540px;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
-	text-align: right;
+  width: 540px;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
+  text-align: right;
 }
 .personMange .exportDialog .con .save .title {
-	width: 108px;
-	height: 30px;
-	padding-right: 10px;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
+  width: 108px;
+  height: 30px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 }
 .personMange .exportDialog .con .save .sp1 {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	text-align: right;
-	margin-left: 7.4px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  text-align: right;
+  margin-left: 7.4px;
 }
 .personMange .exportDialog .con .text {
-	width: 540px;
-	height: 17px;
-	padding-left: 113px;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-top: 20px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #aaaaaa;
-	text-align: justify;
+  width: 540px;
+  height: 17px;
+  padding-left: 113px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #aaaaaa;
+  text-align: justify;
 }
 .personMange .exportDialog .con .btnWrap {
-	width: 540px;
-	height: 32px;
-	padding-left: 108px;
-	box-sizing: border-box;
-	margin-top: 25px;
+  width: 540px;
+  height: 32px;
+  padding-left: 108px;
+  box-sizing: border-box;
+  margin-top: 25px;
 }
 .personMange .exportDialog .con .btnWrap .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .StaticsViewDialogClass .el-input__prefix {
-	position: absolute;
-	height: 100%;
-	left: 5px !important;
-	top: 0;
-	text-align: center;
-	color: #c0c4cc;
-	-webkit-transition: all 0.3s;
-	transition: all 0.3s;
-	transform: translateX(0%);
+  position: absolute;
+  height: 100%;
+  left: 5px !important;
+  top: 0;
+  text-align: center;
+  color: #c0c4cc;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  transform: translateX(0%);
 }
 .personMange .StaticsViewDialogClass .el-tag-class .el-icon-close {
-	color: #ffffff;
-	margin-right: -12px;
-	margin-top: -30px;
+  color: #ffffff;
+  margin-right: -12px;
+  margin-top: -30px;
 }
 .personMange .StaticsViewDialogClass .el-tag-class .el-icon-close:hover {
-	background-color: transparent;
-	color: #26d39d;
+  background-color: transparent;
+  color: #26d39d;
 }
 .personMange .StaticsViewDialogClass .el-dialog {
-	max-height: 58.3%;
-	min-height: 40%;
+  max-height: 58.3%;
+  min-height: 40%;
 }
 .personMange .StaticsViewDialogClass .el-dialog__body {
-	padding: 0;
-	min-height: 300px;
+  padding: 0;
+  min-height: 300px;
 }
 .personMange #canvasPie {
-	width: 100%;
-	min-height: 300px;
+  width: 100%;
+  min-height: 300px;
 }
 .personMange .legendBox {
-	font-size: 0px;
+  font-size: 0px;
 }
 .personMange .StaticsViewDialogClass .legendBox p {
-	font-size: 13px;
-	display: inline-block;
-	width: 50%;
-	font-family: "PingFangSC-Regular";
-	font-size: 12px;
-	color: #dddddd;
+  font-size: 13px;
+  display: inline-block;
+  width: 50%;
+  font-family: "PingFangSC-Regular";
+  font-size: 12px;
+  color: #dddddd;
 }
 $line-color: #24473f;
 .personMange .StaticsViewDialogClass .legendBox .name {
-	position: relative;
-	box-sizing: border-box;
-	span {
-		display: inline-block;
-		padding-left: 20px;
-		font-family: "PingFangSC-Regular";
-		font-size: 12px;
-		color: #dddddd;
-	}
-	&::after {
-		content: "";
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		position: absolute;
-		top: 50%;
-		left: 0px;
-		transform: translateY(-50%);
-		background-color: currentColor;
-		margin-right: 10px;
-	}
+  position: relative;
+  box-sizing: border-box;
+  span {
+    display: inline-block;
+    padding-left: 20px;
+    font-family: "PingFangSC-Regular";
+    font-size: 12px;
+    color: #dddddd;
+  }
+  &::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 0px;
+    transform: translateY(-50%);
+    background-color: currentColor;
+    margin-right: 10px;
+  }
 }
 .personMange .el-dialog__body {
-	height: 100%;
+  height: 100%;
 }
 .personMange .StaticsViewDialogClass .el-header {
-	width: 50%;
-	height: 40px !important;
-	line-height: 40px;
-	margin-top: 20px;
-	padding-left: 35px;
+  width: 50%;
+  height: 40px !important;
+  line-height: 40px;
+  margin-top: 20px;
+  padding-left: 35px;
 }
 .personMange .el-main {
-	padding: 10px 25px 10px;
+  padding: 10px 25px 10px;
 }
 .personMange .el-checkbox {
-	margin-right: 5px;
+  margin-right: 5px;
 }
 .personMange .dialog-footer {
-	border: {
-		width: 1px 0 0 0;
-		style: solid;
-		color: $line-color;
-	}
-	.footer-button {
-		margin: 17px 28px 17px 0;
-	}
+  border: {
+    width: 1px 0 0 0;
+    style: solid;
+    color: $line-color;
+  }
+  .footer-button {
+    margin: 17px 28px 17px 0;
+  }
 }
 .personMange .rightmenu .labelForm {
-	width: 100%;
+  width: 100%;
 }
 .personMange .rightmenu .labelForm .head {
-	width: 100%;
-	height: 50px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
-	background: #1b1b1b;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background: #1b1b1b;
 }
 .personMange .rightmenu .labelForm .head .title {
-	font-family: PingFangSC-Regular;
-	font-size: 16px;
-	color: #dddddd;
-	text-align: justify;
-	padding-left: 10px;
-	box-sizing: border-box;
+  font-family: PingFangSC-Regular;
+  font-size: 16px;
+  color: #dddddd;
+  text-align: justify;
+  padding-left: 10px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .labelForm .head .carte {
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #26d39d;
-	text-align: justify;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #26d39d;
+  text-align: justify;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .labelForm .head .carte div:nth-child(1) {
-	padding-right: 25px;
-	border-right: 1px solid rgba(255, 255, 255, 0.1);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  padding-right: 25px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .labelForm .head .carte div:nth-child(1) img {
-	width: 12px;
-	height: 12px;
-	margin-right: 8px;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
 }
 .personMange .rightmenu .labelForm .head .carte div:nth-child(2) {
-	padding: 0 24px 0 21px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  padding: 0 24px 0 21px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .rightmenu .labelForm .head .carte div:nth-child(2) img {
-	width: 13px;
-	height: 11.4px;
-	margin-right: 7px;
+  width: 13px;
+  height: 11.4px;
+  margin-right: 7px;
 }
 .personMange .rightmenu .labelForm .listWrap {
-	width: 100%;
-	padding-left: 30px;
-	box-sizing: border-box;
+  width: 100%;
+  padding-left: 30px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .labelForm .listWrap .bthWrap {
-	width: 100%;
-	height: 70px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-start;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 .personMange .rightmenu .labelForm .listWrap .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .rightmenu .labelForm .listWrap .el-input__inner {
-	height: 32px;
+  height: 32px;
 }
 .personMange .labelDetailDialog .con {
-	width: 500px;
-	height: 230px;
-	padding: 41px 0 82px 0;
-	box-sizing: border-box;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
+  width: 500px;
+  height: 230px;
+  padding: 41px 0 82px 0;
+  box-sizing: border-box;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
 }
 .personMange .labelDetailDialog .con .detail1 {
-	width: 500px;
-	height: 17px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  width: 500px;
+  height: 17px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .labelDetailDialog .con .detail1 .left {
-	width: 145px;
-	height: 17px;
-	padding-left: 35px;
-	box-sizing: border-box;
+  width: 145px;
+  height: 17px;
+  padding-left: 35px;
+  box-sizing: border-box;
 }
 .personMange .labelDetailDialog .con .detail1 .left img {
-	width: 12.2px;
-	height: 7.9px;
-	margin-right: 8.8px;
+  width: 12.2px;
+  height: 7.9px;
+  margin-right: 8.8px;
 }
 .personMange .labelDetailDialog .con .detail1 .right {
-	flex: 1;
-	height: 17px;
+  flex: 1;
+  height: 17px;
 }
 .personMange .labelDetailDialog .con .detail2 {
-	padding-left: 145px;
-	box-sizing: border-box;
-	margin-top: 12px;
+  padding-left: 145px;
+  box-sizing: border-box;
+  margin-top: 12px;
 }
 .personMange .labelDetailDialog .con .btnWrap1 {
-	width: 100%;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-start;
-	margin-top: 30px;
-	padding-left: 145px;
-	box-sizing: border-box;
+  width: 100%;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 30px;
+  padding-left: 145px;
+  box-sizing: border-box;
 }
 .personMange .labelDetailDialog .con .btnWrap1 .el-button {
-	height: 30px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 30px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .page-export {
-	width: 100%;
-	height: 26px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
-	padding-right: 30px;
-	box-sizing: border-box;
+  width: 100%;
+  height: 26px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 30px;
+  box-sizing: border-box;
 }
 .personMange .page-export1 {
-	width: 60%;
-	height: 26px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
-	// padding-left: 50%;
-	box-sizing: border-box;
+  width: 60%;
+  height: 26px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  // padding-left: 50%;
+  box-sizing: border-box;
 }
 .personMange .page-export .exportWrap {
-	height: 26px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  height: 26px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .personMange .el-pagination__editor.el-input .el-input__inner {
-	height: 26px;
+  height: 26px;
 }
 .personMange .el-pagination__editor.el-input {
-	width: 40px;
+  width: 40px;
 }
 .personMange .addCardDialog .con {
-	width: 380px;
-	height: 290px;
-	padding: 30px 0 43px 0;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #dddddd;
-	text-align: right;
-	box-sizing: border-box;
+  width: 380px;
+  height: 290px;
+  padding: 30px 0 43px 0;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #dddddd;
+  text-align: right;
+  box-sizing: border-box;
 }
 .personMange .addCardDialog .con .detail {
-	width: 380px;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-bottom: 15px;
+  width: 380px;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 15px;
 }
 .personMange .addCardDialog .con .detail .left {
-	width: 110px;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-end;
-	padding-right: 10px;
-	box-sizing: border-box;
+  width: 110px;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  box-sizing: border-box;
 }
 .personMange .addCardDialog .con .detail .right {
-	flex: 1;
-	height: 30px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-start;
+  flex: 1;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 .personMange .addCardDialog .con .btnWrap {
-	margin-top: 21px;
-	display: flex;
-	padding-left: 110px;
-	box-sizing: border-box;
+  margin-top: 21px;
+  display: flex;
+  padding-left: 110px;
+  box-sizing: border-box;
 }
 .personMange .addCardDialog .con .btnWrap .el-button {
-	height: 32px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: PingFangSC-Regular;
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 32px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: PingFangSC-Regular;
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .personMange .rightmenu .addMembers .infoWrap .rightCon {
-	display: inline-block;
-	width: 100%;
-	flex: none;
-	padding-left: 160px;
-	box-sizing: border-box;
+  display: inline-block;
+  width: 100%;
+  flex: none;
+  padding-left: 160px;
+  box-sizing: border-box;
 }
 .personMange .rightmenu .addMembers .infoWrap .rightCon .more {
-	right: 10px;
+  right: 10px;
 }
 .personMange .closeBthWrap {
-	width: 100%;
-	height: 30px;
-	margin-bottom: 20px;
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-	align-items: center;
+  width: 100%;
+  height: 30px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 .personMange .closeBthWrap .el-button {
-	height: 30px;
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.35);
-	border-radius: 2px;
-	font-family: "PingFangSC-Regular";
-	font-size: 13px;
-	color: #ffffff;
-	position: relative;
-	padding: 0 0 0 0;
+  height: 30px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.35);
+  border-radius: 2px;
+  font-family: "PingFangSC-Regular";
+  font-size: 13px;
+  color: #ffffff;
+  position: relative;
+  padding: 0 0 0 0;
 }
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-	color: #26d39d;
-	background-color: transparent;
+  color: #26d39d;
+  background-color: transparent;
 }
 .personMange .rightmenu .addMembers .infoWrap .accessAdd {
-	padding-bottom: 30px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 30px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 }
 .personMange .rightmenu .addMembers .accessAdd {
-	padding-bottom: 30px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 30px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 }
 .personMange .rightmenu .addMembers .accessAdd .right {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
-	letter-spacing: 0;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
+  letter-spacing: 0;
 }
 .personMange .rightmenu .addMembers .accessAdd .addWrap {
-	color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.1);
 }
 </style>

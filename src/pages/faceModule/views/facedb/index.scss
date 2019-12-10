@@ -1,0 +1,146 @@
+$maincolor: #28ffbb;
+.wrap {
+  height: 100%;
+  width: 100%;
+  background-color: #000;
+  font-size: 0px;
+  text-align: left;
+  overflow: auto;
+  .right {
+    display: inline-block;
+    background-color: rgb(28, 29, 32);
+    height: 100%;
+    padding: 0px 40px;
+    box-sizing: border-box;
+    overflow: auto;
+    .dataWrap {
+      height: auto;
+    }
+    .typeoperator {
+      margin: 20px 0px;
+    }
+    .rightheader {
+      margin: 15px auto 0px;
+      height: auto;
+      padding-bottom: 20px;
+      border-bottom: 1px dashed gray;
+
+      ul {
+        list-style: none;
+        padding-left: 0;
+        li {
+          color: #fff;
+          font-size: 14px;
+          vertical-align: top;
+          display: inline-block;
+          line-height: 40px;
+          padding-right: 30px;
+          cursor: pointer;
+          .header-line {
+            border-left: 2px solid #26D39D;;
+            height: 12px;
+            margin-right: 8px;
+            display: inline-block;
+          }
+          img {
+            display: inline-block;
+            height: 16px;
+            padding-right: 16px;
+            vertical-align: middle;
+          }
+
+          span {
+            display: inline-block;
+            color: $maincolor;
+            font-size: 14px;
+          }
+          .searchInputClass {
+            display: inline-block;
+          }
+          .el-button {
+            font-family: "PingFangSC-Regular";
+            font-size: 13px;
+            color: #ffffff;
+            text-align: justify;
+            height: 32px;
+            padding: 7px 16px;
+            box-sizing: border-box;
+          }
+        }
+
+        .active {
+          img {
+            padding-right: 5px;
+            width: 12px;
+            height: 12px;
+          }
+        }
+
+        .rightoperat {
+          .searchinput {
+            width: 120px;
+            padding-right: 15px;
+          }
+        }
+      }
+    }
+  }
+
+  .left {
+    font-size: 14px;
+    display: inline-block;
+    width: 500px;
+    height: 100%;
+    background-color: rgb(22, 23, 25);
+    padding: 0px 40px;
+    box-sizing: border-box;
+    vertical-align: top;
+    position: relative;
+
+    .deleteBtnClass {
+      font-family: "PingFangSC-Regular";
+      font-size: 13px;
+      color: #fd545e;
+    }
+    .rightarrow {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+
+    .leftasda {
+      height: calc(100% - 150px);
+      overflow-y: auto;
+    }
+
+    .title {
+      .addnewdb {
+        width: 140px;
+      }
+
+      margin: 10px 0px;
+
+      .tips {
+        float: right;
+        line-height: 40px;
+        font-size: 14px;
+        color: #fff;
+      }
+    }
+
+    .leftHeader {
+      color: #fff;
+      font-size: 18px;
+      padding: 20px 0px 25px;
+
+      img {
+        width: 17.5px;
+        height: 14px;
+      }
+
+      border-bottom: 1px dashed $maincolor;
+    }
+  }
+}

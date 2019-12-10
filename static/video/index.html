@@ -2,7 +2,9 @@
 <html>
 
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
+    <script src='./decoder/wfs.js'></script>
+    <script src='./decoder/wfsControl.js'></script>
     <script src="sync_websocket.js"></script>
     <script src="deque.js"></script>
     <script src="./decoder/common.js"></script>
@@ -18,24 +20,31 @@
 </head>
 
 <body>
-    <!--canvas id="playCanvas" width="1280" height="720"></canvas-->
+
     server_ip: <input id="ip" type="text" name="url" value="192.168.9.199"></input><br>
-    url: <input id="url" type="text" name="url" value="rtsp://admin:admin123456@192.168.9.203/Streaming/tracks/201?starttime=20191014t145200z&endtime=20191014t145220z"></input><br>
-    action: <input id="preview" type="radio" name="action">preview</input><input id="playback" type="radio" name="action" checked=true>playback</input><br>
-    stream type: <input id="main" type="radio" name="streamType" checked=true>main</input><input id="sub" type="radio" name="streamType">sub</input><input id="super" type="radio" name="streamType">super</input><hr>
-    <button id="button" type="button" onclick="slot_createVideo()">create video</button><br><hr>
+    url: <input id="url" type="text" name="url"
+        value="rtsp://admin:admin@192.168.9.221:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif"></input><br>
+    action: <input id="preview" type="radio" name="action" checked=true>preview</input><input id="playback" type="radio"
+        name="action">playback</input><br>
+    <button id="button" type="button" onclick="slot_createCanvas()">create canvas</button><br>
+    <button id="button" type="button" onclick="slot_createVideo()">create video</button><br>
+    <hr>
     <button id="button_stop" type="button" onclick="slot_stopall()">stop all video</button>
     <button id="button_pause" type="button" onclick="slot_pauseall()">pause all video</button>
-    <button id="button_resume" type="button" onclick="slot_resumeall()">resume all video</button><br><hr>
+    <button id="button_resume" type="button" onclick="slot_resumeall()">resume all video</button><br>
+    <hr>
     <button id="button_one_times" type="button" onclick="slot_one_times()">one times</button>
     <button id="button_two_times" type="button" onclick="slot_two_times()">two times</button>
-    <button id="button_four_times" type="button" onclick="slot_four_times()">four times</button><br><hr>
+    <button id="button_four_times" type="button" onclick="slot_four_times()">four times</button><br>
+    <hr>
 
 
     start time: <input id="start" type="text" name="start" value="20191014145200"></input><br>
-    <button id="button_drag" type="button" onclick="slot_dragall()">drag all video to begin</button><hr>
+    <button id="button_drag" type="button" onclick="slot_dragall()">drag all video to begin</button>
+    <hr>
 
-    <button id="button_download" type="button" onclick="slot_download()">download(4 times)</button><hr>
+    <button id="button_download" type="button" onclick="slot_download()">download(4 times)</button>
+    <hr>
 
     <button id="button_record" type="button" onclick="slot_record()">record first video</button>
     <button id="button_stopRecord" type="button" onclick="slot_stopRecord()">stop record</button>

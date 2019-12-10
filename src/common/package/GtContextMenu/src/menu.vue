@@ -1,11 +1,23 @@
 <template>
-  <div class='submenu'
-       v-html='html'
-       @click='submenuclick'>
+  <div class="submenu">
+    <ul class="submenu-ul">
+      <li v-for="(item,index) in data "
+          :key="index"
+          :onmouseover="item.hover=true"
+          :mouseout="item.hover=false"
+          @click.stop="clickLabel(item.value)"
+          :class="{'next':item.children&&item.children.length}"
+          class="submenu-li">
+        {{item.label}}
 
+        <sub-menu :data="item.children||[]"
+                  @chooseItem="$emit('chooseItem',$event)">
+
+        </sub-menu>
+      </li>
+    </ul>
   </div>
 </template>
-
 <script>
 export default {
   name: "SubMenu",
@@ -17,81 +29,20 @@ export default {
       }
     }
   },
-
-  data() {
-    return {
-      html: ""
-    };
-  },
-  mounted() {
-    console.log(this.data);
-    this.init();
-  },
   methods: {
-    getHtml(data, parent) {
-      let html = "",
-        ishavechildren = false;
-      html += `<ul class="submenu-ul">`;
-      for (var i = 0, len = data.length; i < len; i++) {
-        ishavechildren = typeof data[i].children == "undefined";
-        html += `
-          <li class="submenu-li" parent='${parent}-${i}' 
-            value='${data[i].value}'
-            ishavechildren=${ishavechildren}
-           index='${i}'>
-            ${data[i].label}
-             ${ishavechildren ? "" : "<span class='next'>></span>"} 
-          </li>
-        `;
-      }
-      html += "</ul>";
-      return html;
-    },
-    init() {
-      this.html = this.getHtml(this.data, 0);
-    },
-    submenuclick(e) {
-      if (e.target.className.indexOf("submenu-li") == -1) {
-        return;
-      }
-      e.preventDefault();
-      e.stopPropagation();
-      let ishavechildren = e.target.getAttribute("ishavechildren");
-      if (ishavechildren == "true") {
-        let value = e.target.getAttribute("value");
-        this.$emit("chooseItem", value);
-        return;
-      }
-      let index = e.target.getAttribute("index");
-      let parent = e.target.getAttribute("parent").split("-");
-      let num = this.data;
-      let newHtml = "";
-      let dep = [0];
-      for (let i = 0; i < parent.length; i++) {
-        if (i == 0) {
-          newHtml += this.getHtml(num, 0);
-        } else {
-          num = num[parent[i]].children;
-          if (num) {
-            dep.push(parent[i]);
-            newHtml += this.getHtml(num, dep.join("-"));
-          } else {
-            break;
-          }
-        }
-      }
-      this.html = newHtml;
+    clickLabel(item) {
+      this.$emit("chooseItem", item);
     }
   },
   watch: {
-    data() {
-      this.init();
-    }
+    data() {}
   }
 };
 </script>
 <style lang="scss">
 .submenu {
+  position: relative;
+  top: -36px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   .submenu-ul {
     background-color: rgb(42, 46, 49);
@@ -100,20 +51,44 @@ export default {
     list-style: none;
     width: 120px;
     border-right: 1px solid grey;
-    box-sizing: border-box;                     
+    box-sizing: border-box;
     vertical-align: top;
     padding: 0px;
     margin: 0px;
+    position: absolute;
+    right: 0px;
+    transform: translateX(100%);
+    .next {
+      position: relative;
+      // &::after {
+      //   content: "";
+      //   position: absolute;
+      //   top: 50%;
+      //   right: 15px;
+      //   width: 7px;
+      //   height: 7px;
+      //   border-top: 1px solid #ddd;
+      //   border-right: 1px solid #ddd;
+      //   transform: translateY(-50%) rotate(45deg);
+      // }
+    }
     .submenu-li {
+      position: relative;
       line-height: 36px;
       color: #dddddd;
-      font-size: 12px;  
+      font-size: 12px;
       text-align: center;
       cursor: pointer;
       margin: 0px;
       padding: 0px;
       &:hover {
         background-color: rgba(40, 255, 187, 0.05);
+      }
+      & > .submenu {
+        display: none;
+      }
+      &:hover > .submenu {
+        display: block;
       }
     }
     .divide {
@@ -129,3 +104,4 @@ export default {
   }
 }
 </style>
+

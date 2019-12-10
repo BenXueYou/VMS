@@ -28,6 +28,13 @@ export function operatorOrgTree(data) {
     data
   });
 }
+export function getScond(viewType) {
+  let url = sbUrl.getScondUrl(viewType);
+  return axios({
+    method: "get",
+    url
+  });
+}
 // 操作标签 上下移动
 export function opeartorTag(data) {
   let url = sbUrl.operatorTagUrl;
@@ -40,6 +47,14 @@ export function opeartorTag(data) {
 // 编辑权限组接口
 export function getTDByType(resUuid, resType) {
   let url = sbUrl.getTDByTypeUrl(resUuid, resType);
+  return axios({
+    method: "get",
+    url
+  });
+}
+// 编辑权限组接口
+export function getDeviceInfoByChannel(channelUuid) {
+  let url = sbUrl.getDeviceInfoByChannelUrl(channelUuid);
   return axios({
     method: "get",
     url
@@ -696,5 +711,44 @@ export function judgeRepeatCard(params) {
     method: "get",
     url,
     params
+  });
+}
+// 获取设备人脸库配置
+export function getVideoDeviceSetting(uuid) {
+  let url = sbUrl.getVideoDeviceSettingUrl(uuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+export function setDelaySyncSetting(uuid, data) {
+  let url = sbUrl.setDelaySyncSettingUrl(uuid);
+  return axios({
+    method: "put",
+    url,
+    data
+  });
+}
+export function setImmediateSyncSettingl(uuid, data) {
+  let url = sbUrl.setImmediateSyncSettingUrl(uuid);
+  return axios({
+    method: "put",
+    url,
+    data
+  });
+}
+export function getTongDaoType(resUuid, resType) {
+  let url = sbUrl.getTongDaoTypeUrl(resUuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+
+export function getViewTypeList(resUuid, resType) {
+  let url = sbUrl.getViewTypeListUrl(resUuid);
+  return axios({
+    method: "get",
+    url
   });
 }

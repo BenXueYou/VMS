@@ -40,7 +40,7 @@
                slot-scope="{ node }">
             <div class="i-tree-item-icon">
               {{ node.label }}
-              <img class="checked-img"
+              <img v-if="node.data.id===checkedUuid"
                    src="@/assets/images/doorAccess/checked_icon.png"
                    width="10.9px"
                    height="9px"
@@ -71,6 +71,10 @@ export default {
       default: ""
     },
     orgType: {
+      type: String,
+      default: ""
+    },
+    aaaaaa: {
       type: String,
       default: ""
     },
@@ -157,12 +161,14 @@ export default {
       initAreaData: {
         type: Array,
         default: () => {}
-      }
+      },
+      checkedUuid: ""
     };
   },
   created() {},
   mounted() {
     this.showPopver();
+    this.checkedUuid = this.aaaaaa;
   },
   methods: {
     showPopver() {
@@ -203,9 +209,11 @@ export default {
       // this.getInfrastructure(this.initAreaData.id);
     },
     loadNode(node, resolve) {
+      console.log(node);
       if (node.level === 0) {
         return;
       }
+
       let data = { parentOrgUuid: node.data.orgUuid };
       api.getOrgTree(data, this.orgType).then(res => {
         if (res.data.data) {
@@ -228,7 +236,22 @@ export default {
         } else {
           resolve([]);
         }
+        this.jugdeChecked(node);
       });
+    },
+    jugdeChecked(node) {
+      console.log(node);
+      if (node.data.id === this.checkedUuid) {
+        this.$set(node, "checked", true);
+      } else {
+        this.$set(node, "checked", false);
+      }
+      if (node.parent) {
+        this.jugdeChecked(node.parent);
+      }
+      if (node.children) {
+        this.jugdeChecked(node.children);
+      }
     },
     getInfrastructure(parentUuid) {
       this.$houseHttp
@@ -252,6 +275,8 @@ export default {
       }
     },
     handleNodeClick(obj, node, component) {
+      this.checkedUuid = node.data.id;
+      this.jugdeChecked(node);
       let maxTagSn = -1000,
         children = node.childNodes;
       for (let i = 0; i < children.length; i++) {
@@ -315,6 +340,10 @@ export default {
     }
   },
   watch: {
+    aaaaaa() {
+      this.checkedUuid = this.aaaaaa;
+       console.log(this.aaaaaa);
+    },
     visible(val) {
       if (val) {
         this.nodeText = this.name;
@@ -351,7 +380,7 @@ export default {
   }
   .el-tree-node__content {
     .checked-img {
-      display: none;
+      // display: none;
     }
     &:focus {
       .checked-img {
