@@ -742,8 +742,9 @@ export default {
       });
     },
     closeVideoAA(index) {
-      console.log(index);
-      this.operatorIndex = index;
+      if(index){
+        this.operatorIndex = index;
+      }
       console.log(this.videoArr[this.operatorIndex]);
       if (!this.videoArr[this.operatorIndex].channelUuid) {
         this.$message.error("该分路上没有通道！");
