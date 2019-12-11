@@ -41,15 +41,15 @@
 						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
 					</template>-->
 				</el-table-column>
-				<el-table-column prop="accountName" label="账户" width="120"></el-table-column>
-				<el-table-column prop="staffName" label="姓名" width="120"></el-table-column>
-				<el-table-column prop="phoneNumber" label="手机号码" width="120"></el-table-column>
-				<el-table-column prop="roles" label="角色" width="120"></el-table-column>
-				<el-table-column prop="accountCreateTime" label="创建时间" width="120"></el-table-column>
-				<el-table-column prop="loginTimes" label="登陆次数" width="120"></el-table-column>
-				<el-table-column prop="lastLoginTime" label="最后登录时间" width="120"></el-table-column>
-				<el-table-column prop="onofflineStatus" label="状态" width="128">
-					<template slot-scope="scope">{{$common.getEnumItemName("gender", scope.row.onofflineStatus)}}</template>
+				<el-table-column prop="accountName" label="账户" ></el-table-column>
+				<el-table-column prop="staffName" label="姓名" ></el-table-column>
+				<el-table-column prop="phoneNumber" label="手机号码" ></el-table-column>
+				<el-table-column prop="roles" label="角色" ></el-table-column>
+				<el-table-column prop="accountCreateTime" label="创建时间" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="loginTimes" label="登陆次数" ></el-table-column>
+				<el-table-column prop="lastLoginTime" label="最后登录时间" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="onofflineStatus" label="状态">
+					<template slot-scope="scope">{{$common.getEnumItemName("onoffline", scope.row.onofflineStatus)}}</template>
 				</el-table-column>
 				<el-table-column prop="description" label="账号描述"></el-table-column>
 				<el-table-column prop="reason" label="操作" width="200">
@@ -117,7 +117,7 @@ import treePanelDialog from "@/pages/user/components/treePanelDialog";
 import * as api from "../http/ajax";
 import resetPassword from "@/pages/user/components/resetPassword";
 import ConfirmDialog from "@/common/ConfirmDialog";
-import RestApi from "@/utils/RestApi";
+// import RestApi from "@/utils/RestApi";
 export default {
   name: "accout",
   components: { AccountAdd, treePanelDialog, resetPassword, ConfirmDialog },
@@ -222,29 +222,6 @@ export default {
           }
         })
         .catch(() => {});
-    },
-    axiosRequest() {
-      this.$loginAjax
-        .loginOut()
-        .then(res => {
-          console.log("------------------");
-        })
-        .catch(() => {
-          this.$message.error("退出失败");
-        });
-    },
-    test() {
-      let ip = window.config.ip,
-        httpHeader = window.config.protocolHeader;
-      let url = `${httpHeader}/${ip}/${RestApi.api.login.loginOutApi}`;
-      let xhr = new XMLHttpRequest();
-      xhr.open("detete", url, true);
-      xhr.setRequestHeader(
-        "Authorization",
-        this.$store.state.home.Authorization
-      );
-      xhr.setRequestHeader("projectUuid", this.$store.state.home.projectUuid);
-      xhr.send();
     },
     // 编辑
     handleEditClick(rowData) {

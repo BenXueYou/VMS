@@ -446,13 +446,13 @@ img,
 
 .el-switch__core:after {
   position: absolute;
-  top: 1px;
+  top: -2px;
   left: 0px;
   border-radius: 100%;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   background-color: #26d39d;
 }
 
@@ -477,11 +477,11 @@ $el-switch-circle-size: 13px;
   width: 36px !important;
 }
 
-.el-switch__core:after {
-  top: -2px;
-  height: $el-switch-circle-size;
-  width: $el-switch-circle-size;
-}
+// .el-switch__core:after {
+//   top: -2px;
+//   height: $el-switch-circle-size;
+//   width: $el-switch-circle-size;
+// }
 
 .el-switch.is-checked .el-switch__core::after {
   margin-left: -14px;

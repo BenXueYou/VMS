@@ -208,28 +208,28 @@ export default {
           this.subCapture = this.stompClient.subscribe(
             subCaptureApi,
             greeting => {
-              // console.log("收到抓拍通知：", greeting);
+              console.log("收到抓拍通知：", greeting);
               this.handleSubscribeCapture(JSON.parse(greeting.body));
             }
           );
           this.subRecognization = this.stompClient.subscribe(
             subRecognizationApi,
             greeting => {
-              // console.log("收到识别通知：", greeting);
+              console.log("收到识别通知：", greeting);
               this.handleSubscribeRecognization(JSON.parse(greeting.body));
             }
           );
           this.subMonitorAlarm = this.stompClient.subscribe(
             subMonitorAlarmApi,
             greeting => {
-              // console.log("收到报警通知：", greeting);
+              console.log("收到报警通知：", greeting);
               this.handleSubscribeMonitorAlarm(JSON.parse(greeting.body));
             }
           );
           this.subDeviceOnOff = this.stompClient.subscribe(
             subDeviceOnOffApi,
             greeting => {
-              // console.log("收到设备状态变更通知：", greeting);
+              console.log("收到设备状态变更通知：", greeting);
               this.handleSubscribeDeviceOnOff(JSON.parse(greeting.body));
             }
           );
