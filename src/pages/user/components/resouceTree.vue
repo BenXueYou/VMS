@@ -409,6 +409,9 @@ export default {
 	width: 90px;
 	padding-right: 15px;
 }
+.showResource .right .channelItemClass .el-checkbox {
+  margin-right: 18px;
+}
 .showResource .right .channelItemClass span {
 	font-family: "PingFangSC-Regular";
 	font-size: 12px;

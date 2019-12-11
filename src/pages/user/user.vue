@@ -1,7 +1,7 @@
 <template>
   <div class="userBox">
     <div class="left_menu header">
-      <el-menu :default-active="defaultActive"
+      <el-menu :default-active="$route.path"
                class="el-menu-vertical"
                @open="handleOpen"
                @close="handleClose"
