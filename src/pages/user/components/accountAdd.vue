@@ -363,7 +363,7 @@ export default {
     rowData: {
       handler(newVal, old) {
         if (this.rowData.accountUuid) {
-          this.initData();
+          // this.initData();
           this.title = "编辑账号";
           // this.initData();
           console.log("rowData==", this.rowData);
@@ -375,7 +375,7 @@ export default {
             this.isAssociateSwitch = false;
           }
         } else {
-          this.initData();
+          // this.initData();
           this.title = "添加账号";
           this.isEditPassWord = false;
         }
