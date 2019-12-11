@@ -55,7 +55,8 @@
     </div> -->
     <!-- 1 -->
     <div id='canvasWrap'
-         ref='canvasRefs'>
+         ref='canvasRefs'
+         :class="{'fill':mode!='original'}">
 
     </div>
   </div>
@@ -199,7 +200,7 @@ export default {
   },
   watch: {
     mode(val) {
-      this.calcHeight();
+      // this.calcHeight();
     },
     position(val) {
       console.log(val);
@@ -451,6 +452,7 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
   }
+  
 }
 </style>
 

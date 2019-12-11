@@ -677,7 +677,9 @@ export default {
         node.data && node.data.nodeType
       );
       if (node.level === 0) {
-        this.defaultExpKeys.push(data[0].id);
+        if (data.length) {
+          this.defaultExpKeys.push(data[0].id);
+        }
       }
       data = data.map(item => {
         item.leaf = !item.openFlag;
@@ -755,7 +757,9 @@ export default {
         let data = await this.getTagTreeData();
         console.log(data);
         if (node.level === 0) {
-          this.defaultExpKeys.push(data[0].id);
+          if (data.length) {
+            this.defaultExpKeys.push(data[0].id);
+          }
         }
         return resolve(data);
       } else if (node.level === 1) {
@@ -1602,7 +1606,11 @@ export default {
 @import "@/style/variables.scss";
 #treeLaa {
   .el-tabs__content {
+    overflow: auto;
+  }
+  .mypanel {
     width: 380px;
+    height: calc(100vh - 240px);
   }
   .el-tabs__item {
     color: #dddddd;

@@ -1,7 +1,9 @@
 .el-color-picker__trigger {
   border: 0;
 }
-
+.fill video {
+  object-fit: fill !important;
+}
 .el-color-picker__panel {
   background-color: #232629;
   .el-button--default,
@@ -52,8 +54,8 @@ img,
 }
 .el-image-viewer__canvas img {
   width: auto;
-  max-width: 60%!important;
-  height: 60%!important;
+  max-width: 60% !important;
+  height: 60% !important;
   top: 5%;
   left: 5%;
 }
@@ -323,8 +325,8 @@ img,
 
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   border-radius: 2px;
-  background:rgba(40,255,187,0.15);
-  border: 1px solid rgba(32,204,150,0.80);
+  background: rgba(40, 255, 187, 0.15);
+  border: 1px solid rgba(32, 204, 150, 0.8);
 }
 
 .el-pagination.is-background .btn-next,
@@ -981,7 +983,7 @@ input::-webkit-input-placeholder {
 .el-select .el-tag__close.el-icon-close {
   background-color: #b8b9ba;
 }
-.el-submenu.is-opened>.el-submenu__title .el-submenu__icon-arrow {
+.el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
   transform: none;
 }
 .el-date-picker__header-label {
@@ -991,20 +993,11 @@ input::-webkit-input-placeholder {
   color: #bebebe;
 }
 .el-date-picker__time-header {
-  border-bottom: 1px solid rgba(
-    $color: #e4e4e4,
-    $alpha: 0.3
-  )
+  border-bottom: 1px solid rgba($color: #e4e4e4, $alpha: 0.3);
 }
 .el-date-table th {
-  border-bottom: 1px solid rgba(
-    $color: #EBEEF5,
-    $alpha: 0.3
-  )
+  border-bottom: 1px solid rgba($color: #ebeef5, $alpha: 0.3);
 }
 .el-picker-panel__footer {
-  border-top: 1px solid rgba(
-    $color: #e4e4e4,
-    $alpha: 0.3
-  )
+  border-top: 1px solid rgba($color: #e4e4e4, $alpha: 0.3);
 }
