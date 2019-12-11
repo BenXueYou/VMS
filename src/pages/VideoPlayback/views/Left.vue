@@ -506,7 +506,11 @@ export default {
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
   .el-tabs__content {
+    overflow: auto;
+  }
+  .mypanel {
     width: 380px;
+    min-height: 100%;
   }
   .mypanel {
     .el-tree-node {

@@ -1606,6 +1606,9 @@ export default {
 @import "@/style/variables.scss";
 #treeLaa {
   .el-tabs__content {
+    overflow: auto;
+  }
+  .mypanel {
     width: 380px;
   }
   .el-tabs__item {

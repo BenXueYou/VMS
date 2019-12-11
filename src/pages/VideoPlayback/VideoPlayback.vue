@@ -37,7 +37,8 @@
                     @click="ClickViDeoA(index)">
         </video-wrap>
       </div>
-      <div class="footer">
+      <div class="footer"
+           v-show="!fullscreen">
         <control-panel @download="download"
                        @saveView="saveView"
                        @choosetime="choosetime"
