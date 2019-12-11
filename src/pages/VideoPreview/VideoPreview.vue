@@ -81,7 +81,7 @@
             </el-dropdown-menu>
           </el-dropdown>
 
-          <gt-button class='button'
+          <gt-button class='button aaaca'
                      :icon="icons.fullScreen"
                      @click="PreviewAreafullScreen"
                      :showClose="false"
@@ -1178,6 +1178,9 @@ export default {
           border-radius: 2px;
           vertical-align: middle;
           cursor: pointer;
+        }
+        .aaaca {
+          width: 40px;
         }
       }
       .fenlu {

@@ -6,8 +6,8 @@ var Authorization = "Basic YXBwOjEyMzQ1Ng==";
 var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
-  ip = "192.168.9.102:15000";
-  websocketIp = "192.168.9.102:15007";
+  ip = "192.168.9.230:15000";
+  websocketIp = "192.168.9.230:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -16,8 +16,8 @@ if (DEBUG == "DEBUG") {
 } else if (DEBUG == "TEST") {
   // 提测环境
   // ip = "192.168.9.141:15000";
-  ip = "192.168.9.102:15000";   
-  websocketIp = "192.168.9.102:80";
+  ip = "192.168.9.230:15000";   
+  websocketIp = "192.168.9.230:80";
   imageUrl =
     protocolHeader +
     "//" +
