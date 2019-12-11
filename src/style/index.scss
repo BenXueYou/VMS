@@ -30,6 +30,15 @@ img,
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
 }
+.FaceHeader .el-icon-arrow-down:before {
+  width: 9px;
+  height: 6px;
+  background-image: url("../assets/images/select-down.png");
+  background-repeat: no-repeat;
+  content: " ";
+  position: absolute;
+  // top: 3px;
+}
 
 /**************************************图片预览******************************************/
 .el-image-viewer__wrapper {

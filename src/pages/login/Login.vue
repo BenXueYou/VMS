@@ -252,18 +252,8 @@ export default {
               // let body = res.data;
               // this.loginSuccessResponse(body);
             });
-          // 以下是测试代码 projectUuid 299fc6dfa7104483bcee8d71e59957cd
-          /** ***********测试代码*************** */
-          // this.$store.dispatch(
-          //   "setProjectUuid",
-          //    body.data.adminUser.projects[0].projectUuid
-          // );
-          /** ***********测试结束*************** */
           // 刷新页面以便于更新projectUuid
           this.$nextTick(() => {
-            // let index = window.location.href.lastIndexOf("/");
-            // let suffix = window.location.href.substring(0, index + 1);
-            // window.location.href = suffix + "Home";
             window.location.reload();
             // let index = window.location.href.lastIndexOf("/");
             // let suffix = window.location.href.substring(0, index + 1);
