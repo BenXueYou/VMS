@@ -23,7 +23,7 @@ wfsControl.prototype.setup = function(video) {
 wfsControl.prototype.play = function(data) {
   if (!this.isHidden) {
     // 页面不可见的时候，停止接受数据
-    this.video.play();
+    // this.video.play();
     this.wfs.play(data);
     // data = null;
     // delete data;

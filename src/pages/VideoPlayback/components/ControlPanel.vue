@@ -399,7 +399,6 @@ export default {
       newData.sort((a, b) => {
         return a.position - b.position;
       });
-      console.log(newData);
       this.controlData = newData;
       this.getMaxTime();
     },
