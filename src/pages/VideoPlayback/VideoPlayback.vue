@@ -742,7 +742,7 @@ export default {
       });
     },
     closeVideoAA(index) {
-      if(index){
+      if (index) {
         this.operatorIndex = index;
       }
       console.log(this.videoArr[this.operatorIndex]);

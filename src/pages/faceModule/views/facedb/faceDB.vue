@@ -808,6 +808,7 @@ export default {
           this.stompClient.subscribe(
             "/user/topic/face-1.3/client/faceLibImportTaskProgress",
             greeting => {
+              console.log("subscribe success: ", greeting);
               this.handleSubscribe(JSON.parse(greeting.body));
             }
           );
@@ -831,11 +832,11 @@ export default {
       this.importProgress = data.importProgress;
     },
     setIntervalMethod() {
-      if (this.importProgress < 100) {
-        this.interval = setInterval(() => {
+      this.interval = setInterval(() => {
+        if (this.importProgress < 100) {
           this.getStaffLibList(true);
-        }, 3000);
-      }
+        }
+      }, 2000);
     }
   },
   mounted() {

@@ -32,7 +32,7 @@
                    width="10.9px"
                    height="9px"
                    style="margin-right: 4px;">
-              <span class="text-show">{{node.label}}</span>
+              <div class="text-show" style="width: 100px;">{{node.label}}</div>
               <el-dropdown trigger="click"
                            class="action-icon"
                            @command="handleDropDownMenuClick"
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 
 export default {
   components: {},
