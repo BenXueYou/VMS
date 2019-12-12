@@ -155,7 +155,7 @@
                     :startTime="startTime"
                     :endTime="endTime"
                     @zoomFc="zoomFc"></timeline>
-          <time-select v-for="(item,index)  in controlData"
+          <time-select v-for="(item)  in controlData"
                        :scale="zoomNow"
                        :startTime="startTime"
                        :endTime="endTime"
@@ -163,8 +163,8 @@
                        @chooseTime="chooseTime"
                        :left="left"
                        :move="move"
-                       :index="index"
-                       :key="index">
+                       :index="item.myIndex"
+                       :key="item.myIndex">
 
           </time-select>
         </div>
@@ -399,6 +399,7 @@ export default {
       newData.sort((a, b) => {
         return a.position - b.position;
       });
+      console.log(newData);
       this.controlData = newData;
       this.getMaxTime();
     },

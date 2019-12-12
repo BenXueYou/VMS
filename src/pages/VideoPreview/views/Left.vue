@@ -112,27 +112,25 @@
           <div class="custom-tree-node"
                @dblclick.stop="openVidewTu(data)"
                slot-scope="{ node, data }">
-            <div>
-              <span class="span"
-                    style='min-width:150px;display:inline-block;'
-                    :title="node.label">{{ node.label }}</span>
-              <el-dropdown trigger="click"
-                           @command="handleCommand"
-                           placement="bottom"
-                           class='threelinemenu'>
-                <span class="el-dropdown-link"
-                      @click="saveClickData(node, data)">
-                  <img class="checked-img"
-                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                       style="margin-right: 20%;">
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="view">打开视图</el-dropdown-item>
-                  <el-dropdown-item command="renameView">重命名</el-dropdown-item>
-                  <el-dropdown-item command="deleteView">删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div>
+            <span class="span"
+                  style='min-width:120px;display:inline-block;'
+                  :title="node.label">{{ node.label }}</span>
+            <el-dropdown trigger="click"
+                         @command="handleCommand"
+                         placement="bottom"
+                         class='threelinemenu'>
+              <span class="el-dropdown-link"
+                    @click="saveClickData(node, data)">
+                <img class="checked-img"
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                     style="margin-right: 20%;">
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="view">打开视图</el-dropdown-item>
+                <el-dropdown-item command="renameView">重命名</el-dropdown-item>
+                <el-dropdown-item command="deleteView">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
         </el-tree>
       </el-tab-pane>

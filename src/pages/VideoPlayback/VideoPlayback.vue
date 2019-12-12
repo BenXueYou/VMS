@@ -243,7 +243,9 @@ export default {
       if (this.operatorIndex >= this.videoArr.length) {
         return [];
       }
-      return [this.videoArr[this.operatorIndex]];
+      let data = [this.videoArr[this.operatorIndex]];
+      data[0].myIndex = this.operatorIndex;
+      return data;
     },
     videoMode() {
       if (this.operatorIndex >= this.videoArr.length) {
@@ -415,7 +417,7 @@ export default {
         streamType
       );
       this.operatorIndex = index;
-      console.log(data);
+      console.log(`index=${index}  拖拽url=${data.rtspUrl}`);
       this.$refs["video" + index][0].drag(data.rtspUrl);
       this.getVideoSpeed();
     },

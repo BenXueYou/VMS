@@ -43,7 +43,7 @@
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
-                   class="mypanel"
+                   class="mypanel2"
                    name="tag">
         <el-tree :props="tagprops"
                  :load="tagloadNode"
@@ -71,7 +71,6 @@
 
       </el-tab-pane>
       <el-tab-pane label="视图"
-                   style="width:228px;"
                    name="view">
 
         <el-tree :props="viewProps"
@@ -506,12 +505,13 @@ export default {
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
   .el-tabs__content {
-    width: 380px;
+    overflow: auto;
   }
   .mypanel {
-    .el-tree-node {
-      // width: 500px;
-    }
+    width: 380px;
+  }
+  .mypanel2 {
+    // width: 228px;
   }
   .el-tree-node__label {
     text-indent: 10px;
