@@ -805,6 +805,7 @@ export default {
       });
     },
     closeVideo(index) {
+      this.operatorIndex = index;
       this.videoArr[index].rtspUrl = "";
       this.videoArr[index].streamType = "";
       this.videoArr[index].channelUuid = "";
