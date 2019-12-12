@@ -1,78 +1,87 @@
 <template>
-	<div class="VideoPlaybackContent">
-		<left-content @playRtsp="playRtsp" @updateView="updateView" ref="leftTree" @openView="openView"></left-content>
-		<div class="right" ref="rigth">
-			<div class="vedioWrap" :class="{'fullVideoWrap':fullscreen}" ref="vedioWrap">
-				<video-wrap
-					v-for="(item,index) in showFenlu"
-					:ref="'video'+index"
-					:key="index"
-					:index="index"
-					:isActive="operatorIndex===index"
-					:width="item.width"
-					:height="item.height"
-					:IsShowMenu="!!item.rtspUrl"
-					:rtspUrl="item.rtspUrl"
-					:streamType="item.streamType"
-					:left="item.left"
-					:top="item.top"
-					:mode="item.mode"
-					action="playback"
-					:position="item.position"
-					:fenlu="fenluIndex+1"
-					:isRecord="!!item.isRecord"
-					@closeVideo="closeVideoAA"
-					@startRecord="startRecord"
-					@stopRecord="stopRecord"
-					@openVideoVoice="openVideoVoice"
-					@screenShot="screenShot"
-					@dragstart="dragstart(index)"
-					@drop="drop(index)"
-					@contextmenu="showMenu"
-					@click="ClickViDeoA(index)"
-				></video-wrap>
-			</div>
-			<div class="footer">
-				<control-panel
-					@download="download"
-					@saveView="saveView"
-					@choosetime="choosetime"
-					@play="pasueVideo"
-					@stop="stopVideo"
-					@singleFrame="videoSingleFrame"
-					@speedUp="videoSpeedUp"
-					@slowDown="videoSpeedDown"
-					@PreviewAreafullScreen="PreviewAreafullScreen"
-					@chooseFenlu="chooseFenlu"
-					@changeMode="changeMode"
-					:downloadStatus="downloadStatus"
-					:isPlaying="isPlaying"
-					:mode="videoMode"
-					:speed="videoSpeed"
-					:operatorIndex.sync="operatorIndex"
-					:fenlu="fenlu"
-					:fenlnWW="fenluIndex"
-					:data="oneRoad"
-				></control-panel>
-			</div>
-		</div>
-		<video-info-Dialog title="摄像机信息" :videoinfo="videoinfo" :visible.sync="videoInfoVisible"></video-info-Dialog>
-		<image-adjust-dialog title="画面调节" :visible.sync="imageAdjustVisible"></image-adjust-dialog>
-		<screenshot-dialog :visible.sync="screenShotVisible"></screenshot-dialog>
-		<download-dialog
-			:visible.sync="downloadVisible"
-			@shutdownVideo="shutdownVideo"
-			:tableData="downloadData"
-		></download-dialog>
-		<local-broadcast-dialog :visible.sync="showBroadCastVisible"></local-broadcast-dialog>
-		<tree-append-tag-dialog
-			@confirm="addView"
-			title="添加视图"
-			labelName="视图名称"
-			:visible.sync="appendViewVisible"
-		></tree-append-tag-dialog>
-		<set-play-time-dialog :visible.sync="setTimeVisible" @confirm="setPlayTime"></set-play-time-dialog>
-	</div>
+  <div class='VideoPlaybackContent'>
+    <left-content @playRtsp="playRtsp"
+                  @updateView="updateView"
+                  ref="leftTree"
+                  @openView="openView"></left-content>
+    <div class='right'
+         ref='rigth'>
+      <div class='vedioWrap'
+           :class="{'fullVideoWrap':fullscreen}"
+           ref='vedioWrap'>
+        <video-wrap v-for="(item,index) in showFenlu"
+                    :ref="'video'+index"
+                    :key="index"
+                    :index="index"
+                    :isActive="operatorIndex===index"
+                    :width="item.width"
+                    :height="item.height"
+                    :IsShowMenu="!!item.rtspUrl"
+                    :rtspUrl="item.rtspUrl"
+                    :streamType="item.streamType"
+                    :left="item.left"
+                    :top="item.top"
+                    :mode="item.mode"
+                    action="playback"
+                    :position="item.position"
+                    :fenlu="fenluIndex+1"
+                    :isRecord="!!item.isRecord"
+                    @closeVideo="closeVideoAA"
+                    @startRecord="startRecord"
+                    @stopRecord="stopRecord"
+                    @openVideoVoice="openVideoVoice"
+                    @screenShot="screenShot"
+                    @dragstart="dragstart(index)"
+                    @drop="drop(index)"
+                    @contextmenu="showMenu"
+                    @click="ClickViDeoA(index)">
+        </video-wrap>
+      </div>
+      <div class="footer"
+           v-if="!fullscreen">
+        <control-panel @download="download"
+                       @saveView="saveView"
+                       @choosetime="choosetime"
+                       @play="pasueVideo"
+                       @stop="stopVideo"
+                       @singleFrame="videoSingleFrame"
+                       @speedUp="videoSpeedUp"
+                       @slowDown="videoSpeedDown"
+                       @PreviewAreafullScreen="PreviewAreafullScreen"
+                       @chooseFenlu="chooseFenlu"
+                       @changeMode="changeMode"
+                       :downloadStatus="downloadStatus"
+                       :isPlaying="isPlaying"
+                       :mode="videoMode"
+                       :speed="videoSpeed"
+                       :operatorIndex.sync="operatorIndex"
+                       :fenlu="fenlu"
+                       :fenlnWW="fenluIndex"
+                       :data="oneRoad">
+
+        </control-panel>
+      </div>
+    </div>
+    <video-info-Dialog title="摄像机信息"
+                       :videoinfo="videoinfo"
+                       :visible.sync="videoInfoVisible"></video-info-Dialog>
+    <image-adjust-dialog title="画面调节"
+                         :visible.sync="imageAdjustVisible">
+    </image-adjust-dialog>
+    <screenshot-dialog :visible.sync="screenShotVisible">
+
+    </screenshot-dialog>
+    <download-dialog :visible.sync="downloadVisible"
+                     @shutdownVideo="shutdownVideo"
+                     :tableData="downloadData"></download-dialog>
+    <local-broadcast-dialog :visible.sync="showBroadCastVisible"></local-broadcast-dialog>
+    <tree-append-tag-dialog @confirm="addView"
+                            title="添加视图"
+                            labelName="视图名称"
+                            :visible.sync="appendViewVisible"></tree-append-tag-dialog>
+    <set-play-time-dialog :visible.sync="setTimeVisible"
+                          @confirm="setPlayTime"></set-play-time-dialog>
+  </div>
 </template>
 
 <script>
@@ -235,7 +244,9 @@ export default {
       if (this.operatorIndex >= this.videoArr.length) {
         return [];
       }
-      return [this.videoArr[this.operatorIndex]];
+      let data = [this.videoArr[this.operatorIndex]];
+      data[0].myIndex = this.operatorIndex;
+      return data;
     },
     videoMode() {
       if (this.operatorIndex >= this.videoArr.length) {
@@ -407,7 +418,7 @@ export default {
         streamType
       );
       this.operatorIndex = index;
-      console.log(data);
+      console.log(`index=${index}  拖拽url=${data.rtspUrl}`);
       this.$refs["video" + index][0].drag(data.rtspUrl);
       this.getVideoSpeed();
     },

@@ -1,8 +1,12 @@
 .el-color-picker__trigger {
   border: 0;
 }
-.fill video {
+.RTask .fill video {
   object-fit: fill !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .el-color-picker__panel {
   background-color: #232629;
