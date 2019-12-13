@@ -7,14 +7,14 @@
                v-if="isPlaying"
                @click="play"
                alt="">
-          <img :src="icons.pause"
+          <img :src="icons.stop"
                style="height:16px;width:16px;"
                v-else
                @click="play"
                alt="">
         </li>
         <li>
-          <img :src="icons.stop"
+          <img :src="icons.pause"
                @click="stop"
                alt="">
         </li>
@@ -399,7 +399,7 @@ export default {
       newData.sort((a, b) => {
         return a.position - b.position;
       });
-      console.log(newData);
+      // console.log(newData);
       this.controlData = newData;
       this.getMaxTime();
     },

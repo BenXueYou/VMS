@@ -504,11 +504,15 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
+  .is-leaf {
+    width: 0px !important;
+  }
   .el-tabs__content {
     overflow: auto;
   }
   .mypanel {
     width: 380px;
+    height: calc(100vh - 410px);
   }
   .mypanel2 {
     // width: 228px;
@@ -547,7 +551,7 @@ export default {
     }
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
-    padding: 6px 2px 6px 0px;
+    padding: 6px 0px;
   }
 }
 </style>

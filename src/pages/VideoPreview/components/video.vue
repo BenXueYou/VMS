@@ -56,7 +56,7 @@
     <!-- 1 -->
     <div id='canvasWrap'
          ref='canvasRefs'
-         :class="{'fill':mode!='original'}">
+         :class="{'fullscreen':mode!='original'}">
 
     </div>
   </div>

@@ -69,7 +69,7 @@
           <div class="custom-tree-node"
                @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
-            <div class="channelStatus">
+            <div class="channelStatus2">
               <img :src="data.icon"
                    v-if="data.icon"
                    alt="">
@@ -80,24 +80,24 @@
                     @dragstart="dragstart(data,$event)"
                     :title="node.label"
                     :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
-              <el-dropdown trigger="click"
-                           @command="handleCommand"
-                           placement="bottom"
-                           class='threelinemenu'>
-                <span class="el-dropdown-link"
-                      v-if="data.isOnline||!data.hasOwnProperty('channelType')"
-                      @click="saveClickData(node, data,$event)">
-                  <img class="checked-img"
-                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                       style="margin-right: 20%;">
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="video">打开视频</el-dropdown-item>
-                  <el-dropdown-item command="playback">查看录像</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div>
 
+            </div>
+            <el-dropdown trigger="click"
+                         @command="handleCommand"
+                         placement="bottom"
+                         class='threelinemenu'>
+              <span class="el-dropdown-link"
+                    v-if="data.isOnline||!data.hasOwnProperty('channelType')"
+                    @click="saveClickData(node, data)">
+                <img class="checked-img"
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                     style="margin-right: 20%;">
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="video">打开视频</el-dropdown-item>
+                <el-dropdown-item command="playback">查看录像</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
         </el-tree>
 
@@ -1603,6 +1603,9 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #treeLaa {
+  .is-leaf {
+    width: 0px !important;
+  }
   .el-tabs__content {
     overflow: auto;
   }
@@ -1642,7 +1645,7 @@ export default {
     }
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
-    padding: 6px 2px 6px 0px;
+    padding: 6px 0px;
   }
 }
 </style>
@@ -1688,13 +1691,23 @@ export default {
         width: 12px;
         height: 12px;
       }
-      span {
+      .span {
         font-size: 12px;
         color: #dddddd;
+        min-width: 120px;
       }
       .channelOffline {
         color: #999999;
       }
+    }
+    .channelStatus2 {
+      width: 220px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-basis: 20px;
+      flex-shrink: 20px;
+      flex-flow: 20px;
     }
     .span {
       // width: calc(100% - 30px);

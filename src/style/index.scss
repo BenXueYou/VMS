@@ -8,6 +8,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.fullscreen video {
+  object-fit: fill !important;
+}
 .el-color-picker__panel {
   background-color: #232629;
   .el-button--default,
