@@ -3,18 +3,18 @@
     <div class="head">
       <ul>
         <li>
-          <img :src="icons.play"
+          <img :src="icons.pause"
                v-if="isPlaying"
+               style="height:16px;width:16px;"
                @click="play"
                alt="">
-          <img :src="icons.stop"
-               style="height:16px;width:16px;"
+          <img :src="icons.play"
                v-else
                @click="play"
                alt="">
         </li>
         <li>
-          <img :src="icons.pause"
+          <img :src="icons.stop"
                @click="stop"
                alt="">
         </li>
@@ -399,7 +399,6 @@ export default {
       newData.sort((a, b) => {
         return a.position - b.position;
       });
-      // console.log(newData);
       this.controlData = newData;
       this.getMaxTime();
     },

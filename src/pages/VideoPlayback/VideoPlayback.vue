@@ -748,7 +748,6 @@ export default {
       if (index !== undefined) {
         this.operatorIndex = index;
       }
-      console.log(this.videoArr[this.operatorIndex]);
       if (!this.videoArr[this.operatorIndex].channelUuid) {
         this.$message.error("该分路上没有通道！");
       } else {
@@ -958,7 +957,9 @@ export default {
       ][0].isPause;
     },
     stopVideo() {
-      this.closeVideoAA();
+      let item = this.videoArr[this.operatorIndex];
+      item.rtspUrl = "";
+      this.videoArr.splice(this.operatorIndex, 1, item);
     },
     videoSingleFrame() {
       this.$refs["video" + this.operatorIndex][0].singleFrame();

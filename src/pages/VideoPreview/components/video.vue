@@ -288,8 +288,15 @@ export default {
       // if (!this.canvas) {
       //   this.playVideo();
       // }
-      console.log(url);
-      this.video_mgr.drag(this.video, url);
+      console.log(this.video);
+      console.log(this.rtspUrl);
+      if (this.video) {
+        console.log(url);
+        this.video_mgr.drag(this.video, url);
+      } else {
+        alert(1);
+        this.playVideo();
+      }
     },
     calcHeight() {
       // 这里让视频的宽高比是*16:9；
@@ -452,7 +459,6 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
   }
-  
 }
 </style>
 
