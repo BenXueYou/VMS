@@ -22,6 +22,7 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
+                   :class="{'myShowCuoTree':showCloudControl}"
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
@@ -1612,6 +1613,9 @@ export default {
   .mypanel {
     width: 380px;
     height: calc(100vh - 240px);
+  }
+  .myShowCuoTree {
+    height: calc(100vh - 610px);
   }
   .el-tabs__item {
     color: #dddddd;
