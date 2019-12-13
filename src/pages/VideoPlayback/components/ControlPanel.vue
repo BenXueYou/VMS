@@ -4,7 +4,7 @@
       <ul>
         <li>
           <img :src="icons.pause"
-               v-if="isPlaying"
+               v-if="playStatus==1"
                style="height:16px;width:16px;"
                @click="play"
                alt="">
@@ -212,10 +212,10 @@ export default {
         return 1;
       }
     },
-    isPlaying: {
-      type: Boolean,
+    playStatus: {
+      type: Number,
       default() {
-        return true;
+        return 0;
       }
     },
     fenlnWW: {

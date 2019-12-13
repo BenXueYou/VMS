@@ -144,12 +144,17 @@ export default {
       default() {
         return "video";
       }
-    }
+    },
+    playStatus: {
+      type: Number,
+      default() {
+        return 0;
+      }
+    } // 0待播放 1正在播放 2暂停播放
   },
   data() {
     return {
       icons,
-
       ip: "",
       port: "",
       video_mgr: null,
@@ -157,7 +162,7 @@ export default {
       video: null,
       video_list: [],
       speed: 1, // 视频播放速度
-      isPause: false // 0表示正在播放，1表示
+      isPause: false // 0表示正在播放，1表示,
     };
   },
   destroyed() {
@@ -258,14 +263,17 @@ export default {
         this.$message.error("该选中框没有视频在播放！");
         return;
       }
-      if (!this.isPause) {
+      if (this.playStatus === 0) {
+        // 如果按钮待播放，点击这个按钮没有反应
+        return;
+      } else if (this.playStatus === 1) {
+        // 正在播放就停止
         await this.video_mgr.pause(this.video);
         this.$message.success("暂停视频");
-      } else {
+      } else if (this.playStatus === 2) {
         await this.video_mgr.resume(this.video);
         this.$message.success("继续播放视频");
       }
-      this.isPause = !this.isPause;
     },
     async resume() {},
     async singleFrame() {},
@@ -288,9 +296,9 @@ export default {
       // if (!this.canvas) {
       //   this.playVideo();
       // }
-      console.log(this.video);
+      console.log(this.canvas);
       console.log(this.rtspUrl);
-      if (this.video) {
+      if (this.canvas) {
         console.log(url);
         this.video_mgr.drag(this.video, url);
       } else {
