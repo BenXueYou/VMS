@@ -317,6 +317,11 @@ export default {
           this.canvas.height = this.height;
           return;
         }
+        // if (this.decodeMod === "video") {
+        //   this.canvas.width = this.width;
+        //   this.canvas.height = this.height;
+        //   return;
+        // }
         // 如果宽高比大于16:9 则按照高计算宽
         if (this.width / this.height >= 16 / 9) {
           let width = this.width;
@@ -392,7 +397,10 @@ export default {
         this.video_mgr.stop(this.video);
       }
       if (this.canvas && this.$refs.canvasRefs) {
-        this.$refs.canvasRefs.removeChild(this.canvas);
+        // 再加一层判断，获取当前canvasRefs下面是否有child
+        if (this.$refs.canvasRefs.childNodes.length) {
+          this.$refs.canvasRefs.removeChild(this.canvas);
+        }
       }
       this.canvas = null;
     },

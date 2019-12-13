@@ -70,7 +70,8 @@
           <gt-button class='button'
                      @click='saveShiTu'
                      :showClose="false">保存视图</gt-button>
-          <el-dropdown @command="changeView">
+          <el-dropdown @command="changeView"
+                       trigger="click">
             <gt-button class='button'
                        :showClose="false">
               {{videoMode}}
