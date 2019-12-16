@@ -12,7 +12,6 @@
 							class="left-space time-interal"
 							v-model="eventType"
 							clearable
-							placeholder="事件"
 							size="small"
 						>
 							<el-option
@@ -80,9 +79,13 @@
 				<el-table-column prop="clientIp" label="登陆IP"></el-table-column>
 				<el-table-column prop="eventTime" label="时间" :show-overflow-tooltip="true"></el-table-column>
 				<el-table-column prop="eventType" label="事件">
-					<template
-						slot-scope="scope"
-					>{{$common.getEnumItemName('system_log_event',scope.row.eventType)}}</template>
+				  <template
+                  slot-scope="scope"
+	                >
+	                <!--   <span>{{scope.row.invalidTime}}</span> -->
+	                  <span v-if="scope.row.eventType==='login'">登陆</span>
+	                  <span v-if="scope.row.eventType==='logout'">登出</span>
+	                </template>
 				</el-table-column>
 			</el-table>
 			<!----------------------------------表格分页器---------------------------------->
@@ -112,7 +115,11 @@ export default {
   data() {
     return {
       eventType: null,
-      eventTypeOptions: [],
+      eventTypeOptions: [
+        { typeName: "全部", typeStr: null },
+        { typeName: "登陆", typeStr: "login" },
+        { typeName: "登出", typeStr: "logout" }
+      ],
       accountName: null,
       accountOptions: [],
       loginIp: null,
@@ -149,7 +156,7 @@ export default {
       console.log(that.pageSize);
     });
     // this.initData();
-    this.eventTypeOptions = this.$common.getEnumByGroupStr("config");
+    // this.eventTypeOptions = this.$common.getEnumByGroupStr("config");
   },
   activated() {
     this.currentPage = 1;

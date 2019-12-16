@@ -54,6 +54,7 @@
 				<el-table-column prop="description" label="账号描述"></el-table-column>
 				<el-table-column prop="reason" label="操作" width="200">
 					<template slot-scope="scope">
+          <div v-if="scope.row.accountType!=='project_admin'">
 						<el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
 						<el-button
 							@click="editRoleClick(scope.row)"
@@ -73,6 +74,13 @@
 							type="text"
 							size="small"
 						>删除</el-button>
+          </div>
+          <div v-if="scope.row.accountType==='project_admin'">
+            <el-button>编辑</el-button>
+            <el-button>分配角色</el-button>
+            <el-button>禁用</el-button>
+            <el-button>删除</el-button>
+          </div>
 					</template>
 				</el-table-column>
 			</el-table>
