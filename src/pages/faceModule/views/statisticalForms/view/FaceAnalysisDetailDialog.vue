@@ -10,13 +10,19 @@
         <div :key="index"
              class="face-item">
           <div>
-            <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+            <!-- <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
                  style="margin-right: 10px;"
                  width="139px"
-                 height="139px">
-            <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')"
+                 height="139px"> -->
+            <el-image style="width: 139px; height: 139px; margin-right: 10px;"
+                      :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                      :preview-src-list="[$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')]"></el-image>
+            <!-- <img :src="$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')"
                  width="248px"
-                 height="139px">
+                 height="139px"> -->
+            <el-image style="width: 248px; height: 139px;"
+                      :src="$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')"
+                      :preview-src-list="[$common.setPictureShow(item.panoramaCapturePhotoUrl, 'facelog')]"></el-image>
           </div>
           <div class="item-info">
             <div class="info-one">
