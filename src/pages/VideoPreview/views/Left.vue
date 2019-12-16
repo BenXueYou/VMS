@@ -22,7 +22,7 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
-                   :class="{'myShowCuoTree':showCloudControl}"
+                   :class="{'myShowCuoTree':showCloudControl,'showMaxWidth':!showMaxWidth}"
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
@@ -359,6 +359,7 @@ export default {
       tagIndex: 0, // 用来上下移动标签的时候记录
       data: [],
       data2: [],
+      showMaxWidth: false, // 是否显示最长的宽度
       devprops: {
         label: "label",
         isLeaf: "leaf"
@@ -678,6 +679,7 @@ export default {
       if (node.level === 0) {
         if (data.length) {
           this.defaultExpKeys.push(data[0].id);
+          this.showMaxWidth = true;
         }
       }
       data = data.map(item => {
@@ -1613,6 +1615,9 @@ export default {
   .mypanel {
     width: 380px;
     height: calc(100vh - 240px);
+  }
+  .showMaxWidth {
+    width: 196px;
   }
   .myShowCuoTree {
     height: calc(100vh - 610px);

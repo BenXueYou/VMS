@@ -212,6 +212,7 @@ export default {
         _this.imageBase642 = this.result
           .replace("data:image/jpeg;base64,", "jpeg:")
           .replace("data:image/png;base64,", "png:")
+          .replace("data:image/bmp;base64,", "bmp:")
           .replace("data:image/jpg;base64,", "jpg:");
       };
       this.imageUrl2 = URL.createObjectURL(e2.file);
@@ -229,7 +230,8 @@ export default {
       reader1.onload = function(e) {
         _this.imageBase641 = this.result
           .replace("data:image/jpeg;base64,", "jpeg:")
-          .replace("data:image/png;base64,", "png:")
+					.replace("data:image/png;base64,", "png:")
+					.replace("data:image/bmp;base64,", "bmp:")
           .replace("data:image/jpg;base64,", "jpg:");
       };
       this.imageUrl1 = URL.createObjectURL(e1.file);

@@ -19,6 +19,7 @@
              @tab-click="handleClick">
       <el-tab-pane label="设备树"
                    class="mypanel"
+                   :class="{'showMaxWidth':!showMaxWidth}"
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
@@ -176,6 +177,7 @@ export default {
       defaultExpandedKeys: [],
       changeNameDialogVisible: false,
       isDeleteVisible: false,
+      showMaxWidth: false,
       nodeValue: "",
       icons,
       searchText: "",
@@ -329,8 +331,12 @@ export default {
         node.data && node.data.id,
         node.data && node.data.nodeType
       );
+      // data = [];
       if (node.level === 0) {
-        this.defaultExpKeys.push(data[0].id);
+        if (data.length) {
+          this.defaultExpKeys.push(data[0].id);
+          this.showMaxWidth = true;
+        }
       }
       data = data.map(item => {
         item.leaf = !item.openFlag;
@@ -390,8 +396,9 @@ export default {
       console.log(node);
       if (node.level === 0) {
         let data = await this.getTagTreeData();
-        this.defaultExpKeys.push(data[0].id);
-        console.log(data);
+        if (data.length) {
+          this.defaultExpKeys.push(data[0].id);
+        }
         return resolve(data);
       } else if (node.level === 1) {
         let data = await this.getChannelByNode(node.data.id);
@@ -513,6 +520,9 @@ export default {
   .mypanel {
     width: 380px;
     height: calc(100vh - 410px);
+  }
+  .showMaxWidth {
+    width: 196px;
   }
   .mypanel2 {
     // width: 228px;
