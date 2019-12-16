@@ -128,6 +128,7 @@ export default {
 						}
 					);
 				} else {
+					console.log(window.navigator.getMedia);
 					alert("不支持摄像头");
 					_this.shootPhotoDialogVisible = false;
 				}
