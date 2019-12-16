@@ -45,7 +45,7 @@
 								<el-button type="text" @click="edit(scope.row)" size="small">编辑</el-button>
 								<el-button type="text" @click="ditribute(scope.row)" size="small">分配账号</el-button>
 								<el-button type="text" @click="enableRow(scope.row)" style="color:#FFBA22;" size="small">禁用</el-button>
-								<el-button type="text" @click="deleteRow(scope.row)" style="color: #FF5F5F;" size="small">剔除</el-button>
+								<el-button type="text" @click="deleteRow(scope.row)" style="color: #FF5F5F;" size="small">删除</el-button>
 							</template>
 						</el-table-column>
 					</el-table>
