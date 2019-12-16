@@ -246,7 +246,7 @@ export default {
           let data = {
             resourceUuid: o.id,
             resourceType: o.resType,
-            resourceAuthUuids: o.checkedAuthUuids,
+            resourceAuthUuids: o.checkedAuthUuids
           };
           Object.assign(data, o);
           dataArr.push(data);
@@ -313,9 +313,11 @@ export default {
         treeStructure: "orgNode$device|devNode|chnNode", // 树结构，指定树的类型及树的结构
         authEnable: false, // 是否开启权限过滤，默认开启true
         recursiveEnable: false, // 是否递归查询子节点的资源，默认不查询false
-        extInfo: {
-          aimType: "chnSubType"
-        }
+        extInfo: [
+          {
+            aimType: "chnSubType"
+          }
+        ]
       };
       if (node.id < 4) {
         obj.viewType = this.treeTypeArr[node.id].id;
@@ -337,9 +339,11 @@ export default {
       this.resourceType = this.rightTabArr[0].id;
       // 切换树的类型
       let obj = {
-        extInfo: {
-          aimType: "chnSubType"
-        },
+        extInfo: [
+          {
+            aimType: "chnSubType"
+          }
+        ],
         viewType: this.activeName, // 不填则查所有类型资源 门禁 door、视频 video、报警 alarm、访客机 visitor
         treeStructure: "orgNode$device|devNode|chnNode", // 树结构，指定树的类型及树的结构
         authEnable: false, // 是否开启权限过滤，默认开启true
@@ -410,7 +414,7 @@ export default {
 	padding-right: 15px;
 }
 .showResource .right .channelItemClass .el-checkbox {
-  margin-right: 18px;
+	margin-right: 18px;
 }
 .showResource .right .channelItemClass span {
 	font-family: "PingFangSC-Regular";
