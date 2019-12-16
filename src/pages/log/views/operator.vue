@@ -61,8 +61,8 @@
 						slot-scope="scope"
 					>{{$common.getEnumItemName('SystemLogEventEnum',scope.row.eventType)}}</template>
 				</el-table-column>
-				<el-table-column prop="detail" label="操作内容"></el-table-column>
-				<el-table-column prop="eventTime" label="操作时间"></el-table-column>
+				<el-table-column show-overflow-tooltip prop="detail" label="操作内容"></el-table-column>
+				<el-table-column show-overflow-tooltip prop="eventTime" label="操作时间"></el-table-column>
 			</el-table>
 			<!----------------------------------表格分页器---------------------------------->
 			<div class="footer">

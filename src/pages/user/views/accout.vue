@@ -44,7 +44,12 @@
 				<el-table-column prop="accountName" label="账户" ></el-table-column>
 				<el-table-column prop="staffName" label="姓名" ></el-table-column>
 				<el-table-column prop="phoneNumber" label="手机号码" ></el-table-column>
-				<el-table-column prop="roles" label="角色" ></el-table-column>
+				<el-table-column prop="roles" label="角色" >
+          <template slot-scope="scope">
+            <span v-if="scope.row.accountType==='project_admin'">超级管理员</span>
+            <span v-if="scope.row.accountType!=='project_admin'">{{scope.row.roles}}</span>
+          </template>    
+        </el-table-column>
 				<el-table-column prop="accountCreateTime" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="loginTimes" label="登陆次数" ></el-table-column>
 				<el-table-column prop="lastLoginTime" label="最后登录时间" show-overflow-tooltip></el-table-column>
@@ -76,21 +81,21 @@
 						>删除</el-button>
           </div>
           <div v-if="scope.row.accountType==='project_admin'">
-            <el-button type="text" size="small">编辑</el-button>
+            <el-button type="text" size="small"></el-button>
             <el-button
               type="text"
               size="small"
-            >分配角色</el-button>
+            ></el-button>
             <el-button
               class="onOffBtnClass"
               type="text"
               size="small"
-            >禁用</el-button>
+            ></el-button>
             <el-button
               class="deleteBtnClass"
               type="text"
               size="small"
-            >删除</el-button>
+            ></el-button>
           </div>
 					</template>
 				</el-table-column>
