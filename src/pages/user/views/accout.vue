@@ -116,7 +116,7 @@
 			v-show="addDialogVisible"
 			:checkedRoles="defaultRoleData"
 			@close="close"
-			:rowData="rowData"
+			:rowData.sync="rowData"
 			@addRole="addRoleClick"
 		/>
 		<tree-panel-dialog

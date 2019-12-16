@@ -237,6 +237,7 @@ export default {
       this.queryBody.roleUuids = []; // 角色uuid数组
       this.queryBody.isAssociateStaff = "";
       this.queryBody.invalidTime = ""; // 失效时间 (可选)
+
     },
     // 点击确定按钮
     editBtnAct(status) {
@@ -319,6 +320,7 @@ export default {
               console.log("status55555==", status);
               if (status === "again") {
                 this.initData();
+                this.$emit("update:rowData",{roles:[]});
               } else if (status === "save") {
                 this.$emit("close", true);
               }
@@ -350,6 +352,7 @@ export default {
     addRoleBtn() {
       // 分配角色 向父组件传值
       //   this.showTreeAdd = !this.showTreeAdd;
+      console.log(this.rowData);
       this.$emit("addRole", this.rowData);
     },
     close() {
