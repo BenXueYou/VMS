@@ -37,15 +37,16 @@ service.interceptors.response.use(
     if (response.data.hasOwnProperty("success")) {
       if (response.data.success) {
         return response;
-      } else if (response.data.errCode === 7000) {
+      } else if (response.data.errCode === 7000 ) {
         sessionStorage.setItem("Authorization","");
         sessionStorage.setItem("projectUuid","");
         router.replace({
           name: "Login"
         });
-      } else if (response.data.msg === "令牌无效") {
+      } else if (response.data.msg === "令牌无效" || response.data.msg === "权限不足" ) {
         sessionStorage.setItem("Authorization","");
         sessionStorage.setItem("projectUuid","");
+        Toast.error(response.data.msg);
         router.replace({
           name: "Login"
         });

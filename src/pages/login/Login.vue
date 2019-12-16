@@ -190,8 +190,10 @@ export default {
               grant_type: "password"
             })
             .then(res => {
-              let body = res.data;
-              this.loginSuccessResponse(body);
+              let body = res && res.data;
+              if(body){
+              	this.loginSuccessResponse(body);
+              }
             });
         } else {
           this.$cToast.error("请正确填写内容");
