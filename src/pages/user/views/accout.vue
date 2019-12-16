@@ -70,11 +70,19 @@
 								size="small"
 							>分配角色</el-button>
 							<el-button
+                v-if="scope.row.enable===1"
 								class="onOffBtnClass"
 								@click="forbidBtnClick(scope.row)"
 								type="text"
 								size="small"
 							>禁用</el-button>
+              <el-button
+                v-if="scope.row.enable===0"
+                class="onOffBtnClass"
+                @click="startBtnClick(scope.row)"
+                type="text"
+                size="small"
+              >启用</el-button>
 							<el-button
 								class="deleteBtnClass"
 								@click="deleteBtnClick(scope.row)"
@@ -346,6 +354,11 @@ export default {
     forbidBtnClick(rowData) {
       this.accountUuids = [rowData.accountUuid];
       this.switchData(0);
+    },
+    // 启用
+    startBtnClick(rowData) {
+      this.accountUuids = [rowData.accountUuid];
+      this.switchData(1);
     },
     resetPassword() {
       if (!this.accountUuids.length) {
