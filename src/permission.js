@@ -46,7 +46,7 @@ router.beforeEach((to, from, next) => {
               console.log(res);
               if (res.data.success) {
                 let data = res.data.data || [];
-                let getAllData = true; // 测试用的，先显示全部的菜单那
+                let getAllData = false; // 测试用的，先显示全部的菜单那
                 let routerData = getRoute(data, getAllData);
                 window.localStorage.setItem(
                   "routerData",
@@ -56,12 +56,12 @@ router.beforeEach((to, from, next) => {
               }
             })
             .catch(() => {
-              let routerData = getRoute([], true);
-              window.localStorage.setItem(
-                "routerData",
-                JSON.stringify(routerData)
-              );
-              router.addRoutes(routerData);
+              // let routerData = getRoute([], true);
+              // window.localStorage.setItem(
+              //   "routerData",
+              //   JSON.stringify(routerData)
+              // );
+              // router.addRoutes(routerData);
             });
         }
       }
