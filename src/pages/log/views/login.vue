@@ -8,12 +8,7 @@
 				<div class="leftgroup">
 					<div class="leftgroupitem">
 						<span class="topTitleTxt">事件：</span>
-						<el-select
-							class="left-space time-interal"
-							v-model="eventType"
-							clearable
-							size="small"
-						>
+						<el-select class="left-space time-interal" v-model="eventType" clearable size="small">
 							<el-option
 								v-for="item in eventTypeOptions"
 								:key="item.typeStr"
@@ -79,13 +74,11 @@
 				<el-table-column prop="clientIp" label="登陆IP"></el-table-column>
 				<el-table-column prop="eventTime" label="时间" :show-overflow-tooltip="true"></el-table-column>
 				<el-table-column prop="eventType" label="事件">
-				  <template
-                  slot-scope="scope"
-	                >
-	                <!--   <span>{{scope.row.invalidTime}}</span> -->
-	                  <span v-if="scope.row.eventType==='login'">登陆</span>
-	                  <span v-if="scope.row.eventType==='logout'">登出</span>
-	                </template>
+					<template slot-scope="scope">
+						<!--   <span>{{scope.row.invalidTime}}</span> -->
+						<span v-if="scope.row.eventType==='login'">登陆</span>
+						<span v-if="scope.row.eventType==='logout'">登出</span>
+					</template>
 				</el-table-column>
 			</el-table>
 			<!----------------------------------表格分页器---------------------------------->

@@ -31,15 +31,12 @@
 						<el-table-column label="角色名称" prop="roleName" width="120"></el-table-column>
 						<el-table-column prop="roleStatus" label="状态" width="120"></el-table-column>
 						<el-table-column prop="invalidTime" label="过期时间" show-overflow-tooltip>
-              <template
-                  slot-scope="scope"
-                >
-                <!--   <span>{{scope.row.invalidTime}}</span> -->
-                  <span v-if="scope.row.invalidTime==='long'">永久</span>
-                  <span v-if="scope.row.invalidTime!=='long'">{{scope.row.invalidTime}}</span>
-                </template>
-              </el-table-column>      
-            </el-table-column>
+							<template slot-scope="scope">
+								<!--   <span>{{scope.row.invalidTime}}</span> -->
+								<span v-if="scope.row.invalidTime==='long'">永久</span>
+								<span v-if="scope.row.invalidTime!=='long'">{{scope.row.invalidTime}}</span>
+							</template>
+						</el-table-column>
 						<el-table-column prop="createAccountName" label="创建账号" show-overflow-tooltip></el-table-column>
 						<el-table-column prop="roleCreateTime" label="创建时间" show-overflow-tooltip></el-table-column>
 						<el-table-column prop="description" label="角色描述" show-overflow-tooltip></el-table-column>
