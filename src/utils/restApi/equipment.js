@@ -19,6 +19,9 @@ let zwzPrefix = `${window.config.protocolHeader}${ip}/${zhangwz}/`;
 let wyfPrefix = `${window.config.protocolHeader}${ip}/${
   window.config.wyf
 }/project/${projectUuid}/`;
+let wyfPrefix2 = `${window.config.protocolHeader}${ip}/zuul/${
+  window.config.wyf
+}/project/${projectUuid}/`;
 let fkPrefix = `${
   window.config.protocolHeader
 }${ip}/visitant-v1/project/${projectUuid}/`;
@@ -130,7 +133,7 @@ export default {
     `${
       window.config.protocolHeader
     }${ip}/iacserv-v1/operation/operation/dataRestore/device/${deviceUuid}`,
-  staffExportUrl: type => `${wyfPrefix}staff/import/${type}`,
+  staffExportUrl: type => `${wyfPrefix2}staff/import/${type}`,
   // 下载模板
   downloadUrl: `${wyfPrefix}staff/import/exportTemplate`,
   // 获取导入结果
