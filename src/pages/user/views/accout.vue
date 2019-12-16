@@ -76,10 +76,21 @@
 						>删除</el-button>
           </div>
           <div v-if="scope.row.accountType==='project_admin'">
-            <el-button>编辑</el-button>
-            <el-button>分配角色</el-button>
-            <el-button>禁用</el-button>
-            <el-button>删除</el-button>
+            <el-button type="text" size="small">编辑</el-button>
+            <el-button
+              type="text"
+              size="small"
+            >分配角色</el-button>
+            <el-button
+              class="onOffBtnClass"
+              type="text"
+              size="small"
+            >禁用</el-button>
+            <el-button
+              class="deleteBtnClass"
+              type="text"
+              size="small"
+            >删除</el-button>
           </div>
 					</template>
 				</el-table-column>
