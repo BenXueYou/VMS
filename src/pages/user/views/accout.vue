@@ -274,7 +274,7 @@ export default {
       //   this.defaultRoleData = [];
       //   this.rowData = {};
       // }
-
+      this.defaultRoleData=rowData.roles;
       this.$set(this.rowData, "roles", this.defaultRoleData);
       this.getRoleList();
     },
