@@ -45,14 +45,14 @@
                     :class="{'channelOffline':!data.isOnline}"
                     :title="node.label">{{ node.label }}</span>
 
-              <span class="el-dropdown-link  "
-                    v-if="data.isOnline||data.nodeType!='chnNode'"
-                    @click.stop="saveClickData(node, data,$event)">
-                <img class="checked-img threelinemenu"
-                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                     style="margin-right: 20%;">
-              </span>
             </div>
+            <span class="el-dropdown-link  "
+                  v-if="data.isOnline||data.nodeType!='chnNode'"
+                  @click.stop="saveClickData(node, data,$event)">
+              <img class="checked-img threelinemenu"
+                   src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                   style="margin-right: 20%;">
+            </span>
 
           </div>
         </el-tree>
@@ -1613,7 +1613,7 @@ export default {
     overflow: auto;
   }
   .mypanel {
-    width: 380px;
+    // width: 380px;
     height: calc(100vh - 240px);
   }
   .showMaxWidth {
@@ -1678,24 +1678,23 @@ export default {
   }
 
   .custom-tree-node {
-    flex: 1;
+    // flex: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 14px;
-    padding-right: 18px;
-    height: 100%;
-    white-space: nowrap;
+    // font-size: 14px;
+    // padding-right: 18px;
+    // height: 100%;
+    // white-space: nowrap;
     // overflow: hidden;
     // text-overflow: ellipsis;
     width: calc(100% - 30px);
+    // width: 100%;
     .channelStatus {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      flex-basis: 20px;
-      flex-shrink: 20px;
-      flex-flow: 20px;
+      width: 100%;
       img {
         width: 12px;
         height: 12px;
@@ -1703,7 +1702,11 @@ export default {
       .span {
         font-size: 12px;
         color: #dddddd;
-        min-width: 120px;
+        // min-width: 120px;
+        width: calc(100% - 30px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .channelOffline {
         color: #999999;
@@ -1714,16 +1717,16 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-basis: 20px;
-      flex-shrink: 20px;
-      flex-flow: 20px;
+      // flex-basis: 20px;
+      // flex-shrink: 20px;
+      // flex-flow: 20px;
     }
     .span {
       // width: calc(100% - 30px);
       // overflow: hidden;
       // display: block;
       // text-overflow: ellipsis;
-      margin-left: 10px;
+      margin-left: 7px;
       white-space: nowrap;
       user-select: none;
       // float: left;
