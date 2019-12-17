@@ -50,6 +50,16 @@ img,
 }
 
 /**************************************图片预览******************************************/
+.el-image-viewer__canvas {
+  width: 60%;
+  height: 70%;
+  margin-left: 20%;
+  margin-top: 10%;
+  background-color: #26282b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .el-image-viewer__wrapper {
   position: fixed;
   top: 0;
@@ -60,10 +70,9 @@ img,
   height: 100%;
 }
 .el-image-viewer__canvas img {
-  width: auto;
-  max-width: 60% !important;
-  height: 60% !important;
-  top: 5%;
+  max-width: 75% !important;
+  height: 65% !important;
+  top: 0%;
   left: 5%;
 }
 .el-image-viewer__mask {
@@ -76,13 +85,26 @@ img,
   background: #000;
 }
 .el-icon-circle-close:before {
-  content: "\E78D";
-  color: #efefef;
+  content: "\E6DB";
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 15px;
+  font-size: 36px;
+  
 }
 .el-image-viewer__btn.el-image-viewer__close {
   position: absolute;
-  top: 15%;
-  right: 15%;
+  top: calc(15% + 40px);
+  right: 20%;
+  width: 60%;
+  border-bottom: 1px solid #3e9c7f4f;
+  border-radius: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-content: center;
+  padding-bottom: 10px;
+}
+.el-image-viewer__actions {
+  bottom: 15%;
 }
 /**************************************单选框样式*********************************************/
 
