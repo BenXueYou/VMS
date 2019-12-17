@@ -857,7 +857,7 @@ export default {
                 /* eslint-disable */
                 let data = res.data.data || {};
                 let channelTyepCN =
-                  JSON.parse(localStorage.getItem("localEnums"))["chn"][
+                  JSON.parse(sessionStorage.getItem("localEnums"))["chn"][
                     data.channelType
                   ] || data.channelType;
                 data.channelType = channelTyepCN;

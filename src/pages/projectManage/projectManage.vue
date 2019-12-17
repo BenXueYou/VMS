@@ -30,7 +30,7 @@ export default {
       // this.data = this.$store.state.home.projectList;
       this.data = this.$store.state.home.projectList;
       if (!this.data || !this.data.length) {
-        this.data = JSON.parse(localStorage.projectList);
+        this.data = JSON.parse(sessionStorage.projectList);
       }
     });
   },
@@ -44,7 +44,7 @@ export default {
       this.$store.dispatch("setProjectUuid", uuid);
       this.$ProjectManageAjax
         .setLogUuid({
-          logUuid: localStorage.getItem("logUuid")
+          logUuid: sessionStorage.getItem("logUuid")
         })
         .then(res => {
           // let body = res.data;

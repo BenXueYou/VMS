@@ -40,7 +40,7 @@ router.beforeEach((to, from, next) => {
           // 这里根据项目的uuid去请求用户的权限菜单
           api
             .getHomeMenu({
-              accountUuid: window.localStorage.getItem("useruuid").trim()
+              accountUuid: window.sessionStorage.getItem("useruuid").trim()
             })
             .then(res => {
               console.log(res);
@@ -48,7 +48,7 @@ router.beforeEach((to, from, next) => {
                 let data = res.data.data || [];
                 let getAllData = false; // 测试用的，先显示全部的菜单那
                 let routerData = getRoute(data, getAllData);
-                window.localStorage.setItem(
+                window.sessionStorage.setItem(
                   "routerData",
                   JSON.stringify(routerData)
                 );
@@ -57,7 +57,7 @@ router.beforeEach((to, from, next) => {
             })
             .catch(() => {
               // let routerData = getRoute([], true);
-              // window.localStorage.setItem(
+              // window.sessionStorage.setItem(
               //   "routerData",
               //   JSON.stringify(routerData)
               // );

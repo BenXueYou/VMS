@@ -217,11 +217,11 @@ export default {
         this.$store.commit("SET_PROJECT_LIST", projects);
         // 设置ProjectUuid 默认设置第一个，其他Uuid可以在切换项目更改
         // 这里存储的username用于上面的账号名称显示
-        localStorage.setItem("username", body.data.adminUser.username);
+        sessionStorage.setItem("username", body.data.adminUser.username);
         // 这里存储userUuid, 后面调用菜单的时候会使用到
-        localStorage.setItem("useruuid", body.data.adminUser.useruuid);
+        sessionStorage.setItem("useruuid", body.data.adminUser.useruuid);
         // 这里存储logUuid, 后面选择项目的时候会使用到
-        localStorage.setItem("logUuid", body.data.adminUser.logUuid);
+        sessionStorage.setItem("logUuid", body.data.adminUser.logUuid);
         // this.$store.dispatch("setUserName", body.data.adminUser.username);
         if (!projects.length) {
           this.$message.error("该账号下面没有项目!!!");
@@ -238,7 +238,7 @@ export default {
           this.$loginAjax
             .setLogUuidByNoPrjectUuid({
               projectUuid: body.data.adminUser.projects[0].projectUuid,
-              logUuid: localStorage.getItem("logUuid")
+              logUuid: sessionStorage.getItem("logUuid")
             })
             .then(res => {
               // let body = res.data;

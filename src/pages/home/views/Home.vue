@@ -131,9 +131,9 @@ export default {
       // );
       // this.menuArr = constantRouterMap;
       // console.log(constantRouterMap[0].children);
-      // console.log(window.localStorage.getItem("useruuid"));
+      // console.log(window.sessionStorage.getItem("useruuid"));
       // console.log(this.$router);
-      this.menuArr = JSON.parse(window.localStorage.getItem("routerData"));
+      this.menuArr = JSON.parse(window.sessionStorage.getItem("routerData"));
     },
     onClickMenu(compomentItem) {
       console.log(compomentItem);

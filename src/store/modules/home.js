@@ -14,7 +14,7 @@ const home = {
     account: Storage.read("account") || "",
     userUuid: Storage.read("userUuid") || "",
     projectList: Storage.read("projectList") || []
-    // username: localStorage.getItem("username") || ""
+    // username: sessionStorage.getItem("username") || ""
   },
   mutations: {
     SET_TAG_VIEW_ARR: (state, tagViewArr) => {

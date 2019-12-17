@@ -135,21 +135,37 @@ let allChildrenRouter = [
 ];
 
 export function getRoute(data, istest) {
+  let routerArr=[{
+    path: "/Home",
+    name: "Home",
+    component: Home,
+    title: "首页"
+  }];
+  for(let i=0,len=data.length;i<len;i++){
+    for(let j=0;j<allChildrenRouter.length;j++){
+      if(allChildrenRouter[j].title === data[i].nodeName){
+        routerArr.push(allChildrenRouter[j]);
+        break;
+      }
+    }
+  }
+  console.log(routerArr);
   return [
     {
       path: "/",
       name: "MainLayout",
       component: MainLayout,
       redirect: "Home",
-      children: allChildrenRouter.filter(item => {
-        return (
-          data.some(v => {
-            return v.nodeName === item.title;
-          }) ||
-          item.title === "首页" ||
-          istest
-        );
-      })
+      children:routerArr 
+      // allChildrenRouter.filter(item => {
+      //   return (
+      //     data.some(v => {
+      //       return v.nodeName === item.title;
+      //     }) ||
+      //     item.title === "首页" ||
+      //     istest
+      //   );
+      // })
     }
   ];
 }

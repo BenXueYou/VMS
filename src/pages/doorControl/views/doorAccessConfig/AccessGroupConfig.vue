@@ -353,7 +353,7 @@ export default {
         api.staffDetail(data).then(res => {
           let data = res.data || {};
           if (data) {
-            let transfer = JSON.parse(localStorage.localEnums);
+            let transfer = JSON.parse(sessionStorage.localEnums);
             if (data.lifePictureUrl) {
               data.lifePictureUrl = RestApi.api.imageUrl + data.lifePictureUrl;
             }
@@ -375,7 +375,7 @@ export default {
           console.log(res);
           if (res.data.success) {
             let result = res.data.data || [];
-            let transfer = JSON.parse(localStorage.localEnums);
+            let transfer = JSON.parse(sessionStorage.localEnums);
             for (let i = 0, len = result.length; i < len; i++) {
               result[i].sex = transfer.gender[result[i].gender];
               result[i].nation = transfer.nation[result[i].nation];

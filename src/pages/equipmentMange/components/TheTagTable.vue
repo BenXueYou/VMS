@@ -246,7 +246,7 @@ export default {
         .then(res => {
           this.showloading = false;
           console.log(res);
-          let fanyi = JSON.parse(localStorage.localEnums);
+          let fanyi = JSON.parse(sessionStorage.localEnums);
           if (res.data.success && res.data.data) {
             let num = res.data.data.list || [];
             for (let i = 0, len = num.length; i < len; i++) {

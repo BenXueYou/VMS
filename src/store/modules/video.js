@@ -1,10 +1,10 @@
 const video = {
   state: {
     iccSignalRule: JSON.parse(
-      window.localStorage.getItem("iccSignalRule") || "{}"
+      window.sessionStorage.getItem("iccSignalRule") || "{}"
     ),
     iccMediaRule: JSON.parse(
-      window.localStorage.getItem("iccMediaRule") || "{}"
+      window.sessionStorage.getItem("iccMediaRule") || "{}"
     )
   },
   getters: {
@@ -17,11 +17,11 @@ const video = {
   },
   mutations: {
     setIccSignalRule(state, res) {
-      window.localStorage.setItem("iccSignalRule", JSON.stringify(res));
+      window.sessionStorage.setItem("iccSignalRule", JSON.stringify(res));
       state.iccSignalRule = res;
     },
     setIccMediaRule(state, res) {
-      window.localStorage.setItem("iccMediaRule", JSON.stringify(res));
+      window.sessionStorage.setItem("iccMediaRule", JSON.stringify(res));
       state.iccMediaRule = res;
     }
   }

@@ -132,7 +132,7 @@ export default {
     this.initData();
   },
   activated() {
-    localStorage.setItem("eventType", "set");
+    sessionStorage.setItem("eventType", "set");
     console.log(this.$route.params.data, "---------openDoor-------");
     var params = this.$route.params.data;
     var data = {};

@@ -125,10 +125,10 @@ export default {
   },
   watch: {
     visible(val) {
-      if (localStorage.getItem("eventType") === "set") {
+      if (sessionStorage.getItem("eventType") === "set") {
         this.modelNameOptions = this.setEvents;
         // this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
-      } else if (localStorage.getItem("eventType") === "operation") {
+      } else if (sessionStorage.getItem("eventType") === "operation") {
         this.modelNameOptions = this.operationEvents;
         // this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
       }

@@ -105,7 +105,7 @@ export default {
   },
   created() {},
   mounted() {
-    localStorage.setItem("eventType", "operation");
+    sessionStorage.setItem("eventType", "operation");
     let h =
 			window.innerHeight ||
 			document.documentElement.clientHeight ||
@@ -128,7 +128,7 @@ export default {
     this.initData();
   },
   activated() {
-    localStorage.setItem("eventType", "operation");
+    sessionStorage.setItem("eventType", "operation");
     this.currentPage = 1;
     this.initData();
   },

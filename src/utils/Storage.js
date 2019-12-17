@@ -11,7 +11,7 @@ export var Storage = {
       return;
     } */
     try {
-      window.localStorage.setItem(key, JSON.stringify(value));
+      window.sessionStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
       console.log(error);
     }
@@ -35,7 +35,7 @@ export var Storage = {
    */
   read (key) {
     let data = null;
-    let jsonStr = window.localStorage.getItem(key);
+    let jsonStr = window.sessionStorage.getItem(key);
     try {
       data = JSON.parse(jsonStr);
     } catch (error) {

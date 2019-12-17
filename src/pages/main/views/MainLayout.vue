@@ -312,8 +312,8 @@ export default {
             this.$store.dispatch("setProjectUuid", "");
             this.$store.dispatch("setTagViewArr", []);
             this.$store.dispatch("setLocalTag", "Home");
-            localStorage.setItem("iccSignalRule", "");
-            localStorage.setItem("iccMediaRule", "");
+            sessionStorage.setItem("iccSignalRule", "");
+            sessionStorage.setItem("iccMediaRule", "");
             this.$router.push({
               name: "Login"
             });
@@ -334,10 +334,10 @@ export default {
     handleQueryBaseTypeByGroupSuccessResponse(body) {
       this.local_enums = body;
       this.$store.dispatch("setLocalEnums", this.local_enums);
-      this.localStorageResidentTypeTransfer();
+      this.sessionStorageResidentTypeTransfer();
     },
     // 居民管理模块的部分本地翻译数组
-    localStorageResidentTypeTransfer() {
+    sessionStorageResidentTypeTransfer() {
       this.$store.commit(
         "SET_CERTIFICATE",
         this.$common.getEnumByGroupStr("cred")

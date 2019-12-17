@@ -155,7 +155,7 @@ export default {
   methods: {
     getWorkStatus() {
       // alert(this.deviceUuid);
-      let fanyi = JSON.parse(localStorage.localEnums);
+      let fanyi = JSON.parse(sessionStorage.localEnums);
       console.log(fanyi.alarm_s);
       api.getDeivceWorkStatus(this.deviceUuid).then(res => {
         console.log(res);
