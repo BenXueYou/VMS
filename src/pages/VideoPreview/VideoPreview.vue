@@ -211,8 +211,8 @@ export default {
               value: "辅码流"
             },
             {
-              label: "三码流",
-              value: "三码流"
+              label: "第三码流",
+              value: "第三码流"
             }
           ]
         },
@@ -934,7 +934,7 @@ export default {
         case "辅码流":
           this.switchMaLiu(this.operatorIndex, "sub");
           break;
-        case "三码流":
+        case "第三码流":
           this.switchMaLiu(this.operatorIndex, "thrid");
           break;
         case "打开音频":

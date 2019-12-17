@@ -37,9 +37,7 @@
               <img :src="data.icon"
                    v-if="data.icon"
                    alt="">
-              <span :class="{'channelOffline':!data.isOnline}"
-                    class='span'
-                    :title="node.label">{{ node.label }}</span>
+              <span :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
             </div>
 
           </div>
@@ -67,8 +65,7 @@
                  v-if="data.icon">
               <img :src="data.icon"
                    alt="">
-              <span :class="{'channelOffline':!data.isOnline}"
-                    :title="node.label">{{ node.label }}</span>
+              <span :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
             </div>
           </div>
         </el-tree>
@@ -521,7 +518,7 @@ export default {
     overflow: auto;
   }
   .mypanel {
-    // width: 380px;
+    width: 380px;
     height: calc(100vh - 410px);
   }
   .showMaxWidth {
@@ -585,86 +582,40 @@ export default {
     // overflow: auto;
   }
   .custom-tree-node {
-    // flex: 1;
-    display: flex;
+    width: 100%;
+    flex: 1;
+    // display: flex;
     align-items: center;
     justify-content: space-between;
-    // font-size: 14px;
-    // padding-right: 18px;
-    // height: 100%;
-    // white-space: nowrap;
-    // overflow: hidden;
-    // text-overflow: ellipsis;
-    width: calc(100% - 30px);
-    // width: 100%;
+    font-size: 14px;
+    padding-right: 8px;
     .channelStatus {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
+      user-select: none;
       img {
         width: 12px;
         height: 12px;
+        margin-right: 7px;
       }
-      .span {
+      span {
         font-size: 12px;
-        color: #dddddd;
-        // min-width: 120px;
-        width: calc(100% - 30px);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        text-indent: 5px;
+        color: #ddd;
       }
       .channelOffline {
         color: #999999;
       }
     }
+    .span {
+      white-space: nowrap;
+    }
+    .threelinemenu {
+      display: none;
+      float: right;
+      margin-right: 10px;
+    }
+    &:hover .threelinemenu {
+      display: block;
+    }
   }
-  // .custom-tree-node {
-  //   width: 100%;
-  //   flex: 1;
-  //   // display: flex;
-  //   align-items: center;
-  //   justify-content: space-between;
-  //   font-size: 14px;
-  //   padding-right: 8px;
-
-  //   .channelStatus {
-  //     width: 100%;
-  //     img {
-  //       width: 12px;
-  //       height: 12px;
-  //       margin-right: 7px;
-  //     }
-  //     span {
-  //       font-size: 12px;
-  //       color: #ddd;
-  //       width: calc(100% - 30px);
-  //       overflow: hidden;
-  //       text-overflow: ellipsis;
-  //       white-space: nowrap;
-  //     }
-  //     .channelOffline {
-  //       color: #999999;
-  //     }
-  //   }
-  //   .span {
-  //     white-space: nowrap;
-  //     width: calc(100% - 30px);
-  //     overflow: hidden;
-  //     text-overflow: ellipsis;
-  //     white-space: nowrap;
-  //   }
-  //   .threelinemenu {
-  //     display: none;
-  //     float: right;
-  //     margin-right: 10px;
-  //   }
-  //   &:hover .threelinemenu {
-  //     display: block;
-  //   }
-  // }
   .timeSelect {
     padding: 25px 12px 25px;
     box-sizing: border-box;

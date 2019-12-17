@@ -265,7 +265,7 @@ export default {
       streamTypeOptions: [
         { typeStr: "main", typeName: "主码流" },
         { typeStr: "sub", typeName: "辅码流" },
-        { typeStr: "thrid", typeName: "三码流" }
+        { typeStr: "thrid", typeName: "第三码流" }
       ],
       fullscreenLoading: false, // 局部遮罩是否显示
       mainVideoScreenLoading: false, // 视频遮罩是否显示

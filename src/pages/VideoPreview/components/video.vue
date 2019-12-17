@@ -14,7 +14,7 @@
     <div class="header"
          v-if='IsShowMenu'>
       <div class="videoinfo">
-        码流类型、码率、大小
+        {{c}}、码率、大小
       </div>
       <div class="menu"
            v-if="width>500">
@@ -169,6 +169,13 @@ export default {
     this.stopVideo();
   },
   computed: {
+    streamText() {
+      return {
+        main: "主码流",
+        sub: "辅码流",
+        third: "第三码流"
+      }[this.streamType];
+    },
     menuData() {
       return [
         {

@@ -22,7 +22,7 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
-                   :class="{'myShowCuoTree':showCloudControl,'showMaxWidth':!showMaxWidth}"
+                   :class="{'myShowCuoTree':showCloudControl}"
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
@@ -45,14 +45,14 @@
                     :class="{'channelOffline':!data.isOnline}"
                     :title="node.label">{{ node.label }}</span>
 
+              <span class="el-dropdown-link  "
+                    v-if="data.isOnline||data.nodeType!='chnNode'"
+                    @click.stop="saveClickData(node, data,$event)">
+                <img class="checked-img threelinemenu"
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                     style="margin-right: 20%;">
+              </span>
             </div>
-            <span class="el-dropdown-link  "
-                  v-if="data.isOnline||data.nodeType!='chnNode'"
-                  @click.stop="saveClickData(node, data,$event)">
-              <img class="checked-img threelinemenu"
-                   src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                   style="margin-right: 20%;">
-            </span>
 
           </div>
         </el-tree>
@@ -359,7 +359,6 @@ export default {
       tagIndex: 0, // 用来上下移动标签的时候记录
       data: [],
       data2: [],
-      showMaxWidth: false, // 是否显示最长的宽度
       devprops: {
         label: "label",
         isLeaf: "leaf"
@@ -534,7 +533,7 @@ export default {
                   value: "sub"
                 },
                 {
-                  label: "三码流",
+                  label: "第三码流",
                   value: "thrid"
                 }
               ]
@@ -679,7 +678,6 @@ export default {
       if (node.level === 0) {
         if (data.length) {
           this.defaultExpKeys.push(data[0].id);
-          this.showMaxWidth = true;
         }
       }
       data = data.map(item => {
@@ -1613,11 +1611,8 @@ export default {
     overflow: auto;
   }
   .mypanel {
-    // width: 380px;
-    height: calc(100vh - 240px);
-  }
-  .showMaxWidth {
-    width: 196px;
+    width: 380px;
+    height: calc(100vh - 185px);
   }
   .myShowCuoTree {
     height: calc(100vh - 610px);
@@ -1678,35 +1673,33 @@ export default {
   }
 
   .custom-tree-node {
-    // flex: 1;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    // font-size: 14px;
-    // padding-right: 18px;
-    // height: 100%;
-    // white-space: nowrap;
+    font-size: 14px;
+    padding-right: 18px;
+    height: 100%;
+    white-space: nowrap;
     // overflow: hidden;
     // text-overflow: ellipsis;
     width: calc(100% - 30px);
-    // width: 100%;
     .channelStatus {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      width: 100%;
+      flex-basis: 20px;
+      flex-shrink: 20px;
+      flex-flow: 20px;
       img {
         width: 12px;
         height: 12px;
+        user-select: none;
       }
       .span {
         font-size: 12px;
         color: #dddddd;
-        // min-width: 120px;
-        width: calc(100% - 30px);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        min-width: 120px;
       }
       .channelOffline {
         color: #999999;
@@ -1717,16 +1710,16 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      // flex-basis: 20px;
-      // flex-shrink: 20px;
-      // flex-flow: 20px;
+      flex-basis: 20px;
+      flex-shrink: 20px;
+      flex-flow: 20px;
     }
     .span {
       // width: calc(100% - 30px);
       // overflow: hidden;
       // display: block;
       // text-overflow: ellipsis;
-      margin-left: 7px;
+      margin-left: 10px;
       white-space: nowrap;
       user-select: none;
       // float: left;
@@ -1760,13 +1753,13 @@ export default {
     }
   }
   .tabs {
-    height: calc(100vh - 170px);
+    height: calc(100vh - 120px);
     // overflow-y: auto;
     padding: 0px 12px 25px;
     overflow: auto;
   }
   .tabsPanel {
-    height: calc(100vh - 550px);
+    height: calc(100vh - 520px);
     overflow: auto;
   }
   .tabsPanel {
