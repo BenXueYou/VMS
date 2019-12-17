@@ -7,8 +7,11 @@
        @drop="drop"
        @dragover="dragover"
        @dblclick="dblclickhandler"
+       @mouseenter="mouseenter"
+       @mouseout="mouseout"
+       @mousemove="mousemove"
        draggable="true"
-       :class="{'VideoActive':isActive,'isAutoScreen':isAutoScreen}"
+       :class="{'VideoActive':isActive,'isAutoScreen':isAutoScreen,'showMenuFlag':showMenuFlag}"
        :style="{height:height+'px',width:width+'px',left:left+'px',top:top+'px'}">
     <!-- 视频信息展示菜单 -->
     <div class="header"
@@ -162,7 +165,10 @@ export default {
       video: null,
       video_list: [],
       speed: 1, // 视频播放速度
-      isPause: false // 0表示正在播放，1表示,
+      isPause: false, // 0表示正在播放，1表示,
+      showMenuFlag: false, // 是否显示菜单
+      isInVideo: false, // 鼠标是否在video组件里面
+      mouseTimer: null // 鼠标进入计时器
     };
   },
   destroyed() {
@@ -243,6 +249,25 @@ export default {
     }
   },
   methods: {
+    mouseenter() {
+      this.isInVideo = true;
+      this.showMenuFlag = true;
+    },
+    mouseout() {
+      this.isInVideo = false;
+      this.showMenuFlag = false;
+      clearTimeout(this.mouseTimer);
+    },
+    mousemove() {
+      if (this.mouseTimer) {
+        clearTimeout(this.mouseTimer);
+        this.mouseTimer = null;
+      }
+      this.showMenuFlag = true;
+      this.mouseTimer = setTimeout(() => {
+        this.showMenuFlag = false;
+      }, 3000);
+    },
     async speedUp() {
       if (!this.video || !this.video_mgr) {
         this.$message.error("该选中框没有视频在播放！");
@@ -565,15 +590,17 @@ export default {
     }
   }
 
-  &:hover .header {
-    top: 0px;
-  }
   .camera {
     position: absolute;
     top: calc(50% + 0px);
     left: 50%;
     transform: translate(-50%, -50%);
     max-width: 20%;
+  }
+}
+.showMenuFlag {
+  .header {
+    top: 0px;
   }
 }
 .VideoActive {
