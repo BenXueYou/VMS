@@ -142,9 +142,12 @@ export default {
 	padding-bottom: 30px;
 }
 .SnapShootDialogClass .el-dialog {
-    background: #25292d;
-    border-radius: 3px;
-    border-radius: 3px;
-	margin-top: 2vh!important;
+	background: #25292d;
+	border-radius: 3px;
+	border-radius: 3px;
+	margin-top: 2vh !important;
+}
+.SnapShootDialogClass .el-dialog__wrapper{
+	overflow: auto;
 }
 </style>
