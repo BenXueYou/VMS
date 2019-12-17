@@ -326,7 +326,7 @@ export default {
 }
 .xydialog .dialog-footer .cardBox {
 	width: calc(50% - 18px);
-	height: calc(50% - 20px);
+	/* height: calc(50% - 20px); */
 	margin-top: 15px;
 	margin-right: 15px;
 	background-color: rgba(33, 35, 37, 0.8);

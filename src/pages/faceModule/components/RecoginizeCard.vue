@@ -55,7 +55,7 @@
 					</div>
 					<div class="asidFontClass">布控照</div>
 				</div>
-				<div class="asidCompareTxtClass" :style="`width:${imgWidth>95?1.1*imgWidth:84}px;`">
+				<div class="asidCompareTxtClass" :style="`width:${imgWidth>95?'100%':'84px'};`">
 					<div class="asidFontClass">{{recoginizeItem.staffName||'姓名:-- --'}}</div>
 					<div
 						class="asidFontClass"
