@@ -73,7 +73,7 @@
 
     </screenshot-dialog>
     <download-dialog :visible.sync="downloadVisible"
-                     @shutdownVideo="shutdownVideo"
+                     @shutdownVideo="stopVideo"
                      :tableData="downloadData"></download-dialog>
     <local-broadcast-dialog :visible.sync="showBroadCastVisible"></local-broadcast-dialog>
     <tree-append-tag-dialog @confirm="addView"
