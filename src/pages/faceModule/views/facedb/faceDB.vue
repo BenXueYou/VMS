@@ -168,7 +168,6 @@
                         :libraryuuid="faceLibraryUuid"
                         :isUpdate="isUpdate"
                         :staffDetail="staffDetail"
-                        :title="addtitle"
                         @getstafflirary="getstafflirary"
                         @closeAddAct="closeStaffAddDialogAct"></the-face-d-b-add>
     </div>

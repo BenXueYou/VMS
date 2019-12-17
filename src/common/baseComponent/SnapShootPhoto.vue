@@ -128,6 +128,8 @@ export default {
 						}
 					);
 				} else {
+					console.log(window.navigator);
+					console.log(window.navigator.getMedia);
 					alert("不支持摄像头");
 					_this.shootPhotoDialogVisible = false;
 				}
@@ -141,9 +143,12 @@ export default {
 	padding-bottom: 30px;
 }
 .SnapShootDialogClass .el-dialog {
-    background: #25292d;
-    border-radius: 3px;
-    border-radius: 3px;
-	margin-top: 2vh!important;
+	background: #25292d;
+	border-radius: 3px;
+	border-radius: 3px;
+	margin-top: 2vh !important;
+}
+.SnapShootDialogClass.el-dialog__wrapper{
+	overflow: auto;
 }
 </style>
