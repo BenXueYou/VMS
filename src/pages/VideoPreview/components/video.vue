@@ -14,7 +14,7 @@
     <div class="header"
          v-if='IsShowMenu'>
       <div class="videoinfo">
-        {{c}}、码率、大小
+        {{streamText}}
       </div>
       <div class="menu"
            v-if="width>500">
