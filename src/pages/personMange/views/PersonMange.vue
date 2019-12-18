@@ -2942,9 +2942,13 @@ export default {
         if (window.navigator.getMedia) {
           window.navigator.getMedia(
             {
+              // video: {
+              //   width: { min: 1024, ideal: 1280, max: 1920 },
+              //   height: { min: 776, ideal: 720, max: 1080 }
+              // },
               video: {
-                width: { min: 1024, ideal: 1280, max: 1920 },
-                height: { min: 776, ideal: 720, max: 1080 }
+                width: { min: 1280 },
+                height: { min: 720 }
               },
               audio: false // 不适用音频
             },

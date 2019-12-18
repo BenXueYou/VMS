@@ -935,53 +935,46 @@ export default {
       setTimeout(() => {
         _this.video = document.getElementById("video");
         // 媒体对象
-        window.navigator.getMedia =
-          window.navigator.getUserMedia ||
-          window.navigator.webkitGetUserMedia ||
-          window.navigator.mozGetUserMedia ||
-          window.navigator.msGetUserMedia;
-        if (window.navigator.getMedia) {
-          window.navigator.getMedia(
-            {
-              video: {
-                width: { min: 1024, ideal: 1280, max: 1920 },
-                height: { min: 776, ideal: 720, max: 1080 }
-              },
-              audio: false // 不适用音频
+        window.navigator.mediaDevices
+          .getUserMedia({
+            // video: {
+            //   width: { min: 1024, ideal: 1280, max: 1920 },
+            //   height: { min: 776, ideal: 720, max: 1080 }
+            // },
+            video: {
+              width: { min: 1280 },
+              height: { min: 720 }
             },
-            function(strem) {
-              console.log(strem);
-              _this.mediaStreamTrack = strem.getTracks()[0];
-              try {
-                _this.video.src = _this.vendorUrl.createObjectURL(strem);
-              } catch (e) {
-                console.log(e);
-                _this.video.srcObject = strem;
-              }
-              _this.video.play();
-              _this.video.addEventListener("loadedmetadata", function() {
-                _this.canvWidth = this.videoWidth;
-                _this.canvHeight = this.videoHeight;
-              });
-              // let track = strem.getVideoTracks()[0],
-              //   imageCapture = new ImageCapture(track);
-              // imageCapture.getPhotoSettings().then((photoSettings) => {
-              //   _this.canvWidth = photoSettings.imageWidth;
-              //   _this.canvHeight = photoSettings.imageHeight;
-              //   console.log("_this.canvWidth: ", _this.canvWidth, _this.canvHeight);
-              // });
-            },
-            function(error) {
-              console.log(error);
-              _this.shootPhotoDialogVisible = false;
-
-              alert("未捕捉到摄像头");
+            audio: false // 不适用音频
+          })
+          .then(function(strem) {
+            console.log(strem);
+            _this.mediaStreamTrack = strem.getTracks()[0];
+            try {
+              _this.video.src = _this.vendorUrl.createObjectURL(strem);
+            } catch (e) {
+              console.log(e);
+              _this.video.srcObject = strem;
             }
-          );
-        } else {
-          alert("不支持摄像头");
-          _this.shootPhotoDialogVisible = false;
-        }
+            _this.video.play();
+            _this.video.addEventListener("loadedmetadata", function() {
+              _this.canvWidth = this.videoWidth;
+              _this.canvHeight = this.videoHeight;
+            });
+            // let track = strem.getVideoTracks()[0],
+            //   imageCapture = new ImageCapture(track);
+            // imageCapture.getPhotoSettings().then((photoSettings) => {
+            //   _this.canvWidth = photoSettings.imageWidth;
+            //   _this.canvHeight = photoSettings.imageHeight;
+            //   console.log("_this.canvWidth: ", _this.canvWidth, _this.canvHeight);
+            // });
+          })
+          .catch(function(error) {
+            console.log(error);
+            _this.shootPhotoDialogVisible = false;
+
+            alert("未捕捉到摄像头");
+          });
       }, 100);
     },
     filterNode(value, data) {

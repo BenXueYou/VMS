@@ -101,9 +101,9 @@ export default {
 					window.navigator.getMedia(
 						{
 							video: {
-								width: { min: 1024, ideal: 1280, max: 1920 },
-								height: { min: 776, ideal: 720, max: 1080 }
-							}, // 使用摄像头对象
+                width: { min: 1280 },
+                height: { min: 720 }
+              },
 							audio: false // 不适用音频
 						},
 						function(strem) {
