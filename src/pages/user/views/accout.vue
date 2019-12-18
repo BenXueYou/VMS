@@ -169,6 +169,7 @@ export default {
       addDialogVisible: false,
       accountUuids: [],
       accountNames: [],
+      partUuids: [],
       roleDataList: [],
       defaultRoleData: [],
       defaultProps: {
@@ -419,7 +420,11 @@ export default {
       this.accountUuids = [];
       this.accountNames = [];
       selection.forEach(item => {
-        this.accountUuids.push(item.accountUuid);
+        console.log("item==", item);
+        if (item.accountType === "project_admin") {
+        } else {
+          this.accountUuids.push(item.accountUuid);
+        }
         this.accountNames.push(item.accountName);
       });
       console.log("accountUuids==", this.accountUuids);

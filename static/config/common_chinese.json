@@ -1239,5 +1239,37 @@
   },
   "auth_visitor": {
     "": ""
-  }
+  },
+  "setLogEventEnum": {
+    "add": "增加",
+    "edit": "修改",
+    "delete": "删除",
+    "query": "查看",
+    "input": "导入",
+    "export": "导出",
+    "move": "移动",
+    "move_out": "移出",
+    "data_distribution": "下发数据",
+    "statistics": "统计",    
+    "batch_upgrade": "批量升级"
+  },
+  "operationLogEventEnum": {
+    "query": "查看",
+    "open_close_door": "开关门",
+    "remove_alarm": "消警",
+    "real_time_preview": "实时预览",
+    "pan_tilt_control": "云台控制",
+    "local_video": "本地录像",
+    "image_adjustment": "图像调节",
+    "snapshot": "抓图",
+    "stream_switching": "码流切换",
+    "video_replay": "录像回放",
+    "video_download": "录像下载",
+    "normallyopen_normallyclosed": "常开常闭",
+    "face_preview": "人脸预览",
+    "subscribe": "订阅"
+  },
+
+
+
 }

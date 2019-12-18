@@ -80,7 +80,8 @@ export default {
         { typeName: "门禁管理", typeStr: "门禁管理" },
         { typeName: "访客管理", typeStr: "访客管理" },
         { typeName: "视频预览", typeStr: "视频预览" },
-        { typeName: "人脸识别", typeStr: "人脸识别" }
+        { typeName: "人脸识别", typeStr: "人脸识别" },
+        { typeName: "视频回放", typeStr: "视频回放" },
       ],
       operationEvents: [
         { typeName: "全部", typeStr: null },
@@ -89,15 +90,52 @@ export default {
         { typeName: "门禁管理", typeStr: "门禁管理" },
         { typeName: "访客管理", typeStr: "访客管理" },
         { typeName: "人脸识别", typeStr: "人脸识别" }
+      ],
+      setLogEventEnum: [
+        { typeName: "全部", typeStr: null },
+        { typeName: "增加", typeStr: "add" },
+        { typeName: "修改", typeStr: "edit" },
+        { typeName: "删除", typeStr: "delete" },
+        { typeName: "查看", typeStr: "query" },
+        { typeName: "导入", typeStr: "input" },
+        { typeName: "导出", typeStr: "export" },
+        { typeName: "移动", typeStr: "move" },
+        { typeName: "移出", typeStr: "move_out" },
+        { typeName: "下发数据", typeStr: "data_distribution" },
+        { typeName: "统计", typeStr: "statistics" },
+        { typeName: "批量升级", typeStr: "batch_upgrade" },
+      ],
+      operationLogEventEnum: [
+        { typeName: "全部", typeStr: null },
+        { typeName: "查看", typeStr: "query" },
+        { typeName: "开关门", typeStr: "open_close_door" },
+        { typeName: "消警", typeStr: "remove_alarm" },
+        { typeName: "实时预览", typeStr: "real_time_preview" },
+        { typeName: "云台控制", typeStr: "pan_tilt_control" },
+        { typeName: "本地录像", typeStr: "local_video" },
+        { typeName: "图像调节", typeStr: "image_adjustment" },
+        { typeName: "抓图", typeStr: "snapshot" },
+        { typeName: "码流切换", typeStr: "stream_switching" },
+        { typeName: "录像回放", typeStr: "video_replay" },
+        { typeName: "录像下载", typeStr: "video_download" },
+        { typeName: "常开常闭", typeStr: "normallyopen_normallyclosed" },
+        { typeName: "人脸预览", typeStr: "face_preview" },
+        { typeName: "订阅", typeStr: "subscribe" }
       ]
+
+
+
     };
   },
   mounted() {
     this.SearchObj.verifyResult = this.resultOptions[0].typeStr;
     this.SearchObj.openDoorResult = this.resultOptions[0].typeStr;
-    this.eventTypeOptions = this.$common.getEnumByGroupStr(
-      "SystemLogEventEnum"
-    );
+    // this.setLogEventEnum = this.$common.getEnumByGroupStr("auth_door");
+    console.log("setLogEventE===", this.$common.getEnumByGroupStr("auth_door"));
+    console.log("setLogEventE===", this.$common.getEnumByGroupStr("auth_alarm"));
+    // this.$common.getEnumByGroupStr("nation")
+    console.log(this.$common.getEnumByGroupStr("nation"));
+    // this.eventTypeOptions = this.$common.getEnumByGroupStr("setLogEventEnum");
     this.eventTypeOptions.unshift({ typeName: "全部", typeStr: null });
     this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
     // this.eventTypeOptions = this.$common.getEnumByGroupStr(
@@ -127,9 +165,11 @@ export default {
     visible(val) {
       if (sessionStorage.getItem("eventType") === "set") {
         this.modelNameOptions = this.setEvents;
+        this.eventTypeOptions = this.setLogEventEnum;
         // this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
       } else if (sessionStorage.getItem("eventType") === "operation") {
         this.modelNameOptions = this.operationEvents;
+        this.eventTypeOptions = this.operationLogEventEnum;
         // this.SearchObj.modelName = this.modelNameOptions[0].typeStr;
       }
     }
