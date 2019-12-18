@@ -195,7 +195,7 @@ export default {
 @import "@/style/variables.scss";
 .SearchLog {
 	background: #2a2e31;
-	padding: 10px 20px 10px;
+	padding: 10px 10px 10px 15px;
 	box-sizing: border-box;
 	.btn-group {
 		// float: right;
@@ -207,19 +207,19 @@ export default {
 			cursor: pointer;
 		}
 		margin-top: 25px;
-		padding-left: 100px;
+		padding-left: 40px;
 	}
 	.form-item {
 		margin-bottom: 15px;
 		label {
 			display: inline-block;
-			width: 80px;
+			width: 40px;
 			text-align: right;
 			@include font-s;
 		}
 		.el-select,
 		.input {
-			width: calc(100% - 100px);
+			width: calc(100% - 80px);
 			margin-left: 10px;
 		}
 	}
