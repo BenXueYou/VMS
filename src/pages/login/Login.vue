@@ -191,7 +191,7 @@ export default {
             })
             .then(res => {
               let body = res && res.data;
-              if(body){
+              if (body) {
               	this.loginSuccessResponse(body);
               }
             });

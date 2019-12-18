@@ -91,6 +91,7 @@
 							>删除</el-button>
 						</div>
 						<div v-if="scope.row.accountType==='project_admin'">
+              <el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
 							<el-button type="text" size="small"></el-button>
 							<el-button type="text" size="small"></el-button>
 							<el-button class="onOffBtnClass" type="text" size="small"></el-button>
@@ -274,7 +275,7 @@ export default {
       //   this.defaultRoleData = [];
       //   this.rowData = {};
       // }
-      this.defaultRoleData=rowData.roles;
+      this.defaultRoleData = rowData.roles;
       this.$set(this.rowData, "roles", this.defaultRoleData);
       this.getRoleList();
     },
