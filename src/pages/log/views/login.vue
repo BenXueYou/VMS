@@ -164,7 +164,7 @@ export default {
         page: this.currentPage,
         accountName: this.accountName,
         logType: "login",
-        IP: this.loginIp?this.loginIp:null,
+        IP: this.loginIp ? this.loginIp : null,
         modelName: null,
         eventType: this.eventType
       };

@@ -1,90 +1,66 @@
 <template>
-  <div class="main"
-       id='maina'>
-    <el-container class="main-container">
-      <el-header class="main-container-header">
-        <div class="header-title">
-          <img src="@/assets/images/logo.png" />
-        </div>
-        <tag-view />
-        <el-dropdown trigger="click"
-                     @command="handleCommand"
-                     class="quit-btn">
-          <span class="el-dropdown-link myAccountHeader">
-            <img src="@/assets/images/header.png"
-                 alt />
-            <span class="userName">{{username}}</span>
-            <i class="el-icon-caret-bottom el-icon--right"
-               style="color:#FFF;"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item class="dropdown-li"
-                              disabled
-                              command="xiugai">
-              <span class="myAccountItem">
-                <img src="@/assets/images/mima.png"
-                     class="normal"
-                     width="14px"
-                     height="14px" />
-                <img src="@/assets/images/mima_l.png"
-                     class="active"
-                     width="14px"
-                     height="14px" />
-                <span>修改密码</span>
-              </span>
-            </el-dropdown-item>
-            <el-dropdown-item class="dropdown-li"
-                              command="qiehuan">
-              <span class="myAccountItem">
-                <img src="@/assets/images/qiehuan.png"
-                     class="normal"
-                     width="14px"
-                     height="14px" />
-                <img src="@/assets/images/qiehuan_l.png"
-                     width="14px"
-                     class="active"
-                     height="14px" />
-                <span>切换项目</span>
-              </span>
-            </el-dropdown-item>
-            <el-dropdown-item class="dropdown-li"
-                              command="tuichu">
-              <span class="myAccountItem">
-                <img src="@/assets/images/tuichu.png"
-                     class="normal"
-                     width="14px"
-                     height="14px" />
-                <img src="@/assets/images/tuichu_l.png"
-                     class="active"
-                     width="14px"
-                     height="14px" />
-                <span>退出</span>
-              </span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </el-header>
-      <el-main class="main-container-main">
-        <!-- <router-view></router-view> -->
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
-      </el-main>
-    </el-container>
-    <template v-for="(dialogParama,index) in GlobalAlarmList">
-      <global-alarm-dialog :key="index"
-                           @close="closeDialog(dialogParama,index)"
-                           @closeAudio="closeAudio"
-                           :dialogParama="dialogParama" />
-    </template>
-  </div>
-</template>
+	<div class="main" id="maina">
+		<el-container class="main-container">
+			<el-header class="main-container-header">
+				<div class="header-title">
+					<img src="@/assets/images/logo.png" />
+				</div>
+				<tag-view />
+				<el-dropdown trigger="click" @command="handleCommand" class="quit-btn">
+					<span class="el-dropdown-link myAccountHeader">
+						<img src="@/assets/images/header.png" alt />
+						<span class="userName">{{username}}</span>
+						<i class="el-icon-caret-bottom el-icon--right" style="color:#FFF;"></i>
+					</span>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item class="dropdown-li" command="xiugai">
+							<span class="myAccountItem">
+								<img src="@/assets/images/mima.png" class="normal" width="14px" height="14px" />
+								<img src="@/assets/images/mima_l.png" class="active" width="14px" height="14px" />
+								<span>修改密码</span>
+							</span>
+						</el-dropdown-item>
+						<el-dropdown-item class="dropdown-li" command="qiehuan">
+							<span class="myAccountItem">
+								<img src="@/assets/images/qiehuan.png" class="normal" width="14px" height="14px" />
+								<img src="@/assets/images/qiehuan_l.png" width="14px" class="active" height="14px" />
+								<span>切换项目</span>
+							</span>
+						</el-dropdown-item>
+						<el-dropdown-item class="dropdown-li" command="tuichu">
+							<span class="myAccountItem">
+								<img src="@/assets/images/tuichu.png" class="normal" width="14px" height="14px" />
+								<img src="@/assets/images/tuichu_l.png" class="active" width="14px" height="14px" />
+								<span>退出</span>
+							</span>
+						</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
+			</el-header>
+			<el-main class="main-container-main">
+				<!-- <router-view></router-view> -->
+				<keep-alive>
+					<router-view></router-view>
+				</keep-alive>
+			</el-main>
+		</el-container>
+		<template v-for="(dialogParama,index) in GlobalAlarmList">
+			<global-alarm-dialog
+				:key="index"
+				@close="closeDialog(dialogParama,index)"
+				@closeAudio="closeAudio"
+				:dialogParama="dialogParama"
+			/>
+		</template>
 
+		<TheChangePassWord :visible.sync="showPassWordDialogVisible" @onConfirm="confirm"></TheChangePassWord>
+	</div>
+</template>
 <script>
-import TheChangePassWord from "@/common/EditPasswordDialog";
+// import TheChangePassWord from "@/common/EditPasswordDialog";
+import TheChangePassWord from "@/common/TheChangePassWord";
 import TagView from "@/pages/main/views/TagView";
 import { mapState } from "vuex";
-
 export default {
   components: {
     TagView,
@@ -113,32 +89,7 @@ export default {
   mounted() {
     this.initWebSocket();
     console.log(this.$store);
-    this.$store.commit(
-      "SET_CERTIFICATE",
-      this.$common.getEnumByGroupStr("cred")
-    );
-    this.$store.commit("SET_EDUOPTIONS", this.$common.getEnumByGroupStr("edu"));
-    this.$store.commit(
-      "SET_COUNTRY",
-      this.$common.getEnumByGroupStr("nationality")
-    );
-    this.$store.commit("SET_NATION", this.$common.getEnumByGroupStr("nation"));
-    this.$store.commit(
-      "SET_MARITAL",
-      this.$common.getEnumByGroupStr("marital")
-    );
-    this.$store.commit(
-      "SET_GENDEROPTIONS",
-      this.$common.getEnumByGroupStr("gender")
-    );
-    this.$store.commit(
-      "SET_STAFFOPTIONS",
-      this.$common.getEnumByGroupStr("staff_t")
-    );
-    this.$store.commit(
-      "SET_CARDOPTIONS",
-      this.$common.getEnumByGroupStr("card_u")
-    );
+    this.residentLocalStorage();
     // 添加用户交互模拟事件
     var btn = document.createElement("button");
     let event = new MouseEvent("click");
@@ -152,6 +103,44 @@ export default {
   },
   activated() {},
   methods: {
+    confirm(data) {
+      this.onClickQuit();
+    },
+    // 居民管理的本地翻译全局存储
+    residentLocalStorage() {
+      this.$store.commit(
+        "SET_CERTIFICATE",
+        this.$common.getEnumByGroupStr("cred")
+      );
+      this.$store.commit(
+        "SET_EDUOPTIONS",
+        this.$common.getEnumByGroupStr("edu")
+      );
+      this.$store.commit(
+        "SET_COUNTRY",
+        this.$common.getEnumByGroupStr("nationality")
+      );
+      this.$store.commit(
+        "SET_NATION",
+        this.$common.getEnumByGroupStr("nation")
+      );
+      this.$store.commit(
+        "SET_MARITAL",
+        this.$common.getEnumByGroupStr("marital")
+      );
+      this.$store.commit(
+        "SET_GENDEROPTIONS",
+        this.$common.getEnumByGroupStr("gender")
+      );
+      this.$store.commit(
+        "SET_STAFFOPTIONS",
+        this.$common.getEnumByGroupStr("staff_t")
+      );
+      this.$store.commit(
+        "SET_CARDOPTIONS",
+        this.$common.getEnumByGroupStr("card_u")
+      );
+    },
     browerStatus(e) {
       e = window.event || e;
       // e.returnValue = "确定离开当前页面吗？";
@@ -191,17 +180,17 @@ export default {
       if (this.webSocket) return;
       if (this.stompClient) return;
       /* eslint-disable */
-      let url = window.config.protocolHeader + window.config.socketIP;
-      this.webSocket = new SockJS(url);
-      this.stompClient = Stomp.over(this.webSocket);
-      /* eslint-enable */
+			let url = window.config.protocolHeader + window.config.socketIP;
+			this.webSocket = new SockJS(url);
+			this.stompClient = Stomp.over(this.webSocket);
+			/* eslint-enable */
       this.stompClient.connect(
         { projectUuid: this.$store.state.home.projectUuid },
         frame => {
           console.log("connect success----------------:", frame);
           const subCaptureApi = "/user/topic/face-1.3/client/capture";
           const subRecognizationApi =
-            "/user/topic/face-1.3/client/recognization";
+						"/user/topic/face-1.3/client/recognization";
           const subMonitorAlarmApi = "/user/topic/face-1.3/client/monitorAlarm";
           const subDeviceOnOffApi = "/user/topic/status/device";
           // 订阅通知
@@ -263,7 +252,7 @@ export default {
       let his = data.captureDatetime.split(" ")[1];
       let ymd = data.captureDatetime.split(" ")[0];
       let mdy =
-        ymd.split("-")[1] + "-" + ymd.split("-")[2] + "-" + ymd.split("-")[0];
+				ymd.split("-")[1] + "-" + ymd.split("-")[2] + "-" + ymd.split("-")[0];
       data.captureDatetime = his + " " + mdy;
       CapturePhotoArr.push(data);
       if (CapturePhotoArr && CapturePhotoArr.length > 10) {
@@ -397,99 +386,99 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .dropdown-li {
-  text-align: left;
-  .myAccountItem {
-    span {
-      padding-left: 4px;
-    }
-    img {
-      width: 11px;
-      height: 11px;
-    }
-    .active {
-      display: none;
-    }
+	text-align: left;
+	.myAccountItem {
+		span {
+			padding-left: 4px;
+		}
+		img {
+			width: 11px;
+			height: 11px;
+		}
+		.active {
+			display: none;
+		}
 
-    vertical-align: top;
-  }
-  &:hover {
-    color: #26d39d;
-    .normal {
-      display: none !important;
-    }
-    .active {
-      display: inline-block;
-    }
-  }
+		vertical-align: top;
+	}
+	&:hover {
+		color: #26d39d;
+		.normal {
+			display: none !important;
+		}
+		.active {
+			display: inline-block;
+		}
+	}
 }
 #maina {
-  height: 100%;
-  .main-container {
-    height: 100%;
-    .main-container-header {
-      background: #222326;
-      display: flex;
-      flex-flow: row nowrap;
-      align-items: center;
-      background-image: linear-gradient(
-        -180deg,
-        #353a3f 4%,
-        #272a2d 47%,
-        #202124 90%
-      );
-      box-shadow: 0 6px 25px 0 rgba(0, 0, 0, 0.4);
-      z-index: 1;
-      height: 50px !important;
-      .header-title {
-        margin-right: 20px;
-        margin-left: 10px;
-        width: 100px;
-        height: 33%;
-      }
-      .el-dropdown-header {
-        float: right;
-      }
-      .myAccountHeader {
-        cursor: pointer;
-        line-height: 30px;
-        font-family: "PingFangSC-Light";
-        font-size: 12px;
-        color: #dddddd;
-        letter-spacing: 0;
-        text-align: left;
-        span {
-          padding-left: 15px;
-        }
-        img {
-          vertical-align: top;
-        }
-      }
-      .quit-btn {
-        margin-left: auto;
-        margin-right: 1%;
-        .quit-btn-icon {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-          .quit-btn-text {
-            font-family: PingFangSC-Regular;
-            font-size: 12px;
-            color: #dddddd;
-            letter-spacing: 0;
-            text-align: right;
-            margin-left: 6px;
-          }
-        }
-      }
-    }
-    .main-container-main {
-      height: calc(100% - 50px);
-      box-sizing: border-box;
-      overflow: hidden;
-      padding: 0px;
-      background: #1b1b1b;
-    }
-  }
+	height: 100%;
+	.main-container {
+		height: 100%;
+		.main-container-header {
+			background: #222326;
+			display: flex;
+			flex-flow: row nowrap;
+			align-items: center;
+			background-image: linear-gradient(
+				-180deg,
+				#353a3f 4%,
+				#272a2d 47%,
+				#202124 90%
+			);
+			box-shadow: 0 6px 25px 0 rgba(0, 0, 0, 0.4);
+			z-index: 1;
+			height: 50px !important;
+			.header-title {
+				margin-right: 20px;
+				margin-left: 10px;
+				width: 100px;
+				height: 33%;
+			}
+			.el-dropdown-header {
+				float: right;
+			}
+			.myAccountHeader {
+				cursor: pointer;
+				line-height: 30px;
+				font-family: "PingFangSC-Light";
+				font-size: 12px;
+				color: #dddddd;
+				letter-spacing: 0;
+				text-align: left;
+				span {
+					padding-left: 15px;
+				}
+				img {
+					vertical-align: top;
+				}
+			}
+			.quit-btn {
+				margin-left: auto;
+				margin-right: 1%;
+				.quit-btn-icon {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					justify-content: center;
+					.quit-btn-text {
+						font-family: PingFangSC-Regular;
+						font-size: 12px;
+						color: #dddddd;
+						letter-spacing: 0;
+						text-align: right;
+						margin-left: 6px;
+					}
+				}
+			}
+		}
+		.main-container-main {
+			height: calc(100% - 50px);
+			box-sizing: border-box;
+			overflow: hidden;
+			padding: 0px;
+			background: #1b1b1b;
+		}
+	}
 }
 </style>
