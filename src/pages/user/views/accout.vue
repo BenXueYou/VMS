@@ -363,7 +363,7 @@ export default {
       this.switchData(1);
     },
     resetPassword() {
-      if (!this.accountUuids.length) {
+      if (!this.accountNames.length) {
         this.$message.warning("请选择账号！");
         return;
       }
@@ -371,9 +371,14 @@ export default {
     },
     switchData(enable) {
       if (!this.accountUuids.length) {
-        this.$message.warning("请选择账号！");
-        return;
-      }
+        if (this.accountNames.length) {
+          this.$message.warning("超级管理员没有权限");
+          return;
+        } else {
+          this.$message.warning("请选择账号！");
+          return;
+        }
+      } 
       api
         .switchAccountApi({
           accountUuids: this.accountUuids,
