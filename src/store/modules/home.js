@@ -6,14 +6,14 @@ const home = {
     // localTag: Cookies.get('localTag') || 'Home',
     tagViewArr: Storage.readSession("tagViewArr") || [],
     localTag: Storage.readSession("localTag") || "Home",
-    localEnums: Storage.read("localEnums") || {},
-    CapturePhotoArr: Storage.read("CapturePhotoArr") || [],
-    RecognizationArr: Storage.read("RecognizationArr") || [],
+    localEnums: Storage.readSession("localEnums") || {},
+    CapturePhotoArr: Storage.readSession("CapturePhotoArr") || [],
+    RecognizationArr: Storage.readSession("RecognizationArr") || [],
     Authorization: Storage.readSession("Authorization") || "",
     projectUuid: Storage.readSession("projectUuid") || "",
-    account: Storage.read("account") || "",
-    userUuid: Storage.read("userUuid") || "",
-    projectList: Storage.read("projectList") || []
+    account: Storage.readSession("account") || "",
+    userUuid: Storage.readSession("userUuid") || "",
+    projectList: Storage.readSession("projectList") || []
     // username: sessionStorage.getItem("username") || ""
   },
   mutations: {

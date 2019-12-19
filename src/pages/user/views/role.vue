@@ -1,94 +1,127 @@
 <template>
-	<div class="role">
-		<div class="table" v-show="!isShowEdit">
-			<div class="title">角色管理</div>
+  <div class="role">
+    <div class="table"
+         v-show="!isShowEdit">
+      <div class="title">角色管理</div>
 
-			<div class="content">
-				<div class="roleHeader">
-					<el-button type="primary" @click="add" size="small">新增</el-button>
-					<el-button type="primary" @click="deletea" size="small">刪除</el-button>
-					<el-button type="primary" @click="enable(1)" size="small">启用</el-button>
-					<el-button type="primary" @click="enable(0)" size="small">禁用</el-button>
-					<!-- <el-button type="primary"
+      <div class="content">
+        <div class="roleHeader">
+          <el-button type="primary"
+                     @click="add"
+                     size="small">新增</el-button>
+          <el-button type="primary"
+                     @click="deletea"
+                     size="small">刪除</el-button>
+          <el-button type="primary"
+                     @click="enable(1)"
+                     size="small">启用</el-button>
+          <el-button type="primary"
+                     @click="enable(0)"
+                     size="small">禁用</el-button>
+          <!-- <el-button type="primary"
                      @click="resetPassword"
 					size="small">密码重置</el-button>-->
 
-					<div style="float:right;">
-						<label>角色名称：</label>
-						<el-input style="width:130px;" v-model="roleName"></el-input>
-						<el-button type="primary" @click="serach" size="small">检索</el-button>
-					</div>
-				</div>
-				<div class="tableWarp">
-					<el-table
-						ref="multipleTable"
-						:data="tableData"
-						tooltip-effect="dark"
-						style="width: 100%"
-						@selection-change="handleSelectionChange"
-					>
-						<el-table-column type="selection" width="55"></el-table-column>
-						<el-table-column label="角色名称" prop="roleName" width="120"></el-table-column>
-						<el-table-column prop="roleStatus" label="状态" width="120"></el-table-column>
-						<el-table-column prop="invalidTime" label="过期时间" show-overflow-tooltip>
-							<template slot-scope="scope">
-								<!--   <span>{{scope.row.invalidTime}}</span> -->
-								<span v-if="scope.row.invalidTime==='long'">永久</span>
-								<span v-if="scope.row.invalidTime!=='long'">{{scope.row.invalidTime}}</span>
-							</template>
-						</el-table-column>
-						<el-table-column prop="createAccountName" label="创建账号" show-overflow-tooltip></el-table-column>
-						<el-table-column prop="roleCreateTime" label="创建时间" show-overflow-tooltip></el-table-column>
-						<el-table-column prop="description" label="角色描述" show-overflow-tooltip></el-table-column>
-						<el-table-column label="操作" width="200" show-overflow-tooltip>
-							<template slot-scope="scope">
-								<el-button type="text" @click="edit(scope.row)" size="small">编辑</el-button>
-								<el-button type="text" @click="ditribute(scope.row)" size="small">分配账号</el-button>
-								<el-button type="text" @click="enableRow(scope.row)" style="color:#FFBA22;" size="small">禁用</el-button>
-								<el-button type="text" @click="deleteRow(scope.row)" style="color: #FF5F5F;" size="small">删除</el-button>
-							</template>
-						</el-table-column>
-					</el-table>
-				</div>
-				<div class="fenye">
-					<el-pagination
-						@current-change="handleCurrentChange"
-						:current-page="pageNow"
-						:page-size="pageSize"
-						background
-						class="pagination"
-						layout="total, prev, pager, next, jumper"
-						:total="dataTotal"
-					></el-pagination>
-				</div>
-			</div>
-		</div>
-		<role-add
-			class="editDiv"
-			:roleUuid.sync="roleUuid"
-			:visible.sync="isShowEdit"
-			@close="close"
-			v-show="isShowEdit"
-		></role-add>
-		<reset-password :visible.sync="resetPasswordVisible"></reset-password>
-		<confirm-dialog
-			:visible.sync="isConfirm"
-			title="提示"
-			confirmText="是否删除角色"
-			@confirm="confirmDelete"
-		></confirm-dialog>
-		<tree-panel-dialog
-			:isShow.sync="showtreeadad"
-			:treeData="treeList"
-			:initSelectData="initSelectData"
-			:itemicon="require('@/assets/images/person_g.png')"
-			:props="treeProps"
-			@onConfirm="distur"
-			title="分配账号"
-			checkedText="已分配的账号"
-			placeholder="搜索账号名或姓名"
-		></tree-panel-dialog>
-	</div>
+          <div style="float:right;">
+            <label>角色名称：</label>
+            <el-input style="width:130px;"
+                      v-model="roleName"></el-input>
+            <el-button type="primary"
+                       @click="serach"
+                       size="small">检索</el-button>
+          </div>
+        </div>
+        <div class="tableWarp">
+          <el-table ref="multipleTable"
+                    :data="tableData"
+                    tooltip-effect="dark"
+                    style="width: 100%"
+                    @selection-change="handleSelectionChange">
+            <el-table-column type="selection"
+                             width="55"></el-table-column>
+            <el-table-column label="角色名称"
+                             prop="roleName"
+                             width="120"></el-table-column>
+            <el-table-column prop="roleStatus"
+                             label="状态"
+                             width="120"></el-table-column>
+            <el-table-column prop="invalidTime"
+                             label="过期时间"
+                             show-overflow-tooltip>
+              <template slot-scope="scope">
+                <!--   <span>{{scope.row.invalidTime}}</span> -->
+                <span v-if="scope.row.invalidTime==='long'">永久</span>
+                <span v-if="scope.row.invalidTime!=='long'">{{scope.row.invalidTime}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createAccountName"
+                             label="创建账号"
+                             show-overflow-tooltip></el-table-column>
+            <el-table-column prop="roleCreateTime"
+                             label="创建时间"
+                             show-overflow-tooltip></el-table-column>
+            <el-table-column prop="description"
+                             label="角色描述"
+                             show-overflow-tooltip></el-table-column>
+            <el-table-column label="操作"
+                             width="200"
+                             show-overflow-tooltip>
+              <template slot-scope="scope">
+                <el-button type="text"
+                           @click="edit(scope.row)"
+                           size="small">编辑</el-button>
+                <el-button type="text"
+                           @click="ditribute(scope.row)"
+                           size="small">分配账号</el-button>
+                <el-button type="text"
+                           v-if="scope.row.enable===1"
+                           @click="enableRow(scope.row,0)"
+                           style="color:#FFBA22;"
+                           size="small">禁用</el-button>
+                <el-button type="text"
+                           v-if="scope.row.enable===0"
+                           @click="enableRow(scope.row,1)"
+                           style="color:#FFBA22;"
+                           size="small">启用</el-button>
+                <el-button type="text"
+                           @click="deleteRow(scope.row)"
+                           style="color: #FF5F5F;"
+                           size="small">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div class="fenye">
+          <el-pagination @current-change="handleCurrentChange"
+                         :current-page="pageNow"
+                         :page-size="pageSize"
+                         background
+                         class="pagination"
+                         layout="total, prev, pager, next, jumper"
+                         :total="dataTotal"></el-pagination>
+        </div>
+      </div>
+    </div>
+    <role-add class="editDiv"
+              :roleUuid.sync="roleUuid"
+              :visible.sync="isShowEdit"
+              @close="close"
+              v-show="isShowEdit"></role-add>
+    <reset-password :visible.sync="resetPasswordVisible"></reset-password>
+    <confirm-dialog :visible.sync="isConfirm"
+                    title="提示"
+                    confirmText="是否删除角色"
+                    @confirm="confirmDelete"></confirm-dialog>
+    <tree-panel-dialog :isShow.sync="showtreeadad"
+                       :treeData="treeList"
+                       :initSelectData="initSelectData"
+                       :itemicon="require('@/assets/images/person_g.png')"
+                       :props="treeProps"
+                       @onConfirm="distur"
+                       title="分配账号"
+                       checkedText="已分配的账号"
+                       placeholder="搜索账号名或姓名"></tree-panel-dialog>
+  </div>
 </template>
 
 <script>
@@ -262,10 +295,10 @@ export default {
         }
       });
     },
-    enableRow(row) {
+    enableRow(row, enable) {
       this.updateRoleStatus({
         roleUuids: [row.roleUuid],
-        enable: 0
+        enable: enable
       });
     },
     deleteRow(row) {
@@ -339,55 +372,55 @@ export default {
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .role {
-	height: 100%;
-	.table {
-		height: 100%;
-	}
-	.editDiv {
-		height: 100%;
-		background: #212325;
-	}
-	.title {
-		position: relative;
-		height: 60px;
-		line-height: 60px;
-		padding-left: 60px;
-		background: #212325;
-		&::after {
-			content: "";
-			width: 3px;
-			height: 14px;
-			position: absolute;
-			top: 23px;
-			left: 40px;
-			background: #26d39d;
-		}
-	}
-	.content {
-		height: calc(100% - 80px);
-		margin-top: 20px;
-		background: #212325;
-		.roleHeader {
-			padding: 25px 40px;
-		}
-	}
+  height: 100%;
+  .table {
+    height: 100%;
+  }
+  .editDiv {
+    height: 100%;
+    background: #212325;
+  }
+  .title {
+    position: relative;
+    height: 60px;
+    line-height: 60px;
+    padding-left: 60px;
+    background: #212325;
+    &::after {
+      content: "";
+      width: 3px;
+      height: 14px;
+      position: absolute;
+      top: 23px;
+      left: 40px;
+      background: #26d39d;
+    }
+  }
+  .content {
+    height: calc(100% - 80px);
+    margin-top: 20px;
+    background: #212325;
+    .roleHeader {
+      padding: 25px 40px;
+    }
+  }
 }
 .tableWarp {
-	height: calc(100% - 140px);
-	padding: 0px 40px;
-	box-sizing: border-box;
-	overflow: auto;
+  height: calc(100% - 140px);
+  padding: 0px 40px;
+  box-sizing: border-box;
+  overflow: auto;
 }
 .fenye {
-	margin-top: 10px;
-	padding: 0px 40px;
-	box-sizing: border-box;
-	span {
-		@include font-s;
-		float: right;
-	}
-	.pagination {
-		float: right;
-	}
+  margin-top: 10px;
+  padding: 0px 40px;
+  box-sizing: border-box;
+  span {
+    @include font-s;
+    float: right;
+  }
+  .pagination {
+    float: right;
+  }
 }
 </style>
