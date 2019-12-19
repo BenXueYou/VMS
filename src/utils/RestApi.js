@@ -60,7 +60,8 @@ export default {
       login: `oauth-v1/authentication/iac`,
       setLogUuid: `sysLog-v1/project/${store.state.home.projectUuid}/log`,
       setLogUuidByNoPrjectUuid: (projectUuid) => `sysLog-v1/project/${projectUuid}/log`,
-      loginOutApi: `oauth-v1/exit`
+      loginOutApi: `oauth-v1/exit`,
+      updatePasswordApi:`upms-v1/account/updatePwd`,
     },
 
     /**

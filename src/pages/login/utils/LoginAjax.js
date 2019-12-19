@@ -46,6 +46,14 @@ export var LoginAjax = {
       data: data
     });
   },
+  updatePassword(data) {
+    let api = `${window.config.protocolHeader}/${ip}/${RestApi.api.login.updatePasswordApi}/${data.accountName}`;
+    return axios({
+      method: 'PUT',
+      url: api,
+      data
+    });
+  },
 };
 
 function install(Vue) {

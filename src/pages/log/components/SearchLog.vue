@@ -81,7 +81,7 @@ export default {
         { typeName: "访客管理", typeStr: "访客管理" },
         { typeName: "视频预览", typeStr: "视频预览" },
         { typeName: "人脸识别", typeStr: "人脸识别" },
-        { typeName: "视频回放", typeStr: "视频回放" },
+        { typeName: "视频回放", typeStr: "视频回放" }
       ],
       operationEvents: [
         { typeName: "全部", typeStr: null },
@@ -103,7 +103,7 @@ export default {
         { typeName: "移出", typeStr: "move_out" },
         { typeName: "下发数据", typeStr: "data_distribution" },
         { typeName: "统计", typeStr: "statistics" },
-        { typeName: "批量升级", typeStr: "batch_upgrade" },
+        { typeName: "批量升级", typeStr: "batch_upgrade" }
       ],
       operationLogEventEnum: [
         { typeName: "全部", typeStr: null },
@@ -122,9 +122,6 @@ export default {
         { typeName: "人脸预览", typeStr: "face_preview" },
         { typeName: "订阅", typeStr: "subscribe" }
       ]
-
-
-
     };
   },
   mounted() {
@@ -132,7 +129,10 @@ export default {
     this.SearchObj.openDoorResult = this.resultOptions[0].typeStr;
     // this.setLogEventEnum = this.$common.getEnumByGroupStr("auth_door");
     console.log("setLogEventE===", this.$common.getEnumByGroupStr("auth_door"));
-    console.log("setLogEventE===", this.$common.getEnumByGroupStr("auth_alarm"));
+    console.log(
+      "setLogEventE===",
+      this.$common.getEnumByGroupStr("auth_alarm")
+    );
     // this.$common.getEnumByGroupStr("nation")
     console.log(this.$common.getEnumByGroupStr("nation"));
     // this.eventTypeOptions = this.$common.getEnumByGroupStr("setLogEventEnum");
@@ -195,7 +195,7 @@ export default {
 @import "@/style/variables.scss";
 .SearchLog {
 	background: #2a2e31;
-	padding: 10px 20px 10px;
+	padding: 10px 10px 10px 15px;
 	box-sizing: border-box;
 	.btn-group {
 		// float: right;
@@ -207,19 +207,19 @@ export default {
 			cursor: pointer;
 		}
 		margin-top: 25px;
-		padding-left: 100px;
+		padding-left: 40px;
 	}
 	.form-item {
 		margin-bottom: 15px;
 		label {
 			display: inline-block;
-			width: 80px;
+			width: 40px;
 			text-align: right;
 			@include font-s;
 		}
 		.el-select,
 		.input {
-			width: calc(100% - 100px);
+			width: calc(100% - 80px);
 			margin-left: 10px;
 		}
 	}

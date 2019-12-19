@@ -53,7 +53,7 @@
 						ref="popover1"
 						placement="bottom-end"
 						:visible-arrow="false"
-						width="300"
+						width="270"
 						trigger="click"
 					>
 						<search-option-view @query="queryAct"></search-option-view>
@@ -164,7 +164,7 @@ export default {
         page: this.currentPage,
         accountName: this.accountName,
         logType: "login",
-        IP: this.loginIp?this.loginIp:null,
+        IP: this.loginIp ? this.loginIp : null,
         modelName: null,
         eventType: this.eventType
       };

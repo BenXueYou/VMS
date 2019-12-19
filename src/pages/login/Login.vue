@@ -192,7 +192,7 @@ export default {
             .then(res => {
               let body = res && res.data;
               if (body) {
-              	this.loginSuccessResponse(body);
+                this.loginSuccessResponse(body);
               }
             });
         } else {
@@ -279,7 +279,7 @@ export default {
 	.el-input__inner {
 		background: rgba($color: #000000, $alpha: 0.05) !important;
 		height: 46px;
-		font-family: 'PingFangSC-Regular';
+		font-family: "PingFangSC-Regular";
 		font-size: 14px;
 		color: #575757;
 		letter-spacing: 0;
@@ -294,7 +294,7 @@ export default {
 		border-color: #ffffff !important;
 	}
 	.el-checkbox__label {
-		font-family: 'PingFangSC-Regular';
+		font-family: "PingFangSC-Regular";
 		font-size: 12px;
 		color: #999999;
 		letter-spacing: 0;
@@ -302,7 +302,7 @@ export default {
 	.el-button--primary {
 		background-color: #26d39d !important;
 		height: 46px;
-		font-family: 'PingFangSC-Regular';
+		font-family: "PingFangSC-Regular";
 		font-size: 14px;
 		color: #ffffff;
 		letter-spacing: 0;
@@ -324,7 +324,7 @@ export default {
 		padding: 2% 3%;
 		box-sizing: border-box;
 		.head-title {
-			font-family: 'PingFangSC-Regular';
+			font-family: "PingFangSC-Regular";
 			font-size: 16px;
 			color: #dddddd;
 			display: flex;
@@ -358,7 +358,7 @@ export default {
 			padding: 8%;
 			box-sizing: border-box;
 			.block-title {
-				font-family: 'PingFangSC-Medium';
+				font-family: "PingFangSC-Medium";
 				font-size: 30px;
 				color: #333333;
 				text-align: center;
@@ -371,7 +371,7 @@ export default {
 				margin-left: 10px;
 				justify-content: space-between;
 				.button-text {
-					font-family: 'PingFangSC-Regular';
+					font-family: "PingFangSC-Regular";
 					font-size: 12px;
 					color: #999999;
 					letter-spacing: 0;

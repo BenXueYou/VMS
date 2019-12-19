@@ -1,148 +1,138 @@
 <template>
-  <div class="AccountAdd">
-    <div class="mainBox">
-      <el-header class="headerBox">
-        <div class="headerTxt">{{title}}</div>
-        <div>
-          <el-button v-if="!rowData.accountUuid"
-                     @click="editBtnAct('again')"
-                     class="firstBtnClass"
-                     v-loading="isload">保存并继续添加</el-button>
-          <el-button @click="editBtnAct('save')"
-                     v-loading="isload">确认</el-button>
-          <el-button @click="close">取消</el-button>
-        </div>
-      </el-header>
-      <div class="bodyBox">
-        <div class="bodyBoxDiv">
-          <p>用户账号：</p>
-          <p>密码：</p>
-          <p>确认密码：</p>
-          <p>状态：</p>
-          <p>是否关联系统人员：</p>
-          <p>姓名：</p>
-          <p>手机：</p>
-          <p>邮箱：</p>
-          <p>到期时间：</p>
-          <p v-if="!isLongTIme"
-             style="visibility: hidden;">到期时间：</p>
-          <p>账号描述：</p>
-        </div>
-        <div class="bodyBoxDiv">
-          <div>
-            <el-input v-model="queryBody.accountName"></el-input>
-          </div>
-          <div>
-            <el-input v-model="queryBody.password"
-                      :disabled="isEditPassWord"></el-input>
-          </div>
-          <div>
-            <el-input v-model="queryBody.confirmPassword"
-                      :disabled="isEditPassWord"></el-input>
-          </div>
-          <p style="margin:17px 0">
-            <el-radio-group v-model="queryBody.enable">
-              <el-radio :label="1">启用</el-radio>
-              <el-radio :label="0">禁用</el-radio>
-            </el-radio-group>
-          </p>
-          <p style="text-align: left;margin:28px 0 0 0">
-            <el-switch v-model="isAssociateSwitch"
-                       active-color="rgba(32, 204, 150, 0.2)"
-                       inactive-color="rgba(255,255,255,0.2)"></el-switch>
-          </p>
-          <div>
-            <el-input :disabled="isAssociateSwitch"
-                      v-model="queryBody.staffName"></el-input>
-            <span class="cursorClass"
-                  v-if="isAssociateSwitch"
-                  @click="addSystemStaff">
-              <img class="img"
-                   src="@/assets/images/resident/modify_icon.png"
-                   alt
-                   srcset />请选择
-            </span>
-          </div>
-          <div>
-            <el-input :disabled="isAssociateSwitch"
-                      v-model="queryBody.phoneNumber"></el-input>
-          </div>
-          <div>
-            <el-input :disabled="isAssociateSwitch"
-                      v-model="queryBody.emailNumber"></el-input>
-          </div>
-          <p style="margin:17px 0">
-            <el-radio-group v-model="isLongTIme">
-              <el-radio :label="1">长期</el-radio>
-              <el-radio :label="0">短期</el-radio>
-            </el-radio-group>
-          </p>
-          <div v-if="!isLongTIme">
-            <el-date-picker v-model="invalidTimeVal"
-                            type="datetime"
-                            class="time-interal-date"
-                            placeholder="选择日期"
-                            size="small"
-                            value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
-          </div>
-          <p>
-            <el-input type="textarea"
-                      :rows="2"
-                      placeholder="请输入内容"
-                      v-model="queryBody.description"></el-input>
-          </p>
-        </div>
-      </div>
-      <div class="bodyBox">
-        <div class="bodyBoxDiv flex-spw">
-          <div>
-            <img class="img"
-                 src="@/assets/images/resident/baseMsg.png"
-                 alt />系统角色
-          </div>
-          <div>角色：</div>
-        </div>
-        <div>
-          <div class="bodyBoxDiv addRoleBtnClass cursorClass"
-               @click="addRoleBtn">
-            <img class="img"
-                 src="@/assets/images/add.png"
-                 alt
-                 srcset />新增
-          </div>
-          <div>
-            <!-- <gt-button
+	<div class="AccountAdd">
+		<div class="mainBox">
+			<el-header class="headerBox">
+				<div class="headerTxt">{{title}}</div>
+				<div>
+					<el-button
+						v-if="!rowData.accountUuid"
+						@click="editBtnAct('again')"
+						class="firstBtnClass"
+						v-loading="isload"
+					>保存并继续添加</el-button>
+					<el-button @click="editBtnAct('save')" v-loading="isload">确认</el-button>
+					<el-button @click="close">取消</el-button>
+				</div>
+			</el-header>
+			<div class="bodyBox">
+				<div class="bodyBoxDiv">
+					<p>用户账号：</p>
+					<p>密码：</p>
+					<p>确认密码：</p>
+					<p>状态：</p>
+					<p>是否关联系统人员：</p>
+					<p>姓名：</p>
+					<p>手机：</p>
+					<p>邮箱：</p>
+					<p>到期时间：</p>
+					<p v-if="!isLongTIme" style="visibility: hidden;">到期时间：</p>
+					<p>账号描述：</p>
+				</div>
+				<div class="bodyBoxDiv">
+					<div>
+						<el-input v-model="queryBody.accountName"></el-input>
+					</div>
+					<div>
+						<el-input v-model="queryBody.password" :disabled="isEditPassWord"></el-input>
+					</div>
+					<div>
+						<el-input v-model="queryBody.confirmPassword" :disabled="isEditPassWord"></el-input>
+					</div>
+					<p style="margin:17px 0">
+						<el-radio-group v-model="queryBody.enable">
+							<el-radio :label="1">启用</el-radio>
+							<el-radio :label="0">禁用</el-radio>
+						</el-radio-group>
+					</p>
+					<p style="text-align: left;margin:28px 0 0 0">
+						<el-switch
+							v-model="isAssociateSwitch"
+							active-color="rgba(32, 204, 150, 0.2)"
+							inactive-color="rgba(255,255,255,0.2)"
+						></el-switch>
+					</p>
+					<div>
+						<el-input :disabled="isAssociateSwitch" v-model="queryBody.staffName"></el-input>
+						<span class="cursorClass" v-if="isAssociateSwitch" @click="addSystemStaff">
+							<img class="img" src="@/assets/images/resident/modify_icon.png" alt srcset />请选择
+						</span>
+					</div>
+					<div>
+						<el-input :disabled="isAssociateSwitch" v-model="queryBody.phoneNumber"></el-input>
+					</div>
+					<div>
+						<el-input :disabled="isAssociateSwitch" v-model="queryBody.emailNumber"></el-input>
+					</div>
+					<p style="margin:17px 0">
+						<el-radio-group v-model="isLongTIme">
+							<el-radio :label="1">长期</el-radio>
+							<el-radio :label="0">短期</el-radio>
+						</el-radio-group>
+					</p>
+					<div v-if="!isLongTIme">
+						<el-date-picker
+							v-model="invalidTimeVal"
+							type="datetime"
+							class="time-interal-date"
+							placeholder="选择日期"
+							size="small"
+							value-format="yyyy-MM-dd HH:mm:ss"
+						></el-date-picker>
+					</div>
+					<p>
+						<el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="queryBody.description"></el-input>
+					</p>
+				</div>
+			</div>
+			<div class="bodyBox">
+				<div class="bodyBoxDiv flex-spw">
+					<div>
+						<img class="img" src="@/assets/images/resident/baseMsg.png" alt />系统角色
+					</div>
+					<div>角色：</div>
+				</div>
+				<div>
+					<div class="bodyBoxDiv addRoleBtnClass cursorClass" @click="addRoleBtn">
+						<img class="img" src="@/assets/images/add.png" alt srcset />新增
+					</div>
+					<div>
+						<!-- <gt-button
 							:icon="icons.door"
 							v-for="(item,index) in rowData.roles || []"
 							class="person"
 							:key="index"
 							:show-close="false"
-						>{{item.roleName}}</gt-button> -->
-            <gt-button v-for="(item,index) in rowData.roles || []"
-                       class="bilibili"
-                       @close="deleteChannelAuth(index)"
-                       :key="index">{{item.roleName}}</gt-button>
-          </div>
-        </div>
-      </div>
-      <div class="footerClass">
-        <el-button v-if="!rowData.accountUuid"
-                   @click="editBtnAct('again')"
-                   class="firstBtnClass"
-                   v-loading="isload">保存并继续添加</el-button>
-        <el-button @click="editBtnAct('save')"
-                   v-loading="isload">确认</el-button>
-        <el-button @click="close">取消</el-button>
-      </div>
-    </div>
-    <tab-tree-tag title="请选择关联人员"
-                  rightTxt="已选的人员"
-                  :tabs="tabs"
-                  :isShow="systemStaffDialogVisible"
-                  @onCancel="onCancel"
-                  @onConfirm="onConfirm"></tab-tree-tag>
-    <!-- <tree-panel-dialog :isShow.sync="showTreeAdd" title='分配角色'></tree-panel-dialog> -->
-  </div>
+						>{{item.roleName}}</gt-button>-->
+						<gt-button
+							v-for="(item,index) in rowData.roles || []"
+							class="bilibili"
+							@close="deleteChannelAuth(index)"
+							:key="index"
+						>{{item.roleName}}</gt-button>
+					</div>
+				</div>
+			</div>
+			<div class="footerClass">
+				<el-button
+					v-if="!rowData.accountUuid"
+					@click="editBtnAct('again')"
+					class="firstBtnClass"
+					v-loading="isload"
+				>保存并继续添加</el-button>
+				<el-button @click="editBtnAct('save')" v-loading="isload">确认</el-button>
+				<el-button @click="close">取消</el-button>
+			</div>
+		</div>
+		<tab-tree-tag
+			title="请选择关联人员"
+			rightTxt="已选的人员"
+			:tabs="tabs"
+			:isShow="systemStaffDialogVisible"
+			@onCancel="onCancel"
+			@onConfirm="onConfirm"
+		></tab-tree-tag>
+		<!-- <tree-panel-dialog :isShow.sync="showTreeAdd" title='分配角色'></tree-panel-dialog> -->
+	</div>
 </template>
 <script>
 // import api from "@/pages/faceModule/api.js";
@@ -237,7 +227,6 @@ export default {
       this.queryBody.roleUuids = []; // 角色uuid数组
       this.queryBody.isAssociateStaff = "";
       this.queryBody.invalidTime = ""; // 失效时间 (可选)
-
     },
     // 点击确定按钮
     editBtnAct(status) {
@@ -336,7 +325,7 @@ export default {
               console.log("status55555==", status);
               if (status === "again") {
                 this.initData();
-                this.$emit("update:rowData",{roles:[]});
+                this.$emit("update:rowData", { roles: [] });
               } else if (status === "save") {
                 this.$emit("close", true);
               }
@@ -422,171 +411,171 @@ export default {
 </script>
 <style>
 .AccountAdd .el-tag .el-icon-close {
-  /* background-image: url("../../../../../assets/images/faceModule/tagDeleteIcon.png"); */
-  background-size: contain;
-  color: transparent;
-  top: -15px;
-  right: -15px;
+	/* background-image: url("../../../../../assets/images/faceModule/tagDeleteIcon.png"); */
+	background-size: contain;
+	color: transparent;
+	top: -15px;
+	right: -15px;
 }
 .AccountAdd .flex-spw {
-  display: flex;
-  justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 .AccountAdd .el-input__inner {
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 2px;
 }
 .AccountAdd .el-textarea__inner {
-  width: 250px;
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+	width: 250px;
+	background-color: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .el-message-box__title {
-  padding-left: 0;
-  margin-bottom: 0;
-  font-size: 16px;
-  line-height: 1;
-  color: #dddddd;
+	padding-left: 0;
+	margin-bottom: 0;
+	font-size: 16px;
+	line-height: 1;
+	color: #dddddd;
 }
 .el-message-box__header {
-  border-bottom: 1px solid #303133;
+	border-bottom: 1px solid #303133;
 }
 .el-message-box__content {
-  color: #dddddd;
+	color: #dddddd;
 }
 .el-message-box .el-button--default,
 .el-message-box .el-button--default:hover,
 .el-message-box .el-button--default:active,
 .el-message-box .el-button--default:focus {
-  background: rgba(40, 255, 187, 0.1);
-  border: 1px solid rgba(40, 255, 187, 0.45);
-  border-radius: 2px;
+	background: rgba(40, 255, 187, 0.1);
+	border: 1px solid rgba(40, 255, 187, 0.45);
+	border-radius: 2px;
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .AccountAdd {
-  width: 1100px;
-  min-height: 100%;
-  padding: 30px;
-  box-sizing: border-box;
-  background-color: #212325;
-  .mainBox {
-    height: 100%;
-    padding: 0 40px;
-    box-sizing: border-box;
-    overflow: auto;
-    .headerBox {
-      display: flex;
-      justify-content: space-between;
-      align-content: center;
-      padding: 18px 0 24px;
-      height: 69px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      .headerTxt {
-        border-left: 2px solid #26d39d;
-        font-family: "PingFangSC-Regular";
-        font-size: 14px;
-        color: #ffffff;
-        padding-left: 10px;
-      }
-      .el-button {
-        background: rgba(40, 255, 187, 0.08);
-        border: 1px solid rgba(38, 211, 157, 0.8);
-        border-radius: 2px;
-        height: 32px;
-        font-family: "PingFangSC-Regular";
-        font-size: 13px;
-        color: #ffffff;
-        text-align: justify;
-        padding: 0px 27px;
-        margin-top: -13px;
-      }
-      .firstBtnClass {
-        padding: 0 15px;
-      }
-    }
-    .bodyBox {
-      display: flex;
-      justify-content: flex-start;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-      padding: 15px 0;
-      .bodyBoxDiv {
-        font-family: "PingFangSC-Regular";
-        font-size: 13px;
-        color: #dddddd;
-        text-align: right;
-        padding: 0px 11px;
-        p {
-          margin: 28px 0;
-          text-align: right;
-        }
-        p:last-child {
-          margin: 17px 0 13px 0;
-        }
-        .el-radio-group {
-          display: block;
-        }
-        .el-input {
-          display: inline-block;
-          width: 250px;
-          height: 32px;
-          margin: 17px 13px 0px 0;
-          .el-input__inner {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 2px;
-          }
-        }
-        div {
-          text-align: left;
-        }
-        .img {
-          vertical-align: baseline;
-          margin-right: 8px;
-        }
-        .el-tag {
-          background-color: rgba(255, 255, 255, 0.05);
-          border: 0;
-          border-radius: 2px;
-          font-family: "PingFangSC-Regular";
-          font-size: 13px;
-          color: #dddddd;
-        }
-        .warningTxt {
-          font-family: "PingFangSC-Regular";
-          font-size: 13px;
-          color: #fd545e;
-        }
-      }
-      .bodyBoxDiv:first-child {
-        width: 24%;
-        min-width: 100px;
-      }
-      .addRoleBtnClass {
-        text-align: left;
-        line-height: 25px;
-        margin-bottom: 10px;
-      }
-    }
-    .footerClass {
-      margin: 26px 0 100px;
-      text-align: right;
-      .el-button {
-        background: rgba(40, 255, 187, 0.08);
-        border: 1px solid rgba(38, 211, 157, 0.8);
-        border-radius: 2px;
-        border-radius: 2px;
-        height: 32px;
-        font-family: "PingFangSC-Regular";
-        font-size: 13px;
-        color: #ffffff;
-        text-align: justify;
-        padding: 7px 27px;
-      }
-      .firstBtnClass {
-        padding: 0 15px;
-      }
-    }
-  }
+	width: 1100px;
+	min-height: 100%;
+	padding: 30px;
+	box-sizing: border-box;
+	background-color: #212325;
+	.mainBox {
+		height: 100%;
+		padding: 0 40px;
+		box-sizing: border-box;
+		overflow: auto;
+		.headerBox {
+			display: flex;
+			justify-content: space-between;
+			align-content: center;
+			padding: 18px 0 24px;
+			height: 69px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+			.headerTxt {
+				border-left: 2px solid #26d39d;
+				font-family: "PingFangSC-Regular";
+				font-size: 14px;
+				color: #ffffff;
+				padding-left: 10px;
+			}
+			.el-button {
+				background: rgba(40, 255, 187, 0.08);
+				border: 1px solid rgba(38, 211, 157, 0.8);
+				border-radius: 2px;
+				height: 32px;
+				font-family: "PingFangSC-Regular";
+				font-size: 13px;
+				color: #ffffff;
+				text-align: justify;
+				padding: 0px 27px;
+				margin-top: -13px;
+			}
+			.firstBtnClass {
+				padding: 0 15px;
+			}
+		}
+		.bodyBox {
+			display: flex;
+			justify-content: flex-start;
+			border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+			padding: 15px 0;
+			.bodyBoxDiv {
+				font-family: "PingFangSC-Regular";
+				font-size: 13px;
+				color: #dddddd;
+				text-align: right;
+				padding: 0px 11px;
+				p {
+					margin: 28px 0;
+					text-align: right;
+				}
+				p:last-child {
+					margin: 17px 0 13px 0;
+				}
+				.el-radio-group {
+					display: block;
+				}
+				.el-input {
+					display: inline-block;
+					width: 250px;
+					height: 32px;
+					margin: 17px 13px 0px 0;
+					.el-input__inner {
+						border: 1px solid rgba(255, 255, 255, 0.15);
+						border-radius: 2px;
+					}
+				}
+				div {
+					text-align: left;
+				}
+				.img {
+					vertical-align: baseline;
+					margin-right: 8px;
+				}
+				.el-tag {
+					background-color: rgba(255, 255, 255, 0.05);
+					border: 0;
+					border-radius: 2px;
+					font-family: "PingFangSC-Regular";
+					font-size: 13px;
+					color: #dddddd;
+				}
+				.warningTxt {
+					font-family: "PingFangSC-Regular";
+					font-size: 13px;
+					color: #fd545e;
+				}
+			}
+			.bodyBoxDiv:first-child {
+				width: 24%;
+				min-width: 100px;
+			}
+			.addRoleBtnClass {
+				text-align: left;
+				line-height: 25px;
+				margin-bottom: 10px;
+			}
+		}
+		.footerClass {
+			margin: 26px 0 100px;
+			text-align: right;
+			.el-button {
+				background: rgba(40, 255, 187, 0.08);
+				border: 1px solid rgba(38, 211, 157, 0.8);
+				border-radius: 2px;
+				border-radius: 2px;
+				height: 32px;
+				font-family: "PingFangSC-Regular";
+				font-size: 13px;
+				color: #ffffff;
+				text-align: justify;
+				padding: 7px 27px;
+			}
+			.firstBtnClass {
+				padding: 0 15px;
+			}
+		}
+	}
 }
 </style>

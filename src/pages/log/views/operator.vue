@@ -35,7 +35,7 @@
 						ref="popover1"
 						placement="bottom-end"
 						:visible-arrow="false"
-						width="300"
+						width="270"
 						v-model="visible"
 						trigger="click"
 					>
