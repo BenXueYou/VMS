@@ -127,11 +127,11 @@ export default {
       getChannelStatusList: `/iaclog-v1/project/${store.state.home.projectUuid}/channelStatus`,
       getOrgDevTree: `/basedata-v1/project/${store.state.home.projectUuid}/organization/children`,
       handleDoorStatus: (channelUuid, action) =>
-        `/iacserv-v1/operation/operation/opendoor/channel/${channelUuid}/action/${action}`,
+        `/iacserv-v1/project/${store.state.home.projectUuid}/operation/opendoor/channel/${channelUuid}/action/${action}`,
       getStatistics: `/iacapp-v1/project/${store.state.home.projectUuid}/door/statistics`,
       removeAlarm: channelUuid =>
-        `/iacserv-v1/operation/operation/removeAlarm/channel/${channelUuid}`,
-      allOperation: `/iacserv-v1/operation/project/${store.state.home.projectUuid}/device/toMgr`
+        `/iacserv-v1/project/${store.state.home.projectUuid}/operation/operation/removeAlarm/channel/${channelUuid}`,
+      allOperation: `/iacserv-v1/project/${store.state.home.projectUuid}/operation/project/${store.state.home.projectUuid}/device/toMgr`
     },
 
     /**
