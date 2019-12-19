@@ -518,7 +518,7 @@ export default {
     overflow: auto;
   }
   .mypanel {
-    width: 380px;
+    // width: 380px;
     height: calc(100vh - 410px);
   }
   .showMaxWidth {
@@ -559,6 +559,10 @@ export default {
       /* WebKit browsers */
       font-size: 12px;
     }
+  }
+  .el-tree-node,
+  .el-tree-node__content {
+    width: min-content;
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
     padding: 6px 0px;
