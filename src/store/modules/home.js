@@ -42,6 +42,7 @@ const home = {
     },
     SET_LOCAL_ENUMS: (state, localEnums) => {
       state.localEnums = localEnums;
+      console.log(typeof localEnums);
       Storage.save("localEnums", localEnums);
     },
     SET_CAPTURE_PHOTO_ARR: (state, CapturePhotoArr) => {

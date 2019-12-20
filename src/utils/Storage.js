@@ -6,12 +6,16 @@ export var Storage = {
   /**
    * 保存文件
    */
-  save (key, value) {
+  save(key, value) {
     /* if (!value) {
       return;
     } */
     try {
-      window.sessionStorage.setItem(key, JSON.stringify(value));
+      if (typeof value != "string") {
+        window.sessionStorage.setItem(key, JSON.stringify(value));
+      } else {
+        window.sessionStorage.setItem(key, value);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -19,7 +23,7 @@ export var Storage = {
   /**
    * 保存到session当中
    */
-  saveSession (key, value) {
+  saveSession(key, value) {
     /* if (!value) {
       return;
     } */
@@ -33,7 +37,7 @@ export var Storage = {
    * 读取数据
    * @key 读取key
    */
-  read (key) {
+  read(key) {
     let data = null;
     let jsonStr = window.sessionStorage.getItem(key);
     try {
@@ -46,11 +50,11 @@ export var Storage = {
   /**
    * 从session当中读取数据
    */
-  readSession (key) {
+  readSession(key) {
     let data = null;
     let jsonStr = window.sessionStorage.getItem(key);
     try {
-      if(jsonStr!==""){
+      if (jsonStr !== "") {
         data = JSON.parse(jsonStr);
       }
     } catch (error) {
@@ -59,8 +63,8 @@ export var Storage = {
     return data;
   }
 };
-function install (Vue) {
+function install(Vue) {
   Vue.prototype.$storage = Storage;
-};
+}
 
 export default install;
