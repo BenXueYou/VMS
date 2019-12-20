@@ -104,7 +104,7 @@
 <script>
 import ConfirmDialog from "@/common/ConfirmDialog";
 import AddAccessCaseDialog from "@/pages/doorControl/components/doorAccessConfig/AddAccessCaseDialog";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import * as api from "../../utils/ajax.js";
 export default {
   components: {

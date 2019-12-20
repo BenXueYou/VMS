@@ -21,13 +21,12 @@
                    v-if="item.name !== 'Home' && item.type === 'config'" />
       </template>
 		</div>-->
-  </div>
+	</div>
 </template>
 
 <script>
 // import { constantRouterMap } from "@/router";
 import MenuItem from "@/pages/home/components/MenuItem";
-import RestApi from "@/utils/RestApi";
 export default {
   components: {
     MenuItem
@@ -35,93 +34,15 @@ export default {
   props: {},
   data() {
     return {
-      flag: true,
       tagViewArr: [],
-      beforeUnload_time: "",
-      gap_time: "",
-      menuArr: [{ children: [] }]
+      menuArr: []
     };
   },
   created() {
-    // 请求菜单数据是延迟加载的，偷懒，先用setTimeout.
-    setTimeout(() => {
-      this.initData();
-    }, 0);
+    this.initData();
   },
-  mounted() {
-    if (
-      this.$route.fullPath.toLocaleLowerCase().indexOf("/projectmanage") !==
-        -1 &&
-      this.$route.fullPath.toLocaleLowerCase().indexOf("/home") !== -1
-    ) {
-      window.addEventListener("beforeunload", e => this.browerStatus(e));
-      window.addEventListener("unload", e => this.browerStatusOff(e));
-    }
-  },
-  destroyed() {
-    window.removeEventListener("beforeunload", e => this.browerStatus(e));
-    window.removeEventListener("unload", e => this.browerStatusOff(e));
-  },
-
+  mounted() {},
   methods: {
-    browerStatus(e) {
-      e = window.event || e;
-      e.returnValue = "确定离开当前页面吗？";
-      this.beforeUnload_time = new Date().getTime();
-      this.axiosRequest();
-    },
-    browerStatusOff(e) {
-      // 加一段同步代码阻塞一下，不然刷新会发不出去异步请求
-      // let now = new Date();
-      // while (new Date() - now < 15000) {
-      //   console.log("------------");
-      // }
-      this.gap_time = new Date().getTime() - this.beforeUnload_time;
-      if (this._gap_time <= 15) {
-        this.axiosRequest();
-      }
-    },
-    axiosRequest() {
-      this.$loginAjax
-        .loginOut()
-        .then(res => {
-          // <<<<<<< HEAD
-          //           debugger;
-          //           this.flag = false;
-          //           console.log('==============', this.flag);
-          //         })
-          //         .catch(() => {});
-          //       let date = new Date();
-          //       while (new Date() - date < 10000) {
-          //         console.log("-------等待退出接口响应---------", this.flag);
-          //       }
-          // =======
-          console.log("------------------");
-        })
-        .catch(() => {
-          this.$message.error("退出失败");
-        });
-    },
-    httpRequest() {
-      let ip = window.config.ip,
-        httpHeader = window.config.protocolHeader;
-      let url = `${httpHeader}/${ip}/${RestApi.api.login.loginOutApi}`;
-      console.log(
-        this.$store.state.home.projectUuid,
-        "----",
-        this.$store.state.home.Authorization,
-        "onunload！！！！！",
-        url
-      );
-      let xhr = new XMLHttpRequest();
-      xhr.open("detete", url, true);
-      xhr.setRequestHeader(
-        "Authorization",
-        this.$store.state.home.Authorization
-      );
-      xhr.setRequestHeader("projectUuid", this.$store.state.home.projectUuid);
-      xhr.send();
-    },
     initData() {
       // 这里暂时将访客功能页面给注释掉
       // 解开只需要删掉val.name!=="VistorMange" 这个判断条件 && val.name !== "VistorMange"
@@ -143,7 +64,8 @@ export default {
       this.$router.push({ name: compomentItem.name });
     }
   },
-  watch: {}
+  watch: {},
+  destroyed() {}
 };
 </script>
 

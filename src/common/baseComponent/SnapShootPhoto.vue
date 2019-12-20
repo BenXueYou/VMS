@@ -101,9 +101,9 @@ export default {
 					window.navigator.getMedia(
 						{
 							video: {
-								width: { min: 1024, ideal: 1280, max: 1920 },
-								height: { min: 776, ideal: 720, max: 1080 }
-							}, // 使用摄像头对象
+                width: { min: 1280 },
+                height: { min: 720 }
+              },
 							audio: false // 不适用音频
 						},
 						function(strem) {
@@ -128,6 +128,8 @@ export default {
 						}
 					);
 				} else {
+					console.log(window.navigator);
+					console.log(window.navigator.getMedia);
 					alert("不支持摄像头");
 					_this.shootPhotoDialogVisible = false;
 				}
@@ -141,9 +143,12 @@ export default {
 	padding-bottom: 30px;
 }
 .SnapShootDialogClass .el-dialog {
-    background: #25292d;
-    border-radius: 3px;
-    border-radius: 3px;
-	margin-top: 2vh!important;
+	background: #25292d;
+	border-radius: 3px;
+	border-radius: 3px;
+	margin-top: 2vh !important;
+}
+.SnapShootDialogClass.el-dialog__wrapper{
+	overflow: auto;
 }
 </style>

@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import tagView from "@/common/Tag.vue";
 import RestApi from "@/utils/RestApi.js";
 import * as api from "../../utils/ajax";
@@ -270,6 +270,7 @@ export default {
       if (this.vistorAIDetail && this.vistorAIDetail.staffType) {
         this.staffType = this.vistorAIDetail.staffType;
       }
+      //   debugger
       if (this.staffType === "resident") {
         // this.vistorAIDetail.staffUuid = "f5056126f7c14795a276cfab3909867e";
         this.detailResident(this.vistorAIDetail);

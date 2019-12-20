@@ -22,6 +22,7 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
+                   :class="{'myShowCuoTree':showCloudControl,'showMaxWidth':!showMaxWidth}"
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
@@ -59,7 +60,7 @@
       <el-tab-pane label="标签"
                    name="tag">
         <el-tree :props="props"
-                 class='videoTree'
+                 class='videoTree2'
                  :load="loadNode"
                  :default-expanded-keys="defaultExpKeys"
                  node-key="id"
@@ -69,7 +70,7 @@
           <div class="custom-tree-node"
                @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
-            <div class="channelStatus">
+            <div class="channelStatus2">
               <img :src="data.icon"
                    v-if="data.icon"
                    alt="">
@@ -80,24 +81,24 @@
                     @dragstart="dragstart(data,$event)"
                     :title="node.label"
                     :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
-              <el-dropdown trigger="click"
-                           @command="handleCommand"
-                           placement="bottom"
-                           class='threelinemenu'>
-                <span class="el-dropdown-link"
-                      v-if="data.isOnline||!data.hasOwnProperty('channelType')"
-                      @click="saveClickData(node, data,$event)">
-                  <img class="checked-img"
-                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                       style="margin-right: 20%;">
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="video">打开视频</el-dropdown-item>
-                  <el-dropdown-item command="playback">查看录像</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div>
 
+            </div>
+            <el-dropdown trigger="click"
+                         @command="handleCommand"
+                         placement="bottom"
+                         class='threelinemenu'>
+              <span class="el-dropdown-link"
+                    v-if="data.isOnline||!data.hasOwnProperty('channelType')"
+                    @click="saveClickData(node, data)">
+                <img class="checked-img"
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                     style="margin-right: 20%;">
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="video">打开视频</el-dropdown-item>
+                <el-dropdown-item command="playback">查看录像</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
         </el-tree>
 
@@ -105,34 +106,32 @@
       <el-tab-pane label="视图"
                    name="view">
         <el-tree :props="viewProps"
-                 class='videoTree'
+                 class='videoTree2'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node"
                @dblclick.stop="openVidewTu(data)"
                slot-scope="{ node, data }">
-            <div>
-              <span class="span"
-                    style='min-width:150px;display:inline-block;'
-                    :title="node.label">{{ node.label }}</span>
-              <el-dropdown trigger="click"
-                           @command="handleCommand"
-                           placement="bottom"
-                           class='threelinemenu'>
-                <span class="el-dropdown-link"
-                      @click="saveClickData(node, data)">
-                  <img class="checked-img"
-                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                       style="margin-right: 20%;">
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="view">打开视图</el-dropdown-item>
-                  <el-dropdown-item command="renameView">重命名</el-dropdown-item>
-                  <el-dropdown-item command="deleteView">删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div>
+            <span class="span"
+                  style='min-width:120px;display:inline-block;'
+                  :title="node.label">{{ node.label }}</span>
+            <el-dropdown trigger="click"
+                         @command="handleCommand"
+                         placement="bottom"
+                         class='threelinemenu'>
+              <span class="el-dropdown-link"
+                    @click="saveClickData(node, data)">
+                <img class="checked-img"
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
+                     style="margin-right: 20%;">
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="view">打开视图</el-dropdown-item>
+                <el-dropdown-item command="renameView">重命名</el-dropdown-item>
+                <el-dropdown-item command="deleteView">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
         </el-tree>
       </el-tab-pane>
@@ -350,6 +349,7 @@ export default {
       icons,
       searchText: "", // 搜索框的文本
       appendChildrenDialogVisible: false,
+      showMaxWidth: false,
       appendTagDialogVisible: false,
       changeNameDialogVisible: false,
       node: "", // 用于存储当前的操作的节点
@@ -534,7 +534,7 @@ export default {
                   value: "sub"
                 },
                 {
-                  label: "三码流",
+                  label: "第三码流",
                   value: "thrid"
                 }
               ]
@@ -679,6 +679,7 @@ export default {
       if (node.level === 0) {
         if (data.length) {
           this.defaultExpKeys.push(data[0].id);
+          this.showMaxWidth = true;
         }
       }
       data = data.map(item => {
@@ -1605,11 +1606,21 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #treeLaa {
+  .is-leaf {
+    width: 0px !important;
+  }
   .el-tabs__content {
     overflow: auto;
   }
   .mypanel {
-    width: 380px;
+    // width: 380px;
+    height: calc(100vh - 185px);
+  }
+  .showMaxWidth {
+    width: 196px;
+  }
+  .myShowCuoTree {
+    height: calc(100vh - 610px);
   }
   .el-tabs__item {
     color: #dddddd;
@@ -1642,8 +1653,21 @@ export default {
       font-size: 12px;
     }
   }
+  .el-tree-node,
+  .el-tree-node__content {
+    width: min-content;
+  }
+  .videoTree2 {
+    .el-tree-node,
+    .el-tree-node__content {
+      width: 100%;
+    }
+    .custom-tree-node {
+      width: calc(100% - 30px);
+    }
+  }
   .el-tree-node__content > .el-tree-node__expand-icon {
-    padding: 6px 2px 6px 0px;
+    padding: 6px 0px;
   }
 }
 </style>
@@ -1663,6 +1687,7 @@ export default {
     // width:500px;
     // overflow: auto;
   }
+
   .mysearchText {
   }
 
@@ -1677,7 +1702,7 @@ export default {
     white-space: nowrap;
     // overflow: hidden;
     // text-overflow: ellipsis;
-    width: calc(100% - 30px);
+    // width: calc(100% - 30px);
     .channelStatus {
       display: flex;
       justify-content: flex-start;
@@ -1688,14 +1713,28 @@ export default {
       img {
         width: 12px;
         height: 12px;
+        user-select: none;
       }
-      span {
+      .span {
         font-size: 12px;
         color: #dddddd;
+        min-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .channelOffline {
         color: #999999;
       }
+    }
+    .channelStatus2 {
+      width: 220px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-basis: 20px;
+      flex-shrink: 20px;
+      flex-flow: 20px;
     }
     .span {
       // width: calc(100% - 30px);
@@ -1736,13 +1775,13 @@ export default {
     }
   }
   .tabs {
-    height: calc(100vh - 170px);
+    height: calc(100vh - 120px);
     // overflow-y: auto;
     padding: 0px 12px 25px;
     overflow: auto;
   }
   .tabsPanel {
-    height: calc(100vh - 550px);
+    height: calc(100vh - 520px);
     overflow: auto;
   }
   .tabsPanel {

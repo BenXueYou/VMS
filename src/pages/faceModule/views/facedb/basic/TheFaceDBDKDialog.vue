@@ -157,6 +157,10 @@ export default {
       }
       if (this.fileIdNum.length) {
         this.uploader.settings.multipart_params.templateType = this.templatetype;
+        this.uploader.settings.url = RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
+          this.$store.state.home.projectUuid,
+          this.libraryuuid
+        );
         this.uploader.start();
       } else {
         this.$message.error("请上传文件！");
@@ -174,7 +178,7 @@ export default {
         browse_button: "fileSelect", // 这里填写触发元素的按钮ID
         url: RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
           _this.$store.state.home.projectUuid,
-          this.libraryuuid
+          _this.libraryuuid
         ), // 上传的地址
         // url: "http://192.168.9.166:9220/v1/face/escaped/pluploadUpload",
         headers: {

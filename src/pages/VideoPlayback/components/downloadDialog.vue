@@ -40,6 +40,8 @@
                          width="100">
           <template slot-scope="scope">
             <span v-if="scope.row.status==='done'">已完成</span>
+            <span v-else-if="scope.row.status==='processing'">进行中</span>
+            <span v-else-if="scope.row.status==='ready'">准备中</span>
           </template>
         </el-table-column>
         <el-table-column prop="taskAddTime"
@@ -52,10 +54,10 @@
             <el-button @click="downloadVideo(scope.row)"
                        type="text"
                        size="small">下载</el-button>
-            <el-button type="text"
+            <!-- <el-button type="text"
                        class='deleteText'
                        @click='deleteVideo(scope.row)'
-                       size="small">删除</el-button>
+                       size="small">删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -132,6 +134,13 @@ export default {
     },
     async downloadVideo(row) {
       console.log(row);
+      // for (let i = 0, len = this.tableData.length; i < len; i++) {
+      //   if (this.tableData[i].videoPeriod === row.videoPeriod) {
+      //     this.tableData[i].status = "processing";
+      //     this.tableData.concat();
+      //     break;
+      //   }
+      // }
       let { rtspUrl: url } = await this.backup(
         row.channelUuid,
         row.startTime,
@@ -142,12 +151,15 @@ export default {
       // 下载的时候判断是海康还是大华的设备
       // 大华NVR不暂停视频 进行下载
       // 海康IPC暂停视频在进行下载
-      if (row.deviceType === "ipc") {
-        this.$emit("shutdownVideo");
-      }
+      // if (row.deviceType === "ipc") {
+      this.$emit("shutdownVideo");
+      // }
       console.log(url);
       // eslint-disable-next-line
-      var video_mgr = new window.CVideoMgrSdk(function() {});
+      var video_mgr = new window.CVideoMgrSdk(data => {
+        console.log(data);
+        this.$message.success("下载完成!");
+      });
       let { jMedia, jSignal } = this.$store.getters;
       console.log(jMedia, jSignal);
       var video = await video_mgr.setup({
@@ -158,7 +170,8 @@ export default {
         action: "download",
         speed: 4
       });
-      video_mgr.play(video);
+      let status = video_mgr.play(video);
+      alert(status);
     },
     deleteVideo(device) {},
     close() {

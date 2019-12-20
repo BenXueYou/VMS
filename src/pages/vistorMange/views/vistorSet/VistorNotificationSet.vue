@@ -142,7 +142,7 @@
 
 <script>
 import * as api from "../../utils/ajax";
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 export default {
   components: {},
   props: {},
@@ -414,7 +414,7 @@ export default {
 	background: rgba(40, 255, 187, 0.1);
 	border: 1px solid rgba(40, 255, 187, 0.35);
 	border-radius: 2px;
-	font-family: "PingFangSC-Regular";
+	font-family: 'PingFangSC-Regular';
 	font-size: 13px;
 	color: #ffffff;
 	position: relative;

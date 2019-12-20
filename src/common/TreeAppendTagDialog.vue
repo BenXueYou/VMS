@@ -8,7 +8,7 @@
 
       <div class="body form-item">
         <label class="label"
-               for>名称：</label>
+               for>{{labelName}}：</label>
         <el-input class="input"
                   v-model="name"></el-input>
       </div>
@@ -32,6 +32,12 @@
 export default {
   name: "TreeChangeNameDialog.vue",
   props: {
+    labelName: {
+      type: String,
+      default() {
+        return "名称";
+      }
+    },
     width: {
       type: String,
       default() {
@@ -56,37 +62,10 @@ export default {
         return false;
       }
     },
-    select: {
+    value: {
       type: String,
       default() {
         return "";
-      }
-    },
-    options: {
-      type: Array,
-      default() {
-        return [
-          {
-            value: "选项1",
-            label: "黄金糕"
-          },
-          {
-            value: "选项2",
-            label: "双皮奶"
-          },
-          {
-            value: "选项3",
-            label: "蚵仔煎"
-          },
-          {
-            value: "选项4",
-            label: "龙须面"
-          },
-          {
-            value: "选项5",
-            label: "北京烤鸭"
-          }
-        ];
       }
     }
   },
@@ -115,15 +94,18 @@ export default {
   },
   watch: {
     visible(val) {
-      this.name = "";
-      this.selectValue = this.select;
+      if (val) {
+        this.name = this.value;
+      } else {
+        this.name = "";
+      }
       this.TreechangeNameDialogVisible = this.visible;
     }
   }
 };
 </script>
 <style lang="scss">
-$labelwidth: 5em;
+$labelwidth: 7em;
 .c {
   .input {
     input {
@@ -147,7 +129,7 @@ $labelwidth: 5em;
 </style>
 
 <style lang="scss" scoped>
-$labelwidth: 5em;
+$labelwidth: 7em;
 .c {
   overflow: hidden;
   .body {

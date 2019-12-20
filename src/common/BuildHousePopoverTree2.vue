@@ -177,9 +177,9 @@ export default {
       // this.getUpAddress(this.labelArr);
       this.nodeText = this.getWanZheng(node).substr(1);
       this.$emit("setUseData", {
-        node: this.currentNode,
-        name: this.upAddress
+        node: this.currentNode
       });
+      console.log(node);
       this.defaultExpKeys = [node.data.id];
       // }
     },

@@ -104,9 +104,6 @@ const home = {
     setAuthorization({ commit }, Authorization) {
       commit("SET_AUTHORIZATION", Authorization);
     },
-    // setUserName({ commit }, username) {
-    //   commit("SET_UserName", username);
-    // },
     setProjectUuid({ commit }, projectUuid) {
       commit("SET_PROJECT_UUID", projectUuid);
     },

@@ -17,11 +17,16 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-    // 获取token
+    // 获取token projectUuid
     let Authorization = store.state.home.Authorization;
     let projectUuid = store.state.home.projectUuid;
     config.headers["Authorization"] = Authorization;
     config.headers["projectUuid"] = projectUuid;
+    if (config.method === 'get') {
+      config.data = true;
+      config.headers['Content-type'] = 'application/json';
+    }
+    // config.headers['H-TOKEN'] = '111'
     return config;
   },
   error => {
@@ -38,8 +43,6 @@ service.interceptors.response.use(
       if (response.data.success) {
         return response;
       } else if (response.data.errCode === 7000 ) {
-        sessionStorage.setItem("Authorization","");
-        sessionStorage.setItem("projectUuid","");
         router.replace({
           name: "Login"
         });

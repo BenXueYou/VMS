@@ -260,10 +260,10 @@ export default {
     },
     getFacedbListSuccess(body) {
       this.libraryOptions = body.data;
-      this.faceLibraryList = [];
-      if (this.libraryOptions.length !== 0) {
-        this.faceLibraryList.push(this.libraryOptions[0].faceLibraryUuid);
-      }
+      // this.faceLibraryList = [];
+      // if (this.libraryOptions.length !== 0) {
+      //   this.faceLibraryList.push(this.libraryOptions[0].faceLibraryUuid);
+      // }
     },
     handleTypeChange(val) {
       if (this.typeRadio === "picture") {

@@ -11,6 +11,14 @@ export function getPreviewInfo(params = {}) {
     params
   });
 }
+export function getFacePreviewInfo(params = {}) {
+  let url = vUrl.getFacePreviewInfoUrl;
+  return axios({
+    method: "GET",
+    url,
+    params
+  });
+}
 export function getPreviewInfoAA(params = {}) {
   let url = vUrl.getPreviewInfAAoUrl;
   params.asgName = store.state.home.projectUuid;

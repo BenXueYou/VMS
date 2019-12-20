@@ -111,16 +111,16 @@ export default {
       visitStateOptions: [],
       approveStateOptions: [],
       SearchObj: {
-        visitorPlateNo: "",
-        visitorPhoneNo: "",
-        staffName: "",
-        staffPhoneNo: "",
+        visitorPlateNo: null,
+        visitorPhoneNo: null,
+        staffName: null,
+        staffPhoneNo: null,
         estimatedDatetimeArriveBegin: null,
         estimatedDatetimeArriveEnd: null,
         estimatedDatetimeLeaveBegin: null,
         estimatedDatetimeLeaveEnd: null,
-        visitState: "",
-        approveState: ""
+        visitState: null,
+        approveState: null
       }
     };
   },

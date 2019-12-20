@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import SetTimeAreaDialog from "@/pages/equipmentMange/components/RemoteControlDialogContent/SetTimeAreaDialog";
 import SetDateAreaDialog from "@/pages/equipmentMange/components/RemoteControlDialogContent/SetDateAreaDialog";
 import chooseDialog from "@/pages/doorControl/components/doorAccessConfig/chooseDialog";

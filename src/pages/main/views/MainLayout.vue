@@ -86,10 +86,12 @@
 import TheChangePassWord from "@/common/TheChangePassWord";
 import TagView from "@/pages/main/views/TagView";
 import { mapState } from "vuex";
+import GlobalAlarmDialog from "@/pages/alarmDialog/GlobalAlarmDialog.vue";
 export default {
   components: {
     TagView,
-    TheChangePassWord
+    TheChangePassWord,
+    GlobalAlarmDialog
   },
   props: {},
   data() {
@@ -222,28 +224,28 @@ export default {
           this.subCapture = this.stompClient.subscribe(
             subCaptureApi,
             greeting => {
-              console.log("收到抓拍通知：", greeting);
+              // console.log("收到抓拍通知：", greeting);
               this.handleSubscribeCapture(JSON.parse(greeting.body));
             }
           );
           this.subRecognization = this.stompClient.subscribe(
             subRecognizationApi,
             greeting => {
-              console.log("收到识别通知：", greeting);
+              // console.log("收到识别通知：", greeting);
               this.handleSubscribeRecognization(JSON.parse(greeting.body));
             }
           );
           this.subMonitorAlarm = this.stompClient.subscribe(
             subMonitorAlarmApi,
             greeting => {
-              console.log("收到报警通知：", greeting);
+              // console.log("收到报警通知：", greeting);
               this.handleSubscribeMonitorAlarm(JSON.parse(greeting.body));
             }
           );
           this.subDeviceOnOff = this.stompClient.subscribe(
             subDeviceOnOffApi,
             greeting => {
-              console.log("收到设备状态变更通知：", greeting);
+              // console.log("收到设备状态变更通知：", greeting);
               this.handleSubscribeDeviceOnOff(JSON.parse(greeting.body));
             }
           );
@@ -317,6 +319,7 @@ export default {
         this.showPassWordDialogVisible = true;
       }
     },
+    // 退出账号
     onClickQuit() {
       this.$loginAjax
         .loginOut()
@@ -339,6 +342,7 @@ export default {
           this.$message.error("退出失败");
         });
     },
+    // 获取本地翻译
     queryBaseTypeByGroup() {
       this.$homeAjax.queryBaseTypeByGroup().then(res => {
         let body = res.data;
@@ -388,7 +392,13 @@ export default {
       );
     }
   },
-  watch: {},
+  watch: {
+    GlobalAlarmList: {
+      handler() {},
+      deep: true,
+      immediate: true
+    }
+  },
   destroyed() {},
   computed: {
     ...mapState({
