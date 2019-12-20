@@ -60,7 +60,7 @@
       <el-tab-pane label="标签"
                    name="tag">
         <el-tree :props="props"
-                 class='videoTree'
+                 class='videoTree2'
                  :load="loadNode"
                  :default-expanded-keys="defaultExpKeys"
                  node-key="id"
@@ -106,7 +106,7 @@
       <el-tab-pane label="视图"
                    name="view">
         <el-tree :props="viewProps"
-                 class='videoTree'
+                 class='videoTree2'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
@@ -1657,6 +1657,15 @@ export default {
   .el-tree-node__content {
     width: min-content;
   }
+  .videoTree2 {
+    .el-tree-node,
+    .el-tree-node__content {
+      width: 100%;
+    }
+    .custom-tree-node {
+      width: calc(100% - 30px);
+    }
+  }
   .el-tree-node__content > .el-tree-node__expand-icon {
     padding: 6px 0px;
   }
@@ -1678,6 +1687,7 @@ export default {
     // width:500px;
     // overflow: auto;
   }
+
   .mysearchText {
   }
 
