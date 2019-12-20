@@ -170,6 +170,7 @@ export default {
       accountUuids: [],
       accountNames: [],
       partUuids: [],
+      adminUuids:[],
       roleDataList: [],
       defaultRoleData: [],
       defaultProps: {
@@ -371,12 +372,16 @@ export default {
     },
     switchData(enable) {
       if (!this.accountUuids.length) {
-        if (this.accountNames.length) {
+        if (this.adminUuids.length) {
           this.$message.warning("超级管理员没有权限");
-          return;
         } else {
-          this.$message.warning("请选择账号！");
-          return;
+          if (this.accountNames.length) {
+            this.$message.warning("超级管理员没有权限");
+            return;
+          } else {
+            this.$message.warning("请选择账号！");
+            return;
+          }
         }
       } 
       api
@@ -424,9 +429,11 @@ export default {
     handleSelectionChange(selection) {
       this.accountUuids = [];
       this.accountNames = [];
+      this.adminUuids = [];
       selection.forEach(item => {
         console.log("item==", item);
         if (item.accountType === "project_admin") {
+          this.adminUuids.push(item.accountUuid);
         } else {
           this.accountUuids.push(item.accountUuid);
         }
