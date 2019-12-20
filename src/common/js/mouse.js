@@ -39,7 +39,7 @@ export const mouseout = ($event) => {
 //鼠标移动浮层移动
 export const mousemove = ($event) => {
     // console.log($event);
-    let left = $event.clientX - $event.layerX,
+    let left = $event.clientX ,
         top = $event.clientY,
         bgObj = document.querySelector('#bgObj');
     if (bgObj) {

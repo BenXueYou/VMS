@@ -92,12 +92,6 @@ service.interceptors.response.use(
   //     }
   error => {
     console.log(error); // for debug
-    // 一秒内只会弹出一个报错信息
-    const currentToastTime = new Date().getTime();
-    if (currentToastTime - lastToastTime > TIME_RANGE_TOAST) {
-      Toast.error("请求错误！");
-    }
-    lastToastTime = new Date().getTime();
     return Promise.reject(error);
   }
 );
