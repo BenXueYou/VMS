@@ -33,10 +33,10 @@
 						<el-input v-model="queryBody.accountName"></el-input>
 					</div>
 					<div>
-						<el-input v-model="queryBody.password" :disabled="isEditPassWord"></el-input>
+						<el-input type="password" v-model="queryBody.password" :disabled="isEditPassWord"></el-input>
 					</div>
 					<div>
-						<el-input v-model="queryBody.confirmPassword" :disabled="isEditPassWord"></el-input>
+						<el-input type="password" v-model="queryBody.confirmPassword" :disabled="isEditPassWord"></el-input>
 					</div>
 					<p style="margin:17px 0">
 						<el-radio-group v-model="queryBody.enable">
@@ -231,7 +231,6 @@ export default {
     // 点击确定按钮
     editBtnAct(status) {
       console.log("queryBody==", this.queryBody);
-      //密码格式
       if (this.queryBody.roles) {
         let roleUuids = [];
         this.queryBody.roles.filter(i => {
@@ -242,14 +241,6 @@ export default {
       if (this.rowData.accountUuid) {
         // 修改
         console.log("queryBody==", this.queryBody);
-        // let roleUuids= [];
-        // this.queryBody.roles.filter(i => {
-        //    roleUuids.push(i.roleUuid);
-        // });
-        // this.queryBody.roleUuids = roleUuids;
-        // console.log("roleUuids==", this.queryBody)
-        // debugger;
-        // return;
         let parms = this.queryBody;
         if (this.isAssociateSwitch === true) {
           parms.isAssociateStaff = 1;
@@ -375,7 +366,6 @@ export default {
           this.title = "编辑账号";
           // this.initData();
           console.log("rowData==", this.rowData);
-          this.queryBody.confirmPassword = "********";
           this.isEditPassWord = true;
           if (this.rowData.isAssociateStaff === 1) {
             this.isAssociateSwitch = true;
@@ -390,12 +380,12 @@ export default {
         if (!newVal.roles) {
           this.initData();
         }
-        console.log("newVal====", newVal);
         Object.assign(this.queryBody, newVal);
         console.log("--------------------", this.queryBody);
         if (this.rowData.accountUuid) {
           if (this.queryBody.invalidTime === "long") {
             this.isLongTIme = 1;
+            this.queryBody.confirmPassword = this.queryBody.password;
           } else {
             this.invalidTimeVal = this.queryBody.invalidTime;
             this.isLongTIme = 0;
