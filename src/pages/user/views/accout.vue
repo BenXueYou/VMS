@@ -374,6 +374,7 @@ export default {
       if (!this.accountUuids.length) {
         if (this.adminUuids.length) {
           this.$message.warning("超级管理员没有权限");
+          return;
         } else {
           if (this.accountNames.length) {
             this.$message.warning("超级管理员没有权限");
