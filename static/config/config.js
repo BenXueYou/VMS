@@ -3,7 +3,7 @@ var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
 var Authorization = "Basic YXBwOjEyMzQ1Ng==";
-var DEBUG = "TEST";
+var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
   ip = "192.168.9.230:15000";
