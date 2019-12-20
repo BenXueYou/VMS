@@ -1250,7 +1250,7 @@
     "move": "移动",
     "move_out": "移出",
     "data_distribution": "下发数据",
-    "statistics": "统计",    
+    "statistics": "统计",
     "batch_upgrade": "批量升级"
   },
   "operationLogEventEnum": {
@@ -1268,8 +1268,5 @@
     "normallyopen_normallyclosed": "常开常闭",
     "face_preview": "人脸预览",
     "subscribe": "订阅"
-  },
-
-
-
+  }
 }

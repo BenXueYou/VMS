@@ -55,9 +55,14 @@ export var Storage = {
     let jsonStr = window.sessionStorage.getItem(key);
     try {
       if (jsonStr !== "") {
-        data = JSON.parse(jsonStr);
+        if (key !== "account" && key !== "userUuid") {
+          data = JSON.parse(jsonStr);
+        } else {
+          data = jsonStr;
+        }
       }
     } catch (error) {
+      console.log(key);
       console.log(error);
     }
     return data;

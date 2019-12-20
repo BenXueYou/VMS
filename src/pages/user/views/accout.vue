@@ -115,6 +115,7 @@
 		</div>
 		<account-add
 			v-show="addDialogVisible"
+      :addDialogVisible="addDialogVisible"
 			:checkedRoles="defaultRoleData"
 			@close="close"
 			:rowData.sync="rowData"

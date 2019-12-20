@@ -159,6 +159,18 @@ export default {
       default() {
         return {};
       }
+    },
+    checkedRoles: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    addDialogVisible: {
+      type: Boolean,
+      default() {
+        return false;
+      }
     }
   },
   data() {
@@ -387,6 +399,12 @@ export default {
     }
   },
   watch: {
+    addDialogVisible(val) {
+      // 用于监听是否打开或者关闭新增页面
+      if (val) {
+        this.initData();
+      }
+    },
     rowData: {
       handler(newVal, old) {
         if (this.rowData.accountUuid) {
@@ -406,9 +424,9 @@ export default {
           this.title = "添加账号";
           this.isEditPassWord = false;
         }
-        if (!newVal.roles) {
-          this.initData();
-        }
+        // if (!newVal.roles) {
+        //   this.initData();
+        // }
         console.log("newVal====", newVal);
         Object.assign(this.queryBody, newVal);
         console.log("--------------------", this.queryBody);
