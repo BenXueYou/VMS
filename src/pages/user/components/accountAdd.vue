@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 <template>
 	<div class="AccountAdd">
 		<div class="mainBox">
@@ -271,18 +272,24 @@ export default {
             this.isload = !this.isload;
           });
       } else {
+        if (this.queryBody.password !== this.queryBody.confirmPassword) {
+          this.$message({ type: "warning", message: "两次密码不一致" });
+          return;
+        }
         var eReg1 = /^(?![^a-zA-Z]+$)(?!\D+$)/;
-        if (!eReg1.test(this.queryBody.password)&&!eReg1.test(this.queryBody.confirmPassword)) {
+        if (!eReg1.test(this.queryBody.password)) {
           this.$message.warning("密码至少包含数字，字母这两种（区分大小写）");
           return;
         }
-        var eReg2 = /^[^\[\]\?\|\\\/\:\;\+\*\<\>]*$/;
-        if (!eReg2.test(this.queryBody.password)&&!eReg2.test(this.queryBody.confirmPassword)) {
+        /* eslint-disable */
+				var eReg2 = /^[^\[\]\?\|\\\/\:\;\+\*\<\>]*$/;
+				/* eslint-enable */
+        if (!eReg2.test(this.queryBody.password)) {
           this.$message.warning("不能包含特殊字符 /[]:;丨+*?<>");
           return;
         }
         var eReg3 = /^[^\s]*$/;
-        if (!eReg3.test(this.queryBody.password)&&!eReg3.test(this.queryBody.confirmPassword)) {
+        if (!eReg3.test(this.queryBody.password)) {
           this.$message.warning("字符中不能包含空格");
           return;
         }

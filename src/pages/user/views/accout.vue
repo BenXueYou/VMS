@@ -170,7 +170,7 @@ export default {
       accountUuids: [],
       accountNames: [],
       partUuids: [],
-      adminUuids:[],
+      adminUuids: [],
       roleDataList: [],
       defaultRoleData: [],
       defaultProps: {
