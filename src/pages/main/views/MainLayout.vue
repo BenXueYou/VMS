@@ -89,7 +89,6 @@ export default {
   mounted() {
     this.initWebSocket();
     console.log(this.$store);
-    this.residentLocalStorage();
     // 添加用户交互模拟事件
     var btn = document.createElement("button");
     let event = new MouseEvent("click");
@@ -105,41 +104,6 @@ export default {
   methods: {
     confirm(data) {
       this.onClickQuit();
-    },
-    // 居民管理的本地翻译全局存储
-    residentLocalStorage() {
-      this.$store.commit(
-        "SET_CERTIFICATE",
-        this.$common.getEnumByGroupStr("cred")
-      );
-      this.$store.commit(
-        "SET_EDUOPTIONS",
-        this.$common.getEnumByGroupStr("edu")
-      );
-      this.$store.commit(
-        "SET_COUNTRY",
-        this.$common.getEnumByGroupStr("nationality")
-      );
-      this.$store.commit(
-        "SET_NATION",
-        this.$common.getEnumByGroupStr("nation")
-      );
-      this.$store.commit(
-        "SET_MARITAL",
-        this.$common.getEnumByGroupStr("marital")
-      );
-      this.$store.commit(
-        "SET_GENDEROPTIONS",
-        this.$common.getEnumByGroupStr("gender")
-      );
-      this.$store.commit(
-        "SET_STAFFOPTIONS",
-        this.$common.getEnumByGroupStr("staff_t")
-      );
-      this.$store.commit(
-        "SET_CARDOPTIONS",
-        this.$common.getEnumByGroupStr("card_u")
-      );
     },
     browerStatus(e) {
       e = window.event || e;
