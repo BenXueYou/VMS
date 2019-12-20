@@ -1,125 +1,109 @@
 <template>
-  <div class="ResidentTagWrap"
-       v-loading="mainScreenLoading"
-       element-loading-background="rgba(0, 0, 0, 0.8)">
-    <el-row type="flex"
-            justify="space-between">
-      <el-col class="leftBox"
-              :span="12">
-        <span>{{tagName}}（{{total}}人）</span>
-      </el-col>
-      <el-col class="rightBox"
-              :span="12">
-        <span @click="changeDialogVisible=!changeDialogVisible">
-          <img class="img"
-               src="../../../assets/images/resident/modify_icon.png"
-               alt> 修改标签
-        </span>
-        <span style="color:rgba(255,255,255,0.1)">|</span>
-        <span @click="detailDialogAct">
-          <img class="img"
-               src="../../../assets/images/resident/detail_tag_icon.png"
-               alt> 标签详情
-        </span>
-      </el-col>
-    </el-row>
+	<div
+		class="ResidentTagWrap"
+		v-loading="mainScreenLoading"
+		element-loading-background="rgba(0, 0, 0, 0.8)"
+	>
+		<el-row type="flex" justify="space-between">
+			<el-col class="leftBox" :span="12">
+				<span>{{tagName}}（{{total}}人）</span>
+			</el-col>
+			<el-col class="rightBox" :span="12">
+				<span @click="changeDialogVisible=!changeDialogVisible">
+					<img class="img" src="../../../assets/images/resident/modify_icon.png" alt /> 修改标签
+				</span>
+				<span style="color:rgba(255,255,255,0.1)">|</span>
+				<span @click="detailDialogAct">
+					<img class="img" src="../../../assets/images/resident/detail_tag_icon.png" alt /> 标签详情
+				</span>
+			</el-col>
+		</el-row>
 
-    <el-main>
-      <el-header>
-        <el-button type="primary"
-                   size="small"
-                   @click="addElementToTagAct">添加楼栋房屋/居民</el-button>
-        <el-button type="primary"
-                   size="small"
-                   @click="removeTagAct">移出</el-button>
-      </el-header>
-      <el-table ref="multipleTagTable"
-                :data="tableData"
-                tooltip-effect="dark"
-                class="tableBoxClass"
-                @selection-change="handleSelectionChange">
-        <el-table-column type="selection"
-                         width="100"></el-table-column>
-        <el-table-column prop="staffName"
-                         label="名称"></el-table-column>
-        <el-table-column prop="address"
-                         label="楼栋房屋"></el-table-column>
-      </el-table>
-      <el-footer class="footerClass">
-        <el-pagination @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange"
-                       :current-page="currentPage"
-                       layout="total,prev, pager, next,jumper"
-                       :page-size="pageSize"
-                       :total="total"
-                       background></el-pagination>
-      </el-footer>
-    </el-main>
-    <!-----------------------------------------添加地址居民到标签----------------------------------->
-    <person-tree-tag title="添加地址/居民到标签"
-                     rightTxt="已选择的地址或居民"
-                     :isShow="isShow"
-                     :treeType="treeType"
-                     treeNodeType="staff"
-                     :checkedNodeArr="checkedNode"
-                     @onCancel="onCancel"
-                     @onConfirm="onConfirm"></person-tree-tag>
-    <!---------------------------------------------标签详情---------------------------------------------->
-    <el-dialog title="标签详情"
-               :visible.sync="detailDialogVisible"
-               width="25%"
-               center>
-      <el-row type="flex"
-              class="changeTagBox">
-        <el-col :span="8"
-                style="padding-top:12px;">
-          <img src="@/assets/images/resident/tag_default.png"
-               alt
-               srcset>
-          {{checkedLeftTagData.tagName}}：
-        </el-col>
-        <el-col :span="16">
-          <!-- <p v-for="(value, name) in residentTag"
+		<el-main>
+			<el-header>
+				<el-button type="primary" size="small" @click="addElementToTagAct">添加楼栋房屋/居民</el-button>
+				<el-button type="primary" size="small" @click="removeTagAct">移出</el-button>
+			</el-header>
+			<el-table
+				ref="multipleTagTable"
+				:data="tableData"
+				tooltip-effect="dark"
+				class="tableBoxClass"
+				@selection-change="handleSelectionChange"
+			>
+				<el-table-column type="selection" width="100"></el-table-column>
+				<el-table-column prop="staffName" label="名称"></el-table-column>
+				<el-table-column prop="address" label="楼栋房屋"></el-table-column>
+			</el-table>
+			<el-footer class="footerClass">
+				<el-pagination
+					@size-change="handleSizeChange"
+					@current-change="handleCurrentChange"
+					:current-page="currentPage"
+					layout="total,prev, pager, next,jumper"
+					:page-size="pageSize"
+					:total="total"
+					background
+				></el-pagination>
+			</el-footer>
+		</el-main>
+		<!-----------------------------------------添加地址居民到标签----------------------------------->
+		<person-tree-tag
+			title="添加地址/居民到标签"
+			rightTxt="已选择的地址或居民"
+			:isShow="isShow"
+			:treeType="treeType"
+			treeNodeType="staff"
+			:checkedNodeArr="checkedNode"
+			@onCancel="onCancel"
+			@onConfirm="onConfirm"
+		></person-tree-tag>
+		<!---------------------------------------------标签详情---------------------------------------------->
+		<el-dialog title="标签详情" :visible.sync="detailDialogVisible" width="25%" center>
+			<el-row type="flex" class="changeTagBox">
+				<el-col :span="8" style="padding-top:12px;">
+					<img src="@/assets/images/resident/tag_default.png" alt srcset />
+					{{checkedLeftTagData.tagName}}：
+				</el-col>
+				<el-col :span="16">
+					<!-- <p v-for="(value, name) in residentTag"
              :key="name"
              v-show="tn[name]">
             <span style='display:inline-block;width:60px;'>包含{{tn[name]}}</span>
             <span>{{value || 0}}</span>
-          </p> -->
-          <p>
-            <span>包含区域</span>
-            <span>{{residentTag.area || 0}}</span>
-          </p>
-          <p>
-            <span>包含期&nbsp;&nbsp;&nbsp;</span>
-            <span>{{residentTag.phase || 0}}</span>
-          </p>
-          <p>
-            <span>包含楼栋</span>
-            <span>{{residentTag.building || 0}}</span>
-          </p>
-          <p>
-            <span>包含单元</span>
-            <span>{{residentTag.unit || 0}}</span>
-          </p>
-          <p>
-            <span>包含楼层</span>
-            <span>{{residentTag.floor || 0}}</span>
-          </p>
-          <p>
-            <span>包含居民</span>
-            <span>{{residentTag.staff || 0}}</span>
-          </p>
-        </el-col>
-      </el-row>
-      <span slot="footer"
-            class="dialog-footer">
-        <el-button type="primary"
-                   @click="detailDialogVisible = false">保 存</el-button>
-        <el-button type="primary"
-                   @click="detailDialogVisible = false">取 消</el-button>
-      </span>
-    </el-dialog>
-  </div>
+					</p>-->
+					<p>
+						<span>包含区域</span>
+						<span>{{residentTag.area || 0}}</span>
+					</p>
+					<p>
+						<span>包含期&nbsp;&nbsp;&nbsp;</span>
+						<span>{{residentTag.phase || 0}}</span>
+					</p>
+					<p>
+						<span>包含楼栋</span>
+						<span>{{residentTag.building || 0}}</span>
+					</p>
+					<p>
+						<span>包含单元</span>
+						<span>{{residentTag.unit || 0}}</span>
+					</p>
+					<p>
+						<span>包含楼层</span>
+						<span>{{residentTag.floor || 0}}</span>
+					</p>
+					<p>
+						<span>包含居民</span>
+						<span>{{residentTag.staff || 0}}</span>
+					</p>
+				</el-col>
+			</el-row>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="detailDialogVisible = false">保 存</el-button>
+				<el-button type="primary" @click="detailDialogVisible = false">取 消</el-button>
+			</span>
+		</el-dialog>
+	</div>
 </template>
 <script>
 import personTreeTag from "@/common/personTreeTag";
@@ -180,9 +164,9 @@ export default {
   },
   mounted() {
     let h =
-      window.innerHeight ||
-      document.documentElement.clientHeight ||
-      document.body.clientHeight;
+			window.innerHeight ||
+			document.documentElement.clientHeight ||
+			document.body.clientHeight;
     this.$refs.multipleTagTable.$el.style.height = h - 280 + "px";
     // 这里 -1 是为了去掉表头高度
     this.pageSize = parseInt((h - 280) / 48) - 1;
@@ -191,9 +175,9 @@ export default {
     let that = this;
     window.addEventListener("resize", function() {
       let h =
-        window.innerHeight ||
-        document.documentElement.clientHeight ||
-        document.body.clientHeight;
+				window.innerHeight ||
+				document.documentElement.clientHeight ||
+				document.body.clientHeight;
       that.$refs.multipleTagTable.$el.style.height = h - 280 + "px";
       var pageSize = parseInt((h - 280) / 48) - 1;
       if (pageSize !== that.pageSize && that.isResize) {
@@ -218,14 +202,18 @@ export default {
   },
   methods: {
     addElementToTagAct() {
-      this.isShow = !this.isShow;
-    },
-    getTagTreeDetail() {
-      let queryTyoeUuid = this.checkedLeftTagData.tagUuid;
-      if (!queryTyoeUuid && !queryTyoeUuid.length) {
+      if (this.checkedLeftTagData && !this.checkedLeftTagData.tagUuid) {
         this.$message({ type: "warning", message: "没有选择标签" });
         return;
       }
+      this.isShow = !this.isShow;
+    },
+    getTagTreeDetail() {
+      if (this.checkedLeftTagData && !this.checkedLeftTagData.tagUuid) {
+        this.$message({ type: "warning", message: "没有选择标签" });
+        return;
+      }
+      let queryTyoeUuid = this.checkedLeftTagData.tagUuid;
       var xhr = {
         limit: this.pageSize,
         page: this.currentPage,
@@ -358,13 +346,10 @@ export default {
       // 接受返回的标签
       console.log(this.checkedLeftTagData, "添加地址居民到标签", data);
       this.checkedNode = data;
-      let queryTyoeUuid = this.checkedLeftTagData.tagUuid;
-
-      if (!queryTyoeUuid && !queryTyoeUuid.length) {
+      if (this.checkedLeftTagData && !this.checkedLeftTagData.tagUuid) {
         this.$message({ type: "warning", message: "没有选择标签" });
         return;
       }
-
       if (this.tableData && this.tableData.length) {
         // 编辑标签内元素
         this.putElementToTag(data, this.checkedLeftTagData);
@@ -424,86 +409,86 @@ export default {
 </script>
 <style>
 .tagDialogBox .el-dialog {
-  padding: 0 0 36px;
+	padding: 0 0 36px;
 }
 .ResidentTagWrap .el-dialog--center .el-dialog__body {
-  text-align: initial;
-  padding: 25px 25px 0px;
+	text-align: initial;
+	padding: 25px 25px 0px;
 }
 .el-message-box__btns .el-button {
-  background: rgba(40, 255, 187, 0.1);
-  border: 1px solid rgba(40, 255, 187, 0.45);
-  border-radius: 2px;
+	background: rgba(40, 255, 187, 0.1);
+	border: 1px solid rgba(40, 255, 187, 0.45);
+	border-radius: 2px;
 }
 .el-message-box__title,
 .el-message-box__content {
-  color: #dddddd;
+	color: #dddddd;
 }
 </style>
 <style lang="scss" scoped>
 .ResidentTagWrap {
-  font-family: "PingFangSC-Regular";
-  font-size: 14px;
-  color: #dddddd;
-  letter-spacing: 0.5px;
-  height: 100%;
-  box-sizing: border-box;
-  .leftBox {
-    text-align: left;
-    // height: 40px;
-    padding-left: 20px;
-    padding-bottom: 15px;
-  }
-  .rightBox {
-    text-align: right;
-    // height: 40px;
-    padding-right: 20px;
-    padding-bottom: 15px;
-    span {
-      color: #26d39d;
-      margin: 0 12px;
-      font-size: 13px;
-      font-family: PingFangSC-Regular;
-    }
-  }
-  .el-main {
-    background: #212325;
-    width: 100%;
-    height: calc(100% - 40px);
-    overflow: auto;
-  }
-  .el-main .el-header {
-    // height: ;
-    line-height: 60px;
-    padding-left: 30px;
-  }
-  .tableBoxClass {
-    width: 60%;
-    padding: 0px 30px;
-    box-sizing: border-box;
-  }
-  .footerClass {
-    width: calc(60% - 30px);
-    text-align: right;
-  }
-  .changeTagBox {
-    font-family: "PingFangSC-Regular";
-    font-size: 12px;
-    color: #dddddd;
-    text-align: left;
-    padding-left: 36px;
-    .el-input {
-      display: inline-block;
-      width: 50%;
-      margin-left: 5px;
-    }
-  }
-  .dialog-footer {
-    line-height: 80px;
-    margin-bottom: 36px;
-  }
-  .el-dialog--center .el-dialog__footer {
-    text-align: inherit;
-  }
+	font-family: "PingFangSC-Regular";
+	font-size: 14px;
+	color: #dddddd;
+	letter-spacing: 0.5px;
+	height: 100%;
+	box-sizing: border-box;
+	.leftBox {
+		text-align: left;
+		// height: 40px;
+		padding-left: 20px;
+		padding-bottom: 15px;
+	}
+	.rightBox {
+		text-align: right;
+		// height: 40px;
+		padding-right: 20px;
+		padding-bottom: 15px;
+		span {
+			color: #26d39d;
+			margin: 0 12px;
+			font-size: 13px;
+			font-family: PingFangSC-Regular;
+		}
+	}
+	.el-main {
+		background: #212325;
+		width: 100%;
+		height: calc(100% - 40px);
+		overflow: auto;
+	}
+	.el-main .el-header {
+		// height: ;
+		line-height: 60px;
+		padding-left: 30px;
+	}
+	.tableBoxClass {
+		width: 60%;
+		padding: 0px 30px;
+		box-sizing: border-box;
+	}
+	.footerClass {
+		width: calc(60% - 30px);
+		text-align: right;
+	}
+	.changeTagBox {
+		font-family: "PingFangSC-Regular";
+		font-size: 12px;
+		color: #dddddd;
+		text-align: left;
+		padding-left: 36px;
+		.el-input {
+			display: inline-block;
+			width: 50%;
+			margin-left: 5px;
+		}
+	}
+	.dialog-footer {
+		line-height: 80px;
+		margin-bottom: 36px;
+	}
+	.el-dialog--center .el-dialog__footer {
+		text-align: inherit;
+	}
 }
 </style>
