@@ -105,6 +105,7 @@
 							:show-close="false"
 						>{{item.roleName}}</gt-button>-->
 						<gt-button
+              style="margin-right: 5px;"
 							v-for="(item,index) in rowData.roles || []"
 							class="bilibili"
 							@close="deleteChannelAuth(index)"
@@ -226,6 +227,7 @@ export default {
       this.queryBody.emailNumber = null; // 邮箱号码
       this.queryBody.description = null; // 描述
       this.queryBody.roleUuids = []; // 角色uuid数组
+      this.queryBody.roles = [];
       this.queryBody.isAssociateStaff = "";
       this.queryBody.invalidTime = ""; // 失效时间 (可选)
     },
@@ -384,6 +386,8 @@ export default {
           this.title = "添加账号";
           this.isEditPassWord = false;
         }
+        console.log("newVal===", newVal);
+        console.log("old===", old);
         if (!newVal.roles) {
           this.initData();
         }

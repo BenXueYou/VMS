@@ -104,6 +104,8 @@ export default {
       password: ""
     };
   },
+  activated() {
+  },
   mounted() {
     this.TreechangeNameDialogVisible = this.visible;
   },
@@ -143,6 +145,8 @@ export default {
   },
   watch: {
     visible(val) {
+      this.password = "";
+      this.confirmPassword = "";
       this.name = "";
       this.selectValue = this.select;
       this.TreechangeNameDialogVisible = this.visible;

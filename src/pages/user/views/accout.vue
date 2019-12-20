@@ -383,7 +383,7 @@ export default {
         if (this.adminUuids.length) {
           this.$message.warning("勾选之中的超级管理员没有权限");
           return;
-        } 
+        }
       }
       api
         .switchAccountApi({
@@ -426,7 +426,7 @@ export default {
         if (this.adminUuids.length) {
           this.$message.warning("勾选之中的超级管理员没有权限");
           return;
-        } 
+        }
       }
       api
         .deleteAccountApi({ accountUuids: this.accountUuids })
