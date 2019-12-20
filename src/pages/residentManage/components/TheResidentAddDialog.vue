@@ -935,18 +935,17 @@ export default {
       setTimeout(() => {
         _this.video = document.getElementById("video");
         // 媒体对象
-        window.navigator.mediaDevices
-          .getUserMedia({
-            // video: {
-            //   width: { min: 1024, ideal: 1280, max: 1920 },
-            //   height: { min: 776, ideal: 720, max: 1080 }
-            // },
-            video: {
-              width: { min: 1280 },
-              height: { min: 720 }
-            },
-            audio: false // 不适用音频
-          })
+        window.navigator.getUserMedia({
+          // video: {
+          //   width: { min: 1024, ideal: 1280, max: 1920 },
+          //   height: { min: 776, ideal: 720, max: 1080 }
+          // },
+          video: {
+            width: { min: 1280 },
+            height: { min: 720 }
+          },
+          audio: false // 不适用音频
+        })
           .then(function(strem) {
             console.log(strem);
             _this.mediaStreamTrack = strem.getTracks()[0];
@@ -972,7 +971,6 @@ export default {
           .catch(function(error) {
             console.log(error);
             _this.shootPhotoDialogVisible = false;
-
             alert("未捕捉到摄像头");
           });
       }, 100);
