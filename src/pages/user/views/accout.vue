@@ -379,7 +379,7 @@ export default {
           this.$message.warning("请选择账号！");
           return;
         }
-      } 
+      }
       api
         .switchAccountApi({
           accountUuids: this.accountUuids,

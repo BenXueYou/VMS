@@ -253,7 +253,7 @@ export default {
     // 点击确定按钮
     editBtnAct(status) {
       console.log("queryBody==", this.queryBody);
-      //密码格式
+      // 密码格式
       var eReg1 = /^(?![^a-zA-Z]+$)(?!\D+$)/;
       if (
         !eReg1.test(this.queryBody.password) &&
@@ -262,6 +262,7 @@ export default {
         this.$message.warning("密码至少包含数字，字母这两种（区分大小写）");
         return;
       }
+      // eslint-disable-next-line no-useless-escape
       var eReg2 = /^[^\[\]\?\|\\\/\:\;\+\*\<\>]*$/;
       if (
         !eReg2.test(this.queryBody.password) &&
