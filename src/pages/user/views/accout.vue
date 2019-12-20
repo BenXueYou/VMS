@@ -70,19 +70,19 @@
 								size="small"
 							>分配角色</el-button>
 							<el-button
-                v-if="scope.row.enable===1"
+								v-if="scope.row.enable===1"
 								class="onOffBtnClass"
 								@click="forbidBtnClick(scope.row)"
 								type="text"
 								size="small"
 							>禁用</el-button>
-              <el-button
-                v-if="scope.row.enable===0"
-                class="onOffBtnClass"
-                @click="startBtnClick(scope.row)"
-                type="text"
-                size="small"
-              >启用</el-button>
+							<el-button
+								v-if="scope.row.enable===0"
+								class="onOffBtnClass"
+								@click="startBtnClick(scope.row)"
+								type="text"
+								size="small"
+							>启用</el-button>
 							<el-button
 								class="deleteBtnClass"
 								@click="deleteBtnClick(scope.row)"
@@ -91,7 +91,7 @@
 							>删除</el-button>
 						</div>
 						<div v-if="scope.row.accountType==='project_admin'">
-              <el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
+							<el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
 							<el-button type="text" size="small"></el-button>
 							<el-button type="text" size="small"></el-button>
 							<el-button class="onOffBtnClass" type="text" size="small"></el-button>
@@ -378,7 +378,7 @@ export default {
           this.$message.warning("请选择账号！");
           return;
         }
-      } 
+      }
       api
         .switchAccountApi({
           accountUuids: this.accountUuids,
