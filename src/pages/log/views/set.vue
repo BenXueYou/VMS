@@ -61,7 +61,7 @@
 				<el-table-column label="类型">
 					<template
 						slot-scope="scope"
-					>{{$common.getEnumItemName("SystemLogEventEnum", scope.row.eventType)}}</template>
+					>{{$common.getEnumItemName("setLogEventEnum", scope.row.eventType)}}</template>
 				</el-table-column>
 				<el-table-column prop="detail" label="详情"></el-table-column>
 				<el-table-column prop="eventTime" label="配置时间"></el-table-column>
