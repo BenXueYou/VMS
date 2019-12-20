@@ -372,18 +372,18 @@ export default {
     },
     switchData(enable) {
       if (!this.accountUuids.length) {
-        if (this.adminUuids.length) {
+        if (this.accountNames.length) {
           this.$message.warning("超级管理员没有权限");
           return;
         } else {
-          if (this.accountNames.length) {
-            this.$message.warning("超级管理员没有权限");
-            return;
-          } else {
-            this.$message.warning("请选择账号！");
-            return;
-          }
+          this.$message.warning("请选择账号！");
+          return;
         }
+      } else {
+        if (this.adminUuids.length) {
+          this.$message.warning("勾选之中的超级管理员没有权限");
+          return;
+        } 
       }
       api
         .switchAccountApi({
@@ -414,6 +414,20 @@ export default {
       this.isConfirm = !this.isConfirm;
     },
     deleteData() {
+      if (!this.accountUuids.length) {
+        if (this.accountNames.length) {
+          this.$message.warning("超级管理员没有权限");
+          return;
+        } else {
+          this.$message.warning("请选择账号！");
+          return;
+        }
+      } else {
+        if (this.adminUuids.length) {
+          this.$message.warning("勾选之中的超级管理员没有权限");
+          return;
+        } 
+      }
       api
         .deleteAccountApi({ accountUuids: this.accountUuids })
         .then(res => {
