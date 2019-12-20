@@ -11,8 +11,10 @@ export const mouseover = ($event) => {
         fontSize = style.fontSize,
         text = dom.innerHTML,
         span = document.createElement("span"),
-        left = $event.clientX - $event.layerX,
+        // left = $event.clientX - $event.layerX,
+        left = $event.clientX,
         top = $event.clientY + 5; // 向下偏移5
+   
     span.style.cssText = `font-size:12px;height:0;overflow:hidden;`;
     span.setAttribute('id', 'span');
     document.body.appendChild(span);
