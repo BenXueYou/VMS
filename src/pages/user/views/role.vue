@@ -302,18 +302,16 @@ export default {
       });
     },
     deleteRow(row) {
-      // this.deleteUser({
+      this.deleteUser([row.roleUuid]);
+      // let param = {
       //   roleUuids: [row.roleUuid]
+      // };
+      // api.deleteRole(param).then(res => {
+      //   if (res.data.success) {
+      //     this.$message.success("删除成功！");
+      //     this.getData();
+      //   }
       // });
-      let param = {
-        roleUuids: [row.roleUuid]
-      };
-      api.deleteRole(param).then(res => {
-        if (res.data.success) {
-          this.$message.success("删除成功！");
-          this.getData();
-        }
-      });
     },
     serach() {
       this.pageNow = 1;
