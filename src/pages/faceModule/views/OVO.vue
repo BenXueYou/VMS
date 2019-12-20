@@ -107,7 +107,7 @@
 	</div>
 </template>
 <script type="text/javascript">
-import { mouseover, mouseout, mousemove } from "@/common/mouse.js";
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
 import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
