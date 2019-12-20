@@ -447,14 +447,17 @@ export default {
         item.playStatus = 1;
         return item;
       });
-      let videoArr = newdata.extra.videoArr || [];
-      for (let i = 0, len = elements.length; i < len; i++) {
-        this.videoArr[i] = elements[i];
-        if (videoArr.length) {
-          this.videoArr[i].timeData = videoArr[i].timeData;
-          this.videoArr[i].fileName = videoArr[i].fileName;
-        }
-      }
+      let extra = newdata.extra || {};
+      let videoArr = extra.videoArr || [];
+      this.videoArr = videoArr;
+      // for (let i = 0, len = elements.length; i < len; i++) {
+      //   this.videoArr[i] = elements[i];
+      //   if (videoArr.length) {
+      //     this.videoArr[i].timeData = videoArr[i].timeData;
+      //     this.videoArr[i].fileName = videoArr[i].fileName;
+      //   }
+      // }
+      console.log(this.videoArr);
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
@@ -477,12 +480,8 @@ export default {
       });
       // 存储每个视频分路的名字
       let extra = {};
-      extra.videoArr = this.videoArr.map(item => {
-        return {
-          timeData: item.timeData,
-          fileName: item.fileName
-        };
-      });
+      extra.videoArr = this.videoArr;
+      console.log(JSON.stringify(extra));
       let data = {
         viewType: "playback", // 视图类型
         viewInfo: {
@@ -630,6 +629,7 @@ export default {
           this.operatorIndex = 15;
         }
       }
+      console.log(this.videoArr);
     },
     records(channelUuid, startTime, endTime, videoType, streamType) {
       return new Promise((resolve, reject) => {

@@ -75,11 +75,11 @@
                    name="view">
 
         <el-tree :props="viewProps"
-                 class='videoTree'
+                 class='videoTree2'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
-          <div class="custom-tree-node"
+          <div class="custom-tree-node viewTree"
                @dblclick.stop="openView(data,$event)"
                slot-scope="{ node, data }">
             <span class="span"
@@ -562,11 +562,15 @@ export default {
   }
   .el-tree-node,
   .el-tree-node__content {
-    width: min-content;
+    width: max-content;
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
     padding: 6px 0px;
   }
+}
+.videoTree2 .el-tree-node,
+.videoTree2 .el-tree-node__content {
+  width: 100% !important;
 }
 </style>
 

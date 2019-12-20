@@ -225,6 +225,7 @@ import ImgCard from "@/pages/faceModule/components/ImgCard.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
 import * as api from "@/pages/faceModule/http/homeBaseHttp.js";
 import * as logApi from "@/pages/faceModule/http/logSearchHttp.js";
+import * as api2 from "@/pages/VideoPreview/ajax.js";
 import { mapState } from "vuex";
 export default {
   name: "home",
@@ -606,8 +607,8 @@ export default {
         document.getElementById("poster_img").style.display = "block";
         document.getElementById("player").style.display = "none";
       }
-      api
-        .getRtspUrlByChannelUuidApi(data)
+      api2
+        .getFacePreviewInfo(data)
         .then(res => {
           if (res.data.success) {
             let data = res.data.data;
