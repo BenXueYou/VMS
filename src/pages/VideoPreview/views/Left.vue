@@ -22,7 +22,7 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
-                   :class="{'myShowCuoTree':showCloudControl}"
+                   :class="{'myShowCuoTree':showCloudControl,'showMaxWidth':!showMaxWidth}"
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
@@ -349,6 +349,7 @@ export default {
       icons,
       searchText: "", // 搜索框的文本
       appendChildrenDialogVisible: false,
+      showMaxWidth: false,
       appendTagDialogVisible: false,
       changeNameDialogVisible: false,
       node: "", // 用于存储当前的操作的节点
@@ -678,6 +679,7 @@ export default {
       if (node.level === 0) {
         if (data.length) {
           this.defaultExpKeys.push(data[0].id);
+          this.showMaxWidth = true;
         }
       }
       data = data.map(item => {
@@ -1611,8 +1613,11 @@ export default {
     overflow: auto;
   }
   .mypanel {
-    width: 380px;
+    // width: 380px;
     height: calc(100vh - 185px);
+  }
+  .showMaxWidth {
+    width: 196px;
   }
   .myShowCuoTree {
     height: calc(100vh - 610px);
@@ -1647,6 +1652,10 @@ export default {
       /* WebKit browsers */
       font-size: 12px;
     }
+  }
+  .el-tree-node,
+  .el-tree-node__content {
+    width: min-content;
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
     padding: 6px 0px;
@@ -1683,7 +1692,7 @@ export default {
     white-space: nowrap;
     // overflow: hidden;
     // text-overflow: ellipsis;
-    width: calc(100% - 30px);
+    // width: calc(100% - 30px);
     .channelStatus {
       display: flex;
       justify-content: flex-start;
@@ -1700,6 +1709,9 @@ export default {
         font-size: 12px;
         color: #dddddd;
         min-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .channelOffline {
         color: #999999;

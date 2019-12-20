@@ -447,8 +447,13 @@ export default {
         item.playStatus = 1;
         return item;
       });
+      let videoArr = newdata.extra.videoArr || [];
       for (let i = 0, len = elements.length; i < len; i++) {
         this.videoArr[i] = elements[i];
+        if (videoArr.length) {
+          this.videoArr[i].timeData = videoArr[i].timeData;
+          this.videoArr[i].fileName = videoArr[i].fileName;
+        }
       }
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
@@ -470,6 +475,14 @@ export default {
           timeData: item.timeData // 流类型
         };
       });
+      // 存储每个视频分路的名字
+      let extra = {};
+      extra.videoArr = this.videoArr.map(item => {
+        return {
+          timeData: item.timeData,
+          fileName: item.fileName
+        };
+      });
       let data = {
         viewType: "playback", // 视图类型
         viewInfo: {
@@ -483,8 +496,10 @@ export default {
           width: 0, // 宽度
           height: 0 // 高度
         },
-        parentUuid: "" // 父节点uuid
+        parentUuid: "", // 父节点uuid
+        extra // 存储一些自己的格外节点
       };
+
       api2.addView(data).then(res => {
         if (res.data.success) {
           this.$message.success("保存视图成功！");
