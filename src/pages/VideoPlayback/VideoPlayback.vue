@@ -432,12 +432,12 @@ export default {
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
       let newdata = JSON.parse(JSON.stringify(data));
-      let elements = newdata.elements.map((item, index) => {
-        item.position = index;
-        item.mode = "original";
-        item.playStatus = 1;
-        return item;
-      });
+      // let elements = newdata.elements.map((item, index) => {
+      //   item.position = index;
+      //   item.mode = "original";
+      //   item.playStatus = 1;
+      //   return item;
+      // });
       let extra = newdata.extra || {};
       let videoArr = extra.videoArr || [];
       this.videoArr = videoArr;
