@@ -231,27 +231,6 @@ export default {
     // 点击确定按钮
     editBtnAct(status) {
       console.log("queryBody==", this.queryBody);
-      if (this.queryBody.password !== this.queryBody.confirmPassword) {
-        this.$message.warning("两次的密码不一致");
-        return;
-      }
-      // 密码格式
-      var eReg1 = /^(?![^a-zA-Z]+$)(?!\D+$)/;
-      if (!eReg1.test(this.queryBody.password)) {
-        this.$message.warning("密码至少包含数字，字母这两种（区分大小写）");
-        return;
-      }
-      // eslint-disable-next-line no-useless-escape
-      var eReg2 = /^[^\[\]\?\|\\\/\:\;\+\*\<\>]*$/;
-      if (!eReg2.test(this.queryBody.password)) {
-        this.$message.warning("不能包含特殊字符 /[]:;丨+*?<>");
-        return;
-      }
-      var eReg3 = /^[^\s]*$/;
-      if (!eReg3.test(this.queryBody.password)) {
-        this.$message.warning("字符中不能包含空格");
-        return;
-      }
       if (this.queryBody.roles) {
         let roleUuids = [];
         this.queryBody.roles.filter(i => {
@@ -292,6 +271,21 @@ export default {
             this.isload = !this.isload;
           });
       } else {
+        var eReg1 = /^(?![^a-zA-Z]+$)(?!\D+$)/;
+        if (!eReg1.test(this.queryBody.password)&&!eReg1.test(this.queryBody.confirmPassword)) {
+          this.$message.warning("密码至少包含数字，字母这两种（区分大小写）");
+          return;
+        }
+        var eReg2 = /^[^\[\]\?\|\\\/\:\;\+\*\<\>]*$/;
+        if (!eReg2.test(this.queryBody.password)&&!eReg2.test(this.queryBody.confirmPassword)) {
+          this.$message.warning("不能包含特殊字符 /[]:;丨+*?<>");
+          return;
+        }
+        var eReg3 = /^[^\s]*$/;
+        if (!eReg3.test(this.queryBody.password)&&!eReg3.test(this.queryBody.confirmPassword)) {
+          this.$message.warning("字符中不能包含空格");
+          return;
+        }
         let parms = this.queryBody;
         if (this.isAssociateSwitch === true) {
           parms.isAssociateStaff = 1;
