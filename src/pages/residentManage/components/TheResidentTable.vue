@@ -316,8 +316,7 @@ export default {
         that.getResident();
       }
     });
-
-    let name = this.$common.getAuthIsOwn('居民管理', '新增');
+    let name = this.$common.getAuthIsOwn("居民管理", "新增");
     console.log(name);
   },
   watch: {

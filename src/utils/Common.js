@@ -9,26 +9,27 @@ export var COMMON = {
    * 注：均以汉字名为索引
    */
   getAuthIsOwn(moduleName, btnName) {
-
-    if (store.state.auth.AuthList.filter(modelObj => {
-      return modelObj.nodeName === moduleName;
-    })[0] && store.state.auth.AuthList.filter(modelObj => {
-      return modelObj.nodeName === moduleName;
-    })[0].auth.filter(authObj => {
-      return btnName.indexOf(authObj.authName) !== -1;
-    })[0]) {
-      return store.state.auth.AuthList.filter(modelObj => {
+    if (btnName.length >= 2) {
+      if (store.state.auth.AuthList.filter(modelObj => {
+        return modelObj.nodeName === moduleName;
+      })[0] && store.state.auth.AuthList.filter(modelObj => {
         return modelObj.nodeName === moduleName;
       })[0].auth.filter(authObj => {
         return btnName.indexOf(authObj.authName) !== -1;
-      })[0].isOwn;
-    } else {
-      console.log('无效权限');
-      return false;
+      })[0]) {
+        return store.state.auth.AuthList.filter(modelObj => {
+          return modelObj.nodeName === moduleName;
+        })[0].auth.filter(authObj => {
+          return btnName.indexOf(authObj.authName) !== -1;
+        })[0].isOwn;
+      } else {
+        console.log('无效权限');
+        return false;
+      }
+    }else{
+      alert('按钮名称必须大于两个字符');
     }
-
   },
-
   // 校验手机号格式
   isPhoneNum(PhoneNum) {
     let prep = /^1[3456789]\d{9}$/;

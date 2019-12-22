@@ -120,10 +120,24 @@ function getAuthList() {
     .then(res => {
       console.log(res.data);
       let data = res.data.data || [];
-      store.dispatch('setAuthList', data);
+      let AllModulesArr = [];
+      getAllModulesArr(data, AllModulesArr);
+      store.dispatch('setAuthList', AllModulesArr);
     });
 }
 
+// 将所有的模块扁化
+function getAllModulesArr(data, AllModulesData) {
+  if (data && data.length) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].childNodes) {
+        getAllModulesArr(data[i].childNodes, AllModulesData);
+      } else {
+        AllModulesData.push(data[i]);
+      }
+    }
+  }
+}
 /**
  * 格式化路由映射 服务器返回的类 变成路由所需要的类
  */
