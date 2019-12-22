@@ -157,6 +157,7 @@ export default {
       }
       if (this.fileIdNum.length) {
         this.uploader.settings.multipart_params.templateType = this.templatetype;
+        this.uploader.settings.multipart_params.uuid = new Date().getTime();
         this.uploader.settings.url = RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
           this.$store.state.home.projectUuid,
           this.libraryuuid
@@ -174,6 +175,7 @@ export default {
         return;
       }
       /* eslint-disable */
+      let num = new Date().getTime();
       this.uploader = new plupload.Uploader({
         browse_button: "fileSelect", // 这里填写触发元素的按钮ID
         url: RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
@@ -184,12 +186,13 @@ export default {
         headers: {
           Authorization: _this.$store.state.home.Authorization
         }, //token值
-        // chunk_size: "1mb", // 分段上传，每个小段的大小
+        chunk_size: "1mb", // 分段上传，每个小段的大小
         filters: {
           max_file_size: "2000000mb"
         },
         multipart_params: {
-          templateType: _this.templatetype
+          templateType: _this.templatetype,
+          uuid: num
         },
         file_data_name: "multipartFile",
         init: {
