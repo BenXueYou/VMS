@@ -688,11 +688,13 @@ export default {
           roleUuid: this.roleUuid
         })
         .then(res => {
-          // console.log(res);
+          console.log(res.data);
           let data = res.data.data || [];
           this.data = data;
           this.initData();
         });
+      // this.data = this.$store.state.auth.AuthList;
+      // this.initData();
     }
   },
   watch: {

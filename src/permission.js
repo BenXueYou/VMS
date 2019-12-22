@@ -11,7 +11,6 @@ import store from "@/store/store";
   return true;
 } */
 import * as api from "@/pages/user/http/ajax.js";
-
 const whiteList = ["/Login"]; // 不重定向白名单
 let isInitRoute = false;
 router.beforeEach((to, from, next) => {
@@ -63,6 +62,9 @@ router.beforeEach((to, from, next) => {
               // );
               // router.addRoutes(routerData);
             });
+
+          // 这里请求用户的权限列表
+          getAuthList();
         }
       }
 
@@ -109,6 +111,18 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
   // NProgress.done() // 结束Progress
 });
+// 获取权限列表
+function getAuthList() {
+  api
+    .getAuth({
+      roleUuid: ''
+    })
+    .then(res => {
+      console.log(res.data);
+      let data = res.data.data || [];
+      store.dispatch('setAuthList', data);
+    });
+}
 
 /**
  * 格式化路由映射 服务器返回的类 变成路由所需要的类

@@ -316,6 +316,9 @@ export default {
         that.getResident();
       }
     });
+
+    let name = this.$common.getAuthIsOwn('居民管理', '新增');
+    console.log(name);
   },
   watch: {
     checkedLeftTreeData(val) {
@@ -867,7 +870,7 @@ export default {
 			}
 		}
 		.tableOperateBtnClass {
-			font-family: 'PingFangSC-Regular';
+			font-family: "PingFangSC-Regular";
 			font-size: 13px;
 			color: #26d39d;
 			display: flex;
@@ -876,13 +879,13 @@ export default {
 			display: inline-block;
 		}
 		.editFontClass {
-			font-family: 'PingFangSC-Regular';
+			font-family: "PingFangSC-Regular";
 			font-size: 13px;
 			color: #26d39d;
 			margin: 0 22px;
 		}
 		.deleteBtnClass {
-			font-family: 'PingFangSC-Regular';
+			font-family: "PingFangSC-Regular";
 			font-size: 13px;
 			color: #ff5f5f;
 		}
