@@ -1,51 +1,47 @@
 <template>
-	<el-dialog
-		:title="title"
-		@close="close"
-		:width="width"
-		:class="{'dialogCenter':center}"
-		:close-on-click-modal="false"
-		:append-to-body="true"
-		:visible.sync="TreechangeNameDialogVisible"
-	>
-		<div class="c">
-			<el-tree
-				:data="data"
-				node-key="featureUuid"
-				:props="props"
-				default-expand-all
-				:expand-on-click-node="false"
-			>
-				<span class="custom-tree-node" slot-scope="{ node, data }">
-					<div class="labelName">{{ node.label }}</div>
-					<div class="groupButton">
-						<el-checkbox
-							:indeterminate="data.isIndeterminate"
-							v-model="data.checkAll"
-							style="float:left;"
-							@change="handleCheckAllChange(node,data)"
-						>全选</el-checkbox>
-						<el-checkbox-group
-							v-model="data.checkAuth"
-							v-if="data.auth.length"
-							style="float:left;"
-							@change="handleCheckedCitiesChange(node,data)"
-						>
-							<el-checkbox
-								v-for="city in data.auth"
-								:label="city.authName"
-								:key="city.authName"
-							>{{city.authName}}</el-checkbox>
-						</el-checkbox-group>
-					</div>
-				</span>
-			</el-tree>
-		</div>
-		<div class="ss">
-			<el-button type="primary" class="butttt" @click="close" size="small">取消</el-button>
-			<el-button type="primary" class="butttt" @click="confirm" size="small">确定</el-button>
-		</div>
-	</el-dialog>
+  <el-dialog :title="title"
+             @close="close"
+             :width="width"
+             :class="{'dialogCenter':center}"
+             :close-on-click-modal="false"
+             :append-to-body="true"
+             :visible.sync="TreechangeNameDialogVisible">
+    <div class="c tears">
+      <el-tree :data="data"
+               node-key="featureUuid"
+               :props="props"
+               default-expand-all
+               :expand-on-click-node="false">
+        <span class="custom-tree-node"
+              slot-scope="{ node, data }">
+          <div class="labelName">{{ node.label }}</div>
+          <div class="groupButton">
+            <el-checkbox :indeterminate="data.isIndeterminate"
+                         v-model="data.checkAll"
+                         @change="handleCheckAllChange(node,data)">全选</el-checkbox>
+            <el-checkbox-group v-model="data.checkAuth"
+                               v-if="data.auth.length"
+                               class='macheckoutbox'
+                               @change="handleCheckedCitiesChange(node,data)">
+              <el-checkbox v-for="city in data.auth"
+                           :label="city.authName"
+                           :key="city.authName">{{city.authName}}</el-checkbox>
+            </el-checkbox-group>
+          </div>
+        </span>
+      </el-tree>
+    </div>
+    <div class="ss">
+      <el-button type="primary"
+                 class="butttt"
+                 @click="close"
+                 size="small">取消</el-button>
+      <el-button type="primary"
+                 class="butttt"
+                 @click="confirm"
+                 size="small">确定</el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -464,7 +460,7 @@ export default {
       node.data.checkAuth = checkAuth;
       node.data.checkAll = checkAuth.length === auth.length;
       node.data.isIndeterminate =
-				checkAuth.length > 0 && checkAuth.length < auth.length;
+        checkAuth.length > 0 && checkAuth.length < auth.length;
       let arr = checkAuth;
       let last = node;
       let previous = node;
@@ -481,7 +477,6 @@ export default {
           previous = previous.previousSibling;
         }
       }
-      // console.log(arr);
       if (node.parent) {
         this.traverseUpwrad(node.parent, arr);
       }
@@ -491,7 +486,7 @@ export default {
         data[i].data.checkAuth = checkAuth;
         data[i].data.checkAll = checkAuth.length === auth.length;
         data[i].data.isIndeterminate =
-					checkAuth.length > 0 && checkAuth.length < auth.length;
+          checkAuth.length > 0 && checkAuth.length < auth.length;
         if (data[i].childNodes.length) {
           this.dealParentOperator(data[i].childNodes, checkAuth);
         }
@@ -501,19 +496,24 @@ export default {
       // console.log(node);
       data.checkAll = data.checkAuth.length === data.auth.length;
       data.isIndeterminate =
-				data.checkAuth.length > 0 && data.checkAuth.length < data.auth.length;
+        data.checkAuth.length > 0 && data.checkAuth.length < data.auth.length;
       // 点击选项不是叶子点击的情况
       if (node.childNodes.length) {
         let xxx = this.getDifferent(data.checkAuth, data.lastCheckCities);
-        // console.log(xxx);
+        console.log(xxx);
         // lastCheckCities的作用记录修改的是哪个按钮的状态，这个按钮是被选中了还是取消了
         data.lastCheckCities = data.checkAuth;
         // 这里的函数名字起的比较随意
+        // 向下递归查询，将孩子节点的某个权限全部选中或者取消
+        console.log(node.childNodes);
+
         this.dealParentOperator222(node.childNodes, xxx.name, xxx.isAdd);
       }
+      // 向上更新所有节点的数据
       this.traverseUpwrad(node, data.checkAuth);
     },
     dealParentOperator222(data, name, isAdd) {
+      console.log(data);
       for (let i = 0, len = data.length; i < len; i++) {
         let checkAuth = data[i].data.checkAuth;
         if (isAdd) {
@@ -530,7 +530,7 @@ export default {
         data[i].data.checkAuth = checkAuth;
         data[i].data.checkAll = checkAuth.length === auth.length;
         data[i].data.isIndeterminate =
-					checkAuth.length > 0 && checkAuth.length < auth.length;
+          checkAuth.length > 0 && checkAuth.length < auth.length;
         if (data[i].childNodes.length) {
           this.dealParentOperator222(data[i].childNodes, name, isAdd);
         }
@@ -557,7 +557,7 @@ export default {
     },
     getCheckedNodes(data) {
       // 这里新增判断外面传进来的selectAuthUuid数组，根据里面的uuid判断选不选中
-      console.log(data);
+      // console.log(data);
       data = data.sort((v1, v2) => {
         return v1.authName - v2.authName;
       });
@@ -596,8 +596,8 @@ export default {
           data[i].checkAuth = this.getCheckedNodes(data[i].auth);
           data[i].checkAll = data[i].checkAuth.length === data[i].auth.length;
           data[i].isIndeterminate =
-						data[i].checkAuth.length > 0 &&
-						data[i].checkAuth.length < data[i].auth.length;
+            data[i].checkAuth.length > 0 &&
+            data[i].checkAuth.length < data[i].auth.length;
         } else {
           // console.log(checkAuth);
           data[i].auth = auth;
@@ -605,7 +605,7 @@ export default {
           data[i].lastCheckCities = checkAuth;
           data[i].checkAll = checkAuth.length === data[i].auth.length;
           data[i].isIndeterminate =
-						checkAuth.length > 0 && checkAuth.length < data[i].auth.length;
+            checkAuth.length > 0 && checkAuth.length < data[i].auth.length;
         }
         if (!arr.length) {
           arr = data[i].checkAuth;
@@ -708,76 +708,84 @@ export default {
 </script>
 <style lang="scss">
 .c {
-	.input {
-		input {
-			height: 30px;
-			line-height: 30px;
-		}
-	}
+  .input {
+    input {
+      height: 30px;
+      line-height: 30px;
+    }
+  }
 }
 </style>
 <style lang="scss" scoped>
 .custom-tree-node {
-	display: flex;
-	.labelName {
-		width: 200px;
-	}
-	.groupButton {
-		width: calc(100% - 200px);
-	}
+  display: flex;
+  width: calc(100%);
+  justify-content: space-between;
+  l .labelName {
+    width: 200px;
+  }
+  .groupButton {
+    display: flex;
+    justify-content: flex-start;
+    // width: calc(100% - 200px);
+    padding-right: 50px;
+  }
+}
+.macheckoutbox {
+  margin-left: 30px;
 }
 
 $labelwidth: 5em;
 .ss {
-	padding: 15px;
-	.butttt {
-		float: right;
-		margin-right: 30px;
-	}
-	&::after {
-		content: "";
-		display: block;
-		clear: both;
-	}
+  padding: 15px;
+  .butttt {
+    float: right;
+    margin-right: 30px;
+  }
+  &::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
 }
 .c {
-	overflow: auto;
-	max-height: 65vh;
-	min-height: 30vh;
-	padding: 10px 20px;
-	.body {
-		max-width: 300px;
-		width: 80%;
-		margin: 30px auto;
-		display: flex;
-		flex-wrap: wrap;
-		.label {
-			width: $labelwidth;
-			text-align: right;
-			line-height: 30px;
-			font-family: "PingFangSC-Regular";
-			padding-right: 5px;
-			box-sizing: border-box;
-			font-size: 13px;
-			color: #dddddd;
-			text-align: right;
-		}
-		.input {
-			width: calc(100% - #{$labelwidth});
-			box-sizing: border-box;
-			button {
-				height: 30px;
-				padding: 7px 21px;
-				background: rgba(40, 255, 187, 0.12);
-				border: 1px solid rgba(40, 255, 187, 0.8);
-				border-radius: 2px;
-				border-radius: 2px;
-				font-family: "PingFangSC-Regular";
-				font-size: 12px;
-				color: #ffffff;
-				letter-spacing: 0;
-			}
-		}
-	}
+  overflow: auto;
+  max-height: 65vh;
+  min-height: 30vh;
+  padding: 10px 20px;
+  .body {
+    max-width: 300px;
+    width: 80%;
+    margin: 30px auto;
+    display: flex;
+    flex-wrap: wrap;
+    .label {
+      width: $labelwidth;
+      text-align: right;
+      line-height: 30px;
+      font-family: "PingFangSC-Regular";
+      padding-right: 5px;
+      box-sizing: border-box;
+      font-size: 13px;
+      color: #dddddd;
+      text-align: right;
+    }
+    .input {
+      width: calc(100% - #{$labelwidth});
+      box-sizing: border-box;
+      button {
+        height: 30px;
+        padding: 7px 21px;
+        background: rgba(40, 255, 187, 0.12);
+        border: 1px solid rgba(40, 255, 187, 0.8);
+        border-radius: 2px;
+        border-radius: 2px;
+        font-family: "PingFangSC-Regular";
+        font-size: 12px;
+        color: #ffffff;
+        letter-spacing: 0;
+      }
+    }
+  }
 }
 </style>
