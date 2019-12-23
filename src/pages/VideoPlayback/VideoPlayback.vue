@@ -589,7 +589,7 @@ export default {
       videos = {
         fileName: channelName, // 文件名
         videoType: videoType, // 录像类型，必填
-        streamType: "third", // 码流类型
+        streamType: "thrid", // 码流类型
         rtspUrl,
         startTime: sd,
         endTime: ed,

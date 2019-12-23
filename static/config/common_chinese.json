@@ -261,7 +261,7 @@
   "stream": {
     "main": "主码流",
     "sub": "辅码流",
-    "third": "第三码流"
+    "thrid": "第三码流"
   },
   "record": {
     "normal_vod": "普通录像",

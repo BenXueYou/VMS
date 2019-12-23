@@ -1680,7 +1680,7 @@ export default {
     }
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
-    padding: 6px 0px;
+    padding: 6px 3px 6px 0px;
   }
 }
 </style>
@@ -1770,7 +1770,7 @@ export default {
       // overflow: hidden;
       // display: block;
       // text-overflow: ellipsis;
-      margin-left: 10px;
+      margin-left: 5px;
       white-space: nowrap;
       user-select: none;
       // float: left;

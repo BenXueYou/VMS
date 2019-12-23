@@ -181,7 +181,9 @@ export default {
         sub: "辅码流",
         thrid: "第三码流"
       };
+      console.log("-------------------");
       console.log(this.streamType);
+      console.log(obj[this.streamType]);
       return obj[this.streamType];
     },
     menuData() {
