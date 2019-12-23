@@ -283,10 +283,10 @@ export default {
       this.devBelong = "";
     },
     exportDoor() {
-      // if (!this.tagUuid) {
-      //   this.$message.error("请选择左边导入的标签!");
-      //   return;
-      // }
+      if (!this.tagUuid) {
+        this.$message.warning("请选择左边导入的标签!");
+        return;
+      }
       // 导入通道的时候去获取下拉列表
 
       this.checkedNode = [];

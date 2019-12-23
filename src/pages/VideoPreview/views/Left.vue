@@ -572,6 +572,7 @@ export default {
         });
     },
     chuliData(streamType = "") {
+      console.log(this.operatorData);
       if (this.operatorData.nodeType === "chnNode") {
         this.getPreviewInfo(
           this.operatorData.id,
@@ -587,8 +588,8 @@ export default {
       } else if (this.operatorData.hasOwnProperty("channelType")) {
         this.getPreviewInfo(
           this.operatorData.channelUuid,
-          streamType,
-          this.operatorData
+          this.operatorData,
+          streamType
         );
       } else if (this.operatorData.hasOwnProperty("tagType")) {
         this.getChannelByNode(this.operatorData.id).then(res => {
@@ -623,11 +624,18 @@ export default {
       ) {
         this.chuliData(command);
       } else if (command === "playback") {
+        console.log(this.operatorData);
         if (this.operatorData.nodeType === "chnNode") {
           this.$emit(
             "switchLuxiang",
             this.operatorData.id,
             this.operatorData.label
+          );
+        } else if (this.operatorData.hasOwnProperty("channelUuid")) {
+          this.$emit(
+            "switchLuxiang",
+            this.operatorData.channelUuid,
+            this.operatorData.channelName
           );
         } else {
           this.$message.error("请选择通道查看录像！");
@@ -645,7 +653,7 @@ export default {
       // if (!data.isOnline) {
       //   return;
       // }
-      console.log(data);
+      console.log(channelUuid, data, streamType, operator);
       this.$emit("playRtsp", channelUuid, streamType, data, operator);
     },
     handleNodeClick() {
