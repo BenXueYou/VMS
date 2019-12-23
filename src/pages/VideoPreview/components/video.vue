@@ -176,11 +176,13 @@ export default {
   },
   computed: {
     streamText() {
-      return {
+      let obj = {
         main: "主码流",
         sub: "辅码流",
-        third: "第三码流"
-      }[this.streamType];
+        thrid: "第三码流"
+      };
+      console.log(this.streamType);
+      return obj[this.streamType];
     },
     menuData() {
       return [

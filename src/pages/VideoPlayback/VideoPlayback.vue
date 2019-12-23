@@ -523,7 +523,7 @@ export default {
           arr[i].hasOwnProperty("channelType")
         ) {
           this.playVideo(
-            arr[i].id,
+            arr[i].id || arr[i].channelUuid,
             arr[i].label,
             sd,
             ed,

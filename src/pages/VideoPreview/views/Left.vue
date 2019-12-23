@@ -58,6 +58,7 @@
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
+                   class="mypanel2"
                    name="tag">
         <el-tree :props="props"
                  class='videoTree2'
@@ -70,7 +71,7 @@
           <div class="custom-tree-node"
                @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
-            <div class="channelStatus2">
+            <div class="channelStatus channelStatus2">
               <img :src="data.icon"
                    v-if="data.icon"
                    alt="">
@@ -106,7 +107,7 @@
       <el-tab-pane label="视图"
                    name="view">
         <el-tree :props="viewProps"
-                 class='videoTree2'
+                 class='videoTree3'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
@@ -1616,6 +1617,9 @@ export default {
     // width: 380px;
     height: calc(100vh - 185px);
   }
+  .mypanel2 {
+    height: calc(100vh - 185px);
+  }
   .showMaxWidth {
     width: 196px;
   }
@@ -1664,6 +1668,15 @@ export default {
     }
     .custom-tree-node {
       width: calc(100% - 30px);
+    }
+  }
+  .videoTree3 {
+    .el-tree-node,
+    .el-tree-node__content {
+      width: 100%;
+    }
+    .custom-tree-node {
+      width: calc(100%);
     }
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
@@ -1735,6 +1748,22 @@ export default {
       flex-basis: 20px;
       flex-shrink: 20px;
       flex-flow: 20px;
+      img {
+        width: 12px;
+        height: 12px;
+        user-select: none;
+      }
+      .span {
+        font-size: 12px;
+        color: #dddddd;
+        min-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .channelOffline {
+        color: #999999;
+      }
     }
     .span {
       // width: calc(100% - 30px);
