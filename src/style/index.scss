@@ -87,13 +87,13 @@ img,
   opacity: 0.5;
   background: #000;
 }
-.el-icon-circle-close:before {
+.el-image-viewer__wrapper .el-icon-circle-close:before {
   content: "\E6DB";
   color: rgba(255, 255, 255, 0.5);
   margin-right: 15px;
   font-size: 28px;
 }
-.el-image-viewer__btn.el-image-viewer__close {
+.el-image-viewer__wrapper .el-image-viewer__close {
   position: absolute;
   top: calc(15vh + 20px);
   right: 20%;
