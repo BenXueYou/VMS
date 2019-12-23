@@ -142,7 +142,7 @@ export default {
           ) +
             "?templateType=" +
             this.templatetype,
-          "模板.xlsx",
+          this.templatetype === 'e_prisoner' ? "模板.txt" : "模板.xlsx",
           "GET"
         );
       }
