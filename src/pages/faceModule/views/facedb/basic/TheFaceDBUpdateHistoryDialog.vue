@@ -157,7 +157,8 @@ export default {
       },
       stompClient: null,
       selectedTabRow: null,
-      interval: null
+      interval: null,
+      refreshFlag: false,
     };
   },
   methods: {
@@ -292,7 +293,9 @@ export default {
       }
     },
     handleSubscribe(data) {
+      this.refreshFlag = true;
       if (!data) {
+        this.refreshFlag = false;
         return;
       }
       if (this.tableData && this.tableData.length > 0) {
@@ -340,11 +343,12 @@ export default {
       );
     },
     setIntervalMethod() {
-      if (this.selectedTabRow.importProgress < 100) {
-        this.interval = setInterval(() => {
+      this.interval = setInterval(() => {
+        if (this.refreshFlag) {
           this.gettaskdetail();
-        }, 3000);
-      }
+          this.refreshFlag = false;
+        }
+      }, 3000);
     }
   },
   watch: {

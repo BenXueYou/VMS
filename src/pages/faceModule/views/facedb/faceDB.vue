@@ -301,9 +301,9 @@ export default {
       listTableColumns: [], // 右边表格，显示哪些数据
       ws: "", // 定义全局的websocket对象,
       currentRowIndex: "",
-      importProgress: 100,
       stompClient: null,
-      interval: null
+      interval: null,
+      refreshFlag: false
     };
   },
   computed: {
@@ -825,17 +825,18 @@ export default {
       }
     },
     handleSubscribe(data) {
+      this.refreshFlag = true;
       if (!data) {
-        return;
+        this.refreshFlag = false;
       }
-      this.importProgress = data.importProgress;
     },
     setIntervalMethod() {
       this.interval = setInterval(() => {
-        if (this.importProgress < 100) {
+        if (this.refreshFlag) {
           this.getStaffLibList(true);
+          this.refreshFlag = false;
         }
-      }, 2000);
+      }, 3000);
     }
   },
   mounted() {
@@ -864,6 +865,7 @@ export default {
       clearInterval(this.interval);
     }
     this.disConnectSocket();
+    this.refreshFlag = false;
   },
   destroyed() {
     // alert('destroyed')
