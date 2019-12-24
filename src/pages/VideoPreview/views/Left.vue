@@ -1788,7 +1788,7 @@ export default {
       margin-left: 5px;
     }
     .threelinemenu {
-      // display: none;
+      display: none;
       float: right;
       margin-right: 10px;
     }
