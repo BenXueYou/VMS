@@ -1673,15 +1673,16 @@ export default {
     .el-tree-node,
     .el-tree-node__content {
       width: 100%;
+      box-sizing: border-box;
     }
     .custom-tree-node {
-      width: calc(100% - 30px);
+      width: calc(100% - 40px);
     }
   }
   .videoTree3 {
     .el-tree-node,
     .el-tree-node__content {
-      width: 100%;
+       width: 100% !important;
     }
     .custom-tree-node {
       width: calc(100%);
@@ -1787,7 +1788,7 @@ export default {
       margin-left: 5px;
     }
     .threelinemenu {
-      display: none;
+      // display: none;
       float: right;
       margin-right: 10px;
     }

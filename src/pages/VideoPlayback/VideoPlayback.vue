@@ -100,7 +100,32 @@ import setPlayTimeDialog from "@/pages/VideoPlayback/components/setPlayTimeDialo
 import icons from "@/common/icon.js";
 import * as api from "@/pages/equipmentMange/ajax.js";
 import * as api2 from "@/pages/VideoPreview/ajax.js";
-
+let videoArrAA = Array.from({ length: 16 }, (item, index) => {
+  item = {
+    width: 0,
+    height: 0,
+    rtspUrl: "",
+    position: index,
+    fileName: "测试文件名字1",
+    // startTime: "2019-11-19 00:00:00",
+    // endTime: "2019-11-19 23:59:59",
+    startTime: "",
+    endTime: "",
+    mode: "original",
+    playStatus: 0,
+    timeData: [
+      // {
+      //   startTime: "2019-11-12 00:00:00", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
+      //   endTime: "2019-11-12 15:00:00" // 结束时间（yyyy-MM-dd hh:mm:ss），必填
+      // },
+      // {
+      //   startTime: "2019-11-19 11:59:59", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
+      //   endTime: "2019-11-19 23:00:00" // 结束时间（yyyy-MM-dd hh:mm:ss），必填
+      // }
+    ]
+  };
+  return item;
+});
 export default {
   name: "VideoPreview",
   components: {
@@ -133,32 +158,7 @@ export default {
       fullscreen: false,
       videoInfoVisible: false,
       imageAdjustVisible: false,
-      videoArr: Array.from({ length: 16 }, (item, index) => {
-        item = {
-          width: 0,
-          height: 0,
-          rtspUrl: "",
-          position: index,
-          fileName: "测试文件名字1",
-          // startTime: "2019-11-19 00:00:00",
-          // endTime: "2019-11-19 23:59:59",
-          startTime: "",
-          endTime: "",
-          mode: "original",
-          playStatus: 0,
-          timeData: [
-            // {
-            //   startTime: "2019-11-12 00:00:00", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
-            //   endTime: "2019-11-12 15:00:00" // 结束时间（yyyy-MM-dd hh:mm:ss），必填
-            // },
-            // {
-            //   startTime: "2019-11-19 11:59:59", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
-            //   endTime: "2019-11-19 23:00:00" // 结束时间（yyyy-MM-dd hh:mm:ss），必填
-            // }
-          ]
-        };
-        return item;
-      }),
+      videoArr: videoArrAA,
       icons,
       fenlu: [1, 4, 8, 9, 16],
       fenluIndex: 0,
@@ -448,7 +448,7 @@ export default {
       //   return item;
       // });
       let extra = newdata.extra || {};
-      let videoArr = extra.videoArr || [];
+      let videoArr = extra.videoArr || videoArrAA;
       this.videoArr = videoArr;
       // for (let i = 0, len = elements.length; i < len; i++) {
       //   this.videoArr[i] = elements[i];
