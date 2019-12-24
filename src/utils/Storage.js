@@ -12,9 +12,9 @@ export var Storage = {
     } */
     try {
       if (typeof value != "string") {
-        window.sessionStorage.setItem(key, JSON.stringify(value));
+        window.localStorage.setItem(key, JSON.stringify(value));
       } else {
-        window.sessionStorage.setItem(key, value);
+        window.localStorage.setItem(key, value);
       }
     } catch (error) {
       console.log(error);
@@ -39,7 +39,7 @@ export var Storage = {
    */
   read(key) {
     let data = null;
-    let jsonStr = window.sessionStorage.getItem(key);
+    let jsonStr = window.localStorage.getItem(key);
     try {
       data = JSON.parse(jsonStr);
     } catch (error) {
