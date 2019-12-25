@@ -130,8 +130,8 @@ export default {
         `/iacserv-v1/project/${store.state.home.projectUuid}/operation/opendoor/channel/${channelUuid}/action/${action}`,
       getStatistics: `/iacapp-v1/project/${store.state.home.projectUuid}/door/statistics`,
       removeAlarm: channelUuid =>
-        `/iacserv-v1/project/${store.state.home.projectUuid}/operation/operation/removeAlarm/channel/${channelUuid}`,
-      allOperation: `/iacserv-v1/project/${store.state.home.projectUuid}/operation/project/${store.state.home.projectUuid}/device/toMgr`
+        `/iacserv-v1/project/${store.state.home.projectUuid}/operation/removeAlarm/channel/${channelUuid}`,
+      allOperation: `/iacserv-v1/project/${store.state.home.projectUuid}/operation/device/toMgr`
     },
 
     /**
