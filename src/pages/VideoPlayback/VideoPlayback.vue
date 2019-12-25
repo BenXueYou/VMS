@@ -1092,7 +1092,6 @@ export default {
     PreviewAreafullScreen() {
       // this.setFullScreen(this.$refs.vedioWrap);
       var element = document.documentElement;
-      this.initWrapDom();
       if (this.fullscreen) {
         if (document.exitFullscreen) {
           document.exitFullscreen();
@@ -1119,7 +1118,10 @@ export default {
         console.log("已全屏！");
       }
       // // 改变当前全屏状态
-      this.fullscreen = !this.fullscreen;
+      setTimeout(() => {
+        this.fullscreen = true;
+        this.initWrapDom();
+      }, 100);
     },
     setFullScreen(target) {
       if (target.requestFullscreen) {

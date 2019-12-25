@@ -1022,7 +1022,8 @@
       </div>
     </div>
     <!--详情弹窗-->
-    <el-dialog class="detailDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="detailDialog"
                :title="'员工详情'"
                :visible.sync="detailDialog"
                @close="closeDialog"
@@ -1187,7 +1188,8 @@
       </div>
     </el-dialog>
     <!--删除弹窗-->
-    <el-dialog class="deleteDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="deleteDialog"
                :visible.sync="deleteDialog"
                width="400px">
       <div class="con">
@@ -1204,7 +1206,8 @@
       </div>
     </el-dialog>
     <!--修改名称弹窗-->
-    <el-dialog class="editDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="editDialog"
                :title="'修改名称'"
                :visible.sync="editDialog"
                close="closeDialog"
@@ -1222,7 +1225,8 @@
       </div>
     </el-dialog>
     <!--修改标签弹窗-->
-    <el-dialog class="editDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="editDialog"
                :title="'修改标签'"
                :visible.sync="editLabelDialog"
                close="closeDialog"
@@ -1240,7 +1244,8 @@
       </div>
     </el-dialog>
     <!--新建部门弹窗-->
-    <el-dialog class="editDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="editDialog"
                :title="'新建部门'"
                :visible.sync="newDialog"
                @close="closeDialog"
@@ -1258,7 +1263,8 @@
       </div>
     </el-dialog>
     <!--标签详情弹窗-->
-    <el-dialog class="labelDetailDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="labelDetailDialog"
                :title="'标签详情'"
                :visible.sync="labelDetailDialog"
                @close="closeDialog"
@@ -1287,7 +1293,7 @@
                                 title="批量导入员工"
                                 type="personnel"></the-resident-import-dialog>
 
-    <!-- <el-dialog class='importDialog'
+    <!--  <el-dialog :class="{'dialogCenter':true}" class='importDialog'
                :title="'Excel批量导入人员'"
                :visible.sync="importDialog"
                @close="closeDialog"
@@ -1318,7 +1324,8 @@
 		</el-dialog>-->
 
     <!--Excel批量导出人员-->
-    <el-dialog class="exportDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="exportDialog"
                :title="'Excel批量导出人员'"
                :visible.sync="exportDialog"
                @close="closeDialog"
@@ -1346,7 +1353,8 @@
     </el-dialog>
 
     <!--数据统计弹窗-->
-    <el-dialog class="StaticsViewDialogClass"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="StaticsViewDialogClass"
                width="550px"
                :title="chartTitle"
                :visible.sync="dataChartDialog"
@@ -1386,7 +1394,8 @@
       </div>
     </el-dialog>
     <!--新增卡片弹窗-->
-    <el-dialog class="addCardDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="addCardDialog"
                :title="'新增卡片'"
                :visible.sync="addCardDialog"
                @close="closeDialog"
@@ -1437,7 +1446,8 @@
       </div>
     </el-dialog>
     <!--编辑卡片弹窗-->
-    <el-dialog class="addCardDialog"
+    <el-dialog :class="{'dialogCenter':true}"
+               class="addCardDialog"
                :title="'编辑卡片'"
                :visible.sync="editCardDialog"
                @close="closeDialog"
@@ -1488,7 +1498,8 @@
       </div>
     </el-dialog>
     <!--h5拍照-->
-    <el-dialog title="拍照"
+    <el-dialog :class="{'dialogCenter':true}"
+               title="拍照"
                center
                :visible.sync="shootPhotoDialogVisible"
                :width="`${canvWidth ? canvWidth + 50 : '1300'}px`"
@@ -3265,6 +3276,10 @@ export default {
         this.initApartmentTree();
         this.clickNode(res);
       } else {
+        if (res.tagUuids) {
+          this.tableData1 = [];
+          return;
+        }
         this.currentPage2 = 1;
         this.labelName = res.tagName;
         this.labelTagUuid = res.tagUuid;

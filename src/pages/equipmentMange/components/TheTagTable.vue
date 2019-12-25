@@ -386,7 +386,12 @@ export default {
   },
   watch: {
     tagUuid(val) {
-      this.getTagList();
+      console.log(val);
+      if (val) {
+        this.getTagList();
+      } else {
+        this.tableData = [];
+      }
     }
   }
 };

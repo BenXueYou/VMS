@@ -1,6 +1,6 @@
 <template>
 	<el-dialog
-		class="MyDialogClass"
+		class="MyDialogClass dialogCenter"
 		width="700px"
 		:title="title"
 		:modal="modal"

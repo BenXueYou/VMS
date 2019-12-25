@@ -225,6 +225,8 @@ export default {
             // this.commit("tagUuid",result[0].tagUuid);
             if (!result[0]) {
               this.data2 = result;
+              this.$store.commit("setTagUuid", "");
+              this.$emit("clickNode", {});
               return;
             }
 
@@ -233,6 +235,7 @@ export default {
               this.$store.commit("setTagUuid", result[0].tagUuid);
               this.$store.commit("setTag", result[0]);
               this.$emit("clickNode", result[0]);
+
               result[0].selected = true;
             } else {
               let index = 0;
