@@ -4,18 +4,18 @@
       <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')" width="100%" height="100%">
     </div>
     <div class="fellow-info-detail-line1">
-      <div class="title">
+      <div class="title text-show">
         共同摄像头{{item.travelTogetherChannel ? item.travelTogetherChannel : "未知"}}个
       </div>
-      <div class="title" style="margin-left: 2px;">
+      <div class="title text-show" style="margin-left: 2px;">
         同行{{item.travelTogetherFrequency ? item.travelTogetherFrequency : "未知"}}次
       </div>
     </div>
     <div class="fellow-info-detail-line2">
-      <div class="title">
+      <div class="title text-show">
         {{item.staffName ? item.staffName : "未知"}}
       </div>
-      <div class="title">
+      <div class="title text-show">
         {{item.faceLibraryName ? item.faceLibraryName : "未知"}}
       </div>
     </div>
