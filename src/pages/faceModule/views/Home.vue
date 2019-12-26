@@ -391,7 +391,7 @@ export default {
           arr.unshift(item);
         } else {
           if (this.checkedTaskUUidList && this.checkedTaskUUidList.length) {
-            if(this.todayCompareCount>0){
+            if (this.todayCompareCount > 0) {
               this.todayCompareCount -= 1;
             }
           }
@@ -478,13 +478,9 @@ export default {
       for (let i = 0; i < treeIcons.length; i++) {
         if (treeIcons[i].value === type) {
           if (isOnline === "offline") {
-            icon = require(`@/assets/images/treeIcons/${
-              treeIcons[i].icon
-            }2.png`);
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
           } else {
-            icon = require(`@/assets/images/treeIcons/${
-              treeIcons[i].icon
-            }.png`);
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
           }
           break;
         }

@@ -131,7 +131,7 @@
                style="width: 13%; display: flex; align-items: center">
             <span>布控颜色：</span>
             <div class="monitor-color"
-                 :style="`background-color:${faceMonitorObj.taskColour ? faceMonitorObj.taskColour : 'transparent'}; opacity: 0.2`"></div>
+                 :style="`background-color:${faceMonitorObj.taskColour ? faceMonitorObj.taskColour : 'transparent'};`"></div>
           </div>
           <div class="info-block block-line"
                style="width: 13%">目标人列表：{{faceMonitorObj.reservedCount}} </div>
