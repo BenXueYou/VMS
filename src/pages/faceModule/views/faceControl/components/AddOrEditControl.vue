@@ -173,6 +173,7 @@
                         prop="taskColour">
             <el-color-picker v-model="formLabelAlign.taskColour"
                              size="mini"
+                             show-alpha
                              style="margin-top: 7px;margin-left: 8px;"></el-color-picker>
           </el-form-item>
           <el-form-item label="布控状态："
