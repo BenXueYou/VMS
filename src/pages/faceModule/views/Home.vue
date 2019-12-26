@@ -376,9 +376,19 @@ export default {
       //     }
       //   }
       // });
-      this.photoList.unshift(val[val.length - 1]);
-
-      this.todayShootCount++;
+      // 判断推送过来数据是不是选中的通道
+      let channelUuid = val[val.length - 1].channelUuid;
+      if (
+        !this.notCheckAll ||
+        this.checkedChannelsUuidList.indexOf(channelUuid) !== -1
+      ) {
+        // 显示的是单通道
+        this.todayShootCount++;
+        this.photoList.unshift(val[val.length - 1]);
+        if (this.photoList.length > 9) {
+          this.photoList.pop();
+        }
+      }
     },
     RecognizationArr(val) {
       // 这里socket推送抓拍记录，会有已经的历史记录，所以直接推送过来第一张加入到抓拍记录
@@ -400,6 +410,9 @@ export default {
       //   }
       // });
       this.comparePhotoList.unshift(val[val.length - 1]);
+      if (this.comparePhotoList.length > 5) {
+        this.comparePhotoList.pop();
+      }
       this.comparePhotoList.pop();
       // this.getRecongizeList();
     },
@@ -482,9 +495,13 @@ export default {
       for (let i = 0; i < treeIcons.length; i++) {
         if (treeIcons[i].value === type) {
           if (isOnline === "offline") {
-            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }2.png`);
           } else {
-            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }.png`);
           }
           break;
         }

@@ -21,7 +21,7 @@
           <el-col :span="6"
                   class="asidListRowFooter imgTxtClass">
             <div class="cursorClass"
-                @click="clickDetailAct">
+                 @click="clickDetailAct">
               <span>详情</span>
               <img src="@/assets/images/faceModule/detail_btn_icon.png" />
             </div>
@@ -64,7 +64,7 @@
           <div @mouseover="mymouseover"
                @mouseout="mymouseout"
                @mousemove="mymousemove"
-               class="asidFontClass textclipsClass">{{recoginizeItem.channelName||'通道名称'}}</div>
+               class="asidFontClass textclipsClass aaaaaa">{{recoginizeItem.channelName||'通道名称'}}</div>
           <template v-if="imgWidth>95">
             <div @mouseover="mymouseover"
                  @mouseout="mymouseout"
@@ -197,6 +197,13 @@ export default {
   text-overflow: ellipsis;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+}
+.RecognizeCardClass .aaaaaa {
+  width: 100%;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .RecognizeCardClass .imgTxtClass {
