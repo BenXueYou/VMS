@@ -360,44 +360,48 @@ export default {
   },
   watch: {
     CapturePhotoArr(val) {
-      // console.log(val);
-      let arr = [];
-      let snapshotTotal = this.todayShootCount;
-      snapshotTotal++;
-      val.map(item => {
-        if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
-          arr.unshift(item);
-        } else {
-          if (
-            this.checkedChannelsUuidList &&
-            this.checkedChannelsUuidList.length
-          ) {
-            snapshotTotal--;
-          }
-        }
-      });
-      this.photoList = arr;
-      if (snapshotTotal < 0) {
-        snapshotTotal = 0;
-      }
-      this.todayShootCount = snapshotTotal;
+      console.log(val);
+      // let arr = [];
+      // let snapshotTotal = this.todayShootCount;
+      // snapshotTotal++;
+      // val.map(item => {
+      //   if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
+      //     arr.unshift(item);
+      //   } else {
+      //     if (
+      //       this.checkedChannelsUuidList &&
+      //       this.checkedChannelsUuidList.length
+      //     ) {
+      //       snapshotTotal--;
+      //     }
+      //   }
+      // });
+      this.photoList.unshift(val[val.length - 1]);
+
+      this.todayShootCount++;
     },
     RecognizationArr(val) {
+      // 这里socket推送抓拍记录，会有已经的历史记录，所以直接推送过来第一张加入到抓拍记录
       console.log(val);
-      let arr = [];
+      // let num = val;
+      // let arr = [];
       this.todayCompareCount += 1;
-      val.map(item => {
-        if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
-          arr.unshift(item);
-        } else {
-          if (this.checkedTaskUUidList && this.checkedTaskUUidList.length) {
-            if(this.todayCompareCount>0){
-              this.todayCompareCount -= 1;
-            }
-          }
-        }
-      });
-      this.comparePhotoList = arr;
+
+      // arr.unshift(val[val.length - 1]);
+      // val.map(item => {
+      //   if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
+      //     arr.unshift(item);
+      //   } else {
+      //     if (this.checkedTaskUUidList && this.checkedTaskUUidList.length) {
+      //       if (this.todayCompareCount > 0) {
+      //         this.todayCompareCount -= 1;
+      //       }
+      //     }
+      //   }
+      // });
+      this.comparePhotoList.unshift(val[val.length - 1]);
+      this.comparePhotoList.pop();
+      // this.getRecongizeList();
     },
     DeviceOnOffArr(val) {
       console.log(val);

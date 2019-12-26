@@ -282,8 +282,8 @@ export default {
       this.$store.dispatch("setProjectUuid", "");
       this.$store.dispatch("setTagViewArr", []);
       this.$store.dispatch("setLocalTag", "Home");
-      localStorage.setItem("iccSignalRule", "");
-      localStorage.setItem("iccMediaRule", "");
+      sessionStorage.setItem("iccSignalRule", "");
+      sessionStorage.setItem("iccMediaRule", "");
       this.$router.push({
         name: "Login"
       });
