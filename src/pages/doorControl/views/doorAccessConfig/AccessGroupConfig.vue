@@ -517,6 +517,21 @@ export default {
               this.$refs.mytable.setCurrentRow(this.tableData[index]);
             }
           }
+        } else {
+          this.tableData = [];
+          this.groupName = "";
+          this.doorNum = [];
+          this.peopleNum = [];
+          this.doorChildNum = [];
+          this.time = [];
+          this.updateTime = "";
+          this.createTime = "";
+          this.groupName = "";
+          this.updateMan = "";
+          this.date = [];
+          this.doorCount = 0;
+          this.peopleCount = 0;
+          this.doorNum = [];
         }
       });
     },

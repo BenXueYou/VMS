@@ -413,7 +413,7 @@ export default {
       if (this.comparePhotoList.length > 5) {
         this.comparePhotoList.pop();
       }
-      this.comparePhotoList.pop();
+      // this.comparePhotoList.pop();
       // this.getRecongizeList();
     },
     DeviceOnOffArr(val) {
