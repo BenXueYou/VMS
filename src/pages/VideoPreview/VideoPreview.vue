@@ -975,7 +975,7 @@ export default {
       this.$refs["video" + index][0].record();
 
       api2.downloadRecordLog({
-        channelUuid: this.operatorData.channelUuid,
+        channelUuid: this.videoArr[index].channelUuid,
         viewType: "preview"
       });
     },

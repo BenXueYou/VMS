@@ -57,7 +57,14 @@ export default {
   // 根据组织或者设备获取下面的在线通道
   getOnlineChannelUrl: `${zwUrlPrefix}/open/video/channel/list`,
   downloadRecordLogUrl: `${urlPrefix}/video/download/log`,
-  getPreviewTreeUrl: `${zwUrlPrefix}/auth/organization/tree`
+  getPreviewTreeUrl: `${zwUrlPrefix}/auth/organization/tree`,
   // 先使用下面的url测试
   // videoTreeUrl: `http://192.168.9.164:9000/project/a2445ed3830b4a3d9607ef502e8333bf/organization/video/children`
+  // 人脸预览切换通道日志
+  log1Url: `${
+    window.config.protocolHeader
+  }${ip}/faceconfig-v1/project/${projectUuid}/faceInfo/capture/log`,
+  log2Url: `${
+    window.config.protocolHeader
+  }${ip}/faceconfig-v1/project/${projectUuid}/faceInfo/capture/log`
 };

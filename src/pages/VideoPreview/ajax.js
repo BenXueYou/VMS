@@ -67,6 +67,22 @@ export function downloadRecordLog(data) {
     data
   });
 }
+export function log1(data) {
+  let url = vUrl.log1Url;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
+export function log2(data) {
+  let url = vUrl.log2Url;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
 export function getPreset(params) {
   let url = vUrl.getPresetUrl;
   return axios({
