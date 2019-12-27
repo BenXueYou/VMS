@@ -971,6 +971,11 @@ export default {
       this.videoArr.splice(index, 1, item);
 
       this.$refs["video" + index][0].record();
+
+      api2.downloadRecordLog({
+        channelUuid: this.operatorData.channelUuid,
+        viewType: "preview"
+      });
     },
     stopRecord(index) {
       if (!this.videoArr[index].channelUuid) {

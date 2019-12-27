@@ -51,6 +51,14 @@ export function getPreviewTree(data) {
     data
   });
 }
+export function downloadRecordLog(data) {
+  let url = vUrl.downloadRecordLogUrl;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
 export function getPreset(params) {
   let url = vUrl.getPresetUrl;
   return axios({

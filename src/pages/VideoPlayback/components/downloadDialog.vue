@@ -142,9 +142,10 @@ export default {
       // 下载的时候判断是海康还是大华的设备
       // 大华NVR不暂停视频 进行下载
       // 海康IPC暂停视频在进行下载
-      if (row.deviceType === "ipc") {
-        this.$emit("shutdownVideo");
-      }
+      // 就算是大华的nvr也要暂停，因为不知道他支不支持多路拉流
+      // if (row.deviceType === "ipc") {
+      this.$emit("shutdownVideo");
+      // }
       console.log(url);
       // eslint-disable-next-line
       var video_mgr = new window.CVideoMgrSdk(function() {});
@@ -159,6 +160,10 @@ export default {
         speed: 4
       });
       video_mgr.play(video);
+      api2.downloadRecordLog({
+        channelUuid: row.channelUuid,
+        viewType: "playback"
+      });
     },
     deleteVideo(device) {},
     close() {
