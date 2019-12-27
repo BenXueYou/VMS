@@ -11,6 +11,8 @@ wfsControl.prototype.setup = function(video) {
   this.wfs.attachMedia({
     video: video
   });
+  console.log(video);
+  video.setAttribute("muted", "muted");
   const _this = this;
   this.video = video;
   document.addEventListener("visibilitychange", function() {
