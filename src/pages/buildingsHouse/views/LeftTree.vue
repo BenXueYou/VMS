@@ -95,7 +95,8 @@ export default {
       isDisableAdd: false,
       lastLevelType: "",
       clickObj: {},
-      isShowCopy: true
+      isShowCopy: true,
+      isInit: true
     };
   },
   created() {},
@@ -191,6 +192,7 @@ export default {
     },
     handleNodeClick(obj, node, component) {
       console.log(node);
+      this.isInit = false;
       this.$emit("setTreeRootData", obj);
       this.clickObj = this.$common.copyObject(obj, this.clickObj);
       this.currentNode = node;
@@ -242,6 +244,8 @@ export default {
     },
     refreshNode(param) {
       if (param === "init") {
+        this.initData();
+      } else if (param !== "init" && this.isInit) {
         this.initData();
       } else {
         // if (!this.currentNode.expanded) {
