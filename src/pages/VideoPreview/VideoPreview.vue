@@ -70,7 +70,8 @@
           <gt-button class='button'
                      @click='saveShiTu'
                      :showClose="false">保存视图</gt-button>
-          <el-dropdown @command="changeView">
+          <el-dropdown @command="changeView"
+                       trigger="click">
             <gt-button class='button'
                        :showClose="false">
               {{videoMode}}
@@ -81,7 +82,7 @@
             </el-dropdown-menu>
           </el-dropdown>
 
-          <gt-button class='button aaaca'
+          <gt-button class='button'
                      :icon="icons.fullScreen"
                      @click="PreviewAreafullScreen"
                      :showClose="false"
@@ -210,8 +211,8 @@ export default {
               value: "辅码流"
             },
             {
-              label: "三码流",
-              value: "三码流"
+              label: "第三码流",
+              value: "第三码流"
             }
           ]
         },
@@ -501,7 +502,7 @@ export default {
       // 这里做个判断，判断streamType是否为空，为空则判断是不是第一个播放，是则主码流，不是则辅码流
       if (streamType === "") {
         let flag = !!this.videoArr.filter(item => {
-          return item.rtspUrl !== "" && item.streamType === "main";
+          return item.rtspUrl !== "";
         }).length;
         streamType = flag ? "sub" : "main";
       }
@@ -805,6 +806,7 @@ export default {
       });
     },
     closeVideo(index) {
+      this.operatorIndex = index;
       this.videoArr[index].rtspUrl = "";
       this.videoArr[index].streamType = "";
       this.videoArr[index].channelUuid = "";
@@ -932,7 +934,7 @@ export default {
         case "辅码流":
           this.switchMaLiu(this.operatorIndex, "sub");
           break;
-        case "三码流":
+        case "第三码流":
           this.switchMaLiu(this.operatorIndex, "thrid");
           break;
         case "打开音频":
@@ -1183,9 +1185,6 @@ export default {
           border-radius: 2px;
           vertical-align: middle;
           cursor: pointer;
-        }
-        .aaaca {
-          width: 40px;
         }
       }
       .fenlu {

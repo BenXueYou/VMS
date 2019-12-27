@@ -32,7 +32,7 @@
                    width="10.9px"
                    height="9px"
                    style="margin-right: 4px;">
-              <div class="text-show" style="width: 140px;">{{node.label}}</div>
+              <div class="text-show" style="width: 110px;" :title='node.label'>{{node.label}}</div>
               <el-dropdown trigger="click"
                            class="action-icon"
                            @command="handleDropDownMenuClick"

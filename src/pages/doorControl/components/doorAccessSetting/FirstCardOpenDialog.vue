@@ -137,7 +137,7 @@
 import DevicePopoverTree from "@/common/DevicePopoverTree.vue";
 import TabTree from "@/common/TabTree.vue";
 import FCTabTreeCheckBox from "./FCTabTreeCheckBox";
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
+import { mouseover, mouseout, mousemove } from "@/common/mouse.js"; // 注意路径
 export default {
   components: { DevicePopoverTree, TabTree, FCTabTreeCheckBox },
   props: {

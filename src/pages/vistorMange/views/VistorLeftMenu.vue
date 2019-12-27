@@ -22,15 +22,8 @@
 							/>
 							<span>访客记录</span>
 							<img
-								v-show="menuTitle === '1'"
 								class="vistor_left_menu_right_icon"
-								src="../../../assets/images/select-down.png"
-							/>
-							<img
-								v-show="menuTitle !== '1'"
-								class="vistor_left_menu_right_icon"
-								src="../../../assets/images/doorAccess/left_menu_down_icon.png"
-								alt
+								:src="menuTitle === '1'?require('@/assets/images/select-down.png'):require('@/assets/images/doorAccess/left_menu_down_icon.png')"
 							/>
 						</template>
 						<el-menu-item index="/VistorMange/VistorRecord">访客记录</el-menu-item>
@@ -187,11 +180,11 @@ export default {
 	background-color: rgb(35, 70, 62) !important;
 }
 
-.el-menu:hover,
-.el-menu-item:hover {
+.vistor_left_menu .el-menu:hover,
+.vistor_left_menu .el-menu-item:hover {
 	background-color: rgb(33, 45, 51);
 }
-.el-menu-item.isActive {
+.vistor_left_menu .el-menu-item.isActive {
 	border-left: 2px solid #26d39d !important;
 }
 .vistor_left_menu .el-menu-item.is-active {
@@ -207,20 +200,20 @@ export default {
   border-left: 2px solid #26d39d !important; */
 	background-color: rgb(35, 38, 41) !important;
 }
-.el-menu--collapse {
+.vistor_left_menu .el-menu--collapse {
 	width: 100%;
 }
-.el-menu--vertical {
+.vistor_left_menu .el-menu--vertical {
 	background: rgba(39, 42, 45, 0.9);
 	width: 140px;
 	/* border: 1px solid red; */
 }
-.el-menu--vertical .el-menu {
+.vistor_left_menu .el-menu--vertical .el-menu {
 	background: rgba(39, 42, 45, 0.9);
 	border: none;
 	min-width: 138px;
 }
-.header {
+.vistor_left_menu.header {
 	width: 100%;
 	height: 100%;
 	/* max-width: 200px; */
@@ -233,30 +226,27 @@ export default {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
-.el-menu {
+.vistor_left_menu .el-menu {
 	background: rgba(39, 42, 45, 0.9);
 	border: none;
 	/* min-width: 138px; */
 }
-.menuItemBoxClass .el-submenu {
+.vistor_left_menu .menuItemBoxClass .el-submenu {
 	height: 50px;
 	line-height: 49px;
 }
-.el-menu--horizontal {
+.vistor_left_menu .el-menu--horizontal {
 	border: none;
 }
-.el-menu--horizontal .el-menu-item {
-	background-color: red;
-}
-.el-menu--horizontal .el-menu-item {
+.vistor_left_menu .el-menu--horizontal .el-menu-item {
 	transition: all 0.6s ease-in-out;
 }
-.el-menu--horizontal .el-submenu:hover,
-.el-menu--horizontal .el-menu-item:hover {
+.vistor_left_menu .el-menu--horizontal .el-submenu:hover,
+.vistor_left_menu .el-menu--horizontal .el-menu-item:hover {
 	/* background-color: rgba(40, 255, 187, 0.08); */
 	transition: all 0.6s ease-in-out;
 }
-.el-menu--horizontal > .el-menu-item .is-active {
+.vistor_left_menu .el-menu--horizontal > .el-menu-item .is-active {
 	background-color: rgb(35, 57, 54);
 	/* border-left: 2px solid #26D39D; */
 }
@@ -264,14 +254,14 @@ export default {
 .el-menu-item:hover {
   background-color: rgba(40, 255, 187, 0.08);
 } */
-.el-submenu__title:hover,
-.el-menu-item:hover,
-.el-menu-item:focus {
+.vistor_left_menu .el-submenu__title:hover,
+.vistor_left_menu .el-menu-item:hover,
+.vistor_left_menu .el-menu-item:focus {
 	/* background-color: rgba(40, 255, 187, 0.08); */
 	background-color: rgb(35, 57, 54) !important;
 	color: #72757f;
 }
-li {
+.vistor_left_menu li {
 	padding: 0;
 	/* border-bottom: 1px solid rgba(40, 255, 187, 0.08); */
 	/* box-shadow: 8px 0 18px 0 rgba(0, 0, 0, 0.1); */

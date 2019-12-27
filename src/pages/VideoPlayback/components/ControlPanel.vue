@@ -3,12 +3,12 @@
     <div class="head">
       <ul>
         <li>
-          <img :src="icons.play"
-               v-if="isPlaying"
+          <img :src="icons.pause"
+               v-if="playStatus==1"
+               style="height:16px;width:16px;"
                @click="play"
                alt="">
-          <img :src="icons.pause"
-               style="height:16px;width:16px;"
+          <img :src="icons.play"
                v-else
                @click="play"
                alt="">
@@ -155,7 +155,7 @@
                     :startTime="startTime"
                     :endTime="endTime"
                     @zoomFc="zoomFc"></timeline>
-          <time-select v-for="(item,index)  in controlData"
+          <time-select v-for="(item)  in controlData"
                        :scale="zoomNow"
                        :startTime="startTime"
                        :endTime="endTime"
@@ -163,8 +163,8 @@
                        @chooseTime="chooseTime"
                        :left="left"
                        :move="move"
-                       :index="index"
-                       :key="index">
+                       :index="item.myIndex"
+                       :key="item.myIndex">
 
           </time-select>
         </div>
@@ -212,10 +212,10 @@ export default {
         return 1;
       }
     },
-    isPlaying: {
-      type: Boolean,
+    playStatus: {
+      type: Number,
       default() {
-        return true;
+        return 0;
       }
     },
     fenlnWW: {

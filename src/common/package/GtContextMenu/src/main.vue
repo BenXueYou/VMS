@@ -83,7 +83,7 @@ export default {
   left: 0px;
   background: #2a2e31;
   box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: 111111;
 }
 </style>
 

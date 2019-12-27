@@ -20,7 +20,7 @@
                  width="10.9px"
                  height="9px"
                  style="margin-right: 4px;">
-            <span class="text-show">{{node.label}}</span>
+            <div class="text-show" :title='node.label'>{{node.label}}</div>
           </div>
         </div>
       </el-tree>

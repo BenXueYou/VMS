@@ -65,16 +65,21 @@
 				<div class="item-text">资质荣誉</div>
 				<div class="item-text">新闻中心</div>-->
 			</div>
-			<div class="foot-item-copyright">
-				<p>2019© 上海广拓 沪ICP备09001829号-3</p>
+			<div style="margin:0px auto;font-size:14px;text-algin:center;padding:20px 0 10px">
+				<p
+					style="height:0px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;text-algin:center"
+				>2019© 上海广拓 沪ICP备09001829号-3</p>
 			</div>
-			<div class="foot-item-IP">
+			<div style="margin:0 auto; padding:20px 0;">
 				<a
 					target="_blank"
 					href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010602003853"
+					style="display:inline-block;text-decoration:none;height:20px;line-height:20px;display:flex;justify-content:center;"
 				>
 					<img src="@/assets/images/login/copyRight_icon.png" />
-					<p>沪公网安备 31010602003853号</p>
+					<p
+						style="height:0px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393; font-size:14px"
+					>沪公网安备 31010602003853号</p>
 				</a>
 			</div>
 		</div>
@@ -212,21 +217,20 @@ export default {
         let Authorization =
 					body.data.token.tokenType + " " + body.data.token.accessToken;
         this.$store.dispatch("setAuthorization", Authorization);
+
         // 存储ProjectList
         let projects = body.data.adminUser.projects || [];
         this.$store.commit("SET_PROJECT_LIST", projects);
+
         // 设置ProjectUuid 默认设置第一个，其他Uuid可以在切换项目更改
-        // 这里存储的username用于上面的账号名称显示
+
         sessionStorage.setItem("username", body.data.adminUser.username);
         // 这里存储userUuid, 后面调用菜单的时候会使用到
         sessionStorage.setItem("useruuid", body.data.adminUser.useruuid);
         // 这里存储logUuid, 后面选择项目的时候会使用到
         sessionStorage.setItem("logUuid", body.data.adminUser.logUuid);
         // this.$store.dispatch("setUserName", body.data.adminUser.username);
-        if (!projects.length) {
-          this.$message.error("该账号下面没有项目!!!");
-          return;
-        }
+
         if (projects.length > 1) {
           // 如果要从登陆页面跳转到项目选择的页面，则执行下面的代码
           this.$router.push("/projectManage");
@@ -294,6 +298,7 @@ export default {
 		border-color: #ffffff !important;
 	}
 	.el-checkbox__label {
+		font-family: PingFangSC-Regular;
 		font-family: "PingFangSC-Regular";
 		font-size: 12px;
 		color: #999999;
@@ -309,6 +314,7 @@ export default {
 	}
 }
 </style>
+
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .login-div {
@@ -405,41 +411,9 @@ export default {
 				}
 			}
 		}
-		.foot-item-copyright {
-			margin: 0px auto;
-			font-size: 14px;
-			text-align: center;
-			padding: 20px 0 10px;
-			p {
-				height: 0px;
-				line-height: 20px;
-				margin: 0px 0px 0px 5px;
-				color: #939393;
-				text-align: center;
-			}
-		}
-		.foot-item-IP {
-			margin: 0 auto;
-			padding: 20px 0;
-			a {
-				display: inline-block;
-				text-decoration: none;
-				height: 20px;
-				line-height: 20px;
-				display: flex;
-				justify-content: center;
-				p {
-					height: 0px;
-					line-height: 20px;
-					margin: 0px 0px 0px 5px;
-					color: #939393;
-					font-size: 14px;
-				}
-			}
-		}
 		.foot-text {
 			margin-top: 14px;
-			font-family: "PingFangSC-Regular";
+			font-family: PingFangSC-Regular;
 			font-size: 14px;
 			color: #555555;
 			letter-spacing: 1.17px;

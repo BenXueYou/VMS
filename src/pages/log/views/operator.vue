@@ -59,7 +59,7 @@
 				<el-table-column prop="eventType" label="类型">
 					<template
 						slot-scope="scope"
-					>{{$common.getEnumItemName('SystemLogEventEnum',scope.row.eventType)}}</template>
+					>{{$common.getEnumItemName('operationLogEventEnum',scope.row.eventType)}}</template>
 				</el-table-column>
 				<el-table-column show-overflow-tooltip prop="detail" label="操作内容"></el-table-column>
 				<el-table-column show-overflow-tooltip prop="eventTime" label="操作时间"></el-table-column>

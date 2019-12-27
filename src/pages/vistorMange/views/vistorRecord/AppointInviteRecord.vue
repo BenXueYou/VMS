@@ -427,6 +427,7 @@ export default {
 		height: 50px;
 		padding: 15px 40px;
 		background: #212325;
+		box-sizing: border-box;
 		div {
 			font-family: "PingFangSC-Regular";
 			font-size: 14px;

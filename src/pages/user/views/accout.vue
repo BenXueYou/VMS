@@ -70,19 +70,19 @@
 								size="small"
 							>分配角色</el-button>
 							<el-button
-                v-if="scope.row.enable===1"
+								v-if="scope.row.enable===1"
 								class="onOffBtnClass"
 								@click="forbidBtnClick(scope.row)"
 								type="text"
 								size="small"
 							>禁用</el-button>
-              <el-button
-                v-if="scope.row.enable===0"
-                class="onOffBtnClass"
-                @click="startBtnClick(scope.row)"
-                type="text"
-                size="small"
-              >启用</el-button>
+							<el-button
+								v-if="scope.row.enable===0"
+								class="onOffBtnClass"
+								@click="startBtnClick(scope.row)"
+								type="text"
+								size="small"
+							>启用</el-button>
 							<el-button
 								class="deleteBtnClass"
 								@click="deleteBtnClick(scope.row)"
@@ -91,7 +91,7 @@
 							>删除</el-button>
 						</div>
 						<div v-if="scope.row.accountType==='project_admin'">
-              <el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
+							<el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
 							<el-button type="text" size="small"></el-button>
 							<el-button type="text" size="small"></el-button>
 							<el-button class="onOffBtnClass" type="text" size="small"></el-button>
@@ -115,7 +115,6 @@
 		</div>
 		<account-add
 			v-show="addDialogVisible"
-      :addDialogVisible="addDialogVisible"
 			:checkedRoles="defaultRoleData"
 			@close="close"
 			:rowData.sync="rowData"
@@ -171,6 +170,7 @@ export default {
       accountUuids: [],
       accountNames: [],
       partUuids: [],
+      adminUuids: [],
       roleDataList: [],
       defaultRoleData: [],
       defaultProps: {
@@ -379,7 +379,12 @@ export default {
           this.$message.warning("请选择账号！");
           return;
         }
-      } 
+      } else {
+        if (this.adminUuids.length) {
+          this.$message.warning("勾选之中的超级管理员没有权限");
+          return;
+        }
+      }
       api
         .switchAccountApi({
           accountUuids: this.accountUuids,
@@ -409,6 +414,20 @@ export default {
       this.isConfirm = !this.isConfirm;
     },
     deleteData() {
+      if (!this.accountUuids.length) {
+        if (this.accountNames.length) {
+          this.$message.warning("超级管理员没有权限");
+          return;
+        } else {
+          this.$message.warning("请选择账号！");
+          return;
+        }
+      } else {
+        if (this.adminUuids.length) {
+          this.$message.warning("勾选之中的超级管理员没有权限");
+          return;
+        }
+      }
       api
         .deleteAccountApi({ accountUuids: this.accountUuids })
         .then(res => {
@@ -425,9 +444,11 @@ export default {
     handleSelectionChange(selection) {
       this.accountUuids = [];
       this.accountNames = [];
+      this.adminUuids = [];
       selection.forEach(item => {
         console.log("item==", item);
         if (item.accountType === "project_admin") {
+          this.adminUuids.push(item.accountUuid);
         } else {
           this.accountUuids.push(item.accountUuid);
         }

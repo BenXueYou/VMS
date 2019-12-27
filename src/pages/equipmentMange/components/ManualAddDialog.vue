@@ -81,11 +81,7 @@
                                     :houseUuid="houseUuid"
                                     @setUseData="setHouseData" />
         </el-form-item>
-        <el-form-item label="1400上传国标码"
-                      prop="gBCode">
-          <el-input v-model.trim="ruleForm.gBCode"
-                    size="samll"></el-input>
-        </el-form-item>
+
         <el-form-item label="设备描述："
                       prop="remarks">
           <el-input v-model.trim="ruleForm.remarks"
@@ -116,7 +112,7 @@ import PopoverTree from "@/common/selectOrgTree";
 // 这是楼栋房屋只到单元的下拉框树
 import BuildHousePopoverTree from "@/common/BuildHousePopoverTree2";
 import personTreeTag from "@/common/personTreeTag";
-import icons from "@/common/js/icon.js";
+import icons from "@/common/icon.js";
 import * as api from "../ajax";
 export default {
   name: "ManualAddDialog",
@@ -153,7 +149,7 @@ export default {
     title: {
       type: String,
       default() {
-        return "手动添加";
+        return "手动搜索";
       }
     },
     value: {
@@ -208,16 +204,12 @@ export default {
         infrastructureUuid: "",
         nickName: "",
         orgUuid: "",
-        gBCode: "",
         remarks: ""
       },
       rules: {
         nickName: [
           { required: true, message: "请输入设备名称", trigger: "blur" },
           { min: 4, max: 32, message: "长度在 4 到 32 个字符", trigger: "blur" }
-        ],
-        belongServiceUuid: [
-          { required: true, message: "请选择设备子服务", trigger: "blur" }
         ],
         remarks: [
           { required: false, message: "请输入设备描述名称", trigger: "blur" },
@@ -240,6 +232,9 @@ export default {
         ],
         devicePassword: [
           { required: true, message: "请填写密码", trigger: "blur" }
+        ],
+        belongServiceUuid: [
+          { required: true, message: "请选择子服务", trigger: "blur" }
         ],
         deviceType: [
           { required: true, message: "请填写设备类型", trigger: "blur" }
@@ -347,10 +342,6 @@ export default {
       this.houseName = params.node.data.label;
     },
     saveData() {
-      if (this.localService && this.localService.length === 0) {
-        this.$message({ type: "warning", message: "子服务列表为空" });
-        return;
-      }
       const getServiceNameByUuid = uuid => {
         return this.localService.filter(v => {
           return v.belongServiceUuid === uuid;
@@ -371,7 +362,6 @@ export default {
         infrastructureUuid: this.ruleForm.infrastructureUuid,
         nickName: this.ruleForm.nickName,
         orgUuid: this.ruleForm.orgUuid,
-        gBCode: this.ruleForm.gBCode,
         remarks: this.ruleForm.remarks
       };
       console.log(data);
@@ -534,7 +524,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
     }
   }
   .body {
-    // height: calc(100vh - 290px);
+    height: calc(100vh - 290px);
     overflow-y: auto;
     padding: 20px 0px 10px;
     margin: 0px 30px 30px;

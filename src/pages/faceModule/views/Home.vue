@@ -75,7 +75,7 @@
 						element-loading-background="rgba(0, 0, 0, 0.8)"
 					>
 						<div id="poster_img"></div>
-						<div ref="canvasRefs" id="player"></div>
+						<div ref="canvasRefs" id="player" class="fill"></div>
 					</div>
 				</el-main>
 				<!-- 底部人脸抓拍记录图片list -->
@@ -225,6 +225,7 @@ import ImgCard from "@/pages/faceModule/components/ImgCard.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
 import * as api from "@/pages/faceModule/http/homeBaseHttp.js";
 import * as logApi from "@/pages/faceModule/http/logSearchHttp.js";
+import * as api2 from "@/pages/VideoPreview/ajax.js";
 import { mapState } from "vuex";
 export default {
   name: "home",
@@ -265,7 +266,7 @@ export default {
       streamTypeOptions: [
         { typeStr: "main", typeName: "主码流" },
         { typeStr: "sub", typeName: "辅码流" },
-        { typeStr: "thrid", typeName: "三码流" }
+        { typeStr: "thrid", typeName: "第三码流" }
       ],
       fullscreenLoading: false, // 局部遮罩是否显示
       mainVideoScreenLoading: false, // 视频遮罩是否显示
@@ -324,8 +325,8 @@ export default {
         that.$refs.heightBox.$el.style.height = h + "px";
         that.asideWidth = 0.3 * w + "px";
         that.$refs.mainHeightBox.$el.style.height = h - 300 + "px";
-        that.canvas.width = (16 * (that.HEIGHT() - 350 - 100)) / 9 - 50;
         that.canvas.height = that.HEIGHT() - 450;
+        that.canvas.width = (16 * that.canvas.height) / 9;
       });
       that.drawLine();
     });
@@ -604,9 +605,10 @@ export default {
         this.canvas = null;
         this.$refs.canvasRefs.innerHTML = "";
         document.getElementById("poster_img").style.display = "block";
+        document.getElementById("player").style.display = "none";
       }
-      api
-        .getRtspUrlByChannelUuidApi(data)
+      api2
+        .getFacePreviewInfo(data)
         .then(res => {
           if (res.data.success) {
             let data = res.data.data;
@@ -633,8 +635,8 @@ export default {
       if (!this.canvas) {
         this.canvas = document.createElement("video");
       }
-      this.canvas.width = (16 * (this.HEIGHT() - 350 - 100)) / 9 - 50;
       this.canvas.height = this.HEIGHT() - 450;
+      this.canvas.width = (16 * this.canvas.height) / 9;
       // 设置新的视频对象播放参数
       console.log(jSignal);
       this.video = await this.video_mgr.setup({
@@ -654,6 +656,7 @@ export default {
       }
       if (document.getElementById("poster_img")) {
         document.getElementById("poster_img").style.display = "none";
+        document.getElementById("player").style.display = "block";
       }
       this.$refs.canvasRefs.innerHTML = "";
       this.$refs.canvasRefs.appendChild(this.canvas);
@@ -966,13 +969,16 @@ export default {
 	box-sizing: border-box;
 }
 #player {
+	position: relative;
 	text-align: center;
 	height: 100%;
 	object-fit: fill;
 	width: 100%;
 	z-index: 2;
-	background: rgba(33, 35, 37, 1);
+  background: rgba(33, 35, 37, 1);
+  display: none;
 }
+
 .el-radio-myclass {
 	margin: 10px 0px 9px;
 	font-family: "PingFangSC-Regular";
@@ -1117,16 +1123,12 @@ export default {
 #poster_img {
 	width: 100%;
 	height: 100%;
-	position: absolute;
-	top: 0px;
-	left: 0px;
 	background: transparent url("../../../assets/poster.png") no-repeat center
 		100%;
 	background-size: 100% 100%;
 	background-clip: content-box;
 	background-origin: content-box;
 	box-sizing: border-box;
-	/* background-color: #FFFFFF; */
 }
 .RTask .imgTxtClass {
 	font-size: 14px;
@@ -1427,7 +1429,7 @@ export default {
 	text-align: center;
 	/* background: rgba(36, 39, 42, 1); */
 	background: rgba(33, 35, 37, 1);
-	padding: 20px 25px;
+	/* padding: 20px 25px; */
 }
 
 .RTask .main-box {

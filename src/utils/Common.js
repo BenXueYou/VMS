@@ -1,6 +1,35 @@
 import store from "@/store/store.js";
 import { callbackify } from "util";
 export var COMMON = {
+
+  // 根据模块按钮查找权限
+  /**
+   * moduleName,模块名称，名字全匹配，传汉字
+   * btnName,按钮名称，按钮功能名字模糊匹配，传汉字
+   * 注：均以汉字名为索引
+   */
+  getAuthIsOwn(moduleName, btnName) {
+    if (btnName.length >= 2) {
+      if (store.state.auth.AuthList.filter(modelObj => {
+        return modelObj.nodeName === moduleName;
+      })[0] && store.state.auth.AuthList.filter(modelObj => {
+        return modelObj.nodeName === moduleName;
+      })[0].auth.filter(authObj => {
+        return btnName.indexOf(authObj.authName) !== -1;
+      })[0]) {
+        return store.state.auth.AuthList.filter(modelObj => {
+          return modelObj.nodeName === moduleName;
+        })[0].auth.filter(authObj => {
+          return btnName.indexOf(authObj.authName) !== -1;
+        })[0].isOwn;
+      } else {
+        console.log('无效权限');
+        return false;
+      }
+    }else{
+      alert('按钮名称必须大于两个字符');
+    }
+  },
   // 校验手机号格式
   isPhoneNum(PhoneNum) {
     let prep = /^1[3456789]\d{9}$/;
@@ -132,13 +161,13 @@ export var COMMON = {
     console.log(url, itemData);
     var xhr = new XMLHttpRequest();
     xhr.responseType = "blob"; // 返回类型blob
-    xhr.onload = function() {
+    xhr.onload = function () {
       // 定义请求完成的处理函数
       if (this.status === 200) {
         var blob = this.response;
         var reader = new FileReader();
         reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签href
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           var str = e.target.result;
           var type = str.substring(str.indexOf("/") + 1, str.indexOf(";"));
           var a = document.createElement("a"); // 转换完成，创建一个a标签用于下载
@@ -171,7 +200,7 @@ export var COMMON = {
     // 通过Images对象
     let image = new Image();
     image.setAttribute("crossOrigin", "anonymous");
-    image.onload = function(e) {
+    image.onload = function (e) {
       let canvas = document.createElement("canvas");
       canvas.width = image.width;
       canvas.height = image.height;
@@ -236,9 +265,9 @@ export var COMMON = {
       window.config.protocolHeader +
       window.config.ip +
       `/fileforward-server-v1/project/${
-        store.state.home.projectUuid
+      store.state.home.projectUuid
       }/fileforward/fileByUrl?asgName=${
-        store.state.home.projectUuid
+      store.state.home.projectUuid
       }&fileUrl=` +
       url;
 
@@ -250,13 +279,13 @@ export var COMMON = {
       httpRequest = new ActiveXObject("MsXml2.XmlHttp");
     }
     httpRequest.responseType = "blob";
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
           var value = this.response;
           var reader = new window.FileReader();
           reader.readAsDataURL(value);
-          reader.onloadend = function() {
+          reader.onloadend = function () {
             var base64data = reader.result;
             base64data = base64data
               .replace("data:image/jpeg;base64,", "jpeg:")
@@ -284,14 +313,14 @@ export var COMMON = {
     //   })
   },
   getJSON(url) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open("get", url, true);
       xhr.setRequestHeader(
         "Accept",
         "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
       );
-      xhr.onload = function() {
+      xhr.onload = function () {
         var status = xhr.status;
         if (status == 200) {
           resolve(xhr.response);
@@ -498,9 +527,9 @@ export var COMMON = {
         window.config.protocolHeader +
         window.config.ip +
         `/fileforward-server-v1/project/${
-          store.state.home.projectUuid
+        store.state.home.projectUuid
         }/fileforward/fileByUrl?asgName=${
-          store.state.home.projectUuid
+        store.state.home.projectUuid
         }&fileUrl=` +
         imgUrl;
     } else {
@@ -508,7 +537,7 @@ export var COMMON = {
         window.config.protocolHeader +
         window.config.ip +
         `/fileforward-server-v1/project/${
-          store.state.home.projectUuid
+        store.state.home.projectUuid
         }/fileforward/fileByUrl?fileUrl=` +
         imgUrl;
     }
@@ -677,14 +706,14 @@ export var COMMON = {
     if (method == "POST") {
       xhr.setRequestHeader("Content-type", "application/json");
     }
-    xhr.onload = function() {
+    xhr.onload = function () {
       // 请求完成
       if (this.status == 200) {
         // 返回200
         var blob = this.response;
         var reader = new FileReader();
         reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           // 转换完成，创建一个a标签用于下载
           var a = document.createElement("a");
           a.download = name;
@@ -709,7 +738,7 @@ export var COMMON = {
     var previous = 0;
     if (!options) options = {};
 
-    var later = function() {
+    var later = function () {
       //
       previous = options.leading === false ? 0 : new Date().getTime();
       timeout = null;
@@ -717,7 +746,7 @@ export var COMMON = {
       if (!timeout) context = args = null;
     };
 
-    var throttled = function() {
+    var throttled = function () {
       // 记录当前时间
       var now = new Date().getTime();
       // 如果是第一次进来，并且leading等于false,设置previous等于now,可以阻止事件立即执行
@@ -741,7 +770,7 @@ export var COMMON = {
       }
     };
 
-    throttled.cancel = function() {
+    throttled.cancel = function () {
       clearTimeout(timeout);
       previous = 0;
       timeout = null;

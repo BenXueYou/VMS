@@ -386,15 +386,21 @@ export default {
 }
 .GlobalAlarmDialog .dialog-footer .cardBox {
 	width: calc(50% - 18px);
-	height: calc(50% - 20px);
+	/* height: calc(50% - 20px); */
 	margin-top: 15px;
-	margin: 15px 7.5px 0;
+	margin: 5px 7.5px 10px;
 	background-color: rgba(33, 35, 37, 0.8);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	padding: 10px 10px 0;
 	box-sizing: border-box;
 }
-
+.GlobalAlarmDialog .cardBox .el-image {
+	width: 100%;
+	height: 100%;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
 .GlobalAlarmDialog .cardBox .facePhoto {
 	width: 139px;
 	height: 139px;

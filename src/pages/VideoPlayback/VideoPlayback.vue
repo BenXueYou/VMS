@@ -21,6 +21,7 @@
                     :streamType="item.streamType"
                     :left="item.left"
                     :top="item.top"
+                    :playStatus="item.playStatus"
                     :mode="item.mode"
                     action="playback"
                     :position="item.position"
@@ -38,7 +39,7 @@
         </video-wrap>
       </div>
       <div class="footer"
-           v-show="!fullscreen">
+           v-if="!fullscreen">
         <control-panel @download="download"
                        @saveView="saveView"
                        @choosetime="choosetime"
@@ -51,7 +52,7 @@
                        @chooseFenlu="chooseFenlu"
                        @changeMode="changeMode"
                        :downloadStatus="downloadStatus"
-                       :isPlaying="isPlaying"
+                       :playStatus="playStatus"
                        :mode="videoMode"
                        :speed="videoSpeed"
                        :operatorIndex.sync="operatorIndex"
@@ -72,7 +73,7 @@
 
     </screenshot-dialog>
     <download-dialog :visible.sync="downloadVisible"
-                     @shutdownVideo="shutdownVideo"
+                     @shutdownVideo="stopVideo"
                      :tableData="downloadData"></download-dialog>
     <local-broadcast-dialog :visible.sync="showBroadCastVisible"></local-broadcast-dialog>
     <tree-append-tag-dialog @confirm="addView"
@@ -144,7 +145,7 @@ export default {
           startTime: "",
           endTime: "",
           mode: "original",
-          status: true,
+          playStatus: 0,
           timeData: [
             // {
             //   startTime: "2019-11-12 00:00:00", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
@@ -244,7 +245,9 @@ export default {
       if (this.operatorIndex >= this.videoArr.length) {
         return [];
       }
-      return [this.videoArr[this.operatorIndex]];
+      let data = [this.videoArr[this.operatorIndex]];
+      data[0].myIndex = this.operatorIndex;
+      return data;
     },
     videoMode() {
       if (this.operatorIndex >= this.videoArr.length) {
@@ -252,12 +255,12 @@ export default {
       }
       return this.videoArr[this.operatorIndex].mode;
     },
-    isPlaying() {
+    playStatus() {
       if (this.operatorIndex >= this.videoArr.length) {
-        return true;
+        return 0;
       }
       // 视频处于播放还是暂停状态
-      return this.videoArr[this.operatorIndex].status;
+      return Number(this.videoArr[this.operatorIndex].playStatus);
     }
   },
   mounted() {
@@ -416,7 +419,10 @@ export default {
         streamType
       );
       this.operatorIndex = index;
-      console.log(data);
+      this.videoArr[index].rtspUrl = data.rtspUrl;
+      this.videoArr[index].playStatus = 1;
+      this.videoArr.concat();
+      console.log(`index=${index}  拖拽url=${data.rtspUrl}`);
       this.$refs["video" + index][0].drag(data.rtspUrl);
       this.getVideoSpeed();
     },
@@ -435,20 +441,30 @@ export default {
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
       let newdata = JSON.parse(JSON.stringify(data));
-      let elements = newdata.elements.map((item, index) => {
-        item.position = index;
-        item.mode = "original";
-        return item;
-      });
-      for (let i = 0, len = elements.length; i < len; i++) {
-        this.videoArr[i] = elements[i];
-      }
+      // let elements = newdata.elements.map((item, index) => {
+      //   item.position = index;
+      //   item.mode = "original";
+      //   item.playStatus = 1;
+      //   return item;
+      // });
+      let extra = newdata.extra || {};
+      let videoArr = extra.videoArr || [];
+      this.videoArr = videoArr;
+      // for (let i = 0, len = elements.length; i < len; i++) {
+      //   this.videoArr[i] = elements[i];
+      //   if (videoArr.length) {
+      //     this.videoArr[i].timeData = videoArr[i].timeData;
+      //     this.videoArr[i].fileName = videoArr[i].fileName;
+      //   }
+      // }
+      console.log(this.videoArr);
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
     },
     addView(name) {
       // 保存视图
+      console.log(this.videoArr);
       let elements = this.videoArr.map(item => {
         return {
           position: {
@@ -458,9 +474,14 @@ export default {
           },
           channelUuid: item.channelUuid, // 通道uuid
           rtspUrl: item.rtspUrl, // rtsp rtspUrl
-          streamType: item.streamType // 流类型
+          streamType: item.streamType,
+          timeData: item.timeData // 流类型
         };
       });
+      // 存储每个视频分路的名字
+      let extra = {};
+      extra.videoArr = this.videoArr;
+      console.log(JSON.stringify(extra));
       let data = {
         viewType: "playback", // 视图类型
         viewInfo: {
@@ -474,8 +495,10 @@ export default {
           width: 0, // 宽度
           height: 0 // 高度
         },
-        parentUuid: "" // 父节点uuid
+        parentUuid: "", // 父节点uuid
+        extra // 存储一些自己的格外节点
       };
+
       api2.addView(data).then(res => {
         if (res.data.success) {
           this.$message.success("保存视图成功！");
@@ -571,7 +594,8 @@ export default {
         startTime: sd,
         endTime: ed,
         channelUuid: id,
-        timeData: data.videos
+        timeData: data.videos,
+        playStatus: 1
       };
       // 从选中的框开始播放
       // 往后面放的时候，还要判断后面的框是不是在放
@@ -605,6 +629,7 @@ export default {
           this.operatorIndex = 15;
         }
       }
+      console.log(this.videoArr);
     },
     records(channelUuid, startTime, endTime, videoType, streamType) {
       return new Promise((resolve, reject) => {
@@ -743,9 +768,9 @@ export default {
       });
     },
     closeVideoAA(index) {
-      console.log(index);
-      this.operatorIndex = index;
-      console.log(this.videoArr[this.operatorIndex]);
+      if (index !== undefined) {
+        this.operatorIndex = index;
+      }
       if (!this.videoArr[this.operatorIndex].channelUuid) {
         this.$message.error("该分路上没有通道！");
       } else {
@@ -769,12 +794,15 @@ export default {
       }
     },
     shutdownVideo() {
-      this.videoArr[this.operatorIndex].rtspUrl = "";
-      this.videoArr[this.operatorIndex].channelUuid = "";
-      this.videoArr[this.operatorIndex].startTime = "";
-      this.videoArr[this.operatorIndex].endTime = "";
-      this.videoArr[this.operatorIndex].timeData = [];
-      this.videoArr.concat();
+      let item = this.videoArr[this.operatorIndex];
+      item.rtspUrl = "";
+      item.bzRtspUrl = "";
+      item.channelUuid = "";
+      item.startTime = "";
+      item.endTime = "";
+      item.playStatus = 0;
+      item.timeData = [];
+      this.videoArr.splice(this.operatorIndex, 1, item);
     },
     // 处理
     dealContextMenu(value) {
@@ -804,6 +832,7 @@ export default {
                 item.startTime = "";
                 item.endTime = "";
                 item.timeData = [];
+                item.playStatus = 0;
                 return item;
               });
             })
@@ -948,13 +977,30 @@ export default {
       this.getVideoSpeed();
     },
     pasueVideo() {
+      if (this.videoArr[this.operatorIndex].playStatus === 0) {
+        if (this.videoArr[this.operatorIndex].bzRtspUrl) {
+          this.videoArr[this.operatorIndex].rtspUrl = this.videoArr[
+            this.operatorIndex
+          ].bzRtspUrl;
+          this.videoArr[this.operatorIndex].playStatus = 1;
+        } else {
+          this.$message.error("该分路上面没有正在播放的视频");
+        }
+        return;
+      } else if (this.videoArr[this.operatorIndex].playStatus === 1) {
+        this.videoArr[this.operatorIndex].playStatus = 2;
+      } else if (this.videoArr[this.operatorIndex].playStatus === 2) {
+        this.videoArr[this.operatorIndex].playStatus = 1;
+      }
       this.$refs["video" + this.operatorIndex][0].pause();
-      this.videoArr[this.operatorIndex].status = this.$refs[
-        "video" + this.operatorIndex
-      ][0].isPause;
+      this.videoArr.concat();
     },
     stopVideo() {
-      this.closeVideoAA();
+      let item = this.videoArr[this.operatorIndex];
+      item.bzRtspUrl = item.rtspUrl; // 备用的url
+      item.rtspUrl = "";
+      item.playStatus = 0;
+      this.videoArr.splice(this.operatorIndex, 1, item);
     },
     videoSingleFrame() {
       this.$refs["video" + this.operatorIndex][0].singleFrame();

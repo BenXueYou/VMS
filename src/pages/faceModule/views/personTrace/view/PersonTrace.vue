@@ -143,7 +143,8 @@ export default {
       isShowSamePlaDialog: false,
       isShowMenuList: false,
       Overlay: null,
-      numShowArr: []
+      numShowArr: [],
+      faceUuid: ""
     };
   },
   created() {
@@ -370,9 +371,7 @@ export default {
       this.$factTragicHttp
         .getTragicList({
           imageBase64: this.imageBase64,
-          faceUuid: this.$route.params.imgObj
-            ? this.$route.params.imgObj.faceUuid
-            : "",
+          faceUuid: this.faceUuid,
           // faceUuid: "28334ca055b54a428fc6c63e56d24da4",
           startTime: this.startTime,
           endTime: this.endTime,
@@ -429,6 +428,7 @@ export default {
     deleteImage() {
       this.imageUrl = "";
       this.imageBase64 = "";
+      this.faceUuid = "";
       this.$refs.picUpload.imageFile = "";
       this.$refs.picUpload.isDisabled = false;
     }
@@ -441,6 +441,7 @@ export default {
       this.$common.imageToBase64(this.imageUrl, base64 => {
         this.imageBase64 = base64;
       });
+      this.faceUuid = this.$route.params.imgObj ? this.$route.params.imgObj.faceUuid : "";
     }
   }
 };

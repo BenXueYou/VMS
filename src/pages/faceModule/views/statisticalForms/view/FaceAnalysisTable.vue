@@ -66,17 +66,23 @@
             <el-table-column label="人脸照片"
                              width="190">
               <template slot-scope="scope">
-                <img :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl, 'facelog')"
+                <!-- <img :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl, 'facelog')"
                      width="30px"
-                     height="30px">
+                     height="30px"> -->
+                <el-image style="width: 30px; height: 30px"
+                          :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl, 'facelog')"
+                          :preview-src-list="[$common.setPictureShow(scope.row.faceCapturePhotoUrl, 'facelog')]"></el-image>
               </template>
             </el-table-column>
             <el-table-column label="全景照片"
                              width="190">
               <template slot-scope="scope">
-                <img :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl, 'facelog')"
+                <!-- <img :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl, 'facelog')"
                      width="50px"
-                     height="30px">
+                     height="30px"> -->
+                <el-image style="width: 50px; height: 30px"
+                          :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl, 'facelog')"
+                          :preview-src-list="[$common.setPictureShow(scope.row.panoramaCapturePhotoUrl, 'facelog')]"></el-image>
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -205,16 +211,18 @@ export default {
       this.isShow = true;
     },
     getFaceAnalysisDetail() {
-      this.$factTragicHttp.getCompareDetail({
-        limit: 30,
-        page: 1,
-        faceUuid: this.faceUuid,
-        snapshotTimeStart: this.startTime,
-        snapshotTimeEnd: this.endTime,
-      }).then(res => {
-        let body = res.data;
-        this.getCompareDetailSuccess(body);
-      });
+      this.$factTragicHttp
+        .getCompareDetail({
+          limit: 30,
+          page: 1,
+          faceUuid: this.faceUuid,
+          snapshotTimeStart: this.startTime,
+          snapshotTimeEnd: this.endTime
+        })
+        .then(res => {
+          let body = res.data;
+          this.getCompareDetailSuccess(body);
+        });
     },
     getCompareDetailSuccess(body) {
       this.detailsData = body.data.list;

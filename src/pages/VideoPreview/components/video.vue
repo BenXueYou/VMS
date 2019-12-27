@@ -7,14 +7,17 @@
        @drop="drop"
        @dragover="dragover"
        @dblclick="dblclickhandler"
+       @mouseenter="mouseenter"
+       @mouseout="mouseout"
+       @mousemove="mousemove"
        draggable="true"
-       :class="{'VideoActive':isActive,'isAutoScreen':isAutoScreen}"
+       :class="{'VideoActive':isActive,'isAutoScreen':isAutoScreen,'showMenuFlag':showMenuFlag}"
        :style="{height:height+'px',width:width+'px',left:left+'px',top:top+'px'}">
     <!-- 视频信息展示菜单 -->
     <div class="header"
          v-if='IsShowMenu'>
       <div class="videoinfo">
-        码流类型、码率、大小
+        {{streamText}}
       </div>
       <div class="menu"
            v-if="width>500">
@@ -55,7 +58,8 @@
     </div> -->
     <!-- 1 -->
     <div id='canvasWrap'
-         ref='canvasRefs'>
+         ref='canvasRefs'
+         :class="{'fullscreen':mode!='original'}">
 
     </div>
   </div>
@@ -143,12 +147,17 @@ export default {
       default() {
         return "video";
       }
-    }
+    },
+    playStatus: {
+      type: Number,
+      default() {
+        return 0;
+      }
+    } // 0待播放 1正在播放 2暂停播放
   },
   data() {
     return {
       icons,
-
       ip: "",
       port: "",
       video_mgr: null,
@@ -156,13 +165,23 @@ export default {
       video: null,
       video_list: [],
       speed: 1, // 视频播放速度
-      isPause: false // 0表示正在播放，1表示
+      isPause: false, // 0表示正在播放，1表示,
+      showMenuFlag: false, // 是否显示菜单
+      isInVideo: false, // 鼠标是否在video组件里面
+      mouseTimer: null // 鼠标进入计时器
     };
   },
   destroyed() {
     this.stopVideo();
   },
   computed: {
+    streamText() {
+      return {
+        main: "主码流",
+        sub: "辅码流",
+        third: "第三码流"
+      }[this.streamType];
+    },
     menuData() {
       return [
         {
@@ -199,7 +218,7 @@ export default {
   },
   watch: {
     mode(val) {
-      this.calcHeight();
+      // this.calcHeight();
     },
     position(val) {
       console.log(val);
@@ -230,6 +249,25 @@ export default {
     }
   },
   methods: {
+    mouseenter() {
+      this.isInVideo = true;
+      this.showMenuFlag = true;
+    },
+    mouseout() {
+      this.isInVideo = false;
+      this.showMenuFlag = false;
+      clearTimeout(this.mouseTimer);
+    },
+    mousemove() {
+      if (this.mouseTimer) {
+        clearTimeout(this.mouseTimer);
+        this.mouseTimer = null;
+      }
+      this.showMenuFlag = true;
+      this.mouseTimer = setTimeout(() => {
+        this.showMenuFlag = false;
+      }, 3000);
+    },
     async speedUp() {
       if (!this.video || !this.video_mgr) {
         this.$message.error("该选中框没有视频在播放！");
@@ -257,14 +295,17 @@ export default {
         this.$message.error("该选中框没有视频在播放！");
         return;
       }
-      if (!this.isPause) {
+      if (this.playStatus === 0) {
+        // 如果按钮待播放，点击这个按钮没有反应
+        return;
+      } else if (this.playStatus === 1) {
+        // 正在播放就停止
         await this.video_mgr.pause(this.video);
         this.$message.success("暂停视频");
-      } else {
+      } else if (this.playStatus === 2) {
         await this.video_mgr.resume(this.video);
         this.$message.success("继续播放视频");
       }
-      this.isPause = !this.isPause;
     },
     async resume() {},
     async singleFrame() {},
@@ -287,8 +328,15 @@ export default {
       // if (!this.canvas) {
       //   this.playVideo();
       // }
-      console.log(url);
-      this.video_mgr.drag(this.video, url);
+      console.log(this.canvas);
+      console.log(this.rtspUrl);
+      if (this.canvas) {
+        console.log(url);
+        this.video_mgr.drag(this.video, url);
+      } else {
+        alert(1);
+        this.playVideo();
+      }
     },
     calcHeight() {
       // 这里让视频的宽高比是*16:9；
@@ -301,6 +349,11 @@ export default {
           this.canvas.height = this.height;
           return;
         }
+        // if (this.decodeMod === "video") {
+        //   this.canvas.width = this.width;
+        //   this.canvas.height = this.height;
+        //   return;
+        // }
         // 如果宽高比大于16:9 则按照高计算宽
         if (this.width / this.height >= 16 / 9) {
           let width = this.width;
@@ -376,7 +429,10 @@ export default {
         this.video_mgr.stop(this.video);
       }
       if (this.canvas && this.$refs.canvasRefs) {
-        this.$refs.canvasRefs.removeChild(this.canvas);
+        // 再加一层判断，获取当前canvasRefs下面是否有child
+        if (this.$refs.canvasRefs.childNodes.length) {
+          this.$refs.canvasRefs.removeChild(this.canvas);
+        }
       }
       this.canvas = null;
     },
@@ -534,15 +590,17 @@ export default {
     }
   }
 
-  &:hover .header {
-    top: 0px;
-  }
   .camera {
     position: absolute;
     top: calc(50% + 0px);
     left: 50%;
     transform: translate(-50%, -50%);
     max-width: 20%;
+  }
+}
+.showMenuFlag {
+  .header {
+    top: 0px;
   }
 }
 .VideoActive {

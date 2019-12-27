@@ -104,6 +104,8 @@ export default {
       password: ""
     };
   },
+  activated() {
+  },
   mounted() {
     this.TreechangeNameDialogVisible = this.visible;
   },
@@ -117,6 +119,23 @@ export default {
         this.$message.error("两次密码不同！");
         return;
       }
+      var eReg1 = /^(?![^a-zA-Z]+$)(?!\D+$)/;
+      if (!eReg1.test(this.password)) {
+        this.$message.warning("密码至少包含数字，字母这两种（区分大小写）");
+        return;
+      }
+      /* eslint-disable */
+      var eReg2 = /^[^\[\]\?\|\\\/\:\;\+\*\<\>]*$/;
+      /* eslint-enable */
+      if (!eReg2.test(this.password)) {
+        this.$message.warning("不能包含特殊字符 /[]:;丨+*?<>");
+        return;
+      }
+      var eReg3 = /^[^\s]*$/;
+      if (!eReg3.test(this.password)) {
+        this.$message.warning("字符中不能包含空格");
+        return;
+      }
       this.$emit("confirm", this.password);
       this.$emit("update:visible", false);
     },
@@ -126,6 +145,8 @@ export default {
   },
   watch: {
     visible(val) {
+      this.password = "";
+      this.confirmPassword = "";
       this.name = "";
       this.selectValue = this.select;
       this.TreechangeNameDialogVisible = this.visible;

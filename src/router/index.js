@@ -1,5 +1,9 @@
 import Vue from "vue";
 import Router from "vue-router";
+const originalPush = Router.prototype.push;
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err);
+};
 // 模块首页
 import Login from "@/pages/login/Login";
 import MainLayout from "@/pages/main/views/MainLayout";
@@ -188,7 +192,6 @@ export const constantRouterMap = [
     component: projectManage
   }
 ];
-
 
 export default new Router({
   // mode: 'history', //后端支持可开

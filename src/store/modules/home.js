@@ -11,7 +11,7 @@ const home = {
     RecognizationArr: Storage.readSession("RecognizationArr") || [],
     Authorization: Storage.readSession("Authorization") || "",
     projectUuid: Storage.readSession("projectUuid") || "",
-    account: Storage.readSession("account") || "",
+    account: Storage.read("account") || "",
     userUuid: Storage.readSession("userUuid") || "",
     projectList: Storage.readSession("projectList") || []
     // username: sessionStorage.getItem("username") || ""
@@ -43,15 +43,15 @@ const home = {
     SET_LOCAL_ENUMS: (state, localEnums) => {
       state.localEnums = localEnums;
       console.log(typeof localEnums);
-      Storage.save("localEnums", localEnums);
+      Storage.saveSession("localEnums", localEnums);
     },
     SET_CAPTURE_PHOTO_ARR: (state, CapturePhotoArr) => {
       state.CapturePhotoArr = CapturePhotoArr;
-      Storage.save("CapturePhotoArr", CapturePhotoArr);
+      Storage.saveSession("CapturePhotoArr", CapturePhotoArr);
     },
     SET_RECOGNIZATION_ARR: (state, RecognizationArr) => {
       state.RecognizationArr = RecognizationArr;
-      Storage.save("RecognizationArr", RecognizationArr);
+      Storage.saveSession("RecognizationArr", RecognizationArr);
     },
     SET_AUTHORIZATION: (state, Authorization) => {
       state.Authorization = Authorization;
@@ -68,7 +68,7 @@ const home = {
     },
     SET_PROJECT_LIST: (state, projectList) => {
       state.projectList = projectList;
-      Storage.save("projectList", projectList);
+      Storage.saveSession("projectList", projectList);
     },
     SET_ACCOUNT: (state, account) => {
       state.account = account;
@@ -76,7 +76,7 @@ const home = {
     },
     SET_USERUUID: (state, userUuid) => {
       state.userUuid = userUuid;
-      Storage.save("userUuid", userUuid);
+      Storage.saveSession("userUuid", userUuid);
     }
   },
   actions: {
@@ -104,9 +104,6 @@ const home = {
     setAuthorization({ commit }, Authorization) {
       commit("SET_AUTHORIZATION", Authorization);
     },
-    // setUserName({ commit }, username) {
-    //   commit("SET_UserName", username);
-    // },
     setProjectUuid({ commit }, projectUuid) {
       commit("SET_PROJECT_UUID", projectUuid);
     },
