@@ -16,6 +16,7 @@ let sbPrefix = `${
 export default {
   // 获取视频预览信息
   getPreviewInfoUrl: `${urlPrefix}/video/previewInfo`,
+  getFacePreviewInfoUrl: `${urlPrefix}/face/previewInfo`,
   // 云台控制视角
   ctrlUrl: `${urlPrefix}/video/ptz/ctrl`,
   // 云台控制预置
