@@ -187,6 +187,7 @@
           <div class="bottom-button">
             <el-button type="primary"
                       @click="onClickConfirm"
+                      :loading="isLoadButton"
                       size="small">确定</el-button>
             <el-button type="primary"
                       @click="onClickCancel"

@@ -6,8 +6,8 @@ var Authorization = "Basic YXBwOjEyMzQ1Ng==";
 var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
-  ip = "192.168.9.237:15000";
-  websocketIp = "192.168.9.237:15007";
+  ip = "192.168.9.232:15000";
+  websocketIp = "192.168.9.232:15007";
   imageUrl =
     protocolHeader +
     "//" +
