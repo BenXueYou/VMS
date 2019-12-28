@@ -40,7 +40,7 @@
                            @command="handleDropDownMenuClick"
                            placement="bottom">
                 <div class="img-div"
-                     @click.stop="onClickMore(node, data)">
+                     @click="onClickMore(node, data)">
                   <img :src="icons.more_action"
                        width="16px"
                        height="13px">

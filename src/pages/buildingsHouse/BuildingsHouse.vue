@@ -319,7 +319,7 @@ export default {
       this.isShowHouseTable = true;
       setTimeout(() => {
         this.$refs.leftTree.refreshNode();
-        this.$refs.houseTable.getHouseList();
+        // this.$refs.houseTable.getHouseList();
       }, 200);
     },
     onCancelEditOrAddUnit() {
