@@ -32,7 +32,9 @@
                    width="10.9px"
                    height="9px"
                    style="margin-right: 4px;">
-              <div class="text-show" style="width: 110px;" :title='node.label'>{{node.label}}</div>
+              <div class="text-show"
+                   style="width: 110px;"
+                   :title='node.label'>{{node.label}}</div>
               <el-dropdown trigger="click"
                            class="action-icon"
                            @command="handleDropDownMenuClick"
@@ -51,7 +53,8 @@
                                     v-if="!isDisableMoveUp">上移</el-dropdown-item>
                   <el-dropdown-item command="moveDown"
                                     v-if="!isDisableMoveDown">下移</el-dropdown-item>
-                  <el-dropdown-item command="copy" v-if="isShowCopy">复制</el-dropdown-item>
+                  <el-dropdown-item command="copy"
+                                    v-if="isShowCopy">复制</el-dropdown-item>
                   <el-dropdown-item command="delete">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -187,7 +190,10 @@ export default {
       setTimeout(() => {
         this.$refs.buildingTree.setCurrentKey(id);
         this.$emit("setTreeRootData", this.treeData[0]);
-        this.clickObj = this.$common.copyObject(this.treeData[0], this.clickObj);
+        this.clickObj = this.$common.copyObject(
+          this.treeData[0],
+          this.clickObj
+        );
       }, 200);
     },
     handleNodeClick(obj, node, component) {
@@ -243,6 +249,7 @@ export default {
       }, 200);
     },
     refreshNode(param) {
+      console.log(param);
       if (param === "init") {
         this.initData();
       } else if (param !== "init" && this.isInit) {
@@ -454,7 +461,9 @@ export default {
     },
     getCopyName(label, index) {
       label = `${this.currentNode.data.label}(${index})`;
-      if (!this.currentNode.parent.childNodes.some((v) => v.data.label === label)) {
+      if (
+        !this.currentNode.parent.childNodes.some(v => v.data.label === label)
+      ) {
         return label;
       }
       return this.getCopyName(label, index + 1);
@@ -474,7 +483,7 @@ export default {
     copyInfrastructureSuccessResponse(body) {
       this.$cToast.success(body.msg);
       this.refreshParentNode();
-    },
+    }
   },
   watch: {
     filterText(val) {
@@ -527,7 +536,7 @@ export default {
 <style lang="scss" scoped>
 .left-tree {
   // width: 15%;
-  width:300px;
+  width: 300px;
   height: 100%;
   background: rgba($color: #232629, $alpha: 0.8);
   padding: 0 1%;
