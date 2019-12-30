@@ -113,12 +113,14 @@ router.afterEach(() => {
 });
 // 获取权限列表
 function getAuthList() {
+  console.log(sessionStorage.getItem('useruuid'));
   api
     .getAuth({
-      roleUuid: ''
+      roleUuid: sessionStorage.getItem('useruuid')
     })
     .then(res => {
       console.log(res.data);
+      // debugger;
       let data = res.data.data || [];
       let AllModulesArr = [];
       getAllModulesArr(data, AllModulesArr);

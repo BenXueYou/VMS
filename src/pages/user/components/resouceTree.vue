@@ -25,6 +25,8 @@
 						<el-tree
 							:load="loadNode"
 							node-key="id"
+							:ref="treeTab.id"
+							check-strictly
 							:show-checkbox="false"
 							:props="defaultProps"
 							:expand-on-click-node="false"
@@ -216,8 +218,10 @@ export default {
             channelItem.extInfo &&
 						this.resourceType === channelItem.extInfo.channelDivideType
           );
+        } else {
+          // 只显示该类型的设备
+          return channelItem.nodeType === "devNode";
         }
-        return true;
       }
       return false;
     },
@@ -254,16 +258,38 @@ export default {
       console.log(dataArr);
       this.$emit("transferResourceAuth", dataArr);
     },
-    // 输入框的筛选按钮
-    filterNode(obj, data) {},
+    // 筛选方法
+    filterNode(obj, data) {
+      if (this.resourceType === this.rightTabArr[0].id) {
+        // 过滤通道
+        console.log(data);
+        return data.nodeType.indexOf("chn") === -1;
+      } else {
+        if (data.nodeType === "devNode") {
+          data.openFlag = true;
+        }
+        data.isLeaf = !data.openFlag;
+        console.log(data);
+        // 恢复节点
+        return false;
+      }
+    },
     // 点击树节点响应事件
     nodeClick(data, node, nodeTree) {
       // TODO:此处需要有过滤只选择通道
-      if (!data.openFlag && data.nodeType.indexOf("chn") !== -1) {
-        this.$set(node, "checked", !node.checked);
-        this.handleCheckChannelData(data, node.checked);
+      if (this.resourceType === this.rightTabArr[0].id) {
+        if (!data.openFlag && data.nodeType.indexOf("dev") !== -1) {
+          this.$set(node, "checked", !node.checked);
+          this.handleCheckChannelData(data, node.checked);
+        }
+      } else {
+        if (!data.openFlag && data.nodeType.indexOf("chn") !== -1) {
+          this.$set(node, "checked", !node.checked);
+          this.handleCheckChannelData(data, node.checked);
+        }
       }
     },
+    // 过滤节点
     // 处理选中的数据源
     handleCheckChannelData(data, isBool) {
       if (isBool) {
@@ -295,8 +321,13 @@ export default {
           .then(res => {
             let data = res.data.data || [];
             data.map(element => {
+              if (
+                this.resourceType === this.rightTabArr[0].id &&
+								element.nodeType === "devNode"
+              ) {
+                element.openFlag = false;
+              }
               element.isLeaf = !element.openFlag;
-              // this.$set(element, "isLeaf", !element.openFlag);
             });
             resolve(data);
           })
@@ -355,6 +386,25 @@ export default {
     // 点击右边按钮，改变资源类型
     resourceTypeChange() {
       this.getChannelAuth();
+      // 当选择的是设备
+      if (this.resourceType === this.rightTabArr[0].id) {
+        // 获取当前显示的通道
+        let treeCheckedChannelArr = this.checkedChannelArr.filter((v, k) => {
+          return this.justifyIsShowCheckedChannel(v);
+        });
+        let treeCheckedChannelKeysArr = treeCheckedChannelArr.map(v => {
+          return v.id;
+        });
+        // 点击右侧按钮，过滤左侧树的节点
+        console.log(treeCheckedChannelKeysArr);
+        if (this.$refs[this.activeName] && this.$refs[this.activeName][0]) {
+          this.$refs[this.activeName][0].setCheckedKeys([]);
+          this.$refs[this.activeName][0].setCheckedKeys(
+            treeCheckedChannelKeysArr
+          );
+          this.$refs[this.activeName][0].filter();
+        }
+      }
     },
     // 通道资源的静态资源权限
     getChannelAuth() {

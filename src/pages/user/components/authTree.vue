@@ -693,8 +693,6 @@ export default {
           this.data = data;
           this.initData();
         });
-      // this.data = this.$store.state.auth.AuthList;
-      // this.initData();
     }
   },
   watch: {

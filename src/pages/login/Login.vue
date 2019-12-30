@@ -230,7 +230,6 @@ export default {
         // 这里存储logUuid, 后面选择项目的时候会使用到
         sessionStorage.setItem("logUuid", body.data.adminUser.logUuid);
         // this.$store.dispatch("setUserName", body.data.adminUser.username);
-
         if (projects.length > 1) {
           // 如果要从登陆页面跳转到项目选择的页面，则执行下面的代码
           this.$router.push("/projectManage");
