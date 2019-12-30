@@ -22,9 +22,9 @@ service.interceptors.request.use(
     let projectUuid = store.state.home.projectUuid;
     config.headers["Authorization"] = Authorization;
     config.headers["projectUuid"] = projectUuid;
-    if (config.method === 'get') {
+    if (config.method === "get") {
       config.data = true;
-      config.headers['Content-type'] = 'application/json';
+      config.headers["Content-type"] = "application/json";
     }
     // config.headers['H-TOKEN'] = '111'
     return config;
@@ -42,13 +42,16 @@ service.interceptors.response.use(
     if (response.data.hasOwnProperty("success")) {
       if (response.data.success) {
         return response;
-      } else if (response.data.errCode === 7000 ) {
+      } else if (response.data.errCode === 7000) {
         router.replace({
           name: "Login"
         });
-      } else if (response.data.msg === "令牌无效" || response.data.msg === "权限不足" ) {
-        sessionStorage.setItem("Authorization","");
-        sessionStorage.setItem("projectUuid","");
+      } else if (
+        response.data.msg === "令牌无效" ||
+        response.data.msg === "权限不足"
+      ) {
+        sessionStorage.setItem("Authorization", "");
+        sessionStorage.setItem("projectUuid", "");
         Toast.error(response.data.msg);
         router.replace({
           name: "Login"
@@ -94,6 +97,7 @@ service.interceptors.response.use(
   //       return response.data;
   //     }
   error => {
+    console.log(arguments);
     console.log(error); // for debug
     // 一秒内只会弹出一个报错信息
     const currentToastTime = new Date().getTime();
