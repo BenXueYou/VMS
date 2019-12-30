@@ -174,6 +174,10 @@ export default {
     },
     nowSync() {
       let data = this.getData();
+      if (!data.isvideoset) {
+        this.$message.warning('请开启人脸识别');
+        return;
+      }
       api.setImmediateSyncSettingl(this.deviceUuid, data).then(res => {
         console.log(res);
         if (res.data.success) {
