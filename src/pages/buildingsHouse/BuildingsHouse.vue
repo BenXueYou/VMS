@@ -168,7 +168,6 @@ export default {
       }
     },
     setTreeRootData(data) {
-      console.log("233333333333333333333333333399999999");
       this.initTreeRootData = data;
       this.$refs.houseTable.rootInfrastructureUuid = data.id;
       this.$refs.houseTable.initTreeRootData = data;
