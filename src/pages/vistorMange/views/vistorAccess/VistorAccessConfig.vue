@@ -453,6 +453,8 @@ export default {
                 this.$refs.mytable.setCurrentRow(this.tableData[index]);
               }
             }
+          } else {
+            this.tableData = [];
           }
         });
     },
