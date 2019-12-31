@@ -19,7 +19,8 @@ router.beforeEach((to, from, next) => {
   if (
     store.state.home.Authorization &&
     store.state.home.Authorization.substr(0, 5) !== "Basic" &&
-    !!sessionStorage.getItem("Authorization")
+    !!sessionStorage.getItem("Authorization") &&
+    window.sessionStorage.getItem("useruuid")
   ) {
     // 判断是否有token 目前先置为 true !!!!
     if (to.path === "/Login") {
@@ -28,12 +29,12 @@ router.beforeEach((to, from, next) => {
       // NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
     } else {
       // 判断改账户是否选择了项目
-      if (to.path === '/projectManage') {
+      if (to.path === "/projectManage") {
         console.log("projectUuid===", store.state.home.projectUuid);
         next();
         // return;
       }
-      if (!isInitRoute && to.path !== '/projectManage') {
+      if (!isInitRoute && to.path !== "/projectManage") {
         if (sessionStorage.getItem("projectUuid") !== "") {
           isInitRoute = true;
           // 这里根据项目的uuid去请求用户的权限菜单
@@ -113,10 +114,10 @@ router.afterEach(() => {
 });
 // 获取权限列表
 function getAuthList() {
-  console.log(sessionStorage.getItem('useruuid'));
+  console.log(sessionStorage.getItem("useruuid"));
   api
     .getAuth({
-      roleUuid: sessionStorage.getItem('useruuid')
+      roleUuid: sessionStorage.getItem("useruuid")
     })
     .then(res => {
       console.log(res.data);
@@ -124,7 +125,7 @@ function getAuthList() {
       let data = res.data.data || [];
       let AllModulesArr = [];
       getAllModulesArr(data, AllModulesArr);
-      store.dispatch('setAuthList', AllModulesArr);
+      store.dispatch("setAuthList", AllModulesArr);
     });
 }
 
@@ -144,4 +145,4 @@ function getAllModulesArr(data, AllModulesData) {
  * 格式化路由映射 服务器返回的类 变成路由所需要的类
  */
 // eslint-disable-next-line no-unused-vars
-function formateRouterMap() { }
+function formateRouterMap() {}

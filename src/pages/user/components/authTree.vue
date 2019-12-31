@@ -7,7 +7,6 @@
              :append-to-body="true"
              :visible.sync="TreechangeNameDialogVisible">
     <div class="c tears">
-      <!-- default-expand-all -->
       <div class="tableHeader">
         <div class="hitem">
           模块名称
@@ -19,15 +18,32 @@
           操作权限
         </div>
       </div>
-      <el-tree :data="data"
-               node-key="featureUuid"
-               :props="props"
-               :expand-on-click-node="false">
-        <span class="custom-tree-node"
-              slot-scope="{ node, data }">
-          <div class="labelName">{{ node.label }}</div>
-        </span>
-      </el-tree>
+      <div class="treeWrap">
+        <el-tree :data="data"
+                 node-key="featureUuid"
+                 :props="props"
+                 default-expand-all
+                 :expand-on-click-node="false">
+          <span class="custom-tree-node"
+                slot-scope="{ node, data }">
+            <div class="labelName">{{ node.label }}</div>
+            <div class="labelButton">
+              <el-switch :width="27"
+                         v-model="data.isShow"
+                         @change="showAuth(node,data,'isShow')"
+                         active-color="#26D39D40"
+                         inactive-color="rgb(72,73,75)"></el-switch>
+            </div>
+            <div class="labelButton">
+              <el-switch :width="27"
+                         v-model="data.isOwn"
+                         @change="showAuth(node,data,'isOwn')"
+                         active-color="#26D39D40"
+                         inactive-color="rgb(72,73,75)"></el-switch>
+            </div>
+          </span>
+        </el-tree>
+      </div>
     </div>
     <div class="ss">
       <el-button type="primary"
@@ -100,8 +116,97 @@ export default {
     this.TreechangeNameDialogVisible = this.visible;
   },
   methods: {
-    close() {},
-    confirm() {},
+    getUuid() {
+      // return auth
+      //   .filter(item => {
+      //     return chekcedNum.indexOf(item.authName) !== -1;
+      //   })
+      //   .map(item => {
+      //     return item.authUuid;
+      //   });
+    },
+    showMode(node, data) {
+      console.log(node, data);
+    },
+    showAuth(node, data, key) {
+      console.log(data);
+      if (node.childNodes && node.childNodes.length) {
+        // 向下更新所有节点
+        this.dealParentOperator(node.childNodes, key, data[key]);
+      }
+      // 向上更新所有节点
+      if (node.parent) {
+        this.traverseUpwrad(node.parent, key, data[key]);
+      }
+    },
+    traverseUpwrad(node, key, flag) {
+      console.log(node, flag);
+      let childNodes = node.childNodes;
+      for (let i = 0, len = childNodes.length; i < len; i++) {
+        if (!flag) {
+          break;
+        }
+        flag = flag && childNodes[i].data[key];
+      }
+      console.log(flag);
+      node.data[key] = flag;
+      if (node.parent) {
+        this.traverseUpwrad(node.parent, key, flag);
+      }
+    },
+    dealParentOperator(data, key, flag) {
+      console.log(data);
+      for (let i = 0; i < data.length; i++) {
+        data[i].data[key] = flag;
+        this.$set(data[i].data, key, flag);
+        if (data[i].childNodes && data[i].childNodes.length) {
+          this.dealParentOperator(data[i].childNodes, key, flag);
+        }
+      }
+    },
+    getAllCheckedLeafUuid(data) {
+      // 遍历数据
+      for (let i = 0, len = data.length; i < len; i++) {
+        // 判断是不是叶子节点
+        if (data[i].childNodes && data[i].childNodes.length) {
+          this.getAllCheckedLeafUuid(data[i].childNodes);
+        } else {
+          // let num = this.getUuid(data[i].auth, data[i].checkAuth);
+          // num有长度则表示要显示
+          this.showNum.push({
+            featureName: data[i].nodeName,
+            featureUuid: data[i].featureUuid,
+            isShow: data[i].isShow,
+            isOwn: data[i].isOwn,
+            authUuids: data[i].auth
+          });
+        }
+      }
+    },
+    initData() {
+      let d = JSON.parse(JSON.stringify(this.data));
+      this.dpTree(d);
+      this.data = JSON.parse(JSON.stringify(d));
+    },
+    close() {
+      this.$emit("update:visible", false);
+    },
+    confirm() {
+      this.showNum = [];
+      this.getAllCheckedLeafUuid(this.data);
+      // console.log(this.checkedNum);
+      console.log(this.showNum);
+
+      this.close();
+    },
+    dpTree(data) {
+      // 编辑整个数据，将数字改为bool值 isOwn isShow
+      for (let i = 0; i < data.length; i++) {
+        data[i].isOwn = !!data[i].isOwn;
+        data[i].isShow = !!data[i].isShow;
+        this.dpTree(data[i].childNodes || []);
+      }
+    },
     getData() {
       api
         .getAuth({
@@ -109,9 +214,11 @@ export default {
         })
         .then(res => {
           console.log(res.data);
-          let data = res.data.data || [];
-          this.data = data;
-          this.initData();
+          if (res.data.success) {
+            let data = res.data.data || [];
+            this.data = data;
+            this.initData();
+          }
         });
     }
   },
@@ -138,18 +245,30 @@ export default {
 <style lang="scss" scoped>
 .tableHeader {
   display: flex;
+  line-height: 42px;
   .hitem {
+    color: rgba(255, 255, 255, 0.8);
     flex: 1;
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-right: 1px dashed rgba(255, 255, 255, 0.12);
+    &:last-child {
+      border: none;
+    }
   }
 }
 .custom-tree-node {
   display: flex;
   width: calc(100%);
   justify-content: space-between;
-  l .labelName {
-    width: 200px;
+  .labelName {
+    text-align: left;
+    width: calc(100% - 560px);
+  }
+  .labelButton {
+    width: 280px;
+    display: flex;
+    justify-content: center;
   }
   .groupButton {
     display: flex;
@@ -176,10 +295,12 @@ $labelwidth: 5em;
   }
 }
 .c {
-  overflow: auto;
-  max-height: 65vh;
-  min-height: 30vh;
   padding: 10px 20px;
+  .treeWrap {
+    overflow: auto;
+    max-height: 65vh;
+    min-height: 30vh;
+  }
   .body {
     max-width: 300px;
     width: 80%;
