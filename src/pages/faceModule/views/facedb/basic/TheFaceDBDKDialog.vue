@@ -117,6 +117,8 @@ export default {
   },
   watch: {
     faceDBDialogVisible: function(val) {
+      this.isShowPerc = false;
+      this.percentage = 0;
       this.diglogvisible = this.faceDBDialogVisible;
       if (this.diglogvisible) {
         this.$nextTick(function() {
@@ -125,7 +127,9 @@ export default {
       } else {
       }
     },
-    diglogvisible() {
+    diglogvisible(val) {
+      this.isShowPerc = false;
+      this.percentage = 0;
       if (this.diglogvisible !== this.faceDBDialogVisible) {
         this.$emit("close");
       }
