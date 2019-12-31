@@ -99,6 +99,7 @@ export default {
       this.credentialNo = null;
       this.staffType = this.staffTypeOptions[0].typeStr;
       this.createTime = this.$common.getCurrentTime();
+      this.$emit("query", {});
     }
   }
 };
