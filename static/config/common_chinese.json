@@ -1037,6 +1037,9 @@
     "GT_DOOR_HK": "海康门禁服务",
     "GT_DOOR_DH": "大华门禁服务",
     "GT_VIDEO_HK": "海康视频服务",
+    "GT_VIDEO_HW": "华为视频服务",
+    "GT_VIDEO_UNV": "宇视视频服务",
+    "GT_VIDEO_KS": "旷视视频服务",
     "GT_VIDEO_DH": "大华视频服务",
     "GT_UPLOAD_POLICE1400": "公安1400上传服务",
     "GT_STATISTICAL_POLICE1400": "公安1400统计服务",
@@ -1047,7 +1050,7 @@
     "GT_EUREKA": "注册中心服务",
     "GT_GATEWAY": "网关服务",
     "GT_GUESTSLAVE": "网桥服务",
-    "GT_DATACENTER": "数据中心服务"
+    "GT_DATACENTER": "数据中心"
   },
   "face_lib_type": {
     "systemFaceLib": "系统人员库",
