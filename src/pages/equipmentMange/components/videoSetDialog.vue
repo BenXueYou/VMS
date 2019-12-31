@@ -174,7 +174,7 @@ export default {
     },
     nowSync() {
       let data = this.getData();
-      if (!data.isvideoset) {
+      if (!data.enable) {
         this.$message.warning('请开启人脸识别');
         return;
       }
