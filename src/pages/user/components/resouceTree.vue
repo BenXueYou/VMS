@@ -97,6 +97,7 @@
 									:key="j"
 									:label="authItem.authUuid"
 									:name="authItem.authUuid"
+									@change="authItemChangeAct($event,authItem,channelItem)"
 								>{{authItem.authName}}</el-checkbox>
 							</template>
 						</el-checkbox-group>
@@ -168,6 +169,16 @@ export default {
     this.getChannelAuth();
   },
   methods: {
+    authItemChangeAct(val, authItem, channelItem) {
+      if (!val) {
+        this.checkedAuthUuids.splice(
+          this.checkedAuthUuids.findIndex(item => item === authItem.authUuid),
+          1
+        );
+      } else {
+        // if(channelItem.checkedAuthUuids.length === this.){}
+      }
+    },
     TopAllHandleCheckAllChange(val) {
       // 顶部的全选事件
       this.checkedChannelArr.map(channelItem => {
@@ -350,9 +361,11 @@ export default {
           }
         ]
       };
+      // 判断当前是否是根节点懒加载
       if (node.id < 4) {
         obj.viewType = this.treeTypeArr[node.id].id;
       } else {
+        // 非根节点的懒加载
         obj.viewType = this.activeName;
       }
       // 先判断是不是根节点

@@ -1827,7 +1827,6 @@ export default {
       canvWidth: "",
       canvHeight: "",
       mediaStreamTrack: null
-      
     };
   },
   created() {},
