@@ -186,9 +186,9 @@ export default {
         headers: {
           Authorization: _this.$store.state.home.Authorization
         }, //token值
-        chunk_size: "1mb", // 分段上传，每个小段的大小
+        chunk_size: "5mb", // 分段上传，每个小段的大小
         filters: {
-          max_file_size: "2000000mb"
+          max_file_size: "5000000mb"
         },
         multipart_params: {
           templateType: _this.templatetype,
