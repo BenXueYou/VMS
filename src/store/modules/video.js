@@ -1,11 +1,7 @@
 const video = {
   state: {
-    iccSignalRule: JSON.parse(
-      window.sessionStorage.getItem("iccSignalRule") || "{}"
-    ),
-    iccMediaRule: JSON.parse(
-      window.sessionStorage.getItem("iccMediaRule") || "{}"
-    )
+    iccSignalRule: "{}",
+    iccMediaRule: "{}"
   },
   getters: {
     jSignal(state) {
