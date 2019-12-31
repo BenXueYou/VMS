@@ -338,7 +338,7 @@ export default {
         console.log(url);
         this.video_mgr.drag(this.video, url);
       } else {
-        alert(1);
+        // alert(1);
         this.playVideo();
       }
     },
