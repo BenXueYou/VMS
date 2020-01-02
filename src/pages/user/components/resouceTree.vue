@@ -278,7 +278,10 @@ export default {
       } else {
         if (data.isLeaf) {
           console.log(data.realType, this.resourceType);
-          return data.realType.indexOf(this.resourceType) !== -1;
+          if (this.activeName !== "door") {
+            return data.realType.indexOf(this.resourceType) !== -1;
+          }
+          return data.realType === this.resourceType;
         } else {
           return true;
         }
