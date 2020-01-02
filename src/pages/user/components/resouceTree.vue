@@ -1,118 +1,112 @@
 <template>
-	<el-dialog
-		:title="title"
-		@close="close"
-		width="1280px"
-		:class="{'dialogCenter':true}"
-		:close-on-click-modal="false"
-		:append-to-body="true"
-		class="showResource"
-		:visible.sync="isShow"
-	>
-		<div class="mywrap">
-			<div class="left">
-				<el-tabs v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane
-						v-for="(treeTab,i) in treeTypeArr"
-						:key="i"
-						:label="treeTab.label"
-						class="i-tree"
-						:name="treeTab.id"
-					>
-						<!-- v-if="treeTab.id === activeName" -->
-						<!-- :load="loadNode($event,treeTab.id)" -->
-						<!-- v-if="treeTab.id === activeName" -->
-						<el-tree
-							:load="loadNode"
-							node-key="id"
-							:ref="treeTab.id"
-							check-strictly
-							:show-checkbox="false"
-							:props="defaultProps"
-							:expand-on-click-node="false"
-							@node-click="nodeClick"
-							:filter-node-method="filterNode"
-							lazy
-						>
-							<div class="custom-tree-node i-tree-item" slot-scope="{node}">
-								<div class="i-tree-item-icon">
-									{{ node.data.label}}
-									<template>
-										<img
-											v-if="node.checked"
-											src="@/assets/images/doorAccess/checked_icon.png"
-											width="10.9px"
-											height="9px"
-											style="margin-right: 20px;"
-										/>
-									</template>
-								</div>
-							</div>
-						</el-tree>
-					</el-tab-pane>
-				</el-tabs>
-			</div>
-			<div class="right">
-				<!---- 资源类型 ----->
-				<el-radio-group v-model="resourceType" @change="resourceTypeChange">
-					<template v-for="(item,index) in rightTabArr">
-						<el-radio-button :key="index" :label="item.id" :name="item.id">{{item.label}}</el-radio-button>
-					</template>
-				</el-radio-group>
-				<!---- 资源权限 ----->
-				<div class="channelItemClass">
-					<span class="channelItemSpan textClips">资源名称</span>
-					<el-checkbox
-						:indeterminate="isIndeterminate"
-						v-model="checkAll"
-						@change="TopAllHandleCheckAllChange"
-					>全选</el-checkbox>
-					<el-checkbox-group v-model="checkedAuthUuids">
-						<template v-for="(authItem,j) in resourceAuthArr">
-							<el-checkbox
-								@change="TopAllChangeAuthItem($event,authItem)"
-								:key="j"
-								:label="authItem.authUuid"
-								:name="authItem.authUuid"
-							>{{authItem.authName}}</el-checkbox>
-						</template>
-					</el-checkbox-group>
-				</div>
-				<template v-for="(channelItem,i) in checkedChannelArr">
-					<div v-if="justifyIsShowCheckedChannel(channelItem)" class="channelItemClass" :key="i">
-						<span
-							class="channelItemSpan textClips"
-							@mouseover="mymouseover"
-							@mouseout="mymouseout"
-							@mousemove="mymousemove"
-						>{{channelItem.label}}</span>
-						<el-checkbox
-							:indeterminate="channelItem.isIndeterminate"
-							v-model="channelItem.checkAll"
-							@change="handleCheckAllChange(channelItem)"
-						>全选</el-checkbox>
-						<el-checkbox-group v-model="channelItem.checkedAuthUuids">
-							<template v-for="(authItem,j) in channelItem.authArr">
-								<el-checkbox
-									:key="j"
-									:label="authItem.authUuid"
-									:name="authItem.authUuid"
-									@change="authItemChangeAct($event,authItem,channelItem)"
-								>{{authItem.authName}}</el-checkbox>
-							</template>
-						</el-checkbox-group>
-						<span @click="handleCheckChannelData(channelItem,false)">
-							<img src alt srcset />
-						</span>
-					</div>
-				</template>
-			</div>
-		</div>
-		<div slot="footer" class="dialog-footer">
-			<el-button type="primary" @click="onConfirmBtn">确 定</el-button>
-			<el-button type="primary" @click="isShow = false">取 消</el-button>
-		</div>
-	</el-dialog>
+  <el-dialog :title="title"
+             @close="close"
+             width="1280px"
+             :class="{'dialogCenter':true}"
+             :close-on-click-modal="false"
+             :append-to-body="true"
+             class="showResource"
+             :visible.sync="isShow">
+    <div class="mywrap">
+      <div class="left">
+        <el-tabs v-model="activeName"
+                 @tab-click="handleClick">
+          <el-tab-pane v-for="(treeTab,i) in treeTypeArr"
+                       :key="i"
+                       :label="treeTab.label"
+                       class="i-tree"
+                       :name="treeTab.id">
+            <!-- v-if="treeTab.id === activeName" -->
+            <!-- :load="loadNode($event,treeTab.id)" -->
+            <!-- v-if="treeTab.id === activeName" -->
+            <el-tree :load="loadNode"
+                     node-key="id"
+                     :ref="treeTab.id"
+                     check-strictly
+                     :show-checkbox="false"
+                     :props="defaultProps"
+                     :expand-on-click-node="false"
+                     @node-click="nodeClick"
+                     :filter-node-method="filterNode"
+                     lazy>
+              <div class="custom-tree-node i-tree-item"
+                   slot-scope="{node}">
+                <div class="i-tree-item-icon">
+                  {{ node.data.label}}
+                  <template>
+                    <img v-if="node.checked"
+                         src="@/assets/images/doorAccess/checked_icon.png"
+                         width="10.9px"
+                         height="9px"
+                         style="margin-right: 20px;" />
+                  </template>
+                </div>
+              </div>
+            </el-tree>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+      <div class="right">
+        <!---- 资源类型 ----->
+        <el-radio-group v-model="resourceType"
+                        @change="resourceTypeChange">
+          <template v-for="(item,index) in rightTabArr">
+            <el-radio-button :key="index"
+                             :label="item.id"
+                             :name="item.id">{{item.label}}</el-radio-button>
+          </template>
+        </el-radio-group>
+        <!---- 资源权限 ----->
+        <div class="channelItemClass">
+          <span class="channelItemSpan textClips">资源名称</span>
+          <el-checkbox :indeterminate="isIndeterminate"
+                       v-model="checkAll"
+                       @change="TopAllHandleCheckAllChange">全选</el-checkbox>
+          <el-checkbox-group v-model="checkedAuthUuids">
+            <template v-for="(authItem,j) in resourceAuthArr">
+              <el-checkbox @change="TopAllChangeAuthItem($event,authItem)"
+                           :key="j"
+                           :label="authItem.authUuid"
+                           :name="authItem.authUuid">{{authItem.authName}}</el-checkbox>
+            </template>
+          </el-checkbox-group>
+        </div>
+        <template v-for="(channelItem,i) in checkedChannelArr">
+          <div v-if="justifyIsShowCheckedChannel(channelItem)"
+               class="channelItemClass"
+               :key="i">
+            <span class="channelItemSpan textClips"
+                  @mouseover="mymouseover"
+                  @mouseout="mymouseout"
+                  @mousemove="mymousemove">{{channelItem.label}}</span>
+            <el-checkbox :indeterminate="channelItem.isIndeterminate"
+                         v-model="channelItem.checkAll"
+                         @change="handleCheckAllChange(channelItem)">全选</el-checkbox>
+            <el-checkbox-group v-model="channelItem.checkedAuthUuids">
+              <template v-for="(authItem,j) in channelItem.authArr">
+                <el-checkbox :key="j"
+                             :label="authItem.authUuid"
+                             :name="authItem.authUuid"
+                             @change="authItemChangeAct($event,authItem,channelItem)">{{authItem.authName}}</el-checkbox>
+              </template>
+            </el-checkbox-group>
+            <span @click="handleCheckChannelData(channelItem,false)">
+              <img src
+                   alt
+                   srcset />
+            </span>
+          </div>
+        </template>
+      </div>
+    </div>
+    <div slot="footer"
+         class="dialog-footer">
+      <el-button type="primary"
+                 @click="onConfirmBtn">确 定</el-button>
+      <el-button type="primary"
+                 @click="isShow = false">取 消</el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -196,12 +190,12 @@ export default {
         }
       });
       /* eslint-disable */
-			this.checkedAuthUuids = val
-				? this.resourceAuthArr.map(item => {
-						return item.authUuid;
-				  })
-				: [];
-			/* eslint-enable */
+      this.checkedAuthUuids = val
+        ? this.resourceAuthArr.map(item => {
+            return item.authUuid;
+          })
+        : [];
+      /* eslint-enable */
     },
     TopAllChangeAuthItem(val, authItem) {
       // 右侧按钮事件的全选
@@ -227,7 +221,7 @@ export default {
         if (this.resourceType !== this.rightTabArr[0].id) {
           return (
             channelItem.extInfo &&
-						this.resourceType === channelItem.extInfo.channelDivideType
+            this.resourceType === channelItem.extInfo.channelDivideType
           );
         } else {
           // 只显示该类型的设备
@@ -271,25 +265,28 @@ export default {
     },
     // 筛选方法
     filterNode(obj, data) {
+      console.log(123);
+      console.log(obj, data);
+      // 第一个的都是设备，所以比较第一个就可以判断是不是要显示通道
       if (this.resourceType === this.rightTabArr[0].id) {
         // 过滤通道
         console.log(data);
         return data.nodeType.indexOf("chn") === -1;
       } else {
-        if (data.nodeType === "devNode") {
-          data.openFlag = true;
-        }
-        data.isLeaf = !data.openFlag;
-        console.log(data);
+        // if (data.nodeType === "devNode") {
+        //   data.openFlag = true;
+        // }
+        // data.isLeaf = !data.openFlag;
+        // console.log(data);
         // 恢复节点
-        return false;
+        return true;
       }
     },
     // 点击树节点响应事件
     nodeClick(data, node, nodeTree) {
       // TODO:此处需要有过滤只选择通道
       if (this.resourceType === this.rightTabArr[0].id) {
-        if (!data.openFlag && data.nodeType.indexOf("dev") !== -1) {
+        if (data.nodeType.indexOf("dev") !== -1) {
           this.$set(node, "checked", !node.checked);
           this.handleCheckChannelData(data, node.checked);
         }
@@ -326,18 +323,20 @@ export default {
     },
     // 获取树节点数据的HTTP
     getTreeData(obj) {
+      console.log(this.resourceType);
+      console.log(this.rightTabArr[0].id);
       return new Promise(resolve => {
         api
           .getNewTree(obj)
           .then(res => {
             let data = res.data.data || [];
             data.map(element => {
-              if (
-                this.resourceType === this.rightTabArr[0].id &&
-								element.nodeType === "devNode"
-              ) {
-                element.openFlag = false;
-              }
+              // if (
+              //   this.resourceType === this.rightTabArr[0].id &&
+              //   element.nodeType === "devNode"
+              // ) {
+              //   element.openFlag = false;
+              // }
               element.isLeaf = !element.openFlag;
             });
             resolve(data);
@@ -375,7 +374,9 @@ export default {
         obj.parentUuid = node.data.id;
       }
       let data = await this.getTreeData(obj);
+      console.log(data);
       resolve(data);
+      this.$refs[this.activeName][0].filter();
     },
     // 点击tab按钮，切换树的类型
     handleClick(tab, event) {
@@ -415,9 +416,10 @@ export default {
           this.$refs[this.activeName][0].setCheckedKeys(
             treeCheckedChannelKeysArr
           );
-          this.$refs[this.activeName][0].filter();
         }
       }
+      // auth_video
+      this.$refs[this.activeName][0].filter();
     },
     // 通道资源的静态资源权限
     getChannelAuth() {
@@ -467,110 +469,110 @@ export default {
 </script>
 <style>
 .showResource .right .channelItemClass {
-	border-bottom: 1px dashed rgb(69, 71, 74);
-	display: flex;
-	line-height: 49px;
+  border-bottom: 1px dashed rgb(69, 71, 74);
+  display: flex;
+  line-height: 49px;
 }
 .showResource .right .channelItemClass .channelItemSpan {
-	display: inline-block;
-	width: 90px;
-	padding-right: 15px;
+  display: inline-block;
+  width: 90px;
+  padding-right: 15px;
 }
 .showResource .right .channelItemClass .el-checkbox {
-	margin-right: 18px;
+  margin-right: 18px;
 }
 .showResource .right .channelItemClass span {
-	font-family: "PingFangSC-Regular";
-	font-size: 12px;
-	color: #dddddd;
+  font-family: "PingFangSC-Regular";
+  font-size: 12px;
+  color: #dddddd;
 }
 .showResource .right .el-checkbox-group {
-	display: inline;
+  display: inline;
 }
 .showResource .el-tabs__nav {
-	display: inline-block;
-	width: 100%;
-	color: #dddddd;
+  display: inline-block;
+  width: 100%;
+  color: #dddddd;
 }
 .showResource .el-tabs__item {
-	color: #dddddd;
-	width: 25%;
+  color: #dddddd;
+  width: 25%;
 }
 .showResource .right .el-radio-group {
-	width: 70%;
-	display: flex;
-	justify-content: space-between;
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
 }
 .showResource .right .el-radio-group .el-radio-button__inner {
-	display: inline-block;
-	width: 90px;
-	background: transparent;
-	border: 1px solid rgba(38, 211, 157, 0.08);
-	border-radius: 2px;
-	font-family: "PingFangSC-Regular";
-	font-size: 13px;
-	color: #dddddd;
-	text-align: justify;
-	text-align: center;
+  display: inline-block;
+  width: 90px;
+  background: transparent;
+  border: 1px solid rgba(38, 211, 157, 0.08);
+  border-radius: 2px;
+  font-family: "PingFangSC-Regular";
+  font-size: 13px;
+  color: #dddddd;
+  text-align: justify;
+  text-align: center;
 }
 .showResource
-	.right
-	.el-radio-button__orig-radio:checked
-	+ .el-radio-button__inner {
-	color: #ffffff;
-	background: rgba(40, 255, 187, 0.08);
-	border-color: rgba(38, 211, 157, 0.8);
-	-webkit-box-shadow: -1px 0 0 0 #26d39d;
-	box-shadow: -1px 0 0 0 rgba(38, 211, 157, 0.08);
+  .right
+  .el-radio-button__orig-radio:checked
+  + .el-radio-button__inner {
+  color: #ffffff;
+  background: rgba(40, 255, 187, 0.08);
+  border-color: rgba(38, 211, 157, 0.8);
+  -webkit-box-shadow: -1px 0 0 0 #26d39d;
+  box-shadow: -1px 0 0 0 rgba(38, 211, 157, 0.08);
 }
 .showResource .el-tabs__item.is-active {
-	color: #26d39d;
+  color: #26d39d;
 }
 </style>
 <style lang="scss" scoped>
 $width: 300px;
 
 .showResource {
-	.mywrap {
-		display: flex;
-		min-height: 500px;
-		.left {
-			flex: 2;
-			padding: 20px 25px;
-			border-right: 1px solid rgba(255, 255, 255, 0.05);
-			max-width: 420px;
-		}
-		.right {
-			flex: 8;
-			padding: 10px 25px;
-		}
-	}
-	.dialog-footer {
-		height: 69px;
-		line-height: 69px;
-		border-top: 1px solid #24473f;
-		padding-right: 48px;
-	}
+  .mywrap {
+    display: flex;
+    min-height: 500px;
+    .left {
+      flex: 2;
+      padding: 20px 25px;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      max-width: 420px;
+    }
+    .right {
+      flex: 8;
+      padding: 10px 25px;
+    }
+  }
+  .dialog-footer {
+    height: 69px;
+    line-height: 69px;
+    border-top: 1px solid #24473f;
+    padding-right: 48px;
+  }
 }
 .i-tree {
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	padding: 10px 0;
-	box-sizing: border-box;
-	overflow: auto;
-	.i-tree-item {
-		width: 100%;
-		.i-tree-item-icon {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			.action-icon {
-				margin-left: auto;
-				margin-right: 10px;
-				cursor: pointer;
-			}
-		}
-	}
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 10px 0;
+  box-sizing: border-box;
+  overflow: auto;
+  .i-tree-item {
+    width: 100%;
+    .i-tree-item-icon {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .action-icon {
+        margin-left: auto;
+        margin-right: 10px;
+        cursor: pointer;
+      }
+    }
+  }
 }
 </style>
