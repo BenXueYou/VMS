@@ -44,7 +44,7 @@
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
-                   class="mypanel2"
+                   class="mypanel mypanel2"
                    name="tag">
         <el-tree :props="tagprops"
                  :load="tagloadNode"
@@ -53,7 +53,6 @@
                  lazy
                  node-key="id"
                  class='videoTree'
-                 :indent="10"
                  ref="tree2"
                  show-checkbox
                  :default-checked-keys="defaultExpandedKeys"
@@ -75,7 +74,7 @@
                    name="view">
 
         <el-tree :props="viewProps"
-                 class='videoTree2'
+                 class='videoTree2 videoTree3'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
@@ -571,6 +570,11 @@ export default {
 .videoTree2 .el-tree-node,
 .videoTree2 .el-tree-node__content {
   width: 100% !important;
+}
+.videoTree3 {
+  .span {
+   padding-left: 20px;
+  }
 }
 </style>
 

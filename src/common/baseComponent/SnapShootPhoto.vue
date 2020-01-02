@@ -101,9 +101,9 @@ export default {
 					window.navigator.getMedia(
 						{
 							video: {
-                width: { min: 1280 },
-                height: { min: 720 }
-              },
+								width: { min: 1280 },
+								height: { min: 720 }
+							},
 							audio: false // 不适用音频
 						},
 						function(strem) {
@@ -148,7 +148,7 @@ export default {
 	border-radius: 3px;
 	margin-top: 2vh !important;
 }
-.SnapShootDialogClass.el-dialog__wrapper{
+.SnapShootDialogClass.el-dialog__wrapper {
 	overflow: auto;
 }
 </style>

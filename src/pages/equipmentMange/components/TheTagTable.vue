@@ -246,7 +246,7 @@ export default {
         .then(res => {
           this.showloading = false;
           console.log(res);
-          let fanyi = JSON.parse(sessionStorage.localEnums);
+          let fanyi = JSON.parse(localStorage.localEnums);
           if (res.data.success && res.data.data) {
             let num = res.data.data.list || [];
             for (let i = 0, len = num.length; i < len; i++) {
@@ -283,10 +283,10 @@ export default {
       this.devBelong = "";
     },
     exportDoor() {
-      // if (!this.tagUuid) {
-      //   this.$message.error("请选择左边导入的标签!");
-      //   return;
-      // }
+      if (!this.tagUuid) {
+        this.$message.warning("请选择左边导入的标签!");
+        return;
+      }
       // 导入通道的时候去获取下拉列表
 
       this.checkedNode = [];
@@ -386,7 +386,12 @@ export default {
   },
   watch: {
     tagUuid(val) {
-      this.getTagList();
+      console.log(val);
+      if (val) {
+        this.getTagList();
+      } else {
+        this.tableData = [];
+      }
     }
   }
 };

@@ -499,6 +499,7 @@ export default {
       operator = -1,
       isDrag = false
     ) {
+      console.log(streamType);
       // 这里做个判断，判断streamType是否为空，为空则判断是不是第一个播放，是则主码流，不是则辅码流
       if (streamType === "") {
         let flag = !!this.videoArr.filter(item => {
@@ -885,7 +886,7 @@ export default {
                 /* eslint-disable */
                 let data = res.data.data || {};
                 let channelTyepCN =
-                  JSON.parse(sessionStorage.getItem("localEnums"))["chn"][
+                  JSON.parse(localStorage.getItem("localEnums"))["chn"][
                     data.channelType
                   ] || data.channelType;
                 data.channelType = channelTyepCN;
@@ -973,11 +974,6 @@ export default {
       this.videoArr.splice(index, 1, item);
 
       this.$refs["video" + index][0].record();
-
-      api2.downloadRecordLog({
-        channelUuid: this.videoArr[index].channelUuid,
-        viewType: "preview"
-      });
     },
     stopRecord(index) {
       if (!this.videoArr[index].channelUuid) {
@@ -1044,7 +1040,6 @@ export default {
     PreviewAreafullScreen() {
       var element = document.documentElement;
       // this.setFullScreen(this.$refs.vedioWrap);
-      this.initWrapDom();
 
       if (this.fullscreen) {
         if (document.exitFullscreen) {
@@ -1070,9 +1065,13 @@ export default {
           element.msRequestFullscreen();
         }
         console.log("已全屏！");
+        // this.fullscreen = !this.fullscreen;
+        setTimeout(() => {
+          this.fullscreen = true;
+          this.initWrapDom();
+        }, 100);
       }
       // // 改变当前全屏状态
-      this.fullscreen = !this.fullscreen;
     },
     setFullScreen(target) {
       if (target.requestFullscreen) {

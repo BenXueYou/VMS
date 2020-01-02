@@ -35,6 +35,14 @@ export function getScond(viewType) {
     url
   });
 }
+export function getResultImport(params) {
+  let url = sbUrl.getResultImportUrl;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
 // 操作标签 上下移动
 export function opeartorTag(data) {
   let url = sbUrl.operatorTagUrl;

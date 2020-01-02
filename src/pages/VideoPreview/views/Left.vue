@@ -58,6 +58,7 @@
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
+                   class="mypanel2"
                    name="tag">
         <el-tree :props="props"
                  class='videoTree2'
@@ -70,7 +71,7 @@
           <div class="custom-tree-node"
                @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
-            <div class="channelStatus2">
+            <div class="channelStatus channelStatus2">
               <img :src="data.icon"
                    v-if="data.icon"
                    alt="">
@@ -106,7 +107,7 @@
       <el-tab-pane label="视图"
                    name="view">
         <el-tree :props="viewProps"
-                 class='videoTree2'
+                 class='videoTree3'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
@@ -571,6 +572,7 @@ export default {
         });
     },
     chuliData(streamType = "") {
+      console.log(this.operatorData);
       if (this.operatorData.nodeType === "chnNode") {
         this.getPreviewInfo(
           this.operatorData.id,
@@ -586,8 +588,8 @@ export default {
       } else if (this.operatorData.hasOwnProperty("channelType")) {
         this.getPreviewInfo(
           this.operatorData.channelUuid,
-          streamType,
-          this.operatorData
+          this.operatorData,
+          streamType
         );
       } else if (this.operatorData.hasOwnProperty("tagType")) {
         this.getChannelByNode(this.operatorData.id).then(res => {
@@ -622,11 +624,18 @@ export default {
       ) {
         this.chuliData(command);
       } else if (command === "playback") {
+        console.log(this.operatorData);
         if (this.operatorData.nodeType === "chnNode") {
           this.$emit(
             "switchLuxiang",
             this.operatorData.id,
             this.operatorData.label
+          );
+        } else if (this.operatorData.hasOwnProperty("channelUuid")) {
+          this.$emit(
+            "switchLuxiang",
+            this.operatorData.channelUuid,
+            this.operatorData.channelName
           );
         } else {
           this.$message.error("请选择通道查看录像！");
@@ -644,7 +653,7 @@ export default {
       // if (!data.isOnline) {
       //   return;
       // }
-      console.log(data);
+      console.log(channelUuid, data, streamType, operator);
       this.$emit("playRtsp", channelUuid, streamType, data, operator);
     },
     handleNodeClick() {
@@ -1616,6 +1625,9 @@ export default {
     // width: 380px;
     height: calc(100vh - 185px);
   }
+  .mypanel2 {
+    height: calc(100vh - 185px);
+  }
   .showMaxWidth {
     width: 196px;
   }
@@ -1661,13 +1673,23 @@ export default {
     .el-tree-node,
     .el-tree-node__content {
       width: 100%;
+      box-sizing: border-box;
     }
     .custom-tree-node {
-      width: calc(100% - 30px);
+      width: calc(100% - 40px);
+    }
+  }
+  .videoTree3 {
+    .el-tree-node,
+    .el-tree-node__content {
+       width: 100% !important;
+    }
+    .custom-tree-node {
+      width: calc(100%);
     }
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
-    padding: 6px 0px;
+    padding: 6px 3px 6px 0px;
   }
 }
 </style>
@@ -1735,13 +1757,29 @@ export default {
       flex-basis: 20px;
       flex-shrink: 20px;
       flex-flow: 20px;
+      img {
+        width: 12px;
+        height: 12px;
+        user-select: none;
+      }
+      .span {
+        font-size: 12px;
+        color: #dddddd;
+        min-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .channelOffline {
+        color: #999999;
+      }
     }
     .span {
       // width: calc(100% - 30px);
       // overflow: hidden;
       // display: block;
       // text-overflow: ellipsis;
-      margin-left: 10px;
+      margin-left: 5px;
       white-space: nowrap;
       user-select: none;
       // float: left;

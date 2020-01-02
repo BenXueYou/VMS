@@ -1,6 +1,7 @@
 <template>
 	<el-dialog
 		width="600px"
+		class="dialogCenter"
 		:title="title"
 		center
 		:visible.sync="isCurrentShow"

@@ -360,39 +360,61 @@ export default {
   },
   watch: {
     CapturePhotoArr(val) {
-      // console.log(val);
-      let arr = [];
-      let snapshotTotal = this.todayShootCount;
-      snapshotTotal++;
-      val.map(item => {
-        if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
-          arr.unshift(item);
-        } else {
-          if (
-            this.checkedChannelsUuidList &&
-            this.checkedChannelsUuidList.length
-          ) {
-            snapshotTotal--;
-          }
+      console.log(val);
+      // let arr = [];
+      // let snapshotTotal = this.todayShootCount;
+      // snapshotTotal++;
+      // val.map(item => {
+      //   if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
+      //     arr.unshift(item);
+      //   } else {
+      //     if (
+      //       this.checkedChannelsUuidList &&
+      //       this.checkedChannelsUuidList.length
+      //     ) {
+      //       snapshotTotal--;
+      //     }
+      //   }
+      // });
+      // 判断推送过来数据是不是选中的通道
+      let channelUuid = val[val.length - 1].channelUuid;
+      if (
+        !this.notCheckAll ||
+        this.checkedChannelsUuidList.indexOf(channelUuid) !== -1
+      ) {
+        // 显示的是单通道
+        this.todayShootCount++;
+        this.photoList.unshift(val[val.length - 1]);
+        if (this.photoList.length > 9) {
+          this.photoList.pop();
         }
-      });
-      this.photoList = arr;
-      this.todayShootCount = snapshotTotal;
+      }
     },
     RecognizationArr(val) {
+      // 这里socket推送抓拍记录，会有已经的历史记录，所以直接推送过来第一张加入到抓拍记录
       console.log(val);
-      let arr = [];
+      // let num = val;
+      // let arr = [];
       this.todayCompareCount += 1;
-      val.map(item => {
-        if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
-          arr.unshift(item);
-        } else {
-          if (this.checkedTaskUUidList && this.checkedTaskUUidList.length) {
-            this.todayCompareCount -= 1;
-          }
-        }
-      });
-      this.comparePhotoList = arr;
+
+      // arr.unshift(val[val.length - 1]);
+      // val.map(item => {
+      //   if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
+      //     arr.unshift(item);
+      //   } else {
+      //     if (this.checkedTaskUUidList && this.checkedTaskUUidList.length) {
+      //       if (this.todayCompareCount > 0) {
+      //         this.todayCompareCount -= 1;
+      //       }
+      //     }
+      //   }
+      // });
+      this.comparePhotoList.unshift(val[val.length - 1]);
+      if (this.comparePhotoList.length > 5) {
+        this.comparePhotoList.pop();
+      }
+      // this.comparePhotoList.pop();
+      // this.getRecongizeList();
     },
     DeviceOnOffArr(val) {
       console.log(val);
@@ -459,11 +481,7 @@ export default {
               this.$message.warning("设备离线");
               return;
             }
-            console.log(this.channelInfoList);
-            this.getRtspInChannelUuid(
-              this.channelInfoList[0].channelUuid,
-              this.channelInfoList[0].channelName
-            );
+            this.getRtspInChannelUuid(this.channelInfoList[0].channelUuid);
           } else {
             console.log(res.data.data);
             this.$message({ type: "warning", message: "查询数据为空" });
@@ -539,35 +557,13 @@ export default {
       this.$refs.tree.setCheckedKeys(this.checkedTaskUUidList);
       this.checkTaskAll =
         this.checkedTaskUUidList.length === this.taskList.length;
-      this.log();
-    },
-    log() {
-      console.log(this.checkedTaskUUidList);
-      let task = this.taskList || [],
-        num = [];
-      console.log(task);
-      console.log(this.checkedTaskUUidList);
-      for (let j = 0; j < this.checkedTaskUUidList.length; j++) {
-        let index = -1;
-        for (let i = 0; i < task.length; i++) {
-          if (task[i].faceMonitorUuid === this.checkedTaskUUidList[j]) {
-            index = i;
-            break;
-          }
-        }
-        if (index !== -1) {
-          num.push(task[index]);
-        }
-      }
-      console.log(num);
-      api2.log2(num);
     },
     // 全部任务选中
     handleTaskCheckAllChange(val) {
       this.checkTaskAll = val;
       if (val) {
         this.checkedTaskUUidList = [];
-        for (var i = 0; i < this.taskList && this.taskList.length; i++) {
+        for (var i = 0; i < this.taskList.length; i++) {
           var temp = this.taskList[i];
           this.checkedTaskUUidList.push(temp.faceMonitorUuid);
         }
@@ -575,7 +571,6 @@ export default {
         this.checkedTaskUUidList = [];
       }
       this.$refs.tree.setCheckedKeys(this.checkedTaskUUidList);
-      console.log(val);
     },
     // 只呈现单路摄像机
     handleCheckAllChange(val) {
@@ -608,11 +603,7 @@ export default {
         return;
       }
       // 获取rtspUlrl
-      this.getRtspInChannelUuid(
-        this.checkedChannel.channelUuid,
-        this.checkedChannel.channelName,
-        true
-      );
+      this.getRtspInChannelUuid(this.checkedChannel.channelUuid, true);
       // 更新抓拍总数
       if (this.notCheckAll) {
         this.checkedChannelsUuidList = [];
@@ -627,7 +618,7 @@ export default {
       this.visible_popver = false;
     },
     // 布控任务通道ID获取码流参数
-    getRtspInChannelUuid(channelUuid, channelName, isBool) {
+    getRtspInChannelUuid(channelUuid, isBool) {
       let data = {
         channelUuid: channelUuid,
         streamType: this.streamType
@@ -650,13 +641,6 @@ export default {
           }
         })
         .catch(() => {});
-      // 添加日志
-      api2.log1([
-        {
-          channelUuid,
-          channelName
-        }
-      ]);
     },
     async loadVideo(data) {
       if (data) {
