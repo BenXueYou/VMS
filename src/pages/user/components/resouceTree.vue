@@ -225,6 +225,12 @@ export default {
     justifyIsShowCheckedChannel(channelItem) {
       if (channelItem.viewType === this.activeName) {
         if (this.resourceType !== this.rightTabArr[0].id) {
+          if (this.activeName !== "door") {
+            return (
+              channelItem.extInfo &&
+							channelItem.realType.indexOf(this.resourceType) !== -1
+            );
+          }
           return (
             channelItem.extInfo && this.resourceType === channelItem.realType
           );
