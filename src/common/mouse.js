@@ -11,7 +11,8 @@ export const mouseover = ($event) => {
     fontSize = style.fontSize,
     text = dom.innerHTML,
     span = document.createElement("span"),
-    left = $event.clientX-$event.layerX,
+    // left = $event.clientX-$event.layerX,
+    left = $event.clientX,
     top = $event.clientY;
     span.style.cssText = `font-size:12px;height:0;overflow:hidden;`;
     span.setAttribute('id', 'span');
@@ -37,7 +38,8 @@ export const mouseout = ($event) => {
     //鼠标移动浮层移动
 export const mousemove = ($event) => {
     // console.log($event);
-    let left = $event.clientX-$event.layerX,
+    // let left = $event.clientX-$event.layerX,
+    let left = $event.clientX,
     top = $event.clientY,
     bgObj = document.querySelector('#bgObj');
     if (bgObj) {
