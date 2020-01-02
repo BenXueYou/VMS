@@ -223,7 +223,6 @@ export default {
         this.$store.commit("SET_PROJECT_LIST", projects);
 
         // 设置ProjectUuid 默认设置第一个，其他Uuid可以在切换项目更改
-
         sessionStorage.setItem("username", body.data.adminUser.username);
         // 这里存储userUuid, 后面调用菜单的时候会使用到
         sessionStorage.setItem("useruuid", body.data.adminUser.useruuid);
@@ -243,10 +242,7 @@ export default {
               projectUuid: body.data.adminUser.projects[0].projectUuid,
               logUuid: sessionStorage.getItem("logUuid")
             })
-            .then(res => {
-              // let body = res.data;
-              // this.loginSuccessResponse(body);
-            });
+            .then(res => {});
           // 刷新页面以便于更新projectUuid
           this.$nextTick(() => {
             window.location.reload();

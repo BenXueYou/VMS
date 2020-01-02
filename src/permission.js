@@ -116,12 +116,11 @@ router.afterEach(() => {
 function getAuthList() {
   console.log(sessionStorage.getItem("useruuid"));
   api
-    .getAuth({
+    .getAccountFeatureAuth({
       roleUuid: sessionStorage.getItem("useruuid")
     })
     .then(res => {
       console.log(res.data);
-      // debugger;
       let data = res.data.data || [];
       let AllModulesArr = [];
       getAllModulesArr(data, AllModulesArr);

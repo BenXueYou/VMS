@@ -33,6 +33,7 @@ export default {
   // 变更角色状态
   // 获取角色功能模块权限树
   getAuthUrl: `${httpHeader}/role/feature/auth`,
+  getAccountFeatureAuthUrl: `${httpHeader}/role/feature/info`,
 
   // 获取角色资源模块权限
   getResourceUrl: `${httpHeader}/resource/auth`,

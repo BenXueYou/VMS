@@ -45,7 +45,7 @@ var resourceType = {
       label: "视频设备"
     },
     {
-      id: "auth_video_monitor",
+      id: "bullet_camera",
       label: "监控点"
     },
     {
@@ -63,19 +63,19 @@ var resourceType = {
       label: "门禁设备"
     },
     {
-      id: "auth_door_monitor",
+      id: "door",
       label: "门禁点"
     },
     {
-      id: "auth_door_input",
+      id: "door_aic",
       label: "输入"
     },
     {
-      id: "auth_door_output",
+      id: "door_aoc",
       label: "输出"
     },
     {
-      id: "auth_door_readhead",
+      id: "readhead",
       label: "读头"
     }
   ],

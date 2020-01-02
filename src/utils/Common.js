@@ -6,27 +6,22 @@ export var COMMON = {
   /**
    * moduleName,模块名称，名字全匹配，传汉字
    * btnName,按钮名称，按钮功能名字模糊匹配，传汉字
-   * 注：均以汉字名为索引
+   * 注：均以汉字名为索引 $common.getAuthIsOwn();
    */
   getAuthIsOwn(moduleName, btnName) {
+    let AllAuthList = store.state.auth.AuthList;
     if (btnName.length >= 2) {
-      if (store.state.auth.AuthList.filter(modelObj => {
+      // 根据功能模块名称获取，功能模块的权限配置
+      let cnd1 = AllAuthList.filter(modelObj => {
         return modelObj.nodeName === moduleName;
-      })[0] && store.state.auth.AuthList.filter(modelObj => {
-        return modelObj.nodeName === moduleName;
-      })[0].auth.filter(authObj => {
+      })[0];
+      // 根据按钮的名称 从 功能模块的权限配置中，获取权限的对象
+      let cnd2 = cnd1.auth.filter(authObj => {
         return btnName.indexOf(authObj.authName) !== -1;
-      })[0]) {
-        return store.state.auth.AuthList.filter(modelObj => {
-          return modelObj.nodeName === moduleName;
-        })[0].auth.filter(authObj => {
-          return btnName.indexOf(authObj.authName) !== -1;
-        })[0].isOwn;
-      } else {
-        console.log('无效权限');
-        return false;
-      }
-    }else{
+      })[0];
+      // 判断是否拥有操作权限
+      return cnd1 && cnd2 ? cnd2.isOwn : false
+    } else {
       alert('按钮名称必须大于两个字符');
     }
   },

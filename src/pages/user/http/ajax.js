@@ -37,6 +37,14 @@ export function getAuth(params) {
     params
   });
 }
+export function getAccountFeatureAuth(params) {
+  let { getAccountFeatureAuthUrl: url } = userUrl;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
 export function getResource(params) {
   let { getResourceUrl: url } = userUrl;
   return axios({
