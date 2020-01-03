@@ -25,14 +25,25 @@
 						placeholder="选择日期"
 						value-format="yyyy-MM-dd HH:mm:ss"
 					></el-date-picker>
-					<el-button type="default" size="mini">数据统计</el-button>
+					<el-button :disabled="!$common.getAuthIsOwn('预约邀请记录','isShow')" type="primary" size="mini">数据统计</el-button>
 				</div>
 				<!-- <div> -->
 				<div class="rightgroup">
 					<span class="title">访客姓名：</span>
 					<el-input class="input staffNameInput" v-model="staffName"></el-input>
-					<el-button type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
-					<el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
+					<el-button
+						:disabled="!$common.getAuthIsOwn('预约邀请记录','isShow')"
+						type="primary"
+						@click="queryBtnAct"
+						icon="el-icon-search"
+						size="small"
+					>检索</el-button>
+					<el-button
+						:disabled="!$common.getAuthIsOwn('预约邀请记录','isShow')"
+						type="primary"
+						v-popover:popover1
+						size="small"
+					>其他条件检索</el-button>
 					<el-popover
 						ref="popover1"
 						placement="bottom-end"
@@ -91,7 +102,11 @@
 				<el-table-column label="操作">
 					<template slot-scope="scope">
 						<div class="tableCertificateBtnClass">
-							<span @click="detailBtnAct(scope.row)" class="editFontClass cursorClass">详情</span>
+							<span
+								:class="$common.getAuthIsOwn('预约邀请记录', 'isShow')?'cursorClass':'disabled'"
+								@click="detailBtnAct(scope.row)"
+								class="editFontClass"
+							>详情</span>
 						</div>
 					</template>
 				</el-table-column>
@@ -389,10 +404,10 @@ export default {
 	top: 50%;
 	left: 120%;
 }
-.AppointInviteRecord .el-button--default,
-.AppointInviteRecord .el-button--default:hover,
-.AppointInviteRecord .el-button--default:active,
-.AppointInviteRecord .el-button--default:focus {
+.AppointInviteRecord .el-button--primary,
+.AppointInviteRecord .el-button--primary:hover,
+.AppointInviteRecord .el-button--primary:active,
+.AppointInviteRecord .el-button--primary:focus {
 	font-family: "PingFangSC-Regular";
 	font-size: 16px;
 	height: 34px;

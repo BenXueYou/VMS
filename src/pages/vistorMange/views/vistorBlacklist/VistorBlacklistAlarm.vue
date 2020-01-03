@@ -33,14 +33,20 @@
 						placeholder="选择日期"
 						value-format="yyyy-MM-dd HH:mm:ss"
 					></el-date-picker>
-					<el-button type="default" size="mini">数据统计</el-button>
+					<el-button :disabled="!ShowAuthDisabled" type="primary" size="mini">数据统计</el-button>
 				</div>
 				<!-- <div> -->
 				<div class="rightgroup">
 					<span class="title">姓名：</span>
 					<el-input class="input staffNameInput" v-model="staffName"></el-input>
-					<el-button type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
-					<el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
+					<el-button
+						:disabled="!ShowAuthDisabled"
+						type="primary"
+						@click="queryBtnAct"
+						icon="el-icon-search"
+						size="small"
+					>检索</el-button>
+					<el-button :disabled="!ShowAuthDisabled" type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
 					<el-popover
 						ref="popover1"
 						placement="bottom-end"
@@ -91,7 +97,11 @@
 				<el-table-column label="操作">
 					<template slot-scope="scope">
 						<div class="tableCertificateBtnClass">
-							<span @click="detailBtnAct(scope.row)" class="editFontClass cursorClass">详情</span>
+							<span
+								:class="ShowAuthDisabled?'cursorClass':''"
+								@click="detailBtnAct(scope.row)"
+								class="editFontClass"
+							>详情</span>
 						</div>
 					</template>
 				</el-table-column>
@@ -134,7 +144,9 @@ export default {
       isShow: false,
       rowData: {},
       showloading: false,
-      otherSearchData: {}
+      otherSearchData: {},
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
@@ -160,6 +172,8 @@ export default {
       that.pageSize = parseInt((h - 295) / 50) - 1;
       console.log(that.pageSize);
     });
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("黑名单报警", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("黑名单报警", "isOwn");
   },
   activated() {
     console.log(this.$route.params.data, "---------blacklistAlarm-------");
@@ -170,7 +184,9 @@ export default {
     }
     this.currentPage = 1;
     Object.assign(this.otherSearchData, data);
-    this.initData();
+    if (this.ShowAuthDisabled) {
+      this.initData();
+    }
   },
   methods: {
     selectDateChangeAct(value) {
@@ -254,6 +270,7 @@ export default {
     },
     // 详情
     detailBtnAct(rowData) {
+      if (!this.ShowAuthDisabled) return;
       this.rowData = rowData;
       api.getBlacklistAlarmDetailUrl(rowData.alarmUuid).then(res => {
         if (res.data.success && res.data.data) {
@@ -388,10 +405,10 @@ export default {
 	top: 50%;
 	left: 120%;
 }
-.BlacklistAlarm .el-button--default,
-.BlacklistAlarm .el-button--default:hover,
-.BlacklistAlarm .el-button--default:active,
-.BlacklistAlarm .el-button--default:focus {
+.BlacklistAlarm .el-button--primary,
+.BlacklistAlarm .el-button--primary:hover,
+.BlacklistAlarm .el-button--primary:active,
+.BlacklistAlarm .el-button--primary:focus {
 	font-family: "PingFangSC-Regular";
 	font-size: 16px;
 	height: 34px;

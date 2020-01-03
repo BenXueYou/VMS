@@ -460,6 +460,7 @@ export default {
       }
     },
     getResident() {
+      if (!this.$common.getAuthIsOwn("居民管理", "isShow")) return;
       this.pageSize = this.tableOrTableCell
         ? this.tableSize
         : this.tableCellSize;

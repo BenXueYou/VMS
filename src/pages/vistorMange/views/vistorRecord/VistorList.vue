@@ -6,14 +6,25 @@
 		<div class="main">
 			<div class="main-header">
 				<div>
-					<el-button type="default" size="mini">数据统计</el-button>
-					<el-button type="default" size="mini">导出</el-button>
+					<el-button :disabled="!$common.getAuthIsOwn('访客列表','isShow')" type="primary" size="mini">数据统计</el-button>
+					<el-button :disabled="!$common.getAuthIsOwn('访客列表','isOwn')" type="primary" size="mini">导出</el-button>
 				</div>
 				<div class="rightgroup">
 					<span class="title">访客姓名：</span>
 					<el-input class="input staffNameInput" v-model="staffName"></el-input>
-					<el-button type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
-					<el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
+					<el-button
+						:disabled="!$common.getAuthIsOwn('访客列表','isShow')"
+						type="primary"
+						@click="queryBtnAct"
+						icon="el-icon-search"
+						size="small"
+					>检索</el-button>
+					<el-button
+						:disabled="!$common.getAuthIsOwn('访客列表','isShow')"
+						type="primary"
+						v-popover:popover1
+						size="small"
+					>其他条件检索</el-button>
 					<el-popover
 						ref="popover1"
 						placement="bottom-end"
@@ -23,7 +34,12 @@
 					>
 						<vistor-search-view @query="queryAct"></vistor-search-view>
 					</el-popover>
-					<el-button type="primary" @click="tableOrTableCell = !tableOrTableCell" size="small">切换视图</el-button>
+					<el-button
+						:disabled="!$common.getAuthIsOwn('访客列表','isShow')"
+						type="primary"
+						@click="tableOrTableCell = !tableOrTableCell"
+						size="small"
+					>切换视图</el-button>
 				</div>
 			</div>
 			<el-table
@@ -48,16 +64,22 @@
 				<el-table-column label="操作">
 					<template slot-scope="scope">
 						<div class="tableCertificateBtnClass">
-							<span @click="detailBtnAct(scope.row)" class="editFontClass cursorClass">详情</span>
+							<span
+								@click="detailBtnAct(scope.row)"
+								:class="$common.getAuthIsOwn('访客列表', 'isShow')?'cursorClass':'disabled'"
+								class="editFontClass"
+							>详情</span>
 							<span
 								v-if="!scope.row.black"
 								@click="signBlacklistBtnAct(scope.row)"
-								class="deleteBtnClass cursorClass"
+								class="deleteBtnClass"
+								:class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'"
 							>拉黑</span>
 							<span
+								:class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'"
 								v-if="scope.row.black"
 								@click="signWhitelistBtnAct(scope.row)"
-								class="signOffBtnClass cursorClass"
+								class="signOffBtnClass"
 							>解除拉黑</span>
 						</div>
 					</template>
@@ -74,13 +96,18 @@
 							trigger="click"
 						>
 							<el-row class="popoverBox" justify="space-between">
-								<el-col class="VCelPopoverCol cursorClass" @click.native="detailBtnAct(item)">
+								<el-col
+									:class="$common.getAuthIsOwn('访客列表', 'isShow')?'cursorClass':'disabled'"
+									class="VCelPopoverCol"
+									@click.native="detailBtnAct(item)"
+								>
 									<img class="img" src="@/assets/images/personMange/detail1.png" />
 									详情
 								</el-col>
 								<el-col
 									v-if="!item.black"
-									class="VCelPopoverCol cursorClass"
+									class="VCelPopoverCol"
+									:class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'"
 									@click.native="signBlacklistBtnAct(item)"
 								>
 									<img class="img" src="@/assets/images/personMange/delete1.png" />
@@ -88,7 +115,8 @@
 								</el-col>
 								<el-col
 									v-if="item.black"
-									class="VCelPopoverCol cursorClass"
+									class="VCelPopoverCol"
+									:class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'"
 									@click.native="signWhitelistBtnAct(item)"
 								>
 									<img class="img" src="@/assets/images/personMange/delete1.png" />
@@ -564,10 +592,10 @@ export default {
 	top: 50%;
 	left: 120%;
 }
-.VistorList .el-button--default,
-.VistorList .el-button--default:hover,
-.VistorList .el-button--default:active,
-.VistorList .el-button--default:focus {
+.VistorList .el-button--primary,
+.VistorList .el-button--primary:hover,
+.VistorList .el-button--primary:active,
+.VistorList .el-button--primary:focus {
 	font-family: "PingFangSC-Regular";
 	font-size: 16px;
 	width: 90px;

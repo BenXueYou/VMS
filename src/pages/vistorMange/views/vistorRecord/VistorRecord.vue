@@ -33,14 +33,25 @@
 						placeholder="选择日期"
 						value-format="yyyy-MM-dd HH:mm:ss"
 					></el-date-picker>
-					<el-button type="default" size="mini">数据统计</el-button>
+					<el-button :disabled="!$common.getAuthIsOwn('访客记录', 'isShow')" type="primary" size="mini">数据统计</el-button>
 				</div>
 				<!-- <div> -->
 				<div class="rightgroup">
 					<span class="title">访客姓名：</span>
 					<el-input class="input staffNameInput" v-model="staffName"></el-input>
-					<el-button type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
-					<el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
+					<el-button
+						:disabled="!$common.getAuthIsOwn('访客记录', 'isShow')"
+						type="primary"
+						@click="queryBtnAct"
+						icon="el-icon-search"
+						size="small"
+					>检索</el-button>
+					<el-button
+						:disabled="!$common.getAuthIsOwn('访客记录', 'isShow')"
+						type="primary"
+						v-popover:popover1
+						size="small"
+					>其他条件检索</el-button>
 					<el-popover
 						ref="popover1"
 						placement="bottom-end"
@@ -86,14 +97,16 @@
 						<div class="tableCertificateBtnClass">
 							<span @click="detailBtnAct(scope.row)" class="editFontClass cursorClass">详情</span>
 							<span
+								:class="$common.getAuthIsOwn('访客记录', 'isOwn')?'cursorClass':'disabled'"
 								v-if="scope.row.signOff"
 								@click="signOffBtnAct(scope.row)"
-								class="editFontClass cursorClass"
+								class="editFontClass"
 							>签离</span>
 							<span
 								v-if="scope.row.forbid"
 								@click="forbidBtnAct(scope.row)"
-								class="deleteBtnClass cursorClass"
+								:class="$common.getAuthIsOwn('访客记录', 'isOwn')?'cursorClass':'disabled'"
+								class="deleteBtnClass"
 							>{{forbidBtnTxt}}</span>
 						</div>
 					</template>
@@ -277,6 +290,7 @@ export default {
       }
     },
     initData() {
+      if (!this.$common.getAuthIsOwn("访客记录", "isShow")) return;
       var params = {
         limit: this.pageSize,
         page: this.currentPage
@@ -294,9 +308,9 @@ export default {
             for (let i = 0; i < this.tableData.length; i++) {
               let item = this.tableData[i];
               // 判断是否需要签离 处理已到访，超出有效期后 权限回收的问题
-              item.signOff = item.manualSignOff && Boolean(
-                this.signOffBtnArr.indexOf(item.visitState) !== -1
-              );
+              item.signOff =
+								item.manualSignOff &&
+								Boolean(this.signOffBtnArr.indexOf(item.visitState) !== -1);
               let isOvertime = this.justifyForbidBtnTxt(item);
               item.forbid =
 								Boolean(this.forbidBtnArr.indexOf(item.visitState) !== -1) ||
@@ -318,7 +332,7 @@ export default {
     },
     // 详情
     detailBtnAct(rowData) {
-      console.log(rowData);
+      if (!this.$common.getAuthIsOwn("访客记录", "isShow")) return;
       // 请求数据
       this.showloading = !this.showloading;
       api
@@ -345,6 +359,8 @@ export default {
     // 禁止通行
     forbidBtnAct(rowData) {
       console.log("禁止通信");
+      if (!this.$common.getAuthIsOwn("访客记录", "isOwn")) return;
+
       if (rowData.recordUuid) {
         rowData.visitRecordUuid = rowData.recordUuid;
       } else {
@@ -370,6 +386,7 @@ export default {
     },
     // 签离
     signOffBtnAct(rowData) {
+      if (!this.$common.getAuthIsOwn("访客记录", "isOwn")) return;
       console.log("签离", rowData);
       this.showloading = !this.showloading;
       api
@@ -512,10 +529,10 @@ export default {
 	top: 50%;
 	left: 120%;
 }
-.VistorRecord .el-button--default,
-.VistorRecord .el-button--default:hover,
-.VistorRecord .el-button--default:active,
-.VistorRecord .el-button--default:focus {
+.VistorRecord .el-button--primary,
+.VistorRecord .el-button--primary:hover,
+.VistorRecord .el-button--primary:active,
+.VistorRecord .el-button--primary:focus {
 	font-family: "PingFangSC-Regular";
 	font-size: 16px;
 	height: 34px;

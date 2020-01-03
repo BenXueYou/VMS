@@ -1,5 +1,4 @@
 import store from "@/store/store.js";
-import { callbackify } from "util";
 export var COMMON = {
 
   // 根据模块按钮查找权限
@@ -12,7 +11,7 @@ export var COMMON = {
     let AllAuthList = store.state.auth.AuthList;
     if (isOwnOrShow === 'isOwn' || 'isShow') {
       // 判断是不是超级管理员，超级管理员，权限全部开放
-      if (store.state.home.accountType === 'project_admin') return true;
+      if (store.state.home.accountType === 'project_admin') return false;
       // 根据功能模块名称获取，功能模块的权限配置
       let cnd1 = AllAuthList.filter(modelObj => {
         return modelObj.nodeName === moduleName;

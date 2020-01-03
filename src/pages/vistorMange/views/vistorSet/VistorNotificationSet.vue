@@ -133,8 +133,8 @@
 				</div>
 			</div>
 			<div class="brnWrap">
-				<el-button style="width: 66px;" @click="putVistorNotification">确定</el-button>
-				<el-button style="width: 66px;" @click="cancelVistorNotification">取消</el-button>
+				<el-button :disabled="!OwnAuthDisabled" type="primary" style="width: 66px;" @click="putVistorNotification">确定</el-button>
+				<el-button :disabled="!OwnAuthDisabled" type="primary" style="width: 66px;" @click="cancelVistorNotification">取消</el-button>
 			</div>
 		</div>
 	</div>
@@ -154,6 +154,8 @@ export default {
       threshold: "",
       isSendMsg: true,
       isNoticeVisitor: true,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true,
       isInstructions: true,
       isEditCon: false,
       isLimitFrequency: true,
@@ -171,12 +173,14 @@ export default {
   },
   created() {},
   activated() {
-    this.getVistorNotification();
-    this.getShortMsgOptionsUrl();
+    if (this.ShowAuthDisabled) {
+      this.getVistorNotification();
+      this.getShortMsgOptionsUrl();
+    }
   },
   mounted() {
-    this.getVistorNotification();
-    this.getShortMsgOptionsUrl();
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("访客预约邀请", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("访客预约邀请", "isOwn");
   },
   methods: {
     getShortMsgOptionsUrl() {
@@ -193,7 +197,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          this.$message({ type: "err", message: "请求失败" });
+          //   this.$message({ type: "err", message: "请求失败" });
         });
     },
     // 初始化
@@ -221,7 +225,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          this.$message({ type: "err", message: "请求失败" });
+          //   this.$message({ type: "err", message: "请求失败" });
         });
     },
     // 点击页面配置按钮保存信息
@@ -253,7 +257,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          this.$message({ type: "err", message: "请求失败" });
+          //   this.$message({ type: "err", message: "请求失败" });
         });
     },
     cancelVistorNotification() {
@@ -414,7 +418,7 @@ export default {
 	background: rgba(40, 255, 187, 0.1);
 	border: 1px solid rgba(40, 255, 187, 0.35);
 	border-radius: 2px;
-	font-family: 'PingFangSC-Regular';
+	font-family: "PingFangSC-Regular";
 	font-size: 13px;
 	color: #ffffff;
 	position: relative;
