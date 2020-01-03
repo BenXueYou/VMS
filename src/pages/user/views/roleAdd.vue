@@ -218,10 +218,10 @@ export default {
     transferResourceAuth(dataArr) {
       this.resourceAuth = dataArr;
     },
-    setFeatureData(checkedUuidNums, showNum) {
+    setFeatureData(showNum) {
       // 设置获取到的数据
       this.featureAuth = showNum;
-      this.featureAuthUuids = checkedUuidNums;
+      // this.featureAuthUuids = checkedUuidNums;
     },
     deleteFeatureAuth(index) {
       this.featureAuth.splice(index, 1);
@@ -299,16 +299,26 @@ export default {
         return resourceAuth.push(obj);
       });
       console.log("resourceAuth===", resourceAuth);
-      let featureAuthUuids = [];
+      let featureAuthUuids = [],
+        isShowList = [],
+        isOwnList = [];
       for (let i = 0, len = this.featureAuth.length; i < len; i++) {
         featureAuthUuids.push(...this.featureAuth[i].authUuids);
+        if (this.featureAuth[i].isShow) {
+          isShowList.push(this.featureAuth[i].featureUuid);
+        }
+        if (this.featureAuth[i].isOwn) {
+          isOwnList.push(<this className="featureAuth"></this>[i].featureUuid);
+        }
       }
       let data = {
         roleName: this.roleName, // 角色名称
         invalidTime: this.time === "forever" ? "long" : this.invalidTime, // 到期时间，当类型为短期时传时间字符串，永久时传枚举值
         description: this.description, // 角色描述
         enable: this.enable === "enable" ? 1 : 0, // 0禁用、1启用
-        featureAuthUuids: featureAuthUuids,
+        // featureAuthUuids: featureAuthUuids,
+        isShowList,
+        isOwnList,
         // 关联的功能模块
         resourceAuthUuids: resourceAuth, // 关联的通道资源
         accountUuids: this.shouquanSelectedArr.map(i => {
