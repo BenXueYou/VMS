@@ -268,8 +268,9 @@ export default {
             this.$message.warning(res.data.msg);
           }
         })
-        .catch(() => {
-          this.$message.error("退出失败");
+        .catch((error) => {
+          console.log(error);
+          // this.$message.error("退出失败");
         });
     },
     // 获取本地翻译

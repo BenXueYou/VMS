@@ -5,24 +5,23 @@ export var COMMON = {
   // 根据模块按钮查找权限
   /**
    * moduleName,模块名称，名字全匹配，传汉字
-   * btnName,按钮名称，按钮功能名字模糊匹配，传汉字
+   * isOwnOrShow, 模块的权限(查看权限或操作权限)  传 isShow 或 isOwn
    * 注：均以汉字名为索引 $common.getAuthIsOwn();
    */
-  getAuthIsOwn(moduleName, btnName) {
+  getAuthIsOwn(moduleName, isOwnOrShow, ) {
     let AllAuthList = store.state.auth.AuthList;
-    if (btnName.length >= 2) {
+    if (isOwnOrShow === 'isOwn' || 'isShow') {
+      // 判断是不是超级管理员，超级管理员，权限全部开放
+      if (store.state.home.accountType === 'project_admin') return true;
       // 根据功能模块名称获取，功能模块的权限配置
       let cnd1 = AllAuthList.filter(modelObj => {
         return modelObj.nodeName === moduleName;
       })[0];
       // 根据按钮的名称 从 功能模块的权限配置中，获取权限的对象
-      let cnd2 = cnd1.auth.filter(authObj => {
-        return btnName.indexOf(authObj.authName) !== -1;
-      })[0];
       // 判断是否拥有操作权限
-      return cnd1 && cnd2 ? cnd2.isOwn : false
+      return cnd1 ? cnd2[isOwnOrShow] : false
     } else {
-      alert('按钮名称必须大于两个字符');
+      alert('请传入isShow 或 isOwn');
     }
   },
   // 校验手机号格式
@@ -595,7 +594,7 @@ export var COMMON = {
     // console.log(typeof store.state.home.localEnums);
     for (let groupStrKey in store.state.home.localEnums) {
       if (groupStr === groupStrKey) {
-        console.log(store.state.home.localEnums[groupStrKey]);
+        // console.log(store.state.home.localEnums[groupStrKey]);
         for (let typeStrKey in store.state.home.localEnums[groupStrKey]) {
           types.push({
             typeStr: typeStrKey,

@@ -33,8 +33,7 @@ export default {
   // 变更角色状态
   // 获取角色功能模块权限树
   getAuthUrl: `${httpHeader}/role/feature/auth`,
-  getAccountFeatureAuthUrl: `${httpHeader}/role/feature/info`,
-
+  
   // 获取角色资源模块权限
   getResourceUrl: `${httpHeader}/resource/auth`,
 
@@ -57,7 +56,10 @@ export default {
     resetAccountPWDApi: `${httpAccountHeader}/resetPwd`,
     deleteAccountApi: `${httpAccountHeader}`,
     switchAccountApi: `${httpAccountHeader}`,
-    //账号分配角色
-    editRoleAccountApi: `${httpHeader}/account/role`
+    // 账号分配角色
+    editRoleAccountApi: `${httpHeader}/account/role`,
+
+    // 根据账号获取功能模块的权限
+    getAccountFeatureAuthUrl: `${httpHeader}/account/feature/auth`,
   }
 };

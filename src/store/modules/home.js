@@ -13,6 +13,7 @@ const home = {
     projectUuid: Storage.readSession("projectUuid") || "",
     account: Storage.read("account") || "",
     userUuid: Storage.readSession("userUuid") || "",
+    accountType: Storage.readSession("accountType") || "",
     projectList: Storage.readSession("projectList") || []
     // username: sessionStorage.getItem("username") || ""
   },
@@ -77,6 +78,10 @@ const home = {
     SET_USERUUID: (state, userUuid) => {
       state.userUuid = userUuid;
       Storage.saveSession("userUuid", userUuid);
+    },
+    SET_ACCOUNTTYPE: (state, accountType) => {
+      state.accountType = accountType;
+      Storage.save("accountType", accountType);
     }
   },
   actions: {
@@ -112,7 +117,10 @@ const home = {
     },
     SET_USERUUID({ commit }, userUuid) {
       commit("SET_USERUUID", userUuid);
-    }
+    },
+    setAccountType({ commit }, accountType) {
+      commit("SET_ACCOUNTTYPE", accountType);
+    },
   }
 };
 

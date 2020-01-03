@@ -214,6 +214,7 @@ export default {
           this.$store.dispatch("setAccount", "");
           this.$store.dispatch("SET_USERUUID", "");
         }
+        // TOKEN
         let Authorization =
 					body.data.token.tokenType + " " + body.data.token.accessToken;
         this.$store.dispatch("setAuthorization", Authorization);
@@ -253,6 +254,7 @@ export default {
         }
       }
     },
+
     hrefToCloud() {
       window.location.href =
 				window.config.protocolHeader +

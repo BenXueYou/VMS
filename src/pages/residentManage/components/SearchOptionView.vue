@@ -37,7 +37,7 @@
 			<el-date-picker v-model="registerTime" type="date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' placeholder="选择日期" class="input"></el-date-picker>
 		</div>
 		<div class="btn-group">
-			<el-button type="primary" size="small" @click="query">查询</el-button>
+			<el-button :disabled="!this.$common.getAuthIsOwn('居民管理', 'isShow')" type="primary" size="small" @click="query">查询</el-button>
 			<span class="btn-text" @click="resetValue">重置</span>
 		</div>
 	</div>

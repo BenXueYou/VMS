@@ -63,6 +63,7 @@ router.beforeEach((to, from, next) => {
               // );
               // router.addRoutes(routerData);
             });
+          getAccountTypeByUserUuid(window.sessionStorage.getItem("useruuid").trim());
 
           // 这里请求用户的权限列表
           getAuthList();
@@ -112,12 +113,25 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
   // NProgress.done() // 结束Progress
 });
+// 根据userUuid查询账号类型
+function getAccountTypeByUserUuid(userUuid) {
+  api
+    .getAccountDetail({ accountUuid: userUuid })
+    .then(res => {
+      if (res.data.success) {
+        store.dispatch("setAccountType", res.data.data.accountType);
+      } else {
+        alert(res.data.msg);
+      }
+    })
+    .catch(() => { });
+}
 // 获取权限列表
 function getAuthList() {
   console.log(sessionStorage.getItem("useruuid"));
   api
     .getAccountFeatureAuth({
-      roleUuid: sessionStorage.getItem("useruuid")
+      accountUuid: sessionStorage.getItem("useruuid")
     })
     .then(res => {
       console.log(res.data);
@@ -144,4 +158,4 @@ function getAllModulesArr(data, AllModulesData) {
  * 格式化路由映射 服务器返回的类 变成路由所需要的类
  */
 // eslint-disable-next-line no-unused-vars
-function formateRouterMap() {}
+function formateRouterMap() { }

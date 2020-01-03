@@ -38,7 +38,7 @@ export function getAuth(params) {
   });
 }
 export function getAccountFeatureAuth(params) {
-  let { getAccountFeatureAuthUrl: url } = userUrl;
+  let { getAccountFeatureAuthUrl: url } = userUrl.accountApi;
   return axios({
     method: "get",
     url,

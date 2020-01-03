@@ -1,6 +1,9 @@
 .el-color-picker__trigger {
   border: 0;
 }
+.disabled{
+  color:  #82848a!important;
+}
 .RTask .fill video {
   object-fit: fill !important;
   position: absolute;
@@ -208,7 +211,15 @@ img,
   height: 34px;
   line-height: 34px;
 }
-
+/****************** 按钮样式***************************/
+.el-button--primary.is-disabled,
+.el-button--primary.is-disabled:hover,
+.el-button--primary.is-disabled:focus,
+.el-button--primary.is-disabled:active {
+  color: #ffffff;
+  background-color: #82848a;
+  border-color: #93e9ce;
+}
 .el-button--default,
 .el-button--default:hover,
 .el-button--default:active,
