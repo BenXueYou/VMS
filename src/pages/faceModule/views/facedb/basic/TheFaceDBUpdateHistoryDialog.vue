@@ -348,7 +348,7 @@ export default {
           this.gettaskdetail();
           this.refreshFlag = false;
         }
-      }, 3000);
+      }, 60000);
     }
   },
   watch: {
