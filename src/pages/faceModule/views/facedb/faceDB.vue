@@ -822,7 +822,7 @@ export default {
           this.getStaffLibList(true);
           this.refreshFlag = false;
         }
-      }, 3000);
+      }, 60000);
     }
   },
   mounted() {
