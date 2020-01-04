@@ -243,7 +243,9 @@ export default {
       checkedFaceUuidList: [],
       checkedFaceLibObj: [],
       checkFaceDBNameString: "对比人脸库",
-      selectDate: null
+      selectDate: null,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   fiters: {},
@@ -256,6 +258,9 @@ export default {
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
     this.statusOptions = this.$common.getEnumByGroupStr("alarm_r");
+
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("报警查询", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("报警查询", "isOwn");
     this.getTaskList(false);
   },
   watch: {

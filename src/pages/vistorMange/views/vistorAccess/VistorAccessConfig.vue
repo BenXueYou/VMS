@@ -51,8 +51,8 @@
 					<div class="doorWrap" :style="{'max-height':MH}">
 						<el-popover
 							placement="bottom-start"
-							v-if="item.resType !== 'door'"
 							width="320"
+							v-if="item.resType !== 'door'"
 							trigger="hover"
 							v-for="(item,index) in doorNum"
 							:key="index"

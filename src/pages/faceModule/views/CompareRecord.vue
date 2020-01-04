@@ -80,8 +80,19 @@
 				</div>
 			</div>
 			<div :span="2" style="margin-top:-15px;">
-				<el-button icon="el-icon-search" class="search-btn" @click="queryAct" type="primary">查询</el-button>
-				<el-button class="search-btn" @click="resetQueryAct" type="primary">重置</el-button>
+				<el-button
+					:disabled="!ShowAuthDisabled"
+					icon="el-icon-search"
+					class="search-btn"
+					@click="queryAct"
+					type="primary"
+				>查询</el-button>
+				<el-button
+					:disabled="!ShowAuthDisabled"
+					class="search-btn"
+					@click="resetQueryAct"
+					type="primary"
+				>重置</el-button>
 			</div>
 		</el-row>
 		<div
@@ -172,11 +183,18 @@ export default {
 				document.body.clientWidth;
       h = h - 65;
       console.log(w);
+      if (this.deactivated) return;
       that.$refs.compareRecordHeight.$el.style.height = h + "px";
     });
+
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("对比查询", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("对比查询", "isOwn");
+
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    this.getTaskList();
+    if (this.ShowAuthDisabled) {
+      this.getTaskList();
+    }
   },
   activated: function() {
     this.deactivated = false;
@@ -327,6 +345,7 @@ export default {
     },
     // 点击详情的事件
     doComparethis(e) {
+      if (!this.ShowAuthDisabled) return;
       this.getAlarmShootPhotoList(this.totalCompareItemList[e]);
     },
     // 根据客户端的传的人员staffUuid查找抓拍图片
@@ -497,7 +516,9 @@ export default {
       dialogfullscreenLoading: false,
       staffName: null,
       certificateNum: null,
-      genderOption: ""
+      genderOption: "",
+      OwnAuthDisabled: true,
+      ShowAuthDisabled: true
     };
   }
 };

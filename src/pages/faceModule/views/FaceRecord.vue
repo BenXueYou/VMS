@@ -97,8 +97,19 @@
 			</div>
 
 			<div class="topBoxBtnBox">
-				<el-button icon="el-icon-search" class="search-btn" @click="queryAct" type="primary">查询</el-button>
-				<el-button class="search-btn" @click="resetQueryAct" type="primary">重置</el-button>
+				<el-button
+					:disabled="!ShowAuthDisabled"
+					icon="el-icon-search"
+					class="search-btn"
+					@click="queryAct"
+					type="primary"
+				>查询</el-button>
+				<el-button
+					:disabled="!ShowAuthDisabled"
+					class="search-btn"
+					@click="resetQueryAct"
+					type="primary"
+				>重置</el-button>
 			</div>
 		</el-row>
 		<el-row
@@ -124,28 +135,49 @@
 					<el-row class="FRelPopoverRow" justify="space-between">
 						<el-col
 							class="FRelPopoverCol"
+							:class="OwnAuthDisabled?'cursorClass':'disabled'"
 							@click.native="searchImageToFace(o,index,'searchFaceWithFace')"
 						>
 							<img src="@/assets/images/faceModule/2.png" />
 							以脸搜脸
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'Companion')">
+						<el-col
+							:class="OwnAuthDisabled?'cursorClass':'disabled'"
+							class="FRelPopoverCol"
+							@click.native="analysisAct(o,index,'Companion')"
+						>
 							<img src="@/assets/images/faceModule/2.png" />
 							同行人分析
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="judgeStaffTrace(o,'PersonTrace')">
+						<el-col
+							:class="OwnAuthDisabled?'cursorClass':'disabled'"
+							class="FRelPopoverCol"
+							@click.native="judgeStaffTrace(o,'PersonTrace')"
+						>
 							<img src="@/assets/images/faceModule/4.png" />
 							人员轨迹
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="shoWholeImgUrl(o,index)">
+						<el-col
+							:class="OwnAuthDisabled?'cursorClass':'disabled'"
+							class="FRelPopoverCol"
+							@click.native="shoWholeImgUrl(o,index)"
+						>
 							<img src="@/assets/images/faceModule/3.png" />
 							查看大图
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="tempCtrlTask(o,index)">
+						<el-col
+							:class="OwnAuthDisabled?'cursorClass':'disabled'"
+							class="FRelPopoverCol"
+							@click.native="tempCtrlTask(o,index)"
+						>
 							<img src="@/assets/images/faceModule/5.png" />
 							临时布控
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="downloadImg(o,index)">
+						<el-col
+							:class="OwnAuthDisabled?'cursorClass':'disabled'"
+							class="FRelPopoverCol"
+							@click.native="downloadImg(o,index)"
+						>
 							<img src="@/assets/images/faceModule/6.png" />
 							导出图片
 						</el-col>
@@ -216,6 +248,9 @@ import RestApi from "@/utils/RestApi.js";
 export default {
   components: { elPopverTree, AlTree, PicQulitySelect },
   mounted: function() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("抓拍记录", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("抓拍记录", "isOwn");
+
     let h =
 			window.innerHeight ||
 			document.documentElement.clientHeight ||
@@ -247,7 +282,9 @@ export default {
     }
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    this.queryAct();
+    if (this.ShowAuthDisabled) {
+      this.queryAct();
+    }
   },
   watch: {},
   activated: function() {
@@ -330,6 +367,7 @@ export default {
     // 临时布控
     tempCtrlTask(o, index) {
       console.log(o.faceCapturePhotoUrl);
+      if (!this.OwnAuthDisabled) return;
       this.$common.imageToBase64(o.faceCapturePhotoUrl, base64 => {
         api.addTempContrlTask({ imageBase64: base64 }).then(res => {
           if (res.data.success) {
@@ -348,6 +386,7 @@ export default {
     },
     // 是否有人员轨迹
     judgeStaffTrace(item, routeName) {
+      if (!this.OwnAuthDisabled) return;
       //   this.$router.push({ path: routeName, query: { imgObj: item } });
       let data = {
         faceCaptureRecordUuid: item.faceCaptureUuid,
@@ -372,6 +411,7 @@ export default {
     },
     // 是否有同行人分析
     analysisAct(o, index, routeName) {
+      if (!this.OwnAuthDisabled) return;
       this.mainScreenLoading = true;
       api
         .photoRecordToAnalysis({
@@ -401,6 +441,7 @@ export default {
         });
     },
     searchImageToFace(o, index, routeName) {
+      if (!this.OwnAuthDisabled) return;
       this.$set(o, "CellVisiblePopver", false);
       // this.$router.push({ path: routeName, query: { imgObj: o } });
       this.$router.push({
@@ -419,17 +460,20 @@ export default {
     },
     // 下载导出图片
     downloadImg(o, index) {
+      if (!this.OwnAuthDisabled) return;
       this.$common.exportImageAct(o.faceCapturePhotoUrl, o);
       this.$common.exportImageAct(o.panoramaCapturePhotoUrl, o);
     },
     // 查看大图
     shoWholeImgUrl(o, index) {
+      if (!this.OwnAuthDisabled) return;
       this.dialogVisible = !this.dialogVisible;
       this.dialogPhotoImgUrl = o.faceCapturePhotoUrl;
       this.dialogPanoramaImgUrl = o.panoramaCapturePhotoUrl;
       this.titleTxt = o.channelName;
     },
     queryAct() {
+      if (!this.ShowAuthDisabled) return;
       if (this.startTime && this.endTime) {
         /* eslint-disable */
 				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
@@ -566,7 +610,9 @@ export default {
       isShow: false,
       size: 20,
       cellwidth: 80,
-      defaultCheckedChannel: []
+      defaultCheckedChannel: [],
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   }
 };
@@ -844,10 +890,13 @@ export default {
 	color: #28ffbb;
 	background-color: transparent;
 }
-.faceRecord.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+.faceRecord.el-select-dropdown.is-multiple
+	.el-select-dropdown__item.selected.hover {
 	background: transparent;
 }
-.faceRecord .el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+.faceRecord
+	.el-select-dropdown.is-multiple
+	.el-select-dropdown__item.selected.hover {
 	background: rgba(40, 255, 187, 0.15);
 }
 .faceRecord .el-select-dropdown__item.hover,
