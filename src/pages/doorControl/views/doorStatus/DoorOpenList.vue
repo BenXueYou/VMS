@@ -1,21 +1,21 @@
 <template>
 	<div class="door-list">
 		<div class="list-button">
-			<el-button @click="allOpen" type="primary" size="small">全部开门</el-button>
-			<el-button @click="allClose" type="primary" size="small">全部关门</el-button>
-			<el-button @click="allDismiss" type="primary" size="small">全部消警</el-button>
+			<el-button :disabled="!OwnAuthDisabled" @click="allOpen" type="primary" size="small">全部开门</el-button>
+			<el-button :disabled="!OwnAuthDisabled" @click="allClose" type="primary" size="small">全部关门</el-button>
+			<el-button :disabled="!OwnAuthDisabled" @click="allDismiss" type="primary" size="small">全部消警</el-button>
 			<div class="number-icon">
 				<div class="number-text">
 					<span>全部：</span>
 					<span>{{total}}</span>
 				</div>
 				<div class="number-text">
-					<img src="@/assets/images/door_open.png" width="9px" height="11px" style="margin-right: 5px;">
+					<img src="@/assets/images/door_open.png" width="9px" height="11px" style="margin-right: 5px;" />
 					<span>门开：</span>
 					<span>{{opened}}</span>
 				</div>
 				<div class="number-text">
-					<img src="@/assets/images/door_close.png" width="9px" height="11px" style="margin-right: 5px;">
+					<img src="@/assets/images/door_close.png" width="9px" height="11px" style="margin-right: 5px;" />
 					<span>门关：</span>
 					<span>{{closed}}</span>
 				</div>
@@ -36,7 +36,7 @@
 		<el-scrollbar class="scrollbar">
 			<div class="list-items">
 				<template v-for="(item, index) in itemListData">
-					<door-item :key="index" :doorItem="item" @handleDoorStatus="handleDoorStatus"/>
+					<door-item :key="index" :doorItem="item" @handleDoorStatus="handleDoorStatus" />
 				</template>
 			</div>
 		</el-scrollbar>
@@ -79,16 +79,21 @@ export default {
       online: 0,
       offline: 0,
       total: 0,
-      interval: null
+      interval: null,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("门状态", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("门状态", "isOwn");
     // this.registerEventbus();
     // this.connectSocket();
   },
   activated() {
     this.registerEventbus();
+    if (!this.ShowAuthDisabled) return;
     this.connectSocket();
     this.getStatistics();
     this.interval = setInterval(() => {
@@ -97,15 +102,14 @@ export default {
   },
   methods: {
     initData() {
+      if (!this.ShowAuthDisabled) return;
       this.getChannelStatusList();
     },
     getStatistics() {
-      this.$logSearchHttp
-        .getStatistics()
-        .then(res => {
-          let body = res.data;
-          this.getStatisticsSuccessResponse(body);
-        });
+      this.$logSearchHttp.getStatistics().then(res => {
+        let body = res.data;
+        this.getStatisticsSuccessResponse(body);
+      });
     },
     getStatisticsSuccessResponse(body) {
       this.opened = body.data.opened;
@@ -188,7 +192,7 @@ export default {
               .allOperation({
                 operateType,
                 resType: this.nodeType,
-                resUuid: this.nodeUuid,
+                resUuid: this.nodeUuid
               })
               .then(res => {
                 let body = res.data;
@@ -210,7 +214,9 @@ export default {
     },
     connectSocket() {
       /* eslint-disable */
-			let socket = new SockJS(window.config.protocolHeader + window.config.socketIP);
+			let socket = new SockJS(
+				window.config.protocolHeader + window.config.socketIP
+			);
 			this.stompClient = Stomp.over(socket);
 			this.stompClient.connect(
 				// { projectUuid: window.config.projectUuid },
@@ -286,7 +292,7 @@ export default {
     removeAlarm(channelUuid) {
       this.$logSearchHttp
         .removeAlarm({
-          channelUuid,
+          channelUuid
         })
         .then(res => {
           this.$cToast.success("操作成功");
@@ -334,23 +340,23 @@ export default {
 		align-items: center;
 		.number-icon {
 			width: 50%;
-      min-width: 500px;
+			min-width: 500px;
 			margin-left: auto;
 			margin-right: 0;
 			font-family: PingFangSC-Regular;
 			font-size: 13px;
 			display: flex;
 			flex-flow: row nowrap;
-      justify-content: center;
+			justify-content: center;
 			color: #ffffff;
 			align-items: center;
 			.number-text {
 				display: flex;
 				align-items: center;
-        margin-right:8px;
-        span{
-          white-space: nowrap;
-        }
+				margin-right: 8px;
+				span {
+					white-space: nowrap;
+				}
 				&:last-child {
 					margin-right: 0px;
 				}
