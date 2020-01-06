@@ -1,88 +1,69 @@
 <template>
-  <el-container class="LinkageAction">
-    <el-header>
-      <el-row ref="headerRef"
-              type="flex"
-              justify="space-between">
-        <el-col :span="20">
-          <img class="img"
-               src="../../../../assets/images/doorAccess/linkage_action_icon.png"
-               alt>联动动作
-        </el-col>
-        <el-col :span="4"
-                class="header-buttton-box">
-          <el-button type="primary"
-                     @click="addLinkageAct">
-            <img class="img"
-                 src="../../../../assets/images/doorAccess/add_btn_icon.png"
-                 alt> 新增
-          </el-button>
-        </el-col>
-      </el-row>
-    </el-header>
-    <el-main class="bodyBox">
-      <el-table :data="tableData"
-                style="width: 100%"
-                height="100%"
-                v-loading="isLoading">
-        <el-table-column type="index"
-                         :index="tableIndex"
-                         label="序号"
-                         width="80"></el-table-column>
-        <el-table-column prop="planName"
-                         label="预案名称"
-                         width="180"></el-table-column>
-        <el-table-column prop="deviceName"
-                         label="设备"
-                         width="200"></el-table-column>
-        <el-table-column prop="triggerCondition"
-                         label="触发条件"
-                         width="200">
-          <template slot-scope="scope">
-            <span>{{$common.getEnumItemName("door_plan_t", scope.row.triggerCondition)}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="triggerPosName"
-                         label="触发位置"
-                         width="200"></el-table-column>
-        <!-- <el-table-column prop="linkageType"
+	<el-container class="LinkageAction">
+		<el-header>
+			<el-row ref="headerRef" type="flex" justify="space-between">
+				<el-col :span="20">
+					<img class="img" src="../../../../assets/images/doorAccess/linkage_action_icon.png" alt />联动动作
+				</el-col>
+				<el-col :span="4" class="header-buttton-box">
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="addLinkageAct">
+						<img class="img" src="../../../../assets/images/doorAccess/add_btn_icon.png" alt /> 新增
+					</el-button>
+				</el-col>
+			</el-row>
+		</el-header>
+		<el-main class="bodyBox">
+			<el-table :data="tableData" style="width: 100%" height="100%" v-loading="isLoading">
+				<el-table-column type="index" :index="tableIndex" label="序号" width="80"></el-table-column>
+				<el-table-column prop="planName" label="预案名称" width="180"></el-table-column>
+				<el-table-column prop="deviceName" label="设备" width="200"></el-table-column>
+				<el-table-column prop="triggerCondition" label="触发条件" width="200">
+					<template slot-scope="scope">
+						<span>{{$common.getEnumItemName("door_plan_t", scope.row.triggerCondition)}}</span>
+					</template>
+				</el-table-column>
+				<el-table-column prop="triggerPosName" label="触发位置" width="200"></el-table-column>
+				<!-- <el-table-column prop="linkageType"
                          label="联动类型"
                          width="200">
           <template slot-scope="scope">
             <span>{{$common.getEnumItemName("linkage", scope.row.linkageType)}}</span>
           </template>
-        </el-table-column> -->
-        <el-table-column prop="linkagePosName"
-                         label="联动位置"
-                         width="200"></el-table-column>
-        <el-table-column prop="linkageOp"
-                         label="动作类型"
-                         width="200">
-          <template slot-scope="scope">
-            <span>{{$common.getEnumItemName("door_plan_d", scope.row.linkageOp)}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作"
-                         width>
-          <template slot-scope="scope">
-            <el-button type="text"
-                       size="small"
-                       @click.stop="editButtonAct(scope.row)">编辑</el-button>
-            <el-button type="text"
-                       size="small"
-                       class="delete-button"
-                       @click.stop="deleteDialog(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-main>
-    <!-- --------------------------    弹窗   ------------------------------------- -->
-    <linkage-action-dialog :isShow="isShow"
-                           @onCancel="onCancelDialog"
-                           @onConfirm="onConfirmDialog"
-                           ref="linkActionDialog"
-                           :isAdd="isAdd"></linkage-action-dialog>
-  </el-container>
+				</el-table-column>-->
+				<el-table-column prop="linkagePosName" label="联动位置" width="200"></el-table-column>
+				<el-table-column prop="linkageOp" label="动作类型" width="200">
+					<template slot-scope="scope">
+						<span>{{$common.getEnumItemName("door_plan_d", scope.row.linkageOp)}}</span>
+					</template>
+				</el-table-column>
+				<el-table-column label="操作" width>
+					<template slot-scope="scope">
+						<el-button
+							:disabled="!OwnAuthDisabled"
+							type="text"
+							size="small"
+							@click.stop="editButtonAct(scope.row)"
+						>编辑</el-button>
+						<el-button
+							:disabled="!OwnAuthDisabled"
+							type="text"
+							size="small"
+							class="delete-button"
+							@click.stop="deleteDialog(scope.row)"
+						>删除</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+		</el-main>
+		<!-- --------------------------    弹窗   ------------------------------------- -->
+		<linkage-action-dialog
+			:isShow="isShow"
+			@onCancel="onCancelDialog"
+			@onConfirm="onConfirmDialog"
+			ref="linkActionDialog"
+			:isAdd="isAdd"
+		></linkage-action-dialog>
+	</el-container>
 </template>
 <script>
 import linkageActionDialog from "../../components/doorAccessSetting/LinkageActDialog.vue";
@@ -95,13 +76,18 @@ export default {
       tableData: [],
       isLoading: false,
       isAdd: true,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("联动动作", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("联动动作", "isOwn");
     // this.getLinkageAct();
   },
   activated() {
+    if (!this.ShowAuthDisabled) return;
     this.getLinkageAct();
   },
   methods: {
@@ -140,26 +126,22 @@ export default {
         }
       )
         .then(() => {})
-        .catch((action) => {
+        .catch(action => {
           if (action === "cancel") {
-            this.$DoorSetAjax
-              .deleteLinkageActApi(row.planUuid)
-              .then(res => {
-                let body = res.data;
-                this.$cToast.success(body.msg);
-                this.getLinkageAct();
-              });
+            this.$DoorSetAjax.deleteLinkageActApi(row.planUuid).then(res => {
+              let body = res.data;
+              this.$cToast.success(body.msg);
+              this.getLinkageAct();
+            });
           }
         });
     },
     editButtonAct(row) {
       this.isAdd = false;
-      this.$DoorSetAjax
-        .getLinkageActDetailApi(row.planUuid)
-        .then(res => {
-          let body = res.data;
-          this.getLinkageActDetailSuccessResponse(body);
-        });
+      this.$DoorSetAjax.getLinkageActDetailApi(row.planUuid).then(res => {
+        let body = res.data;
+        this.getLinkageActDetailSuccessResponse(body);
+      });
     },
     getLinkageActDetailSuccessResponse(body) {
       this.getDeviceDoorVO(body.data.deviceUuid);
@@ -170,12 +152,10 @@ export default {
       if (!deviceUuid) {
         return;
       }
-      this.$DoorSetAjax
-        .getDeviceDoorVO(deviceUuid)
-        .then(res => {
-          let body = res.data;
-          this.getDeviceDoorVOSuccessResponse(body);
-        });
+      this.$DoorSetAjax.getDeviceDoorVO(deviceUuid).then(res => {
+        let body = res.data;
+        this.getDeviceDoorVOSuccessResponse(body);
+      });
     },
     getDeviceDoorVOSuccessResponse(body) {
       this.$refs.linkActionDialog.linkagePosOptions = [];
@@ -224,20 +204,20 @@ export default {
 </script>
 <style lang="scss" scoped>
 .LinkageAction {
-  height: 100%;
-  background: rgba(35, 38, 41, 0.8);
-  padding: 15px 40px 0px;
-  .el-header {
-    line-height: 60px;
-  }
-  .header-buttton-box {
-    text-align: right;
-  }
-  .bodyBox {
-    padding-top: 15px;
-  }
-  .delete-button {
-    color: #ff5f5f;
-  }
+	height: 100%;
+	background: rgba(35, 38, 41, 0.8);
+	padding: 15px 40px 0px;
+	.el-header {
+		line-height: 60px;
+	}
+	.header-buttton-box {
+		text-align: right;
+	}
+	.bodyBox {
+		padding-top: 15px;
+	}
+	.delete-button {
+		color: #ff5f5f;
+	}
 }
 </style>
