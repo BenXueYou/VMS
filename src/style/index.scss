@@ -4,6 +4,13 @@
 .disabled {
   color: #82848a !important;
 }
+div[disabled],
+div span[disabled]{
+  pointer-events: none;
+  // cursor: not-allowed!important;
+  background-color: #82848a !important;
+  color: #FFFFFF !important;
+}
 span[disabled],
 li[disabled] {
   pointer-events: none;

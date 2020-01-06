@@ -47,7 +47,7 @@
 						placeholder="选择日期"
 						value-format="yyyy-MM-dd HH:mm:ss"
 					></el-date-picker>
-					<el-button type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
+					<el-button :disabled="!ShowAuthDisabled" type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
 					<!-- <el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button> -->
 					<el-popover
 						ref="popover1"
@@ -124,11 +124,16 @@ export default {
       total: 0,
       isShow: false,
       showloading: false,
-      otherSearchData: {}
+      otherSearchData: {},
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("登陆日志", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("登陆日志", "isOwn");
+
     let h =
 			window.innerHeight ||
 			document.documentElement.clientHeight ||
@@ -157,6 +162,7 @@ export default {
   },
   methods: {
     initData() {
+      if (!this.ShowAuthDisabled) return;
       var params = {
         beginTime: this.validateTimeStart,
         endTime: this.validateTimeEnd,

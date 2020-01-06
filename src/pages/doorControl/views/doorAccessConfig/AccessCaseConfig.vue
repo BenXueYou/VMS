@@ -1,104 +1,80 @@
 <template>
-  <div class='wrap'>
-    <el-button class='button'
-               type="primary"
-               @click='add'>
-      <img :src="icons.newAdd"
-           alt="">
-      新增
-    </el-button>
-    <div class="tableContent"
-         :style="{'height':tableHeight+'px'}">
-      <el-table :data="tableData"
-                style="width: 100%">
-        <el-table-column prop="name"
-                         width="180"
-                         label="名称">
-        </el-table-column>
-        <el-table-column prop="accessTimeArea"
-                         label="通行时间">
-          <template slot-scope="scope">
-            <div class="dateLine"
-                 v-for="(item , index) in scope.row.accessTimeArea"
-                 :key="index">
-              <div class="date">
-                {{item.startTime}}~{{item.endTime}}
-              </div>
-              <div class="time">
-                <div class="time"
-                     v-for="(time,i) in item.timesArea"
-                     :key="i">
-                  {{time.startTime}} ~ {{time.endTime}}
-                </div>
-              </div>
-            </div>
+	<div class="wrap">
+		<el-button :disabled="!OwnAuthDisabled" class="button" type="primary" @click="add">
+			<img :src="icons.newAdd" alt />
+			新增
+		</el-button>
+		<div class="tableContent" :style="{'height':tableHeight+'px'}">
+			<el-table :data="tableData" style="width: 100%">
+				<el-table-column prop="name" width="180" label="名称"></el-table-column>
+				<el-table-column prop="accessTimeArea" label="通行时间">
+					<template slot-scope="scope">
+						<div class="dateLine" v-for="(item , index) in scope.row.accessTimeArea" :key="index">
+							<div class="date">{{item.startTime}}~{{item.endTime}}</div>
+							<div class="time">
+								<div
+									class="time"
+									v-for="(time,i) in item.timesArea"
+									:key="i"
+								>{{time.startTime}} ~ {{time.endTime}}</div>
+							</div>
+						</div>
+					</template>
+				</el-table-column>
+				<el-table-column prop="noAccessTimeArea" label="不可通行时间">
+					<template slot-scope="scope">
+						<div class="dateLine" v-for="(item , index) in scope.row.noAccessTimeArea" :key="index">
+							<div class="date">{{item.startTime}}~{{item.endTime}}</div>
+							<div class="time">
+								<div v-for="(time,i) in item.timesArea" :key="i">{{time.startTime}} ~ {{time.endTime}}</div>
+							</div>
+						</div>
+					</template>
+				</el-table-column>
+				<el-table-column prop="remarks" width="180" label="备注"></el-table-column>
+				<el-table-column label="操作" width="200">
+					<template slot-scope="scope">
+						<el-button
+							:disabled="!OwnAuthDisabled"
+							@click="editEquipment(scope.row)"
+							type="text"
+							size="small"
+						>编辑</el-button>
+						<el-button
+							:disabled="!OwnAuthDisabled"
+							type="text"
+							class="deleteText"
+							@click="deleteEquip(scope.row)"
+							size="small"
+						>删除</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+		</div>
 
-          </template>
-        </el-table-column>
-        <el-table-column prop="noAccessTimeArea"
-                         label="不可通行时间">
-          <template slot-scope="scope">
-            <div class="dateLine"
-                 v-for="(item , index) in scope.row.noAccessTimeArea"
-                 :key="index">
-              <div class="date">
-                {{item.startTime}}~{{item.endTime}}
-              </div>
-              <div class="time">
-                <div v-for="(time,i) in item.timesArea"
-                     :key="i">
-                  {{time.startTime}} ~ {{time.endTime}}
-                </div>
-              </div>
+		<el-pagination
+			@current-change="handleCurrentChange"
+			:current-page.sync="pageNow"
+			:page-size="pageSize"
+			background
+			class="pagination"
+			layout="total, prev, pager, next, jumper"
+			:total="dataTotal"
+		></el-pagination>
 
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="remarks"
-                         width="180"
-                         label="备注">
-        </el-table-column>
-        <el-table-column label="操作"
-                         width="200">
-          <template slot-scope="scope">
-            <el-button @click="editEquipment(scope.row)"
-                       type="text"
-                       size="small">编辑</el-button>
-            <el-button type="text"
-                       class='deleteText'
-                       @click='deleteEquip(scope.row)'
-                       size="small">删除</el-button>
-          </template>
-        </el-table-column>
+		<add-access-case-dialog
+			:title="title"
+			:mark="mark"
+			:value="value"
+			:accessData="accessData"
+			:noAccessData="noAccessData"
+			:row="row"
+			@confirm="confirmSuccess"
+			:visible.sync="AddAccesTimeDialogVisible"
+		></add-access-case-dialog>
 
-      </el-table>
-    </div>
-
-    <el-pagination @current-change="handleCurrentChange"
-                   :current-page.sync="pageNow"
-                   :page-size="pageSize"
-                   background
-                   class="pagination"
-                   layout="total, prev, pager, next, jumper"
-                   :total="dataTotal">
-    </el-pagination>
-
-    <add-access-case-dialog :title="title"
-                            :mark="mark"
-                            :value="value"
-                            :accessData="accessData"
-                            :noAccessData="noAccessData"
-                            :row="row"
-                            @confirm="confirmSuccess"
-                            :visible.sync='AddAccesTimeDialogVisible'>
-
-    </add-access-case-dialog>
-
-    <confirm-dialog :visible.sync="confirmVisible"
-                    :confirmText="confirmText"
-                    @confirm="confirm"></confirm-dialog>
-
-  </div>
+		<confirm-dialog :visible.sync="confirmVisible" :confirmText="confirmText" @confirm="confirm"></confirm-dialog>
+	</div>
 </template>
 
 <script>
@@ -274,12 +250,17 @@ export default {
           }
         ],
         remarks: ""
-      })
+      }),
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   mounted() {
     this.tableHeight = window.innerHeight - 30 - 120 - 100;
     this.pageSize = ~~(this.tableHeight / 70);
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("特殊日期", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("特殊日期", "isOwn");
+    if (!this.ShowAuthDisabled) return;
     this.getDateList();
   }
 };
@@ -289,38 +270,38 @@ export default {
 @import "@/style/variables.scss";
 
 .wrap {
-  height: 100%;
-  padding: $rightContentPadding;
-  box-sizing: border-box;
-  background-color: $rigthContentBackgroundColor;
-  .tableContent {
-    overflow: auto;
-  }
-  .dateLine {
-    display: flex;
-    flex-wrap: wrap;
-    @include font-s;
-    font-size: 13px;
-    line-height: 20px;
-    .date {
-      width: 200px;
-      text-align: right;
-    }
-    .time {
-      width: 140px;
-      text-align: left;
-      text-indent: 15px;
-    }
-  }
-  .button {
-    @include button30;
-    @include font-s;
-    font-size: 13px;
-    margin: 0px 0px 20px;
-  }
-  .pagination {
-    margin-top: 15px;
-    float: right;
-  }
+	height: 100%;
+	padding: $rightContentPadding;
+	box-sizing: border-box;
+	background-color: $rigthContentBackgroundColor;
+	.tableContent {
+		overflow: auto;
+	}
+	.dateLine {
+		display: flex;
+		flex-wrap: wrap;
+		@include font-s;
+		font-size: 13px;
+		line-height: 20px;
+		.date {
+			width: 200px;
+			text-align: right;
+		}
+		.time {
+			width: 140px;
+			text-align: left;
+			text-indent: 15px;
+		}
+	}
+	.button {
+		@include button30;
+		@include font-s;
+		font-size: 13px;
+		margin: 0px 0px 20px;
+	}
+	.pagination {
+		margin-top: 15px;
+		float: right;
+	}
 }
 </style>

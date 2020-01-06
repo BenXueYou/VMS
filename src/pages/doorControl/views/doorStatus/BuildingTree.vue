@@ -1,31 +1,29 @@
 <template>
-  <div class="left-list-build">
-    <el-scrollbar style="height: 68vh;transition:0.2s">
-      <el-tree :data="treeData"
-               :props="defaultProps"
-               node-key="id"
-               :indent="10"
-               lazy
-               :load="loadNode"
-               ref="buildingTree"
-               :filter-node-method="filterNode"
-               :default-expanded-keys="defaultExpKeys"
-               :highlight-current="true"
-               :expand-on-click-node="false"
-               @node-click="handleNodeClick">
-        <div class="custom-tree-node i-tree-item"
-             slot-scope="{ node }">
-          <div class="i-tree-item-icon">
-            <img :src="iconShow(node)"
-                 width="10.9px"
-                 height="9px"
-                 style="margin-right: 4px;">
-            <div class="text-show" :title='node.label'>{{node.label}}</div>
-          </div>
-        </div>
-      </el-tree>
-    </el-scrollbar>
-  </div>
+	<div class="left-list-build">
+		<el-scrollbar style="height: 68vh;transition:0.2s">
+			<el-tree
+				:data="treeData"
+				:props="defaultProps"
+				node-key="id"
+				:indent="10"
+				lazy
+				:load="loadNode"
+				ref="buildingTree"
+				:filter-node-method="filterNode"
+				:default-expanded-keys="defaultExpKeys"
+				:highlight-current="true"
+				:expand-on-click-node="false"
+				@node-click="handleNodeClick"
+			>
+				<div class="custom-tree-node i-tree-item" slot-scope="{ node }">
+					<div class="i-tree-item-icon">
+						<img :src="iconShow(node)" width="10.9px" height="9px" style="margin-right: 4px;" />
+						<div class="text-show" :title="node.label">{{node.label}}</div>
+					</div>
+				</div>
+			</el-tree>
+		</el-scrollbar>
+	</div>
 </template>
 
 <script>
@@ -52,11 +50,15 @@ export default {
       isExpanded: false,
       currentNode: null,
       defaultExpKeys: [],
-      lastLevelType: ""
+      lastLevelType: "",
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("门状态", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("门状态", "isOwn");
     this.initData();
   },
   activated() {
@@ -65,6 +67,7 @@ export default {
   methods: {
     handleClick() {},
     initData() {
+      if (!this.ShowAuthDisabled) return;
       this.getAreaStruct();
     },
     getAreaStruct() {
@@ -190,7 +193,7 @@ export default {
               this.$set(item, "leaf", true);
               if (
                 item.nextCount !== 0 &&
-                item.nodeType !== this.lastLevelType
+								item.nodeType !== this.lastLevelType
               ) {
                 this.$set(item, "leaf", false);
               }
@@ -215,7 +218,7 @@ export default {
               this.$set(item, "leaf", true);
               if (
                 item.nextCount !== 0 &&
-                item.nodeType !== this.lastLevelType
+								item.nodeType !== this.lastLevelType
               ) {
                 this.$set(item, "leaf", false);
               }
@@ -256,31 +259,31 @@ export default {
 
 <style lang="scss">
 .left-list-build {
-  .el-tree {
-    background: rgba($color: #212326, $alpha: 1);
-  }
+	.el-tree {
+		background: rgba($color: #212326, $alpha: 1);
+	}
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .left-list-build {
-  height: 85%;
-  overflow-x: auto;
-  .i-tree-item {
-    width: 190px;
-    .i-tree-item-icon {
-      display: flex;
-      align-items: center;
-      .action-icon {
-        margin-left: auto;
-        margin-right: 5px;
-        .img-div {
-          cursor: pointer;
-          height: 32px;
-          line-height: 32px;
-        }
-      }
-    }
-  }
+	height: 85%;
+	overflow-x: auto;
+	.i-tree-item {
+		width: 190px;
+		.i-tree-item-icon {
+			display: flex;
+			align-items: center;
+			.action-icon {
+				margin-left: auto;
+				margin-right: 5px;
+				.img-div {
+					cursor: pointer;
+					height: 32px;
+					line-height: 32px;
+				}
+			}
+		}
+	}
 }
 </style>

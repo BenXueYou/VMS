@@ -1,30 +1,27 @@
 <template>
-  <div class="left-list">
-    <div class="tree-input">
-      <el-input placeholder="请输入关键字搜索"
-                v-model="filterText"
-                size="small"
-                style="width: 97%">
-        <img slot="prefix"
-             :src="icons.search">
-      </el-input>
-    </div>
-    <el-tabs v-model="activeName"
-             @tab-click="handleClick">
-      <el-tab-pane label="楼栋单元"
-                   name="1">
-        <building-tree v-if="isShowBuildTree"
-                       :filterText="filterText"
-                       @setTreeRootData="setTreeRootData" />
-      </el-tab-pane>
-      <el-tab-pane label="设备树"
-                   name="2">
-        <org-device-tree v-if="isShowOrgTree"
-                         :filterText="filterText"
-                         @setTreeRootData="setTreeRootData" />
-      </el-tab-pane>
-    </el-tabs>
-  </div>
+	<div class="left-list">
+		<div class="tree-input">
+			<el-input placeholder="请输入关键字搜索" v-model="filterText" size="small" style="width: 97%">
+				<img slot="prefix" :src="icons.search" />
+			</el-input>
+		</div>
+		<el-tabs v-model="activeName" @tab-click="handleClick">
+			<el-tab-pane label="楼栋单元" name="1">
+				<building-tree
+					v-if="isShowBuildTree"
+					:filterText="filterText"
+					@setTreeRootData="setTreeRootData"
+				/>
+			</el-tab-pane>
+			<el-tab-pane label="设备树" name="2">
+				<org-device-tree
+					v-if="isShowOrgTree"
+					:filterText="filterText"
+					@setTreeRootData="setTreeRootData"
+				/>
+			</el-tab-pane>
+		</el-tabs>
+	</div>
 </template>
 
 <script>
@@ -44,11 +41,16 @@ export default {
       filterText: "",
       activeName: "1",
       isShowBuildTree: true,
-      isShowOrgTree: false
+      isShowOrgTree: false,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true,
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("门状态", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("门状态", "isOwn");
+  },
   methods: {
     handleClick(val) {
       if (val.name === "1") {
@@ -71,50 +73,50 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 .left-list {
-  .el-input__prefix {
-    position: absolute;
-    left: 43px;
-    top: 12px;
-  }
-  .el-input--prefix .el-input__inner {
-    padding-left: 40px;
-  }
-  .el-tabs__item {
-    color: #dddddd;
-  }
-  .el-tabs__nav-wrap::after {
-    background: rgb(131, 131, 131);
-  }
-  .is-active {
-    color: $add-text-color;
-  }
-  .el-input__prefix {
-    position: absolute;
-    left: 43px;
-    top: 9px;
-  }
-  .el-tree {
-    background: rgba($color: #212326, $alpha: 1);
-  }
+	.el-input__prefix {
+		position: absolute;
+		left: 43px;
+		top: 12px;
+	}
+	.el-input--prefix .el-input__inner {
+		padding-left: 40px;
+	}
+	.el-tabs__item {
+		color: #dddddd;
+	}
+	.el-tabs__nav-wrap::after {
+		background: rgb(131, 131, 131);
+	}
+	.is-active {
+		color: $add-text-color;
+	}
+	.el-input__prefix {
+		position: absolute;
+		left: 43px;
+		top: 9px;
+	}
+	.el-tree {
+		background: rgba($color: #212326, $alpha: 1);
+	}
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .left-list {
-  width: 16%;
-  min-width: 180px;
-  height: 100%;
-  background: #212325;
-  padding: 0 1%;
-  box-sizing: border-box;
-  .tree-input {
-    height: 75px;
-    display: flex;
-    align-items: center;
-    .image {
-      margin-left: 10px;
-      cursor: pointer;
-    }
-  }
+	width: 16%;
+	min-width: 180px;
+	height: 100%;
+	background: #212325;
+	padding: 0 1%;
+	box-sizing: border-box;
+	.tree-input {
+		height: 75px;
+		display: flex;
+		align-items: center;
+		.image {
+			margin-left: 10px;
+			cursor: pointer;
+		}
+	}
 }
 </style>
