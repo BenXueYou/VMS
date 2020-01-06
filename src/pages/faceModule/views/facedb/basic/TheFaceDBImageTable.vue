@@ -7,8 +7,16 @@
 					<el-checkbox class="checkButton" v-model="item.checked" @change="checkboxchange(index)"></el-checkbox>
 					<div class="mask">
 						<div class="operator">
-							<i class="el-icon-edit-outline" @click="editface(imageTableData[index])">编辑</i>
-							<i class="el-icon-delete" @click="deleteface(imageTableData[index])">删除</i>
+							<i
+								:disabled="!OwnAuthDisabled"
+								class="el-icon-edit-outline"
+								@click="editface(imageTableData[index])"
+							>编辑</i>
+							<i
+								:disabled="!OwnAuthDisabled"
+								class="el-icon-delete"
+								@click="deleteface(imageTableData[index])"
+							>删除</i>
 						</div>
 					</div>
 				</div>
@@ -114,11 +122,16 @@ export default {
       pageIndex: "",
       multipleSelection: [],
       pageSize: 28,
-      preload: []
+      preload: [],
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   computed: {},
-  mounted() {},
+  mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("人脸库", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("人脸库", "isOwn");
+  },
   methods: {
     blur() {
       if (this.pageIndex !== "") {

@@ -4,7 +4,7 @@
 			<div class="mainBox">
 				<el-header class="headerBox">
 					<div>基础配置</div>
-					<el-button @click="postData">保存</el-button>
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="postData">保存</el-button>
 				</el-header>
 				<div class="bodyBox">
 					<div class="bodyBoxDiv">
@@ -105,7 +105,7 @@
 					</div>
 				</div>
 				<div class="footerClass">
-					<el-button @click="postData">保存</el-button>
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="postData">保存</el-button>
 				</div>
 			</div>
 		</div>
@@ -136,12 +136,18 @@ export default {
         savePanoramauriDay: 180 /* 人脸抓全景图保存天数 */,
         saveAlarmImageType: 1 /* 人脸报警图片保存天数类型，true长期，false短期 */,
         savaAlarmIangeDay: 180 /* 人脸报警图片保存天数 */
-      }
+      },
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
-    this.initData();
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("基础设置", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("基础设置", "isOwn");
+    if (this.ShowAuthDisabled) {
+      this.initData();
+    }
   },
   methods: {
     initData() {

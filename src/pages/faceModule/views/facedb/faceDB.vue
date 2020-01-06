@@ -10,7 +10,13 @@
 					人脸库
 				</div>
 				<div class="title button-div">
-					<el-button type="primary" icon="el-icon-plus" class="addnewdb" @click="addfacedb">新建人像库</el-button>
+					<el-button
+						:disabled="!OwnAuthDisabled"
+						type="primary"
+						icon="el-icon-plus"
+						class="addnewdb"
+						@click="addfacedb"
+					>新建人像库</el-button>
 					<span class="tips">人像库总数：{{tableData.length}} &nbsp;&nbsp;&nbsp;&nbsp; 总人脸数：{{totalrenshu}}</span>
 				</div>
 				<div class="leftasda">
@@ -29,13 +35,19 @@
 						<el-table-column prop="faceTotal" label="人员数量" width="100"></el-table-column>
 						<el-table-column label="操作">
 							<template slot-scope="scope">
-								<el-button @click.stop="editFaceLib(scope.row)" type="text" size="small">
+								<el-button
+									:disabled="!OwnAuthDisabled"
+									@click.stop="editFaceLib(scope.row)"
+									type="text"
+									size="small"
+								>
 									<!-- <i class="el-icon-edit-outline"></i> -->
 									编辑
 								</el-button>
 
 								<el-button
 									type="text"
+									:disabled="!OwnAuthDisabled"
 									size="small"
 									class="deleteBtnClass"
 									@click.stop="openDeleteDialog('deletefaceLib',scope.row)"
@@ -60,26 +72,27 @@
 					<li>
 						<el-checkbox v-model="selectall" @change="selectAll">本页全选</el-checkbox>
 					</li>
-					<li class="active" @click="addfile">
+					<li :disabled="!OwnAuthDisabled" class="active" @click="addfile">
 						<img src="@/assets/images/faceModule/add.png" alt />
-						<span>新增</span>
+						<span :disabled="!OwnAuthDisabled">新增</span>
 					</li>
-					<li class="active" @click="deletefile">
+					<li :disabled="!OwnAuthDisabled" class="active" @click="deletefile">
 						<!-- <i class="el-icon-delete"></i> -->
 						<img src="@/assets/images/delete2.png" alt />
-						<span>删除</span>
+						<span :disabled="!OwnAuthDisabled">删除</span>
 					</li>
-					<li class="active" @click="exportExcel2">
+					<li :disabled="!OwnAuthDisabled" class="active" @click="exportExcel2">
 						<img src="@/assets/images/faceModule/expert.png" alt />
-						<span>导出</span>
+						<span :disabled="!OwnAuthDisabled">导出</span>
 					</li>
 					<li
+						:disabled="!ShowAuthDisabled"
 						class="active"
 						@click="faceLibUpdateRecord"
 						v-if="selectLibRow.faceLibraryType === 'staticFaceLib'"
 					>
 						<img src="@/assets/images/faceModule/facedb_update_history.png" alt />
-						<span>更新历史</span>
+						<span :disabled="!ShowAuthDisabled">更新历史</span>
 					</li>
 					<li
 						class="active"
@@ -95,7 +108,7 @@
 							姓名：
 							<el-input class="searchinput" label="姓名" v-model="staffName" placeholder="请输入"></el-input>
 						</div>
-						<el-button type="primary" v-popover:popover>其他检索条件</el-button>
+						<el-button :disabled="!OwnAuthDisabled" type="primary" v-popover:popover>其他检索条件</el-button>
 						<el-popover
 							ref="popover"
 							placement="bottom-end"
@@ -105,7 +118,7 @@
 						>
 							<search-option-view @query="queryAct"></search-option-view>
 						</el-popover>
-						<el-button type="primary" @click="search">检索</el-button>
+						<el-button :disabled="!OwnAuthDisabled" type="primary" @click="search">检索</el-button>
 					</li>
 				</ul>
 			</div>
@@ -283,7 +296,9 @@ export default {
       stompClient: null,
       interval: null,
       refreshFlag: false,
-      queryData: {}
+      queryData: {},
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   computed: {
@@ -493,7 +508,6 @@ export default {
         this.imagePageNow = index;
       }
       this.pageNow = index;
-
       this.getStaffLibStaffData(this.queryData);
     },
     selectAll(val) {
@@ -648,6 +662,7 @@ export default {
       this.imageTableData = [];
     },
     selectedRow(row, event, column) {
+      if (!this.ShowAuthDisabled) return;
       // 当点击左边的列表，右边进行更新
       this.faceDBDialogAddVisible = false;
       this.selectLibRow = row;
@@ -828,6 +843,9 @@ export default {
   mounted() {
     // this.templatetypearr = window.face.kutemplate;
     this.templatetypearr = this.$common.getEnumByGroupStr("staff_temp");
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("人脸库", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("人脸库", "isOwn");
+
     this.$nextTick(function() {
       // var el = this.$refs.dataWrap;
       // var w = el.offsetWidth;
@@ -837,14 +855,11 @@ export default {
     });
   },
   activated() {
-    if (this.listTableData.length || this.imageTableData.length) {
-      // this.getStaffLibList(false); // 如果有数据就不用在请求一次了。
-    } else {
-      // this.getStaffLibList(true);
+    if (this.ShowAuthDisabled) {
+      this.getStaffLibList();
+      this.setIntervalMethod();
+      this.connectSocket(); // 建立socket
     }
-    this.getStaffLibList();
-    this.setIntervalMethod();
-    this.connectSocket(); // 建立socket
   },
   deactivated() {
     if (this.interval) {

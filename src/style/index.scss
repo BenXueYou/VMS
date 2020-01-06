@@ -1,8 +1,14 @@
 .el-color-picker__trigger {
   border: 0;
 }
-.disabled{
-  color:  #82848a!important;
+.disabled {
+  color: #82848a !important;
+}
+span[disabled],
+li[disabled] {
+  pointer-events: none;
+  // cursor: not-allowed!important;
+  color: #82848a !important;
 }
 .RTask .fill video {
   object-fit: fill !important;
@@ -181,7 +187,6 @@ img,
   color: #dddddd;
   letter-spacing: 0;
 }
-
 /**************************************时间选择器*********************************************/
 
 .el-picker-panel {
@@ -216,9 +221,17 @@ img,
 .el-button--primary.is-disabled:hover,
 .el-button--primary.is-disabled:focus,
 .el-button--primary.is-disabled:active {
-  color: #ffffff!important;
-  background-color: #82848a!important;
-  border-color: #93e9ce!important;
+  color: #ffffff !important;
+  background-color: #82848a !important;
+  border-color: #93e9ce !important;
+}
+.el-button--text.is-disabled,
+.el-button--text.is-disabled:hover,
+.el-button--text.is-disabled:focus,
+.el-button--text.is-disabled:active {
+  color: #82848a !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
 }
 .el-button--default,
 .el-button--default:hover,

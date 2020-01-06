@@ -23,11 +23,11 @@
 				</el-table-column>
 				<el-table-column label="操作" min-width="120">
 					<template slot-scope="scope">
-						<el-button type="text" size="small" @click="editface(scope.row)">
+						<el-button :disabled='!OwnAuthDisabled' type="text" size="small" @click="editface(scope.row)">
 							<i class="el-icon-edit-outline"></i>
 							编辑
 						</el-button>
-						<el-button type="text" size="small" @click="deleteface(scope.row)">
+						<el-button :disabled='!OwnAuthDisabled' type="text" size="small" @click="deleteface(scope.row)">
 							<i class="el-icon-delete"></i>
 							删除
 						</el-button>
@@ -36,7 +36,7 @@
 			</el-table>
 		</div>
 		<div class="faceDBFooter">
-      <el-pagination
+			<el-pagination
 				@current-change="currentChange"
 				:current-page="pageNow"
 				layout="total,prev, pager, next,jumper"
@@ -63,7 +63,7 @@
 					@keyup.enter.native="blur"
 					type="number"
 				></el-input>
-			</div> -->
+			</div>-->
 		</div>
 	</div>
 </template>
@@ -129,7 +129,9 @@ export default {
   data() {
     return {
       multipleSelection: [],
-      yeshu: ""
+      yeshu: "",
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   computed: {
@@ -140,6 +142,8 @@ export default {
   },
   mounted() {
     console.log(this.listTableData, this.tableColumnsList);
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("人脸库", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("人脸库", "isOwn");
   },
   methods: {
     blur() {
