@@ -4,11 +4,11 @@
 		<div class="content" v-show="!addDialogVisible">
 			<div class="topBox">
 				<div class="topBoxLeft">
-					<el-button @click="addBtnAct">新增</el-button>
-					<el-button @click="volumeDelete">删除</el-button>
-					<el-button @click="switchData(1)">启用</el-button>
-					<el-button @click="switchData(0)">禁用</el-button>
-					<el-button @click="resetPassword">密码重置</el-button>
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="addBtnAct">新增</el-button>
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="volumeDelete">删除</el-button>
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="switchData(1)">启用</el-button>
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="switchData(0)">禁用</el-button>
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="resetPassword">密码重置</el-button>
 				</div>
 				<div class="topBoxRight">
 					<span class="tipsTxt">姓名：</span>
@@ -22,7 +22,7 @@
 							:value="item.typeStr"
 						></el-option>
 					</el-select>
-					<el-button icon="el-icon-search" @click="initData">检索</el-button>
+					<el-button  type="primary" :disabled="!ShowAuthDisabled" icon="el-icon-search" @click="initData">检索</el-button>
 				</div>
 			</div>
 			<el-table
@@ -62,14 +62,21 @@
 				<el-table-column prop="reason" label="操作" width="200">
 					<template slot-scope="scope">
 						<div v-if="scope.row.accountType!=='project_admin'">
-							<el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
 							<el-button
+								:disabled="!OwnAuthDisabled"
+								@click="handleEditClick(scope.row)"
+								type="text"
+								size="small"
+							>编辑</el-button>
+							<el-button
+								:disabled="!OwnAuthDisabled"
 								@click="editRoleClick(scope.row)"
 								v-loading="showTreeAdd"
 								type="text"
 								size="small"
 							>分配角色</el-button>
 							<el-button
+								:disabled="!OwnAuthDisabled"
 								v-if="scope.row.enable===1"
 								class="onOffBtnClass"
 								@click="forbidBtnClick(scope.row)"
@@ -82,8 +89,10 @@
 								@click="startBtnClick(scope.row)"
 								type="text"
 								size="small"
+								:disabled="!OwnAuthDisabled"
 							>启用</el-button>
 							<el-button
+								:disabled="!OwnAuthDisabled"
 								class="deleteBtnClass"
 								@click="deleteBtnClick(scope.row)"
 								type="text"
@@ -91,11 +100,16 @@
 							>删除</el-button>
 						</div>
 						<div v-if="scope.row.accountType==='project_admin'">
-							<el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
-							<el-button type="text" size="small"></el-button>
-							<el-button type="text" size="small"></el-button>
-							<el-button class="onOffBtnClass" type="text" size="small"></el-button>
-							<el-button class="deleteBtnClass" type="text" size="small"></el-button>
+							<el-button
+								:disabled="!OwnAuthDisabled"
+								@click="handleEditClick(scope.row)"
+								type="text"
+								size="small"
+							>编辑</el-button>
+							<el-button :disabled="!OwnAuthDisabled" type="text" size="small"></el-button>
+							<el-button :disabled="!OwnAuthDisabled" type="text" size="small"></el-button>
+							<el-button :disabled="!OwnAuthDisabled" class="onOffBtnClass" type="text" size="small"></el-button>
+							<el-button :disabled="!OwnAuthDisabled" class="deleteBtnClass" type="text" size="small"></el-button>
 						</div>
 					</template>
 				</el-table-column>
@@ -149,6 +163,8 @@ export default {
     this.initData();
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("账号管理", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("账号管理", "isOwn");
     // this.initData();
     this.onlineStatusOptions = this.$common.getEnumByGroupStr("onoffline");
     this.onlineStatusOptions.unshift({ typeName: "全部", typeStr: null });
@@ -180,7 +196,9 @@ export default {
       checkedRoleList: [],
       rowData: {},
       accountUuid: "",
-      isAddRole: ""
+      isAddRole: "",
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   watch: {},
