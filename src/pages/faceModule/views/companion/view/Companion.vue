@@ -3,8 +3,8 @@
 		<div class="main-container">
 			<div class="select-box">
 				<div class="picture">
-					<div class="face-img" @click="onClickTurnToGetFace">
-						<div class="avatar">
+					<div :disabled="!OwnAuthDisabled" class="face-img" @click="onClickTurnToGetFace">
+						<div :disabled="!OwnAuthDisabled"  class="avatar">
 							<img v-if="!imageUrl" src="@/assets/images/addImg2.png" class="ovo-card-img add-icon" />
 							<i v-if="!imageUrl" class="el-icon-circle-plus-outline font-color">添加图片</i>
 							<img
@@ -45,8 +45,8 @@
 						<el-input v-model="captureInterval" style="width: 60px" type="number"></el-input>
 						<span class="timeText">秒</span>
 						<div class="search-btn">
-							<el-button @click="queryAct" type="primary" size="small" icon="el-icon-search">开始搜索</el-button>
-							<el-button @click="resetParams" type="primary" size="small">重置</el-button>
+							<el-button :disabled="!ShowAuthDisabled"  @click="queryAct" type="primary" size="small" icon="el-icon-search">开始搜索</el-button>
+							<el-button :disabled="!ShowAuthDisabled"  @click="resetParams" type="primary" size="small">重置</el-button>
 						</div>
 					</div>
 					<div class="line-two">
@@ -111,9 +111,11 @@ export default {
   },
   created() {},
   mounted() {
-    this.initData();
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("同行人分析", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("同行人分析", "isOwn");
+    if (this.ShowAuthDisabled) {
+      this.initData();
+    }
     // this.queryAct();
   },
   methods: {

@@ -118,7 +118,7 @@
 				</div>
 			</el-row>
 			<div class="facealarm-table">
-				<el-radio-group class="switchBtn" v-model="showindex" @change="changeIndex">
+				<el-radio-group :disabled="!ShowAuthDisabled" class="switchBtn" v-model="showindex" @change="changeIndex">
 					<el-radio label="0">图片</el-radio>
 					<el-radio label="1">列表</el-radio>
 				</el-radio-group>

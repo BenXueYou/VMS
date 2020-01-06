@@ -89,7 +89,7 @@
 					</div>
 					<div
 						class="status"
-            :disabled="!OwnAuthDisabled"
+						:disabled="!OwnAuthDisabled"
 						v-if="faceMonitorObj.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
 						@click="deleteCon"
 					>
@@ -302,10 +302,12 @@ export default {
   created() {},
   activated() {},
   mounted() {
-    this.init();
-    this.getMonitoringTaskList();
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("人脸布控", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("人脸布控", "isOwn");
+    if (this.ShowAuthDisabled) {
+      this.init();
+      this.getMonitoringTaskList();
+    }
   },
   methods: {
     init() {

@@ -9,7 +9,7 @@
 			@onCancel="onCancelEditOrAddModel"
 		/>
 		<div class="menu" v-show="isShowMain">
-			<el-button @click="addNewMission" type="primary" size="small">
+			<el-button :disabled="!OwnAuthDisabled" @click="addNewMission" type="primary" size="small">
 				<div style="display: flex; align-items: center;">
 					<img src="@/assets/images/faceModule/new_mission.png" />
 					<span style="margin-left: 3px;">新建模型</span>
@@ -21,6 +21,7 @@
 						:key="index"
 						class="button-item"
 						@click="select(item)"
+						:disabled="!ShowAuthDisabled"
 						:style="`${item.selected ? 'background: rgba(40, 255, 187, 0.10); border: 1px #226652 solid;' : 'background: rgba(255, 255, 255, 0.1)'};`"
 					>{{item.text}}</div>
 				</template>
@@ -60,15 +61,16 @@
 						inactive-color="rgba(255,255,255,0.2)"
 						@change="switchChange"
 						:active-value="1"
+            :disabled="!OwnAuthDisabled"
 						:inactive-value="0"
 					></el-switch>
-					<span style="margin-left: 3px;">状态</span>
-					<div class="status" @click="editTaskInit">
-						<img src="@/assets/images/edit.png" width="14px" height="14px" />
+					<span v-if="OwnAuthDisabled" style="margin-left: 3px;">状态</span>
+					<div :disabled="!OwnAuthDisabled" class="status" @click="editTaskInit">
+						<img v-if="OwnAuthDisabled"  src="@/assets/images/edit.png" width="14px" height="14px" />
 						<span style="margin-left: 3px;">编辑</span>
 					</div>
-					<div class="status" @click="deleteIntel">
-						<img src="@/assets/images/delete2.png" width="14px" height="14px" />
+					<div :disabled="!OwnAuthDisabled" class="status" @click="deleteIntel">
+						<img v-if="OwnAuthDisabled"  src="@/assets/images/delete2.png" width="14px" height="14px" />
 						<span style="margin-left: 3px;">删除</span>
 					</div>
 				</div>
@@ -176,13 +178,13 @@
 							placeholder="选择日期"
 							value-format="yyyy-MM-dd HH:mm:ss"
 						></el-date-picker>
-						<el-button @click="queryAct" type="primary" size="small">
+						<el-button :disabled="!ShowAuthDisabled" @click="queryAct" type="primary" size="small">
 							<div style="display: flex; align-items: center;">
 								<img src="@/assets/images/faceModule/search.png" />
 								<span style="margin-left: 3px;">查询</span>
 							</div>
 						</el-button>
-						<el-button @click="turnToJudge" type="primary" size="small">
+						<el-button :disabled="!ShowAuthDisabled" @click="turnToJudge" type="primary" size="small">
 							<div style="display: flex; align-items: center;">
 								<img src="@/assets/images/faceModule/turn_record.png" height="12.5px" />
 								<span style="margin-left: 3px;">跳转研判记录</span>
@@ -269,16 +271,20 @@ export default {
       otherVideoSourceList: [],
       notInVideoSourceList: [],
       limit: 7,
-      judgeItemTotal: 0
+      judgeItemTotal: 0,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true,
     };
   },
   created() {},
   activated() {},
   mounted() {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("智能模型", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("基础设置", "isOwn");
-    this.initData();
-    this.getIntelModelList();
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("智能模型", "isOwn");
+    if (this.ShowAuthDisabled) {
+      this.initData();
+      this.getIntelModelList();
+    }
   },
   methods: {
     initData() {
