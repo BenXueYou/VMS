@@ -4,12 +4,16 @@
                   :needType="needType"
                   :tagType="tagType"
                   @changetab="changetab"
+                  :ShowAuthDisabled="ShowAuthDisabled"
+                  :OwnAuthDisabled="OwnAuthDisabled"
                   ref='testTree'
                   @clickNode="clickNode">
 
     </the-leftmenu>
 
     <the-wrap :tabName="tabName"
+              :ShowAuthDisabled="ShowAuthDisabled"
+              :OwnAuthDisabled="OwnAuthDisabled"
               @updateTree="updateTree">
 
     </the-wrap>
@@ -32,7 +36,9 @@ export default {
       tabName: "organiza",
       orgType: window.config.orgType,
       needType: "",
-      tagType: window.config.tagType
+      tagType: window.config.tagType,
+      ShowAuthDisabled: false,
+      OwnAuthDisabled: false
     };
   },
   created() {},
@@ -50,6 +56,8 @@ export default {
     // console.log(state.equipment.count);
     // console.log(getters.doubleCount);
     // console.log(this.count);
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("设备管理", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("设备管理", "isOwn");
   },
   methods: {
     updateTree(tagUuid) {

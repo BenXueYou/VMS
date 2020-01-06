@@ -24,6 +24,7 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
+                   :disabled="!OwnAuthDisabled"
                    name="organiza">
         <gt-tree ref="tree1"
                  class="tree"
@@ -33,6 +34,7 @@
                  :initdata="data"></gt-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
+                   :disabled="!OwnAuthDisabled"
                    name="tag">
         <gt-tree ref="tree2"
                  class="mypanel"
@@ -85,6 +87,18 @@ export default {
     ConfirmDialog
   },
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     orgType: {
       type: String,
       default() {
@@ -270,6 +284,9 @@ export default {
         });
     },
     getOrgTree(isFirst = false) {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       // 这个添加树的方法
       let data = {
         parentOrgUuid: this.parentOrgUuid,

@@ -2,42 +2,54 @@
   <div class="wrap thecompanygroup">
     <div class="btn-group">
       <el-button :class="{'default':index!=0}"
+                 :disabled="!OwnAuthDisabled"
                  @click="switchType(0)"
                  type="primary">门禁</el-button>
       <el-button :class="{'default':index!=1}"
+                 :disabled="!OwnAuthDisabled"
                  @click="switchType(1)"
                  type="primary">视频</el-button>
       <el-button :class="{'default':index!=2}"
+                 :disabled="!OwnAuthDisabled"
                  @click="switchType(2)"
                  type="primary">报警</el-button>
       <el-button :class="{'default':index!=3}"
                  @click="switchType(3)"
+                 :disabled="!OwnAuthDisabled"
                  type="primary">访客机</el-button>
     </div>
     <div class="tablecontent"
          ref="tablecontent">
       <div class="btn-group">
         <el-button type="primary"
+                   :disabled="!OwnAuthDisabled"
                    @click="addEquipMent">搜索设备</el-button>
         <el-button type="primary"
+                   :disabled="!OwnAuthDisabled"
                    @click="manualAdd">手动添加</el-button>
         <el-button type="primary"
+                   :disabled="!OwnAuthDisabled"
                    @click="deletetableData">删除</el-button>
         <el-button type="primary"
+                   :disabled="!OwnAuthDisabled"
                    @click="update">批量升级</el-button>
         <el-button type="primary"
+                   :disabled="!OwnAuthDisabled"
                    @click="sendData">下发数据</el-button>
 
         <div class="rightgroup">
           <span class="title">设备名称：</span>
           <el-input class="input"
+                    :disabled="!OwnAuthDisabled"
                     v-model="devName"></el-input>
 
           <el-button type="primary"
                      @click="retrieveVisible=!retrieveVisible"
+                     :disabled="!OwnAuthDisabled"
                      size="small">其他条件检索</el-button>
           <el-button type="primary"
                      @click="searchBytext"
+                     :disabled="!OwnAuthDisabled"
                      icon="el-icon-search"
                      size="small">检索</el-button>
         </div>
@@ -133,21 +145,23 @@
           <template slot-scope="scope">
             <el-button @click="editEquipment(scope.row)"
                        type="text"
+                       :disabled="!OwnAuthDisabled"
                        size="small">编辑</el-button>
             <el-button type="text"
                        class="deleteText"
+                       :disabled="!OwnAuthDisabled"
                        @click="deleteEquip(scope.row)"
                        size="small">删除</el-button>
             <el-button type="text"
                        v-if="index==1"
                        @click="remoteControl(scope.row)"
-                       :disabled="(!!scope.row.extInfo.fdLib!=1)"
+                       :disabled="(!!(scope.row.extInfo.fdLib!=1) || !OwnAuthDisabled)"
                        size="small">配置</el-button>
             <el-button type="text"
                        v-if="index!=1"
                        @click="remoteControl(scope.row)"
                        :class="{'offLine':scope.row.netStatus==='offline'}"
-                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig))"
+                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig) || !OwnAuthDisabled)"
                        size="small">配置</el-button>
           </template>
         </el-table-column>
@@ -224,6 +238,20 @@ import * as api from "../ajax.js";
 import { mapState } from "vuex";
 export default {
   name: "TheCompanyTable",
+  props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    }
+  },
   data() {
     return {
       deviceTitle: "",
@@ -350,6 +378,9 @@ export default {
     },
     // 获取当前列表table数据
     getTableData() {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       this.showloading = true;
       api
         .getDevList({
@@ -595,6 +626,7 @@ export default {
     //     time: "2018-10-08"
     //   });
     // }
+    // 获取是否有权限查看
     this.getTableData();
     this.serviceList(this.viewType);
   },

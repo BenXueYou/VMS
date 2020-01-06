@@ -235,7 +235,7 @@ export default {
         this.dpTree(data[i].childNodes || []);
         if (data[i].childNodes && data[i].childNodes.length) {
           let { isShow, isOwn } = this.getChild(data[i].childNodes);
-          console.log(isShow, isOwn);
+          // console.log(isShow, isOwn);
           data[i].isShow = isShow;
           data[i].isOwn = isOwn;
         }
