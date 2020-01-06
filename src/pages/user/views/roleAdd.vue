@@ -246,13 +246,13 @@ export default {
         });
     },
     addFunction() {
-      console.log(this.featureAuth);
-      let featureAuthUuids = [];
-      for (let i = 0, len = this.featureAuth.length; i < len; i++) {
-        featureAuthUuids.push(...this.featureAuth[i].authUuids);
-      }
-      console.log(featureAuthUuids);
-      this.featureAuthUuids = featureAuthUuids;
+      // console.log(this.featureAuth);
+      // let featureAuthUuids = [];
+      // for (let i = 0, len = this.featureAuth.length; i < len; i++) {
+      //   featureAuthUuids.push(...this.featureAuth[i].authUuids);
+      // }
+      // console.log(featureAuthUuids);
+      this.featureAuthUuids = this.featureAuth;
       this.authTreeVisible = true;
     },
     getResource() {
@@ -299,16 +299,16 @@ export default {
         return resourceAuth.push(obj);
       });
       console.log("resourceAuth===", resourceAuth);
-      let featureAuthUuids = [],
-        isShowList = [],
+      let isShowList = [],
         isOwnList = [];
+      console.log(this.featureAuth);
       for (let i = 0, len = this.featureAuth.length; i < len; i++) {
-        featureAuthUuids.push(...this.featureAuth[i].authUuids);
+        // featureAuthUuids.push(...this.featureAuth[i].authUuids);
         if (this.featureAuth[i].isShow) {
           isShowList.push(this.featureAuth[i].featureUuid);
         }
         if (this.featureAuth[i].isOwn) {
-          isOwnList.push(<this className="featureAuth"></this>[i].featureUuid);
+          isOwnList.push(this.featureAuth[i].featureUuid);
         }
       }
       let data = {

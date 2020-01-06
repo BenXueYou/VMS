@@ -202,12 +202,43 @@ export default {
       this.$emit("confirm", this.showNum);
       this.close();
     },
+    getChild(data) {
+      let isShow = true,
+        isOwn = true;
+      for (let i = 0; i < data.length; i++) {
+        isShow = isShow && data[i].isShow;
+        isOwn = isOwn && data[i].isOwn;
+      }
+      return {
+        isOwn,
+        isShow
+      };
+    },
     dpTree(data) {
       // 编辑整个数据，将数字改为bool值 isOwn isShow
       for (let i = 0; i < data.length; i++) {
-        data[i].isOwn = !!data[i].isOwn;
-        data[i].isShow = !!data[i].isShow;
+        // 这里还要判断编辑的这种情况，传过来的selectAuthUuid看他有没有选中
+        let index = -1;
+        for (let j = 0; j < this.selectAuthUuid.length; j++) {
+          if (this.selectAuthUuid[j].featureUuid === data[i].featureUuid) {
+            index = j;
+            break;
+          }
+        }
+        if (index !== -1) {
+          data[i].isOwn = !!this.selectAuthUuid[index].isOwn;
+          data[i].isShow = !!this.selectAuthUuid[index].isShow;
+        } else {
+          data[i].isOwn = !!data[i].isOwn;
+          data[i].isShow = !!data[i].isShow;
+        }
         this.dpTree(data[i].childNodes || []);
+        if (data[i].childNodes && data[i].childNodes.length) {
+          let { isShow, isOwn } = this.getChild(data[i].childNodes);
+          console.log(isShow, isOwn);
+          data[i].isShow = isShow;
+          data[i].isOwn = isOwn;
+        }
       }
     },
     getData() {
@@ -229,6 +260,8 @@ export default {
     visible(val) {
       if (val) {
         this.getData();
+      } else {
+        this.data = [];
       }
       this.TreechangeNameDialogVisible = this.visible;
     }
