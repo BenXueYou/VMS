@@ -39,7 +39,7 @@
 					</el-col>
 					<el-col class="right_box" :span="19">
 						<el-header>
-							<span class="left_tips_txt" @click="addDeviceTag">
+							<span :disabled="!OwnAuthDisabled" class="left_tips_txt" @click="addDeviceTag">
 								<i class="el-icon-circle-plus-outline img"></i>选取设备
 							</span>
 						</el-header>
@@ -72,7 +72,7 @@
 					<el-col class="right_box" :span="19">
 						<el-header>
 							<el-upload
-								:disabled="isDisable"
+								:disabled="(!OwnAuthDisabled) || isDisable"
 								class="uploadClass"
 								:action="updateFileImage"
 								:show-file-list="false"
