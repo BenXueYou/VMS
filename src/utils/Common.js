@@ -18,7 +18,7 @@ export var COMMON = {
       })[0];
       // 根据按钮的名称 从 功能模块的权限配置中，获取权限的对象
       // 判断是否拥有操作权限
-      return cnd1 ? cnd2[isOwnOrShow] : false
+      return cnd1 ? cnd1[isOwnOrShow] : false
     } else {
       alert('请传入isShow 或 isOwn');
     }
