@@ -4,6 +4,7 @@
     <div class="searchWrap">
       <el-input :placeholder="orgType=='staff'?'搜索组织/标签/名称':'搜索设备/标签/名称'"
                 class='mysearchText'
+                :disabled="!OwnAuthDisabled"
                 v-model="searchText">
         <img slot="prefix"
              class="image"
@@ -22,6 +23,7 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
+                   :disabled="!OwnAuthDisabled"
                    :class="{'myShowCuoTree':showCloudControl,'showMaxWidth':!showMaxWidth}"
                    name="organiza">
         <el-tree :props="devprops"
@@ -58,6 +60,7 @@
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
+                   :disabled="!OwnAuthDisabled"
                    class="mypanel2"
                    name="tag">
         <el-tree :props="props"
@@ -105,6 +108,7 @@
 
       </el-tab-pane>
       <el-tab-pane label="视图"
+                   :disabled="!OwnAuthDisabled"
                    name="view">
         <el-tree :props="viewProps"
                  class='videoTree3'
@@ -302,6 +306,18 @@ export default {
     ConfirmDialog
   },
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     showCloudControl: {
       type: Boolean,
       default() {
@@ -500,6 +516,9 @@ export default {
       console.log(this.$refs.tree3.getCheckedNodes());
     },
     openVidoeByDBClick(node, data, e) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // console.log(node, data, e);
       e.preventDefault();
       e.stopPropagation();
@@ -514,6 +533,9 @@ export default {
       }
     },
     saveClickData(node, data, event) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // 点击三角菜单保存树节点信息
       this.operatorData = data;
       if (event) {
@@ -681,6 +703,9 @@ export default {
     async devloadNode(node, resolve) {
       //  懒加载子结点
       console.log(node);
+      if (!this.ShowAuthDisabled) {
+        return resolve([]);
+      }
       let data = await this.videoTree(
         node.data && node.data.id,
         node.data && node.data.nodeType
@@ -761,6 +786,9 @@ export default {
       // });
     },
     async loadNode(node, resolve) {
+      if (!this.ShowAuthDisabled) {
+        return resolve([]);
+      }
       // 加载子结点
       console.log(node);
       if (node.level === 0) {
@@ -974,6 +1002,9 @@ export default {
     },
 
     getViewTree() {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       // 获取视图
       api2
         .getView({
@@ -1682,7 +1713,7 @@ export default {
   .videoTree3 {
     .el-tree-node,
     .el-tree-node__content {
-       width: 100% !important;
+      width: 100% !important;
     }
     .custom-tree-node {
       width: calc(100%);

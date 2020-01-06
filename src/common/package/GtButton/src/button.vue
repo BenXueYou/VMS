@@ -1,5 +1,6 @@
 <template>
   <button class='gt-button'
+          :disabled="disabled"
           @click="clickbutton">
     <img v-if='icon'
          :src="icon"
@@ -19,6 +20,12 @@
 export default {
   name: "GtButton",
   props: {
+    disabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     icon: {
       type: String,
       default: function() {

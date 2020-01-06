@@ -4,6 +4,8 @@
                   needType=""
                   tagType="device"
                   ref='leftTree'
+                  :ShowAuthDisabled="ShowAuthDisabled"
+                  :OwnAuthDisabled="OwnAuthDisabled"
                   @playRtsp="playRtsp"
                   @jumpToPlayback="jumpToPlayback"
                   @updateView="updateView"
@@ -69,10 +71,12 @@
 
           <gt-button class='button'
                      @click='saveShiTu'
+                     :disabled="!OwnAuthDisabled"
                      :showClose="false">保存视图</gt-button>
           <el-dropdown @command="changeView"
                        trigger="click">
             <gt-button class='button'
+                       :disabled="!OwnAuthDisabled"
                        :showClose="false">
               {{videoMode}}
               <i class='el-icon-caret-bottom'></i></gt-button>
@@ -83,6 +87,7 @@
           </el-dropdown>
 
           <gt-button class='button'
+                     :disabled="!OwnAuthDisabled"
                      :icon="icons.fullScreen"
                      @click="PreviewAreafullScreen"
                      :showClose="false"
@@ -247,10 +252,15 @@ export default {
       maxRightWidth: 10000,
       parentArr: new Array(36), // 用来记录所有的视频
       timer: null,
-      cnt: 0
+      cnt: 0,
+      ShowAuthDisabled: false,
+      OwnAuthDisabled: false
     };
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isOwn");
+    // this.OwnAuthDisabled = true;
     this.jugdeJump();
     this.chooseFenlu(1);
     this.jishi();
@@ -499,6 +509,9 @@ export default {
       operator = -1,
       isDrag = false
     ) {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       console.log(streamType);
       // 这里做个判断，判断streamType是否为空，为空则判断是不是第一个播放，是则主码流，不是则辅码流
       if (streamType === "") {
@@ -792,6 +805,9 @@ export default {
       this.getChannleUuid();
     },
     showMenu(e, index) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       console.log(e);
       this.operatorIndex = index;
       const _this = this;
