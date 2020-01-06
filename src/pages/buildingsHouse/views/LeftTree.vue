@@ -1,66 +1,64 @@
 <template>
-  <div class="left-tree">
-    <div class="tree-input">
-      <el-input placeholder="搜索期号／楼栋／单元"
-                v-model="filterText"
-                style="width: 90%">
-        <img slot="prefix"
-             :src="icons.search">
-      </el-input>
-      <img :src="icons.add"
-           @click="onClickAdd"
-           class="image">
-    </div>
-    <div class="i-tree">
-      <el-scrollbar style="height: 98%;transition:0.2s;width: 240px;">
-        <el-tree :data="treeData"
-                 :props="defaultProps"
-                 node-key="id"
-                 :indent="10"
-                 lazy
-                 :load="loadNode"
-                 ref="buildingTree"
-                 :filter-node-method="filterNode"
-                 :default-expanded-keys="defaultExpKeys"
-                 :highlight-current="true"
-                 :expand-on-click-node="false"
-                 @node-click="handleNodeClick">
-          <div class="i-tree-item"
-               slot-scope="{ node, data }">
-            <div class="i-tree-item-icon">
-              <img :src="iconShow(node)"
-                   width="10.9px"
-                   height="9px"
-                   style="margin-right: 4px;">
-              <div class="text-show" style="width: 110px;" :title='node.label'>{{node.label}}</div>
-              <el-dropdown trigger="click"
-                           class="action-icon"
-                           @command="handleDropDownMenuClick"
-                           placement="bottom">
-                <div class="img-div"
-                     @click.stop="onClickMore(node, data)">
-                  <img :src="icons.more_action"
-                       width="16px"
-                       height="13px">
-                </div>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="add"
-                                    v-if="!isDisableAdd">新增{{showType}}</el-dropdown-item>
-                  <el-dropdown-item command="edit">修改名称</el-dropdown-item>
-                  <el-dropdown-item command="moveUp"
-                                    v-if="!isDisableMoveUp">上移</el-dropdown-item>
-                  <el-dropdown-item command="moveDown"
-                                    v-if="!isDisableMoveDown">下移</el-dropdown-item>
-                  <el-dropdown-item command="copy" v-if="isShowCopy">复制</el-dropdown-item>
-                  <el-dropdown-item command="delete">删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div>
-          </div>
-        </el-tree>
-      </el-scrollbar>
-    </div>
-  </div>
+	<div class="left-tree">
+		<div class="tree-input">
+			<el-input placeholder="搜索期号／楼栋／单元" v-model="filterText" style="width: 90%">
+				<img slot="prefix" :src="icons.search" />
+			</el-input>
+			<img :src="icons.add" @click="onClickAdd" class="image" />
+		</div>
+		<div class="i-tree">
+			<el-scrollbar style="height: 98%;transition:0.2s;width: 240px;">
+				<el-tree
+					:data="treeData"
+					:props="defaultProps"
+					node-key="id"
+					:indent="10"
+					lazy
+					:load="loadNode"
+					ref="buildingTree"
+					:filter-node-method="filterNode"
+					:default-expanded-keys="defaultExpKeys"
+					:highlight-current="true"
+					:expand-on-click-node="false"
+					@node-click="handleNodeClick"
+				>
+					<div class="i-tree-item" slot-scope="{ node, data }">
+						<div class="i-tree-item-icon">
+							<img :src="iconShow(node)" width="10.9px" height="9px" style="margin-right: 4px;" />
+							<div class="text-show" style="width: 110px;" :title="node.label">{{node.label}}</div>
+							<el-dropdown
+								:disabled="!OwnAuthDisabled"
+								trigger="click"
+								class="action-icon"
+								@command="handleDropDownMenuClick"
+								placement="bottom"
+							>
+								<div class="img-div" @click.stop="onClickMore(node, data)">
+									<img :src="icons.more_action" width="16px" height="13px" />
+								</div>
+								<el-dropdown-menu slot="dropdown">
+									<el-dropdown-item
+										:disabled="!OwnAuthDisabled"
+										command="add"
+										v-if="!isDisableAdd"
+									>新增{{showType}}</el-dropdown-item>
+									<el-dropdown-item :disabled="!OwnAuthDisabled" command="edit">修改名称</el-dropdown-item>
+									<el-dropdown-item :disabled="!OwnAuthDisabled" command="moveUp" v-if="!isDisableMoveUp">上移</el-dropdown-item>
+									<el-dropdown-item
+										:disabled="!OwnAuthDisabled"
+										command="moveDown"
+										v-if="!isDisableMoveDown"
+									>下移</el-dropdown-item>
+									<el-dropdown-item :disabled="!OwnAuthDisabled" command="copy" v-if="isShowCopy">复制</el-dropdown-item>
+									<el-dropdown-item :disabled="!OwnAuthDisabled" command="delete">删除</el-dropdown-item>
+								</el-dropdown-menu>
+							</el-dropdown>
+						</div>
+					</div>
+				</el-tree>
+			</el-scrollbar>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -95,16 +93,20 @@ export default {
       isDisableAdd: false,
       lastLevelType: "",
       clickObj: {},
-      isShowCopy: true
+      isShowCopy: true,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
     // this.initData();
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isOwn");
   },
   methods: {
     initData() {
-      if (!this.initAreaData) {
+      if (!this.ShowAuthDisabled || !this.initAreaData) {
         return;
       }
       this.treeData = [
@@ -186,7 +188,10 @@ export default {
       setTimeout(() => {
         this.$refs.buildingTree.setCurrentKey(id);
         this.$emit("setTreeRootData", this.treeData[0]);
-        this.clickObj = this.$common.copyObject(this.treeData[0], this.clickObj);
+        this.clickObj = this.$common.copyObject(
+          this.treeData[0],
+          this.clickObj
+        );
       }, 200);
     },
     handleNodeClick(obj, node, component) {
@@ -318,7 +323,7 @@ export default {
         this.isDisableMoveDown = false;
       } else if (
         this.getNodeIndex(node) ===
-        node.parent.childNodes.length - 1
+				node.parent.childNodes.length - 1
       ) {
         this.isDisableMoveUp = false;
         this.isDisableMoveDown = true;
@@ -345,6 +350,7 @@ export default {
       return index;
     },
     onClickAdd() {
+      if (!this.OwnAuthDisabled) return;
       this.$emit("onClickAllTypeAdd");
     },
     handleDropDownMenuClick(index) {
@@ -450,7 +456,9 @@ export default {
     },
     getCopyName(label, index) {
       label = `${this.currentNode.data.label}(${index})`;
-      if (!this.currentNode.parent.childNodes.some((v) => v.data.label === label)) {
+      if (
+        !this.currentNode.parent.childNodes.some(v => v.data.label === label)
+      ) {
         return label;
       }
       return this.getCopyName(label, index + 1);
@@ -470,7 +478,7 @@ export default {
     copyInfrastructureSuccessResponse(body) {
       this.$cToast.success(body.msg);
       this.refreshParentNode();
-    },
+    }
   },
   watch: {
     filterText(val) {
@@ -489,76 +497,76 @@ export default {
 
 <style lang="scss">
 .left-tree {
-  .el-input__prefix {
-    position: absolute;
-    left: 36px;
-    top: 7px;
-  }
-  .el-input--prefix .el-input__inner {
-    padding-left: 28px;
-  }
-  .el-tree {
-    background: rgba($color: #212326, $alpha: 1);
-  }
-  .el-tree-node__content {
-    .action-icon {
-      height: 0px !important;
-      .img-div {
-        display: none;
-      }
-    }
-    &:hover {
-      .action-icon {
-        height: 32px !important;
-        line-height: 32px !important;
-        .img-div {
-          display: block;
-        }
-      }
-    }
-  }
+	.el-input__prefix {
+		position: absolute;
+		left: 36px;
+		top: 7px;
+	}
+	.el-input--prefix .el-input__inner {
+		padding-left: 28px;
+	}
+	.el-tree {
+		background: rgba($color: #212326, $alpha: 1);
+	}
+	.el-tree-node__content {
+		.action-icon {
+			height: 0px !important;
+			.img-div {
+				display: none;
+			}
+		}
+		&:hover {
+			.action-icon {
+				height: 32px !important;
+				line-height: 32px !important;
+				.img-div {
+					display: block;
+				}
+			}
+		}
+	}
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .left-tree {
-  // width: 15%;
-  width:300px;
-  height: 100%;
-  background: rgba($color: #232629, $alpha: 0.8);
-  padding: 0 1%;
-  box-sizing: border-box;
-  .tree-input {
-    height: 100px;
-    border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.08);
-    display: flex;
-    align-items: center;
-    .image {
-      margin-left: 10px;
-      cursor: pointer;
-    }
-  }
-  .i-tree {
-    height: 85%;
-    padding: 20px 0 0 0;
-    box-sizing: border-box;
-    overflow-x: auto;
-    .i-tree-item {
-      width: 200px;
-      .i-tree-item-icon {
-        display: flex;
-        align-items: center;
-        .action-icon {
-          margin-left: auto;
-          margin-right: 5px;
-          .img-div {
-            cursor: pointer;
-            height: 32px;
-            line-height: 32px;
-          }
-        }
-      }
-    }
-  }
+	// width: 15%;
+	width: 300px;
+	height: 100%;
+	background: rgba($color: #232629, $alpha: 0.8);
+	padding: 0 1%;
+	box-sizing: border-box;
+	.tree-input {
+		height: 100px;
+		border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.08);
+		display: flex;
+		align-items: center;
+		.image {
+			margin-left: 10px;
+			cursor: pointer;
+		}
+	}
+	.i-tree {
+		height: 85%;
+		padding: 20px 0 0 0;
+		box-sizing: border-box;
+		overflow-x: auto;
+		.i-tree-item {
+			width: 200px;
+			.i-tree-item-icon {
+				display: flex;
+				align-items: center;
+				.action-icon {
+					margin-left: auto;
+					margin-right: 5px;
+					.img-div {
+						cursor: pointer;
+						height: 32px;
+						line-height: 32px;
+					}
+				}
+			}
+		}
+	}
 }
 </style>
