@@ -323,8 +323,8 @@ export default {
         that.$refs.heightBox.$el.style.height = h + "px";
         that.asideWidth = 0.3 * w + "px";
         that.$refs.mainHeightBox.$el.style.height = h - 300 + "px";
-        that.canvas.height = that.HEIGHT() - 450;
-        that.canvas.width = (16 * that.canvas.height) / 9;
+        // that.canvas.height = that.HEIGHT() - 450;
+        // that.canvas.width = (16 * that.canvas.height) / 9;
       });
       that.drawLine();
     });
@@ -659,8 +659,8 @@ export default {
       if (!this.canvas) {
         this.canvas = document.createElement("video");
       }
-      this.canvas.height = this.HEIGHT() - 450;
-      this.canvas.width = (16 * this.canvas.height) / 9;
+      // this.canvas.height = this.HEIGHT() - 450;
+      // this.canvas.width = (16 * this.canvas.height) / 9;
       // 设置新的视频对象播放参数
       console.log(jSignal);
       this.video = await this.video_mgr.setup({
@@ -1002,7 +1002,10 @@ export default {
   background: rgba(33, 35, 37, 1);
   display: none;
 }
-
+#player video {
+  width: 100%;
+  height: 100%;
+}
 .el-radio-myclass {
   margin: 10px 0px 9px;
   font-family: "PingFangSC-Regular";
