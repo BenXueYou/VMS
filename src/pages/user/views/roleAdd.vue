@@ -82,7 +82,7 @@
 						class="bilibili"
 						@close="deleteChannelAuth(index)"
 						:key="index"
-					>{{item.label}}</gt-button>
+					>{{item.label || item.resourceName}}</gt-button>
 				</div>
 			</div>
 		</div>
@@ -116,8 +116,14 @@
 		<div class="dash-line"></div>
 		<div class="headera">
 			<div class="buttongroup">
-				<el-button v-if="!roleUuid" @click="saveAndAdd" size="small" type="primary">保存并继续添加</el-button>
-				<el-button @click="confirm" class="button" size="small" type="primary">确认</el-button>
+				<el-button
+					v-if="!roleUuid"
+					:loading="isloading"
+					@click="saveAndAdd"
+					size="small"
+					type="primary"
+				>保存并继续添加</el-button>
+				<el-button @click="confirm" :loading="isloading" class="button" size="small" type="primary">确认</el-button>
 				<el-button @click="close" class="button" size="small" type="primary">取消</el-button>
 			</div>
 		</div>
@@ -194,7 +200,8 @@ export default {
         label: "accountName",
         id: "accountUuid"
       },
-      defaultCHNResource: []
+      defaultCHNResource: [],
+      isloading: false
     };
   },
   methods: {
@@ -236,21 +243,11 @@ export default {
         });
     },
     addFunction() {
-      // console.log(this.featureAuth);
-      // let featureAuthUuids = [];
-      // for (let i = 0, len = this.featureAuth.length; i < len; i++) {
-      //   featureAuthUuids.push(...this.featureAuth[i].authUuids);
-      // }
-      // console.log(featureAuthUuids);
       this.featureAuthUuids = this.featureAuth;
       this.authTreeVisible = true;
     },
     getResource() {
       this.showResouce = !this.showResouce;
-      // api.getResource({
-      // 	roleUuid: this.roleUuid,
-      // 	resourceType: ""
-      // });
     },
     saveAndAdd() {
       this.submit(true);
@@ -280,9 +277,10 @@ export default {
     rebaseData() {
       let resourceAuth = [];
       this.resourceAuth.map(i => {
-        console.log("i===", i);
         let obj = {
           resourceUuid: i.resourceUuid,
+          id: i.resourceUuid,
+          label: i.resourceName,
           resourceType: i.resourceType,
           authUuids: i.authUuids ? i.authUuids : i.resourceAuthUuids
         };
@@ -323,32 +321,45 @@ export default {
     submit(isBackTableList) {
       // 通过判断roleUuid是否为空，来判断是新增还是修改
       let data = this.rebaseData();
+      this.isloading = true;
       if (!this.roleUuid) {
-        api.addRoleDetailUrl(data).then(res => {
-          if (res.data.success) {
-            console.log("isBackTableList===", isBackTableList);
-            this.$message.success("添加成功!");
-            if (isBackTableList) {
-              this.resetAddDialog();
-            } else {
-              this.$emit("close", true);
+        api
+          .addRoleDetailUrl(data)
+          .then(res => {
+            this.isloading = false;
+            if (res.data.success) {
+              console.log("isBackTableList===", isBackTableList);
+              this.$message.success("添加成功!");
+              if (isBackTableList) {
+                this.resetAddDialog();
+              } else {
+                this.$emit("close", true);
+              }
             }
-          }
-        });
+          })
+          .catch(() => {
+            this.isloading = false;
+          });
       } else {
-        api.editRoleDetailUrl(data).then(res => {
-          if (res.data.success) {
-            // console.log("isBackTableList===", isBackTableList)
-            this.$emit("close", true);
-            this.$message.success("保存成功！");
-            // this.clsoe();
-            // if (isBackTableList) {
-            //   this.resetAddDialog();
-            // } else {
-            //   this.clsoe();
-            // }
-          }
-        });
+        api
+          .editRoleDetailUrl(data)
+          .then(res => {
+            this.isloading = false;
+            if (res.data.success) {
+              // console.log("isBackTableList===", isBackTableList)
+              this.$emit("close", true);
+              this.$message.success("保存成功！");
+              // this.clsoe();
+              // if (isBackTableList) {
+              //   this.resetAddDialog();
+              // } else {
+              //   this.clsoe();
+              // }
+            }
+          })
+          .catch(() => {
+            this.isloading = false;
+          });
       }
     },
     clsoe() {
@@ -369,19 +380,27 @@ export default {
           }
           this.description = data.description;
           this.account = data.account || [];
-
           this.featureAuth = data.featureAuthUuidsList || [];
-
-          // this.featureAuthUuids =(data.featureAuthUuidsList; || []).map((item, index) => {
-          //   item.authUuids = data.featureAuthUuidsList[index].authUuids;
-          //   return item;
-          // }); data.authUuids;
+          let resourceAuth = [];
           if (data.resourceAuth) {
-            data.resourceAuth.map(i => {
-              return (i.label = i.resourceName);
+            resourceAuth = data.resourceAuth.map(o => {
+              let temp = {
+                resType: o.resourceType,
+                realType: o.channelType,
+                id: o.resourceUuid,
+                label: o.resourceName,
+                extInfo: [
+                  {
+                    aimType: "chnSubType"
+                  }
+                ],
+                checkedAuthUuids: o.resourceAuthUuids
+              };
+              Object.assign(temp, o);
+              return temp;
             });
           }
-          this.resourceAuth = data.resourceAuth || [];
+          this.resourceAuth = resourceAuth;
           this.shouquanSelectedArr = data.account || [];
         }
       });

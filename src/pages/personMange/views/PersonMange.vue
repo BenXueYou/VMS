@@ -1,7 +1,9 @@
 <template>
   <div class="personMange"
        id="personMange">
-    <the-leftmenu @changetab="changetab"
+    <the-leftmenu :ShowAuthDisabled='ShowAuthDisabled'
+                  :OwnAuthDisabled='OwnAuthDisabled'
+                  @changetab="changetab"
                   ref="leftMenu"
                   @clickNode="clickNodeAll"
                   needType
@@ -18,17 +20,17 @@
           <div class="head">
             <div class="title">{{viewGroupName}}&nbsp;&nbsp;({{totalStaff}})</div>
             <div class="carte">
-              <div @click="changeLeftMenu('1')"
+              <div :disabled='!OwnAuthDisabled' @click="changeLeftMenu('1')"
                    style="cursor:pointer;">
                 <img src="./../../../assets/images/personMange/edit.png" />
                 <span>修改名称</span>
               </div>
-              <div @click="changeLeftMenu('2')"
+              <div :disabled='!OwnAuthDisabled' @click="changeLeftMenu('2')"
                    style="cursor:pointer;">
                 <img src="./../../../assets/images/personMange/add.png" />
                 <span>添加子部门</span>
               </div>
-              <div @click="setApartmentLeader"
+              <div :disabled='!OwnAuthDisabled' @click="setApartmentLeader"
                    style="cursor:pointer;">
                 <img src="./../../../assets/images/personMange/set.png" />
                 <span>设置上级</span>
@@ -38,31 +40,31 @@
           <div class="listWrap">
             <div class="bthWrap">
               <div class="left">
-                <el-button style="width: 90px;"
+                <el-button :disabled='!OwnAuthDisabled' type="primary" style="width: 90px;"
                            @click="addEditMembers=true,isListForm=false,newPersonList(),addEditMember='add'">添加成员</el-button>
-                <el-button style="width: 90px;"
+                <el-button :disabled='!OwnAuthDisabled'  type="primary"  style="width: 90px;"
                            @click="importDialog=true">批量导入</el-button>
-                <el-button style="width: 90px;"
+                <el-button :disabled='!OwnAuthDisabled'  type="primary"  style="width: 90px;"
                            @click="exportDialog=true">批量导出</el-button>
-                <el-button style="width: 110px;"
+                <el-button :disabled='!OwnAuthDisabled'  type="primary"  style="width: 110px;"
                            @click="getMsgToDeviceDialogVisiable=!getMsgToDeviceDialogVisiable">设置所在部门</el-button>
-                <el-button style="width: 80px;"
+                <el-button :disabled='!ShowAuthDisabled'  type="primary"  style="width: 80px;"
                            @click="peopleStatistics">统计</el-button>
-                <el-button style="width: 80px;"
+                <el-button :disabled='!OwnAuthDisabled'  type="primary"  style="width: 80px;"
                            @click="deleteDialog=true">删除</el-button>
               </div>
               <div class="right">
                 <span class="sp">姓名：</span>
                 <el-input style="width: 160px;height: 32px;margin-right: 10px;"
                           v-model="searchName"></el-input>
-                <el-button style="width: 80px;"
+                <el-button  type="primary" :disabled='!ShowAuthDisabled'  style="width: 80px;"
                            class="search"
                            @click="isOtherSearch=false,clearSearchInfo(),clickNodeList()">
                   <img src="./../../../assets/images/personMange/search.png" />检索
                 </el-button>
                 <div class="otherSearch"
                      @click.stop="isOtherSearch=true">
-                  <el-button style="width: 110px;"
+                  <el-button type="primary" :disabled='!ShowAuthDisabled' style="width: 110px;"
                              @click.stop="clearSearchInfo(),isOtherSearch=!isOtherSearch">其他检索条件</el-button>
                   <div class="conditionWrap"
                        v-show="isOtherSearch">
@@ -111,15 +113,15 @@
                     <div class="infoWrap">
                       <div class="left"></div>
                       <div class="right">
-                        <el-button style="width: 66px;"
+                        <el-button type="primary" :disabled='!ShowAuthDisabled' style="width: 66px;"
                                    @click.stop="clickNodeList(),isOtherSearch=false">检索</el-button>
-                        <span class="reset"
+                        <span type="primary" :disabled='!ShowAuthDisabled' class="reset"
                               @click="clearSearchInfo">重置</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <el-button style="width: 100px;"
+                <el-button type="primary" :disabled='!ShowAuthDisabled' style="width: 100px;"
                            class="switch"
                            @click="isTableStyle=false,getImageList()">
                   <img src="./../../../assets/images/personMange/switch.png" />切换视图
@@ -196,14 +198,14 @@
                                  width="200">
                   <template slot-scope="scope">
                     <div style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
-                      <span style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #26D39D;display: flex;flex-direction: row;align-items: center;"
+                      <span type="primary" :disabled='!ShowAuthDisabled' style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #26D39D;display: flex;flex-direction: row;align-items: center;"
                             @click="viewSingleDetail(scope.row)">
                         <img src="./../../../assets/images/personMange/detail.png"
                              style="margin-right: 5.9px" />详情
                       </span>
-                      <span style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #26D39D;margin: 0 22px;"
+                      <span type="primary" :disabled='!OwnAuthDisabled' style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #26D39D;margin: 0 22px;"
                             @click="editPersonSingle(scope.row)">编辑</span>
-                      <span style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #FF5F5F;"
+                      <span type="primary" :disabled='!OwnAuthDisabled' style="cursor:pointer;font-family: PingFangSC-Regular;font-size: 13px;color: #FF5F5F;"
                             @click="deletePersonSingle(scope.row)">删除</span>
                     </div>
                   </template>
@@ -219,15 +221,15 @@
           <div class="head">
             <div class="title">{{viewGroupName}}&nbsp;&nbsp;({{totalStaff}})</div>
             <div class="carte">
-              <div @click="changeLeftMenu('1')">
+              <div type="primary" :disabled='!OwnAuthDisabled' @click="changeLeftMenu('1')">
                 <img src="./../../../assets/images/personMange/edit.png" />
                 <span>修改名称</span>
               </div>
-              <div @click="changeLeftMenu('2')">
+              <div type="primary" :disabled='!OwnAuthDisabled' @click="changeLeftMenu('2')">
                 <img src="./../../../assets/images/personMange/add.png" />
                 <span>添加子部门</span>
               </div>
-              <div @click="setApartmentLeader">
+              <div type="primary" :disabled='!OwnAuthDisabled' @click="setApartmentLeader">
                 <img src="./../../../assets/images/personMange/set.png" />
                 <span>设置上级</span>
               </div>
@@ -236,23 +238,23 @@
           <div class="listWrap">
             <div class="bthWrap">
               <div class="left">
-                <el-button style="width: 90px;"
+                <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 90px;"
                            @click="addEditMembers=true,isImageForm=false,newPersonList(),addEditMember='add'">添加成员</el-button>
-                <el-button style="width: 90px;"
+                <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 90px;"
                            @click="importDialog=true">批量导入</el-button>
-                <el-button style="width: 90px;"
+                <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 90px;"
                            @click="exportDialog=true">批量导出</el-button>
-                <el-button style="width: 110px;"
+                <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 110px;"
                            @click="getMsgToDeviceDialogVisiable=!getMsgToDeviceDialogVisiable">设置所在部门</el-button>
-                <el-button style="width: 80px;"
+                <el-button type="primary" :disabled='!ShowAuthDisabled' style="width: 80px;"
                            @click="peopleStatistics">统计</el-button>
-                <el-button style="width: 80px;"
+                <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 80px;"
                            @click="deleteDialog=true">删除</el-button>
               </div>
               <div class="right">
                 <div class="otherSearch"
                      @click.stop="isOtherSearch=true">
-                  <el-button style="width: 100px;"
+                  <el-button type="primary" :disabled='!ShowAuthDisabled' style="width: 100px;"
                              class="search">
                     <img src="./../../../assets/images/personMange/search.png"
                          @click.stop="isOtherSearch=!isOtherSearch" />人员检索
@@ -305,15 +307,15 @@
                     <div class="infoWrap">
                       <div class="left"></div>
                       <div class="right">
-                        <el-button style="width: 66px;"
+                        <el-button type="primary" :disabled='!ShowAuthDisabled' style="width: 66px;"
                                    @click="clickNodeList(),isOtherSearch=false">检索</el-button>
-                        <span class="reset"
+                        <span type="primary" :disabled='!ShowAuthDisabled' class="reset"
                               @click="clearSearchInfo">重置</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <el-button style="width: 100px;"
+                <el-button type="primary" :disabled='!ShowAuthDisabled' style="width: 100px;"
                            class="switch"
                            @click="isTableStyle=true,getFormList()">
                   <img src="./../../../assets/images/personMange/switch.png" />切换视图
@@ -322,7 +324,7 @@
             </div>
             <div class="tableWrap">
               <div class="selectWrap">
-                <el-checkbox v-model="seleactAll"
+                <el-checkbox :disabled='!OwnAuthDisabled' v-model="seleactAll"
                              @change="checkedAllChange">本页全选</el-checkbox>
               </div>
               <div class="inforWrap">
@@ -351,15 +353,15 @@
                   <div style="height: 16px">{{tableData.length>index?tableData[tableData.length-index-1].fixedLine:"座机"}}</div>
                   <div class="operationMask"
                        v-if="isOperationMask&idx == index">
-                    <div @click.stop="isOperationMask=false,viewSingleDetail(tableData[tableData.length-index-1])">
+                    <div type="primary" :disabled='!ShowAuthDisabled' @click.stop="isOperationMask=false,viewSingleDetail(tableData[tableData.length-index-1])">
                       <img src="./../../../assets/images/personMange/detail1.png" />
                       <span>详情</span>
                     </div>
-                    <div @click.stop="isOperationMask=false,editPersonSingle(tableData[tableData.length-index-1])">
+                    <div type="primary" :disabled='!OwnAuthDisabled' @click.stop="isOperationMask=false,editPersonSingle(tableData[tableData.length-index-1])">
                       <img src="./../../../assets/images/personMange/edit.png" />
                       <span>编辑</span>
                     </div>
-                    <div @click.stop="isOperationMask=false,deletePersonSingle(tableData[tableData.length-index-1])">
+                    <div type="primary" :disabled='!OwnAuthDisabled' @click.stop="isOperationMask=false,deletePersonSingle(tableData[tableData.length-index-1])">
                       <img src="./../../../assets/images/personMange/delete1.png" />
                       <span>删除</span>
                     </div>
@@ -383,12 +385,12 @@
                   <span v-show="addEditMember==='edit'">编辑员工</span>
                 </div>
                 <div class="btnWrap">
-                  <el-button style="width: 120px;"
+                  <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 120px;"
                              @click="addPersonMember('continue')"
                              v-show="addEditMember==='add'">保存并继续添加</el-button>
-                  <el-button style="width: 80px;"
+                  <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 80px;"
                              @click="addEditPerson()">确认</el-button>
-                  <el-button style="width: 80px;margin-right: 15px;"
+                  <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 80px;margin-right: 15px;"
                              @click="closeAddEdit">取消</el-button>
                 </div>
               </div>
@@ -945,21 +947,21 @@
         <div class="head">
           <div class="title">{{labelName}}&nbsp;&nbsp;({{labelNumber}})</div>
           <div class="carte">
-            <div @click="changeLeftMenu('1')">
+            <div type="primary" :disabled='!OwnAuthDisabled' @click="changeLeftMenu('1')">
               <img src="./../../../assets/images/personMange/edit.png" />
-              <span>修改名称</span>
+              <span type="primary" :disabled='!OwnAuthDisabled'>修改名称</span>
             </div>
-            <div @click="viewLabelDetail">
+            <div type="primary" :disabled='!OwnAuthDisabled' @click="viewLabelDetail">
               <img src="./../../../assets/images/personMange/labelDetail.png" />
-              <span>标签详情</span>
+              <span type="primary" :disabled='!ShowAuthDisabled'>标签详情</span>
             </div>
           </div>
         </div>
         <div class="listWrap">
           <div class="bthWrap">
-            <el-button style="width: 110px;"
+            <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 110px;"
                        @click="addDeparentment">添加部门/员工</el-button>
-            <el-button style="width: 80px;"
+            <el-button type="primary" :disabled='!OwnAuthDisabled' style="width: 80px;"
                        @click="deleteDialog=true">移出</el-button>
           </div>
           <div class="tableWrap">
@@ -1826,7 +1828,9 @@ export default {
       source: "",
       canvWidth: "",
       canvHeight: "",
-      mediaStreamTrack: null
+      mediaStreamTrack: null,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true,
     };
   },
   created() {},
@@ -1836,6 +1840,8 @@ export default {
     this.isResize = true;
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("员工管理", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("员工管理", "isOwn");
     this.idTypeArr = this.$common.getEnumByGroupStr("cred");
     this.degreeArr = this.$common.getEnumByGroupStr("edu");
     this.nationalityArr = this.$common.getEnumByGroupStr("nationality");
@@ -2671,6 +2677,7 @@ export default {
         });
     },
     changetab(tab) {
+      if (!this.ShowAuthDisabled) return;
       console.log("changetab===", tab);
       if (tab.name === "organiza") {
         this.isOrganiza = true;
@@ -3255,6 +3262,7 @@ export default {
       this.initApartmentTree();
     },
     clickNodeAll(res) {
+      if (!this.ShowAuthDisabled) return;
       this.clearSearchInfo();
       if (this.chartTitle === "") {
         this.chartTitle = res.orgName;

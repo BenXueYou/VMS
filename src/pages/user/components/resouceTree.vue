@@ -270,8 +270,8 @@ export default {
         })
         .map(o => {
           let data = {
-            resourceType: o.resType,
-            chnType: o.resType,
+            resourceType: this.resourceType,
+            channelType: o.realType,
             resourceUuid: o.id,
             resourceAuthUuids: o.checkedAuthUuids
           };
@@ -322,13 +322,19 @@ export default {
         // 构造当前资源类型权限对象
         data.authArr = JSON.parse(JSON.stringify(this.resourceAuthArr));
         let checkedAuthUuids = [];
-        // 默认资源权限全选
-        data.authArr.filter(v => {
-          checkedAuthUuids.push(v.authUuid);
-        });
+        if (!(data.authUuids && data.authUuids.length)) {
+          // 默认资源权限全选
+          data.authArr.filter(v => {
+            checkedAuthUuids.push(v.authUuid);
+          });
+          data.checkAll = true;
+          data.isIndeterminate = false;
+        } else {
+          data.checkAll = false;
+          data.isIndeterminate = true;
+          checkedAuthUuids = data.authUuids;
+        }
         this.$set(data, "checkedAuthUuids", checkedAuthUuids);
-        data.checkAll = true;
-        data.isIndeterminate = false;
         data.viewType = this.activeName;
         this.checkedChannelArr.push(data);
       } else {
@@ -341,8 +347,6 @@ export default {
     },
     // 获取树节点数据的HTTP
     getTreeData(obj) {
-      console.log(this.resourceType);
-      console.log(this.rightTabArr[0].id);
       return new Promise(resolve => {
         api
           .getNewTree(obj)
@@ -469,21 +473,17 @@ export default {
       this.isShow = this.visible;
       if (this.visible) {
         let nums = [];
+        this.checkedChannelArr = [];
         this.defaultCHNResource.map(o => {
-          let data = {
-            resType: o.resourceType,
-            realType: o.chnType,
-            id: o.resourceUuid,
-            label: o.resourceName,
-            checkedAuthUuids: o.resourceAuthUuids
-          };
-          Object.assign(data, o);
-          nums.push(data);
+          nums.push(o);
         });
-        this.checkedChannelArr = nums;
-        let arr = this.checkedChannelArr.map(item => item.resourceUuid);
+        let arr = nums.map(item => item.resourceUuid);
         this.$nextTick(() => {
           this.$refs[this.activeName][0].setCheckedKeys(arr);
+          nums.forEach(element => {
+            this.handleCheckChannelData(element, true);
+          });
+          console.log(this.checkedChannelArr);
         });
       }
     },
