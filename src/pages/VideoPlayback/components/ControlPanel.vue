@@ -193,6 +193,18 @@ export default {
     timeSelect
   },
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     data: {
       type: Array
     },
@@ -323,6 +335,9 @@ export default {
       this.$emit("choosetime", index, chooseTime);
     },
     saveView() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.$emit("saveView");
     },
     download() {

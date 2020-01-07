@@ -2,6 +2,8 @@
   <div class='VideoPlaybackContent'>
     <left-content @playRtsp="playRtsp"
                   @updateView="updateView"
+                  :ShowAuthDisabled="ShowAuthDisabled"
+                  :OwnAuthDisabled="OwnAuthDisabled"
                   ref="leftTree"
                   @openView="openView"></left-content>
     <div class='right'
@@ -51,6 +53,8 @@
                        @PreviewAreafullScreen="PreviewAreafullScreen"
                        @chooseFenlu="chooseFenlu"
                        @changeMode="changeMode"
+                       :ShowAuthDisabled="ShowAuthDisabled"
+                       :OwnAuthDisabled="OwnAuthDisabled"
                        :downloadStatus="downloadStatus"
                        :playStatus="playStatus"
                        :mode="videoMode"
@@ -221,7 +225,9 @@ export default {
           label: "全屏",
           value: "全屏"
         }
-      ]
+      ],
+      ShowAuthDisabled: false,
+      OwnAuthDisabled: false
     };
   },
   computed: {
@@ -264,6 +270,8 @@ export default {
     }
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("视频回放", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("视频回放", "isOwn");
     this.jugdeJump();
     this.$nextTick(() => {
       this.chooseFenlu(1);
@@ -391,6 +399,9 @@ export default {
       }
     },
     jumpVideo(id, name) {
+      if (this.ShowAuthDisabled) {
+        return;
+      }
       let d = new Date();
       let ymd = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
       let hms = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;

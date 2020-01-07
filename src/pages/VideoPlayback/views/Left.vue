@@ -3,6 +3,7 @@
        id='VideoPlaybackContentLeft'>
     <div class="searchWrap">
       <el-input placeholder='搜索组织/标签/名称'
+                :disabled="!OwnAuthDisabled"
                 v-model="searchText">
         <img slot="prefix"
              class="image"
@@ -18,6 +19,7 @@
              class="tabs"
              @tab-click="handleClick">
       <el-tab-pane label="设备树"
+                   :disabled="!OwnAuthDisabled"
                    class="mypanel"
                    :class="{'showMaxWidth':!showMaxWidth}"
                    name="organiza">
@@ -44,6 +46,7 @@
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
+                   :disabled="!OwnAuthDisabled"
                    class="mypanel mypanel2"
                    name="tag">
         <el-tree :props="tagprops"
@@ -71,6 +74,7 @@
 
       </el-tab-pane>
       <el-tab-pane label="视图"
+                   :disabled="!OwnAuthDisabled"
                    name="view">
 
         <el-tree :props="viewProps"
@@ -134,6 +138,7 @@
       <div class="startWrap">
         <el-button type="primary"
                    @click='search'
+                   :disabled="!OwnAuthDisabled"
                    style='margin:0px auto;'>查询</el-button>
       </div>
     </div>
@@ -155,6 +160,18 @@ import ConfirmDialog from "@/common/ConfirmDialog";
 export default {
   name: "leftwrap",
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     tagType: {
       type: String,
       default() {
@@ -278,6 +295,9 @@ export default {
       }
     },
     getViewTree() {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       api2
         .getView({
           viewUuid: "",
@@ -324,6 +344,9 @@ export default {
       return icon;
     },
     async devloadNode(node, resolve) {
+      if (!this.ShowAuthDisabled) {
+        return resolve([]);
+      }
       //  懒加载子结点
       console.log(node);
       let data = await this.videoTree(
@@ -391,6 +414,9 @@ export default {
       // 点击展开
     },
     async tagloadNode(node, resolve) {
+      if (!this.ShowAuthDisabled) {
+        return resolve([]);
+      }
       // 加载子结点
       console.log(node);
       if (node.level === 0) {
@@ -573,7 +599,7 @@ export default {
 }
 .videoTree3 {
   .span {
-   padding-left: 20px;
+    padding-left: 20px;
   }
 }
 </style>

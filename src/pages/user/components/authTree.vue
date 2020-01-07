@@ -30,14 +30,14 @@
             <div class="labelButton">
               <el-switch :width="27"
                          v-model="data.isShow"
-                         @change="showAuth(node,data,'isShow')"
+                         @change="showAuth(node,data,'isShow',1)"
                          active-color="#26D39D40"
                          inactive-color="rgb(72,73,75)"></el-switch>
             </div>
             <div class="labelButton">
               <el-switch :width="27"
                          v-model="data.isOwn"
-                         @change="showAuth(node,data,'isOwn')"
+                         @change="showAuth(node,data,'isOwn',1)"
                          active-color="#26D39D40"
                          inactive-color="rgb(72,73,75)"></el-switch>
             </div>
@@ -128,8 +128,20 @@ export default {
     showMode(node, data) {
       console.log(node, data);
     },
-    showAuth(node, data, key) {
+    showAuth(node, data, key, isChangeLeft) {
       console.log(data);
+      if (isChangeLeft === 1) {
+        // 显示权限关闭，那么它的操作权限也要关闭
+        if (data.isShow === false && key === "isShow") {
+          data.isOwn = false;
+          this.showAuth(node, data, "isOwn");
+        }
+        // 操作权限打开，那么他的显示按钮也要打开
+        if (data.isOwn === true && key === "isOwn") {
+          data.isShow = true;
+          this.showAuth(node, data, "isShow");
+        }
+      }
       if (node.childNodes && node.childNodes.length) {
         // 向下更新所有节点
         this.dealParentOperator(node.childNodes, key, data[key]);

@@ -53,6 +53,7 @@ export default {
       ) {
         const { jSignal, jMedia } = this.$store.getters;
         if (!jSignal.srcUuid || !jMedia.srcUuid) {
+          // 请求接口前判断有没有权限 先不弄了，就调用流媒体服务吧
           let data = await this.getPreviewInfoAA();
           this.$store.commit("setIccSignalRule", data.iccSignalRule);
           this.$store.commit("setIccMediaRule", data.iccMediaRule);
