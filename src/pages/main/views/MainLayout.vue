@@ -268,7 +268,7 @@ export default {
             this.$message.warning(res.data.msg);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
           // this.$message.error("退出失败");
         });
@@ -277,13 +277,12 @@ export default {
     queryBaseTypeByGroup() {
       this.$homeAjax.queryBaseTypeByGroup().then(res => {
         let body = res.data;
-        console.log(res.data);
         this.handleQueryBaseTypeByGroupSuccessResponse(body);
       });
     },
     handleQueryBaseTypeByGroupSuccessResponse(body) {
       this.local_enums = body;
-      console.log(typeof this.local_enums);
+      // console.log(body);
       this.$store.dispatch("setLocalEnums", this.local_enums);
       this.sessionStorageResidentTypeTransfer();
     },
@@ -321,7 +320,7 @@ export default {
         "SET_CARDOPTIONS",
         this.$common.getEnumByGroupStr("card_u")
       );
-    },
+    }
   },
   watch: {
     GlobalAlarmList: {

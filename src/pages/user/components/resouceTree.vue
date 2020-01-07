@@ -132,6 +132,12 @@ export default {
       default() {
         return "关联的通道资源";
       }
+    },
+    defaultCHNResource: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   data() {
@@ -264,11 +270,14 @@ export default {
         })
         .map(o => {
           let data = {
+            resourceType: this.resourceType,
+            channelType: o.realType,
             resourceUuid: o.id,
-            resourceType: o.resType,
+            authUuids: o.resourceAuthUuids,
             resourceAuthUuids: o.checkedAuthUuids
           };
           Object.assign(data, o);
+          data.authUuids = data.resourceAuthUuids;
           dataArr.push(data);
         });
       console.log(dataArr);
@@ -285,7 +294,7 @@ export default {
         if (data.isLeaf) {
           console.log(data.realType, this.resourceType);
           if (this.activeName !== "door") {
-            return data.realType.indexOf(this.resourceType) !== -1;
+            return this.resourceType.indexOf(data.realType) !== -1;
           }
           return data.realType === this.resourceType;
         } else {
@@ -315,13 +324,19 @@ export default {
         // 构造当前资源类型权限对象
         data.authArr = JSON.parse(JSON.stringify(this.resourceAuthArr));
         let checkedAuthUuids = [];
-        // 默认资源权限全选
-        data.authArr.filter(v => {
-          checkedAuthUuids.push(v.authUuid);
-        });
+        if (!(data.authUuids && data.authUuids.length)) {
+          // 默认资源权限全选
+          data.authArr.filter(v => {
+            checkedAuthUuids.push(v.authUuid);
+          });
+          data.checkAll = true;
+          data.isIndeterminate = false;
+        } else {
+          data.checkAll = false;
+          data.isIndeterminate = true;
+          checkedAuthUuids = data.authUuids;
+        }
         this.$set(data, "checkedAuthUuids", checkedAuthUuids);
-        data.checkAll = true;
-        data.isIndeterminate = false;
         data.viewType = this.activeName;
         this.checkedChannelArr.push(data);
       } else {
@@ -334,20 +349,12 @@ export default {
     },
     // 获取树节点数据的HTTP
     getTreeData(obj) {
-      console.log(this.resourceType);
-      console.log(this.rightTabArr[0].id);
       return new Promise(resolve => {
         api
           .getNewTree(obj)
           .then(res => {
             let data = res.data.data || [];
             data.map(element => {
-              // if (
-              //   this.resourceType === this.rightTabArr[0].id &&
-              //   element.nodeType === "devNode"
-              // ) {
-              //   element.openFlag = false;
-              // }
               element.isLeaf = !element.openFlag;
             });
             resolve(data);
@@ -431,8 +438,21 @@ export default {
     },
     // 通道资源的静态资源权限
     getChannelAuth() {
+      let resourceType = "";
+      if (this.resourceType === "ipc/nvr/decoder") {
+        resourceType = "auth_video";
+      } else if (this.resourceType === "access_ctrl") {
+        resourceType = "auth_door";
+      } else if (
+        this.resourceType ===
+				"bullet_camera/dome_camera/ball_camera/bullet_camera_ptz"
+      ) {
+        resourceType = "auth_video_monitor";
+      } else {
+        resourceType = this.resourceType;
+      }
       api
-        .getResource({ resourceType: this.resourceType })
+        .getResource({ resourceType: resourceType })
         .then(res => {
           if (res.data.success) {
             res.data.data = res.data.data || [];
@@ -466,6 +486,24 @@ export default {
   watch: {
     visible() {
       this.isShow = this.visible;
+      if (this.visible) {
+        let nums = [];
+        this.checkedChannelArr = [];
+        this.defaultCHNResource.map(o => {
+          nums.push(o);
+        });
+        let arr = nums.map(item => item.resourceUuid);
+        this.$nextTick(() => {
+          this.$refs[this.activeName][0].setCheckedKeys(arr);
+          const devNode = "ipc/nvr/decoder/access_ctrl/auth_alarm/auth_visitor";
+          nums.forEach(element => {
+            let IdDevNode = devNode.indexOf(element.realType) !== -1;
+            element.nodeType = IdDevNode ? "devNode" : element.nodeType;
+            this.handleCheckChannelData(element, true);
+          });
+          console.log(this.checkedChannelArr);
+        });
+      }
     },
     checkedChannelArr: {
       handler() {},
