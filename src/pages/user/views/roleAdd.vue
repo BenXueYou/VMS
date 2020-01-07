@@ -3,8 +3,8 @@
 		<div class="headera">
 			<span class="shuline">添加角色</span>
 			<div class="buttongroup">
-				<el-button v-if="!roleUuid" @click="saveAndAdd" size="small" type="primary">保存并继续添加</el-button>
-				<el-button @click="confirm" class="button" size="small" type="primary">确认</el-button>
+				<el-button v-if="!roleUuid" :loading="isloading" @click="saveAndAdd" size="small" type="primary">保存并继续添加</el-button>
+				<el-button @click="confirm" :loading="isloading" class="button" size="small" type="primary">确认</el-button>
 				<el-button @click="close" class="button" size="small" type="primary">取消</el-button>
 			</div>
 		</div>
