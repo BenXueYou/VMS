@@ -273,9 +273,11 @@ export default {
             resourceType: this.resourceType,
             channelType: o.realType,
             resourceUuid: o.id,
+            authUuids: o.resourceAuthUuids,
             resourceAuthUuids: o.checkedAuthUuids
           };
           Object.assign(data, o);
+          data.authUuids = data.resourceAuthUuids;
           dataArr.push(data);
         });
       console.log(dataArr);
@@ -292,7 +294,7 @@ export default {
         if (data.isLeaf) {
           console.log(data.realType, this.resourceType);
           if (this.activeName !== "door") {
-            return data.realType.indexOf(this.resourceType) !== -1;
+            return this.resourceType.indexOf(data.realType) !== -1;
           }
           return data.realType === this.resourceType;
         } else {
@@ -436,8 +438,21 @@ export default {
     },
     // 通道资源的静态资源权限
     getChannelAuth() {
+      let resourceType = "";
+      if (this.resourceType === "ipc/nvr/decoder") {
+        resourceType = "auth_video";
+      } else if (this.resourceType === "access_ctrl") {
+        resourceType = "auth_door";
+      } else if (
+        this.resourceType ===
+				"bullet_camera/dome_camera/ball_camera/bullet_camera_ptz"
+      ) {
+        resourceType = "auth_video_monitor";
+      } else {
+        resourceType = this.resourceType;
+      }
       api
-        .getResource({ resourceType: this.resourceType })
+        .getResource({ resourceType: resourceType })
         .then(res => {
           if (res.data.success) {
             res.data.data = res.data.data || [];
@@ -480,7 +495,10 @@ export default {
         let arr = nums.map(item => item.resourceUuid);
         this.$nextTick(() => {
           this.$refs[this.activeName][0].setCheckedKeys(arr);
+          const devNode = "ipc/nvr/decoder/access_ctrl/auth_alarm/auth_visitor";
           nums.forEach(element => {
+            let IdDevNode = devNode.indexOf(element.realType) !== -1;
+            element.nodeType = IdDevNode ? "devNode" : element.nodeType;
             this.handleCheckChannelData(element, true);
           });
           console.log(this.checkedChannelArr);

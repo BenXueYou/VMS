@@ -268,7 +268,7 @@ export default {
             this.$message.warning(res.data.msg);
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
           // this.$message.error("退出失败");
         });
@@ -282,6 +282,7 @@ export default {
     },
     handleQueryBaseTypeByGroupSuccessResponse(body) {
       this.local_enums = body;
+      // console.log(body);
       this.$store.dispatch("setLocalEnums", this.local_enums);
       this.sessionStorageResidentTypeTransfer();
     },
@@ -319,7 +320,7 @@ export default {
         "SET_CARDOPTIONS",
         this.$common.getEnumByGroupStr("card_u")
       );
-    },
+    }
   },
   watch: {
     GlobalAlarmList: {

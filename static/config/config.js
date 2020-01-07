@@ -41,11 +41,11 @@ if (DEBUG == "DEBUG") {
 var resourceType = {
   video: [
     {
-      id: "auth_video",
+      id: "ipc/nvr/decoder",
       label: "视频设备"
     },
     {
-      id: "bullet_camera",
+      id: "bullet_camera/dome_camera/ball_camera/bullet_camera_ptz",
       label: "监控点"
     },
     {
@@ -59,7 +59,7 @@ var resourceType = {
   ],
   door: [
     {
-      id: "auth_door",
+      id: "access_ctrl",
       label: "门禁设备"
     },
     {

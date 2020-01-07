@@ -194,7 +194,6 @@
     "gate": "闸机"
   },
   "chn": {
-    // 视频监控点
     "bullet_camera": "枪机",
     "dome_camera": "半球机",
     "ball_camera": "球机",
