@@ -176,7 +176,9 @@ export default {
     this.data2 = [];
     this.parentOrgUuid = "";
     this.Treeparent = "";
-    this.getOrgTree(true);
+    setTimeout(() => {
+      this.getOrgTree(true);
+    }, 0);
   },
   activated() {},
   computed: {
