@@ -22,7 +22,12 @@
 							:value="item.typeStr"
 						></el-option>
 					</el-select>
-					<el-button  type="primary" :disabled="!ShowAuthDisabled" icon="el-icon-search" @click="initData">检索</el-button>
+					<el-button
+						type="primary"
+						:disabled="!ShowAuthDisabled"
+						icon="el-icon-search"
+						@click="initData"
+					>检索</el-button>
 				</div>
 			</div>
 			<el-table
@@ -250,6 +255,7 @@ export default {
       console.log(val);
     },
     initData() {
+      if (!this.ShowAuthDisabled) return;
       this.tableData = [];
       let data = {
         staffName: this.staffName,
@@ -307,7 +313,6 @@ export default {
           if (res.data.success) {
             this.addDialogVisible = !this.addDialogVisible;
             this.rowData = res.data.data;
-            // debugger;
             // if (this.rowData.invalidTime === "long") {
             //   this.rowData.isLongTIme = 1;
             // } else {
@@ -451,6 +456,7 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.$message({ type: "success", message: res.data.msg });
+            this.currentPage = 1;
             this.initData();
           } else {
             this.$message({ type: "warning", message: res.data.msg });

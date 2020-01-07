@@ -277,13 +277,11 @@ export default {
     queryBaseTypeByGroup() {
       this.$homeAjax.queryBaseTypeByGroup().then(res => {
         let body = res.data;
-        console.log(res.data);
         this.handleQueryBaseTypeByGroupSuccessResponse(body);
       });
     },
     handleQueryBaseTypeByGroupSuccessResponse(body) {
       this.local_enums = body;
-      console.log(typeof this.local_enums);
       this.$store.dispatch("setLocalEnums", this.local_enums);
       this.sessionStorageResidentTypeTransfer();
     },

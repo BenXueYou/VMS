@@ -132,6 +132,12 @@ export default {
       default() {
         return "关联的通道资源";
       }
+    },
+    defaultCHNResource: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   data() {
@@ -264,8 +270,9 @@ export default {
         })
         .map(o => {
           let data = {
-            resourceUuid: o.id,
             resourceType: o.resType,
+            chnType: o.resType,
+            resourceUuid: o.id,
             resourceAuthUuids: o.checkedAuthUuids
           };
           Object.assign(data, o);
@@ -342,12 +349,6 @@ export default {
           .then(res => {
             let data = res.data.data || [];
             data.map(element => {
-              // if (
-              //   this.resourceType === this.rightTabArr[0].id &&
-              //   element.nodeType === "devNode"
-              // ) {
-              //   element.openFlag = false;
-              // }
               element.isLeaf = !element.openFlag;
             });
             resolve(data);
@@ -466,6 +467,25 @@ export default {
   watch: {
     visible() {
       this.isShow = this.visible;
+      if (this.visible) {
+        let nums = [];
+        this.defaultCHNResource.map(o => {
+          let data = {
+            resType: o.resourceType,
+            realType: o.chnType,
+            id: o.resourceUuid,
+            label: o.resourceName,
+            checkedAuthUuids: o.resourceAuthUuids
+          };
+          Object.assign(data, o);
+          nums.push(data);
+        });
+        this.checkedChannelArr = nums;
+        let arr = this.checkedChannelArr.map(item => item.resourceUuid);
+        this.$nextTick(() => {
+          this.$refs[this.activeName][0].setCheckedKeys(arr);
+        });
+      }
     },
     checkedChannelArr: {
       handler() {},

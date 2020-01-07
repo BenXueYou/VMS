@@ -136,9 +136,19 @@
     "fire_equip": "消防设备"
   },
   "dev": {
+
     "nvr": "NVR",
     "ipc": "IPC",
     "decoder": "解码器",
+
+    "wall_machine": "围墙机",
+    "door_machine": "门口机",
+    "room_machine": "室内机",
+    "manager_machine": "管理机",
+
+    "manual_vistor_machine": "人工访客机",
+    "auto_vistor_machine": "自助访客机",
+    "vehicle_gate": "车闸",
     "a7": "A7",
     "f5": "F5",
     "f7": "F7",
@@ -151,13 +161,6 @@
     "electric_arc": "电弧",
     "perimeter": "周界",
     "geomagnetic": "地磁",
-    "wall_machine": "围墙机",
-    "door_machine": "门口机",
-    "manual_vistor_machine": "人工访客机",
-    "room_machine": "室内机",
-    "manager_machine": "管理机",
-    "auto_vistor_machine": "自助访客机",
-    "vehicle_gate": "车闸",
     "water_line": "液位",
     "hydrant": "消火栓/消防栓",
     "alarm_button": "手动报警按钮",
@@ -191,12 +194,18 @@
     "gate": "闸机"
   },
   "chn": {
+    // 视频监控点
     "bullet_camera": "枪机",
     "dome_camera": "半球机",
     "ball_camera": "球机",
     "bullet_camera_ptz": "带云台的枪机",
+    "relay": "继电器",
     "door_ipc": "门禁视频",
     "fire_ipc": "消防视频",
+    "door": "门",
+    "readhead": "读头",
+    "door_aic": "门禁报警输入",
+    "door_aoc": "门禁报警输出",
     "pulse_fence": "脉冲电子围栏",
     "rfid_detected": "RFID",
     "cover_sensor": "井盖",
@@ -212,8 +221,6 @@
     "alarm_button": "手动报警按钮",
     "hydrant": "消火栓/消防栓",
     "pipe_gauge": "管网压力表",
-    "door_aic": "门禁报警输入",
-    "door_aoc": "门禁报警输出",
     "spray_loop": "喷淋回路",
     "water_pump": "水泵",
     "water_connon": "水炮",
@@ -240,13 +247,10 @@
     "sound_light": "声光告警器",
     "emap": "电子地图模块",
     "aom": "视频联动模块",
-    "relay": "继电器",
     "f5_aom": "f5报警输出",
     "chl_f7_aom": "f7报警输出",
     "screen": "屏幕",
     "electric_lock": "电锁",
-    "door": "门",
-    "readhead": "读头",
     "vehicle_gate": "车闸"
   },
   "dev_sys": {
