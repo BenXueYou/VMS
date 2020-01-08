@@ -493,7 +493,7 @@ export default {
         dealState: this.status,
         faceMonitorUuid: this.checkedTaskUuidList.toString(),
         faceLibraryUuids: this.checkedFaceUuidList.toString(),
-        channelUuids: this.checkedChannelsUuidList.toString(),
+        channelUuid: this.checkedChannelsUuidList.toString(),
         alarmDatetimeBegin: this.startTime,
         alarmDatetimeEnd: this.endTime,
         page: this.pageNow,
