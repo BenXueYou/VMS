@@ -513,7 +513,8 @@ export default {
         .then(res => {
           this.isloading = false;
           this.tableData = [];
-          if (res.data.success && res.data.data) {
+          this.pageCount = 0;
+          if (res.data.success && res.data.data && res.data.data.list) {
             this.pageCount = res.data.data.total;
             this.tableData = res.data.data.list;
           }
