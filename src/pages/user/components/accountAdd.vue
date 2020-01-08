@@ -234,6 +234,12 @@ export default {
     // 点击确定按钮
     editBtnAct(status) {
       console.log("queryBody==", this.queryBody);
+      console.log("staffName==", this.queryBody.staffName);
+      if (this.queryBody.accountName === null || this.queryBody.accountName === "null") {
+        this.$message.warning("账号长度在 4 到 16 个字符"); return;
+      } else if (this.queryBody.accountName.length < 4 || this.queryBody.accountName.length > 16) {
+        this.$message.warning("账号长度在 4 到 16 个字符"); return;
+      }
       if (this.queryBody.roles) {
         let roleUuids = [];
         this.queryBody.roles.filter(i => {
