@@ -248,8 +248,8 @@ import RestApi from "@/utils/RestApi.js";
 export default {
   components: { elPopverTree, AlTree, PicQulitySelect },
   mounted: function() {
-    this.ShowAuthDisabled = this.$common.getAuthIsOwn("抓拍记录", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("抓拍记录", "isOwn");
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("抓拍查询", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("抓拍查询", "isOwn");
 
     let h =
 			window.innerHeight ||
