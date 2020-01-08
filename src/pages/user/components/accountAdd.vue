@@ -17,9 +17,9 @@
 			</el-header>
 			<div class="bodyBox">
 				<div class="bodyBoxDiv">
-					<p>用户账号：</p>
-					<p>密码：</p>
-					<p>确认密码：</p>
+					<p class="star">用户账号：</p>
+					<p class="star">密码：</p>
+					<p class="star">确认密码：</p>
 					<p>状态：</p>
 					<p>是否关联系统人员：</p>
 					<p>姓名：</p>
@@ -513,6 +513,11 @@ export default {
 				color: #dddddd;
 				text-align: right;
 				padding: 0px 11px;
+				.star:before {
+					content: "*";
+					color: #f56c6c;
+					margin-right: 4px;
+				}
 				p {
 					margin: 28px 0;
 					text-align: right;
