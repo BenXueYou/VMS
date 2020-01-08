@@ -24,7 +24,6 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
-                   :disabled="!OwnAuthDisabled"
                    name="organiza">
         <gt-tree ref="tree1"
                  class="tree"
@@ -34,7 +33,6 @@
                  :initdata="data"></gt-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
-                   :disabled="!OwnAuthDisabled"
                    name="tag">
         <gt-tree ref="tree2"
                  class="mypanel"
@@ -225,6 +223,9 @@ export default {
         });
     },
     getOrgTag(flag = false, uuid) {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       api
         .getTagList({
           tagType: this.tagType
@@ -509,7 +510,9 @@ export default {
         downData,
         upData
       });
-
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // console.log(downData);
       // console.log(upData);
       this.downData = downData;
@@ -575,6 +578,9 @@ export default {
       value,
       e
     }) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.tagIndex = index;
       // 树节点右边菜单的点击事件
       var data = [

@@ -258,8 +258,8 @@ export default {
   mounted() {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isOwn");
-    this.ShowAuthDisabled = true;
-    this.OwnAuthDisabled = true;
+    // this.ShowAuthDisabled = true;
+    // this.OwnAuthDisabled = false;
     // this.OwnAuthDisabled = true;
     this.jugdeJump();
     this.chooseFenlu(1);

@@ -19,7 +19,6 @@
              class="tabs"
              @tab-click="handleClick">
       <el-tab-pane label="设备树"
-                   :disabled="!OwnAuthDisabled"
                    class="mypanel"
                    :class="{'showMaxWidth':!showMaxWidth}"
                    name="organiza">
@@ -46,7 +45,6 @@
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
-                   :disabled="!OwnAuthDisabled"
                    class="mypanel mypanel2"
                    name="tag">
         <el-tree :props="tagprops"
@@ -74,7 +72,6 @@
 
       </el-tab-pane>
       <el-tab-pane label="视图"
-                   :disabled="!OwnAuthDisabled"
                    name="view">
 
         <el-tree :props="viewProps"

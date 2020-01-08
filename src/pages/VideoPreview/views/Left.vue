@@ -23,7 +23,6 @@
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
-                   :disabled="!OwnAuthDisabled"
                    :class="{'myShowCuoTree':showCloudControl,'showMaxWidth':!showMaxWidth}"
                    name="organiza">
         <el-tree :props="devprops"
@@ -60,7 +59,6 @@
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
-                   :disabled="!OwnAuthDisabled"
                    class="mypanel2"
                    name="tag">
         <el-tree :props="props"
@@ -108,7 +106,6 @@
 
       </el-tab-pane>
       <el-tab-pane label="视图"
-                   :disabled="!OwnAuthDisabled"
                    name="view">
         <el-tree :props="viewProps"
                  class='videoTree3'

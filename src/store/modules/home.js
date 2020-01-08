@@ -11,7 +11,7 @@ const home = {
     RecognizationArr: Storage.readSession("RecognizationArr") || [],
     Authorization: Storage.readSession("Authorization") || "",
     projectUuid: Storage.readSession("projectUuid") || "",
-    account: Storage.read("account") || "",
+    account: Storage.readSession("account") || "",
     userUuid: Storage.readSession("userUuid") || "",
     accountType: Storage.readSession("accountType") || "",
     projectList: Storage.readSession("projectList") || []
@@ -73,7 +73,7 @@ const home = {
     },
     SET_ACCOUNT: (state, account) => {
       state.account = account;
-      Storage.save("account", account);
+      Storage.saveSession("account", account);
     },
     SET_USERUUID: (state, userUuid) => {
       state.userUuid = userUuid;

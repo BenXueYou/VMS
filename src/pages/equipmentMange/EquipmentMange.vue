@@ -59,8 +59,8 @@ export default {
     // console.log(this.count);
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("设备管理", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("设备管理", "isOwn");
-    // this.ShowAuthDisabled = true;
-    // this.OwnAuthDisabled = true;
+    // this.ShowAuthDisabled = false;
+    // this.OwnAuthDisabled = false;
   },
   methods: {
     updateTree(tagUuid) {
