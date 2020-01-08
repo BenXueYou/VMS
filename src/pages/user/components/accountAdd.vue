@@ -367,7 +367,7 @@ export default {
       this.$emit("addRole", this.rowData);
     },
     close() {
-      this.$emit("close");
+      this.$emit("close", true);
     },
     deleteChannelAuth(index) {
       this.rowData.roles.splice(index, 1);
