@@ -191,7 +191,7 @@ export default {
         .then(res => {
           console.log(res);
           if (res.data.success) {
-            let data = res.data.data;
+            let data = res.data.data || {};
             this.data = {
               isvideoset: data.enable || false,
               interval: (data.autoSyncIntervalMin || 0) / 60
