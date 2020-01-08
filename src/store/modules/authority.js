@@ -3,13 +3,17 @@ import { Storage } from "@/utils/Storage";
 
 const auth = {
     state: {
-        AuthList: Storage.readSession("authList") || []
+        AuthList: Storage.readSession("AuthList") || []
     },
     mutations: {
-        SET_AUTH_LIST: (state, authList) => {
-            state.authList = authList;
-            // Cookies.set('localTag', localTag);
-            Storage.saveSession("authList", authList);
+        SET_AUTH_LIST: (state, AuthList) => {
+            state.AuthList = AuthList;
+            Storage.saveSession("AuthList", AuthList);
+        }
+    },
+    getters: {
+        getAUthList(state) {
+            return state.AuthList;
         }
     },
     actions: {
