@@ -95,7 +95,6 @@
 				</el-checkbox-group>
 				<!-- <pic-qulity-select :selectedButtons.sync="qualityOption" /> -->
 			</div>
-
 			<div class="topBoxBtnBox">
 				<el-button icon="el-icon-search" class="search-btn" @click="queryAct" type="primary">查询</el-button>
 				<el-button class="search-btn" @click="resetQueryAct" type="primary">重置</el-button>
@@ -247,7 +246,6 @@ export default {
     }
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    this.queryAct();
   },
   watch: {},
   activated: function() {
@@ -348,7 +346,6 @@ export default {
     },
     // 是否有人员轨迹
     judgeStaffTrace(item, routeName) {
-      //   this.$router.push({ path: routeName, query: { imgObj: item } });
       let data = {
         faceCaptureRecordUuid: item.faceCaptureUuid,
         captureDatetime: item.captureDatetime
@@ -359,7 +356,6 @@ export default {
           if (res.data.success) {
             item.faceUuid = res.data.data;
             this.$set(item, "CellVisiblePopver", false);
-            // this.$router.push({ path: routeName, query: { imgObj: item } });
             this.$router.push({
               name: routeName,
               params: { imgObj: item }
@@ -415,6 +411,7 @@ export default {
       for (var i = 0; i < checkedChannel.length; i++) {
         this.checkedChannelsUuidList.push(checkedChannel[i].channelUuid);
       }
+      this.queryAct();
       console.log(this.checkedChannelsUuidList);
     },
     // 下载导出图片
@@ -844,10 +841,13 @@ export default {
 	color: #28ffbb;
 	background-color: transparent;
 }
-.faceRecord.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+.faceRecord.el-select-dropdown.is-multiple
+	.el-select-dropdown__item.selected.hover {
 	background: transparent;
 }
-.faceRecord .el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+.faceRecord
+	.el-select-dropdown.is-multiple
+	.el-select-dropdown__item.selected.hover {
 	background: rgba(40, 255, 187, 0.15);
 }
 .faceRecord .el-select-dropdown__item.hover,

@@ -127,7 +127,7 @@ export default {
         children: "children",
         label: "label",
         isLeaf: function(data, node) {
-          if (data.children) return true;
+          if (!data.nextCount) return true;
           return false;
         }
       },
