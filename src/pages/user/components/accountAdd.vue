@@ -6,12 +6,12 @@
 				<div class="headerTxt">{{title}}</div>
 				<div>
 					<el-button
-						v-if="!rowData.accountUuid"
+						v-if="!rowData.accountUuid&&queryBody.accountType!=='project_admin'"
 						@click="editBtnAct('again')"
 						class="firstBtnClass"
 						v-loading="isload"
 					>保存并继续添加</el-button>
-					<el-button @click="editBtnAct('save')" v-loading="isload">确认</el-button>
+					<el-button v-if="queryBody.accountType!=='project_admin'" @click="editBtnAct('save')" v-loading="isload">确认</el-button>
 					<el-button @click="close">取消</el-button>
 				</div>
 			</el-header>
@@ -116,12 +116,12 @@
 			</div>
 			<div class="footerClass">
 				<el-button
-					v-if="!rowData.accountUuid"
+					v-if="!rowData.accountUuid&&queryBody.accountType!=='project_admin'"
 					@click="editBtnAct('again')"
 					class="firstBtnClass"
 					v-loading="isload"
 				>保存并继续添加</el-button>
-				<el-button @click="editBtnAct('save')" v-loading="isload">确认</el-button>
+				<el-button v-if="queryBody.accountType!=='project_admin'" @click="editBtnAct('save')" v-loading="isload">确认</el-button>
 				<el-button @click="close">取消</el-button>
 			</div>
 		</div>
