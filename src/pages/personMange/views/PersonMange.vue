@@ -49,7 +49,7 @@
                 <el-button style="width: 80px;"
                            @click="peopleStatistics">统计</el-button>
                 <el-button style="width: 80px;"
-                           @click="deleteDialog=true">删除</el-button>
+                           @click="deleteaaaaadccaa">删除</el-button>
               </div>
               <div class="right">
                 <span class="sp">姓名：</span>
@@ -1899,6 +1899,13 @@ export default {
     this.isResize = false;
   },
   methods: {
+    deleteaaaaadccaa() {
+      if (this.staffUuidList.length) {
+        this.deleteDialog = true;
+      } else {
+        this.$message.error("请选择删除人员!");
+      }
+    },
     addDeparentment() {
       if (this.labelTagUuid) {
         this.addLabelDialogVisiable = !this.addLabelDialogVisiable;
