@@ -649,6 +649,7 @@ export default {
           this.addTitle = "新增子部门";
         }
       } else if (value === "changeName") {
+        // 修改名字，看有没有选中节点
         // alert(this.treeName);
         if (this.treeName === "tree1") {
           if (this.orgType === "device") {
@@ -656,10 +657,19 @@ export default {
           } else {
             this.changeTitle = "修改部门名称";
           }
+          if (this.orgUuid) {
+            this.changeNameDialogVisible = true;
+          } else {
+            this.$message.error("请选择修改设备树的树节点");
+          }
         } else {
-          this.changeTitle = "修改标签";
+          if (this.orgUuid) {
+            this.changeTitle = "修改标签";
+            _this.changeNameDialogVisible = true;
+          } else {
+            this.$message.error("请选择修改标签的树节点");
+          }
         }
-        _this.changeNameDialogVisible = true;
       } else if (value === "movedown") {
         _this.movedownNode();
       } else if (value === "moveup") {
