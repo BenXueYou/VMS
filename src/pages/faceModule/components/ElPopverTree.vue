@@ -202,7 +202,7 @@ export default {
     show() {},
     // 弹窗关闭的回调
     hide() {
-      if (!this.checkAll && !this.isIndeterminate && this.isCheckedAll) {
+      if (!this.checkAll && this.isCheckedAll) {
         this.$emit("transferCheckedChannel", this.channels);
       }
     },
