@@ -308,6 +308,8 @@ export default {
       if (!data.faceMonitorUuids) data.faceMonitorUuids = null;
       if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
       if (!data.genderCapture) data.genderCapture = null;
+      if (!data.staffName) data.staffName = null;
+      if (!data.credentialNo) data.credentialNo = null;
       api
         .getRecognizeList(data)
         .then(res => {
