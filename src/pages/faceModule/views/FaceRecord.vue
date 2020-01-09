@@ -282,9 +282,6 @@ export default {
     }
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    if (this.ShowAuthDisabled) {
-      this.queryAct();
-    }
   },
   watch: {},
   activated: function() {
@@ -455,6 +452,9 @@ export default {
       this.checkedChannelsUuidList = [];
       for (var i = 0; i < checkedChannel.length; i++) {
         this.checkedChannelsUuidList.push(checkedChannel[i].channelUuid);
+      }
+      if (this.ShowAuthDisabled) {
+        this.queryAct();
       }
       console.log(this.checkedChannelsUuidList);
     },
