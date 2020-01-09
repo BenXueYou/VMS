@@ -126,10 +126,7 @@ export default {
       defaultProps: {
         children: "children",
         label: "label",
-        isLeaf: function(data, node) {
-          if (!data.nextCount) return true;
-          return false;
-        }
+        isLeaf: 'isLeaf'
       },
       checkAll: false,
       isIndeterminate: false,
