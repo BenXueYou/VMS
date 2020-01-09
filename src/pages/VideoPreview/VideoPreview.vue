@@ -1,112 +1,110 @@
 <template>
-	<div class="VideoPreviewContent">
-		<left-content
-			orgType="device"
-			needType
-			tagType="device"
-			ref="leftTree"
-			:ShowAuthDisabled="ShowAuthDisabled"
-			:OwnAuthDisabled="OwnAuthDisabled"
-			@playRtsp="playRtsp"
-			@jumpToPlayback="jumpToPlayback"
-			@updateView="updateView"
-			@ctrl="ctrl"
-			@openView="openView"
-			@preset="preset"
-			@addPreset="addPreset"
-			@updatePreset="updatePreset"
-			@deletePreset="deletePreset"
-			@changetab="changetab"
-			@clickNode="clickNode"
-			@switchLuxiang="switchLuxiang"
-			:showCloudControl="showCloudControl"
-			:channelUuid="operatorChannelUuid"
-		></left-content>
-		<div class="right" ref="right">
-			<!-- :style="{'max-width':maxRightWidth+'px'}" -->
-			<div class="vedioWrap" :class="{'fullVideoWrap':fullscreen}" ref="vedioWrap">
-				<video-wrap
-					v-for="(item,index) in showFenlu"
-					:ref="'video'+index"
-					:key="index"
-					:index="index"
-					:isActive="operatorIndex===index"
-					:width="item.width"
-					:height="item.height"
-					:rtspUrl="item.rtspUrl"
-					:streamType="item.streamType"
-					:IsShowMenu="!!item.rtspUrl"
-					:position="item.position"
-					:left="item.left"
-					:top="item.top"
-					:isRecord="!!item.isRecord"
-					:isStopVoice="!!item.isStopVoice"
-					:fenlu="fenluIndex+1"
-					:isAutoScreen="isAutoScreen===index"
-					:mode="item.mode"
-					@playRtsp="playRtsp"
-					@dblclickhandler="dblclickhandler"
-					@closeVideo="closeVideo"
-					@startRecord="startRecord"
-					@stopRecord="stopRecord"
-					@openVideoVoice="openVideoVoice"
-					@screenShot="screenShot"
-					@dragstart="dragstart(index)"
-					@drop="drop(index)"
-					@contextmenu="showMenu"
-					@click="ClickViDeoA(index)"
-				></video-wrap>
-			</div>
-			<div class="footer">
-				<div class="fenlu">
-					<ul>
-						<li
-							v-for="(item,index) in fenlu"
-							:class="{active:fenluIndex===index}"
-							@click="chooseFenlu(index)"
-							:key="index"
-						>{{item}}</li>
-					</ul>
-				</div>
-				<div class="operator">
-					<gt-button
-						class="button"
-						@click="saveShiTu"
-						:disabled="!OwnAuthDisabled"
-						:showClose="false"
-					>保存视图</gt-button>
-					<el-dropdown @command="changeView" trigger="click">
-						<gt-button class="button" :disabled="!OwnAuthDisabled" :showClose="false">
-							{{videoMode}}
-							<i class="el-icon-caret-bottom"></i>
-						</gt-button>
-						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item command="original">原始比例</el-dropdown-item>
-							<el-dropdown-item command="fullscreen">充满屏幕</el-dropdown-item>
-						</el-dropdown-menu>
-					</el-dropdown>
+  <div class="VideoPreviewContent">
+    <left-content orgType="device"
+                  needType
+                  tagType="device"
+                  ref="leftTree"
+                  :ShowAuthDisabled="ShowAuthDisabled"
+                  :OwnAuthDisabled="OwnAuthDisabled"
+                  @playRtsp="playRtsp"
+                  @jumpToPlayback="jumpToPlayback"
+                  @updateView="updateView"
+                  @ctrl="ctrl"
+                  @openView="openView"
+                  @preset="preset"
+                  @addPreset="addPreset"
+                  @updatePreset="updatePreset"
+                  @deletePreset="deletePreset"
+                  @changetab="changetab"
+                  @clickNode="clickNode"
+                  @switchLuxiang="switchLuxiang"
+                  :showCloudControl="showCloudControl"
+                  :channelUuid="operatorChannelUuid"></left-content>
+    <div class="right"
+         ref="right">
+      <!-- :style="{'max-width':maxRightWidth+'px'}" -->
+      <div class="vedioWrap"
+           :class="{'fullVideoWrap':fullscreen}"
+           ref="vedioWrap">
+        <video-wrap v-for="(item,index) in showFenlu"
+                    :ref="'video'+index"
+                    :key="index"
+                    :index="index"
+                    :isActive="operatorIndex===index"
+                    :width="item.width"
+                    :height="item.height"
+                    :rtspUrl="item.rtspUrl"
+                    :streamType="item.streamType"
+                    :IsShowMenu="!!item.rtspUrl"
+                    :position="item.position"
+                    :left="item.left"
+                    :top="item.top"
+                    :isRecord="!!item.isRecord"
+                    :isStopVoice="!!item.isStopVoice"
+                    :fenlu="fenluIndex+1"
+                    :isAutoScreen="isAutoScreen===index"
+                    :mode="item.mode"
+                    @playRtsp="playRtsp"
+                    @dblclickhandler="dblclickhandler"
+                    @closeVideo="closeVideo"
+                    @startRecord="startRecord"
+                    @stopRecord="stopRecord"
+                    @openVideoVoice="openVideoVoice"
+                    @screenShot="screenShot"
+                    @dragstart="dragstart(index)"
+                    @drop="drop(index)"
+                    @contextmenu="showMenu"
+                    @click="ClickViDeoA(index)"></video-wrap>
+      </div>
+      <div class="footer">
+        <div class="fenlu">
+          <ul>
+            <li v-for="(item,index) in fenlu"
+                :class="{active:fenluIndex===index}"
+                @click="chooseFenlu(index)"
+                :key="index">{{item}}</li>
+          </ul>
+        </div>
+        <div class="operator">
+          <gt-button class="button"
+                     @click="saveShiTu"
+                     :disabled="!OwnAuthDisabled"
+                     :showClose="false">保存视图</gt-button>
+          <el-dropdown @command="changeView"
+                       trigger="click">
+            <gt-button class="button"
+                       :disabled="!OwnAuthDisabled"
+                       :showClose="false">
+              {{videoMode}}
+              <i class="el-icon-caret-bottom"></i>
+            </gt-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="original">原始比例</el-dropdown-item>
+              <el-dropdown-item command="fullscreen">充满屏幕</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
 
-					<gt-button
-						class="button"
-						:disabled="!OwnAuthDisabled"
-						:icon="icons.fullScreen"
-						@click="PreviewAreafullScreen"
-						:showClose="false"
-						:showText="false"
-					></gt-button>
-				</div>
-			</div>
-		</div>
-		<video-info-Dialog title="摄像机信息" :videoinfo="videoinfo" :visible.sync="videoInfoVisible"></video-info-Dialog>
-		<image-adjust-dialog title="画面调节" :visible.sync="imageAdjustVisible"></image-adjust-dialog>
-		<screenshot-dialog :visible.sync="screenShotVisible" :src="src"></screenshot-dialog>
-		<tree-append-tag-dialog
-			@confirm="addView"
-			title="添加视图"
-			labelName="视图名称"
-			:visible.sync="appendViewVisible"
-		></tree-append-tag-dialog>
-	</div>
+          <gt-button class="button"
+                     :disabled="!OwnAuthDisabled"
+                     :icon="icons.fullScreen"
+                     @click="PreviewAreafullScreen"
+                     :showClose="false"
+                     :showText="false"></gt-button>
+        </div>
+      </div>
+    </div>
+    <video-info-Dialog title="摄像机信息"
+                       :videoinfo="videoinfo"
+                       :visible.sync="videoInfoVisible"></video-info-Dialog>
+    <image-adjust-dialog title="画面调节"
+                         :visible.sync="imageAdjustVisible"></image-adjust-dialog>
+    <screenshot-dialog :visible.sync="screenShotVisible"
+                       :src="src"></screenshot-dialog>
+    <tree-append-tag-dialog @confirm="addView"
+                            title="添加视图"
+                            labelName="视图名称"
+                            :visible.sync="appendViewVisible"></tree-append-tag-dialog>
+  </div>
 </template>
 
 <script>
@@ -310,7 +308,7 @@ export default {
     checkFull() {
       return (
         window.innerHeight === window.screen.height &&
-				window.innerWidth === window.screen.width
+        window.innerWidth === window.screen.width
       );
     },
     dblclickhandler(index) {
@@ -330,7 +328,7 @@ export default {
     jugdeJump() {
       if (
         this.$route.params.channelUuid &&
-				this.$route.path === "/VideoPreview"
+        this.$route.path === "/VideoPreview"
       ) {
         this.playRtsp(
           this.$route.params.channelUuid,
@@ -585,7 +583,7 @@ export default {
       // 这里还要判断如果后面的视频框，如果有打开的视频，则进行跳过,未写
       if (
         ++this.operatorIndex >= this.fenlu[this.fenluIndex] &&
-				this.fenluIndex <= 5
+        this.fenluIndex <= 5
       ) {
         this.chooseFenlu(this.fenluIndex + 1);
       }
@@ -667,8 +665,8 @@ export default {
       }
       const rightHeight = ~~(
         this.$refs.right.clientHeight -
-				window.innerWidth * 0.03 -
-				2
+        window.innerWidth * 0.03 -
+        2
       );
       // alert(rightHeight);
       // 计算16:9的最大高度
@@ -732,8 +730,8 @@ export default {
               item.left = videoWrapWidth * percent;
               item.top = ~~(
                 videoWrapHeight *
-								(1 - percent) *
-								(item.position - 1)
+                (1 - percent) *
+                (item.position - 1)
               );
             } else {
               item.left = (item.position - 5) * item.width;
@@ -900,343 +898,343 @@ export default {
               })
               .then(res => {
                 /* eslint-disable */
-								let data = res.data.data || {};
-								let channelTyepCN =
-									JSON.parse(localStorage.getItem("localEnums"))["chn"][
-										data.channelType
-									] || data.channelType;
-								data.channelType = channelTyepCN;
-								this.videoinfo = data;
-								this.videoInfoVisible = true;
-								/* eslint-disable */
-							});
-					}
-					break;
-				case "抓图":
-					this.screenShot(this.operatorIndex);
-					break;
-				case "切换至录像":
-					if (!this.videoArr[this.operatorIndex].channelUuid) {
-						this.$message.error("该分路上没有通道！");
-					} else {
-						this.switchLuxiang(
-							this.videoArr[this.operatorIndex].channelUuid,
-							this.videoArr[this.operatorIndex].operatorData.label
-						);
-					}
-					break;
-				case "全屏":
-					// this.setFullScreen(
-					//   this.$refs["video" + this.operatorIndex][0].getCanvas()
-					// );
-					this.PreviewAreafullScreen();
-					break;
-				case "图像调节":
-					if (!this.videoArr[this.operatorIndex].channelUuid) {
-						this.$message.error("该分路上没有通道！");
-					} else {
-						this.imageAdjustVisible = true;
-					}
-					break;
-				case "开始录像":
-					// this.jumpToPlayback();
-					this.startRecord(this.operatorIndex);
-					break;
-				case "停止录像":
-					this.stopRecord(this.operatorIndex);
-					break;
-				case "主码流":
-					this.switchMaLiu(this.operatorIndex, "main");
-					break;
-				case "辅码流":
-					this.switchMaLiu(this.operatorIndex, "sub");
-					break;
-				case "第三码流":
-					this.switchMaLiu(this.operatorIndex, "thrid");
-					break;
-				case "打开音频":
-					this.openVideoVoice(this.operatorIndex);
-					break;
-				default:
-					break;
-			}
-		},
-		openVideoVoice(index) {
-			console.log(index);
-			console.log(this.videoArr);
-			let item = this.videoArr[index];
-			item.isStopVoice = !item.isStopVoice;
+                let data = res.data.data || {};
+                let channelTyepCN =
+                  JSON.parse(localStorage.getItem("localEnums"))["chn"][
+                    data.channelType
+                  ] || data.channelType;
+                data.channelType = channelTyepCN;
+                this.videoinfo = data;
+                this.videoInfoVisible = true;
+                /* eslint-disable */
+              });
+          }
+          break;
+        case "抓图":
+          this.screenShot(this.operatorIndex);
+          break;
+        case "切换至录像":
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.switchLuxiang(
+              this.videoArr[this.operatorIndex].channelUuid,
+              this.videoArr[this.operatorIndex].operatorData.label
+            );
+          }
+          break;
+        case "全屏":
+          // this.setFullScreen(
+          //   this.$refs["video" + this.operatorIndex][0].getCanvas()
+          // );
+          this.PreviewAreafullScreen();
+          break;
+        case "图像调节":
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.imageAdjustVisible = true;
+          }
+          break;
+        case "开始录像":
+          // this.jumpToPlayback();
+          this.startRecord(this.operatorIndex);
+          break;
+        case "停止录像":
+          this.stopRecord(this.operatorIndex);
+          break;
+        case "主码流":
+          this.switchMaLiu(this.operatorIndex, "main");
+          break;
+        case "辅码流":
+          this.switchMaLiu(this.operatorIndex, "sub");
+          break;
+        case "第三码流":
+          this.switchMaLiu(this.operatorIndex, "thrid");
+          break;
+        case "打开音频":
+          this.openVideoVoice(this.operatorIndex);
+          break;
+        default:
+          break;
+      }
+    },
+    openVideoVoice(index) {
+      console.log(index);
+      console.log(this.videoArr);
+      let item = this.videoArr[index];
+      item.isStopVoice = !item.isStopVoice;
 
-			// this.videoArr[index].isStopVoice = !this.videoArr[index].isStopVoice;
-			this.videoArr.splice(index, 1, item);
-			this.videoArr.concat();
-		},
-		startRecord(index) {
-			if (!this.videoArr[index].channelUuid) {
-				this.$message.error("该分路上没有播放的视频");
-				return;
-			}
-			this.menuData = this.menuData.map(item => {
-				if (item.label === "开始录像") {
-					return {
-						value: "停止录像",
-						label: "停止录像"
-					};
-				}
-				return item;
-			});
-			let item = this.videoArr[index];
-			item.isRecord = true;
-			this.videoArr.splice(index, 1, item);
+      // this.videoArr[index].isStopVoice = !this.videoArr[index].isStopVoice;
+      this.videoArr.splice(index, 1, item);
+      this.videoArr.concat();
+    },
+    startRecord(index) {
+      if (!this.videoArr[index].channelUuid) {
+        this.$message.error("该分路上没有播放的视频");
+        return;
+      }
+      this.menuData = this.menuData.map(item => {
+        if (item.label === "开始录像") {
+          return {
+            value: "停止录像",
+            label: "停止录像"
+          };
+        }
+        return item;
+      });
+      let item = this.videoArr[index];
+      item.isRecord = true;
+      this.videoArr.splice(index, 1, item);
 
-			this.$refs["video" + index][0].record();
-		},
-		stopRecord(index) {
-			if (!this.videoArr[index].channelUuid) {
-				this.$message.error("该分路上没有播放的视频");
-				return;
-			}
-			this.menuData = this.menuData.map(item => {
-				if (item.label === "停止录像") {
-					return {
-						value: "开始录像",
-						label: "开始录像"
-					};
-				}
-				return item;
-			});
-			let item = this.videoArr[index];
-			item.isRecord = false;
-			this.videoArr.splice(index, 1, item);
-			this.$refs["video" + index][0].stopRecord();
-		},
-		switchLuxiang(channelUuid, channelName) {
-			this.$store.dispatch("addTagViewItem", {
-				icon: "VideoPlayback",
-				name: "VideoPlayback",
-				title: "视频回放",
-				type: "config",
-				path: "/VideoPlayback"
-			});
-			this.$store.dispatch("setLocalTag", "VideoPlayback");
-			this.$bus.$emit("setLocalTag", "VideoPlayback");
-			this.$router.push({
-				name: "VideoPlayback",
-				params: { channelUuid, channelName }
-			});
-		},
-		screenShot(index) {
-			// 抓图
-			// 判断该分路有没有canvas,从而是否显示弹窗
-			let canvas = this.$refs["video" + index][0].canvas;
-			if (canvas) {
-				// 抓图由webplay控制
-				// this.screenShotVisible = true;
-				// console.log(canvas);
-				// var dataURL = canvas.toDataURL("image/png");
-				// console.log(dataURL);
-				// this.src = dataURL;
-			} else {
-				this.$message.error("该分路没有视频在播放，请先添加视频！");
-			}
-		},
-		jumpToPlayback(channelUuid) {
-			// this.$router.push({
-			//   name: "VideoPlayback",
-			//   params: { channelUuid: "channelUuid" }
-			// });
-		},
-		switchMaLiu(index, streamType) {
-			if (!this.videoArr[index].rtspUrl) {
-				this.$message.error("该分路没有视频在播放，切换失败！");
-				return;
-			}
-			this.playRtsp(this.videoArr[index].channelUuid, streamType, {}, index);
-		},
-		PreviewAreafullScreen() {
-			var element = document.documentElement;
-			// this.setFullScreen(this.$refs.vedioWrap);
+      this.$refs["video" + index][0].record();
+    },
+    stopRecord(index) {
+      if (!this.videoArr[index].channelUuid) {
+        this.$message.error("该分路上没有播放的视频");
+        return;
+      }
+      this.menuData = this.menuData.map(item => {
+        if (item.label === "停止录像") {
+          return {
+            value: "开始录像",
+            label: "开始录像"
+          };
+        }
+        return item;
+      });
+      let item = this.videoArr[index];
+      item.isRecord = false;
+      this.videoArr.splice(index, 1, item);
+      this.$refs["video" + index][0].stopRecord();
+    },
+    switchLuxiang(channelUuid, channelName) {
+      this.$store.dispatch("addTagViewItem", {
+        icon: "VideoPlayback",
+        name: "VideoPlayback",
+        title: "视频回放",
+        type: "config",
+        path: "/VideoPlayback"
+      });
+      this.$store.dispatch("setLocalTag", "VideoPlayback");
+      this.$bus.$emit("setLocalTag", "VideoPlayback");
+      this.$router.push({
+        name: "VideoPlayback",
+        params: { channelUuid, channelName }
+      });
+    },
+    screenShot(index) {
+      // 抓图
+      // 判断该分路有没有canvas,从而是否显示弹窗
+      let canvas = this.$refs["video" + index][0].canvas;
+      if (canvas) {
+        // 抓图由webplay控制
+        // this.screenShotVisible = true;
+        // console.log(canvas);
+        // var dataURL = canvas.toDataURL("image/png");
+        // console.log(dataURL);
+        // this.src = dataURL;
+      } else {
+        this.$message.error("该分路没有视频在播放，请先添加视频！");
+      }
+    },
+    jumpToPlayback(channelUuid) {
+      // this.$router.push({
+      //   name: "VideoPlayback",
+      //   params: { channelUuid: "channelUuid" }
+      // });
+    },
+    switchMaLiu(index, streamType) {
+      if (!this.videoArr[index].rtspUrl) {
+        this.$message.error("该分路没有视频在播放，切换失败！");
+        return;
+      }
+      this.playRtsp(this.videoArr[index].channelUuid, streamType, {}, index);
+    },
+    PreviewAreafullScreen() {
+      var element = document.documentElement;
+      // this.setFullScreen(this.$refs.vedioWrap);
 
-			if (this.fullscreen) {
-				if (document.exitFullscreen) {
-					document.exitFullscreen();
-				} else if (document.webkitCancelFullScreen) {
-					document.webkitCancelFullScreen();
-				} else if (document.mozCancelFullScreen) {
-					document.mozCancelFullScreen();
-				} else if (document.msExitFullscreen) {
-					document.msExitFullscreen();
-				}
-				console.log("已还原！");
-			} else {
-				// 否则，进入全屏
-				if (element.requestFullscreen) {
-					element.requestFullscreen();
-				} else if (element.webkitRequestFullScreen) {
-					element.webkitRequestFullScreen();
-				} else if (element.mozRequestFullScreen) {
-					element.mozRequestFullScreen();
-				} else if (element.msRequestFullscreen) {
-					// IE11
-					element.msRequestFullscreen();
-				}
-				console.log("已全屏！");
-				// this.fullscreen = !this.fullscreen;
-				setTimeout(() => {
-					this.fullscreen = true;
-					this.initWrapDom();
-				}, 100);
-			}
-			// // 改变当前全屏状态
-		},
-		setFullScreen(target) {
-			if (target.requestFullscreen) {
-				target.requestFullscreen();
-			}
-			if (target.webkitRequestFullscreen) {
-				target.webkitRequestFullscreen();
-			}
-			if (target.mozRequestFullScreen) {
-				target.mozRequestFullScreen();
-			}
-			if (target.msRequestFullscreen) {
-				target.msRequestFullscreen();
-			}
-		},
-		getChannleUuid() {
-			// eslint-disable-next-line
-			// this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
-		},
-		updateCloud() {
-			if (this.operatorIndex < 0 || !this.videoArr[this.operatorIndex]) {
-				return false;
-			}
-			if (
-				!this.videoArr[this.operatorIndex].rtspUrl ||
-				!this.videoArr[this.operatorIndex].operatorData
-			) {
-				return false;
-			}
-			return (
-				["bullet_camera_ptz", "ball_camera"].indexOf(
-					this.videoArr[this.operatorIndex].operatorData.realType
-				) !== -1
-			);
-		}
-	},
-	watch: {
-		operatorIndex(val) {
-			// console.log(this.videoArr);
-			this.showCloudControl = this.updateCloud();
-		},
-		videoArr(val) {
-			this.showCloudControl = this.updateCloud();
-		},
-		"$route.path": function(newVal, oldVal) {
-			// 监听路由，查看params是否携带参数rtsp，从而判断是否跳转播放码流
-			this.jugdeJump();
-		}
-	}
+      if (this.fullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        console.log("已还原！");
+      } else {
+        // 否则，进入全屏
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          // IE11
+          element.msRequestFullscreen();
+        }
+        console.log("已全屏！");
+        // this.fullscreen = !this.fullscreen;
+        setTimeout(() => {
+          this.fullscreen = true;
+          this.initWrapDom();
+        }, 100);
+      }
+      // // 改变当前全屏状态
+    },
+    setFullScreen(target) {
+      if (target.requestFullscreen) {
+        target.requestFullscreen();
+      }
+      if (target.webkitRequestFullscreen) {
+        target.webkitRequestFullscreen();
+      }
+      if (target.mozRequestFullScreen) {
+        target.mozRequestFullScreen();
+      }
+      if (target.msRequestFullscreen) {
+        target.msRequestFullscreen();
+      }
+    },
+    getChannleUuid() {
+      // eslint-disable-next-line
+      // this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
+    },
+    updateCloud() {
+      if (this.operatorIndex < 0 || !this.videoArr[this.operatorIndex]) {
+        return false;
+      }
+      if (
+        !this.videoArr[this.operatorIndex].rtspUrl ||
+        !this.videoArr[this.operatorIndex].operatorData
+      ) {
+        return false;
+      }
+      return (
+        ["bullet_camera_ptz", "ball_camera"].indexOf(
+          this.videoArr[this.operatorIndex].operatorData.realType
+        ) !== -1
+      );
+    }
+  },
+  watch: {
+    operatorIndex(val) {
+      // console.log(this.videoArr);
+      this.showCloudControl = this.updateCloud();
+    },
+    videoArr(val) {
+      this.showCloudControl = this.updateCloud();
+    },
+    "$route.path": function(newVal, oldVal) {
+      // 监听路由，查看params是否携带参数rtsp，从而判断是否跳转播放码流
+      this.jugdeJump();
+    }
+  }
 };
 </script>
 <style lang="scss">
 .isCloseDialog {
-	.el-message-box__btns {
-		display: flex;
-		flex-direction: row-reverse;
-		justify-content: center;
-		button {
-			margin-right: 30px;
-		}
-	}
+  .el-message-box__btns {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    button {
+      margin-right: 30px;
+    }
+  }
 }
 .VideoPreviewContent {
-	.el-message-box__title span {
-		color: #fff !important;
-	}
-	.el-message-box__message {
-		p {
-			text-align: center !important;
-		}
-	}
+  .el-message-box__title span {
+    color: #fff !important;
+  }
+  .el-message-box__message {
+    p {
+      text-align: center !important;
+    }
+  }
 }
 </style>
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .VideoPreviewContent {
-	height: 100%;
-	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
 
-	.right {
-		width: calc(100% - 220px);
-		height: 100%;
-		// padding: 0px;
-		box-sizing: border-box;
-		user-select: none;
-		padding: 0px;
-		box-sizing: border-box;
-		.vedioWrap {
-			position: relative;
-			// height: calc(100% - 80px);
-			// padding-top: 56.25%;
-			height: calc(100vh - 122px);
-			margin: 2px 0px 0px;
-		}
-		.footer {
-			height: 70px;
-			// margin: 10px;
-			display: flex;
-			justify-content: space-between;
-			.operator {
-				margin-top: 16px;
-				margin-right: 40px;
-				.button {
-					background: rgba(40, 255, 187, 0.2);
-					border: 0 solid rgba(38, 211, 157, 0.8);
-					border-radius: 2px;
-					vertical-align: middle;
-					cursor: pointer;
-				}
-			}
-			.fenlu {
-				ul {
-					list-style: none;
-					display: flex;
-					justify-content: space-around;
-					li {
-						width: 30px;
-						height: 30px;
-						line-height: 30px;
-						text-align: center;
-						background-color: rgba(255, 255, 255, 0.151);
-						border: 1px solid rgba(255, 255, 255, 0.3);
-						border-radius: 3px;
-						@include font-s;
-						cursor: pointer;
-						margin-right: 10px;
-					}
-					.active {
-						opacity: 0.8;
-						background: rgba(40, 255, 187, 0.15);
-						border: 1px solid rgba(32, 204, 150, 0.8);
-					}
-				}
-			}
-		}
-	}
-	.fullVideoWrap {
-		position: fixed !important;
-		padding: 0px !important;
-		margin: 0px !important;
-		left: 0px;
-		top: 0px;
-		width: 100vw !important;
-		height: 100vh !important;
-		z-index: 10;
-	}
+  .right {
+    width: calc(100% - 220px);
+    height: 100%;
+    // padding: 0px;
+    box-sizing: border-box;
+    user-select: none;
+    padding: 0px;
+    box-sizing: border-box;
+    .vedioWrap {
+      position: relative;
+      // height: calc(100% - 80px);
+      // padding-top: 56.25%;
+      height: calc(100vh - 122px);
+      margin: 2px 0px 0px;
+    }
+    .footer {
+      height: 70px;
+      // margin: 10px;
+      display: flex;
+      justify-content: space-between;
+      .operator {
+        margin-top: 16px;
+        margin-right: 40px;
+        .button {
+          background: rgba(40, 255, 187, 0.2);
+          border: 0 solid rgba(38, 211, 157, 0.8);
+          border-radius: 2px;
+          vertical-align: middle;
+          cursor: pointer;
+        }
+      }
+      .fenlu {
+        ul {
+          list-style: none;
+          display: flex;
+          justify-content: space-around;
+          li {
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.151);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            @include font-s;
+            cursor: pointer;
+            margin-right: 10px;
+          }
+          .active {
+            opacity: 0.8;
+            background: rgba(40, 255, 187, 0.15);
+            border: 1px solid rgba(32, 204, 150, 0.8);
+          }
+        }
+      }
+    }
+  }
+  .fullVideoWrap {
+    position: fixed !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    left: 0px;
+    top: 0px;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 10;
+  }
 }
 </style>
