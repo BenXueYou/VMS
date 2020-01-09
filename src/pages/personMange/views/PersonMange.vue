@@ -381,7 +381,7 @@
             </div>
             <div class="tableWrap">
               <div class="selectWrap">
-                <el-checkbox :disabled='!OwnAuthDisabled'
+                <el-checkbox :disabled='!ShowAuthDisabled'
                              v-model="seleactAll"
                              @change="checkedAllChange">本页全选</el-checkbox>
               </div>
@@ -414,19 +414,36 @@
                     <div type="primary"
                          :disabled='!ShowAuthDisabled'
                          @click.stop="isOperationMask=false,viewSingleDetail(tableData[tableData.length-index-1])">
-                      <img src="./../../../assets/images/personMange/detail1.png" />
+                      <img class="img"
+                           v-if="ShowAuthDisabled"
+                           src="@/assets/images/personMange/detail.png" />
+                      <img class="img"
+                           v-else
+                           src="@/assets/images/personMange/detail1.png" />
                       <span>详情</span>
                     </div>
                     <div type="primary"
                          :disabled='!OwnAuthDisabled'
                          @click.stop="isOperationMask=false,editPersonSingle(tableData[tableData.length-index-1])">
-                      <img src="./../../../assets/images/personMange/edit.png" />
+                      <img class="img"
+                           v-if="OwnAuthDisabled"
+                           src="@/assets/images/personMange/edit.png" />
+                      <img class="img"
+                           v-else
+                           src="@/assets/images/personMange/edit2.png" />
+                      <!-- <img src="./../../../assets/images/personMange/edit.png" /> -->
                       <span>编辑</span>
                     </div>
                     <div type="primary"
                          :disabled='!OwnAuthDisabled'
                          @click.stop="isOperationMask=false,deletePersonSingle(tableData[tableData.length-index-1])">
-                      <img src="./../../../assets/images/personMange/delete1.png" />
+                      <!-- <img src="./../../../assets/images/personMange/delete1.png" /> -->
+                      <img class="img"
+                           v-if="OwnAuthDisabled"
+                           src="@/assets/images/personMange/delete2.png" />
+                      <img class="img"
+                           v-else
+                           src="@/assets/images/personMange/delete1.png" />
                       <span>删除</span>
                     </div>
                   </div>

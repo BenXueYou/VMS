@@ -1,71 +1,54 @@
 <template>
-	<div style="height: 100%;">
-		<init-building
-			:isShow="isShowInitDialog"
-			@onCancel="onCancelInitDialog"
-			@onConfirm="onClickConfirm"
-		/>
-		<all-type-add
-			:isShow="isShowAllTypeAddDialog"
-			@onCancel="onCancelAllTypeAddDialog"
-			@onConfirm="onConfirmAllTypeAddDialog"
-			ref="allTypeAdd"
-		/>
-		<add-or-edit-house
-			:isShow="isShowEditOrAddDialog"
-			:isAdd="isAdd"
-			ref="addOrEditHouse"
-			:initTreeRootData="initTreeRootData"
-			@onCancel="onCancelEditOrAddDialog"
-			@onConfirm="onConfirmEditOrAddDialog"
-		/>
-		<!-- 批量导入 -->
-		<patch-import
-			:isShow.sync="isShowPatchImportDialog"
-			@onCancel="onCancelPatchImportDialog"
-			@onImport="onConfirmPatchImportDialog"
-		/>
-		<!-- 批量导出 -->
-		<patch-export
-			:isShow.sync="isShowPatchExportDialog"
-			@onCancel="onCancelPatchExportDialog"
-			@onImport="onConfirmPatchExportDialog"
-		/>
+  <div style="height: 100%;">
+    <init-building :isShow="isShowInitDialog"
+                   @onCancel="onCancelInitDialog"
+                   @onConfirm="onClickConfirm" />
+    <all-type-add :isShow="isShowAllTypeAddDialog"
+                  @onCancel="onCancelAllTypeAddDialog"
+                  @onConfirm="onConfirmAllTypeAddDialog"
+                  ref="allTypeAdd" />
+    <add-or-edit-house :isShow="isShowEditOrAddDialog"
+                       :isAdd="isAdd"
+                       ref="addOrEditHouse"
+                       :initTreeRootData="initTreeRootData"
+                       @onCancel="onCancelEditOrAddDialog"
+                       @onConfirm="onConfirmEditOrAddDialog" />
+    <!-- 批量导入 -->
+    <patch-import :isShow.sync="isShowPatchImportDialog"
+                  @onCancel="onCancelPatchImportDialog"
+                  @onImport="onConfirmPatchImportDialog" />
+    <!-- 批量导出 -->
+    <patch-export :isShow.sync="isShowPatchExportDialog"
+                  @onCancel="onCancelPatchExportDialog"
+                  @onImport="onConfirmPatchExportDialog" />
 
-		<add-or-edit-build
-			ref="addOrEditBuild"
-			:isShow="isShowAddOrEditBuild"
-			:isAdd="isAddBuild"
-			@onCancel="onCancelEditOrAddBuildDialog"
-			@onConfirm="onConfirmEditOrAddBuildDialog"
-		/>
-		<div v-if="isShowMain" class="build-main">
-			<left-tree
-				@onClickAllTypeAdd="onClickAllTypeAdd"
-				@add="add"
-				@setInitArea="setInitArea"
-				ref="leftTree"
-				@setTreeRootData="setTreeRootData"
-				style="height: 100%;"
-				@edit="edit"
-			/>
-			<house-table
-				v-show="isShowHouseTable"
-				@addHouse="addHouse"
-				@editHouse="editHouse"
-				@batchImport="batchImport"
-				@batchExport="batchExport"
-				ref="houseTable"
-			/>
-			<add-or-edit-unit
-				v-show="!isShowHouseTable"
-				ref="addOrEditUnit"
-				style="height: 100%;"
-				@onConfirm="onConfirmEditOrAddUnit"
-				@onCancel="onCancelEditOrAddUnit"
-			/>
-		</div>
-	</div>
+    <add-or-edit-build ref="addOrEditBuild"
+                       :isShow="isShowAddOrEditBuild"
+                       :isAdd="isAddBuild"
+                       @onCancel="onCancelEditOrAddBuildDialog"
+                       @onConfirm="onConfirmEditOrAddBuildDialog" />
+    <div v-if="isShowMain"
+         class="build-main">
+      <left-tree @onClickAllTypeAdd="onClickAllTypeAdd"
+                 @add="add"
+                 @setInitArea="setInitArea"
+                 ref="leftTree"
+                 @setTreeRootData="setTreeRootData"
+                 style="height: 100%;"
+                 @edit="edit" />
+      <house-table v-show="isShowHouseTable"
+                   @addHouse="addHouse"
+                   @editHouse="editHouse"
+                   @batchImport="batchImport"
+                   @batchExport="batchExport"
+                   ref="houseTable" />
+      <add-or-edit-unit v-show="!isShowHouseTable"
+                        ref="addOrEditUnit"
+                        style="height: 100%;"
+                        @onConfirm="onConfirmEditOrAddUnit"
+                        @onCancel="onCancelEditOrAddUnit" />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -111,13 +94,14 @@ export default {
       specialType: "",
       isInitArea: false,
       ShowAuthDisabled: true,
-      OwnAuthDisabled: true
+      OwnAuthDisabled: false
     };
   },
   created() {},
   mounted() {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isOwn");
+    this.OwnAuthDisabled = false;
     this.initData();
   },
   activated() {
@@ -354,8 +338,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .build-main {
-	width: 100%;
-	height: 100%;
-	display: flex;
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 </style>

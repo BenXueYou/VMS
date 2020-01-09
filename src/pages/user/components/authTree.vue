@@ -30,12 +30,14 @@
             <div class="labelButton">
               <el-switch :width="27"
                          v-model="data.isShow"
+                         :disabled="!data.ShowAuthDisabled"
                          @change="showAuth(node,data,'isShow',1)"
                          active-color="#26D39D40"
                          inactive-color="rgb(72,73,75)"></el-switch>
             </div>
             <div class="labelButton">
               <el-switch :width="27"
+                         :disabled="!data.isShow||!data.OwnAuthDisabled"
                          v-model="data.isOwn"
                          @change="showAuth(node,data,'isOwn',1)"
                          active-color="#26D39D40"
@@ -216,14 +218,20 @@ export default {
     },
     getChild(data) {
       let isShow = true,
-        isOwn = true;
+        isOwn = true,
+        ShowAuthDisabled = true,
+        OwnAuthDisabled = true;
       for (let i = 0; i < data.length; i++) {
         isShow = isShow && data[i].isShow;
         isOwn = isOwn && data[i].isOwn;
+        ShowAuthDisabled = ShowAuthDisabled && data[i].ShowAuthDisabled;
+        OwnAuthDisabled = OwnAuthDisabled && data[i].OwnAuthDisabled;
       }
       return {
         isOwn,
-        isShow
+        isShow,
+        ShowAuthDisabled,
+        OwnAuthDisabled
       };
     },
     dpTree(data) {
@@ -244,19 +252,34 @@ export default {
           data[i].isOwn = !!data[i].isOwn;
           data[i].isShow = !!data[i].isShow;
         }
+        data[i].ShowAuthDisabled = this.$common.getAuthIsOwn(
+          data[i].nodeName,
+          "isShow"
+        );
+        data[i].OwnAuthDisabled = this.$common.getAuthIsOwn(
+          data[i].nodeName,
+          "isOwn"
+        );
         this.dpTree(data[i].childNodes || []);
         if (data[i].childNodes && data[i].childNodes.length) {
-          let { isShow, isOwn } = this.getChild(data[i].childNodes);
+          let {
+            isShow,
+            isOwn,
+            ShowAuthDisabled,
+            OwnAuthDisabled
+          } = this.getChild(data[i].childNodes);
           // console.log(isShow, isOwn);
           data[i].isShow = isShow;
           data[i].isOwn = isOwn;
+          data[i].ShowAuthDisabled = ShowAuthDisabled;
+          data[i].OwnAuthDisabled = OwnAuthDisabled;
         }
       }
     },
     getData() {
       api
         .getAuth({
-          roleUuid: this.roleUuid
+          roleUuid: ""
         })
         .then(res => {
           console.log(res.data);
