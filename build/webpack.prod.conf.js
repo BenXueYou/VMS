@@ -38,7 +38,7 @@ const webpackConfig = merge(baseWebpackConfig, {
           warnings: false,
           drop_debugger: true,
           // @pxy 此处修改打包子后，关闭console.log控制台输出
-          drop_console: false
+          drop_console: true
         }
       },
       sourceMap: config.build.productionSourceMap,

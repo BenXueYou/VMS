@@ -266,6 +266,16 @@ export default {
     checkedFaceUuidList: function(newVal, oldVal) {
       if (!newVal) return;
       this.checkLibAll = newVal.length === this.faceDBList.length;
+    },
+    DeviceTreeList(val) {
+      this.checkedChannelsUuidList = val.map(item => {
+        return item.channelUuid;
+      });
+    },
+    faceDBList(val) {
+      this.checkedFaceUuidList = val.map(item => {
+        return item.faceLibraryUuid;
+      });
     }
   },
   methods: {
@@ -493,7 +503,7 @@ export default {
         dealState: this.status,
         faceMonitorUuid: this.checkedTaskUuidList.toString(),
         faceLibraryUuids: this.checkedFaceUuidList.toString(),
-        channelUuid: this.checkedChannelsUuidList.toString(),
+        channelUuids: this.checkedChannelsUuidList.toString(),
         alarmDatetimeBegin: this.startTime,
         alarmDatetimeEnd: this.endTime,
         page: this.pageNow,

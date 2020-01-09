@@ -185,7 +185,18 @@ export default {
     this.deactivated = true;
     console.log("------deactivated------");
   },
-  watch: {},
+  watch: {
+    DeviceTreeList(val) {
+      this.checkedChannelsUuidList = val.map(item => {
+        return item.channelUuid;
+      });
+    },
+    faceDBList(val) {
+      this.checkedFaceUuidList = val.map(item => {
+        return item.faceLibraryUuid;
+      });
+    }
+  },
   methods: {
     resetQueryAct() {
       this.checkedChannelsUuidList = []; // string[]抓拍设备否
