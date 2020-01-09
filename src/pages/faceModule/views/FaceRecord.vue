@@ -248,8 +248,8 @@ import RestApi from "@/utils/RestApi.js";
 export default {
   components: { elPopverTree, AlTree, PicQulitySelect },
   mounted: function() {
-    this.ShowAuthDisabled = this.$common.getAuthIsOwn("抓拍记录", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("抓拍记录", "isOwn");
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("抓拍查询", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("抓拍查询", "isOwn");
 
     let h =
 			window.innerHeight ||
@@ -282,9 +282,6 @@ export default {
     }
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    if (this.ShowAuthDisabled) {
-      this.queryAct();
-    }
   },
   watch: {},
   activated: function() {
@@ -455,6 +452,9 @@ export default {
       this.checkedChannelsUuidList = [];
       for (var i = 0; i < checkedChannel.length; i++) {
         this.checkedChannelsUuidList.push(checkedChannel[i].channelUuid);
+      }
+      if (this.ShowAuthDisabled) {
+        this.queryAct();
       }
       console.log(this.checkedChannelsUuidList);
     },

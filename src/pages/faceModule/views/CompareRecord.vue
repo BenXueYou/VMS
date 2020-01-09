@@ -203,7 +203,18 @@ export default {
     this.deactivated = true;
     console.log("------deactivated------");
   },
-  watch: {},
+  watch: {
+    DeviceTreeList(val) {
+      this.checkedChannelsUuidList = val.map(item => {
+        return item.channelUuid;
+      });
+    },
+    faceDBList(val) {
+      this.checkedFaceUuidList = val.map(item => {
+        return item.faceLibraryUuid;
+      });
+    }
+  },
   methods: {
     resetQueryAct() {
       this.checkedChannelsUuidList = []; // string[]抓拍设备否
@@ -319,6 +330,8 @@ export default {
         .getRecognizeList(data)
         .then(res => {
           this.mainScreenLoading = !this.mainScreenLoading;
+          this.totalCompareItemList = [];
+          this.total = 0;
           if (res.data.success && res.data.data && res.data.data.list) {
             this.totalCompareItemList = res.data.data.list;
             this.total = res.data.data.total;

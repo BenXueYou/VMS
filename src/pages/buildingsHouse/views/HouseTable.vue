@@ -129,7 +129,7 @@
 									<el-button :disabled="!OwnAuthDisabled" @click="lookDetail(scope.row)" type="text" size="small">一房一档</el-button>
 									<el-button :disabled="!OwnAuthDisabled" @click="editHouse(scope.row)" type="text" size="small">编辑</el-button>
 									<el-button :disabled="!OwnAuthDisabled" @click="deleteHouse(scope.row)" type="text" size="small">
-										<span style="color: #DF5656">删除</span>
+										<span :style="OwnAuthDisabled?`color:'#DF5656'`: `color:'#82848a'`">删除</span>
 									</el-button>
 								</div>
 							</template>

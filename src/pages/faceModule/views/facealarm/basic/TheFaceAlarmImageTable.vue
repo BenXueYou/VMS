@@ -139,6 +139,7 @@ export default {
   },
   watch: {
     tableData(val) {
+      this.tableSourceData = [];
       if (val && val.length) {
         let arr = [];
         val.map(item => {

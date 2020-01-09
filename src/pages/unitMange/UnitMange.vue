@@ -129,10 +129,25 @@
 							<el-table-column label="操作">
 								<template slot-scope="scope">
 									<div class="detail-icon">
-										<el-button  :disabled="!ShowAuthDisabled" @click="lookDetail(scope.row)" type="text" size="small">查看从业人员</el-button>
-										<el-button  :disabled="!OwnAuthDisabled" @click="editUnit(scope.row)" type="text" size="small">编辑</el-button>
-										<el-button  :disabled="!OwnAuthDisabled" @click="deleteUnit(scope.row)" type="text" size="small">
-											<span style="color: #DF5656">删除</span>
+										<el-button
+											:disabled="!ShowAuthDisabled"
+											@click="lookDetail(scope.row)"
+											type="text"
+											size="small"
+										>查看从业人员</el-button>
+										<el-button
+											:disabled="!OwnAuthDisabled"
+											@click="editUnit(scope.row)"
+											type="text"
+											size="small"
+										>编辑</el-button>
+										<el-button
+											:disabled="!OwnAuthDisabled"
+											@click="deleteUnit(scope.row)"
+											type="text"
+											size="small"
+										>
+											<span :style="OwnAuthDisabled?`color:'#DF5656'`: `color:'#82848a'`">删除</span>
 										</el-button>
 									</div>
 								</template>

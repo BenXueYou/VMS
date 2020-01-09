@@ -50,7 +50,11 @@
 						<p></p>
 					</div>
 					<div class="bodyBoxDiv">
-						<p class="cursorClass" style="text-align:left" @click="uploadBtnAct">
+						<p
+							:class="OwnAuthDisabled?'cursorClass':'disabled'"
+							style="text-align:left"
+							@click="uploadBtnAct"
+						>
 							<img class="img" src="@/assets/images/add.png" alt srcset />添加
 						</p>
 						<p v-for="tag in tags" :key="tag.soundUrl">
@@ -264,6 +268,7 @@ export default {
       }
     },
     uploadBtnAct() {
+      if (!this.OwnAuthDisabled) return;
       if (this.tags.length > 9) {
         this.$message({ type: "warning", message: "允许添加音频最多10个" });
         return;
