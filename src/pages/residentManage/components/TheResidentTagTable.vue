@@ -217,6 +217,16 @@ export default {
     })
   },
   methods: {
+    updateTagName() {
+      if (this.checkedLeftTagData && !this.checkedLeftTagData.tagUuid) {
+        this.$message({ type: "warning", message: "没有选择标签" });
+      } else {
+        this.changeDialogVisible = this.$common.getAuthIsOwn(
+          "居民管理",
+          "isShow"
+        );
+      }
+    },
     addElementToTagAct() {
       if (this.checkedLeftTagData && !this.checkedLeftTagData.tagUuid) {
         this.$message({ type: "warning", message: "没有选择标签" });
@@ -339,11 +349,10 @@ export default {
       // this.$bus.$emit("getLeftMenuTag", this.curLeftTagData);
     },
     detailDialogAct() {
-      // 请求标签详情
-      // "data": {
-      //   "infrastructureCount": 0,
-      //   "staffCount": 0
-      // },
+      if (this.checkedLeftTagData && !this.checkedLeftTagData.tagUuid) {
+        this.$message({ type: "warning", message: "没有选择标签" });
+        return;
+      }
       if (!this.$common.getAuthIsOwn("居民管理", "isShow")) return;
       var tagUuid = this.checkedLeftTagData.tagUuid;
       this.$ResidentManageAjax
@@ -356,12 +365,6 @@ export default {
             this.$message({ type: "error", message: "服务器开小差了" });
           }
         });
-    },
-    changeDialogVisibleAct() {
-      this.changeDialogVisible = this.$common.getAuthIsOwn(
-        "居民管理",
-        "isShow"
-      );
     },
     onCancel() {
       this.isShow = !this.isShow;
