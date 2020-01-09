@@ -40,16 +40,16 @@
         <div class="rightgroup">
           <span class="title">设备名称：</span>
           <el-input class="input"
-                    :disabled="!OwnAuthDisabled"
+                    :disabled="!ShowAuthDisabled"
                     v-model="devName"></el-input>
 
           <el-button type="primary"
                      @click="retrieveVisible=!retrieveVisible"
-                     :disabled="!OwnAuthDisabled"
+                     :disabled="!ShowAuthDisabled"
                      size="small">其他条件检索</el-button>
           <el-button type="primary"
                      @click="searchBytext"
-                     :disabled="!OwnAuthDisabled"
+                     :disabled="!ShowAuthDisabled"
                      icon="el-icon-search"
                      size="small">检索</el-button>
         </div>
@@ -155,13 +155,13 @@
             <el-button type="text"
                        v-if="index==1"
                        @click="remoteControl(scope.row)"
-                       :disabled="(!!(scope.row.extInfo.fdLib!=1) || !OwnAuthDisabled)"
+                       :disabled="(!!(scope.row.extInfo.fdLib!=1) || !ShowAuthDisabled)"
                        size="small">配置</el-button>
             <el-button type="text"
                        v-if="index!=1"
                        @click="remoteControl(scope.row)"
                        :class="{'offLine':scope.row.netStatus==='offline'}"
-                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig) || !OwnAuthDisabled)"
+                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig) || !ShowAuthDisabled)"
                        size="small">配置</el-button>
           </template>
         </el-table-column>
@@ -179,6 +179,8 @@
 
       <remote-control-dialog :visible.sync="remoteControlDialogVisiable"
                              :isVistors="index===3"
+                             :ShowAuthDisabled="ShowAuthDisabled"
+                             :OwnAuthDisabled="OwnAuthDisabled"
                              :deviceUuid="deviceUuid"></remote-control-dialog>
 
       <confirm-dialog :visible.sync="ConfirmDialogVisible"
@@ -612,23 +614,25 @@ export default {
     }
   },
   mounted() {
-    let info = this.$refs.tablecontent.getBoundingClientRect();
-    this.tableHeight = info.height - 30 - 60 - 40 - 50;
-    this.pageSize = ~~(this.tableHeight / 50);
-    // for (let i = 0; i < this.pageSize; i++) {
-    //   this.tableData.push({
-    //     devName: "192.128.1." + (i + 1),
-    //     ip: "192.128.1.1",
-    //     devId: "123456789",
-    //     devMode: "VB510F",
-    //     doorCount: 1,
-    //     netStatus: "online",
-    //     time: "2018-10-08"
-    //   });
-    // }
-    // 获取是否有权限查看
-    this.getTableData();
-    this.serviceList(this.viewType);
+    setTimeout(() => {
+      let info = this.$refs.tablecontent.getBoundingClientRect();
+      this.tableHeight = info.height - 30 - 60 - 40 - 50;
+      this.pageSize = ~~(this.tableHeight / 50);
+      // for (let i = 0; i < this.pageSize; i++) {
+      //   this.tableData.push({
+      //     devName: "192.128.1." + (i + 1),
+      //     ip: "192.128.1.1",
+      //     devId: "123456789",
+      //     devMode: "VB510F",
+      //     doorCount: 1,
+      //     netStatus: "online",
+      //     time: "2018-10-08"
+      //   });
+      // }
+      // 获取是否有权限查看
+      this.getTableData();
+      this.serviceList(this.viewType);
+    }, 0);
   },
   watch: {
     orgUuid(val) {

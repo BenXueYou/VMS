@@ -249,6 +249,9 @@ export default {
       this.operatorData = data;
     },
     handleCommand(command) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       console.log(command);
       console.log(this.operatorData);
       if (command === "video") {
@@ -292,27 +295,29 @@ export default {
       }
     },
     getViewTree() {
-      if (!this.ShowAuthDisabled) {
-        return;
-      }
-      api2
-        .getView({
-          viewUuid: "",
-          viewType: "playback"
-        })
-        .then(res => {
-          console.log(res);
-          let data = res.data.data;
-          let list = (data && data.list) || [] || [];
-          this.viewTreeData = list
-            .filter(item => {
-              return item.viewType === "playback";
-            })
-            .map(item => {
-              item.viewName = item.viewInfo.view_name;
-              return item;
-            });
-        });
+      setTimeout(() => {
+        if (!this.ShowAuthDisabled) {
+          return;
+        }
+        api2
+          .getView({
+            viewUuid: "",
+            viewType: "playback"
+          })
+          .then(res => {
+            console.log(res);
+            let data = res.data.data;
+            let list = (data && data.list) || [] || [];
+            this.viewTreeData = list
+              .filter(item => {
+                return item.viewType === "playback";
+              })
+              .map(item => {
+                item.viewName = item.viewInfo.view_name;
+                return item;
+              });
+          });
+      }, 0);
     },
     handleCheckChange(data, checked, indeterminate) {
       // 树上的节点选中发生了改变
@@ -341,43 +346,45 @@ export default {
       return icon;
     },
     async devloadNode(node, resolve) {
-      if (!this.ShowAuthDisabled) {
-        return resolve([]);
-      }
-      //  懒加载子结点
-      console.log(node);
-      let data = await this.videoTree(
-        node.data && node.data.id,
-        node.data && node.data.nodeType
-      );
-      // data = [];
-      if (node.level === 0) {
-        if (data.length) {
-          this.defaultExpKeys.push(data[0].id);
-          this.showMaxWidth = true;
+      setTimeout(async () => {
+        if (!this.ShowAuthDisabled) {
+          return resolve([]);
         }
-      }
-      data = data.map(item => {
-        item.leaf = !item.openFlag;
-        item.isOnline = true;
-        if (item.nodeType === "chnNode") {
-          item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+        //  懒加载子结点
+        console.log(node);
+        let data = await this.videoTree(
+          node.data && node.data.id,
+          node.data && node.data.nodeType
+        );
+        // data = [];
+        if (node.level === 0) {
+          if (data.length) {
+            this.defaultExpKeys.push(data[0].id);
+            this.showMaxWidth = true;
+          }
         }
-        if (item.nodeType === "devNode") {
-          item.isOnline = item.extInfo.devOnlineOrNot === "online";
-        }
-        item.icon = this.getIcon(item.isOnline, item.realType);
-        return item;
-      });
-      // data = [
-      //   {
-      //     label: "测试",
-      //     id: "49D2B7299EAAA3AF295E33F03B982D32",
-      //     h5Type: "channel",
-      //     leaf: true
-      //   }
-      // ];
-      return resolve(data);
+        data = data.map(item => {
+          item.leaf = !item.openFlag;
+          item.isOnline = true;
+          if (item.nodeType === "chnNode") {
+            item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          }
+          if (item.nodeType === "devNode") {
+            item.isOnline = item.extInfo.devOnlineOrNot === "online";
+          }
+          item.icon = this.getIcon(item.isOnline, item.realType);
+          return item;
+        });
+        // data = [
+        //   {
+        //     label: "测试",
+        //     id: "49D2B7299EAAA3AF295E33F03B982D32",
+        //     h5Type: "channel",
+        //     leaf: true
+        //   }
+        // ];
+        return resolve(data);
+      }, 0);
     },
     videoTree(parentUuid, parentType) {
       let data = {};
@@ -411,21 +418,23 @@ export default {
       // 点击展开
     },
     async tagloadNode(node, resolve) {
-      if (!this.ShowAuthDisabled) {
-        return resolve([]);
-      }
-      // 加载子结点
-      console.log(node);
-      if (node.level === 0) {
-        let data = await this.getTagTreeData();
-        if (data.length) {
-          this.defaultExpKeys.push(data[0].id);
+      setTimeout(async () => {
+        if (!this.ShowAuthDisabled) {
+          return resolve([]);
         }
-        return resolve(data);
-      } else if (node.level === 1) {
-        let data = await this.getChannelByNode(node.data.id);
-        return resolve(data);
-      }
+        // 加载子结点
+        console.log(node);
+        if (node.level === 0) {
+          let data = await this.getTagTreeData();
+          if (data.length) {
+            this.defaultExpKeys.push(data[0].id);
+          }
+          return resolve(data);
+        } else if (node.level === 1) {
+          let data = await this.getChannelByNode(node.data.id);
+          return resolve(data);
+        }
+      }, 0);
     },
     getChannelByNode(tagUuid) {
       return new Promise((resolve, reject) => {

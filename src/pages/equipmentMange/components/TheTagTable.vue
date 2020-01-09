@@ -31,18 +31,18 @@
             </el-select>
             <span class='title'>所属设备：</span>
             <el-input class='input'
-                      :disabled="!OwnAuthDisabled"
+                      :disabled="!ShowAuthDisabled"
                       v-model='devBelong'>
             </el-input>
 
             <el-button type="primary"
                        @click="search"
-                       :disabled="!OwnAuthDisabled"
+                       :disabled="!ShowAuthDisabled"
                        icon="el-icon-search"
                        size="small">查询</el-button>
             <el-button type="primary"
                        @click="reset"
-                       :disabled="!OwnAuthDisabled"
+                       :disabled="!ShowAuthDisabled"
                        size="small">重置</el-button>
           </div>
         </div>

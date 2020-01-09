@@ -21,6 +21,8 @@
       <div class="content">
         <!-- <keep-alive> -->
         <component :is='currentComponents'
+                   :ShowAuthDisabled="ShowAuthDisabled"
+                   :OwnAuthDisabled="OwnAuthDisabled"
                    :deviceUuid="deviceUuid">
         </component>
         <!-- </keep-alive> -->
@@ -117,6 +119,18 @@ export default {
     Vistor
   },
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     deviceUuid: {
       type: String,
       default() {

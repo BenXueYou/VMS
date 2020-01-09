@@ -29,6 +29,7 @@
                     readonly></el-input>
           <el-button class='addIcon'
                      type="primary"
+                     disabled="!OwnAuthDisabled"
                      id="fileSelect"
                      size='small'>
             <img :src="icons.selectfile"
@@ -37,6 +38,7 @@
           </el-button>
           <el-button class='update'
                      size='small'
+                     disabled="!OwnAuthDisabled"
                      @click="upgrade"
                      type="primary">
             升级
@@ -79,6 +81,18 @@ import icons from "@/common/icon.js";
 export default {
   name: "system",
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     data: {
       type: Array,
       default() {
@@ -280,11 +294,17 @@ export default {
       }
     },
     reboot() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.confirmText = "是否重启";
       this.select = 1;
       this.comfirmDialogVisiable = true;
     },
     backup() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // this.backupDialogVisiable = true;
 
       api.dataBackup(this.deviceUuid).then(res => {
@@ -303,14 +323,23 @@ export default {
       });
     },
     importData() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.importantDialogVisiable = true;
     },
     saveReset() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.confirmText = "是否保留人员数据并恢复默认设置？";
       this.select = 2;
       this.comfirmDialogVisiable = true;
     },
     deleteReset() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.confirmText = "是否删除全部数据并恢复默认设置？";
       this.select = 3;
       this.comfirmDialogVisiable = true;

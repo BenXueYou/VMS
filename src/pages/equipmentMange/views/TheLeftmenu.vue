@@ -188,6 +188,9 @@ export default {
   },
   methods: {
     showAddChildrenDialog() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // this.appendChildrenDialogVisible = true;
       this.showOrgDialogVisible = true;
     },
@@ -201,6 +204,9 @@ export default {
       return max + 1;
     },
     showAddTagDialog() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.appendTagDialogVisible = true;
       this.addTitle = "新增标签";
       // if (this.orgType === "device") {

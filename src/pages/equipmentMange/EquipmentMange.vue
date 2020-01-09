@@ -15,7 +15,6 @@
               :ShowAuthDisabled="ShowAuthDisabled"
               :OwnAuthDisabled="OwnAuthDisabled"
               @updateTree="updateTree">
-
     </the-wrap>
   </div>
 </template>

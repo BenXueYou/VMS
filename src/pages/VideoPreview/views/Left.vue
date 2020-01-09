@@ -631,6 +631,9 @@ export default {
       this.$emit("openView", data);
     },
     handleCommand(command) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       console.log(command);
       console.log(this.operatorData);
       if (command === "video") {
@@ -698,42 +701,44 @@ export default {
       return icon;
     },
     async devloadNode(node, resolve) {
-      //  懒加载子结点
-      console.log(node);
-      if (!this.ShowAuthDisabled) {
-        return resolve([]);
-      }
-      let data = await this.videoTree(
-        node.data && node.data.id,
-        node.data && node.data.nodeType
-      );
-      if (node.level === 0) {
-        if (data.length) {
-          this.defaultExpKeys.push(data[0].id);
-          this.showMaxWidth = true;
+      setTimeout(async () => {
+        //  懒加载子结点
+        console.log(node);
+        if (!this.ShowAuthDisabled) {
+          return resolve([]);
         }
-      }
-      data = data.map(item => {
-        item.leaf = !item.openFlag;
-        item.isOnline = true;
-        if (item.nodeType === "chnNode") {
-          item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+        let data = await this.videoTree(
+          node.data && node.data.id,
+          node.data && node.data.nodeType
+        );
+        if (node.level === 0) {
+          if (data.length) {
+            this.defaultExpKeys.push(data[0].id);
+            this.showMaxWidth = true;
+          }
         }
-        if (item.nodeType === "devNode") {
-          item.isOnline = item.extInfo.devOnlineOrNot === "online";
-        }
-        item.icon = this.getIcon(item.isOnline, item.realType);
-        return item;
-      });
-      // data = [
-      //   {
-      //     label: "测试",
-      //     id: "49D2B7299EAAA3AF295E33F03B982D32",
-      //     leaf: true
-      //   }
-      // ];
-      console.log(data);
-      return resolve(data);
+        data = data.map(item => {
+          item.leaf = !item.openFlag;
+          item.isOnline = true;
+          if (item.nodeType === "chnNode") {
+            item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          }
+          if (item.nodeType === "devNode") {
+            item.isOnline = item.extInfo.devOnlineOrNot === "online";
+          }
+          item.icon = this.getIcon(item.isOnline, item.realType);
+          return item;
+        });
+        // data = [
+        //   {
+        //     label: "测试",
+        //     id: "49D2B7299EAAA3AF295E33F03B982D32",
+        //     leaf: true
+        //   }
+        // ];
+        console.log(data);
+        return resolve(data);
+      }, 0);
     },
     videoTree(parentUuid, parentType) {
       // 换成视频回放树，添加nvr设备
@@ -783,25 +788,27 @@ export default {
       // });
     },
     async loadNode(node, resolve) {
-      if (!this.ShowAuthDisabled) {
-        return resolve([]);
-      }
-      // 加载子结点
-      console.log(node);
-      if (node.level === 0) {
-        let data = await this.getTagTreeData();
-        console.log(data);
-        if (node.level === 0) {
-          if (data.length) {
-            this.defaultExpKeys.push(data[0].id);
-          }
+      setTimeout(async () => {
+        if (!this.ShowAuthDisabled) {
+          return resolve([]);
         }
-        return resolve(data);
-      } else if (node.level === 1) {
-        let data = await this.getChannelByNode(node.data.id);
-        console.log(data);
-        return resolve(data);
-      }
+        // 加载子结点
+        console.log(node);
+        if (node.level === 0) {
+          let data = await this.getTagTreeData();
+          console.log(data);
+          if (node.level === 0) {
+            if (data.length) {
+              this.defaultExpKeys.push(data[0].id);
+            }
+          }
+          return resolve(data);
+        } else if (node.level === 1) {
+          let data = await this.getChannelByNode(node.data.id);
+          console.log(data);
+          return resolve(data);
+        }
+      }, 0);
     },
     getChannelByNode(tagUuid) {
       return new Promise((resolve, reject) => {
@@ -999,28 +1006,30 @@ export default {
     },
 
     getViewTree() {
-      if (!this.ShowAuthDisabled) {
-        return;
-      }
-      // 获取视图
-      api2
-        .getView({
-          viewUuid: "",
-          viewType: "preview"
-        })
-        .then(res => {
-          console.log(res);
-          let data = res.data.data;
-          let list = (data && data.list) || [] || [];
-          this.viewTreeData = list
-            .filter(item => {
-              return item.viewType === "preview";
-            })
-            .map(item => {
-              item.viewName = item.viewInfo.view_name;
-              return item;
-            });
-        });
+      setTimeout(() => {
+        if (!this.ShowAuthDisabled) {
+          return;
+        }
+        // 获取视图
+        api2
+          .getView({
+            viewUuid: "",
+            viewType: "preview"
+          })
+          .then(res => {
+            console.log(res);
+            let data = res.data.data;
+            let list = (data && data.list) || [] || [];
+            this.viewTreeData = list
+              .filter(item => {
+                return item.viewType === "preview";
+              })
+              .map(item => {
+                item.viewName = item.viewInfo.view_name;
+                return item;
+              });
+          });
+      }, 0);
     },
     showAddChildrenDialog() {
       // this.appendChildrenDialogVisible = true;

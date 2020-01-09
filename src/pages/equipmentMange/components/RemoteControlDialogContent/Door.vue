@@ -100,7 +100,6 @@
       </el-form-item>
 
       <el-form-item label="闭门回锁时长："
-                    :disabled="data.closedDoorLockTime"
                     prop="closedDoorLockTime">
         <el-input v-model='data.closedDoorLockTime'
                   class='interval'
@@ -174,6 +173,7 @@
 
     </el-form>
     <el-button type="primary"
+               disabled="!OwnAuthDisabled"
                class="saveBtn button22"
                @click='save'>
       保存
@@ -195,6 +195,18 @@ import SetTimeAreaDialog from "./SetDeviceTimeAreaDialog.vue";
 export default {
   name: "doordutou",
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     deviceUuid: {
       type: String,
       default() {
