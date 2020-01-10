@@ -65,7 +65,11 @@ export default {
 		lastLevelType: {
 			type: String,
 			default: ""
-		}
+    },
+    isCurrentShow:{
+      type:Boolean,
+      default:''
+    }
 	},
 	data() {
 		return {
@@ -120,12 +124,12 @@ export default {
 						} else {
 							for (let item of res.data.data) {
 								// 新增楼栋单元的上级地址，不能到层。
-								if (item.type === "floor") {
+								if (item.type === this.lastLevelType) {
 									res.data.data = [];
 									resolve([]);
 									this.$message({
 										type: "warning",
-										message: "新增楼栋单元的上级地址，不能到层"
+										message: "此处不能新增房屋"
 									});
 									break;
 								}
@@ -229,7 +233,12 @@ export default {
 				this.initData();
 			},
 			deep: true
-		}
+    },
+    isCurrentShow(val){
+      if(val){
+        this.nodeText = "";
+      }
+    }
 	},
 	destroyed() {}
 };
