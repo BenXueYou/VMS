@@ -238,24 +238,8 @@ export default {
   height: 100%;
   overflow: auto;
 }
-.AntiBack .el-input__prefix {
-  position: absolute;
-  height: 100%;
-  left: 5px !important;
-  top: 0;
-  text-align: center;
-  color: #c0c4cc;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
-  transform: translateX(0%);
-}
-.AntiBack .el-select {
-  display: inline-block;
-  position: relative;
-  width: 80%;
-}
-.AntiBack .el-radio {
-  margin: auto 15px auto 0;
+.treeTabs .el-input__inner {
+	padding-left: 30px;
 }
 </style>
 

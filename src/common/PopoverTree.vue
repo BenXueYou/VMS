@@ -107,6 +107,10 @@ export default {
       if (node.level === 0) {
         return;
       }
+      // if(){
+
+      // }
+      console.log(node);
       if (this.initAreaData && node.data) {
         this.$houseHttp
           .getInfrastructure({
@@ -117,6 +121,13 @@ export default {
               resolve([]);
             } else {
               for (let item of res.data.data) {
+                // 新增楼栋单元的上级地址，不能到层。
+                if(item.type === 'floor'){
+                  res.data.data = [];
+                  resolve([]);
+                  this.$message({type:'warning',message:'新增楼栋单元的上级地址，不能到层'});
+                  break;
+                }
                 this.$set(item, "leaf", true);
                 if (item.nextCount !== 0 && item.type !== this.lastLevelType) {
                   this.$set(item, "leaf", false);
