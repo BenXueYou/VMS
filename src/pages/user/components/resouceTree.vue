@@ -19,9 +19,6 @@
 						class="i-tree"
 						:name="treeTab.id"
 					>
-						<!-- v-if="treeTab.id === activeName" -->
-						<!-- :load="loadNode($event,treeTab.id)" -->
-						<!-- v-if="treeTab.id === activeName" -->
 						<el-tree
 							:load="loadNode"
 							node-key="id"
@@ -234,7 +231,7 @@ export default {
           if (this.activeName !== "door") {
             return (
               channelItem.extInfo &&
-							channelItem.realType.indexOf(this.resourceType) !== -1
+							this.resourceType.indexOf(channelItem.realType) !== -1
             );
           }
           return (
