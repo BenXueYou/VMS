@@ -369,10 +369,6 @@ export default {
         this.$cToast.warn("请填写主题");
         return;
       }
-      if (parseInt(this.duration) === 0) {
-        this.$cToast.warn("照片停留时间不能为0秒");
-        return;
-      }
       let picture = [];
       if (!this.noticeUuid) {
         picture = [];
@@ -382,6 +378,22 @@ export default {
             picture.push(item);
           }
         }
+      }
+      if (
+        !this.noticeUuid &&
+          this.pictureForLocalShow.length > 1 &&
+          parseInt(this.duration) === 0
+      ) {
+        this.$cToast.warn("照片停留时间不能为0秒");
+        return;
+      }
+      if (
+        this.noticeUuid &&
+          this.picture.length > 1 &&
+          parseInt(this.duration) === 0
+      ) {
+        this.$cToast.warn("照片停留时间不能为0秒");
+        return;
       }
       let xhr = {
         duration: parseInt(this.duration),
