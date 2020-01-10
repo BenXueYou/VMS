@@ -355,7 +355,7 @@ export default {
         this.$cToast.warn("请填写主题");
         return;
       }
-      if (parseInt(this.duration) === 0) {
+      if (this.pictureForLocalShow && this.pictureForLocalShow.length && parseInt(this.duration) === 0) {
         this.$cToast.warn("照片停留时间不能为0秒");
         return;
       }
