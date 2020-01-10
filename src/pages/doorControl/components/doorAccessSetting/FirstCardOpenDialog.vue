@@ -297,7 +297,8 @@ export default {
         };
         resourceSet.push(tempItem);
       }
-      if (this.checkedDoor === {}) {
+
+      if (this.checkedDoor && !this.checkedDoor.channelUuid) {
         this.$message({
           type: "warning",
           message: "请选择门"
