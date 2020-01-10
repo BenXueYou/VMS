@@ -64,6 +64,10 @@ export default {
       type: String,
       default: ""
     },
+    isCurrentShow:{
+      type:Boolean,
+      default:false
+    }
   },
   data() {
     return {
@@ -88,6 +92,7 @@ export default {
   },
   methods: {
     initData() {
+      this.nodeText = "";
       if (!this.initAreaData) {
         return;
       }
@@ -122,10 +127,11 @@ export default {
             } else {
               for (let item of res.data.data) {
                 // 新增楼栋单元的上级地址，不能到层。
-                if(item.type === 'floor'){
+                console.log(this.lastLevelType);
+                if(item.type === this.lastLevelType){                  
                   res.data.data = [];
                   resolve([]);
-                  this.$message({type:'warning',message:'新增楼栋单元的上级地址，不能到层'});
+                  this.$message({type:'warning',message:'此处不能新增房屋'});
                   break;
                 }
                 this.$set(item, "leaf", true);
@@ -228,6 +234,11 @@ export default {
         this.initData();
       },
       deep: true
+    },
+    isCurrentShow(val){
+      if(val){
+        this.nodeText = '';
+      }
     }
   },
   destroyed() {}
