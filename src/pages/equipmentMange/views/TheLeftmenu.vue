@@ -903,6 +903,9 @@ export default {
       margin-top: 9px;
     }
   }
+	.searchWrap .el-input__inner {
+		padding-left: 30px;
+	}
 }
 </style>
 
