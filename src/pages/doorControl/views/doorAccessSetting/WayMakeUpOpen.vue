@@ -1,72 +1,81 @@
 <template>
-	<el-row class="WayMakeUpOpen" ref="mainWMHeight" type="flex">
-		<el-col class="WMBox leftBox" :span="4">
-			<el-header>
-				<img class="img" src="../../../../assets/images/doorAccess/device_list_icon.png" alt />设备列表
-			</el-header>
-			<!--     <the-leftmenu @changetab="changetab" ref="leftMenu" @clickNode="clickNodeAll" needType="" tagType="devide"  orgType="devide"></the-leftmenu> -->
-			<el-input
-				prefix-icon="el-icon-search"
-				placeholder="搜索设备地址"
-				v-model="filterText"
-				style="margin-bottom: 21px;"
-			></el-input>
-			<el-tree
-				class="filter-tree"
-				:show-checkbox="false"
-				:check-strictly="false"
-				:data="treeData"
-				:props="defaultProps"
-				node-key="id"
-				@check-change="checkChange"
-				@node-click="nodeClick"
-				@current-change="currentChange"
-				:filter-node-method="filterNode"
-				:expand-on-click-node="true"
-				ref="tree"
-				:highlight-current="true"
-				lazy
-			>
-				<div class="custom-tree-node i-tree-item" slot-scope="{ node }">
-					<div class="i-tree-item-icon">
-						<img :src="iconShow(node)" width="12.2px" height="7.9px" style="margin-right: 4px;" />
-						{{ node.label }}
-					</div>
-				</div>
-			</el-tree>
-		</el-col>
-		<el-col
-			class="WMBox rightBox"
-			:span="20"
-			v-loading="mainListLoading"
-			element-loading-background="rgba(0, 0, 0, 0.8)"
-		>
-			<el-header>
-				<img class="img" src="../../../../assets/images/doorAccess/men_verify.png" alt />多种验证方式组合开门
-			</el-header>
-			<el-table :data="tableData" style="width: 100%">
-				<el-table-column type="index" :index="tableIndex" label="序号" width="80"></el-table-column>
-				<el-table-column prop="nickName" label="读头" width="200"></el-table-column>
-				<el-table-column prop="options" label="开门方式">
-					<template slot-scope="scope">
-						<el-select
-							v-model="scope.row.recognitionMode"
-							@change="changeOpenStyle(scope.row)"
-							size="large"
-							placeholder="请选择"
-						>
-							<el-option
-								v-for="item in scope.row.newOption"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value"
-							></el-option>
-						</el-select>
-					</template>
-				</el-table-column>
-			</el-table>
-		</el-col>
-	</el-row>
+  <el-row class="WayMakeUpOpen"
+          ref="mainWMHeight"
+          type="flex">
+    <el-col class="WMBox leftBox"
+            :span="4">
+      <el-header>
+        <img class="img"
+             src="../../../../assets/images/doorAccess/device_list_icon.png"
+             alt />设备列表
+      </el-header>
+      <!--     <the-leftmenu @changetab="changetab" ref="leftMenu" @clickNode="clickNodeAll" needType="" tagType="devide"  orgType="devide"></the-leftmenu> -->
+      <el-input prefix-icon="el-icon-search"
+                placeholder="搜索设备地址"
+                v-model="filterText"
+                style="margin-bottom: 21px;"></el-input>
+      <el-tree class="filter-tree"
+               :show-checkbox="false"
+               :check-strictly="false"
+               :data="treeData"
+               :props="defaultProps"
+               node-key="id"
+               @check-change="checkChange"
+               @node-click="nodeClick"
+               @current-change="currentChange"
+               :filter-node-method="filterNode"
+               :expand-on-click-node="true"
+               ref="tree"
+               :highlight-current="true"
+               lazy>
+        <div class="custom-tree-node i-tree-item"
+             slot-scope="{ node }">
+          <div class="i-tree-item-icon">
+            <img :src="iconShow(node)"
+                 width="12.2px"
+                 height="7.9px"
+                 style="margin-right: 4px;" />
+            {{ node.label }}
+          </div>
+        </div>
+      </el-tree>
+    </el-col>
+    <el-col class="WMBox rightBox"
+            :span="20"
+            v-loading="mainListLoading"
+            element-loading-background="rgba(0, 0, 0, 0.8)">
+      <el-header>
+        <img class="img"
+             src="../../../../assets/images/doorAccess/men_verify.png"
+             alt />多种验证方式组合开门
+      </el-header>
+      <el-table :data="tableData"
+                style="width: 100%">
+        <el-table-column type="index"
+                         :index="tableIndex"
+                         label="序号"
+                         width="80"></el-table-column>
+        <el-table-column prop="nickName"
+                         label="读头"
+                         width="200"></el-table-column>
+        <el-table-column prop="options"
+                         label="开门方式">
+          <template slot-scope="scope">
+            <el-select :disabled="!OwnAuthDisabled"
+                       v-model="scope.row.recognitionMode"
+                       @change="changeOpenStyle(scope.row)"
+                       size="large"
+                       placeholder="请选择">
+              <el-option v-for="item in scope.row.newOption"
+                         :key="item.value"
+                         :label="item.label"
+                         :value="item.value"></el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-col>
+  </el-row>
 </template>
 <script>
 import TheLeftmenu from "./../../../equipmentMange/views/TheLeftmenu";
@@ -161,7 +170,8 @@ export default {
       newChildData: [],
       isExpanded: false,
       treeNode: "",
-      treeId: ""
+      treeId: "",
+      OwnAuthDisabled: false
     };
   },
   created() {},
@@ -176,6 +186,7 @@ export default {
       "isShow"
     );
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("多验证方式开门", "isOwn");
+    // this.OwnAuthDisabled = false;
     if (!this.ShowAuthDisabled) return;
     this.initDeviceTree();
   },
@@ -205,10 +216,10 @@ export default {
       this.$http
         .get(
           this.api +
-						"/basedata-v1/project/" +
-						this.projectUuid +
-						"/deviceReadHeadList/" +
-						treeId
+            "/basedata-v1/project/" +
+            this.projectUuid +
+            "/deviceReadHeadList/" +
+            treeId
         )
         .then(res => {
           console.log("获取设备读头====", res);
@@ -260,9 +271,9 @@ export default {
       this.$http
         .get(
           this.api +
-						"/basedata-v1/project/" +
-						this.projectUuid +
-						"/device/list?viewType=door&limit=900000000&page=1"
+            "/basedata-v1/project/" +
+            this.projectUuid +
+            "/device/list?viewType=door&limit=900000000&page=1"
         )
         .then(res => {
           console.log("获取设备通道====", res);
@@ -330,10 +341,10 @@ export default {
       this.$http
         .put(
           this.api +
-						"/iacconfig-v1/project/" +
-						this.projectUuid +
-						"/advancedConf/checkCombinationDoorOpen/channelInfo/" +
-						row.channelUuid,
+            "/iacconfig-v1/project/" +
+            this.projectUuid +
+            "/advancedConf/checkCombinationDoorOpen/channelInfo/" +
+            row.channelUuid,
           {
             channelUuid: row.channelUuid,
             recognitionMode: row.recognitionMode,
@@ -382,35 +393,35 @@ export default {
 </script>
 <style>
 .rightBox .el-select .el-input__inner {
-	height: 30px;
+  height: 30px;
 }
 </style>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .WayMakeUpOpen {
-	height: 100%;
-	.WMBox {
-		background: rgba(35, 38, 41, 0.8);
-		margin-right: 20px;
-		height: 100%;
-	}
-	.leftBox {
-		padding: 0 20px;
-		.el-header {
-			padding-left: 0px;
-		}
-	}
-	.rightBox .el-select {
-		width: 80%;
-		max-width: 220px;
-		height: 30px;
-	}
-	.el-header {
-		line-height: 60px;
-	}
-	.el-icon-caret-right:before {
-		content: none;
-	}
+  height: 100%;
+  .WMBox {
+    background: rgba(35, 38, 41, 0.8);
+    margin-right: 20px;
+    height: 100%;
+  }
+  .leftBox {
+    padding: 0 20px;
+    .el-header {
+      padding-left: 0px;
+    }
+  }
+  .rightBox .el-select {
+    width: 80%;
+    max-width: 220px;
+    height: 30px;
+  }
+  .el-header {
+    line-height: 60px;
+  }
+  .el-icon-caret-right:before {
+    content: none;
+  }
 }
 </style>

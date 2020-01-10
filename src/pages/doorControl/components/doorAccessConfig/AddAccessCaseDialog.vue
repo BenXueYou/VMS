@@ -292,11 +292,15 @@ export default {
             trigger: "blur"
           }
         ]
-      }
+      },
+      ShowAuthDisabled: false,
+      OwnAuthDisabled: false
     };
   },
   mounted() {
     this.AddAcessCaseDialogVisible = this.visible;
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("通行时间段", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("通行时间段", "isOwn");
   },
   methods: {
     changeStartTime(index, type, val) {

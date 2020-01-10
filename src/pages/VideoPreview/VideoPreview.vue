@@ -256,6 +256,7 @@ export default {
   mounted() {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isOwn");
+    // this.OwnAuthDisabled = false;
     // this.ShowAuthDisabled = true;
     // this.OwnAuthDisabled = false;
     // this.OwnAuthDisabled = true;

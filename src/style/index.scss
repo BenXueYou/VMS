@@ -3,6 +3,7 @@
 }
 .disabled {
   color: #82848a !important;
+  pointer-events: none;
 }
 div[disabled],
 div span[disabled]{

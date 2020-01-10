@@ -1,179 +1,204 @@
 <template>
-	<div class="wrap adasjdka">
-		<div class="left">
-			<div class="button_group">
-				<el-button :disabled="!OwnAuthDisabled" type="primary" size="small" @click="addNewPowerClick" icon="el-icon-edit-outline">新增</el-button>
-			</div>
+  <div class="wrap adasjdka">
+    <div class="left">
+      <div class="button_group">
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
+                   size="small"
+                   @click="addNewPowerClick"
+                   icon="el-icon-edit-outline">新增</el-button>
+      </div>
 
-			<el-table
-				:data="tableData"
-				highlight-current-row
-				@current-change="handleCurrentChange"
-				ref="mytable"
-				style="width: 100%"
-			>
-				<el-table-column prop="name" label="名称"></el-table-column>
-				<el-table-column prop="doorCount" width="130" label="门数量"></el-table-column>
-			</el-table>
-		</div>
-		<div class="right" v-show="!powerDialogVisible">
-			<div class="button_group">
-				<el-button :disabled="!OwnAuthDisabled" type="primary" size="small" @click="deletePermission" icon="el-icon-delete">删除</el-button>
-				<el-button :disabled="!OwnAuthDisabled" type="primary" size="small" @click="editPermission" icon="el-icon-edit-outline">编辑</el-button>
-			</div>
-			<div class="dash-line"></div>
-			<!-- 内容区域 -->
-			<div class="headInfo">
-				<div class="name">
-					<div class="div">
-						<span>名称：{{groupName}}</span>
-					</div>
-				</div>
-				<div class="timeInfo">
-					<img :src="icons.time" alt />
-					<span>更新时间：{{updateTime}}</span>
-					<img :src="icons.time" alt />
-					<span>创建时间：{{createTime}}</span>
-					<img :src="icons.time" alt />
-					<span>更新人：{{updateMan}}</span>
-				</div>
-			</div>
+      <el-table :data="tableData"
+                highlight-current-row
+                @current-change="handleCurrentChange"
+                ref="mytable"
+                style="width: 100%">
+        <el-table-column prop="name"
+                         label="名称"></el-table-column>
+        <el-table-column prop="doorCount"
+                         width="130"
+                         label="门数量"></el-table-column>
+      </el-table>
+    </div>
+    <div class="right"
+         v-show="!powerDialogVisible">
+      <div class="button_group">
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
+                   size="small"
+                   @click="deletePermission"
+                   icon="el-icon-delete">删除</el-button>
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
+                   size="small"
+                   @click="editPermission"
+                   icon="el-icon-edit-outline">编辑</el-button>
+      </div>
+      <div class="dash-line"></div>
+      <!-- 内容区域 -->
+      <div class="headInfo">
+        <div class="name">
+          <div class="div">
+            <span>名称：{{groupName}}</span>
+          </div>
+        </div>
+        <div class="timeInfo">
+          <img :src="icons.time"
+               alt />
+          <span>更新时间：{{updateTime}}</span>
+          <img :src="icons.time"
+               alt />
+          <span>创建时间：{{createTime}}</span>
+          <img :src="icons.time"
+               alt />
+          <span>更新人：{{updateMan}}</span>
+        </div>
+      </div>
 
-			<div class="doorAndPeople">
-				<span class="title">门：</span>
+      <div class="doorAndPeople">
+        <span class="title">门：</span>
 
-				<div class="mydoor">
-					<p class="showMoreBtn">
-						<span>共{{doorCount}}个门</span>
-						<img :src="icons.down_btn" @click="MH=(MH!=='inherit'?'inherit':'160px')" alt />
-					</p>
+        <div class="mydoor">
+          <p class="showMoreBtn">
+            <span>共{{doorCount}}个门</span>
+            <img :src="icons.down_btn"
+                 @click="MH=(MH!=='inherit'?'inherit':'160px')"
+                 alt />
+          </p>
 
-					<div class="doorWrap" :style="{'max-height':MH}">
-						<el-popover
-							placement="bottom-start"
-							width="320"
-							v-if="item.resType !== 'door'"
-							trigger="hover"
-							v-for="(item,index) in doorNum"
-							:key="index"
-							@show="showDoor(item)"
-							class="message"
-						>
-							<div v-if="item.resType!='door'" class="hoverPerson">
-								<div class="personContent">
-									<gt-button
-										:icon="icons.door"
-										v-for="(item,index) in doorList"
-										class="person"
-										:key="index"
-										:show-close="false"
-									>{{item.nickName}}</gt-button>
-									<div v-if="!doorList.length" class="noDataTips">没有更多数据</div>
-								</div>
-								<div class="lookmore" v-if="doorList.length>6" @click="lookMoreDoor">查看更多》</div>
-							</div>
+          <div class="doorWrap"
+               :style="{'max-height':MH}">
+            <el-popover placement="bottom-start"
+                        width="320"
+                        v-if="item.resType !== 'door'"
+                        trigger="hover"
+                        v-for="(item,index) in doorNum"
+                        :key="index"
+                        @show="showDoor(item)"
+                        class="message">
+              <div v-if="item.resType!='door'"
+                   class="hoverPerson">
+                <div class="personContent">
+                  <gt-button :icon="icons.door"
+                             v-for="(item,index) in doorList"
+                             class="person"
+                             :key="index"
+                             :show-close="false">{{item.nickName}}</gt-button>
+                  <div v-if="!doorList.length"
+                       class="noDataTips">没有更多数据</div>
+                </div>
+                <div class="lookmore"
+                     v-if="doorList.length>6"
+                     @click="lookMoreDoor">查看更多》</div>
+              </div>
 
-							<gt-button :icon="icons.door" slot="reference" :show-close="false">{{item.resName}}</gt-button>
-						</el-popover>
-						<gt-button :icon="icons.door" v-else class="gtbutton" :show-close="false">{{item.resName}}</gt-button>
-					</div>
-				</div>
-			</div>
+              <gt-button :icon="icons.door"
+                         slot="reference"
+                         :show-close="false">{{item.resName}}</gt-button>
+            </el-popover>
+            <gt-button :icon="icons.door"
+                       v-else
+                       class="gtbutton"
+                       :show-close="false">{{item.resName}}</gt-button>
+          </div>
+        </div>
+      </div>
 
-			<div class="doorAndPeople">
-				<span class="title">组内：</span>
+      <div class="doorAndPeople">
+        <span class="title">组内：</span>
 
-				<div class="mydoor">
-					<p class="showMoreBtn">
-						<span>共{{peopleCount}}个人</span>
-						<img :src="icons.down_btn" @click="MH2=(MH2!=='inherit'?'inherit':'160px')" alt />
-					</p>
+        <div class="mydoor">
+          <p class="showMoreBtn">
+            <span>共{{peopleCount}}个人</span>
+            <img :src="icons.down_btn"
+                 @click="MH2=(MH2!=='inherit'?'inherit':'160px')"
+                 alt />
+          </p>
 
-					<div class="doorWrap" :style="{'max-height':MH2}">
-						<el-popover
-							placement="bottom-start"
-							width="240"
-							trigger="hover"
-							v-for="(item,index) in peopleNum"
-							:key="index"
-							@show="showPeople(item)"
-							class="message"
-						>
-							<div v-if="item.resType=='staff'" class="hoverPerson">
-								<div class="head">
-									<img :src="staffInfo.pic" alt />
-								</div>
-								<div class="personainfo">
-									<p>
-										<span>{{staffInfo.name}}</span>
-										<span>{{staffInfo.sex}}</span>
-										<span>{{staffInfo.zhuhu}}</span>
-									</p>
-									<p>
-										<span>{{staffInfo.phone}}</span>
-									</p>
-									<p>
-										<span>{{staffInfo.address}}</span>
-									</p>
-								</div>
-							</div>
-							<div v-else class="hoverPerson">
-								<!-- <div class="xulie">
+          <div class="doorWrap"
+               :style="{'max-height':MH2}">
+            <el-popover placement="bottom-start"
+                        width="240"
+                        trigger="hover"
+                        v-for="(item,index) in peopleNum"
+                        :key="index"
+                        @show="showPeople(item)"
+                        class="message">
+              <div v-if="item.resType=='staff'"
+                   class="hoverPerson">
+                <div class="head">
+                  <img :src="staffInfo.pic"
+                       alt />
+                </div>
+                <div class="personainfo">
+                  <p>
+                    <span>{{staffInfo.name}}</span>
+                    <span>{{staffInfo.sex}}</span>
+                    <span>{{staffInfo.zhuhu}}</span>
+                  </p>
+                  <p>
+                    <span>{{staffInfo.phone}}</span>
+                  </p>
+                  <p>
+                    <span>{{staffInfo.address}}</span>
+                  </p>
+                </div>
+              </div>
+              <div v-else
+                   class="hoverPerson">
+                <!-- <div class="xulie">
                     {{index}}
                   </div>
                   <div class="name">
                     {{item.staffName}}
 								</div>-->
-								<div class="personContent">
-									<gt-button
-										:icon="icons.personHead"
-										v-for="(item,index) in staffList"
-										class="person"
-										:key="index"
-										:show-close="false"
-									>{{item.staffName}}</gt-button>
-									<div v-if="!staffList.length" class="noDataTips">没有更多数据</div>
-								</div>
-								<div class="lookmore" @click="lookMorePerson" v-if="staffList.length>6">查看更多》</div>
-							</div>
+                <div class="personContent">
+                  <gt-button :icon="icons.personHead"
+                             v-for="(item,index) in staffList"
+                             class="person"
+                             :key="index"
+                             :show-close="false">{{item.staffName}}</gt-button>
+                  <div v-if="!staffList.length"
+                       class="noDataTips">没有更多数据</div>
+                </div>
+                <div class="lookmore"
+                     @click="lookMorePerson"
+                     v-if="staffList.length>6">查看更多》</div>
+              </div>
 
-							<gt-button
-								:icon="item.resType=='staff'?icons.personHead:icons.folder"
-								slot="reference"
-								:show-close="false"
-							>{{item.resName}}</gt-button>
-						</el-popover>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="right" v-show="powerDialogVisible">
-			<add-new-power-dialog
-				:visible.sync="powerDialogVisible"
-				:row="rowEdit"
-				:title="newPowerTitle"
-				:groupUuid="groupUuidDialog"
-				@sure="permissionSure"
-			></add-new-power-dialog>
-		</div>
+              <gt-button :icon="item.resType=='staff'?icons.personHead:icons.folder"
+                         slot="reference"
+                         :show-close="false">{{item.resName}}</gt-button>
+            </el-popover>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right"
+         v-show="powerDialogVisible">
+      <add-new-power-dialog :visible.sync="powerDialogVisible"
+                            :row="rowEdit"
+                            :title="newPowerTitle"
+                            :groupUuid="groupUuidDialog"
+                            @sure="permissionSure"></add-new-power-dialog>
+    </div>
 
-		<confirm-dialog
-			:visible.sync="confirmVisible"
-			@confirm="confirmDelete"
-			:confirmText="confirmText"
-		></confirm-dialog>
+    <confirm-dialog :visible.sync="confirmVisible"
+                    @confirm="confirmDelete"
+                    :confirmText="confirmText"></confirm-dialog>
 
-		<confirm-dialog
-			:visible.sync="xiafaConfirmVisible"
-			@confirm="confirmXiafa"
-			:confirmText="confirmXiafaText"
-		></confirm-dialog>
-		<the-company-table-xiafa-dialog :visible.sync="TheCompanyTableXiafaDialogVisible"></the-company-table-xiafa-dialog>
+    <confirm-dialog :visible.sync="xiafaConfirmVisible"
+                    @confirm="confirmXiafa"
+                    :confirmText="confirmXiafaText"></confirm-dialog>
+    <the-company-table-xiafa-dialog :visible.sync="TheCompanyTableXiafaDialogVisible"></the-company-table-xiafa-dialog>
 
-		<staff-dialog :visible.sync="personDialogVisible" :data="staffList"></staff-dialog>
+    <staff-dialog :visible.sync="personDialogVisible"
+                  :data="staffList"></staff-dialog>
 
-		<door-dialog :visible.sync="doorDialogVisible" :data="doorList"></door-dialog>
-	</div>
+    <door-dialog :visible.sync="doorDialogVisible"
+                 :data="doorList"></door-dialog>
+  </div>
 </template>
 
 <script>
@@ -240,11 +265,13 @@ export default {
     };
   },
   activated() {
-    this.getQXList();
+    setTimeout(() => {
+      this.getQXList();
+    }, 0);
   },
   mounted() {
-    this.ShowAuthDisabled = this.$common.getAuthIsOwn("访客权限", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("访客权限", "isOwn");
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("访客权限组", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("访客权限组", "isOwn");
   },
   methods: {
     showDoor(item) {
@@ -503,62 +530,62 @@ export default {
 @import "@/style/variables.scss";
 
 .hoverPerson {
-	box-sizing: border-box;
-	.personContent {
-		height: 130px;
-		overflow: hidden;
-	}
-	.person {
-		margin-right: 10px;
-		margin-top: 10px;
-	}
-	.lookmore {
-		text-align: right;
-		@include font-m;
-		color: $add-text-color;
-		cursor: pointer;
-	}
-	.head {
-		display: inline-block;
-		width: 92px;
-		height: 92px;
-		// background-color: #fff;
-		img {
-			height: 100%;
-			width: 100%;
-		}
-	}
-	.personainfo {
-		display: inline-block;
-		@include font-s;
-		vertical-align: top;
-		padding-top: 10px;
-		padding-left: 10px;
-		p {
-			margin: 0px;
-			line-height: 25px;
-			span {
-				display: inline-block;
-				&:nth-child(2) {
-					padding: 0px 10px;
-				}
-			}
-		}
-	}
+  box-sizing: border-box;
+  .personContent {
+    height: 130px;
+    overflow: hidden;
+  }
+  .person {
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+  .lookmore {
+    text-align: right;
+    @include font-m;
+    color: $add-text-color;
+    cursor: pointer;
+  }
+  .head {
+    display: inline-block;
+    width: 92px;
+    height: 92px;
+    // background-color: #fff;
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  .personainfo {
+    display: inline-block;
+    @include font-s;
+    vertical-align: top;
+    padding-top: 10px;
+    padding-left: 10px;
+    p {
+      margin: 0px;
+      line-height: 25px;
+      span {
+        display: inline-block;
+        &:nth-child(2) {
+          padding: 0px 10px;
+        }
+      }
+    }
+  }
 }
 .hoverContent {
-	background-color: #2a2e31;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	.gt-button {
-		width: 30%;
-		margin-top: 5px;
-	}
+  background-color: #2a2e31;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .gt-button {
+    width: 30%;
+    margin-top: 5px;
+  }
 }
 .noDataTips {
-	text-align: center;
-	color: #fff;
+  text-align: center;
+  color: #fff;
 }
 </style>
 
@@ -566,138 +593,138 @@ export default {
 @import "@/style/variables.scss";
 
 .wrap {
-	.gtbutton {
-		margin-right: 15px;
-		margin-bottom: 15px;
-	}
+  .gtbutton {
+    margin-right: 15px;
+    margin-bottom: 15px;
+  }
 
-	width: 100%;
-	height: 100%;
-	display: flex;
-	box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  box-sizing: border-box;
 
-	$leftWidth: 450px;
-	$rightMarginRight: 20px;
-	.left {
-		width: $leftWidth;
-		padding: $rightContentPadding;
-		background-color: $rigthContentBackgroundColor;
-		box-sizing: border-box;
-		overflow: auto;
-		.button_group {
-			margin: 0px 0px 20px;
-		}
-	}
-	.right {
-		position: relative;
-		margin-left: 20px;
-		width: calc(100% - #{$rightMarginRight} - #{$leftWidth});
-		padding: $rightContentPadding;
-		background-color: $rigthContentBackgroundColor;
-		overflow: auto;
+  $leftWidth: 450px;
+  $rightMarginRight: 20px;
+  .left {
+    width: $leftWidth;
+    padding: $rightContentPadding;
+    background-color: $rigthContentBackgroundColor;
+    box-sizing: border-box;
+    overflow: auto;
+    .button_group {
+      margin: 0px 0px 20px;
+    }
+  }
+  .right {
+    position: relative;
+    margin-left: 20px;
+    width: calc(100% - #{$rightMarginRight} - #{$leftWidth});
+    padding: $rightContentPadding;
+    background-color: $rigthContentBackgroundColor;
+    overflow: auto;
 
-		$wrapBg: rgba(255, 255, 255, 0.03);
-		$titleWidth: 140px;
-		.message {
-			display: inline-block;
-			margin-right: 10px;
-			margin-bottom: 10px;
-		}
-		.doorAndPeople {
-			background: $wrapBg;
-			margin-top: 10px;
-			padding: 20px 0px;
-			font-size: 0px;
-			.doorWrap {
-				margin-top: 20px;
-				max-height: 200px;
-				overflow: hidden;
-			}
-			.mydoor {
-				display: inline-block;
-				width: calc(100% - #{$titleWidth});
-				padding-left: 20px;
-				box-sizing: border-box;
-				.showMoreBtn {
-					margin: 0px;
-					@include font-m;
-					span {
-						display: inline-block;
-					}
-					img {
-						cursor: pointer;
-						padding-left: 10px;
-						display: inline-block;
-						vertical-align: middle;
-					}
-				}
-			}
-			.title {
-				display: inline-block;
-				width: $titleWidth;
-				text-align: right;
-				vertical-align: top;
-				@include font-m;
-			}
-		}
-		.timeDateArea {
-			background-color: $wrapBg;
-			padding: 15px 0px;
-			.cccc {
-				padding: 8px 20px 8px;
-				margin: 0px;
-				vertical-align: top;
-				.aaaa {
-					display: inline-block;
-					.time {
-						padding-right: 25px;
-					}
-				}
-				@include font-m;
-				.label {
-					width: 120px;
-					text-align: right;
-					display: inline-block;
-					vertical-align: top;
-				}
-			}
-		}
-		.headInfo {
-			display: flex;
-			justify-content: space-between;
-			line-height: 20px;
-			margin: 20px 0px 10px;
-			@include font-m;
-			.name {
-				padding: 10px 0px;
-				width: 360px;
-				background: $wrapBg;
-				text-align: center;
-				.div {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					span {
-						height: 20px;
-					}
-				}
-			}
-			.timeInfo {
-				padding: 10px 0px;
-				img {
-					padding-left: 20px;
-				}
-			}
-		}
-		.button_group {
-			margin-bottom: 20px;
-			overflow: hidden;
-			button {
-				float: right;
-				margin-right: 10px;
-				margin-left: 0px;
-			}
-		}
-	}
+    $wrapBg: rgba(255, 255, 255, 0.03);
+    $titleWidth: 140px;
+    .message {
+      display: inline-block;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    .doorAndPeople {
+      background: $wrapBg;
+      margin-top: 10px;
+      padding: 20px 0px;
+      font-size: 0px;
+      .doorWrap {
+        margin-top: 20px;
+        max-height: 200px;
+        overflow: hidden;
+      }
+      .mydoor {
+        display: inline-block;
+        width: calc(100% - #{$titleWidth});
+        padding-left: 20px;
+        box-sizing: border-box;
+        .showMoreBtn {
+          margin: 0px;
+          @include font-m;
+          span {
+            display: inline-block;
+          }
+          img {
+            cursor: pointer;
+            padding-left: 10px;
+            display: inline-block;
+            vertical-align: middle;
+          }
+        }
+      }
+      .title {
+        display: inline-block;
+        width: $titleWidth;
+        text-align: right;
+        vertical-align: top;
+        @include font-m;
+      }
+    }
+    .timeDateArea {
+      background-color: $wrapBg;
+      padding: 15px 0px;
+      .cccc {
+        padding: 8px 20px 8px;
+        margin: 0px;
+        vertical-align: top;
+        .aaaa {
+          display: inline-block;
+          .time {
+            padding-right: 25px;
+          }
+        }
+        @include font-m;
+        .label {
+          width: 120px;
+          text-align: right;
+          display: inline-block;
+          vertical-align: top;
+        }
+      }
+    }
+    .headInfo {
+      display: flex;
+      justify-content: space-between;
+      line-height: 20px;
+      margin: 20px 0px 10px;
+      @include font-m;
+      .name {
+        padding: 10px 0px;
+        width: 360px;
+        background: $wrapBg;
+        text-align: center;
+        .div {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          span {
+            height: 20px;
+          }
+        }
+      }
+      .timeInfo {
+        padding: 10px 0px;
+        img {
+          padding-left: 20px;
+        }
+      }
+    }
+    .button_group {
+      margin-bottom: 20px;
+      overflow: hidden;
+      button {
+        float: right;
+        margin-right: 10px;
+        margin-left: 0px;
+      }
+    }
+  }
 }
 </style>

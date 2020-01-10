@@ -101,7 +101,7 @@ export default {
   mounted() {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isOwn");
-    this.OwnAuthDisabled = false;
+    // this.OwnAuthDisabled = false;
     this.initData();
   },
   activated() {

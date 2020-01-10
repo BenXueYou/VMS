@@ -1,119 +1,127 @@
 <template>
-	<div class="setting-main">
-		<div style="background-color: #212325;height:100%">
-			<div class="mainBox">
-				<el-header class="headerBox">
-					<div>基础配置</div>
-					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="postData">保存</el-button>
-				</el-header>
-				<div class="bodyBox">
-					<div class="bodyBoxDiv">
-						<p>抓拍质量无效图片是否保存：</p>
-						<p>抓拍查重：</p>
-						<p v-if="queryBody.removeDuplicationImage">抓拍查重间隔：</p>
-						<p v-if="queryBody.removeDuplicationImage">人脸查重相似度：</p>
-					</div>
-					<div class="bodyBoxDiv" style="text-align:left">
-						<p class="bodyBoxDivRightP">
-							<el-radio-group v-model="queryBody.saveQualityLowerImage">
-								<el-radio :label="1">是</el-radio>
-								<el-radio :label="0">否</el-radio>
-							</el-radio-group>
-						</p>
-						<p class="bodyBoxDivRightP">
-							<el-radio-group v-model="queryBody.removeDuplicationImage">
-								<el-radio :label="1">是</el-radio>
-								<el-radio :label="0">否</el-radio>
-							</el-radio-group>
-						</p>
-						<div v-if="queryBody.removeDuplicationImage">
-							<el-input
-								v-if=" queryBody.removeDuplicationImage"
-								type="number"
-								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-								v-model="queryBody.captureInterval"
-							></el-input>秒
-						</div>
-						<p v-if=" queryBody.removeDuplicationImage">
-							<el-input
-								v-if=" queryBody.removeDuplicationImage"
-								type="number"
-								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-								v-model="queryBody.similarity"
-							></el-input>
-						</p>
-					</div>
-				</div>
-				<div class="bodyBox">
-					<div class="bodyBoxDiv">
-						<p>报警声音：</p>
-						<p></p>
-					</div>
-					<div class="bodyBoxDiv">
-						<p
-							:class="OwnAuthDisabled?'cursorClass':'disabled'"
-							style="text-align:left"
-							@click="uploadBtnAct"
-						>
-							<img class="img" src="@/assets/images/add.png" alt srcset />添加
-						</p>
-						<p v-for="tag in tags" :key="tag.soundUrl">
-							<el-tag closable @close="handleClose(tag)" :disable-transitions="false">
-								<img class="img" src="@/assets/images/faceModule/voice.png" alt srcset />
-								{{tag.soundName}}
-							</el-tag>
-							<span class="cursorClass" style="margin-left:40px;" @click="tryListenBtnAct(tag)">
-								<img class="img" src="@/assets/images/faceModule/tryListen.png" alt srcset />试听
-							</span>
-						</p>
-						<p></p>
-					</div>
-				</div>
-				<div class="bodyBox">
-					<div class="bodyBoxDiv">
-						<p class="warningTxt" style="visibility: hidden;">抓拍质量无效图片是否保存：</p>
-						<p>人脸抓拍保存天数：</p>
-						<p>人脸抓拍全景图保存天数：</p>
-						<p>人脸报警图片保存天数：</p>
-						<!-- <p>人脸查重相似度：</p> -->
-					</div>
-					<div class="bodyBoxDiv">
-						<p class="warningTxt">注：缩短时间前期时间数据会消失</p>
-						<p class="bodyBoxDivRightP">
-							<el-input
-								type="number"
-								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-								v-model="queryBody.saveImageUriDay"
-							></el-input>天
-						</p>
-						<p class="bodyBoxDivRightP">
-							<el-input
-								type="number"
-								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-								v-model="queryBody.savePanoramauriDay"
-							></el-input>天
-						</p>
-						<p class="bodyBoxDivRightP">
-							<el-radio-group v-model="queryBody.saveAlarmImageType">
-								<el-radio :label="1">长期</el-radio>
-								<el-radio :label="0">短期</el-radio>
-							</el-radio-group>
-						</p>
-						<div v-if="!queryBody.saveAlarmImageType">
-							<el-input
-								type="number"
-								onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
-								v-model="queryBody.savaAlarmIangeDay"
-							></el-input>天
-						</div>
-					</div>
-				</div>
-				<div class="footerClass">
-					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="postData">保存</el-button>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="setting-main">
+    <div style="background-color: #212325;height:100%">
+      <div class="mainBox">
+        <el-header class="headerBox">
+          <div>基础配置</div>
+          <el-button :disabled="!OwnAuthDisabled"
+                     type="primary"
+                     @click="postData">保存</el-button>
+        </el-header>
+        <div class="bodyBox">
+          <div class="bodyBoxDiv">
+            <p>抓拍质量无效图片是否保存：</p>
+            <p>抓拍查重：</p>
+            <p v-if="queryBody.removeDuplicationImage">抓拍查重间隔：</p>
+            <p v-if="queryBody.removeDuplicationImage">人脸查重相似度：</p>
+          </div>
+          <div class="bodyBoxDiv"
+               style="text-align:left">
+            <p class="bodyBoxDivRightP">
+              <el-radio-group v-model="queryBody.saveQualityLowerImage">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
+              </el-radio-group>
+            </p>
+            <p class="bodyBoxDivRightP">
+              <el-radio-group v-model="queryBody.removeDuplicationImage">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
+              </el-radio-group>
+            </p>
+            <div v-if="queryBody.removeDuplicationImage">
+              <el-input v-if=" queryBody.removeDuplicationImage"
+                        type="number"
+                        onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                        v-model="queryBody.captureInterval"></el-input>秒
+            </div>
+            <p v-if=" queryBody.removeDuplicationImage">
+              <el-input v-if=" queryBody.removeDuplicationImage"
+                        type="number"
+                        onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                        v-model="queryBody.similarity"></el-input>
+            </p>
+          </div>
+        </div>
+        <div class="bodyBox">
+          <div class="bodyBoxDiv">
+            <p>报警声音：</p>
+            <p></p>
+          </div>
+          <div class="bodyBoxDiv">
+            <p :class="OwnAuthDisabled?'cursorClass':'disabled'"
+               style="text-align:left"
+               @click="uploadBtnAct">
+              <img class="img"
+                   src="@/assets/images/add.png"
+                   alt
+                   srcset />添加
+            </p>
+            <p v-for="tag in tags"
+               :key="tag.soundUrl">
+              <el-tag closable
+                      @close="handleClose(tag)"
+                      :disable-transitions="false">
+                <img class="img"
+                     src="@/assets/images/faceModule/voice.png"
+                     alt
+                     srcset />
+                {{tag.soundName}}
+              </el-tag>
+              <span class="cursorClass"
+                    style="margin-left:40px;"
+                    @click="tryListenBtnAct(tag)">
+                <img class="img"
+                     src="@/assets/images/faceModule/tryListen.png"
+                     alt
+                     srcset />试听
+              </span>
+            </p>
+            <p></p>
+          </div>
+        </div>
+        <div class="bodyBox">
+          <div class="bodyBoxDiv">
+            <p class="warningTxt"
+               style="visibility: hidden;">抓拍质量无效图片是否保存：</p>
+            <p>人脸抓拍保存天数：</p>
+            <p>人脸抓拍全景图保存天数：</p>
+            <p>人脸报警图片保存天数：</p>
+            <!-- <p>人脸查重相似度：</p> -->
+          </div>
+          <div class="bodyBoxDiv">
+            <p class="warningTxt">注：缩短时间前期时间数据会消失</p>
+            <p class="bodyBoxDivRightP">
+              <el-input type="number"
+                        onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                        v-model="queryBody.saveImageUriDay"></el-input>天
+            </p>
+            <p class="bodyBoxDivRightP">
+              <el-input type="number"
+                        onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                        v-model="queryBody.savePanoramauriDay"></el-input>天
+            </p>
+            <p class="bodyBoxDivRightP">
+              <el-radio-group v-model="queryBody.saveAlarmImageType">
+                <el-radio :label="1">长期</el-radio>
+                <el-radio :label="0">短期</el-radio>
+              </el-radio-group>
+            </p>
+            <div v-if="!queryBody.saveAlarmImageType">
+              <el-input type="number"
+                        onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                        v-model="queryBody.savaAlarmIangeDay"></el-input>天
+            </div>
+          </div>
+        </div>
+        <div class="footerClass">
+          <el-button :disabled="!OwnAuthDisabled"
+                     type="primary"
+                     @click="postData">保存</el-button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 import * as api from "@/pages/faceModule/http/baseConfigHttp.js";
@@ -147,8 +155,8 @@ export default {
   },
   created() {},
   mounted() {
-    this.ShowAuthDisabled = this.$common.getAuthIsOwn("基础设置", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("基础设置", "isOwn");
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("设置", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("设置", "isOwn");
     if (this.ShowAuthDisabled) {
       this.initData();
     }
@@ -163,7 +171,7 @@ export default {
             // 若初始化人脸报警图片保存天数为零，不允许,自动处理默认180
             if (
               !this.queryBody.saveAlarmImageType &&
-							!this.queryBody.savaAlarmIangeDay
+              !this.queryBody.savaAlarmIangeDay
             ) {
               this.queryBody.savaAlarmIangeDay = 180;
             }
@@ -328,154 +336,154 @@ export default {
 </script>
 <style>
 .setting-main .el-tag .el-icon-close {
-	background-image: url("../../../../../assets/images/faceModule/tagDeleteIcon.png");
-	background-size: contain;
-	color: transparent;
-	top: -15px;
-	right: -15px;
+  background-image: url("../../../../../assets/images/faceModule/tagDeleteIcon.png");
+  background-size: contain;
+  color: transparent;
+  top: -15px;
+  right: -15px;
 }
 .el-message-box__title {
-	padding-left: 0;
-	margin-bottom: 0;
-	font-size: 16px;
-	line-height: 1;
-	color: #dddddd;
+  padding-left: 0;
+  margin-bottom: 0;
+  font-size: 16px;
+  line-height: 1;
+  color: #dddddd;
 }
 .el-message-box__header {
-	border-bottom: 1px solid #303133;
+  border-bottom: 1px solid #303133;
 }
 .el-message-box__content {
-	color: #dddddd;
+  color: #dddddd;
 }
 .el-message-box .el-button--default,
 .el-message-box .el-button--default:hover,
 .el-message-box .el-button--default:active,
 .el-message-box .el-button--default:focus {
-	background: rgba(40, 255, 187, 0.1);
-	border: 1px solid rgba(40, 255, 187, 0.45);
-	border-radius: 2px;
+  background: rgba(40, 255, 187, 0.1);
+  border: 1px solid rgba(40, 255, 187, 0.45);
+  border-radius: 2px;
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .setting-main {
-	width: 1100px;
-	min-height: 100%;
-	padding: 30px;
-	box-sizing: border-box;
-	.mainBox {
-		height: 100%;
-		background-color: #212325;
-		padding: 0 40px 40px;
-		box-sizing: border-box;
-		overflow: auto;
-		.headerBox {
-			display: flex;
-			justify-content: space-between;
-			align-content: center;
-			padding: 25px 0 24px;
-			height: 69px;
-			border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-			div {
-				border-left: 2px solid #26d39d;
-				font-family: "PingFangSC-Regular";
-				font-size: 14px;
-				color: #ffffff;
-				padding-left: 10px;
-				line-height: 10px;
-			}
-			.el-button {
-				background: rgba(40, 255, 187, 0.08);
-				border: 1px solid rgba(38, 211, 157, 0.8);
-				border-radius: 2px;
-				border-radius: 2px;
-				width: 80px;
-				height: 32px;
-				font-family: "PingFangSC-Regular";
-				font-size: 13px;
-				color: #ffffff;
-				text-align: justify;
-				padding: 0px 27px;
-				margin-top: -13px;
-			}
-		}
-		.bodyBox {
-			display: flex;
-			justify-content: flex-start;
-			border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-			padding: 15px 0;
-			.bodyBoxDiv {
-				font-family: "PingFangSC-Regular";
-				font-size: 13px;
-				color: #dddddd;
-				text-align: right;
-				padding: 0px 11px;
-				p {
-					// margin: 13px 0;
-					height: 32px;
-					line-height: 32px;
-				}
-				// p:last-child {
-				// 	margin: 0px 0;
-				// }
-				.el-radio-group {
-					display: block;
-				}
-				.el-input {
-					display: inline-block;
-					width: 100px;
-					height: 32px;
-					margin-right: 13px;
-				}
-				div {
-					text-align: left;
-				}
-				.img {
-					vertical-align: baseline;
-					margin-right: 8px;
-				}
-				.el-tag {
-					background-color: rgba(255, 255, 255, 0.05);
-					border: 0;
-					border-radius: 2px;
-					font-family: "PingFangSC-Regular";
-					font-size: 13px;
-					color: #dddddd;
-				}
-				.warningTxt {
-					font-family: "PingFangSC-Regular";
-					font-size: 13px;
-					color: #fd545e;
-					margin-top: 0;
-				}
-				.bodyBoxDivRightP {
-					text-align: left;
-					.el-radio-group {
-						line-height: 40px !important;
-					}
-				}
-			}
-			.bodyBoxDiv:first-child {
-				width: 24%;
-			}
-		}
-		.footerClass {
-			margin: 26px 0 10px;
-			text-align: right;
-			.el-button {
-				background: rgba(40, 255, 187, 0.08);
-				border: 1px solid rgba(38, 211, 157, 0.8);
-				border-radius: 2px;
-				border-radius: 2px;
-				width: 80px;
-				height: 32px;
-				font-family: "PingFangSC-Regular";
-				font-size: 13px;
-				color: #ffffff;
-				text-align: justify;
-				padding: 0px 27px;
-			}
-		}
-	}
+  width: 1100px;
+  min-height: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+  .mainBox {
+    height: 100%;
+    background-color: #212325;
+    padding: 0 40px 40px;
+    box-sizing: border-box;
+    overflow: auto;
+    .headerBox {
+      display: flex;
+      justify-content: space-between;
+      align-content: center;
+      padding: 25px 0 24px;
+      height: 69px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      div {
+        border-left: 2px solid #26d39d;
+        font-family: "PingFangSC-Regular";
+        font-size: 14px;
+        color: #ffffff;
+        padding-left: 10px;
+        line-height: 10px;
+      }
+      .el-button {
+        background: rgba(40, 255, 187, 0.08);
+        border: 1px solid rgba(38, 211, 157, 0.8);
+        border-radius: 2px;
+        border-radius: 2px;
+        width: 80px;
+        height: 32px;
+        font-family: "PingFangSC-Regular";
+        font-size: 13px;
+        color: #ffffff;
+        text-align: justify;
+        padding: 0px 27px;
+        margin-top: -13px;
+      }
+    }
+    .bodyBox {
+      display: flex;
+      justify-content: flex-start;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+      padding: 15px 0;
+      .bodyBoxDiv {
+        font-family: "PingFangSC-Regular";
+        font-size: 13px;
+        color: #dddddd;
+        text-align: right;
+        padding: 0px 11px;
+        p {
+          // margin: 13px 0;
+          height: 32px;
+          line-height: 32px;
+        }
+        // p:last-child {
+        // 	margin: 0px 0;
+        // }
+        .el-radio-group {
+          display: block;
+        }
+        .el-input {
+          display: inline-block;
+          width: 100px;
+          height: 32px;
+          margin-right: 13px;
+        }
+        div {
+          text-align: left;
+        }
+        .img {
+          vertical-align: baseline;
+          margin-right: 8px;
+        }
+        .el-tag {
+          background-color: rgba(255, 255, 255, 0.05);
+          border: 0;
+          border-radius: 2px;
+          font-family: "PingFangSC-Regular";
+          font-size: 13px;
+          color: #dddddd;
+        }
+        .warningTxt {
+          font-family: "PingFangSC-Regular";
+          font-size: 13px;
+          color: #fd545e;
+          margin-top: 0;
+        }
+        .bodyBoxDivRightP {
+          text-align: left;
+          .el-radio-group {
+            line-height: 40px !important;
+          }
+        }
+      }
+      .bodyBoxDiv:first-child {
+        width: 24%;
+      }
+    }
+    .footerClass {
+      margin: 26px 0 10px;
+      text-align: right;
+      .el-button {
+        background: rgba(40, 255, 187, 0.08);
+        border: 1px solid rgba(38, 211, 157, 0.8);
+        border-radius: 2px;
+        border-radius: 2px;
+        width: 80px;
+        height: 32px;
+        font-family: "PingFangSC-Regular";
+        font-size: 13px;
+        color: #ffffff;
+        text-align: justify;
+        padding: 0px 27px;
+      }
+    }
+  }
 }
 </style>

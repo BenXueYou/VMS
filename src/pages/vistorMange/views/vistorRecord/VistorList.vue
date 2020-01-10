@@ -76,7 +76,7 @@
 								:class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'"
 							>拉黑</span>
 							<span
-								:class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'"
+								:class="false?'cursorClass':'disabled'"
 								v-if="scope.row.black"
 								@click="signWhitelistBtnAct(scope.row)"
 								class="signOffBtnClass"

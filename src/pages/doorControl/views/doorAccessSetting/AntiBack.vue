@@ -1,106 +1,123 @@
 <template>
-	<div class="AntiBack">
-		<el-row ref="headerRef" class="header" type="flex" justify="space-between">
-			<el-col :span="20">
-				<img class="img" src="../../../../assets/images/doorAccess/careful_icon.png" alt />
-				<span class="header-title">
-					<span class="header-title-tips">线路反潜回：</span>设置好开门路径，如果不按照此路径验证，门将无法打开
-				</span>
-				<span class="header-title">
-					<span class="header-title-tips">进出反潜回：</span>某个用户如果验证之后不进门/出门，再次验证时门将无法打开
-				</span>
-			</el-col>
-			<el-col :span="4" class="header-buttton-box">
-				<el-button :disabled="!OwnAuthDisabled" type="primary" @click="addAntiBackAct">
-					<img class="img" src="../../../../assets/images/doorAccess/add_btn_icon.png" alt />新增
-				</el-button>
-			</el-col>
-		</el-row>
-		<el-row ref="bodyRef" class="body">
-			<el-table :data="tableData" style="width: 100%">
-				<el-table-column type="index" :index="tableIndex" label="序号" width="80"></el-table-column>
-				<el-table-column prop="groupName" label="反潜回方案名称" width="160" :show-overflow-tooltip="true"></el-table-column>
-				<el-table-column prop="returnTypeName" :show-overflow-tooltip="true" label="反潜回读头">
-					<template slot-scope="scope">
-						<!-- 进出反潜回 -->
-						<template v-if="scope.row.returnType == 'entry_exit'">
-							<div style="text-align:left">
-								进：
-								<span v-for="(item, index) in scope.row.entrySetVOList" :key="index">{{item}}／</span>
-							</div>
-							<div style="text-align:left">
-								出：
-								<span v-for="(item, index) in scope.row.checkOutSetVOList" :key="index">{{item}}／</span>
-							</div>
-						</template>
-						<!-- 线路反潜回 -->
-						<template v-else>
-							<div style="text-align:left">
-								<span
-									style="margin-right:15px;"
-									v-for="(item, index) in scope.row.entrySetVOList"
-									:key="index"
-								>{{index+1}}：{{item}}</span>
-							</div>
-						</template>
-					</template>
-				</el-table-column>
-				<el-table-column prop="returnTypeName" label="反潜回类型" width="180"></el-table-column>
-				<el-table-column prop="address" label="操作" width="200">
-					<template slot-scope="scope">
-						<el-button
-							:disabled="!OwnAuthDisabled"
-							type="text"
-							size="small"
-							@click.stop="editButtonAct(scope.row)"
-						>编辑</el-button>
-						<el-button
-							:disabled="!OwnAuthDisabled"
-							type="text"
-							size="small"
-							class="delete-button"
-							@click.stop="openDeleteDialog(scope.row)"
-						>删除</el-button>
-						<!-- <el-switch
+  <div class="AntiBack">
+    <el-row ref="headerRef"
+            class="header"
+            type="flex"
+            justify="space-between">
+      <el-col :span="20">
+        <img class="img"
+             src="../../../../assets/images/doorAccess/careful_icon.png"
+             alt />
+        <span class="header-title">
+          <span class="header-title-tips">线路反潜回：</span>设置好开门路径，如果不按照此路径验证，门将无法打开
+        </span>
+        <span class="header-title">
+          <span class="header-title-tips">进出反潜回：</span>某个用户如果验证之后不进门/出门，再次验证时门将无法打开
+        </span>
+      </el-col>
+      <el-col :span="4"
+              class="header-buttton-box">
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
+                   @click="addAntiBackAct">
+          <img class="img"
+               src="../../../../assets/images/doorAccess/add_btn_icon.png"
+               alt />新增
+        </el-button>
+      </el-col>
+    </el-row>
+    <el-row ref="bodyRef"
+            class="body">
+      <el-table :data="tableData"
+                style="width: 100%">
+        <el-table-column type="index"
+                         :index="tableIndex"
+                         label="序号"
+                         width="80"></el-table-column>
+        <el-table-column prop="groupName"
+                         label="反潜回方案名称"
+                         width="160"
+                         :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="returnTypeName"
+                         :show-overflow-tooltip="true"
+                         label="反潜回读头">
+          <template slot-scope="scope">
+            <!-- 进出反潜回 -->
+            <template v-if="scope.row.returnType == 'entry_exit'">
+              <div style="text-align:left">
+                进：
+                <span v-for="(item, index) in scope.row.entrySetVOList"
+                      :key="index">{{item}}／</span>
+              </div>
+              <div style="text-align:left">
+                出：
+                <span v-for="(item, index) in scope.row.checkOutSetVOList"
+                      :key="index">{{item}}／</span>
+              </div>
+            </template>
+            <!-- 线路反潜回 -->
+            <template v-else>
+              <div style="text-align:left">
+                <span style="margin-right:15px;"
+                      v-for="(item, index) in scope.row.entrySetVOList"
+                      :key="index">{{index+1}}：{{item}}</span>
+              </div>
+            </template>
+          </template>
+        </el-table-column>
+        <el-table-column prop="returnTypeName"
+                         label="反潜回类型"
+                         width="180"></el-table-column>
+        <el-table-column prop="address"
+                         label="操作"
+                         width="200">
+          <template slot-scope="scope">
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="text"
+                       size="small"
+                       @click.stop="editButtonAct(scope.row)">编辑</el-button>
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="text"
+                       size="small"
+                       class="delete-button"
+                       @click.stop="openDeleteDialog(scope.row)">删除</el-button>
+            <!-- <el-switch
 							:width="27"
 							v-model="scope.row.enabled"
 							@change="changeSwith(scope.row)"
 							active-color="rgba(255,255,255,0.2)"
 							inactive-color="#26D39D40"
 						></el-switch>-->
-						<el-switch
-							:disabled="!OwnAuthDisabled"
-							:width="27"
-							v-model="scope.row.enabled"
-							@change="changeSwith(scope.row)"
-							active-color="#26D39D40"
-							inactive-color="rgb(72,73,75)"
-						></el-switch>
-					</template>
-				</el-table-column>
-			</el-table>
-		</el-row>
-		<el-row ref="footerRef" class="footer">
-			<el-col :span="24" class="footerPages" style="text-align:right">
-				<el-pagination
-					@size-change="handleSizeChange"
-					@current-change="handleCurrentChange"
-					:current-page="currentPage"
-					layout="total,prev, pager, next,jumper"
-					:page-size="pageSize"
-					:total="total"
-					background
-				></el-pagination>
-			</el-col>
-		</el-row>
-		<!-- --------------------------    弹窗   ------------------------------------- -->
-		<AntiBack-dialog
-			:isShow="isShow"
-			:antiBackDetail="antiBackDetail"
-			@onConfirm="onConfirm"
-			@onCancel="onCancel"
-		></AntiBack-dialog>
-	</div>
+            <el-switch :disabled="!OwnAuthDisabled"
+                       :width="27"
+                       v-model="scope.row.enabled"
+                       @change="changeSwith(scope.row)"
+                       active-color="#26D39D40"
+                       inactive-color="rgb(72,73,75)"></el-switch>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-row>
+    <el-row ref="footerRef"
+            class="footer">
+      <el-col :span="24"
+              class="footerPages"
+              style="text-align:right">
+        <el-pagination @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       layout="total,prev, pager, next,jumper"
+                       :page-size="pageSize"
+                       :total="total"
+                       background></el-pagination>
+      </el-col>
+    </el-row>
+    <!-- --------------------------    弹窗   ------------------------------------- -->
+    <AntiBack-dialog :isShow="isShow"
+                     :antiBackDetail="antiBackDetail"
+                     @onConfirm="onConfirm"
+                     @onCancel="onCancel"></AntiBack-dialog>
+  </div>
 </template>
 
 <script>
@@ -130,17 +147,17 @@ export default {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("反潜回", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("反潜回", "isOwn");
     let h =
-			window.innerHeight ||
-			document.documentElement.clientHeight ||
-			document.body.clientHeight;
+      window.innerHeight ||
+      document.documentElement.clientHeight ||
+      document.body.clientHeight;
     this.$refs.bodyRef.$el.style.height = h - 240 + "px";
     // 当窗口发生变化时
     let that = this;
     function resizeEvent() {
       let h =
-				window.innerHeight ||
-				document.documentElement.clientHeight ||
-				document.body.clientHeight;
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight;
       that.$refs.bodyRef.$el.style.height = h - 240 + "px";
       var pageSize = parseInt((h - 240) / 50) - 1;
       if (pageSize !== that.pageSize && that.isResize) {
@@ -155,10 +172,12 @@ export default {
     );
   },
   activated() {
-    this.isResize = true;
-    if (this.ShowAuthDisabled) {
-      this.initData();
-    }
+    setTimeout(() => {
+      this.isResize = true;
+      if (this.ShowAuthDisabled) {
+        this.initData();
+      }
+    }, 0);
   },
   deactivated() {
     this.isResize = false;
@@ -282,71 +301,71 @@ export default {
 </script>
 <style>
 .AntiBack .el-switch.is-checked .el-switch__core::after {
-	left: 100%;
-	margin-left: -11px;
+  left: 100%;
+  margin-left: -11px;
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .AntiBack {
-	height: 100%;
-	background-color: rgba(35, 38, 41, 0.8);
-	color: #dddddd;
-	padding: 15px 40px 0px;
-	.header {
-		width: 100%;
-		height: 5%;
-		background: transparent;
-		display: flex;
-		flex-flow: row nowrap;
-		align-items: center;
-		.header-title {
-			color: #bbbbbb;
-			font-size: 13px;
-			margin-right: 5%;
-			.header-title-tips {
-				color: #ff5f5f;
-			}
-		}
-		.header-buttton-box {
-			text-align: right;
-		}
-		.header-buttton-box button {
-			height: 32px;
-			padding: 10px 22px;
-			font-size: 13px;
-		}
-	}
-	.body {
-		height: 100%;
-		// background: rgba(35,38,41,0.8);
-		padding-top: 15px;
-		.delete-button {
-			color: #ff5f5f;
-			margin-right: 10px;
-		}
-		.el-switch__core {
-			margin: 0;
-			display: inline-block;
-			position: relative;
-			width: 40px;
-			height: 16px;
-			border: 1px solid #dcdfe6;
-			outline: none;
-			border-radius: 10px;
-			-webkit-box-sizing: border-box;
-			box-sizing: border-box;
-			background: #dcdfe6;
-			cursor: pointer;
-			-webkit-transition: border-color 0.3s, background-color 0.3s;
-			transition: border-color 0.3s, background-color 0.3s;
-			vertical-align: middle;
-		}
-	}
-	.footer {
-		width: 100%;
-		padding: 10px 25px;
-		// background-color: rgba(35,38,41,0.8);
-	}
+  height: 100%;
+  background-color: rgba(35, 38, 41, 0.8);
+  color: #dddddd;
+  padding: 15px 40px 0px;
+  .header {
+    width: 100%;
+    height: 5%;
+    background: transparent;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    .header-title {
+      color: #bbbbbb;
+      font-size: 13px;
+      margin-right: 5%;
+      .header-title-tips {
+        color: #ff5f5f;
+      }
+    }
+    .header-buttton-box {
+      text-align: right;
+    }
+    .header-buttton-box button {
+      height: 32px;
+      padding: 10px 22px;
+      font-size: 13px;
+    }
+  }
+  .body {
+    height: 100%;
+    // background: rgba(35,38,41,0.8);
+    padding-top: 15px;
+    .delete-button {
+      color: #ff5f5f;
+      margin-right: 10px;
+    }
+    .el-switch__core {
+      margin: 0;
+      display: inline-block;
+      position: relative;
+      width: 40px;
+      height: 16px;
+      border: 1px solid #dcdfe6;
+      outline: none;
+      border-radius: 10px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      background: #dcdfe6;
+      cursor: pointer;
+      -webkit-transition: border-color 0.3s, background-color 0.3s;
+      transition: border-color 0.3s, background-color 0.3s;
+      vertical-align: middle;
+    }
+  }
+  .footer {
+    width: 100%;
+    padding: 10px 25px;
+    // background-color: rgba(35,38,41,0.8);
+  }
 }
 </style>
