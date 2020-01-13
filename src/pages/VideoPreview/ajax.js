@@ -28,6 +28,22 @@ export function getPreviewInfoAA(params = {}) {
     params
   });
 }
+export function log1(data) {
+  let url = vUrl.log1Url;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
+export function log2(data) {
+  let url = vUrl.log2Url;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
 export function ctrl(deviceUuid, data) {
   let url = vUrl.ctrlUrl + "?channelUuid=" + deviceUuid;
   return axios({

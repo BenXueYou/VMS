@@ -63,7 +63,7 @@ export default {
   // 人脸预览切换通道日志
   log1Url: `${
     window.config.protocolHeader
-  }${ip}/faceconfig-v1/project/${projectUuid}/faceInfo/capture/log`,
+  }${ip}/faceconfig-v1/project/${projectUuid}/monitoringTask/log/info`,
   log2Url: `${
     window.config.protocolHeader
   }${ip}/faceconfig-v1/project/${projectUuid}/faceInfo/capture/log`

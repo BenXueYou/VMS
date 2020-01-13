@@ -199,7 +199,6 @@
 <script>
 import TabTreeTag from "@/common/TabTreeTag.vue";
 import icons from "@/common/icon.js";
-import { setTime } from "../../../equipmentMange/ajax";
 export default {
   components: { TabTreeTag },
   props: {},
@@ -254,7 +253,7 @@ export default {
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("发布公告", "isOwn");
   },
   activated() {
-    setTime(() => {
+    setTimeout(() => {
       if (!this.ShowAuthDisabled) return;
       this.getPublicMessageList();
     }, 0);
@@ -381,16 +380,16 @@ export default {
       }
       if (
         !this.noticeUuid &&
-          this.pictureForLocalShow.length > 1 &&
-          parseInt(this.duration) === 0
+        this.pictureForLocalShow.length > 1 &&
+        parseInt(this.duration) === 0
       ) {
         this.$cToast.warn("照片停留时间不能为0秒");
         return;
       }
       if (
         this.noticeUuid &&
-          this.picture.length > 1 &&
-          parseInt(this.duration) === 0
+        this.picture.length > 1 &&
+        parseInt(this.duration) === 0
       ) {
         this.$cToast.warn("照片停留时间不能为0秒");
         return;

@@ -12,7 +12,6 @@
 
 <script>
 import GtTreeNode from "./tree-node.vue";
-import { setTime } from "../../../../pages/equipmentMange/ajax";
 
 export default {
   name: "GtTree",

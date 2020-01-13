@@ -494,7 +494,10 @@ export default {
               this.$message.warning("设备离线");
               return;
             }
-            this.getRtspInChannelUuid(this.channelInfoList[0].channelUuid);
+            this.getRtspInChannelUuid(
+              this.channelInfoList[0].channelUuid,
+              this.channelInfoList[0].channelName
+            );
           } else {
             console.log(res.data.data);
             this.$message({ type: "warning", message: "查询数据为空" });
@@ -563,6 +566,27 @@ export default {
         })
         .catch(() => {});
     },
+    log() {
+      console.log(this.checkedTaskUUidList);
+      let task = this.taskList || [],
+        num = [];
+      console.log(task);
+      console.log(this.checkedTaskUUidList);
+      for (let j = 0; j < this.checkedTaskUUidList.length; j++) {
+        let index = -1;
+        for (let i = 0; i < task.length; i++) {
+          if (task[i].faceMonitorUuid === this.checkedTaskUUidList[j]) {
+            index = i;
+            break;
+          }
+        }
+        if (index !== -1) {
+          num.push(task[index]);
+        }
+      }
+      console.log(num);
+      api2.log2(num);
+    },
     // 点击选中任务树的任务节点
     checkChanges(data, node) {
       this.checkedNodes = node.checkedNodes;
@@ -570,6 +594,7 @@ export default {
       this.$refs.tree.setCheckedKeys(this.checkedTaskUUidList);
       this.checkTaskAll =
         this.checkedTaskUUidList.length === this.taskList.length;
+      this.log();
     },
     // 全部任务选中
     handleTaskCheckAllChange(val) {
@@ -616,7 +641,11 @@ export default {
         return;
       }
       // 获取rtspUlrl
-      this.getRtspInChannelUuid(this.checkedChannel.channelUuid, true);
+      this.getRtspInChannelUuid(
+        this.checkedChannel.channelUuid,
+        this.checkedChannel.channelName,
+        true
+      );
       // 更新抓拍总数
       if (this.notCheckAll) {
         this.checkedChannelsUuidList = [];
@@ -631,7 +660,7 @@ export default {
       this.visible_popver = false;
     },
     // 布控任务通道ID获取码流参数
-    getRtspInChannelUuid(channelUuid, isBool) {
+    getRtspInChannelUuid(channelUuid, channelName, isBool) {
       let data = {
         channelUuid: channelUuid,
         streamType: this.streamType
@@ -654,6 +683,13 @@ export default {
           }
         })
         .catch(() => {});
+      // 添加日志
+      api2.log1([
+        {
+          channelUuid,
+          channelName
+        }
+      ]);
     },
     async loadVideo(data) {
       if (data) {
