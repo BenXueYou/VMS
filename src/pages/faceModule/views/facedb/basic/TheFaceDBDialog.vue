@@ -4,6 +4,8 @@
 			:title="updatefacedata.faceLibraryUuid?'编辑人脸库':'新增人脸库'"
 			:visible.sync="diglogvisible"
 			width="580px"
+      :close-on-click-modal="false"
+      @close='close'
 			center
 		>
 			<el-form :model="formData" :rules="rules" ref="formRef" label-width="150px">
@@ -21,8 +23,8 @@
 				</el-form-item>
 			</el-form>
 			<span class="dialog-footer button-div btnBox">
-				<el-button type="primary" @click="onSubmit">确 定</el-button>
-				<el-button type="primary" @click="close">取 消</el-button>
+				<el-button type="primary" :loading="isloading" @click="onSubmit">确 定</el-button>
+				<el-button type="primary" @click="diglogvisible=false">取 消</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -71,6 +73,7 @@ export default {
   mounted() {},
   data() {
     return {
+      isloading: false,
       diglogvisible: false,
       rules: RULES,
       formData: {
@@ -130,23 +133,37 @@ export default {
     },
     updatestaffku(data) {
       const _this = this;
-      api.putFaceLib(data).then(res => {
-        if (res.data.success) {
-          _this.$message.success("修改人员库成功");
-          this.$emit("close", true);
-        }
-      });
+      this.isloading = !this.isloading;
+      api
+        .putFaceLib(data)
+        .then(res => {
+          this.isloading = !this.isloading;
+          if (res.data.success) {
+            _this.$message.success("修改人员库成功");
+            this.$emit("close", true);
+          }
+        })
+        .catch(() => {
+          this.isloading = !this.isloading;
+        });
     },
     addstaffku(data) {
       const _this = this;
-      data.faceLibraryType = 'staticFaceLib';
-      api.addFaceLid(data).then(res => {
-        console.log(res);
-        if (res.data.success) {
-          _this.$message.success("添加人员库成功");
-          this.$emit("close", true);
-        }
-      });
+      data.faceLibraryType = "staticFaceLib";
+      this.isloading = !this.isloading;
+      api
+        .addFaceLid(data)
+        .then(res => {
+          console.log(res);
+          this.isloading = !this.isloading;
+          if (res.data.success) {
+            _this.$message.success("添加人员库成功");
+            this.$emit("close", true);
+          }
+        })
+        .catch(() => {
+          this.isloading = !this.isloading;
+        });
     },
     resetdata() {
       this.formData = {
@@ -155,10 +172,11 @@ export default {
         faceLibraryColour: "",
         facePhotoQualities: []
       };
+      this.$refs["formRef"].resetFields();
     },
     close() {
-      this.$emit("close");
       this.resetdata();
+      this.$emit("close");
     }
   }
 };

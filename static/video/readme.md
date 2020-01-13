@@ -122,11 +122,9 @@ decoder.js： webplay解码调度模块js，用以现阶段解码并渲染
 ## 4. 注意
 
 1. 目前仅实现play、stop接口
-
 2. 目前使用的解码和渲染方式还是demo版的
-
 3. 本地录像、回放等接口敬请期待
 
 ------
 
-4. 新增了pause、resume、speedControl、drag、record、stopRecord等功能
+1. 新增了pause、resume、speedControl、drag、record、stopRecord等功能

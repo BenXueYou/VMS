@@ -6,11 +6,8 @@ var Authorization = "Basic YXBwOjEyMzQ1Ng==";
 var DEBUG = "TEST";
 if (DEBUG == "DEBUG") {
   // 测试环境
-  // ip = '180.167.210.2:51880';
-  // ip = "192.168.9.190:15000";
-  // websocketIp = "192.168.9.190:15007";
-  ip = "192.168.9.141:15000";
-  websocketIp = "192.168.9.67:15007";
+  ip = "192.168.9.232:15000";
+  websocketIp = "192.168.9.232:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -19,8 +16,8 @@ if (DEBUG == "DEBUG") {
 } else if (DEBUG == "TEST") {
   // 提测环境
   // ip = "192.168.9.141:15000";
-  ip = '192.168.6.111:15000';
-  websocketIp = "192.168.6.111:15007";
+  ip = "192.168.9.238:15000";   
+  websocketIp = "192.168.9.238:15007";
   imageUrl =
     protocolHeader +
     "//" +
@@ -33,15 +30,146 @@ if (DEBUG == "DEBUG") {
     websocketIp = hostname;
   } else {
     ip = hostname + ":15000";
-    websocketIp = hostname + ":15007";
+    websocketIp = hostname + ":80";
   }
   var imgUrlStr = protocolHeader + "//" + ip;
   imageUrl =
     imgUrlStr +
     "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
+// 设备资源的类型前端字典表:front end so difficult
+var resourceType = {
+  video: [
+    {
+      id: "auth_video",
+      label: "视频设备"
+    },
+    {
+      id: "auth_video_monitor",
+      label: "监控点"
+    },
+    {
+      id: "auth_video_input",
+      label: "输入"
+    },
+    {
+      id: "auth_video_output",
+      label: "输出"
+    }
+  ],
+  door: [
+    {
+      id: "auth_door",
+      label: "门禁设备"
+    },
+    {
+      id: "auth_door_monitor",
+      label: "门禁点"
+    },
+    {
+      id: "auth_door_input",
+      label: "输入"
+    },
+    {
+      id: "auth_door_output",
+      label: "输出"
+    },
+    {
+      id: "auth_door_readhead",
+      label: "读头"
+    }
+  ],
+  alarm: [
+    {
+      id: "auth_alarm",
+      label: "门禁设备"
+    },
+    {
+      id: "auth_alarm_zone",
+      label: "防区"
+    },
+    {
+      id: "auth_alarm_subsystem",
+      label: "子系统"
+    },
+    {
+      id: "auth_alarm_output",
+      label: "输出"
+    }
+  ],
+  visitor: [
+    {
+      id: "auth_visitor",
+      label: "访客设备"
+    }
+  ]
+};
+let treeIcons = [
+  {
+    label: "文件",
+    value: "device",
+    icon: "doc"
+  },
+  {
+    label: "IPC",
+    value: "ipc",
+    icon: "ip"
+  },
+  {
+    label: "NVR",
+    value: "nvr",
+    icon: "nvr"
+  },
+  {
+    label: "门禁",
+    value: "door",
+    icon: "door"
+  },
+  {
+    label: "人工访客",
+    value: "hand_visitordevice",
+    icon: "rgfk"
+  },
+  {
+    label: "自助访客",
+    value: "auto_visitordevice",
+    icon: "zzfk"
+  },
+  {
+    label: "枪机",
+    value: "bullet_camera",
+    icon: "qj"
+  },
+  {
+    label: "半球",
+    value: "dome_camera",
+    icon: "bq"
+  },
+  {
+    label: "球机",
+    value: "ball_camera",
+    icon: "qiuji"
+  },
+  {
+    label: "人脸门",
+    value: "",
+    icon: "rl"
+  },
+  {
+    label: "普通门",
+    value: "",
+    icon: "pt"
+  },
+  {
+    label: "带云台的枪机",
+    value: "bullet_camera_ptz",
+    icon: "ytqj"
+  }
+];
 window.config = {
   DeBug: true,
+  resourceType,
+  treeIcons,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",
@@ -96,7 +224,7 @@ window.config = {
       strValue: "http://www.gato.com.cn/News/index.html"
     }
   ],
-  door_machine: [{ value: "door_machine", label: "门口机" }],
+  door_machine: [],
   video: [{ value: "ipc", label: "IPC" }],
   alarm: [],
   vistor: [

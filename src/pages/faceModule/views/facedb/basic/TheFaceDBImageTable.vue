@@ -14,38 +14,60 @@
 				</div>
 				<p class="time">
 					<span class="item">{{item.staffName||""}} &nbsp;</span>
-					<span class="item">{{item.gender||""}}</span>
-					<span class="item">{{item.staffType||""}}</span>
+					<span style="margin:0 5px" class="item">{{item.gender||""}}</span>
+					<span
+						class="item textclipsClass"
+						@mouseover="mymouseover"
+						@mouseout="mymouseout"
+						@mousemove="mymousemove"
+					>{{item.staffType||""}}</span>
 				</p>
-				<el-tooltip class="item" effect="dark" :content="item.credentialType" placement="bottom">
-					<div class="credentialType">{{item.credentialType||"证件类型"}}</div>
-				</el-tooltip>
-				<el-tooltip class="item" effect="dark" :content="item.credentialNo" placement="bottom">
-					<p class="adress">{{item.credentialNo||'证件号码'}}</p>
-				</el-tooltip>
+				<div class="textclipsClass credentialType">{{item.credentialType||"----"}}</div>
+				<p
+					@mouseover="mymouseover"
+					@mouseout="mymouseout"
+					@mousemove="mymousemove"
+					class="textclipsClass adress"
+				>{{item.credentialNo||'----'}}</p>
 			</div>
 			<!-- <div class="box hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
 		</div>
-		<div class="footer">
+		<div class="faceDBImageFooter">
 			<el-pagination
+				@current-change="currentChange"
+				:current-page="pageNow"
+				layout="total,prev, pager, next,jumper"
+				:page-size="pageSize"
+				:total="total"
+				background
+			></el-pagination>
+			<!-- <el-pagination
 				background
 				layout="prev, pager, next"
 				:page-size="imagePageSize"
-				:current-page="imagePageNow"
+				:current-page="pageNow"
 				@current-change="currentChange"
-				:total="imagePageCount"
+				:total="total"
 			></el-pagination>
-			<p class="totalpagetitle">共{{ imagePageCount}}条</p>
+			<p class="totalpagetitle">共{{ total}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
-				<el-input class="pageIndexClass" v-model="pageIndex" @blur="blur" type="number"></el-input>
-			</div>
+				<el-input
+					class="pageIndexClass"
+					v-model="pageIndex"
+					@blur="blur"
+					@keyup.enter.native="blur"
+					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+					type="number"
+				></el-input>
+			</div>-->
 		</div>
 	</div>
 </template>
 
 <script>
 import RestApi from "@/utils/RestApi.js";
+import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 export default {
   name: "facedblist",
   props: {
@@ -67,7 +89,7 @@ export default {
         return false;
       }
     },
-    imagePageNow: {
+    pageNow: {
       type: Number,
       default() {
         return 1;
@@ -79,7 +101,7 @@ export default {
         return 15;
       }
     },
-    imagePageCount: {
+    total: {
       type: Number,
       default() {
         return 0;
@@ -91,39 +113,17 @@ export default {
       imageHeader: RestApi.api.imageUrl,
       pageIndex: "",
       multipleSelection: [],
-      pageSize: 24,
-      pagenow: 1,
-      total: 1000,
-      countdata: 10000,
+      pageSize: 28,
       preload: []
     };
   },
-  computed: {
-    getLast() {
-      var len = this.imagePageSize - this.imageTableData.length;
-      var a = [];
-      while (len--) {
-        a.push("kj");
-      }
-      return a;
-    }
-  },
-  mounted() {
-    // this.$nextTick(function() {
-    //   var win_h = window.innerHeight;
-    //   var tableheight =
-    //     parseInt(getComputedStyle(this.$refs.tablelist).height) - 40;
-    //   this.pageSize = Math.floor(tableheight / 43);
-    //   //   alert(this.pageSize);
-    // });
-  },
+  computed: {},
+  mounted() {},
   methods: {
     blur() {
       if (this.pageIndex !== "") {
-        if (
-          this.pageIndex > Math.ceil(this.listPageCount / this.listPageSize)
-        ) {
-          this.pageIndex = Math.ceil(this.listPageCount / this.listPageSize);
+        if (this.pageIndex > Math.ceil(this.total / this.imagePageSize)) {
+          this.pageIndex = Math.ceil(this.total / this.imagePageSize);
         }
         this.pageIndex = parseInt(this.pageIndex);
         this.$emit("changepage", parseInt(this.pageIndex));
@@ -167,12 +167,21 @@ export default {
       });
     },
     async preloadImage() {
-    //   var url = "";
+      //   var url = "";
       for (var i = 0; i < this.imageTableData.length; i++) {
         let url = this.imageTableData[i].facePhotoUrl;
         this.preload[i] = url;
         this.preload.splice(i, 1, url);
       }
+    },
+    mymouseover: event => {
+      mouseover(event);
+    },
+    mymouseout(event) {
+      mouseout(event);
+    },
+    mymousemove(event) {
+      mousemove(event);
     }
   },
   deactivated() {
@@ -206,10 +215,25 @@ export default {
   }
 };
 </script>
-
+<style>
+#noteaacx .checkButton .el-checkbox__inner::after {
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+	border: 1px solid #ffffff;
+	border-left: 0;
+	border-top: 0;
+	height: 7px;
+	left: 4px;
+	position: absolute;
+	top: 1px;
+}
+.checkButton .el-checkbox__input.is-checked .el-checkbox__inner {
+	background-color: #26d39d;
+	border-color: #26d39d;
+}
+</style>
 <style lang="scss" scoped>
 $fontcolor: #aaa;
-
 .tablelist {
 	height: 100%;
 	// height: calc(100vh - 76px - 57px - 70px);
@@ -227,7 +251,7 @@ $fontcolor: #aaa;
 		pointer-events: none;
 	}
 	.box {
-		width: 140px;
+		width: 150px;
 		min-height: 178px;
 		// background-color: rgb(36, 39, 42);
 		background: rgba(0, 0, 0, 0.1);
@@ -279,6 +303,7 @@ $fontcolor: #aaa;
 					margin-top: 50px;
 					margin-left: 12px;
 					margin-right: 2px;
+					background: rgba(17, 17, 17, 0.9);
 				}
 				.operator i {
 					cursor: pointer;
@@ -299,6 +324,7 @@ $fontcolor: #aaa;
 					&:hover {
 						color: #ffffff;
 						background-color: rgba(40, 255, 187, 0.3);
+						// background-color: rgba(38,211,157,0.3);
 					}
 				}
 			}
@@ -319,15 +345,25 @@ $fontcolor: #aaa;
 		}
 		.adress {
 			cursor: pointer;
+			display: flex;
+			justify-content: center;
 		}
 		.credentialType {
 			text-align: center !important;
 		}
+		.textclipsClass {
+			font-family: "PingFangSC-Regular";
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+		}
 	}
 }
-.footer {
+.faceDBImageFooter {
 	position: relative;
-	margin: 10px 0px;
+	margin: 5px 0px;
 	.totalpagetitle {
 		font-size: 14px;
 		color: #fff;
@@ -336,7 +372,7 @@ $fontcolor: #aaa;
 		margin-top: 17px;
 	}
 	.el-pagination {
-		margin-right: 180px;
+		margin-right: 18px;
 		margin-top: 10px;
 		float: right;
 	}

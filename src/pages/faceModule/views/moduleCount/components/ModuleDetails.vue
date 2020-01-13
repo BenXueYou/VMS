@@ -22,7 +22,7 @@
           <el-checkbox v-for="dev in devices"
                        :label="dev.channelUuid"
                        :key="dev.channelUuid">
-            {{dev.channelName}}
+            {{dev.nickName}}
             <div class="device-dot"
                  style="background: #F6C620;"></div>
           </el-checkbox>
@@ -63,12 +63,6 @@
         </template>
       </div>
     </div>
-    <div slot="footer"
-         class="dialog-footer">
-      <el-button type="primary"
-                 @click="onClickCancel"
-                 size="small">取消</el-button>
-    </div>
   </el-dialog>
 </template>
 
@@ -93,6 +87,8 @@ export default {
       isLoading: false,
       startTime: "",
       endTime: "",
+      faceSimilarity: "",
+      photoQualitieList: "",
     };
   },
   created() {},
@@ -149,6 +145,8 @@ export default {
         channelList: this.checkedDevices.toString(),
         snapshotTimeStart: this.startTime,
         snapshotTimeEnd: this.endTime,
+        faceSimilarity: this.faceSimilarity,
+        photoQualitieList: this.photoQualitieList.toString(),
       }).then(res => {
         let body = res.data;
         this.getCompareDetailSuccess(body);
@@ -189,6 +187,8 @@ export default {
 .dialog-content {
   padding: 3% 5% 0 5%;
   box-sizing: border-box;
+  height: 570px;
+  overflow-y: auto;
   .content-title {
     font-family: PingFangSC-Regular;
     font-size: 14px;
@@ -198,9 +198,9 @@ export default {
   }
   .content-device {
     background: rgba($color: #26d39d, $alpha: 0.05);
-    height: 40px;
+    height: auto;
     margin-top: 15px;
-    padding: 0 18px;
+    padding: 10px 18px;
     box-sizing: border-box;
     font-family: PingFangSC-Regular;
     font-size: 12px;
@@ -216,7 +216,7 @@ export default {
     }
   }
   .content-list {
-    height: 380px;
+    height: 395px;
     width: 100%;
     border: 1px solid #254a43;
     margin-top: 15px;

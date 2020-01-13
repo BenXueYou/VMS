@@ -44,7 +44,7 @@ export default {
 .fellow-capture-detail {
   height: 188px;
   width: 158px;
-  border: 1px solid #213f3a;
+  border: 1px solid rgba($color: #FFFFFF, $alpha: 0.1);
   border-radius: 3px;
   background: #1b1e21;
   padding: 10px 15px;

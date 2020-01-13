@@ -11,8 +11,10 @@
       <el-button @click="addNewMission"
                  type="primary"
                  size="small">
-        <img src="@/assets/images/faceModule/new_mission.png">
-        新建模型
+        <div style="display: flex; align-items: center;">
+          <img src="@/assets/images/faceModule/new_mission.png">
+          <span style="margin-left: 3px;">新建模型</span>
+        </div>
       </el-button>
       <div class="tab">
         <template v-for="(item, index) in missionButtArr">
@@ -56,20 +58,20 @@
                      @change="switchChange"
                      :active-value="1"
                      :inactive-value="0"></el-switch>
-          <span>状态</span>
+          <span style="margin-left: 3px;">状态</span>
           <div class="status"
                @click="editTaskInit">
             <img src="@/assets/images/edit.png"
                  width="14px"
                  height="14px" />
-            <span>编辑</span>
+            <span style="margin-left: 3px;">编辑</span>
           </div>
           <div class="status"
                @click="deleteIntel">
             <img src="@/assets/images/delete2.png"
                  width="14px"
                  height="14px" />
-            <span>删除</span>
+            <span style="margin-left: 3px;">删除</span>
           </div>
         </div>
       </div>
@@ -100,10 +102,11 @@
                style="width: 20%">人脸抓拍图片需达到的质量：{{intelModelObj.qualities ? $common.getEnumItemName("face_quality", intelModelObj.qualities[intelModelObj.qualities.length-1]) : ""}} </div>
         </div>
         <div class="info-block">
-          <div class="block-line">时间段：
+          <div class="block-line"
+               style="width:100%;display:flex;flex-flow: row wrap;">时间段：
             <template v-for="(item, index) in intelModelObj.timeList">
               <span :key="index">
-                {{item.startTime}}至{{item.endTime}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {{item.startTime ? item.startTime.substr(0, 5) : ""}}至{{item.endTime ? item.endTime.substr(0, 5) : ""}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </span>
             </template>
           </div>
@@ -126,7 +129,7 @@
                               :lineLimit="2"
                               style="width: 60%; margin-left: 40px;"
                               ref="camera2"
-                              containerId="camera1" />
+                              containerId="camera2" />
           </div>
           <div class="block-camera">
             <span>同时不符合：</span>
@@ -136,7 +139,7 @@
                               :lineLimit="2"
                               style="width: 60%; margin-left: 28px;"
                               ref="camera3"
-                              containerId="camera1" />
+                              containerId="camera3" />
           </div>
           <div class="block-line">排除人脸库：&nbsp;&nbsp;&nbsp;&nbsp;
             <template v-for="(item, index) in intelModelObj.notInlibrary">
@@ -155,25 +158,30 @@
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="createTimeStart"
                             type="datetime"
-                            style="width: 180px"
+                            style="width: 205px"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <span class="timeText">—</span>
             <el-date-picker v-model="createTimeEnd"
                             type="datetime"
-                            style="width: 180px; margin-right: 49px;"
+                            style="width: 205px; margin-right: 49px;"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <el-button @click="queryAct"
                        type="primary"
-                       size="small"
-                       icon="el-icon-search">查询</el-button>
+                       size="small">
+              <div style="display: flex; align-items: center;">
+                <img src="@/assets/images/faceModule/search.png">
+                <span style="margin-left: 3px;">查询</span>
+              </div>
+            </el-button>
             <el-button @click="turnToJudge"
                        type="primary"
                        size="small">
-              <img src="@/assets/images/faceModule/turn_record.png"
-                   height="10px">
-              跳转研判记录
+              <div style="display: flex; align-items: center;">
+                <img src="@/assets/images/faceModule/turn_record.png" height="12.5px">
+                <span style="margin-left: 3px;">跳转研判记录</span>
+              </div>
             </el-button>
           </div>
         </div>
@@ -257,7 +265,7 @@ export default {
       faceModelUuid: "",
       otherVideoSourceList: [],
       notInVideoSourceList: [],
-      limit: 5,
+      limit: 7,
       judgeItemTotal: 0,
     };
   },
@@ -294,7 +302,7 @@ export default {
         this.$refs.camera1.isShowMoreButton();
         this.$refs.camera2.isShowMoreButton();
         this.$refs.camera3.isShowMoreButton();
-        this.limit = 5;
+        this.limit = 7;
         this.getJudgedList(this.faceModelUuid);
       }, 600);
     },
@@ -304,7 +312,7 @@ export default {
     },
     onConfirmEditOrAddModel() {
       this.isShowMain = true;
-      this.getIntelModelList();
+      this.getIntelModelList("add");
     },
     onCancelEditOrAddModel() {
       this.isShowMain = true;
@@ -324,6 +332,7 @@ export default {
       } else {
         this.enabled = 0;
       }
+      this.faceModelUuid = "";
       this.getIntelModelList();
     },
     resetData() {
@@ -421,7 +430,7 @@ export default {
     onCancelDetailDialog() {
       this.isShowDetailDialog = false;
     },
-    getIntelModelList() {
+    getIntelModelList(type) {
       this.isLoading = true;
       this.$intelModelHttp
         .getIntelModelList({
@@ -429,17 +438,20 @@ export default {
         })
         .then(res => {
           let body = res.data;
-          this.getIntelModelListSuccess(body);
+          this.getIntelModelListSuccess(body, type);
           this.isLoading = false;
         })
         .catch(() => {
           this.isLoading = false;
         });
     },
-    getIntelModelListSuccess(body) {
+    getIntelModelListSuccess(body, type) {
       this.menuList = body.data;
       this.formatMenuList();
       if (this.menuList && this.menuList.length !== 0) {
+        if (type === "add") {
+          this.faceModelUuid = "";
+        }
         if (!this.faceModelUuid) {
           this.check(this.menuList[0]);
         } else {
@@ -466,6 +478,8 @@ export default {
       this.formatObj();
     },
     getJudgedList(faceModelUuid) {
+      this.compareList = [];
+      this.judgeItemTotal = 0;
       this.isJudgeLoading = true;
       this.$intelModelHttp
         .getJudgedList({
@@ -534,6 +548,7 @@ export default {
     },
     editIntelModelStatusSuccess(body) {
       this.$cToast.success(body.msg);
+      this.resetData();
       this.getIntelModelList();
     },
     turnToJudge() {
@@ -546,11 +561,11 @@ export default {
 };
 </script>
 <style lang="scss">
-.model-main {
-  .el-icon-time:before {
-    width: 0px;
-  }
-}
+// .model-main {
+//   .el-icon-time:before {
+//     width: 0px;
+//   }
+// }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
@@ -596,7 +611,7 @@ export default {
         font-family: PingFangSC-Regular;
         font-size: 13px;
         color: #dddddd;
-        width: 96%;
+        width: 100%;
         height: 50px;
         line-height: 50px;
         cursor: pointer;
@@ -663,6 +678,8 @@ export default {
         .status {
           cursor: pointer;
           margin-left: 25px;
+          display: flex;
+          align-items: center;
         }
       }
     }
@@ -691,8 +708,8 @@ export default {
     }
     .block-line {
       height: 37px;
-      // display: flex;
-      // align-items: center;
+      display: flex;
+      align-items: center;
     }
     .info-container {
       display: flex;

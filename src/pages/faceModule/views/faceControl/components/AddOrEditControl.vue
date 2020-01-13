@@ -3,6 +3,7 @@
     <select-face :isShow="isShowAddFaceDB"
                  ref="selectFace"
                  :initSelectData="initSelectFaceData"
+                 faceLibraryType="systemFaceLib,dynamicFaceLib,staticFaceLib"
                  @onCancel="cancelAddFaceDB"
                  @onConfirm="confirmAddFaceDB" />
     <select-video :isShow="isShowAddVideoSrc"
@@ -37,7 +38,8 @@
           <el-form-item label="人脸库："
                         prop="faceLibraryUuids"
                         required>
-            <div class="add-item">
+            <div class="add-item"
+                 v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true">
               <img src="@/assets/images/faceModule/add.png"
                    style="cursor: pointer;"
                    @click="addFaceDB">
@@ -60,6 +62,7 @@
                     </div>
                   </template>
                   <div class="del-image"
+                       v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
                        @click="deleteItem(item)">
                     <img src="@/assets/images/delete_x.png"
                          width="13px"
@@ -74,6 +77,7 @@
                        height="11px">
                   <span style="margin-left: 4px">{{item.faceLibraryName}}</span>
                   <div class="del-image"
+                       v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
                        @click="deleteItem(item)">
                     <img src="@/assets/images/delete_x.png"
                          width="13px"
@@ -86,7 +90,8 @@
           <el-form-item label="视频源："
                         prop="channelUuids"
                         required>
-            <div class="add-item">
+            <div class="add-item"
+                 v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true">
               <img src="@/assets/images/faceModule/add.png"
                    style="cursor: pointer;"
                    @click="addVideoSource">
@@ -102,6 +107,7 @@
                        height="11px">
                   <span style="margin-left: 4px">{{item.label}}</span>
                   <div class="del-image"
+                       v-if="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
                        @click="deleteVideoItem(item)">
                     <img src="@/assets/images/delete_x.png"
                          width="13px"
@@ -167,6 +173,7 @@
                         prop="taskColour">
             <el-color-picker v-model="formLabelAlign.taskColour"
                              size="mini"
+                             show-alpha
                              style="margin-top: 7px;margin-left: 8px;"></el-color-picker>
           </el-form-item>
           <el-form-item label="布控状态："
@@ -177,6 +184,7 @@
                        active-color="rgba(32,204,150,0.2)"
                        inactive-color="rgba(255,255,255,0.2)"
                        :active-value="1"
+                       :disabled="formLabelAlign.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? true : false"
                        :inactive-value="0"></el-switch>
           </el-form-item>
         </el-form>
@@ -213,6 +221,13 @@ export default {
     }
   },
   data() {
+    const validatorlength = (rule, value, callback) => {
+      if (parseInt(value) < 1 || parseInt(value) > 20) {
+        callback(new Error("目标人列表需为1-20"));
+      } else {
+        callback();
+      }
+    };
     return {
       formLabelAlign: {
         faceMonitorName: "",
@@ -241,6 +256,7 @@ export default {
         ],
         reservedCount: [
           { required: true, message: "目标人列表不能为空", trigger: "blur" },
+          { validator: validatorlength, trigger: "blur" }
         ],
         alarmed: [
           { required: true, message: '请选择是否报警', trigger: 'change' },
@@ -396,20 +412,30 @@ export default {
       this.isShowAddVideoSrc = false;
     },
     deleteItem(item) {
+      this.formLabelAlign.faceLibraryUuids = [];
       for (let [i, v] of this.faceDBSelectedList.entries()) {
         if (v.faceLibraryUuid === item.faceLibraryUuid) {
           this.faceDBSelectedList.splice(i, 1);
         }
       }
       this.$refs.selectFace.deleteItem(item);
+      this.faceDBSelectedList.forEach(v => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+      });
+      this.$refs.monitorForm.validateField('faceLibraryUuids');
     },
     deleteVideoItem(item) {
+      this.formLabelAlign.channelUuids = [];
       for (let [i, v] of this.videoSrcSelectedList.entries()) {
         if (v.id === item.id) {
           this.videoSrcSelectedList.splice(i, 1);
         }
       }
       this.$refs.selectVideo.deleteItem(item);
+      this.videoSrcSelectedList.forEach(v => {
+        this.formLabelAlign.channelUuids.push(v.channelUuid);
+      });
+      this.$refs.monitorForm.validateField('channelUuids');
     },
     setFromDataForEdit(detailData) {
       this.faceDBSelectedList = [];
@@ -417,26 +443,32 @@ export default {
       this.formLabelAlign = this.$common.copyObject(detailData, this.formLabelAlign);
       this.$set(this.formLabelAlign, "faceLibraryUuids", []);
       this.$set(this.formLabelAlign, "channelUuids", []);
-      this.formLabelAlign.libraryList.forEach(v => {
-        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
-        this.faceDBSelectedList.push(v);
-      });
-      this.formLabelAlign.channelList.forEach(v => {
-        this.formLabelAlign.channelUuids.push(v.channelUuid);
-        this.videoSrcSelectedList.push({
-          id: v.channelUuid,
-          label: v.channelName,
-          channelUuid: v.channelUuid,
-          channelName: v.channelName
+      if (this.formLabelAlign.libraryList) {
+        this.formLabelAlign.libraryList.forEach(v => {
+          this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+          this.faceDBSelectedList.push(v);
         });
-      });
-      this.formLabelAlign.systemStaffLibraryTypes.forEach(v => {
-        this.staffTypeOption.forEach(v2 => {
-          if (v2.typeStr === v) {
-            v2.checked = true;
-          }
+      }
+      if (this.formLabelAlign.channelList) {
+        this.formLabelAlign.channelList.forEach(v => {
+          this.formLabelAlign.channelUuids.push(v.channelUuid);
+          this.videoSrcSelectedList.push({
+            id: v.channelUuid,
+            label: v.channelName,
+            channelUuid: v.channelUuid,
+            channelName: v.channelName
+          });
         });
-      });
+      }
+      if (this.formLabelAlign.systemStaffLibraryTypes) {
+        this.formLabelAlign.systemStaffLibraryTypes.forEach(v => {
+          this.staffTypeOption.forEach(v2 => {
+            if (v2.typeStr === v) {
+              v2.checked = true;
+            }
+          });
+        });
+      }
     },
     getAlarmSound() {
       this.$faceControlHttp.getAlarmSound().then(res => {

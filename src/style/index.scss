@@ -1,6 +1,16 @@
 .el-color-picker__trigger {
   border: 0;
 }
+.RTask .fill video {
+  object-fit: fill !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.fullscreen video {
+  object-fit: fill !important;
+}
 .el-color-picker__panel {
   background-color: #232629;
   .el-button--default,
@@ -11,7 +21,7 @@
     border: 1px solid rgba(40, 255, 187, 0.45);
     border-radius: 2px;
     font-size: 13px;
-    height: 32px;
+    height: 34px;
   }
 }
 .cursorClass {
@@ -37,6 +47,68 @@ img,
   content: " ";
   position: absolute;
   // top: 3px;
+}
+
+/**************************************图片预览******************************************/
+.el-image-viewer__canvas {
+  width: 60%;
+  height: 70%;
+  // margin-left: 20%;
+  // margin-top: 10%;
+  position: absolute;
+  left: 20%;
+  top: 15vh;
+  background-color: #26282b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.el-image-viewer__wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.el-image-viewer__canvas img {
+  max-width: 75% !important;
+  height: 65% !important;
+  top: 0%;
+  left: 5%;
+}
+.el-image-viewer__mask {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.5;
+  background: #000;
+}
+.el-image-viewer__wrapper .el-icon-circle-close:before {
+  content: "\E6DB";
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 15px;
+  font-size: 28px;
+}
+.el-image-viewer__wrapper .el-image-viewer__close {
+  position: absolute;
+  top: calc(15vh + 20px);
+  right: 20%;
+  width: 60%;
+  border-bottom: 1px solid #3e9c7f4f;
+  border-radius: 0;
+  display: flex;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -ms-flex-line-pack: center;
+  align-content: center;
+  padding-bottom: 20px;
+}
+.el-image-viewer__actions {
+  bottom: 20vh;
 }
 /**************************************单选框样式*********************************************/
 
@@ -123,18 +195,18 @@ img,
   background-color: transparent !important;
   // border: 1px solid rgba(255, 255, 255, 0.4);
   color: #ffffff;
-  height: 30px;
+  height: 34px;
   border: 1px solid rgba($color: #ffffff, $alpha: 0.15);
   border-radius: 2px;
 }
 
 .el-input__icon {
-  line-height: 30px;
+  line-height: 34px;
 }
 
 .el-input--small .el-input__inner {
-  height: 30px;
-  line-height: 30px;
+  height: 34px;
+  line-height: 34px;
 }
 
 .el-button--default,
@@ -189,7 +261,6 @@ img,
   white-space: nowrap;
   cursor: pointer;
   background: transparent;
-  border: 1px solid #dcdfe6;
   -webkit-appearance: none;
   text-align: center;
   -webkit-box-sizing: border-box;
@@ -268,26 +339,27 @@ img,
   content: "上一页";
   font-size: 12px;
   font-weight: 100;
-  color: #999999;
+  color: #bebebe;
 }
 
 .el-icon-arrow-right:before {
   content: "下一页";
   font-size: 12px;
   font-weight: 100;
-  color: #999999;
+  color: #bebebe;
 }
 
 .el-pagination__total {
   font-size: 12px;
   font-weight: 100;
-  color: #999999;
+  color: #bebebe;
   /*margin: 0 27px 0 27px;*/
 }
 
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(40, 255, 187, 0.15);
+  border: 1px solid rgba(32, 204, 150, 0.8);
 }
 
 .el-pagination.is-background .btn-next,
@@ -339,7 +411,7 @@ img,
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 15px;
   border-radius: 5px;
-  background: rgba(144, 147, 153, 0.3);
+  background: rgba(144, 147, 153, 0.1);
   box-shadow: inset 0 0 6px rgba(144, 147, 153, 0.3);
   -webkit-box-shadow: inset 0 0 6px rgba(144, 147, 153, 0.3);
 }
@@ -430,17 +502,22 @@ img,
   background: #26d39d;
 }
 
-$el-switch-size: 11px;
+$el-switch-size: 13px;
 $el-switch-circle-size: 13px;
 
 .el-switch__core {
   height: $el-switch-size;
+  width: 36px !important;
 }
 
 .el-switch__core:after {
   top: -2px;
   height: $el-switch-circle-size;
   width: $el-switch-circle-size;
+}
+
+.el-switch.is-checked .el-switch__core::after {
+  margin-left: -14px;
 }
 
 // $selecthoverColor:rgb(28, 40, 39);
@@ -708,9 +785,9 @@ input[type="number"] {
 .el-tree {
   position: relative;
   cursor: default;
-  background: rgba(35, 38, 41, 0.8);
   color: #dee5f4;
-  background: rgba($color: #232629, $alpha: 0.8);
+  // background: rgba($color: #232629, $alpha: 0.8);
+  background: transparent;
   font-family: PingFangSC-Regular;
   font-size: 14px;
   color: #dddddd;
@@ -922,20 +999,38 @@ input::-webkit-input-placeholder {
   color: #868686;
 }
 .el-tabs__nav-wrap::after {
-  background-color: #3F4244;
+  background-color: #3f4244;
 }
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-  color: #26D39D;
+  color: #26d39d;
 }
 .el-select .el-tag {
-  background-color: rgba($color: #26D39D, $alpha: 0.1);
+  background-color: rgba($color: #26d39d, $alpha: 0.1);
 }
 .el-tag.el-tag--info {
   border-color: rgba($color: #e9e9eb, $alpha: 0.1);
 }
 .el-tag.el-tag--info .el-tag__close {
-  color: #3E4145;
+  color: #3e4145;
 }
 .el-select .el-tag__close.el-icon-close {
-  background-color: #B8B9BA;
+  background-color: #b8b9ba;
+}
+.el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
+  transform: none;
+}
+.el-date-picker__header-label {
+  color: #bebebe;
+}
+.el-date-table th {
+  color: #bebebe;
+}
+.el-date-picker__time-header {
+  border-bottom: 1px solid rgba($color: #e4e4e4, $alpha: 0.3);
+}
+.el-date-table th {
+  border-bottom: 1px solid rgba($color: #ebeef5, $alpha: 0.3);
+}
+.el-picker-panel__footer {
+  border-top: 1px solid rgba($color: #e4e4e4, $alpha: 0.3);
 }

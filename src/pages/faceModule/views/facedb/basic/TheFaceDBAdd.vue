@@ -3,9 +3,9 @@
 		<div class="dialogHeader">
 			<span>{{staffDetail.faceLibraryName}}-{{staffDetail.faceUuid?"修改人脸":'新增人脸'}}</span>
 			<div class="dialogHeaderBtn">
-				<el-button @click="cancelAct">返回</el-button>
-				<el-button @click="confirmAct">确认</el-button>
-				<el-button @click="cancelAct">取消</el-button>
+				<el-button @click="cancelAct" type="primary" size="small">返回</el-button>
+				<el-button :loading="isloading" @click="confirmAct" type="primary" size="small">确认</el-button>
+				<el-button @click="cancelAct" type="primary" size="small">取消</el-button>
 			</div>
 		</div>
 		<div class="bodyBox">
@@ -40,14 +40,13 @@
 				<div class="bodyBoxRightUploadClass">
 					<div class="staffNameInputBox">
 						<el-input v-model="staffInfo.staffName" placeholder="姓名"></el-input>
-						<span style="color:#ff5f5f;margin-left:10px;line-height:30px">*</span>
 					</div>
 					<el-radio-group v-model="staffInfo.gender">
 						<el-radio label="male">男</el-radio>
 						<el-radio label="female">女</el-radio>
 					</el-radio-group>
 					<div class="phoneNumberInputBox">
-						<el-input v-model="staffInfo.phoneNo" placeholder="手机号码"></el-input>
+						<el-input type="number" v-model="staffInfo.phoneNo" placeholder="手机号码"></el-input>
 					</div>
 				</div>
 				<div>
@@ -143,9 +142,9 @@
 		</div>
 		<div class="dialogFooter">
 			<div class="dialogHeaderBtn">
-				<el-button @click="cancelAct">返回</el-button>
-				<el-button :loading="isloading" @click="confirmAct">确认</el-button>
-				<el-button @click="cancelAct">取消</el-button>
+				<el-button @click="cancelAct" type="primary" size="small">返回</el-button>
+				<el-button :loading="isloading" @click="confirmAct" type="primary" size="small">确认</el-button>
+				<el-button @click="cancelAct" type="primary" size="small">取消</el-button>
 			</div>
 		</div>
 		<snap-shoot-photo :visible="isSnapShoot" @close="shootPhoto" @snapPhotoAct="snapPhotoAct"></snap-shoot-photo>
@@ -187,7 +186,7 @@ export default {
       staffInfo: {
         faceUuid: null, // 人脸uuid
         staffName: null, // 姓名
-        gender: null, // 性别
+        gender: "male", // 性别
         phoneNo: null, // 手机号
         credentialType: null, // 证件类型
         credentialNo: null, // 证件号
@@ -218,7 +217,7 @@ export default {
         this.staffInfo = {
           faceUuid: null, // 人脸uuid
           staffName: null, // 姓名
-          gender: null, // 性别
+          gender: "male", // 性别
           phoneNo: null, // 手机号
           credentialType: null, // 证件类型
           credentialNo: null, // 证件号
@@ -251,6 +250,31 @@ export default {
   },
   methods: {
     confirmAct() {
+      if (
+        this.staffInfo.phoneNo &&
+				!this.$common.isPhoneNum(this.staffInfo.phoneNo)
+      ) {
+        this.$message.warning("请填写正确的手机号");
+        return;
+      }
+
+      if (
+        this.credentialType &&
+				this.credentialType === "id_card" &&
+				this.staffInfo.credentialNo &&
+				!this.$common.isCredentialNo(this.staffInfo.credentialNo)
+      ) {
+        this.$message.warning("请填写正确的身份证号");
+        return;
+      }
+      if (!this.staffInfo.staffName) {
+        this.$message.warning("请填写姓名");
+        return;
+      }
+      if (!this.staffInfo.gender) {
+        this.$message.warning("请选择性别");
+        return;
+      }
       if (this.staffInfo.faceUuid) {
         this.updateStaff(this.staffInfo);
       } else {
@@ -258,6 +282,10 @@ export default {
       }
     },
     addStaff(data) {
+      if (!this.staffInfo.faceImage) {
+        this.$message.warning("请上传人脸照片");
+        return;
+      }
       this.isloading = !this.isloading;
       api
         .addStaffInfo(data)
@@ -349,6 +377,11 @@ export default {
 	border: 1px solid rgba(255, 255, 255, 0.15);
 	border-radius: 2px;
 }
+.dialogwrapadd .bodyBoxRight .staffNameInputBox .el-input__inner {
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 2px;
+	width: calc(100% - 20px);
+}
 .dialogwrapadd .bodyBoxRight .bodyBoxRightUploadClass {
 	display: flex;
 	height: 112px;
@@ -362,16 +395,16 @@ export default {
 	.dialogHeaderBtn {
 		display: inline-block;
 		text-align: right;
-		.el-button {
-			font-family: "PingFangSC-Regular";
-			font-size: 13px;
-			color: #ffffff;
-			text-align: justify;
-			padding: 7px 27px;
-			background: rgba(40, 255, 187, 0.08);
-			border: 0 solid rgba(38, 211, 157, 0.8);
-			border-radius: 2px;
-		}
+		// .el-button {
+		// 	font-family: "PingFangSC-Regular";
+		// 	font-size: 13px;
+		// 	color: #ffffff;
+		// 	text-align: justify;
+		// 	padding: 7px 27px;
+		// 	background: rgba(40, 255, 187, 0.08);
+		// 	border: 0 solid rgba(38, 211, 157, 0.8);
+		// 	border-radius: 2px;
+		// }
 	}
 	.dialogHeader {
 		display: flex;
@@ -465,7 +498,12 @@ export default {
 			margin-left: 25px;
 			.staffNameInputBox {
 				.el-input {
-					width: 120px;
+					width: 150px;
+				}
+				.el-input::after {
+					content: "*";
+					color: #ff5f5f;
+					margin-left: 10px;
 				}
 			}
 			.phoneNumberInputBox {

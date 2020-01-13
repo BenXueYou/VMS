@@ -1,10 +1,27 @@
 import axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
-
+import store from "@/store/store.js";
 let vUrl = RestApi.api.videoUrl;
 
 export function getPreviewInfo(params = {}) {
   let url = vUrl.getPreviewInfoUrl;
+  return axios({
+    method: "GET",
+    url,
+    params
+  });
+}
+export function getFacePreviewInfo(params = {}) {
+  let url = vUrl.getFacePreviewInfoUrl;
+  return axios({
+    method: "GET",
+    url,
+    params
+  });
+}
+export function getPreviewInfoAA(params = {}) {
+  let url = vUrl.getPreviewInfAAoUrl;
+  params.asgName = store.state.home.projectUuid;
   return axios({
     method: "GET",
     url,
@@ -28,6 +45,14 @@ export function getClound(channelUuid) {
 }
 export function preset(uuid, data) {
   let url = vUrl.presetUrl + `?channelUuid=${uuid}`;
+  return axios({
+    method: "POST",
+    url,
+    data
+  });
+}
+export function getPreviewTree(data) {
+  let url = vUrl.getPreviewTreeUrl;
   return axios({
     method: "POST",
     url,
@@ -132,6 +157,22 @@ export function getCameraInfo(params = {}) {
   let url = vUrl.getCameraInfoUrl;
   return axios({
     method: "GET",
+    url,
+    params
+  });
+}
+export function getPlayTree(params = {}) {
+  let url = vUrl.getPlayTreeUrl;
+  return axios({
+    method: "GET",
+    url,
+    params
+  });
+}
+export function getOnlineChannel(params = {}) {
+  let url = vUrl.getOnlineChannelUrl;
+  return axios({
+    methods: "get",
     url,
     params
   });

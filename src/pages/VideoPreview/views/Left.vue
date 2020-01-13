@@ -1,8 +1,9 @@
 <template>
-  <div id="equipLeftMenu"
-       class="leftmenu">
+  <div id="treeLaa"
+       class="treeLaa">
     <div class="searchWrap">
       <el-input :placeholder="orgType=='staff'?'搜索组织/标签/名称':'搜索设备/标签/名称'"
+                class='mysearchText'
                 v-model="searchText">
         <img slot="prefix"
              class="image"
@@ -17,51 +18,78 @@
 
     <el-tabs v-model="activeName"
              class="tabs"
+             :class="{'tabsPanel':showCloudControl}"
              @tab-click="handleClick">
       <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
                    class="mypanel"
+                   :class="{'myShowCuoTree':showCloudControl,'showMaxWidth':!showMaxWidth}"
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
                  ref="tree1"
+                 :default-expanded-keys="defaultExpKeys"
+                 node-key="id"
+                 class='videoTree'
                  lazy>
           <div class="custom-tree-node"
+               @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
-            <!-- v-if="data.h5Type==='channel'" -->
-            <el-dropdown trigger="click"
-                         @command="handleCommand"
-                         placement="bottom"
-                         class='threelinemenu'>
-              <span class="el-dropdown-link"
-                    @click.stop="saveClickData(node, data)">
-                <img class="checked-img"
+            <div class="channelStatus">
+              <img :src="data.icon"
+                   v-if="data.icon"
+                   alt="">
+              <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                    class="span "
+                    :draggable="data.nodeType==='chnNode'"
+                    @dragstart="dragstart(data,$event)"
+                    :class="{'channelOffline':!data.isOnline}"
+                    :title="node.label">{{ node.label }}</span>
+
+              <span class="el-dropdown-link  "
+                    v-if="data.isOnline||data.nodeType!='chnNode'"
+                    @click.stop="saveClickData(node, data,$event)">
+                <img class="checked-img threelinemenu"
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                      style="margin-right: 20%;">
               </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="video">打开视频</el-dropdown-item>
-                <el-dropdown-item command="playback">查看录像</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+            </div>
+
           </div>
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
+                   class="mypanel2"
                    name="tag">
         <el-tree :props="props"
+                 class='videoTree2'
                  :load="loadNode"
+                 :default-expanded-keys="defaultExpKeys"
+                 node-key="id"
                  :expand-on-click-node="false"
                  lazy
                  @node-click="handleNodeClick">
           <div class="custom-tree-node"
+               @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <div class="channelStatus channelStatus2">
+              <img :src="data.icon"
+                   v-if="data.icon"
+                   alt="">
+              <span class="span"
+                    @dblclick.stop="openVidoeByDBClick(node,data,$event)"
+                    @click.stop="saveClickData('', data)"
+                    :draggable="data.hasOwnProperty('channelType')"
+                    @dragstart="dragstart(data,$event)"
+                    :title="node.label"
+                    :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
+
+            </div>
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
                          class='threelinemenu'>
               <span class="el-dropdown-link"
+                    v-if="data.isOnline||!data.hasOwnProperty('channelType')"
                     @click="saveClickData(node, data)">
                 <img class="checked-img"
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
@@ -79,12 +107,16 @@
       <el-tab-pane label="视图"
                    name="view">
         <el-tree :props="viewProps"
+                 class='videoTree3'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node"
+               @dblclick.stop="openVidewTu(data)"
                slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <span class="span"
+                  style='min-width:120px;display:inline-block;'
+                  :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
@@ -188,7 +220,7 @@
         <!-- 点击就去这个点的设置位置 -->
         <div class="button"
              @click="chooseItem"
-             v-show="((value=='yuzhi'&&yuzhi)||(value=='xunhang'&&xunhang))&&!isChoose"
+             v-show="((value=='yuzhi'&&yuzhi!=='')||(value=='xunhang'&&xunhang!==''))&&!isChoose"
              title="">
           <img :src="icons.center"
                alt="">
@@ -318,6 +350,7 @@ export default {
       icons,
       searchText: "", // 搜索框的文本
       appendChildrenDialogVisible: false,
+      showMaxWidth: false,
       appendTagDialogVisible: false,
       changeNameDialogVisible: false,
       node: "", // 用于存储当前的操作的节点
@@ -336,6 +369,7 @@ export default {
         label: "label",
         isLeaf: "leaf"
       },
+      defaultExpKeys: [],
       data3: [
         {
           label: "自定义视图",
@@ -419,6 +453,12 @@ export default {
     })
   },
   methods: {
+    dragstart(data, e) {
+      console.log(JSON.stringify(data));
+      // 使用whereform记录拖拽源
+      e.dataTransfer.setData("whereform", "tree");
+      e.dataTransfer.setData("operatorData", JSON.stringify(data));
+    },
     changeYuZhi() {
       // 下拉列表修改预置点，暂且不需要什么操作
       // for (let i = 0; i < this.yuzhiOptions.length; i++) {
@@ -451,7 +491,7 @@ export default {
           num[list[i].presetNo] = list[i];
           num[list[i].presetNo].isNew = false;
         }
-        console.log(num);
+        // console.log(num);
         this.yuzhi = "";
         this.yuzhiOptions = num;
       });
@@ -459,46 +499,149 @@ export default {
     viewhandleCheckChange() {
       console.log(this.$refs.tree3.getCheckedNodes());
     },
-    saveClickData(node, data) {
+    openVidoeByDBClick(node, data, e) {
+      // console.log(node, data, e);
+      e.preventDefault();
+      e.stopPropagation();
+      this.operatorData = data;
+      // 不在线的通道 ，双击进行展示
+      if (data.isOnline === false) {
+        this.$message.error("设备不在线");
+      } else {
+        if (data.hasOwnProperty("channelUuid") || data.nodeType === "chnNode") {
+          this.chuliData();
+        }
+      }
+    },
+    saveClickData(node, data, event) {
       // 点击三角菜单保存树节点信息
       this.operatorData = data;
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const _this = this;
+        this.$ContextMenu({
+          data: [
+            {
+              value: "video",
+              label: "打开视频",
+              children: [
+                {
+                  label: "主码流",
+                  value: "main"
+                },
+                {
+                  label: "辅码流",
+                  value: "sub"
+                },
+                {
+                  label: "第三码流",
+                  value: "thrid"
+                }
+              ]
+            },
+            {
+              value: "playback",
+              label: "查看录像"
+            }
+          ],
+          event: event,
+          callback(value) {
+            // alert(value);
+            // value表示点击按钮的value
+            _this.handleCommand(value);
+          }
+        });
+      }
+    },
+    // 根据组织或者设备来获取
+    getOnlineChannelList(parentUuid, parentType, streamType) {
+      api2
+        .getOnlineChannel({
+          parentUuid,
+          parentType
+        })
+        .then(res => {
+          console.log(res);
+          let data = res.data.data;
+          // 这里获取到通道UUid
+          for (let i = 0; i < data.length; i++) {
+            data[i].realType = data[i].type;
+            this.getPreviewInfo(data[i].channelUuid, data[i], streamType, -1);
+          }
+        });
+    },
+    chuliData(streamType = "") {
+      console.log(this.operatorData);
+      if (this.operatorData.nodeType === "chnNode") {
+        this.getPreviewInfo(
+          this.operatorData.id,
+          this.operatorData,
+          streamType
+        );
+      } else if (this.operatorData.nodeType === "devNode") {
+        // 点击的是设备，根据设备
+        this.getOnlineChannelList(this.operatorData.id, "devNode", streamType);
+      } else if (this.operatorData.nodeType === "orgNode") {
+        // 根据组织来获取通道
+        this.getOnlineChannelList(this.operatorData.id, "orgNode", streamType);
+      } else if (this.operatorData.hasOwnProperty("channelType")) {
+        this.getPreviewInfo(
+          this.operatorData.channelUuid,
+          this.operatorData,
+          streamType
+        );
+      } else if (this.operatorData.hasOwnProperty("tagType")) {
+        this.getChannelByNode(this.operatorData.id).then(res => {
+          console.log(res);
+          let data = res || [];
+          for (let i = 0; i < data.length; i++) {
+            // 判断设备在不在线
+            if (data[i].extInfo.chnOnlineOrNot === "online") {
+              data[i].realType = data[i].channelType;
+              this.getPreviewInfo(data[i].channelUuid, data[i], streamType, -1);
+            }
+          }
+        });
+      }
+    },
+    openVidewTu(data) {
+      if (!data) {
+        data = this.operatorData;
+      }
+      this.$emit("openView", data);
     },
     handleCommand(command) {
       console.log(command);
       console.log(this.operatorData);
       if (command === "video") {
         // 打开视频操作
-        if (this.operatorData.h5Type === "channel") {
-          this.getPreviewInfo(this.operatorData.id, this.operatorData);
-        } else if (this.operatorData.h5Type === "organization") {
-          // 根据组织来获取通道
-          api
-            .getTDByOrgUuid(this.operatorData.id, { viewType: "video" })
-            .then(res => {
-              console.log(res);
-              let data = res.data.data;
-              // 这里获取到通道UUid
-              for (let i = 0; i < data.length; i++) {
-                data[i].relType = data[i].type;
-                this.getPreviewInfo(data[i].id, data[i]);
-              }
-            });
-        } else if (this.operatorData.hasOwnProperty("channelType")) {
-          this.getPreviewInfo(this.operatorData.channelUuid, this.operatorData);
-        } else if (this.operatorData.hasOwnProperty("tagType")) {
-          this.getChannelByNode(this.operatorData.id).then(res => {
-            console.log(res);
-            let data = res || [];
-            for (let i = 0; i < data.length; i++) {
-              data[i].relType = data[i].channelType;
-              this.getPreviewInfo(data[i].channelUuid, data[i]);
-            }
-          });
-        }
+        this.chuliData();
+      } else if (
+        command === "main" ||
+        command === "sub" ||
+        command === "thrid"
+      ) {
+        this.chuliData(command);
       } else if (command === "playback") {
-        this.$emit("switchLuxiang", this.operatorData.id);
+        console.log(this.operatorData);
+        if (this.operatorData.nodeType === "chnNode") {
+          this.$emit(
+            "switchLuxiang",
+            this.operatorData.id,
+            this.operatorData.label
+          );
+        } else if (this.operatorData.hasOwnProperty("channelUuid")) {
+          this.$emit(
+            "switchLuxiang",
+            this.operatorData.channelUuid,
+            this.operatorData.channelName
+          );
+        } else {
+          this.$message.error("请选择通道查看录像！");
+        }
       } else if (command === "view") {
-        this.$emit("openView", this.operatorData);
+        this.openVidewTu();
       } else if (command === "renameView") {
         this.nodeValue = this.operatorData.viewName;
         this.changeNameDialogVisible = true;
@@ -506,19 +649,58 @@ export default {
         this.isDeleteVisible = true;
       }
     },
-    getPreviewInfo(channelUuid, data) {
-      this.$emit("playRtsp", channelUuid, "main", data);
+    getPreviewInfo(channelUuid, data, streamType, operator = 1) {
+      // if (!data.isOnline) {
+      //   return;
+      // }
+      console.log(channelUuid, data, streamType, operator);
+      this.$emit("playRtsp", channelUuid, streamType, data, operator);
     },
     handleNodeClick() {
       // 点击展开
     },
+    getIcon(isOnline, type) {
+      let treeIcons = window.config.treeIcons || [],
+        icon = "";
+      for (let i = 0; i < treeIcons.length; i++) {
+        if (treeIcons[i].value === type) {
+          if (!isOnline) {
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }2.png`);
+          } else {
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }.png`);
+          }
+          break;
+        }
+      }
+      return icon;
+    },
     async devloadNode(node, resolve) {
       //  懒加载子结点
       console.log(node);
-      let data = await this.videoTree(node.data && node.data.id);
-
+      let data = await this.videoTree(
+        node.data && node.data.id,
+        node.data && node.data.nodeType
+      );
+      if (node.level === 0) {
+        if (data.length) {
+          this.defaultExpKeys.push(data[0].id);
+          this.showMaxWidth = true;
+        }
+      }
       data = data.map(item => {
         item.leaf = !item.openFlag;
+        item.isOnline = true;
+        if (item.nodeType === "chnNode") {
+          item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+        }
+        if (item.nodeType === "devNode") {
+          item.isOnline = item.extInfo.devOnlineOrNot === "online";
+        }
+        item.icon = this.getIcon(item.isOnline, item.realType);
         return item;
       });
       // data = [
@@ -531,11 +713,18 @@ export default {
       console.log(data);
       return resolve(data);
     },
-    videoTree(parentOrgUuid) {
-      let data = parentOrgUuid ? { parentOrgUuid } : {};
+    videoTree(parentUuid, parentType) {
+      // 换成视频回放树，添加nvr设备
+      let data = {};
+      if (parentUuid) {
+        data.parentUuid = parentUuid;
+      }
+      if (parentType) {
+        data.parentType = parentType;
+      }
       return new Promise((resolve, reject) => {
         api2
-          .videoTree(data)
+          .getPlayTree(data)
           .then(res => {
             let list = res.data.data || [];
             resolve(list);
@@ -545,6 +734,31 @@ export default {
             resolve([]);
           });
       });
+      // 下面是新树的接口，不满足有nvr的条件，更换成上面的
+      // let data = {
+      //   viewType: "video",
+      //   treeStructure: "orgNode$device|chnNode",
+      //   authEnable: false,
+      //   parentUuid: parentOrgUuid,
+      //   parentType,
+      //   recursiveEnable: true,
+      //   extInfo: {
+      //     aimType: "chnOnlineStatus",
+      //     aimDetail: null
+      //   }
+      // };
+      // return new Promise((resolve, reject) => {
+      //   api2
+      //     .getPreviewTree(data)
+      //     .then(res => {
+      //       let list = res.data.data || [];
+      //       resolve(list);
+      //     })
+      //     .catch(err => {
+      //       console.log(err);
+      //       resolve([]);
+      //     });
+      // });
     },
     async loadNode(node, resolve) {
       // 加载子结点
@@ -552,9 +766,15 @@ export default {
       if (node.level === 0) {
         let data = await this.getTagTreeData();
         console.log(data);
+        if (node.level === 0) {
+          if (data.length) {
+            this.defaultExpKeys.push(data[0].id);
+          }
+        }
         return resolve(data);
       } else if (node.level === 1) {
         let data = await this.getChannelByNode(node.data.id);
+        console.log(data);
         return resolve(data);
       }
     },
@@ -564,15 +784,17 @@ export default {
           .getChannelByTag({
             tagUuid,
             page: 1,
-            limit: 11111,
+            limit: 111111,
             viewType: "video"
           })
           .then(res => {
             let list = (res.data.data.list || []).map(item => {
               item.label = item.channelName;
               item.id = item.channelUuid;
-              // item.id = item.deviceUuid;
               item.leaf = true;
+              item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+              item.icon = this.getIcon(item.isOnline, item.channelType);
+
               return item;
             });
             resolve(list);
@@ -587,6 +809,11 @@ export default {
           })
           .then(res => {
             let list = res.data.data.list || [];
+            list = list.map(item => {
+              item.isOnline = true;
+              item.icon = require(`@/assets/images/treeIcons/doc.png`);
+              return item;
+            });
             resolve(list);
           });
       });
@@ -977,11 +1204,11 @@ export default {
     },
     appendChild(children) {
       // console.log(children);
-      this.$refs[this.treeName].operator({
-        operator: "addChildre",
-        node: this.Treeparent,
-        value: children
-      });
+      // this.$refs[this.treeName].operator({
+      //   operator: "addChildre",
+      //   node: this.Treeparent,
+      //   value: children
+      // });
     },
     confirAppendChildren(data) {
       // console.log(data);
@@ -1387,7 +1614,26 @@ export default {
 </script>
 <style lang="scss">
 @import "@/style/variables.scss";
-#equipLeftMenu {
+#treeLaa {
+  .is-leaf {
+    width: 0px !important;
+  }
+  .el-tabs__content {
+    overflow: auto;
+  }
+  .mypanel {
+    // width: 380px;
+    height: calc(100vh - 185px);
+  }
+  .mypanel2 {
+    height: calc(100vh - 185px);
+  }
+  .showMaxWidth {
+    width: 196px;
+  }
+  .myShowCuoTree {
+    height: calc(100vh - 610px);
+  }
   .el-tabs__item {
     color: #dddddd;
   }
@@ -1402,8 +1648,48 @@ export default {
     left: 43px;
     top: 0px;
     img {
-      margin-top: 9px;
+      margin-top: 12px;
     }
+  }
+  // .el-tree,
+  // .el-tree-node
+  .custom-tree-node {
+    // width: 500px;
+    height: 100%;
+    // overflow: auto;
+  }
+  .el-input__inner {
+    padding-left: 30px;
+    &::-webkit-input-placeholder {
+      /* WebKit browsers */
+      font-size: 12px;
+    }
+  }
+  .el-tree-node,
+  .el-tree-node__content {
+    width: min-content;
+  }
+  .videoTree2 {
+    .el-tree-node,
+    .el-tree-node__content {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .custom-tree-node {
+      width: calc(100% - 40px);
+    }
+  }
+  .videoTree3 {
+    .el-tree-node,
+    .el-tree-node__content {
+       width: 100% !important;
+    }
+    .custom-tree-node {
+      width: calc(100%);
+    }
+  }
+  .el-tree-node__content > .el-tree-node__expand-icon {
+    padding: 6px 3px 6px 0px;
   }
 }
 </style>
@@ -1411,14 +1697,96 @@ export default {
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 
-.leftmenu {
-  width: 280px;
+.treeLaa {
+  width: 220px;
   box-sizing: border-box;
   height: 100%;
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
+  .videoTree {
+    //  height: calc(100vh - 150px);
+    // height: calc(100vh - 250px);
+    // width:500px;
+    // overflow: auto;
+  }
+
+  .mysearchText {
+  }
+
   .custom-tree-node {
-    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 18px;
+    height: 100%;
+    white-space: nowrap;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+    // width: calc(100% - 30px);
+    .channelStatus {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-basis: 20px;
+      flex-shrink: 20px;
+      flex-flow: 20px;
+      img {
+        width: 12px;
+        height: 12px;
+        user-select: none;
+      }
+      .span {
+        font-size: 12px;
+        color: #dddddd;
+        min-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .channelOffline {
+        color: #999999;
+      }
+    }
+    .channelStatus2 {
+      width: 220px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-basis: 20px;
+      flex-shrink: 20px;
+      flex-flow: 20px;
+      img {
+        width: 12px;
+        height: 12px;
+        user-select: none;
+      }
+      .span {
+        font-size: 12px;
+        color: #dddddd;
+        min-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .channelOffline {
+        color: #999999;
+      }
+    }
+    .span {
+      // width: calc(100% - 30px);
+      // overflow: hidden;
+      // display: block;
+      // text-overflow: ellipsis;
+      margin-left: 5px;
+      white-space: nowrap;
+      user-select: none;
+      // float: left;
+    }
+    .el-dropdown-link {
+      margin-left: 5px;
+    }
     .threelinemenu {
       display: none;
       float: right;
@@ -1430,32 +1798,42 @@ export default {
   }
 
   .searchWrap {
-    padding: 25px 26px 10px;
+    padding: 25px 12px 10px;
     .el-input {
       position: relative;
-      width: calc(100% - #{$iconWidth});
+      width: calc(100%);
     }
     $addIconWidth: 14px;
     img {
       display: inline-block;
       vertical-align: middle;
-      width: $addIconWidth;
+      width: 12px;
       margin-left: 4px;
       cursor: pointer;
     }
   }
   .tabs {
-    height: calc(100vh - 550px);
-    overflow-y: auto;
-    padding: 0px 26px 25px;
+    height: calc(100vh - 120px);
+    // overflow-y: auto;
+    padding: 0px 12px 25px;
+    overflow: auto;
+  }
+  .tabsPanel {
+    height: calc(100vh - 520px);
+    overflow: auto;
+  }
+  .tabsPanel {
+    // height: calc(100vh - 550px);
+    position: relative;
   }
   .mypanel {
     // height: calc(100vh - 60px - 70px - 80px);
-    overflow: auto;
-    width: 228px;
+    // overflow: auto;
+    // position: absolute;\
   }
   .cloundControlPannel {
-    padding: 30px;
+    user-select: none;
+    padding: 30px 12px 0px 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
     @include font-s;

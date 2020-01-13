@@ -15,7 +15,7 @@
           <el-select v-model="faceLibraryList"
                      size="small"
                      multiple
-                     style="width: 160px;"
+                     style="width: 190px;"
                      clearable
                      collapse-tags
                      placeholder="请选择人脸库">
@@ -251,23 +251,29 @@ export default {
       }
     },
     getLibrarys() {
-      this.$faceControlHttp.getFacedbList().then(res => {
+      this.$faceControlHttp.getFacedbList({
+        faceLibraryType: "systemFaceLib,captureFaceLib,dynamicFaceLib,staticFaceLib"
+      }).then(res => {
         let body = res.data;
         this.getFacedbListSuccess(body);
       });
     },
     getFacedbListSuccess(body) {
       this.libraryOptions = body.data;
-      this.faceLibraryList = [];
-      if (this.libraryOptions.length !== 0) {
-        this.faceLibraryList.push(this.libraryOptions[0].faceLibraryUuid);
-      }
+      // this.faceLibraryList = [];
+      // if (this.libraryOptions.length !== 0) {
+      //   this.faceLibraryList.push(this.libraryOptions[0].faceLibraryUuid);
+      // }
     },
     handleTypeChange(val) {
       if (this.typeRadio === "picture") {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 30;
+        this.pageInfo.currentPage = 1;
       } else {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 12;
+        this.pageInfo.currentPage = 1;
       }
       this.getModelList();
     },
@@ -293,6 +299,8 @@ export default {
       );
       this.$refs.modelDetails.startTime = this.startTime;
       this.$refs.modelDetails.endTime = this.endTime;
+      this.$refs.modelDetails.faceSimilarity = this.threshold;
+      this.$refs.modelDetails.photoQualitieList = this.photoQualitieList;
       this.isShowDetail = true;
     },
     onCancelDetail() {
@@ -311,7 +319,7 @@ export default {
           endTime: this.endTime,
           logic: this.logic,
           frequency: this.frequency,
-          leastNumberOfChannel: this.frequency,
+          leastNumberOfChannel: this.leastNumberOfChannel,
           photoQualitieList: this.photoQualitieList.toString(),
         })
         .then(res => {
@@ -373,13 +381,13 @@ export default {
   width: 100%;
   height: 100%;
   .main-container {
-    padding: 1.8% 3%;
+    padding: 1% 3%;
     box-sizing: border-box;
     background: #212325;
     width: 100%;
     height: 100%;
     .search {
-      height: 120px;
+      height: 130px;
       width: 100%;
       border: {
         width: 0 0 1px 0;
@@ -387,7 +395,7 @@ export default {
         color: rgba($color: #ffffff, $alpha: 0.2);
       }
       .search-input {
-        height: 50%;
+        height: 45%;
         display: flex;
         align-items: center;
         font-family: PingFangSC-Regular;

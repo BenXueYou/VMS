@@ -1,81 +1,92 @@
 <template>
 	<div id="noteaacx" class="wrap">
-    <transition name="slide-fade">
-		<div class="left" :style="{'margin-left':(issuoxiao?-470:0)+'px'}">
-			<div class="rightarrow" @click="suoxiao">
-				<img :src="rightarrow" :style="{'transform':(issuoxiao?'rotate(180deg)':'rotate(0deg)')}" alt />
-			</div>
-			<div class="leftHeader">
-				<img src="@/assets/images/faceModule/twopeople.png" alt />
-				人脸库
-			</div>
-			<div class="title button-div">
-				<el-button type="primary" icon="el-icon-plus" class="addnewdb" @click="addfacedb">新建人像库</el-button>
-				<span class="tips">人像库总数：{{tableData.length}} &nbsp;&nbsp;&nbsp;&nbsp; 总人脸数：{{totalrenshu}}</span>
-			</div>
-			<div class="leftasda">
-				<!-- :current-row-key="selectLibRow.index" -->
-				<el-table
-					:data="tableData"
-					border
-					ref="multipleTable"
-					v-loading="loadding"
-					:current-row-key="0"
-					highlight-current-row
-					@row-click="selectedRow"
-					style="width: 100%"
-				>
-					<el-table-column prop="faceLibraryName" label="库名称" width="180"></el-table-column>
-					<el-table-column prop="faceTotal" label="人员数量" width="100"></el-table-column>
-					<el-table-column label="操作">
-						<template slot-scope="scope">
-							<el-button @click.stop="editFaceLib(scope.row)" type="text" size="small">
-								<i class="el-icon-edit-outline"></i>
-								编辑
-							</el-button>
+		<transition name="slide-fade">
+			<div class="left" :style="{'margin-left':(issuoxiao?-470:0)+'px'}">
+				<div class="rightarrow" @click="suoxiao">
+					<img :src="rightarrow" :style="{'transform':(issuoxiao?'rotate(180deg)':'rotate(0deg)')}" alt />
+				</div>
+				<div class="leftHeader">
+					<img src="@/assets/images/faceModule/twopeople.png" alt />
+					人脸库
+				</div>
+				<div class="title button-div">
+					<el-button type="primary" icon="el-icon-plus" class="addnewdb" @click="addfacedb">新建人像库</el-button>
+					<span class="tips">人像库总数：{{tableData.length}} &nbsp;&nbsp;&nbsp;&nbsp; 总人脸数：{{totalrenshu}}</span>
+				</div>
+				<div class="leftasda">
+					<!-- :current-row-key="selectLibRow.index" -->
+					<el-table
+						:data="tableData"
+						border
+						ref="multipleTable"
+						v-loading="loadding"
+						:current-row-key="0"
+						highlight-current-row
+						@row-click="selectedRow"
+						style="width: 100%"
+					>
+						<el-table-column prop="faceLibraryName" label="库名称" width="180"></el-table-column>
+						<el-table-column prop="faceTotal" label="人员数量" width="100"></el-table-column>
+						<el-table-column label="操作">
+							<template slot-scope="scope">
+								<el-button @click.stop="editFaceLib(scope.row)" type="text" size="small">
+									<!-- <i class="el-icon-edit-outline"></i> -->
+									编辑
+								</el-button>
 
-							<el-button
-								type="text"
-								size="small"
-								@click.stop="openDeleteDialog('deletefaceLib',scope.row)"
-							>
-								<i class="el-icon-delete"></i>
-								删除
-							</el-button>
-						</template>
-					</el-table-column>
-				</el-table>
+								<el-button
+									type="text"
+									size="small"
+									class="deleteBtnClass"
+									@click.stop="openDeleteDialog('deletefaceLib',scope.row)"
+								>
+									<!-- <i class="el-icon-delete"></i> -->
+									删除
+								</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
 			</div>
-		</div>
-    </transition>
+		</transition>
 		<div class="right" :style="{'width': 'calc(100% - '+(issuoxiao?30:500)+'px)'}">
 			<div v-show="!faceDBDialogAddVisible" class="rightheader">
 				<ul>
 					<li>
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<!-- <img src="@/assets/images/faceModule/onepeople.png" alt /> -->
+						<div class="header-line"></div>
 						{{libraryName?libraryName:'库名称'}}
 					</li>
 					<li>
 						<el-checkbox v-model="selectall" @change="selectAll">本页全选</el-checkbox>
 					</li>
 					<li class="active" @click="addfile">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/add.png" alt />
 						<span>新增</span>
 					</li>
 					<li class="active" @click="deletefile">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<!-- <i class="el-icon-delete"></i> -->
+						<img src="@/assets/images/delete2.png" alt />
 						<span>删除</span>
 					</li>
 					<li class="active" @click="exportExcel2">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+						<img src="@/assets/images/faceModule/expert.png" alt />
 						<span>导出</span>
 					</li>
-					<li class="active" @click="faceLibUpdateRecord">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+					<li
+						class="active"
+						@click="faceLibUpdateRecord"
+						v-if="selectLibRow.faceLibraryType === 'staticFaceLib'"
+					>
+						<img src="@/assets/images/faceModule/facedb_update_history.png" alt />
 						<span>更新历史</span>
 					</li>
-					<li class="active" @click="updateLibraryTask">
-						<img src="@/assets/images/faceModule/onepeople.png" alt />
+					<li
+						class="active"
+						@click="updateLibraryTask"
+						v-if="selectLibRow.faceLibraryType === 'staticFaceLib'"
+					>
+						<img src="@/assets/images/faceModule/facedb_update.png" alt />
 						<span>库更新</span>
 					</li>
 
@@ -112,10 +123,8 @@
 						:selectall="selectall"
 						:listPageSize="listPageSize"
 						:imagePageSize="imagePageSize"
-						:listPageCount="listPageCount"
-						:imagePageCount="imagePageCount"
-						:listPageNow="listPageNow"
-						:imagePageNow="imagePageNow"
+						:total="total"
+						:pageNow="pageNow"
 						:listTableData="listTableData"
 						:imageTableData="imageTableData"
 						:listtableloadding="listtableloadding"
@@ -134,7 +143,6 @@
 				:libraryuuid="faceLibraryUuid"
 				:isUpdate="isUpdate"
 				:staffDetail="staffDetail"
-				:title="addtitle"
 				@getstafflirary="getstafflirary"
 				@closeAddAct="closeStaffAddDialogAct"
 			></the-face-d-b-add>
@@ -149,19 +157,13 @@
 		<!-- 库更新弹窗 -->
 		<the-face-d-b-d-k-dialog
 			:faceDBDialogVisible="faceDBDialogDKVisible"
-			:libraryarr="libraryarr"
-			:libraryuuid="taofanlibraryuuid"
-			@getstafflirary="getstafflirary"
+			:libraryuuid="selectLibRow.faceLibraryUuid ? selectLibRow.faceLibraryUuid : ''"
 			@close="faceDBDialogDKVisible=false"
-			@addDaoKuTask="addDaoKuTask"
+			@confirm="confirmDBUpdate"
 		></the-face-d-b-d-k-dialog>
 		<!-- 更新历史弹窗 -->
 		<the-face-d-b-update-history-dialog
 			:faceDBDialogVisible="faceDBDialogUpdateHistoryVisible"
-			:uploadstatusZnarr="uploadstatusZnarr"
-			:libraryname="libraryName"
-			:libraryuuid="faceLibraryUuid"
-			:realtimeNum="realtimeNum"
 			@close="faceDBDialogUpdateHistoryVisible=false"
 		></the-face-d-b-update-history-dialog>
 
@@ -184,12 +186,12 @@
 			:visible.sync="exportdialogVisible"
 		>
 			<div style="margin:50px auto;">
-				<el-select v-model="choosetemplate" collapse-tags placeholder="请选择" class="ExportDialogInput">
+				<el-select v-model="choosetemplate" placeholder="请选择" class="ExportDialogInput">
 					<el-option
 						v-for="item in templatetypearr"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
+						:key="item.typeStr"
+						:label="item.typeName"
+						:value="item.typeStr"
 					></el-option>
 				</el-select>
 			</div>
@@ -211,8 +213,10 @@ import TheFaceDBDKDialog from "@/pages/faceModule/views/facedb/basic/TheFaceDBDK
 import TheFaceDBUpdateHistoryDialog from "@/pages/faceModule/views/facedb/basic/TheFaceDBUpdateHistoryDialog";
 import TheFaceDBAdd from "@/pages/faceModule/views/facedb/basic/TheFaceDBAdd";
 import SearchOptionView from "./basic/SearchOptionView";
-import * as api from "@/pages/faceModule/api.js";
+// import * as api from "@/pages/faceModule/api.js";
 import * as faceApi from "@/pages/faceModule/http/faceDBHttp.js";
+import RestApi from "@/utils/RestApi";
+
 export default {
   name: "faceDB",
   components: {
@@ -229,7 +233,7 @@ export default {
       taofanlibraryuuid: "", // 逃犯库的UUID记录
       issuoxiao: false,
       rightarrow: require("@/assets/images/faceModule/rightarrow.png"),
-      choosetemplate: "scalper",
+      choosetemplate: "static_person",
       templatetypearr: [],
       exportdialogVisible: false,
       faceDBDialogVisible: false, // 新建人脸库的
@@ -242,14 +246,15 @@ export default {
       selectall: false,
       typeradio: "TheFaceDBImageTable",
       currentcomponents: "TheFaceDBImageTable",
-      listPageSize: 15,
-      imagePageSize: 24,
+      listPageSize: 18,
+      imagePageSize: 28,
       listPageCount: 0,
       imagePageCount: 0,
       listPageNow: 1,
       imagePageNow: 1,
       pageNow: 1,
-      pageSize: 24,
+      pageSize: 28,
+      total: 0,
       imageTableData: [],
       listTableData: [],
       libraryarr: [],
@@ -273,7 +278,12 @@ export default {
       uploadstatusZnarr: [],
       defaultHeader: require("@/assets/user.png"),
       listTableColumns: [], // 右边表格，显示哪些数据
-      ws: "" // 定义全局的websocket对象
+      ws: "", // 定义全局的websocket对象,
+      currentRowIndex: "",
+      stompClient: null,
+      interval: null,
+      refreshFlag: false,
+      queryData: {}
     };
   },
   computed: {
@@ -302,66 +312,62 @@ export default {
         console.log(newVal, "this.selectLibRow====", this.selectLibRow);
       },
       deep: true
-    },
-    typeradio(val) {
-      if (val === "TheFaceDBListTable") {
-        this.pageSize = this.listPageSize;
-        this.pageNow = this.listPageNow;
-      } else {
-        this.pageSize = this.imagePageSize;
-        this.pageNow = this.imagePageNow;
-      }
     }
   },
   methods: {
     queryAct(data) {
       this.queryData = data;
+      this.pageNow = 1;
       this.getStaffLibStaffData(data);
     },
     suoxiao() {
       this.issuoxiao = !this.issuoxiao;
-      if (this.issuoxiao) {
-        this.$nextTick(() => {
-          var el = this.$refs.dataWrap;
-          var w = el.offsetWidth;
-          this.imagePageSize = 4 * Math.floor(w / 150);
-          if (this.typeradio === "TheFaceDBImageTable") {
-            this.getStaffLibStaffData();
-          }
-        });
+      this.imagePageSize = this.issuoxiao ? 40 : 28;
+      if (this.typeradio === "TheFaceDBImageTable") {
+        this.pageSize = this.imagePageSize;
+        this.getStaffLibStaffData();
       } else {
-        this.$nextTick(() => {
-          var el = this.$refs.dataWrap;
-          var w = el.offsetWidth;
-          this.imagePageSize = 4 * Math.floor(w / 150);
-          this.imageTableData.splice(this.imagePageSize, 20000);
-        });
+        // 列表的limit不需改变
+        this.pageSize = this.listPageSize;
       }
     },
     sureExport() {
-      var num = [];
+      let dataArr = [];
       if (this.typeradio === "TheFaceDBImageTable") {
         for (let i = 0, len = this.imageTableData.length; i < len; i++) {
           if (this.imageTableData[i].checked) {
-            num.push(this.imageTableData[i].staffUuid);
+            // num.push(this.imageTableData[i].staffUuid);
+            dataArr.push({
+              faceUuid: this.imageTableData[i].faceUuid,
+              facePhotoUuid: this.imageTableData[i].facePhotoUuid
+            });
           }
         }
       } else {
         for (let i = 0, len = this.listTableData.length; i < len; i++) {
           if (this.listTableData[i].checked) {
-            num.push(this.listTableData[i].staffUuid);
+            // num.push(this.listTableData[i].staffUuid);
+            dataArr.push({
+              faceUuid: this.listTableData[i].faceUuid,
+              facePhotoUuid: this.listTableData[i].facePhotoUuid
+            });
           }
         }
       }
       this.exportdialogVisible = false;
-      if (!num.length) {
+      if (!dataArr.length) {
         return;
       }
-      window.location.href = api.getExcel({
-        staffuuidList: num.toString(),
-        libraryuuid: this.faceLibraryUuid,
-        templatetype: this.choosetemplate
-      });
+      this.$common.funBuildFile(
+        RestApi.api.faceModuleAPi.faceDBApi.downloadFace(
+          this.$store.state.home.projectUuid
+        ) +
+					"?templateType=" +
+					this.choosetemplate,
+        "人脸库.zip",
+        "POST",
+        dataArr
+      );
     },
     // 后端导出方法
     exportExcel2() {
@@ -380,14 +386,14 @@ export default {
         }
       }
       if (!num.length) {
-        this.$message.error("未选中人员");
+        this.$message.warning("未选中人员");
         return;
       }
       this.exportdialogVisible = true;
     },
     openDeleteDialog(way, row) {
       if (!row.deletable) {
-        this.$message.error(`不可以删除${row.faceLibraryName}数据`);
+        this.$message.warning(`不可以删除${row.faceLibraryName}数据`);
         return;
       }
       if (row.faceLibraryUuid) {
@@ -416,6 +422,7 @@ export default {
         page: this.pageNow,
         limit: this.pageSize
       };
+      if (!params.staffName) params.staffName = null;
       Object.assign(params, data);
       faceApi
         .getStaffList(params)
@@ -427,7 +434,7 @@ export default {
 						!res.data.data ||
 						!res.data.data.list.length
           ) {
-            this.$message.success(this.libraryName + "没有数据");
+            // this.$message.success(this.libraryName + "没有数据");
           } else {
             let arr = res.data.data.list;
             for (let i = 0; i < arr.length; i++) {
@@ -457,11 +464,10 @@ export default {
           }
           if (this.typeradio === "TheFaceDBListTable") {
             this.listTableData = staffTableData;
-            this.listPageCount = res.data.data.total;
           } else {
             this.imageTableData = staffTableData;
-            this.imagePageCount = res.data.data.total;
           }
+          this.total = res.data.data.total;
         })
         .catch(err => {
           console.log(err);
@@ -475,6 +481,7 @@ export default {
       } else {
         this.imagePageNow = 1;
       }
+      this.pageNow = 1;
       this.getStaffLibStaffData();
     },
     changepage(index) {
@@ -485,7 +492,9 @@ export default {
       } else {
         this.imagePageNow = index;
       }
-      this.getStaffLibStaffData();
+      this.pageNow = index;
+
+      this.getStaffLibStaffData(this.queryData);
     },
     selectAll(val) {
       // 选择全部
@@ -494,7 +503,7 @@ export default {
     // 新增人脸库
     addfacedb() {
       this.updatefacedata = {};
-      this.faceDBDialogVisible = !this.faceDBDialogVisible;
+      this.faceDBDialogVisible = true;
     },
     // 编辑人脸库
     editFaceLib(row) {
@@ -520,6 +529,7 @@ export default {
       faceApi.deleteFaceLib({ faceLibraryUuid: this.row }).then(res => {
         if (res.data.success) {
           this.$message.success("删除成功！");
+          this.faceLibraryUuid = "";
           this.getStaffLibList();
         }
       });
@@ -548,48 +558,14 @@ export default {
     changetype(val) {
       this.currentcomponents = val;
       this.selectall = false;
-      if (
-        this.typeradio === "TheFaceDBListTable" &&
-				!this.listTableData.length
-      ) {
-        this.getStaffLibStaffData();
+      this.imagePageSize = this.issuoxiao ? 40 : 28;
+      if (this.typeradio === "TheFaceDBListTable") {
+        this.pageSize = this.listPageSize;
+      } else {
+        this.pageSize = this.imagePageSize;
       }
-      if (this.typeradio === "TheFaceDBImageTable") {
-        if (this.issuoxiao) {
-          this.$nextTick(() => {
-            var el = this.$refs.dataWrap;
-            var w = el.offsetWidth;
-            var size = this.imagePageSize;
-            this.imagePageSize = 4 * Math.floor(w / 150);
-            if (
-              this.typeradio === "TheFaceDBImageTable" &&
-							size !== this.imagePageSize
-            ) {
-              this.getStaffLibStaffData();
-            }
-          });
-        } else {
-          if (this.imageTableData.length) {
-            this.$nextTick(() => {
-              var el = this.$refs.dataWrap;
-              var w = el.offsetWidth;
-              var size = this.imagePageSize;
-              this.imagePageSize = 4 * Math.floor(w / 150);
-              this.imageTableData.splice(this.imagePageSize, 20000);
-              if (size !== this.imagePageSize) {
-                this.getStaffLibStaffData();
-              }
-            });
-          } else {
-            this.$nextTick(() => {
-              var el = this.$refs.dataWrap;
-              var w = el.offsetWidth;
-              this.imagePageSize = 4 * Math.floor(w / 150);
-              this.getStaffLibStaffData();
-            });
-          }
-        }
-      }
+      this.pageNow = 1;
+      this.getStaffLibStaffData();
     },
 
     updateLibraryTask() {
@@ -613,8 +589,9 @@ export default {
       }
     },
     exportfile() {},
+    // 删除人员
     deletefile() {
-      if (!this.selectLibRow.deletable) {
+      if (!this.selectLibRow.delFaceByUser) {
         this.$message.error(`${this.selectLibRow.faceLibraryName}不可以删除`);
         return;
       }
@@ -638,26 +615,10 @@ export default {
       }
       this.deleteStaffFace(num);
     },
-    addDaoKuTask({ time, data, num, uploader }) {
-      if (!this.ws) {
-        // alert("建立socket库了！");
-        // this.conSocket(); //建立socket,本来想延迟建立socket
-      }
-      api.addDaoKuTask(data).then(res => {
-        console.log(res);
-        if (res.data.success) {
-          this.taskNum.push({
-            time: time,
-            num: num,
-            uploader: uploader,
-            isUpload: false
-          });
-          console.log(this.taskNum);
-          this.faceDBDialogDKVisible = false;
-          this.$message.success("任务添加完成，请不要关闭客户端！");
-        } else {
-          this.$message.error(res.data.msg);
-        }
+    addDaoKuTask(params) {
+      faceApi.addDaoKuTask(params[0], params[1]).then(res => {
+        this.$message.success("任务添加完成，请不要关闭客户端！");
+        this.faceDBDialogDKVisible = false;
       });
     },
     getstafflirary() {
@@ -673,8 +634,9 @@ export default {
       //   }
       // });
     },
+    // 关闭人脸库弹窗
     closeFaceDBDialogAct(is) {
-      this.faceDBDialogVisible = !this.faceDBDialogVisible;
+      this.faceDBDialogVisible = false;
       if (is) {
         this.getStaffLibList();
       }
@@ -687,14 +649,18 @@ export default {
     },
     selectedRow(row, event, column) {
       // 当点击左边的列表，右边进行更新
+      this.faceDBDialogAddVisible = false;
       this.selectLibRow = row;
       this.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
       this.libraryName = this.selectLibRow.faceLibraryName;
-      this.currentRowStyle(this.selectLibRow.index);
+      // this.currentRowStyle(this.selectLibRow.index);
+      this.currentRowIndex = this.getIndexById(row);
       this.selectall = false;
       this.resetall();
+      this.pageNow = 1;
       this.getStaffLibStaffData();
     },
+    // 关闭人脸新增页面
     closeStaffAddDialogAct(is) {
       this.isUpdate = !this.isUpdate;
       this.faceDBDialogAddVisible = !this.faceDBDialogAddVisible;
@@ -727,7 +693,7 @@ export default {
     },
     // 删除人脸
     deleteStaffFace(uuid) {
-      if (!this.selectLibRow.deletable) {
+      if (!this.selectLibRow.delFaceByUser) {
         this.$message.error(`不可以删除${this.libraryName}人员`);
         return;
       }
@@ -754,6 +720,7 @@ export default {
     // 查询人员库列表
     getStaffLibList(flag = false) {
       this.loadding = true;
+      this.tableData = [];
       faceApi
         .getFaceLib()
         .then(res => {
@@ -761,11 +728,15 @@ export default {
           if (res.data.success && res.data.data) {
             this.tableData = res.data.data;
             if (this.tableData && !this.tableData.length) return;
-            this.selectLibRow = this.tableData[0];
-            this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
-            this.libraryName = res.data.data[0].faceLibraryName;
-            this.$refs.multipleTable.setCurrentRow(this.selectLibRow);
-            this.getStaffLibStaffData();
+            if (!flag) {
+              this.selectLibRow = this.tableData[0];
+              this.faceLibraryUuid = res.data.data[0].faceLibraryUuid;
+              this.libraryName = res.data.data[0].faceLibraryName;
+              this.$refs.multipleTable.setCurrentRow(this.selectLibRow);
+              this.getStaffLibStaffData();
+            } else {
+              this.handleDefaultChooseFirstData();
+            }
           } else {
             this.$message.warning(res.data.msg);
           }
@@ -774,93 +745,89 @@ export default {
           this.loadding = false;
         });
     },
-    conSocket() {
-      const _this = this;
-      console.log(window.config.socketIP);
-      this.ws = new WebSocket(window.config.socketIP);
-      this.ws.onopen = function() {};
-      // test
-      this.ws.onmessage = function(e) {
-        console.log("socket有数据过来了!");
-        if (!e.data) {
-          console.log("暂无消息推送");
-        } else {
-          try {
-            if (
-              JSON.parse(e.data) &&
-							JSON.parse(e.data).topic === "TOPIC_FILE_UPLOAD_PROCESS"
-            ) {
-              let data = JSON.parse(JSON.parse(e.data).data);
-              console.log(data);
-              if (data.socketType === "startStaffImport") {
-                var needdata = data.clientImportInfoDTO.allNeedFileNamelist;
-                console.log(needdata);
-                console.log(_this.taskNum);
-                if (needdata.length) {
-                  for (var j = 0; j < _this.taskNum.length; j++) {
-                    if (
-                      _this.taskNum[j].isUpload === false &&
-											_this.taskNum[j].time ===
-												data.clientImportInfoDTO.filepath
-                    ) {
-                      // 去除需要上传的文件
-                      for (let i = 0; i < _this.taskNum[j].num.length; i++) {
-                        var flag = false;
-                        for (var k = 0; k < needdata.length; k++) {
-                          if (_this.taskNum[j].num[i].name === needdata[k]) {
-                            flag = true;
-                            break;
-                          }
-                        }
-                        if (!flag) {
-                          _this.taskNum[j].uploader.removeFile(
-                            _this.taskNum[j].num[i].id
-                          );
-                        } else {
-                          console.log(
-                            "-------------------------" +
-															_this.taskNum[j].num[i].name
-                          );
-                        }
-                      }
-                      console.log("找到相同时间戳的任务了，我要开始上传了。");
-                      _this.taskNum[j].uploader.start();
-                      _this.taskNum[j].isUpload = true;
-                      break;
-                    }
-                  }
-                } else {
-                  // console.log("上传完毕，调用分析接口");
-                  // api.fenxi().then(res => {});
-                }
-              } else if (data.socketType === " staffImportProcess") {
-                // var data = data.clientImportInfoDTO;
-                // var needdata = data.allNeedFileNamelist;
-                // if (data.progress === 0.33 && !needdata.length) {
-                //   console.log("上传完毕，调用分析接口");
-                //   api.fenxi().then(res => {});
-                // }
-
-                _this.getStaffLibList();
-                _this.realtimeNum.push({
-                  progress: data.progress,
-                  taskuuid: data.taskuuid,
-                  status: data.status
-                });
-              }
-            }
-          } catch (error) {
-            console.log(error);
-          }
+    getIndexById(row) {
+      if (!row || this.tableData.length === 0) {
+        return -1;
+      }
+      for (let i = 0; i < this.tableData.length; i++) {
+        if (row.faceLibraryUuid === this.tableData[i].faceLibraryUuid) {
+          return i;
         }
-      };
-      this.ws.onclose = function() {
-        console.log("socket关闭了");
-      };
+      }
+      return -1;
+    },
+    handleDefaultChooseFirstData() {
+      if (!this.tableData || this.tableData.length === 0) {
+        return;
+      }
+      let index = 0;
+      if (this.currentRowIndex && this.currentRowIndex >= 0) {
+        index = this.currentRowIndex;
+      }
+      this.setCurrentRow(index);
+      this.getStaffLibStaffData();
+    },
+    setCurrentRow(index) {
+      if (this.$refs.multipleTable) {
+        this.$refs.multipleTable.setCurrentRow(this.tableData[index]);
+      }
+    },
+    confirmDBUpdate() {
+      this.faceDBDialogDKVisible = false;
+      // this.getStaffLibList();
+      setTimeout(() => {
+        this.$refs.multipleTable.setCurrentRow(this.selectLibRow);
+        this.getStaffLibStaffData();
+      }, 10);
+    },
+    connectSocket() {
+      /* eslint-disable */
+			let socket = new SockJS(
+				window.config.protocolHeader + window.config.socketIP
+			);
+			this.stompClient = Stomp.over(socket);
+			this.stompClient.connect(
+				{ projectUuid: this.$store.state.home.projectUuid },
+				frame => {
+					console.log("connect success: ", frame);
+					this.stompClient.subscribe(
+						"/user/topic/face-1.3/client/faceLibImportTaskProgress",
+						greeting => {
+							console.log("subscribe success: ", greeting);
+							this.handleSubscribe(JSON.parse(greeting.body));
+						}
+					);
+				},
+				err => {
+					console.log("error, errMsg: ", err);
+				}
+			);
+			/* eslint-enable */
+    },
+    disConnectSocket() {
+      if (this.stompClient != null) {
+        this.stompClient.disconnect();
+        console.log("Disconnected");
+      }
+    },
+    handleSubscribe(data) {
+      this.refreshFlag = true;
+      if (!data) {
+        this.refreshFlag = false;
+      }
+    },
+    setIntervalMethod() {
+      this.interval = setInterval(() => {
+        if (this.refreshFlag) {
+          this.getStaffLibList(true);
+          this.refreshFlag = false;
+        }
+      }, 60000);
     }
   },
   mounted() {
     // this.templatetypearr = window.face.kutemplate;
+    this.templatetypearr = this.$common.getEnumByGroupStr("staff_temp");
     this.$nextTick(function() {
       // var el = this.$refs.dataWrap;
       // var w = el.offsetWidth;
@@ -875,14 +842,16 @@ export default {
     } else {
       // this.getStaffLibList(true);
     }
-    this.getStaffLibList(true);
-    // this.conSocket(); // 建立socket
+    this.getStaffLibList();
+    this.setIntervalMethod();
+    this.connectSocket(); // 建立socket
   },
   deactivated() {
-    if (this.ws) {
-      this.ws.close();
-      this.ws = "";
+    if (this.interval) {
+      clearInterval(this.interval);
     }
+    this.disConnectSocket();
+    this.refreshFlag = false;
   },
   destroyed() {
     // alert('destroyed')
@@ -901,14 +870,14 @@ export default {
 		color: rgba(255, 255, 255, 0.8);
 	}
 	.el-checkbox__inner::after {
-    box-sizing: content-box;
-    border: 1px solid #26D39D;
-    border-left: 0;
-    border-top: 0;
-    height: 7px;
-    left: 4px;
-    position: absolute;
-    top: 1px;
+		box-sizing: content-box;
+		border: 1px solid #26d39d;
+		border-left: 0;
+		border-top: 0;
+		height: 7px;
+		left: 4px;
+		position: absolute;
+		top: 1px;
 	}
 	.DeleteDialogClass {
 		.mydelete {

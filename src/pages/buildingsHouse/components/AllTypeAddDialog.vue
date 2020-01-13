@@ -17,6 +17,7 @@
         <el-form-item label="上级地址："
                       prop="upAddressId">
           <popover-tree width="90%"
+                        :isCurrentShow='isCurrentShow'
                         :initAreaData="initAreaData"
                         :lastLevelType="lastLevelType"
                         @setUseData="setUseData"/>

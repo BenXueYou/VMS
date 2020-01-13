@@ -119,7 +119,6 @@ export default {
     }
   },
   components: {},
-
   data: function() {
     return {
       defaultExpandedKeys: [],
@@ -127,10 +126,7 @@ export default {
       defaultProps: {
         children: "children",
         label: "label",
-        isLeaf: function(data, node) {
-          if (data.children) return true;
-          return false;
-        }
+        isLeaf: 'isLeaf'
       },
       checkAll: false,
       isIndeterminate: false,
@@ -148,23 +144,6 @@ export default {
         arr.push(element.channelUuid);
       });
       this.checkedChannel = arr;
-    },
-    checkedChannel(val) {
-      // if (!val) val = [];
-      // if (val.length && val.length === this.channels.length) {
-      //   this.checkedChannelName = "全部";
-      //   this.isIndeterminate = false;
-      //   this.checkAll = true;
-      //   return;
-      // }
-      // let str = "";
-      // this.channels.forEach(item => {
-      //   if (val.indexOf(item.channelUuid) !== -1) {
-      //     str += item.nickName;
-      //     str += "，";
-      //   }
-      // });
-      // this.checkedChannelName = str.substr(0, str.length - 1);
     },
     channels(val) {
       if (val && !val.length) {
@@ -210,15 +189,24 @@ export default {
       this.checkedChannel = [];
       this.checkedChannelName = "";
       this.checkAll = false;
-      this.$emit("transferCheckedChannel", []);
+      if (!this.checkAll && this.isCheckedAll) {
+        this.$emit("transferCheckedChannel", this.channels);
+      } else {
+        this.$emit("transferCheckedChannel", []);
+      }
     },
     // 弹窗展开的回调
     show() {},
     // 弹窗关闭的回调
-    hide() {},
+    hide() {
+      if (!this.checkAll && !this.isIndeterminate && this.isCheckedAll) {
+        this.$emit("transferCheckedChannel", this.channels);
+      }
+    },
     // 全选的回调
     handleCheckAllChange(val) {
       console.log(val);
+      this.checkAll = val;
       let checkedChannelArr = [];
       let checkedChannelUuidArr = [];
       if (val) {
@@ -226,13 +214,21 @@ export default {
           checkedChannelUuidArr.push(element.channelUuid);
           checkedChannelArr.push(element);
         });
+      } else {
+        // 此处标示该弹窗是否携带可编辑的数据
+        if (this.isCheckedAll) {
+          checkedChannelArr = this.channels;
+        } else {
+          // 携带编辑数据，允许传NULL数组
+          checkedChannelArr = [];
+        }
       }
       this.checkedChannel = checkedChannelUuidArr;
       console.log(this.checkedChannel);
       this.isIndeterminate = false;
       this.$emit("transferCheckedChannel", checkedChannelArr);
     },
-    // 点击全选复选框事件
+    // 点击复选框事件
     handleCheckedChange(value, data) {
       console.log(value);
       if (this.boxType === "radio") {
@@ -298,6 +294,7 @@ export default {
                 checkedChannelUuidArr.push(element.channelUuid);
               });
               this.checkedChannel = checkedChannelUuidArr;
+              this.checkAll = true;
               this.$emit("transferCheckedChannel", this.channels);
             }
             // 处理单选逻辑
@@ -316,7 +313,7 @@ export default {
   }
 };
 </script>
-<style>
+<style lang='scss'>
 .checkBoxClass {
 	text-align: left;
 	margin: 0px 15px;
@@ -356,7 +353,9 @@ export default {
 	justify-content: flex-start;
 	background: #202124;
 }
-.el-checkbox + .el-checkbox {
-	margin-left: 15px !important;
+.popverTreeParent {
+	.el-checkbox + .el-checkbox {
+		margin-left: 15px !important;
+	}
 }
 </style>

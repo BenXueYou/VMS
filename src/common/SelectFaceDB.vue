@@ -89,6 +89,10 @@ export default {
     initSelectData: {
       type: Array,
       default: () => []
+    },
+    faceLibraryType: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -112,7 +116,9 @@ export default {
     },
     getFacedbList() {
       this.$faceControlHttp
-        .getFacedbList()
+        .getFacedbList({
+          faceLibraryType: this.faceLibraryType
+        })
         .then(res => {
           let body = res.data;
           this.getFacedbListSuccess(body);
@@ -241,7 +247,7 @@ export default {
             background: rgba($color: #26d39d, $alpha: 0.15);
           }
           .item-faceDB {
-            width: 34%;
+            width: 40%;
             margin-left: 18px;
             text-align: left;
           }

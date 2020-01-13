@@ -16,6 +16,10 @@ export var LoginAjax = {
       }
     });
   },
+
+  /**
+   * 登出事件
+   */
 };
 
 function install(Vue) {

@@ -31,7 +31,7 @@
               <img class="img"
                    src="../../../assets/images/resident/baseMsg.png"
                    alt
-                   srcset>
+                   srcset />
               <span>基本信息</span>
             </div>
           </el-col>
@@ -41,7 +41,7 @@
               <el-upload class="uploadClass"
                          :action="updateFileImage"
                          :show-file-list="false"
-                         accept="image/jpg,image/jpeg"
+                         accept="image/jpg, image/jpeg"
                          :headers="myHeaders"
                          :auto-upload="true"
                          :http-request="httpRequest">
@@ -49,11 +49,11 @@
                       class="left_tips_txt imgBox">
                   <img class="img"
                        :src="imageUrl"
-                       alt>
+                       alt />
                   <div class="deleteIconBox"
                        @click.stop="imageUrl='';fileData=''">
                     <img src="@/assets/images/doorAccess/delete_icon.png"
-                         alt>
+                         alt />
                   </div>
                 </span>
                 <span v-else
@@ -62,14 +62,14 @@
                         style="line-height:60px;display:block;">
                     <img class="img"
                          src="@/assets/images/doorAccess/add_img_icon.png"
-                         alt>本地
+                         alt />本地
                   </span>
                   <span class="left_tips_txt"
                         @click.stop="shootPhoto"
                         style="line-height:60px;display:block;">
                     <img class="img"
                          src="@/assets/images/personMange/shootPhoto.png"
-                         alt> 拍摄
+                         alt /> 拍摄
                   </span>
                 </span>
               </el-upload>
@@ -169,7 +169,7 @@
               <img style="vertical-align:middle;margin-left:10px;margin-right:7px;"
                    src="@/assets/images/personMange/addCard.png"
                    alt
-                   srcset>
+                   srcset />
               <span class="themeFont cursorClass"
                     @click="isShow=!isShow">修改标签</span>
             </p>
@@ -344,7 +344,7 @@
               <img class="img"
                    src="../../../assets/images/resident/access_auth_icon.png"
                    alt
-                   srcset>
+                   srcset />
               <span>通行权限</span>
             </div>
           </el-col>
@@ -461,7 +461,7 @@
               <img class="img"
                    src="../../../assets/images/resident/access_card.png"
                    alt
-                   srcset>
+                   srcset />
               <span>通行凭证</span>
             </div>
           </el-col>
@@ -476,7 +476,7 @@
                 <img style="vertical-align:middle;margin-left:10px;margin-right:7px;"
                      src="@/assets/images/personMange/addCard.png"
                      alt
-                     srcset>
+                     srcset />
                 <span class="themeFont cursorClass"
                       @click="addCardDialogAct">新增卡片</span>
                 <span style="color:rgba(255,255,255,0.1);margin:0 10px;">|</span>
@@ -518,7 +518,7 @@
                 <img style="vertical-align:middle;margin-left:10px;margin-right:7px;"
                      src="@/assets/images/personMange/addCard.png"
                      alt
-                     srcset>
+                     srcset />
                 <span class="themeFont cursorClass">新增指纹</span>
               </p>
             </div>
@@ -548,7 +548,7 @@
               <span>信息来源：</span>
             </span>
             <span>
-              <span>xxxx设备/平台录入</span>
+              <span>{{defaultResident.source==='platform'?'平台录入':defaultResident.source}}</span>
             </span>
           </p>
         </div>
@@ -564,11 +564,11 @@
         </el-col>
         <el-col class="header_right_box"
                 :span="20">
-          <el-button :loading='isloading'
+          <el-button :loading="isloading"
                      v-if="titleTxt === '新增居民'"
                      @click="confirm(false)"
                      type="primary">保存并新增</el-button>
-          <el-button :loading='isloading'
+          <el-button :loading="isloading"
                      @click="confirm(true)"
                      type="primary">确认</el-button>
           <el-button @click="close"
@@ -587,22 +587,21 @@
     <el-dialog title="拍照"
                center
                :visible.sync="shootPhotoDialogVisible"
-               width="400px"
-               :before-close="handleClose">
+               :width="`${canvWidth ? canvWidth + 50 : '1300'}px`"
+               :before-close="handleClosePhoto">
       <video v-show="!shootPhotoShow"
              id="video"
-             ref="video"
-             width="350"
-             height="350"></video>
+             :height="`${canvHeight ? canvHeight : '800'}px`"
+             ref="video"></video>
       <img v-show="shootPhotoShow"
            id="img"
-           src>
+           src />
       <span slot="footer"
             style="padding:15px">
         <el-button type="primary"
-                   @click="shootPhotoDialogVisible = false">取 消</el-button>
-        <el-button type="primary"
                    @click="shootAct">拍摄</el-button>
+        <el-button type="primary"
+                   @click="handleClosePhoto">取消</el-button>
       </span>
     </el-dialog>
     <add-card-dialog :addCardDialog.sync="addCardDialogVisible"
@@ -613,7 +612,7 @@
 </template>
 
 <script>
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 import tagView from "@/common/Tag.vue";
 import tabTreeTag from "@/common/TabTreeTag.vue";
 import personTreeTag from "@/common/personTreeTag";
@@ -750,7 +749,10 @@ export default {
       birthday: "",
       icdSocket: null,
       icdPhotofileData: "",
-      isloading: false
+      isloading: false,
+      canvWidth: "",
+      canvHeight: "",
+      mediaStreamTrack: null
     };
   },
   mounted() {
@@ -903,10 +905,12 @@ export default {
     // 拍照事件
     shootAct() {
       var canvas = document.createElement("canvas");
-      canvas.width = "350";
-      canvas.height = "260";
-      //   canvas.getContext("2d").drawImage(this.video, 280, 0, 1000, 720, 0, 0, 260, 260);
-      canvas.getContext("2d").drawImage(this.video, 0, 0, 350, 260);
+      canvas.width = this.canvWidth;
+      canvas.height = this.canvHeight;
+      //    canvas.getContext("2d").drawImage(this.video, 280, 0, 1000, 720, 0, 0, 260, 260);
+      canvas
+        .getContext("2d")
+        .drawImage(this.video, 0, 0, this.canvWidth, this.canvHeight);
       // 把canvas图像转为img图片
       this.shootPhotoShow = true;
       this.img = document.getElementById("img");
@@ -916,8 +920,8 @@ export default {
         .replace("data:image/jpeg;base64,", "jpeg:")
         .replace("data:image/png;base64,", "png:")
         .replace("data:image/jpg;base64,", "jpg:");
-
       this.getFaceQualityDetection(this.fileData);
+      this.mediaStreamTrack.stop();
       this.shootPhotoDialogVisible = false;
       // console.log(this.imageUrl);
     },
@@ -936,31 +940,49 @@ export default {
           window.navigator.mozGetUserMedia ||
           window.navigator.msGetUserMedia;
         if (window.navigator.getMedia) {
-          window.navigator.getMedia(
+          window.navigator.getUserMedia(
             {
-              video: true, // 使用摄像头对象
+              // video: {
+              //   width: { min: 1024, ideal: 1280, max: 1920 },
+              //   height: { min: 776, ideal: 720, max: 1080 }
+              // },
+              video: {
+                width: { min: 1280 },
+                height: { min: 720 }
+              },
               audio: false // 不适用音频
             },
             function(strem) {
               console.log(strem);
+              _this.mediaStreamTrack = strem.getTracks()[0];
               try {
                 _this.video.src = _this.vendorUrl.createObjectURL(strem);
               } catch (e) {
-                console.log(_this.video);
+                console.log(e);
                 _this.video.srcObject = strem;
               }
               _this.video.play();
+              _this.video.addEventListener("loadedmetadata", function() {
+                _this.canvWidth = this.videoWidth;
+                _this.canvHeight = this.videoHeight;
+              });
+              // let track = strem.getVideoTracks()[0],
+              //   imageCapture = new ImageCapture(track);
+              // imageCapture.getPhotoSettings().then((photoSettings) => {
+              //   _this.canvWidth = photoSettings.imageWidth;
+              //   _this.canvHeight = photoSettings.imageHeight;
+              //   console.log("_this.canvWidth: ", _this.canvWidth, _this.canvHeight);
+              // });
             },
             function(error) {
               console.log(error);
               _this.shootPhotoDialogVisible = false;
-
               alert("未捕捉到摄像头");
             }
           );
         } else {
-          alert("不支持摄像头");
           _this.shootPhotoDialogVisible = false;
+          alert("不支持摄像头");
         }
       }, 100);
     },
@@ -1189,11 +1211,15 @@ export default {
       this.dynamicAuthTags = [];
       this.dynamicVistorAuthTags = [];
       this.icdPhotofileData = null;
-      this.houseName = '';
+      this.houseName = "";
     },
     transferCheckedData(data) {
       console.log("获取到选中的节点：", data);
       this.addressOrgList = data;
+    },
+    handleClosePhoto() {
+      this.mediaStreamTrack.stop();
+      this.shootPhotoDialogVisible = false;
     }
   },
   watch: {
@@ -1221,8 +1247,9 @@ export default {
         }
         this.dynamicAuthTags = [];
         this.dynamicTags = [];
-        this.houseName = '';
+        this.houseName = "";
         if (val.addressOrgList && val.addressOrgList.length) {
+          console.log(val.addressOrgList);
           let aName = [];
           val.addressOrgList.forEach(element => {
             element.id = element.infrastructureUuid;
@@ -1320,9 +1347,15 @@ export default {
   overflow-y: auto;
   background: #212325;
 }
-.dialogBoxClass #video {
+/* .dialogBoxClass #video {
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.01);
+} */
+.dialogBoxClass .el-dialog--center .el-dialog__body {
+  text-align: center;
+}
+.dialogBoxClass .el-dialog {
+  margin-top: 1vh !important;
 }
 .dialogBoxClass .el-input__icon {
   line-height: 30px;
@@ -1426,7 +1459,7 @@ export default {
   padding: 15px 0px 20px;
   color: #bbbbbb;
 }
-.el-dialog__wrapper {
+.dialogBoxClass .el-dialog__wrapper {
   overflow: auto;
 }
 .dialogBoxClass .time-line {

@@ -1,42 +1,55 @@
 <template>
 	<div class="dialogwrap">
-		<el-dialog :title="title" :visible.sync="diglogvisible" @close="close" width="580px" center>
+		<el-dialog
+			:title="title"
+			:visible.sync="diglogvisible"
+			:before-close="close"
+			width="580px"
+			center
+		>
 			<el-form ref="form" label-width="150px">
-				<el-form-item label="人脸库：">
-					<el-select v-model="library" collapse-tags placeholder="请选择" class="myinput">
-						<el-option
-							v-for="item in libraryarr"
-							:key="item.faceLibraryUuid"
-							:label="item.faceLibraryName"
-							:disabled="Boolean(item.editabled)"
-							:value="item.faceLibraryUuid"
-						></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="导入类型：">
+				<el-form-item label="请选择模版类型：">
 					<el-select v-model="templatetype" collapse-tags placeholder="请选择" class="myinput">
 						<el-option
 							v-for="item in templatetypearr"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
+							:key="item.typeStr"
+							:label="item.typeName"
+							:value="item.typeStr"
 						></el-option>
 					</el-select>
 				</el-form-item>
 
 				<div class="daorutips">
 					注：格式必须与模板一致
-					<span @click="downloadtempalte($event)">
-						<a :href="concatLink" download>模板下载</a>
+					<span @click="downloadtempalte($event)" style="cursor: pointer;">
+						<!-- <a id="alink"
+						download>模板下载</a>-->
+						模板下载
 					</span>
 				</div>
 				<el-form-item label="文件路径：">
 					<el-input class="buttoninput" :value="filename" readonly></el-input>
-					<el-button id="fileSelect" ref="fileSelect" class="mybutton">浏览</el-button>
+					<el-button
+						id="fileSelect"
+						ref="fileSelect"
+						type="info"
+						style="height: 33.5px;margin-left: -61px;"
+						size="small"
+					>浏览</el-button>
+					<!-- <el-input class="buttoninput"
+                    :value="filename"
+                    readonly>
+            <el-button id="fileSelect"
+                       ref="fileSelect"
+                       slot="append">浏览</el-button>
+					</el-input>-->
+				</el-form-item>
+				<el-form-item label="进度：" v-if="isShowPerc">
+					<el-progress :percentage="percentage" class="progressbar" color="#26D39D"></el-progress>
 				</el-form-item>
 			</el-form>
 			<span class="dialog-footer button-div btnBox">
-				<el-button type="primary" @click="onSubmit">确 定</el-button>
+				<el-button type="primary" :loading="onSubmitLoading" @click="onSubmit">确 定</el-button>
 				<el-button type="primary" @click="close">取 消</el-button>
 			</span>
 		</el-dialog>
@@ -44,6 +57,8 @@
 </template>
 
 <script>
+import RestApi from "@/utils/RestApi";
+
 export default {
   name: "TheFaceDBDialog",
   props: {
@@ -60,23 +75,6 @@ export default {
       default: function() {
         return true;
       }
-    },
-    kucolor: {
-      type: Array,
-      default: function() {
-        return [
-          "rgb(88,121,253)",
-          "rgb(1,181,255)",
-          "yellow",
-          "rgb(255,295,95)"
-        ];
-      }
-    },
-    libraryarr: {
-      type: Array,
-      default: function() {
-        return [];
-      }
     }
   },
   mounted() {
@@ -85,32 +83,23 @@ export default {
   },
   data() {
     return {
+      onSubmitLoading: false,
       diglogvisible: false,
-      kuname: "",
-      kudescri: "",
-      shitu: "",
-      kuyanse: "",
-      exprotway: "local",
-      showcustomize: false,
-      mohu: 0.6,
-      wanzheng: 1,
-      zhedang: 0.6,
-      zhuanjiao: 15,
-      yangfu: 15,
-      qingxie: 15,
-      //
-      templatetype: "",
+      templatetype: "static_person",
       templatetypearr: [],
-      library: [],
       uploader: "", // 文件插件实例化对象
       fileIdNum: [], // 用来保存文件数组
-      downlink: ""
+      libraryarr: [],
+      RestApi,
+      concatLink: "",
+      percentage: 0,
+      isShowPerc: false
     };
   },
   computed: {
-    concatLink() {
-      return `http://${window.config.ip}/mppr-file/v1/file/staffImportTemplate/download/${this.templatetype}`;
-    },
+    // concatLink() {
+    //   return RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(this.$store.state.home.projectUuid) + "?templateType=" + this.templatetype;
+    // },
     filename() {
       var num = [];
       for (var i = 0; i < this.fileIdNum.length; i++) {
@@ -121,17 +110,22 @@ export default {
   },
   watch: {
     faceDBDialogVisible: function(val) {
+      this.isShowPerc = false;
+      this.percentage = 0;
+      this.onSubmitLoading = false;
+
       this.diglogvisible = this.faceDBDialogVisible;
-      this.library = this.libraryuuid;
       if (this.diglogvisible) {
-        this.$emit("getstafflirary");
         this.$nextTick(function() {
           this.uploadInit();
         });
       } else {
       }
     },
-    diglogvisible() {
+    diglogvisible(val) {
+      this.isShowPerc = false;
+      this.onSubmitLoading = false;
+      this.percentage = 0;
       if (this.diglogvisible !== this.faceDBDialogVisible) {
         this.$emit("close");
       }
@@ -143,48 +137,49 @@ export default {
         this.$message.info("请选择模板类型!");
         e.preventDefault();
       } else {
-        // api.gettemplate(this.templatetype).then(res => {
-        //   alert(res);
-        // });
+        // let alink = document.createElement("a");
+        // alink.download = "person.xlsx";
+        // alink.href =
+        //   RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(
+        //     this.$store.state.home.projectUuid
+        //   ) +
+        //   "?templateType=" +
+        //   this.templatetype;
+        // alink.click();
+        this.$common.funBuildFile(
+          RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(
+            this.$store.state.home.projectUuid
+          ) +
+						"?templateType=" +
+						this.templatetype,
+          this.templatetype === "e_prisoner" ? "模板.txt" : "模板.xlsx",
+          "GET"
+        );
       }
     },
-    init() {},
-
+    init() {
+      this.templatetypearr = this.$common.getEnumByGroupStr("staff_temp");
+    },
     onSubmit() {
-      if (!this.kuname) {
-        this.$message.error("请填写任务名称名称");
-        return;
-      }
       if (!this.templatetype) {
-        this.$message.error("请填写导库类型");
+        this.isShowPerc = false;
+        this.$message.error("请选择模板类型");
         return;
       }
-      var num = [];
-      for (var i = 0; i < this.fileIdNum.length; i++) {
-        num.push({
-          fileName: this.fileIdNum[i].name,
-          fileSize: this.fileIdNum[i].size
-        });
+      if (this.fileIdNum.length) {
+        this.uploader.settings.multipart_params.templateType = this.templatetype;
+        this.uploader.settings.multipart_params.uuid = new Date().getTime();
+        this.uploader.settings.url = RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
+          this.$store.state.home.projectUuid,
+          this.libraryuuid
+        );
+        this.onSubmitLoading = true;
+        this.isShowPerc = true;
+        this.uploader.start();
+      } else {
+        this.isShowPerc = false;
+        this.$message.error("请上传文件！");
       }
-      var shijiancuo = Date.now();
-      var data = {
-        filepath: shijiancuo,
-        ftpaddr: "",
-        importFileInfoList: num,
-        importmode: this.exprotway,
-        // libraryuuid: "1",//测试固定导这个库
-        libraryuuid: this.library,
-        taskname: this.kuname,
-        templatetype: this.templatetype,
-        updatemode: ""
-      };
-      console.log(data);
-      this.$emit("addDaoKuTask", {
-        time: shijiancuo,
-        data: data,
-        num: this.fileIdNum,
-        uploader: this.uploader
-      });
     },
     uploadInit() {
       const _this = this;
@@ -194,17 +189,26 @@ export default {
         return;
       }
       /* eslint-disable */
+			let num = new Date().getTime();
 			this.uploader = new plupload.Uploader({
 				browse_button: "fileSelect", // 这里填写触发元素的按钮ID
-				url: `http://${window.config.ip}/mppr-file/v1/file/import/pluploadUpload`, // 上传的地址
+				url: RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
+					_this.$store.state.home.projectUuid,
+					_this.libraryuuid
+				), // 上传的地址
 				// url: "http://192.168.9.166:9220/v1/face/escaped/pluploadUpload",
 				headers: {
-					token: window.config.token
-				}, // token值
-				chunk_size: "1mb", // 分段上传，每个小段的大小
+					Authorization: _this.$store.state.home.Authorization
+				}, //token值
+				chunk_size: "5mb", // 分段上传，每个小段的大小
 				filters: {
-					max_file_size: "2000000mb"
+					max_file_size: "5000000mb"
 				},
+				multipart_params: {
+					templateType: _this.templatetype,
+					uuid: num
+				},
+				file_data_name: "multipartFile",
 				init: {
 					FileFiltered(up, file) {
 						console.log(file);
@@ -220,10 +224,12 @@ export default {
 							_this.fileIdNum.push(file); // 这里在外面使用个全局的数组来记录上传了多少个文件然后进行处理操作。
 							// console.log(_this.fileIdNum);
 						});
+						_this.percentage = 0;
 						alert("文件选择成功");
 					},
-
-					UploadProgress: function(up, file) {},
+					UploadProgress: function(up, file) {
+						_this.percentage = file.percent;
+					},
 					/**
 					 * 队列某个文件上传完成进行的回调
 					 *  @param    uploader        为当前的plupload实例对象
@@ -231,8 +237,14 @@ export default {
 					 *  @param    responseObject  服务器返回的信息对象
 					 */
 					FileUploaded(uploader, file, responseObject) {
-						console.log(file);
-						console.log(responseObject);
+						let res = JSON.parse(responseObject.response);
+						this.onSubmitLoading = false;
+						if (res.success) {
+							_this.$message.success("文件导入成功！");
+							_this.confirm();
+						} else {
+							_this.$message.error(res.msg);
+						}
 					},
 					/**
 					 * 所有文件上传完成回调函数
@@ -248,42 +260,26 @@ export default {
 			this.uploader.init();
 		},
 		clearallData() {
-			this.kuname = "";
-			this.library = "";
-			this.exprotway = "local";
 			this.templatetype = "";
 			this.fileIdNum = [];
-			console.log(this.uploader);
 		},
 		close() {
-			this.$emit("close");
 			this.clearallData();
+			this.$emit("close");
 		},
-		changequality(val) {
-			console.log(val);
-			if (val === "自定义") {
-				this.showcustom();
-			} else {
-				this.hidecustom();
-			}
-		},
-		hidecustom() {
-			this.showcustomize = false;
-		},
-		showcustom() {
-			this.mohu = 0.6;
-			this.wanzheng = 1;
-			this.zhedang = 0.6;
-			this.zhuanjiao = 15;
-			this.yangfu = 15;
-			this.qingxie = 15;
-			this.showcustomize = true;
+		confirm() {
+			this.clearallData();
+			this.$emit("confirm");
 		}
 	}
 };
 </script>
-
 <style lang='scss' scoped>
+.progressbar {
+	width: 280px;
+	line-height: 30px;
+	display: inline-block;
+}
 .color {
 	display: inline-block;
 	width: 16px;
@@ -313,20 +309,6 @@ export default {
 			color: #28ffbb;
 		}
 	}
-}
-.mybutton {
-	width: 80px;
-	padding: 6px 27px;
-	position: absolute;
-	right: 61px;
-	border: 0px;
-	height: 30px;
-	top: 4px;
-	font-family: "PingFangSC-Regular";
-	font-size: 13px;
-	color: #dddddd;
-	background: rgba($color: #ffffff, $alpha: 0.1);
-	border-radius: 2px;
 }
 .customize {
 	border-top: 1px dashed #666;
@@ -374,10 +356,7 @@ export default {
 	.el-form-item {
 		margin-bottom: 10px;
 		.buttoninput {
-			width: 400px;
-			.el-input__inner {
-				width: 320px;
-			}
+			width: 320px;
 		}
 	}
 	.el-input__inner {

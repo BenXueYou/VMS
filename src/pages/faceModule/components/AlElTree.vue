@@ -109,8 +109,13 @@ export default {
       }
       this.$refs.treeRef.setCheckedKeys(this.checkedUuidList);
       this.checkedNameString = this.getCheckedNameString();
+      this.$emit("transferAct", this.checkedUuidList);
     },
-    popverHidden() {},
+    popverHidden() {
+      if (this.checkedUuidList && this.checkedUuidList.length === 0) {
+        this.$emit("transferAct", this.getAllUuidList());
+      }
+    },
     clearAction() {
       this.checkAll = false;
       this.checkedNameString = "";
@@ -129,9 +134,9 @@ export default {
       this.checkAll = val;
       this.checkedUuidList = val ? this.getAllUuidList() : [];
       this.checkedObj = val ? this.treeDataList : [];
+      console.log(this.checkedUuidList);
       this.$refs.treeRef.setCheckedKeys(this.checkedUuidList);
-
-      this.$emit("transferAct", this.checkedUuidList);
+      this.$emit("transferAct", this.getAllUuidList());
     },
 
     // getAllUuidList
@@ -149,8 +154,7 @@ export default {
         string += element[name];
         string += ",";
       });
-      string.substr(0, string.length - 1);
-      return string;
+      return string.substr(0, string.length - 1);
     }
   }
 };

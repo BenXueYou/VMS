@@ -69,7 +69,8 @@
         <div class="map-box"
              id="allmap">
         </div>
-        <div class="menu-list">
+        <div class="menu-list"
+             v-if="isShowMenuList">
           <div class="list-title">满足条件人员</div>
           <template v-for="(item, index) in menuData">
             <div :key="index"
@@ -88,28 +89,31 @@
           <div class="same-place-inner">
             <template v-for="(item, index) in samePlaArr">
               <div :key="index"
-                  class="same-item">
-                  <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')" width="120px" height="120px">
-                  <div style="color: #26D39D;">{{item.similarity}}%</div>
-                  <div>{{item.channelName}}</div>
-                  <div>{{item.snapshotTime}}</div>
+                   class="same-item">
+                <img :src="$common.setPictureShow(item.faceCapturePhotoUrl, 'facelog')"
+                     width="120px"
+                     height="120px">
+                <div style="color: #26D39D;">{{item.similarity}}%</div>
+                <div>{{item.channelName}}</div>
+                <div>{{item.snapshotTime}}</div>
               </div>
             </template>
           </div>
-          <div class="close" @click="closeSamePlaDialog">
-            <img src="@/assets/images/faceModule/close.png" width="20px" height="20px">
+          <div class="close"
+               @click="closeSamePlaDialog">
+            <img src="@/assets/images/faceModule/close.png"
+                 width="20px"
+                 height="20px">
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import PicUpload from "@/common/PicUpload";
 import FellowItem from "@/pages/faceModule/views/companion/view/FellowItem";
 import ElPopverTree from "@/pages/faceModule/components/ElPopverTree";
-import * as Overlay from '@/utils/BlockItemOverlay.js';
 
 export default {
   components: {
@@ -137,11 +141,30 @@ export default {
       pois: [],
       samePlaArr: [],
       isShowSamePlaDialog: false,
+      isShowMenuList: false,
+      Overlay: null,
+      numShowArr: [],
+      faceUuid: ""
     };
   },
-  created() {},
+  created() {
+    let script = document.createElement("script");
+    script.src = "./static/utils/BMap_min.js";
+    // script.type = "text/javascript";
+    // script.src = "http://api.map.baidu.com/api?v=3.0&ak=EnRctIH3RAgwGZGN0P1xlyIoBaOVw86i";
+    document.body.appendChild(script);
+    script.onload = () => {
+      let scriptDraw = document.createElement("script");
+      scriptDraw.src = "./static/utils/DrawingManager.js";
+      document.body.appendChild(scriptDraw);
+      scriptDraw.onload = () => {
+        this.Overlay = require("@/utils/BlockItemOverlay.js");
+        this.initData();
+      };
+    };
+  },
   mounted() {
-    this.initData();
+    // this.initData();
   },
   methods: {
     getMenuData() {
@@ -171,8 +194,12 @@ export default {
       /* eslint-disable */
       this.map.clearOverlays();
       this.pois = [];
-      this.traceData.forEach(v => {
-        let pt = new BMap.Point(v.longitude, v.latitude);
+      this.numShowArr = [];
+      for (let i = this.traceData.length - 1; i >= 0; i--) {
+        let pt = new BMap.Point(
+          this.traceData[i].longitude,
+          this.traceData[i].latitude
+        );
         this.pois.push(pt);
         let myIcon = new BMap.Icon(
           require("@/assets/images/faceModule/trace.png"),
@@ -181,19 +208,48 @@ export default {
         let marker = new BMap.Marker(pt, { icon: myIcon });
         marker.setOffset(new BMap.Size(0, -30));
         this.map.addOverlay(marker);
-        let ItemOverlay = new Overlay.ItemOverlay(pt, v);
-        this.map.addOverlay(ItemOverlay);
-        ItemOverlay.addEventListener("click", ()=> {
-          this.getSamePlaceArr(v.longitude, v.latitude);
+        let itemOverlay = new this.Overlay.ItemOverlay(pt, this.traceData[i]);
+        this.map.addOverlay(itemOverlay);
+        itemOverlay.addEventListener("click", () => {
+          this.getSamePlaceArr(
+            this.traceData[i].longitude,
+            this.traceData[i].latitude
+          );
           this.isShowSamePlaDialog = true;
         });
-      });
+        if (i !== this.traceData.length - 1) {
+          let longitude =
+            (Number(this.traceData[i].longitude) +
+              Number(this.traceData[i + 1].longitude)) /
+            2;
+          let latitude =
+            (Number(this.traceData[i].latitude) +
+              Number(this.traceData[i + 1].latitude)) /
+            2;
+          let numStr = this.traceData.length - 1 - i;
+          let numObj = {
+            longitude,
+            latitude,
+            numStr
+          };
+          for (let i = this.numShowArr.length - 1; i >= 0; i--) {
+            if (numObj.longitude === this.numShowArr[i].longitude && numObj.latitude === this.numShowArr[i].latitude) {
+              numObj.numStr = this.numShowArr[i].numStr + "/" + numObj.numStr;
+              break;
+            }
+          }
+          this.numShowArr.push(numObj);
+          let point = new BMap.Point(numObj.longitude, numObj.latitude);
+          let numOverlay = new this.Overlay.NumOverlay(point, numObj.numStr);
+          this.map.addOverlay(numOverlay);
+        }
+      }
       let sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_CLOSED_ARROW, {
         scale: 0.8, //图标缩放大小
         strokeColor: "#E63434", //设置矢量图标的线填充颜色
         strokeWeight: "3" //设置线宽
       });
-      let icons = new BMap.IconSequence(sy, "50", "90");
+      let icons = new BMap.IconSequence(sy, "20%", "5%");
       // 创建polyline对象
       let polyline = new BMap.Polyline(this.pois, {
         icons: [icons],
@@ -277,7 +333,7 @@ export default {
     },
     initData() {
       this.startTime = this.$common.formatDate(
-        new Date(new Date().getTime() - 1 * 60 * 60 * 1000)
+        new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       );
       this.endTime = this.$common.formatDate(new Date());
       this.libraryTypeOption = this.$common.getEnumByGroupStr(
@@ -305,16 +361,23 @@ export default {
       }
     },
     getTragicList() {
+      if (this.staffLimit < 1) {
+        this.$cToast.warn("搜索结果显示数量最小值为1");
+        return;
+      }
+      this.menuData = [];
+      this.itemData = [];
+      this.map.clearOverlays();
       this.$factTragicHttp
         .getTragicList({
           imageBase64: this.imageBase64,
-          faceUuid: this.$route.query.imgObj ? this.$route.query.imgObj.faceUuid : "",
+          faceUuid: this.faceUuid,
           // faceUuid: "28334ca055b54a428fc6c63e56d24da4",
           startTime: this.startTime,
           endTime: this.endTime,
           channelUuidList: this.channelUuids,
           libraryType: this.libraryType,
-          similarity: this.similarity,
+          similarity: parseInt(this.similarity),
           staffLimit: this.staffLimit
         })
         .then(res => {
@@ -324,16 +387,28 @@ export default {
     },
     getTragicListSuccess(body) {
       this.itemData = body.data;
-      this.setMapCenter();
-      this.getMenuData();
+      if (!this.itemData || this.itemData.length === 0) {
+        this.$cToast.success("暂无满足条件人员");
+        this.isShowMenuList = false;
+      } else {
+        this.isShowMenuList = true;
+        this.setMapCenter();
+        this.getMenuData();
+      }
     },
     setMapCenter() {
       if (this.itemData.length !== 0) {
-        this.map.setCenter(new BMap.Point(this.itemData[0][0].longitude, this.itemData[0][0].latitude));
+        this.map.setCenter(
+          new BMap.Point(
+            this.itemData[0][0].longitude,
+            this.itemData[0][0].latitude
+          )
+        );
       }
     },
     resetData() {
       this.initData();
+      this.selectDate = "";
       this.itemData = [];
       this.imageUrl = "";
       this.imageBase64 = "";
@@ -345,12 +420,15 @@ export default {
       this.menuData = [];
       this.traceData = [];
       this.pois = [];
+      this.numShowArr = [];
       this.samePlaArr = [];
       this.isShowSamePlaDialog = false;
+      this.isShowMenuList = false;
     },
     deleteImage() {
       this.imageUrl = "";
       this.imageBase64 = "";
+      this.faceUuid = "";
       this.$refs.picUpload.imageFile = "";
       this.$refs.picUpload.isDisabled = false;
     }
@@ -358,11 +436,12 @@ export default {
   watch: {},
   destroyed() {},
   activated() {
-    if (this.$route.query.imgObj) {
-      this.imageUrl = this.$route.query.imgObj.faceCapturePhotoUrl;
+    if (this.$route.params.imgObj) {
+      this.imageUrl = this.$route.params.imgObj.faceCapturePhotoUrl;
       this.$common.imageToBase64(this.imageUrl, base64 => {
         this.imageBase64 = base64;
       });
+      this.faceUuid = this.$route.params.imgObj ? this.$route.params.imgObj.faceUuid : "";
     }
   }
 };
@@ -524,8 +603,8 @@ export default {
         width: 480px;
         padding: 15px 0px 15px 15px;
         box-sizing: border-box;
-        background: #25292D;
-        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.20);
+        background: #25292d;
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2);
         border-radius: 2px;
         position: absolute;
         right: 30px;
@@ -539,7 +618,7 @@ export default {
           flex-flow: row wrap;
           align-content: flex-start;
           .same-item {
-            border: 1px #2E3135 solid;
+            border: 1px #2e3135 solid;
             border-radius: 2px;
             background: rgba($color: #000000, $alpha: 0.1);
             width: 140px;
@@ -550,7 +629,7 @@ export default {
             box-sizing: border-box;
             font-family: PingFangSC-Regular;
             font-size: 12px;
-            color: #DDDDDD;
+            color: #dddddd;
             letter-spacing: 0;
             text-align: center;
           }

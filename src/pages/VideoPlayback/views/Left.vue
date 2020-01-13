@@ -1,5 +1,5 @@
 <template>
-  <div class='left'
+  <div class='VideoPlaybackContentLeft'
        id='VideoPlaybackContentLeft'>
     <div class="searchWrap">
       <el-input placeholder='搜索组织/标签/名称'
@@ -19,59 +19,70 @@
              @tab-click="handleClick">
       <el-tab-pane label="设备树"
                    class="mypanel"
+                   :class="{'showMaxWidth':!showMaxWidth}"
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
+                 :default-expanded-keys="defaultExpKeys"
                  ref="tree1"
                  lazy
                  show-checkbox
+                 class='videoTree'
+                 node-key="id"
+                 :default-checked-keys="defaultExpandedKeys"
                  @check-change="devhandleCheckChange">
           <div class="custom-tree-node"
-               slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
-            <!-- v-if="data.hasOwnProperty('channelType')" -->
-            <el-dropdown trigger="click"
-                         @command="handleCommand"
-                         placement="bottom"
-                         class='threelinemenu'>
-              <span class="el-dropdown-link"
-                    @click="saveClickData(node, data)">
-                <img class="checked-img"
-                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                     style="margin-right: 20%;">
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="video">打开视频</el-dropdown-item>
-                <el-dropdown-item command="playback">查看录像</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+               slot-scope="{ node,data }">
+            <div class="channelStatus">
+              <img :src="data.icon"
+                   v-if="data.icon"
+                   alt="">
+              <span :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
+            </div>
+
           </div>
         </el-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
+                   class="mypanel mypanel2"
                    name="tag">
         <el-tree :props="tagprops"
                  :load="tagloadNode"
                  :expand-on-click-node="false"
+                 :default-expanded-keys="defaultExpKeys"
                  lazy
-                 :indent="10"
+                 node-key="id"
+                 class='videoTree'
                  ref="tree2"
                  show-checkbox
+                 :default-checked-keys="defaultExpandedKeys"
                  @check-change="taghandleCheckChange"
                  @node-click="taghandleNodeClick">
-
+          <div class="custom-tree-node"
+               slot-scope="{ node,data }">
+            <div class="channelStatus"
+                 v-if="data.icon">
+              <img :src="data.icon"
+                   alt="">
+              <span :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
+            </div>
+          </div>
         </el-tree>
 
       </el-tab-pane>
       <el-tab-pane label="视图"
                    name="view">
+
         <el-tree :props="viewProps"
+                 class='videoTree2 videoTree3'
                  :data="viewTreeData"
                  refs="tree3"
                  @check-change="viewhandleCheckChange">
-          <div class="custom-tree-node"
+          <div class="custom-tree-node viewTree"
+               @dblclick.stop="openView(data,$event)"
                slot-scope="{ node, data }">
-            <span>{{ node.label }}</span>
+            <span class="span"
+                  :title="node.label">{{ node.label }}</span>
             <el-dropdown trigger="click"
                          @command="handleCommand"
                          placement="bottom"
@@ -101,7 +112,8 @@
         <div class="time">
           <el-date-picker v-model="startDate"
                           type="datetime"
-                          style='width:200px;'
+                          @change="changeTime"
+                          style='width:175px;'
                           placeholder="选择日期时间">
           </el-date-picker>
         </div>
@@ -113,7 +125,8 @@
         <div class="time">
           <el-date-picker v-model="endDate"
                           type="datetime"
-                          style='width:200px;'
+                          @change="changeTime"
+                          style='width:175px;'
                           placeholder="选择日期时间">
           </el-date-picker>
         </div>
@@ -159,8 +172,11 @@ export default {
     d.setMinutes(0);
     d.setSeconds(0);
     return {
+      defaultExpKeys: [],
+      defaultExpandedKeys: [],
       changeNameDialogVisible: false,
       isDeleteVisible: false,
+      showMaxWidth: false,
       nodeValue: "",
       icons,
       searchText: "",
@@ -187,6 +203,16 @@ export default {
     };
   },
   methods: {
+    setKeys(id) {
+      if (this.defaultExpandedKeys.indexOf(id) === -1) {
+        this.defaultExpandedKeys.push(id);
+      }
+    },
+    changeTime() {
+      if (this.startDate > this.endDate) {
+        [this.endDate, this.startDate] = [this.startDate, this.endDate];
+      }
+    },
     deleteNode() {
       // 删除该视图 this.operatorData
       api2.deleteView(this.operatorData.viewUuid).then(res => {
@@ -216,13 +242,19 @@ export default {
         // this.getPreviewInfo(this.operatorData.channelUuid);
       } else if (command === "playback") {
       } else if (command === "view") {
-        this.$emit("openView", this.operatorData);
+        this.openView();
       } else if (command === "renameView") {
         this.nodeValue = this.operatorData.viewName;
         this.changeNameDialogVisible = true;
       } else if (command === "deleteView") {
         this.isDeleteVisible = true;
       }
+    },
+    openView(data) {
+      if (!data) {
+        data = this.operatorData;
+      }
+      this.$emit("openView", data);
     },
     getPreviewInfo(channelUuid) {
       api2
@@ -272,12 +304,49 @@ export default {
       this.deal();
     },
     deal() {},
+    getIcon(isOnline, type) {
+      let treeIcons = window.config.treeIcons || [],
+        icon = "";
+      for (let i = 0; i < treeIcons.length; i++) {
+        if (treeIcons[i].value === type) {
+          if (!isOnline) {
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }2.png`);
+          } else {
+            icon = require(`@/assets/images/treeIcons/${
+              treeIcons[i].icon
+            }.png`);
+          }
+          break;
+        }
+      }
+      return icon;
+    },
     async devloadNode(node, resolve) {
       //  懒加载子结点
       console.log(node);
-      let data = await this.videoTree(node.data && node.data.id);
+      let data = await this.videoTree(
+        node.data && node.data.id,
+        node.data && node.data.nodeType
+      );
+      // data = [];
+      if (node.level === 0) {
+        if (data.length) {
+          this.defaultExpKeys.push(data[0].id);
+          this.showMaxWidth = true;
+        }
+      }
       data = data.map(item => {
         item.leaf = !item.openFlag;
+        item.isOnline = true;
+        if (item.nodeType === "chnNode") {
+          item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+        }
+        if (item.nodeType === "devNode") {
+          item.isOnline = item.extInfo.devOnlineOrNot === "online";
+        }
+        item.icon = this.getIcon(item.isOnline, item.realType);
         return item;
       });
       // data = [
@@ -290,11 +359,17 @@ export default {
       // ];
       return resolve(data);
     },
-    videoTree(parentOrgUuid) {
-      let data = parentOrgUuid ? { parentOrgUuid } : {};
+    videoTree(parentUuid, parentType) {
+      let data = {};
+      if (parentUuid) {
+        data.parentUuid = parentUuid;
+      }
+      if (parentType) {
+        data.parentType = parentType;
+      }
       return new Promise((resolve, reject) => {
         api2
-          .videoTree(data)
+          .getPlayTree(data)
           .then(res => {
             let list = res.data.data || [];
             resolve(list);
@@ -320,7 +395,9 @@ export default {
       console.log(node);
       if (node.level === 0) {
         let data = await this.getTagTreeData();
-        console.log(data);
+        if (data.length) {
+          this.defaultExpKeys.push(data[0].id);
+        }
         return resolve(data);
       } else if (node.level === 1) {
         let data = await this.getChannelByNode(node.data.id);
@@ -339,9 +416,10 @@ export default {
           .then(res => {
             let list = (res.data.data.list || []).map(item => {
               item.label = item.channelName;
-              item.id = item.channelUuid;
               // item.id = item.deviceUuid;
               item.leaf = true;
+              item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+              item.icon = this.getIcon(item.isOnline, item.channelType);
               return item;
             });
             resolve(list);
@@ -356,6 +434,11 @@ export default {
           })
           .then(res => {
             let list = res.data.data.list || [];
+            list = list.map(item => {
+              item.isOnline = true;
+              item.icon = require(`@/assets/images/treeIcons/doc.png`);
+              return item;
+            });
             resolve(list);
           });
       });
@@ -365,16 +448,22 @@ export default {
     },
     search() {
       // 判断两个日期是不是同一天
-      let d1 = new Date(this.startDate);
-      let d2 = new Date(this.endDate);
-      if (
-        d1.getFullYear() !== d2.getFullYear() ||
-        d1.getMonth() !== d2.getMonth() ||
-        d1.getDate() !== d2.getDate()
-      ) {
-        this.$message.error("请选择同一天时间！");
+      let d1 = new Date(this.startDate).getTime();
+      let d2 = new Date(this.endDate).getTime();
+      let oneMonth = 30 * 24 * 60 * 60;
+      if ((d2 - d1) / 1000 > oneMonth) {
+        this.$message.error("时间选择跨度不可以超过1个月");
         return;
       }
+      // if (
+      //   d1.getFullYear() !== d2.getFullYear() ||
+      //   d1.getMonth() !== d2.getMonth() ||
+      //   d1.getDate() !== d2.getDate()
+      // ) {
+      //   this.$message.error("请选择同一天时间！");
+      //   return;
+      // }
+      // alert(this.activeName);
       // 获取树选中的节点
       let treeData = [];
       if (this.activeName === "organiza") {
@@ -384,14 +473,21 @@ export default {
       } else if (this.activeName === "view") {
         treeData = this.$refs.tree3.getCheckedNodes();
       }
-      console.log(treeData);
       if (!treeData.length) {
-        this.$message.error("请选择视频通道!");
+        this.$message.error("请选择选择视频通道!");
         return;
       }
+      let num = treeData.filter(item => {
+        return item.isOnline;
+      });
+      if (!num.length) {
+        this.$message.error("请选择在线的视频通道!");
+        return;
+      }
+      console.log(num);
       this.$emit(
         "playRtsp",
-        treeData,
+        num,
         this.dealTime(this.startDate),
         this.dealTime(this.endDate),
         "normal_vod",
@@ -403,9 +499,9 @@ export default {
       let fz = z => {
         return ("0" + z).slice(-2);
       };
-      return `${d.getFullYear()}-${fz(d.getMonth())}-${fz(d.getDate())} ${fz(
-        d.getHours()
-      )}:${fz(d.getMinutes())}:${fz(d.getSeconds())}`;
+      return `${d.getFullYear()}-${fz(d.getMonth() + 1)}-${fz(
+        d.getDate()
+      )} ${fz(d.getHours())}:${fz(d.getMinutes())}:${fz(d.getSeconds())}`;
     },
     showAddChildrenDialog() {}
   }
@@ -414,6 +510,22 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
+  .is-leaf {
+    width: 0px !important;
+  }
+  .el-tabs__content {
+    overflow: auto;
+  }
+  .mypanel {
+    // width: 380px;
+    height: calc(100vh - 410px);
+  }
+  .showMaxWidth {
+    width: 196px;
+  }
+  .mypanel2 {
+    // width: 228px;
+  }
   .el-tree-node__label {
     text-indent: 10px;
   }
@@ -431,23 +543,82 @@ export default {
     left: 43px;
     top: 0px;
     img {
-      margin-top: 9px;
+      margin-top: 12px;
     }
+  }
+  // .el-input {
+  //   width: 175px !important;
+  // }
+  .el-tree {
+    // overflow: auto;
+  }
+  .el-input__inner {
+    padding-left: 30px;
+    &::-webkit-input-placeholder {
+      /* WebKit browsers */
+      font-size: 12px;
+    }
+  }
+  .el-tree-node,
+  .el-tree-node__content {
+    width: max-content;
+  }
+  .el-tree-node__content > .el-tree-node__expand-icon {
+    padding: 6px 0px;
+  }
+}
+.videoTree2 .el-tree-node,
+.videoTree2 .el-tree-node__content {
+  width: 100% !important;
+}
+.videoTree3 {
+  .span {
+   padding-left: 20px;
   }
 }
 </style>
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
-.left {
-  width: 280px;
+.VideoPlaybackContentLeft {
+  width: 220px;
   box-sizing: border-box;
   height: 100%;
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
-  padding: 0px 40px;
+  // padding: 0px 26px 25px;
+  // overflow: auto;
+  .videoTree {
+    // height: calc(100vh - 380px);
+    // width:500px;
+    // overflow: auto;
+  }
   .custom-tree-node {
     width: 100%;
+    flex: 1;
+    // display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+    .channelStatus {
+      user-select: none;
+      img {
+        width: 12px;
+        height: 12px;
+        margin-right: 7px;
+      }
+      span {
+        font-size: 12px;
+        color: #ddd;
+      }
+      .channelOffline {
+        color: #999999;
+      }
+    }
+    .span {
+      white-space: nowrap;
+    }
     .threelinemenu {
       display: none;
       float: right;
@@ -458,6 +629,8 @@ export default {
     }
   }
   .timeSelect {
+    padding: 25px 12px 25px;
+    box-sizing: border-box;
     .startWrap {
       display: flex;
       margin-bottom: 10px;
@@ -480,9 +653,10 @@ export default {
   .treeWrap,
   .tabs {
     height: calc(100vh - 350px);
-    overflow-y: auto;
+    padding: 0px 12px 25px;
+    overflow: auto;
+    // overflow-y: auto;
   }
-
   .treeSwitchTabs {
     ul {
       display: flex;
@@ -503,16 +677,16 @@ export default {
     }
   }
   .searchWrap {
-    padding: 25px 0px 10px 0px;
+    padding: 25px 12px 10px;
     .el-input {
       position: relative;
-      width: calc(100% - 30px);
+      width: calc(100%);
     }
     $addIconWidth: 14px;
     img {
       display: inline-block;
       vertical-align: middle;
-      width: $addIconWidth;
+      width: 12px;
       margin-left: 4px;
       cursor: pointer;
     }

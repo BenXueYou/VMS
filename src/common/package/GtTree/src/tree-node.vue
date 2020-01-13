@@ -22,7 +22,8 @@
              :src="item.icon"
              alt="">
 
-        <span class='treename'>
+        <span class='treename'
+              :title="item.label">
           {{item.label}}
         </span>
 

@@ -135,7 +135,8 @@
                              label="备注"
                              show-overflow-tooltip>
             </el-table-column>
-            <el-table-column label="操作" width="200">
+            <el-table-column label="操作"
+                             width="200">
               <template slot-scope="scope">
                 <div class="detail-icon">
                   <el-button @click="lookDetail(scope.row)"
@@ -300,7 +301,7 @@ export default {
         }
       )
         .then(() => {})
-        .catch((action) => {
+        .catch(action => {
           if (action === "cancel") {
             this.$houseHttp
               .deleteHouse({
@@ -354,9 +355,11 @@ export default {
       document.getElementById("app").addEventListener("click", () => {
         this.$refs.buildPopoverTree.isShowPopover = false;
       });
-      document.getElementsByClassName("i-popover-box")[0].addEventListener("click", () => {
-        this.$refs.buildPopoverTree.isShowPopover = false;
-      });
+      document
+        .getElementsByClassName("i-popover-box")[0]
+        .addEventListener("click", () => {
+          this.$refs.buildPopoverTree.isShowPopover = false;
+        });
     }
   },
   watch: {

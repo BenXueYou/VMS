@@ -69,7 +69,9 @@
                 <div class="other-span">{{item.faceModelName}}</div>
                 <div class="other-span">{{item.createTime}}</div>
                 <div class="other-span desc">{{item.analysisResultDescribe}}</div>
-                <div class="other-span">{{item.staffName}}&nbsp;&nbsp;{{item.faceLibraryName}}</div>
+                <div class="other-span desc">{{item.staffName}}
+                  <span :style="item.staffName ? 'margin-left: 5px;' : ''">{{item.faceLibraryName}}</span>
+                </div>
                 <div class="other-span"
                      :style="item.status === 'model_processed' ? 'color:#26D39D' : 'color:#FD545E'">{{$common.getEnumItemName('model_analysis_s', item.status)}}</div>
               </div>
@@ -153,7 +155,7 @@ export default {
       statusOptions: [],
       pageInfo: {
         total: 0,
-        pageSize: 14,
+        pageSize: 27,
         currentPage: 1
       },
       moduleList: [],
@@ -164,13 +166,14 @@ export default {
   },
   created() {},
   activated() {
-    this.init();
+    // this.init();
   },
   mounted() {
-    this.statusOptions = this.$common.getEnumByGroupStr("model_analysis_s");
+    this.init();
   },
   methods: {
     init() {
+      this.statusOptions = this.$common.getEnumByGroupStr("model_analysis_s");
       this.startTime = this.getStartTime();
       this.endTime = this.$common.getCurrentTime();
       this.getJudgeList();
@@ -269,9 +272,13 @@ export default {
     },
     handleTypeChange() {
       if (this.typeRadio === "picture") {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 27;
+        this.pageInfo.currentPage = 1;
       } else {
+        this.pageInfo.total = 0;
         this.pageInfo.pageSize = 14;
+        this.pageInfo.currentPage = 1;
       }
       this.getJudgeList();
     },
@@ -361,7 +368,7 @@ export default {
   width: 100%;
   height: 100%;
   .main-container {
-    padding: 1.8% 3%;
+    padding: 1% 3%;
     box-sizing: border-box;
     background: #212325;
     width: 100%;

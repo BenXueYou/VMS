@@ -1,7 +1,75 @@
 import store from "@/store/store.js";
 import { callbackify } from "util";
 export var COMMON = {
-  exportImageAct(dialogPanoramaImgUrl,itemData) {
+  // 校验手机号格式
+  isPhoneNum(PhoneNum) {
+    let prep = /^1[3456789]\d{9}$/;
+    return prep.test(PhoneNum);
+  },
+
+  //校验身份证号
+  isCredentialNo(value) {
+
+    var num = value.toUpperCase();
+    // 身份证号码为15位或者18位，15位时全为数字，18位前17位为数字，最后一位是校验位，可能为数字或字符X。
+    var reg = /^(\d{18,18}|\d{15,15}|\d{17,17}X)$/;
+    if (!reg.test(num)) {
+      return false;
+    }
+    // 校验位按照ISO 7064:1983.MOD 11-2的规定生成，X可以认为是数字10。
+    // 下面分别分析出生日期和校验位
+    var len, re;
+    len = num.length;
+    if (len == 15) {
+      re = new RegExp(
+        /^(\d{6})(\d{2})(\d{2})(\d{2})(\d{3})$/);
+      var arrSplit = num.match(re);
+      // 检查生日日期是否正确
+      var dtmBirth = new Date('19' + arrSplit[2] +
+        '/' + arrSplit[3] + '/' + arrSplit[4]);
+      var bGoodDay;
+      bGoodDay = (dtmBirth.getYear() == Number(arrSplit[2])) &&
+        ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) &&
+        (dtmBirth.getDate() == Number(arrSplit[4]));
+      if (!bGoodDay) {
+        return false;
+      }
+    }
+    if (len == 18) {
+      re = new RegExp(/^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X)$/);
+      var arrSplit = num.match(re);
+      // 检查生日日期是否正确
+      var dtmBirth = new Date(arrSplit[2] + "/" +
+        arrSplit[3] + "/" + arrSplit[4]);
+      var bGoodDay;
+      bGoodDay = (dtmBirth.getFullYear() == Number(arrSplit[2])) &&
+        ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) &&
+        (dtmBirth.getDate() == Number(arrSplit[4]));
+      if (!bGoodDay) {
+        return false;
+      } else {
+        // 检验18位身份证的校验码是否正确。
+        // 校验位按照ISO 7064:1983.MOD
+        // 11-2的规定生成，X可以认为是数字10。
+        var valnum;
+        var arrInt = new Array(7, 9, 10, 5, 8, 4,
+          2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
+        var arrCh = new Array('1', '0', 'X', '9',
+          '8', '7', '6', '5', '4', '3', '2');
+        var nTemp = 0,
+          i;
+        for (var i = 0; i < 17; i++) {
+          nTemp += num.substr(i, 1) * arrInt[i];
+        }
+        valnum = arrCh[nTemp % 11];
+        if (valnum != num.substr(17, 1)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  },
+  exportImageAct(dialogPanoramaImgUrl, itemData) {
     if (!!window.ActiveXObject || "ActiveXObject" in window) {
       this.aLinkDownload(dialogPanoramaImgUrl, itemData); // IE浏览器
     } else if (navigator.userAgent.indexOf("Firefox") !== -1) {
@@ -13,7 +81,7 @@ export var COMMON = {
     }
   },
   // 下载图片的几种方式
-  // 接口返回文件刘 chrome 浏览器会识别不了类型
+  // 接口返回文件流 chrome 浏览器会识别不了类型
   aLinkDownload(url, itemData) {
     url = this.setPictureShow(url, window.config.PicSourceType);
     console.log(url);
@@ -556,11 +624,14 @@ export var COMMON = {
 
     return data;
   },
-  funBuildFile(url, name) {
+  funBuildFile(url, name, method = "GET", data) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true); // 也可以使用POST方式，根据接口
+    xhr.open(method, url, true); // 也可以使用POST方式，根据接口
     xhr.setRequestHeader("Authorization", store.state.home.Authorization);
     xhr.responseType = "blob"; // 返回类型blob
+    if(method=='POST'){
+      xhr.setRequestHeader("Content-type","application/json");
+    }
     xhr.onload = function () {
       // 请求完成
       if (this.status == 200) {
@@ -578,7 +649,11 @@ export var COMMON = {
       }
     };
     // 发送ajax请求
-    xhr.send();
+    if (data) {
+      xhr.send(JSON.stringify(data));
+    } else {
+      xhr.send();
+    }
   },
   throttle(func, wait, options) {
     // options中的leading:false 表示禁用第一次执行
@@ -644,7 +719,7 @@ export var COMMON = {
 
     const event = new MouseEvent('click');
     $a.dispatchEvent(event);
-  },
+  }
 }
 function install(Vue) {
   Vue.prototype.$common = COMMON;

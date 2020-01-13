@@ -7,12 +7,12 @@
         <img slot="prefix"
              class="image"
              :src="icons.search"
-             alt>
+             alt />
       </el-input>
       <img @click="addTagClick"
            v-if="this.treeName !='tree1'"
            :src="icons.add"
-           alt>
+           alt />
     </div>
     <el-tabs v-model="activeName"
              class="tabs"
@@ -49,7 +49,7 @@
                       <div v-if="o.label">
                         <img :src="icons.ceng"
                              class="cengIcon"
-                             alt>
+                             alt />
                         <a class="text-item-Title textClips bigText"
                            href="#"
                            @click="clickHoverMenu(node,o)">{{ o.label }}</a>
@@ -68,7 +68,7 @@
                     <img :src="iconShow(node)"
                          width="10.9px"
                          height="9px"
-                         style="margin-right: 4px;">
+                         style="margin-right: 4px;" />
                     <span class="text-show">{{node.label}}</span>
                   </div>
                 </el-popover>
@@ -78,7 +78,7 @@
                   <img :src="iconShow(node)"
                        width="10.9px"
                        height="9px"
-                       style="margin-right: 4px;">
+                       style="margin-right: 4px;" />
                   <!-- <img :src="icons.folder" width="16px" height="13px" style="margin-right: 4px;"> -->
                   <span class="text-show">{{node.label}}</span>
                 </div>
@@ -258,6 +258,8 @@ export default {
               if (this.data2.length) {
                 this.nodeValue = this.data2[0].tagName;
                 this.$store.commit("SET_Cur_Left_Tag_Data", this.data2[0]);
+              } else {
+                this.$store.commit("SET_Cur_Left_Tag_Data", { tagUuid: "" });
               }
             } else {
               for (var i = 0; i < this.data2.length; i++) {
@@ -782,6 +784,9 @@ export default {
   letter-spacing: 0;
   border: none;
   box-shadow: none;
+  max-height: calc(99vh - 20px);
+  overflow: auto;
+  margin-top: 20px;
 }
 .leftmenu {
   width: $equLeftMenuWidth;

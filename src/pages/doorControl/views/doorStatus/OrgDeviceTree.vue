@@ -20,7 +20,7 @@
                  width="10.9px"
                  height="9px"
                  style="margin-right: 4px;">
-            {{ node.label }}
+            <div class="text-show" :title='node.label'>{{node.label}}</div>
           </div>
         </div>
       </el-tree>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 
 export default {
   components: {},
@@ -207,4 +207,24 @@ export default {
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
+.left-list-build {
+  height: 85%;
+  overflow-x: auto;
+  .i-tree-item {
+    width: 190px;
+    .i-tree-item-icon {
+      display: flex;
+      align-items: center;
+      .action-icon {
+        margin-left: auto;
+        margin-right: 5px;
+        .img-div {
+          cursor: pointer;
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+    }
+  }
+}
 </style>

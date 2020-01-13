@@ -91,10 +91,10 @@
           </el-option>
         </el-select>
       </div>
-      <div class="content-status">
+      <div class="content-status" style="margin-bottom: 10px;">
         <span>处理意见：</span>
         <el-input type="textarea"
-                  :rows="3"
+                  :rows="2"
                   style="width: 600px; margin-left: 30px;"
                   v-model="remark">
         </el-input>
@@ -161,7 +161,9 @@ export default {
       this.infoList = [];
     },
     getLibrarys() {
-      this.$faceControlHttp.getFacedbList().then(res => {
+      this.$faceControlHttp.getFacedbList({
+        faceLibraryType: "systemFaceLib,captureFaceLib,dynamicFaceLib,staticFaceLib"
+      }).then(res => {
         let body = res.data;
         this.getFacedbListSuccess(body);
       });
@@ -213,7 +215,7 @@ export default {
       this.$judgeHttp
         .getJudgeDetails({
           faceModelAnalysisResultUuid: this.modelItem.faceModelAnalysisResultUuid,
-          channelUuids: this.checkedDevices ? this.checkedDevices.join(",") : ""
+          channelUuidList: this.checkedDevices ? this.checkedDevices.join(",") : ""
         })
         .then(res => {
           let body = res.data;
@@ -225,7 +227,7 @@ export default {
         });
     },
     getJudgeDetailsSuccess(body) {
-      this.infoList = body.data.list;
+      this.infoList = body.data;
     }
   },
   watch: {
@@ -255,6 +257,8 @@ export default {
 .dialog-content {
   padding: 3% 5% 0 5%;
   box-sizing: border-box;
+  height: 700px;
+  overflow-y: auto;
   .content-title {
     font-family: PingFangSC-Regular;
     font-size: 14px;
@@ -264,9 +268,9 @@ export default {
   }
   .content-device {
     background: rgba($color: #26d39d, $alpha: 0.05);
-    height: 40px;
+    height: auto;
     margin-top: 15px;
-    padding: 0 18px;
+    padding: 10px 18px;
     box-sizing: border-box;
     font-family: PingFangSC-Regular;
     font-size: 12px;

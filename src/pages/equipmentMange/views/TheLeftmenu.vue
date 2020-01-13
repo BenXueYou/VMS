@@ -1,69 +1,63 @@
 <template>
-  <div id="equipLeftMenu"
-       class="leftmenu">
-    <div class="searchWrap">
-      <el-input :placeholder="orgType=='staff'?'搜索组织/标签/名称':'搜索设备/标签/名称'"
-                v-model="searchText">
-        <img slot="prefix"
-             class="image"
-             :src="icons.search"
-             alt>
-      </el-input>
-      <img v-if="activeName=='organiza'"
-           @click="showAddChildrenDialog"
-           :src="icons.add"
-           alt>
-      <img v-else-if="activeName==='tag'"
-           @click="showAddTagDialog"
-           :src="icons.addSign"
-           alt>
-    </div>
+	<div id="equipLeftMenu" class="leftmenu">
+		<div class="searchWrap">
+			<el-input :placeholder="orgType=='staff'?'搜索组织/标签/名称':'搜索设备/标签/名称'" v-model="searchText">
+				<img slot="prefix" class="image" :src="icons.search" alt />
+			</el-input>
+			<img v-if="activeName=='organiza'" @click="showAddChildrenDialog" :src="icons.add" alt />
+			<img v-else-if="activeName==='tag'" @click="showAddTagDialog" :src="icons.addSign" alt />
+		</div>
 
-    <el-tabs v-model="activeName"
-             class="tabs"
-             @tab-click="handleClick">
-      <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
-                   class="mypanel"
-                   name="organiza">
-        <gt-tree ref="tree1"
-                 class="tree"
-                 @getChidrendata="getChidrendata"
-                 @clickmenu="clickmenu"
-                 @exportData="exportData"
-                 :initdata="data"></gt-tree>
-      </el-tab-pane>
-      <el-tab-pane label="标签"
-                   name="tag">
-        <gt-tree ref="tree2"
-                 class="mypanel"
-                 @clickmenu="clickmenu2"
-                 @exportData="exportData2"
-                 :initdata="data2"></gt-tree>
-      </el-tab-pane>
-    </el-tabs>
+		<el-tabs v-model="activeName" class="tabs" @tab-click="handleClick">
+			<el-tab-pane :label="orgType==='device'?'设备树':'组织架构'" class="mypanel" name="organiza">
+				<gt-tree
+					ref="tree1"
+					class="tree"
+					@getChidrendata="getChidrendata"
+					@clickmenu="clickmenu"
+					@exportData="exportData"
+					:initdata="data"
+				></gt-tree>
+			</el-tab-pane>
+			<el-tab-pane label="标签" name="tag">
+				<gt-tree
+					ref="tree2"
+					class="mypanel"
+					@clickmenu="clickmenu2"
+					@exportData="exportData2"
+					:initdata="data2"
+				></gt-tree>
+			</el-tab-pane>
+		</el-tabs>
 
-    <tree-append-child-dialog @confirm="addchildren"
-                              :options="options"
-                              :select="select"
-                              :title="addTitle"
-                              :visible.sync="appendChildrenDialogVisible"></tree-append-child-dialog>
+		<tree-append-child-dialog
+			@confirm="addchildren"
+			:options="options"
+			:select="select"
+			:title="addTitle"
+			:visible.sync="appendChildrenDialogVisible"
+		></tree-append-child-dialog>
 
-    <tree-append-tag-dialog @confirm="addTag"
-                            :title="addTitle"
-                            :visible.sync="appendTagDialogVisible"></tree-append-tag-dialog>
+		<tree-append-tag-dialog
+			@confirm="addTag"
+			:title="addTitle"
+			:visible.sync="appendTagDialogVisible"
+		></tree-append-tag-dialog>
 
-    <tree-change-name-dialog @confirm="changeName"
-                             :value="nodeValue"
-                             :title="changeTitle"
-                             :visible.sync="changeNameDialogVisible"></tree-change-name-dialog>
+		<tree-change-name-dialog
+			@confirm="changeName"
+			:value="nodeValue"
+			:title="changeTitle"
+			:visible.sync="changeNameDialogVisible"
+		></tree-change-name-dialog>
 
-    <org-dialog :visible.sync="showOrgDialogVisible"
-                :orgType="orgType"
-                @confirm="confirAppendChildren"></org-dialog>
-    <confirm-dialog :visible.sync="isDeleteVisible"
-                    @confirm="deleteNode"
-                    confirmText="确定删除"></confirm-dialog>
-  </div>
+		<org-dialog
+			:visible.sync="showOrgDialogVisible"
+			:orgType="orgType"
+			@confirm="confirAppendChildren"
+		></org-dialog>
+		<confirm-dialog :visible.sync="isDeleteVisible" @confirm="deleteNode" confirmText="确定删除"></confirm-dialog>
+	</div>
 </template>
 <script>
 import TreeAppendChildDialog from "@/common/TreeAppendChildDialog";
@@ -223,12 +217,19 @@ export default {
             // if (!this.tagUuid) {
             // this.tagUuid = result[0].tagUuid;
             // this.commit("tagUuid",result[0].tagUuid);
-            // alert(1);
+            if (!result[0]) {
+              this.data2 = result;
+              this.$store.commit("setTagUuid", "");
+              this.$emit("clickNode", {});
+              return;
+            }
+
             // 新增节点之后，不会去刷新右边第一个节点的列表
             if (!uuid) {
               this.$store.commit("setTagUuid", result[0].tagUuid);
               this.$store.commit("setTag", result[0]);
               this.$emit("clickNode", result[0]);
+
               result[0].selected = true;
             } else {
               let index = 0;
@@ -470,19 +471,19 @@ export default {
       downData,
       upData
     }) {
-      // console.log({
-      //   index,
-      //   version,
-      //   rankOrder,
-      //   orgUuid,
-      //   sliblings,
-      //   isLastOne,
-      //   node,
-      //   value,
-      //   e,
-      //   downData,
-      //   upData
-      // });
+      console.log({
+        index,
+        version,
+        rankOrder,
+        orgUuid,
+        sliblings,
+        isLastOne,
+        node,
+        value,
+        e,
+        downData,
+        upData
+      });
 
       // console.log(downData);
       // console.log(upData);
@@ -611,6 +612,7 @@ export default {
           this.addTitle = "新增子部门";
         }
       } else if (value === "changeName") {
+        // 修改名字，看有没有选中节点
         // alert(this.treeName);
         if (this.treeName === "tree1") {
           if (this.orgType === "device") {
@@ -618,10 +620,19 @@ export default {
           } else {
             this.changeTitle = "修改部门名称";
           }
+          if (this.orgUuid) {
+            this.changeNameDialogVisible = true;
+          } else {
+            this.$message.error("请选择修改设备树的树节点");
+          }
         } else {
-          this.changeTitle = "修改标签";
+          if (this.orgUuid) {
+            this.changeTitle = "修改标签";
+            _this.changeNameDialogVisible = true;
+          } else {
+            this.$message.error("请选择修改标签的树节点");
+          }
         }
-        _this.changeNameDialogVisible = true;
       } else if (value === "movedown") {
         _this.movedownNode();
       } else if (value === "moveup") {
@@ -640,8 +651,18 @@ export default {
       return maxSn;
     },
     addchildren(name, node) {
-      // console.log(this.options);
+      console.log(this.options);
+      console.log(name, node);
+      for (let i = 0; i < this.options.length; i++) {
+        if (this.options[i].id === node) {
+          this.Treeparent =
+						this.Treeparent.substr(0, this.Treeparent.length - 1) + i;
+        }
+      }
+
+      console.log(this.Treeparent);
       // console.log(this.getMaxOrgSn());
+      // this.parentOrgUuid = node;
       let data = {
         orgName: name,
         // orgSn: this.getMaxOrgSn(),
@@ -651,7 +672,7 @@ export default {
       api.addOrgTree(data).then(res => {
         if (res.data.success) {
           // 添加子结点成功之后，展开添加的节点
-          this.getChidrendata(this.orgUuid, true, this.Treeparent);
+          this.getChidrendata(node, true, this.Treeparent);
           // this.getOrgTree();
         }
       });
@@ -828,23 +849,26 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #equipLeftMenu {
-  .el-tabs__item {
-    color: #dddddd;
-  }
-  .el-tabs__nav-wrap::after {
-    background: rgb(131, 131, 131);
-  }
-  .is-active {
-    color: $add-text-color;
-  }
-  .el-input__prefix {
-    position: absolute;
-    left: 43px;
-    top: 0px;
-    img {
-      margin-top: 9px;
-    }
-  }
+	.el-tabs__item {
+		color: #dddddd;
+	}
+	.el-tabs__nav-wrap::after {
+		background: rgb(131, 131, 131);
+	}
+	.is-active {
+		color: $add-text-color;
+	}
+	.el-input__prefix {
+		position: absolute;
+		left: 43px;
+		top: 0px;
+		img {
+			margin-top: 9px;
+		}
+	}
+	.searchWrap .el-input__inner {
+		padding-left: 30px;
+	}
 }
 </style>
 
@@ -852,33 +876,33 @@ export default {
 @import "@/style/variables.scss";
 
 .leftmenu {
-  width: 280px;
-  box-sizing: border-box;
-  height: 100%;
-  $iconWidth: 40px;
-  background-color: rgba(35, 38, 41, 0.8);
-  .searchWrap {
-    padding: 25px 26px 10px;
-    .el-input {
-      position: relative;
-      width: calc(100% - #{$iconWidth});
-    }
-    $addIconWidth: 14px;
-    img {
-      display: inline-block;
-      vertical-align: middle;
-      width: $addIconWidth;
-      margin-left: 4px;
-      cursor: pointer;
-    }
-  }
-  .tabs {
-    padding: 0px 26px 25px;
-  }
-  .mypanel {
-    height: calc(100vh - 60px - 70px - 80px);
-    overflow: auto;
-    width: 228px;
-  }
+	width: 280px;
+	box-sizing: border-box;
+	height: 100%;
+	$iconWidth: 40px;
+	background-color: rgba(35, 38, 41, 0.8);
+	.searchWrap {
+		padding: 25px 26px 10px;
+		.el-input {
+			position: relative;
+			width: calc(100% - #{$iconWidth});
+		}
+		$addIconWidth: 14px;
+		img {
+			display: inline-block;
+			vertical-align: middle;
+			width: $addIconWidth;
+			margin-left: 4px;
+			cursor: pointer;
+		}
+	}
+	.tabs {
+		padding: 0px 26px 25px;
+	}
+	.mypanel {
+		height: calc(100vh - 60px - 70px - 80px);
+		overflow: auto;
+		width: 228px;
+	}
 }
 </style>

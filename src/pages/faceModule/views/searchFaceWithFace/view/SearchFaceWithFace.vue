@@ -11,7 +11,7 @@
                         @deleteImage="deleteImage(item)"
                         :key="item.key"
                         @selectImg="selectImg(item)"
-                        v-if="index !== 5"
+                        v-if="index < 5"
                         :imageUrl="item.imageUrl"
                         :style="`margin-right: 30px; ${item.selected ? 'border: 2px #26D39D solid' : ''}`"
                         height="125px" />
@@ -58,7 +58,7 @@
       <div class="result">
         <div class="result-title">
           <img src="@/assets/images/faceModule/face_compare.png">
-          <span style="margin-left: 15px;">人脸库比对结果</span>
+          <span style="margin-left: 15px;">{{libraryType === 'captureFaceLib' ? '抓拍库' : '人脸库'}}比对结果</span>
         </div>
         <div class="result-list"
              v-loading="isLoading">
@@ -82,9 +82,10 @@
                 </div>
                 <div class="info-other">
                   <div class="other-span">性别：{{$common.getEnumItemName("gender", item.genderCapture)}}</div>
-                  <div class="other-span">所属库：{{libraryType === 'captureFaceLib' ? '抓拍库' : '人脸库'}}</div>
+                  <div class="other-span text-show">所属库：{{libraryType === 'captureFaceLib' ? '抓拍库' : item.faceLibraryName}}</div>
+                  <div class="other-span text-show" v-if="libraryType !== 'captureFaceLib'">人员类型：{{$common.getEnumItemName('staff_t', item.staffType)}}</div>
                   <div class="other-span">{{item.captureDatetime}}</div>
-                  <div class="other-span">{{item.channelName}}</div>
+                  <div class="other-span text-show" v-if="libraryType === 'captureFaceLib'">{{item.channelName}}</div>
                 </div>
               </div>
               <div class="item-num">
@@ -161,7 +162,7 @@ export default {
       similarity: 80,
       pageInfo: {
         total: 0,
-        pageSize: 12,
+        pageSize: 15,
         currentPage: 1
       },
       faceList: [],
@@ -179,19 +180,9 @@ export default {
   },
   created() {},
   activated() {
-    if (this.$route.query.imgObj) {
-      this.imageList = [];
-      this.imageList.push({
-        key: this.genModelIndex(),
-        picBaseUrl: "",
-        imageUrl: this.$route.query.imgObj.faceCapturePhotoUrl
-      });
-      this.imageList.push({
-        key: this.genModelIndex(),
-        picBaseUrl: "",
-        imageUrl: ""
-      });
-      this.defaultSelect();
+    console.log("this.$route.params.imgObj: ", this.$route.params.imgObj);
+    if (this.$route.params.imgObj) {
+      this.turnSearchCommon(this.$route.params.imgObj);
     }
   },
   mounted() {
@@ -223,8 +214,16 @@ export default {
         this.imageList.forEach((v, i) => {
           if (i === 0 && this.imageList.length > 1) {
             this.$set(v, "selected", true);
+            this.selectedKey = this.imageList[0].key;
           } else {
             this.$set(v, "selected", false);
+          }
+        });
+      } else {
+        this.imageList.forEach((v, i) => {
+          this.$set(v, "selected", false);
+          if (v.key === this.selectedKey) {
+            this.$set(v, "selected", true);
           }
         });
       }
@@ -270,11 +269,15 @@ export default {
           this.imageBase64 = v.picBaseUrl;
         }
       });
+      if (this.imageList.length < 2) {
+        this.imageBase64 = "";
+      }
     },
     search() {
       this.getFaceList();
     },
     handleTypeChange() {
+      this.faceList = [];
       this.getFaceList();
     },
     transferCheckedChannel(checkedChannel) {
@@ -285,8 +288,24 @@ export default {
     },
     getFaceList() {
       this.getImg();
-      this.isLoading = true;
       setTimeout(() => {
+        if (!this.imageBase64) {
+          this.$cToast.warn("请添加图片");
+          return;
+        }
+        if (!this.similarity) {
+          this.$cToast.warn("请输入相似度");
+          return;
+        }
+        if (this.similarity < 0 || this.similarity > 100) {
+          this.$cToast.warn("相似度只能在0到100%范围内");
+          return;
+        }
+        if (!this.startTime || !this.endTime) {
+          this.$cToast.warn("开始结束时间不能为空");
+          return;
+        }
+        this.isLoading = true;
         this.$searchFaceHttp
           .searchFace({
             limit: this.pageInfo.pageSize,
@@ -294,7 +313,7 @@ export default {
             imageBase64: this.imageBase64,
             channelUuids: this.channelUuids,
             libraryType: this.libraryType,
-            similarity: this.similarity,
+            similarity: parseInt(this.similarity),
             captureTimeStart: this.startTime,
             captureTimeEnd: this.endTime,
             projectUuid: this.$store.state.home.projectUuid
@@ -307,7 +326,7 @@ export default {
           .catch(() => {
             this.isLoading = false;
           });
-      }, 400);
+      }, 500);
     },
     searchFaceSuccess(body) {
       this.faceList = body.data.list;
@@ -325,27 +344,46 @@ export default {
       this.getFaceList();
     },
     turnToSearchFace(item) {
-      // this.$router.push({ name: "searchFaceWithFace", params: { imgObj: item } });
-      this.imageList = [];
-      this.imageList.push({
-        key: this.genModelIndex(),
-        picBaseUrl: "",
-        imageUrl: item.faceCapturePhotoUrl,
-        selected: true,
-      });
-      this.imageList.push({
-        key: this.genModelIndex(),
-        picBaseUrl: "",
-        imageUrl: ""
-      });
+      this.turnSearchCommon(item);
+    },
+    turnSearchCommon(item) {
+      if (this.imageList.length > 5) {
+        this.imageList.shift();
+        this.imageList.forEach((v, i) => {
+          this.$set(v, "selected", false);
+        });
+        this.imageList.splice(0, 0, {
+          key: this.genModelIndex(),
+          picBaseUrl: "",
+          imageUrl: item.faceCapturePhotoUrl,
+          selected: true,
+        });
+        this.selectedKey = this.imageList[0].key;
+      } else {
+        this.imageList.pop();
+        this.imageList.forEach((v, i) => {
+          this.$set(v, "selected", false);
+        });
+        this.imageList.push({
+          key: this.genModelIndex(),
+          picBaseUrl: "",
+          imageUrl: item.faceCapturePhotoUrl,
+          selected: true,
+        });
+        this.selectedKey = this.imageList[this.imageList.length - 1].key;
+        this.imageList.push({
+          key: this.genModelIndex(),
+          picBaseUrl: "",
+          imageUrl: ""
+        });
+      }
       this.defaultSelect();
-      this.getFaceList();
     },
     turnToPersonTrace(item) {
       if (!item.hasOwnProperty("faceUuid")) {
         item.faceUuid = "";
       }
-      this.$router.push({ name: "PersonTrace", query: { imgObj: item } });
+      this.$router.push({ name: "PersonTrace", params: { imgObj: item } });
     },
     lookAllView(item) {
       this.selectedItem = this.$common.copyObject(item, this.selectedItem);
@@ -470,7 +508,7 @@ export default {
           width: 19%;
           height: 160px;
           background: rgba($color: #000000, $alpha: 0.15);
-          border: 0 solid #26d39d;
+          border: 1px solid #223C36;
           margin-right: 15px;
           margin-bottom: 10px;
           position: relative;
@@ -517,12 +555,12 @@ export default {
             position: absolute;
             left: 2px;
             bottom: 2px;
+            background: rgba($color: #111111, $alpha: 0.9);
             border-radius: 1px;
             display: none;
             .menu-elem {
               display: flex;
               align-items: center;
-              background: rgba($color: #111111, $alpha: 0.9);
               width: 120px;
               height: 32px;
               padding: 0 13px;

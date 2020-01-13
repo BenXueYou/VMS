@@ -4,11 +4,11 @@
 			<el-table :data="listTableData" border style="width: 100%;" v-loading="listtableloadding">
 				<el-table-column prop="index" label="序号" width="120">
 					<template slot-scope="scope">
-            {{("0"+(parseInt(scope.$index)+1)).slice(-2)}}
-						<!-- <el-checkbox
+						<!-- {{("0"+(parseInt(scope.$index)+1)).slice(-2)}} -->
+						<el-checkbox
 							v-model="scope.row.checked"
 							@change="selectchange"
-						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox> -->
+						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -35,20 +35,35 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<div class="footer">
-			<el-pagination
+		<div class="faceDBFooter">
+      <el-pagination
+				@current-change="currentChange"
+				:current-page="pageNow"
+				layout="total,prev, pager, next,jumper"
+				:page-size="listPageSize"
+				:total="total"
+				background
+			></el-pagination>
+			<!-- <el-pagination
 				background
 				layout="prev, pager, next"
 				:page-size="listPageSize"
-				:current-page="listPageNow"
+				:current-page="pageNow"
 				@current-change="currentChange"
-				:total="listPageCount"
+				:total="total"
 			></el-pagination>
-			<p class="totalpagetitle">共{{listPageCount}}条</p>
+			<p class="totalpagetitle">共{{total}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
-				<el-input class="yeshu" v-model="yeshu" @blur="blur" type="number"></el-input>
-			</div>
+				<el-input
+					class="yeshu"
+					v-model="yeshu"
+					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+					@blur="blur"
+					@keyup.enter.native="blur"
+					type="number"
+				></el-input>
+			</div> -->
 		</div>
 	</div>
 </template>
@@ -92,7 +107,7 @@ export default {
         return false;
       }
     },
-    listPageNow: {
+    pageNow: {
       type: Number,
       default() {
         return 1;
@@ -104,7 +119,7 @@ export default {
         return 15;
       }
     },
-    listPageCount: {
+    total: {
       type: Number,
       default() {
         return 0;
@@ -195,7 +210,7 @@ export default {
 .tablelist {
 	height: 100%;
 }
-.footer {
+.faceDBFooter {
 	position: relative;
 	.totalpagetitle {
 		font-size: 14px;
@@ -205,7 +220,7 @@ export default {
 		margin-top: 17px;
 	}
 	.el-pagination {
-		margin-right: 180px;
+		margin-right: 1px;
 		margin-top: 10px;
 		float: right;
 	}

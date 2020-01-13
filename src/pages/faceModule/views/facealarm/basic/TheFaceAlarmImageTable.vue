@@ -13,8 +13,8 @@
 				<!-- <div class="item hiddenitem" v-for="(item,index) in getLast" :key="item+index"></div> -->
 			</div>
 		</div>
-		<div class="footer">
-			<el-pagination
+		<div class="FAMImageListFooter">
+			<!-- <el-pagination
 				background
 				layout="prev, pager, next"
 				:page-size="pageSize"
@@ -25,8 +25,25 @@
 			<p class="totalpagetitle">共{{pageCount}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
-				<el-input class="yeshu" type="number"></el-input>
-			</div>
+				<el-input
+					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+					@keyup.enter.native="blur"
+					@blur="blur"
+					v-model="page"
+					class="yeshu"
+					type="number"
+				></el-input>
+			</div>-->
+			<!-- <el-col :span="24" class="footerPages" style="text-align:right"> -->
+			<el-pagination
+				@current-change="currentChange"
+				:current-page="pageNow"
+				layout="total,prev, pager, next,jumper"
+				:page-size="pageSize"
+				:total="pageCount"
+				background
+			></el-pagination>
+			<!-- </el-col> -->
 		</div>
 		<the-face-alarm-dialog
 			title="对比详情"
@@ -65,7 +82,7 @@ export default {
       type: Array,
       default: function() {
         var num = [];
-        for (var i = 0; i < 13; i++) {
+        for (var i = 0; i < 12; i++) {
           num.push({
             index: ("0" + (i + 1)).slice(-2),
             name: "王小虎",
@@ -116,11 +133,13 @@ export default {
       arr: [1, 1, 1, 1, 1],
       dialogImageUrl: "",
       dialogVisible: false,
+      page: null,
       userheader: require("@/assets/user.png")
     };
   },
   watch: {
     tableData(val) {
+      this.tableSourceData = [];
       if (val && val.length) {
         let arr = [];
         val.map(item => {
@@ -135,6 +154,15 @@ export default {
   },
   mounted() {},
   methods: {
+    blur() {
+      if (this.page !== "") {
+        if (this.page > Math.ceil(this.pageCount / this.pageSize)) {
+          this.page = Math.ceil(this.pageCount / this.pageSize);
+        }
+        this.page = parseInt(this.page);
+        this.$emit("pagechange", parseInt(this.page));
+      }
+    },
     showbig(url) {
       if (url) {
         this.dialogImageUrl = url;
@@ -170,7 +198,26 @@ export default {
   }
 };
 </script>
-
+<style>
+@media screen and (max-width: 1400px) {
+	.facealarm .tableCellList .tableCellListBox .item {
+		background-color: rgb(27, 30, 33);
+		box-sizing: border-box;
+		margin-bottom: 30px;
+		margin-right: 6% !important;
+		margin-left: 6% !important;
+	}
+}
+@media screen and(min-width:1400px) and (max-width: 1700px) {
+	.facealarm .tableCellList .tableCellListBox .item {
+		background-color: rgb(27, 30, 33);
+		box-sizing: border-box;
+		margin-bottom: 30px;
+		margin-right: 2% !important;
+		margin-left: 2.5% !important;
+	}
+}
+</style>
 <style lang="scss" scoped>
 @mixin active {
 	font-family: "PingFangSC-Regular";
@@ -194,14 +241,14 @@ export default {
 			height: 100%;
 			display: flex;
 			flex-wrap: wrap;
-			justify-content: space-between;
+			justify-content: flex-start;
 			align-content: flex-start;
 			overflow: auto;
 			.item {
 				background-color: rgb(27, 30, 33);
 				box-sizing: border-box;
 				margin-bottom: 30px;
-				margin-left: 17px;
+				margin-right: 14px;
 				.content {
 					padding: 10px 12px;
 					box-sizing: border-box;
@@ -209,7 +256,6 @@ export default {
 					.aitem {
 						float: left;
 						width: 100%;
-
 						overflow: hidden;
 						.aitemp {
 							text-indent: 8px;
@@ -221,16 +267,12 @@ export default {
 								white-space: nowrap;
 							}
 						}
-
 						.aitemimg {
 							position: relative;
 							float: left;
 							width: 25%;
 							overflow: hidden;
 							padding-bottom: 25%;
-							// width:100px;
-							// height: 100px;
-							// background-color: #aaa;
 							img {
 								position: absolute;
 								top: 0px;
@@ -264,11 +306,9 @@ export default {
 						.xiangqing {
 							display: inline-block;
 							vertical-align: middle;
-							// color: rgb(39, 150, 119);
 							color: #28ffbb;
 						}
 					}
-
 					img {
 						vertical-align: middle;
 						width: 16px;
@@ -281,7 +321,7 @@ export default {
 		}
 	}
 }
-.footer {
+.FAMImageListFooter {
 	position: relative;
 	// margin: 30px 0px;
 	.totalpagetitle {
@@ -292,7 +332,7 @@ export default {
 		margin-top: 17px;
 	}
 	.el-pagination {
-		margin-right: 180px;
+		margin-right: 22px;
 		margin-top: 10px;
 		float: right;
 	}

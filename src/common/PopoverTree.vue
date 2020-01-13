@@ -64,6 +64,10 @@ export default {
       type: String,
       default: ""
     },
+    isCurrentShow:{
+      type:Boolean,
+      default:false
+    }
   },
   data() {
     return {
@@ -88,6 +92,7 @@ export default {
   },
   methods: {
     initData() {
+      this.nodeText = "";
       if (!this.initAreaData) {
         return;
       }
@@ -107,6 +112,10 @@ export default {
       if (node.level === 0) {
         return;
       }
+      // if(){
+
+      // }
+      console.log(node);
       if (this.initAreaData && node.data) {
         this.$houseHttp
           .getInfrastructure({
@@ -117,6 +126,14 @@ export default {
               resolve([]);
             } else {
               for (let item of res.data.data) {
+                // 新增楼栋单元的上级地址，不能到层。
+                console.log(this.lastLevelType);
+                if(item.type === this.lastLevelType){                  
+                  res.data.data = [];
+                  resolve([]);
+                  this.$message({type:'warning',message:'此处不能新增房屋'});
+                  break;
+                }
                 this.$set(item, "leaf", true);
                 if (item.nextCount !== 0 && item.type !== this.lastLevelType) {
                   this.$set(item, "leaf", false);
@@ -217,6 +234,11 @@ export default {
         this.initData();
       },
       deep: true
+    },
+    isCurrentShow(val){
+      if(val){
+        this.nodeText = '';
+      }
     }
   },
   destroyed() {}

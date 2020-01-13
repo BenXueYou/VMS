@@ -15,14 +15,16 @@
         <el-form-item label="开始时间："
                       prop="name">
           <el-date-picker v-model="startDate"
+                          @change="change"
                           type="datetime"
                           style='width:220px;'
                           placeholder="选择日期时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="开始时间："
+        <el-form-item label="结束时间："
                       prop="name">
           <el-date-picker v-model="endDate"
+                          @change="change"
                           type="datetime"
                           style='width:220px;'
                           placeholder="选择日期时间">
@@ -60,8 +62,32 @@ export default {
   },
   mounted() {},
   methods: {
+    change() {
+      if (
+        new Date(this.startDate).getTime() > new Date(this.endDate).getTime()
+      ) {
+        [this.startDate, this.endDate] = [this.endDate, this.startDate];
+      }
+    },
+    getFormatTime(t) {
+      const change = t => {
+        return ("0" + t).slice(-2);
+      };
+      const d = new Date(t);
+      let year = d.getFullYear();
+      let month = change(d.getMonth() + 1);
+      let day = change(d.getDate());
+      let hour = change(d.getHours());
+      let minute = change(d.getMinutes());
+      let second = change(d.getSeconds());
+      return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    },
     confirm() {
-      this.$emit("confirm", this.startDate, this.endDate);
+      this.$emit(
+        "confirm",
+        this.getFormatTime(this.startDate),
+        this.getFormatTime(this.endDate)
+      );
       this.close();
     },
     close() {

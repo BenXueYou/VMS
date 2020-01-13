@@ -1,28 +1,25 @@
 <template>
 	<el-dialog
 		class="GlobalAlarmDialogClass"
-		:visible.sync="dialogShow"
+		:visible.sync="isShow"
 		@close="closeDialog"
-		:title="taskInfo.taskName||'布控报警'"
+		:title="dialogParama.faceMonitorName||'布控报警'"
 		v-dialogDrag
 	>
-		<!-- <el-row>
-			<div class="global_el-dialog__header" @mousedown="mousedown">
-				<span class="el-dialog__title">{{taskInfo.taskName||'布控报警'}}</span>
-				<button type="button" aria-label="Close" class="el-dialog__headerbtn">
-					<i class="el-dialog__close el-icon el-icon-close" @click="dialogShow = false"></i>
-				</button>
-			</div>
-		</el-row> -->
 		<div class="GlobalAlarmDialog">
-			<!-- <big-img v-if="showImgs" @clickit="viewImg" :imgSrc="imgSrc"></big-img> -->
 			<el-row type="flex" justify="flex-start" class="GlobalAlarmDialogBodyClass" :gutter="5">
 				<div>
+					<!-- facelog-->
 					<div class="leftColBg">
-						<img
+						<!-- <img
 							class="GlobalAlarmDialog-card-img"
-							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,picSourceType)"
-						/>
+							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)"
+						/>-->
+						<el-image
+							class="GlobalAlarmDialog-card-img"
+							:src="$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)"
+							:preview-src-list="[$common.setPictureShow(dialogParama.faceCapturePhotoUrl,PicSourceType)]"
+						></el-image>
 					</div>
 					<p>抓拍图片</p>
 				</div>
@@ -34,13 +31,17 @@
 					type="circle"
 					:percentage="dialogParama.faceSimilarity?parseInt(dialogParama.faceSimilarity.toFixed(0)):0"
 				></el-progress>
-
 				<div class="rightBox">
 					<div class="leftColBg">
-						<img
+						<!-- <img
 							class="GlobalAlarmDialog-card-img"
-							:src="dialogParama.facePhotoUrl?imageHeader+dialogParama.facePhotoUrl:require('@/assets/user.png')"
-						/>
+							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
+						/>-->
+						<el-image
+							class="GlobalAlarmDialog-card-img"
+							:src="$common.setPictureShow(dialogParama.facePhotoUrl)"
+							:preview-src-list="[$common.setPictureShow(dialogParama.facePhotoUrl)]"
+						></el-image>
 					</div>
 					<p>布控图片</p>
 				</div>
@@ -56,8 +57,9 @@
 			</el-row>
 			<el-row type="flex" justify="flex-start" class="operatorBoxClass">
 				<span>操作：</span>
-				<el-button>查看视频</el-button>
-				<el-button>查看录像</el-button>
+				<el-button @click="preViewVideo">查看视频</el-button>
+				<el-button @click="reviewVideo">查看录像</el-button>
+				<el-button @click="closeAudio">关闭声音</el-button>
 			</el-row>
 			<div slot="footer" class="dialog-footer">
 				<p class="footerTxtBox">抓拍记录</p>
@@ -65,13 +67,25 @@
 					<div v-for="(item,index) in 8" :key="index" class="cardBox">
 						<el-row class="cardBoxHeader" type="flex" justify="center" :gutter="15">
 							<el-col class="facePhoto" :span="9">
+								<el-image
+									v-if="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl"
+									:src="$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)"
+									:preview-src-list="[$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)]"
+								></el-image>
 								<img
-									:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
+									v-else
+									:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 								/>
 							</el-col>
 							<el-col class="panoramaPhoto" :span="17">
+								<el-image
+									v-if="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl"
+									:src="$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)"
+									:preview-src-list="[$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)]"
+								></el-image>
 								<img
-									:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,'facelog'):require('@/assets/user.png')"
+									v-else
+									:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 								/>
 							</el-col>
 						</el-row>
@@ -86,7 +100,7 @@
 							</el-row>
 							<el-row type="flex" justify="space-around">
 								<span>特征：{{shootPhotoList[index]&&shootPhotoList[index].sunglasses?'戴墨镜 ':" "}} {{shootPhotoList[index]&&shootPhotoList[index].mask?'戴口罩':""}}</span>
-								<span>性别：{{shootPhotoList[index]&&shootPhotoList[index].genderCapture||''}}</span>
+								<span>性别：{{shootPhotoList[index]&&$common.getEnumItemName('gender',shootPhotoList[index].genderCapture)}}</span>
 								<span>年龄：{{shootPhotoList[index]&&shootPhotoList[index].age||''}}</span>
 								<span>眼镜：{{shootPhotoList[index]&&shootPhotoList[index].glasses?'戴眼镜 ':" "}}</span>
 							</el-row>
@@ -100,65 +114,96 @@
 <script type="text/javascript">
 import RestApi from "@/utils/RestApi.js";
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js";
-import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
   name: "GlobalAlarmDialog",
   props: {
-    dialogParama: {}
+    dialogParama: {},
+    dialogShow: {
+      type: Boolean,
+      default: false
+    }
   },
-  components: { "big-img": BigImg },
   data: function() {
     return {
       shootPhotoList: [],
       staffInfo: {},
       taskInfo: {},
-      showImgs: false,
       imgSrc: "",
+      isShow: false,
       imageHeader: RestApi.api.imageUrl,
-      dialogShow: true,
-      picSourceType: window.config.picSourceType
+      PicSourceType: window.config.PicSourceType
     };
   },
   watch: {
-    showImg: function() {
-      this.showImgs = this.showImg;
-    },
     dialogParama: {
+      handler: function(newVal, oldVal) {
+        this.staffInfo = newVal || {};
+        this.getRecoginizedList();
+      },
+      deep: true,
+      immediate: true
+    },
+    dialogShow: {
       handler: function(val, oldVal) {
-        console.log(val);
+        this.isShow = val;
       },
       deep: true
     }
   },
   mounted: function(e) {
     // 父組件向子組件傳值
-    /**
-	 * captureDatetime: (...)
-		channelName: (...)
-		channelUuid: (...)
-		faceCapturePhotoUrl: (...)
-		faceCaptureRecordUuid: (...)
-		faceLibraryName: (...)
-		faceLibraryUuid: (...)
-		faceMonitorAlarmUuid: (...)
-		faceMonitorUuid: (...)
-		facePhotoUrl: (...)
-		facePhotoUuid: (...)
-		faceSimilarity: (...)
-		faceUuid: (...)
-		householdType: (...)
-		staffName: (...)
-		staffType: (...)
-	 */
     console.log("-------------", this.dialogParama);
     this.staffInfo = this.dialogParama || {};
+    this.isShow = this.dialogParama.showDialog;
     this.getRecoginizedList();
   },
   activated: function() {
     console.log("刷新页面");
   },
   methods: {
+    // 查看视频
+    preViewVideo() {
+      this.$store.dispatch("addTagViewItem", {
+        icon: "VideoPreview",
+        name: "VideoPreview",
+        title: "视频预览",
+        type: "config",
+        path: "/VideoPreview"
+      });
+      this.$store.dispatch("setLocalTag", "VideoPreview");
+      this.$bus.$emit("setLocalTag", "VideoPreview");
+      this.$router.push({
+        path: "../VideoPreview",
+        query: {
+          dialogParama: this.dialogParama,
+          channelUuid: this.dialogParama.channelUuid
+        }
+      });
+    },
+    // 查看录像
+    reviewVideo() {
+      this.$store.dispatch("addTagViewItem", {
+        icon: "vistorMange",
+        name: "VideoPlayback",
+        title: "视频回放",
+        type: "config",
+        path: "/VideoPlayback"
+      });
+      this.$store.dispatch("setLocalTag", "VideoPlayback");
+      this.$bus.$emit("setLocalTag", "VideoPlayback");
+      this.$router.push({
+        path: "../VideoPlayback",
+        query: {
+          dialogParama: this.dialogParama,
+          channelUuid: this.dialogParama.channelUuid,
+          channelName: this.dialogParama.channelName
+        }
+      });
+    },
+    closeAudio() {
+      this.$emit("closeAudio");
+    },
     // 查询识别记录
     getRecoginizedList() {
       var data = {
@@ -179,9 +224,6 @@ export default {
       this.$emit("cs", true);
       // 获取当前图片地址
       this.imgSrc = e.currentTarget.src;
-    },
-    viewImg() {
-      this.$emit("cs", false);
     },
     mousedown(event) {
       this.selectElement = event.currentTarget;
@@ -212,7 +254,8 @@ export default {
       mousemove(event);
     },
     closeDialog() {
-      this.dialogShow = false;
+      this.isShow = false;
+      this.$emit("close");
     }
   }
 };
@@ -343,15 +386,21 @@ export default {
 }
 .GlobalAlarmDialog .dialog-footer .cardBox {
 	width: calc(50% - 18px);
-	height: calc(50% - 20px);
+	/* height: calc(50% - 20px); */
 	margin-top: 15px;
-	margin: 15px 7.5px 0;
+	margin: 5px 7.5px 10px;
 	background-color: rgba(33, 35, 37, 0.8);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	padding: 10px 10px 0;
 	box-sizing: border-box;
 }
-
+.GlobalAlarmDialog .cardBox .el-image {
+	width: 100%;
+	height: 100%;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
 .GlobalAlarmDialog .cardBox .facePhoto {
 	width: 139px;
 	height: 139px;
@@ -359,6 +408,15 @@ export default {
 .GlobalAlarmDialog .cardBox .panoramaPhoto {
 	width: 248px;
 	height: 139px;
+}
+.GlobalAlarmDialog .leftColBg .el-image .el-image-viewer__canvas img,
+.GlobalAlarmDialog .cardBox .facePhoto .el-image .el-image-viewer__canvas img {
+	width: auto;
+	max-width: 100%;
+	height: 100%;
+}
+.GlobalAlarmDialog .leftColBg .GlobalAlarmDialog-card-img.el-image {
+	height: 100%;
 }
 .GlobalAlarmDialog .cardBox .facePhoto img,
 .GlobalAlarmDialog .cardBox .panoramaPhoto img {

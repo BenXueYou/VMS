@@ -5,18 +5,19 @@ import Vuex from "vuex";
 import store from "@/store/store.js";
 import Axios from "@/utils/Request";
 import ElementUI from "element-ui";
+
 import "./style/element-variables.scss";
 import "./style/index.scss";
 import App from "./App";
 import router from "./router";
 
 // 权限控制中枢 路由守卫
-import './permission';
-import './directives';
+import "./permission";
+import "./directives";
 // import './dir';
 
 import echarts from "echarts";
-import { EventBusPlugin as EventBus } from "@/utils/Eventbus";
+import { EventBusPlugin as EventBus } from "@/utils/EventBus";
 import Common from "@/utils/Common.js";
 import Toast from "@/utils/Toast.js";
 import HomeAjax from "@/pages/home/utils/HomeAjax.js";
@@ -25,17 +26,17 @@ import LogSearchHttp from "@/pages/doorControl/utils/LogSearchHttp.js";
 import HouseHttp from "@/pages/buildingsHouse/utils/HouseHttp.js";
 import UnitHttp from "@/pages/unitMange/utils/UnitHttp.js";
 
-import DoorSetAjax from '@/pages/doorControl/utils/DoorAccessSetHttp.js';
+import DoorSetAjax from "@/pages/doorControl/utils/DoorAccessSetHttp.js";
 
-import ResidentHttp from '@/pages/residentManage/utils/ResidentHttp.js';
-import LoginAjax from '@/pages/login/utils/LoginAjax.js';
-import SearchFaceHttp from '@/pages/faceModule/views/searchFaceWithFace/utils/SearchFaceHttp.js';
-import JudgeHttp from '@/pages/faceModule/views/judgeAnalysis/utils/JudgeHttp.js';
-import ModuleCountHttp from '@/pages/faceModule/views/moduleCount/utils/ModuleCountHttp.js';
-import StatisticHttp from '@/pages/faceModule/views/statisticalForms/util/StatisticHttp.js';
-import FactTragicHttp from '@/pages/faceModule/views/companion/util/FactTragicHttp.js';
-import FaceControlHttp from '@/pages/faceModule/views/faceControl/utils/FaceControlHttp.js';
-import IntelModelHttp from '@/pages/faceModule/views/intelModel/utils/IntelModelHttp.js';
+import ResidentHttp from "@/pages/residentManage/utils/ResidentHttp.js";
+import LoginAjax from "@/pages/login/utils/LoginAjax.js";
+import SearchFaceHttp from "@/pages/faceModule/views/searchFaceWithFace/utils/SearchFaceHttp.js";
+import JudgeHttp from "@/pages/faceModule/views/judgeAnalysis/utils/JudgeHttp.js";
+import ModuleCountHttp from "@/pages/faceModule/views/moduleCount/utils/ModuleCountHttp.js";
+import StatisticHttp from "@/pages/faceModule/views/statisticalForms/util/StatisticHttp.js";
+import FactTragicHttp from "@/pages/faceModule/views/companion/util/FactTragicHttp.js";
+import FaceControlHttp from "@/pages/faceModule/views/faceControl/utils/FaceControlHttp.js";
+import IntelModelHttp from "@/pages/faceModule/views/intelModel/utils/IntelModelHttp.js";
 
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = Axios;

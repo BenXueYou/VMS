@@ -15,8 +15,13 @@ let xfPrefix = `${
   window.config.protocolHeader
 }${ip}/${wsh}/project/${projectUuid}/`;
 let ycPrefix = `${window.config.protocolHeader}${ip}/${zhengyu}/`;
-let zwzPrefix = `${window.config.protocolHeader}${ip}/${zhangwz}/`;
+let zwzPrefix = `${
+  window.config.protocolHeader
+}${ip}/${zhangwz}/project/${projectUuid}/`;
 let wyfPrefix = `${window.config.protocolHeader}${ip}/${
+  window.config.wyf
+}/project/${projectUuid}/`;
+let wyfPrefix2 = `${window.config.protocolHeader}${ip}/zuul/${
   window.config.wyf
 }/project/${projectUuid}/`;
 let fkPrefix = `${
@@ -37,6 +42,11 @@ export default {
   setReConfigIssue: (deviceUuid, taskUuid) =>
     `${xfPrefix}restIssueData/${deviceUuid}/${taskUuid}`,
   getTagUrl: `${sbPrefix}tag/list`,
+  getTongDaoTypeUrl: subViewType =>
+    `${ycPrefix}project/${projectUuid}/subViewType/${subViewType}`,
+  getViewTypeListUrl: viewType =>
+    `${ycPrefix}project/${projectUuid}/chnType/${viewType}/list`,
+
   addTagUrl: `${sbPrefix}tag`,
   updateTagUrl: `${sbPrefix}tag`,
   operatorTagUrl: `${sbPrefix}tag/move`,
@@ -61,6 +71,8 @@ export default {
   getNoGuanLiUrl: `${sbPrefix}deviceNotMgr`,
   // 获取权限组已添加的人资源下的具体的人员列表
   getResourceUrl: resourceUuid => `${sbPrefix}resource/${resourceUuid}`,
+  getResultImportUrl: `${sbPrefix}infrastructure/import/result`,
+
   // 标签相关接口
   getChannelByTagUrl: `${sbPrefix}tagElement/channelList`,
   importElementUrl: tagUuid => `${sbPrefix}importElement/${tagUuid}`,
@@ -76,43 +88,46 @@ export default {
   getDoorUrl: uuid => `${ycPrefix}deviceDoor/${uuid}`,
   setDoorUrl: uuid => `${ycPrefix}deviceDoor/${uuid}`,
   getNetUrl: `${ycPrefix}deviceNet`,
-  setNetUrl: `${ycPrefix}deviceNet`,
+  setNetUrl: `${sbPrefix}deviceNet`,
   getJiaoXiaoUrl: deviceUuid => `${ycPrefix}deviceTime/${deviceUuid}`,
-  setJiaoXiaoUrl: deviceUuid => `${ycPrefix}deviceTime/${deviceUuid}`,
+  setJiaoXiaoUrl: deviceUuid => `${sbPrefix}deviceTime/${deviceUuid}`,
   getRelayUrl: deviceUuid => `${ycPrefix}deviceRelay/${deviceUuid}`,
   setRelayUrl: `${ycPrefix}deviceRelay`,
   getFaceUrl: deviceUuid => `${ycPrefix}deviceFaceRecognition/${deviceUuid}`,
-  setFaceUrl: `${ycPrefix}device/faceRecognitionConfig`,
+  setFaceUrl: `${sbPrefix}device/faceRecognitionConfig`,
   getDoorListUrl: deviceUuid => `${ycPrefix}deviceDoorList/${deviceUuid}/`,
   getDoorDutouUrl: channelUuid => `${ycPrefix}deviceDoor/${channelUuid}`,
-  setDoorDutouUrl: channelUuid => `${ycPrefix}deviceDoor/${channelUuid}`,
+  setDoorDutouUrl: channelUuid => `${sbPrefix}deviceDoor/${channelUuid}`,
+  // 根据类型来获取耳机菜单
+  getScondUrl: viewType =>
+    `${ycPrefix}project/${projectUuid}/chnType/select/list`,
   // 获取设备的时段列表
   getTimeUrl: `${ycPrefix}device/passthrough/periodList`,
-  setTimeUrl: `${ycPrefix}device/passthrough/periodList`,
+  setTimeUrl: `${sbPrefix}device/passthrough/periodList`,
   // 根据设备来获取下面的通道
   getChnByDUrl: deviceUuid => `${sbPrefix}deviceChannelTypeList/${deviceUuid}`,
   // 获取和设置报警配置
   getAlarmUrl: deviceUuid => `${ycPrefix}deviceAlarm/${deviceUuid}`,
-  setAlarmUrl: `${ycPrefix}deviceAlarm`,
+  setAlarmUrl: `${sbPrefix}deviceAlarm`,
   deleteFailTaskUrl: `${xfPrefix}issueTask`,
   // 远程控制 设备升级那块
-  upgradeDeviceUrl: `${zwzPrefix}operation/operation/upgrade`,
+  upgradeDeviceUrl: `${zwzPrefix}operation/upgrade`,
   // 远程控制 新的接口
   newUpgradeDeviceUrl: `${
     window.config.protocolHeader
   }${ip}/zuul/fileforward-server-v1/project/system/fileforward/forwardFileToFileSystem`,
   // 数据备份
   dataBackupUrl: deviceUuid =>
-    `${zwzPrefix}operation/operation/dataBackup/device/${deviceUuid}`,
-  // `${zwzPrefix}operation/operation/dataBackup/device/${deviceUuid}`,
+    `${zwzPrefix}operation/dataBackup/device/${deviceUuid}`,
+  // `${zwzPrefix}operation/dataBackup/device/${deviceUuid}`,
   // 获取设备升级进度
-  upgradeProgressUrl: `${zwzPrefix}operation/operation/upgrade`,
+  upgradeProgressUrl: `${zwzPrefix}operation/upgrade`,
   // 重启设备
   restartDeviceUrl: deviceUuid =>
-    `${zwzPrefix}operation/operation/restart/device/${deviceUuid}`,
+    `${zwzPrefix}operation/restart/device/${deviceUuid}`,
   // 恢复出厂设置
   dataResetUrl: deviceUuid =>
-    `${zwzPrefix}operation/operation/initialize/device/${deviceUuid}`,
+    `${zwzPrefix}operation/initialize/device/${deviceUuid}`,
   // 文件转发
   fileByUrl: `${
     window.config.protocolHeader
@@ -121,8 +136,8 @@ export default {
   huanyuanUrl: deviceUuid =>
     `${
       window.config.protocolHeader
-    }${ip}/iacserv-v1/operation/operation/dataRestore/device/${deviceUuid}`,
-  staffExportUrl: type => `${wyfPrefix}staff/import/${type}`,
+    }${ip}/iacserv-v1/operation/dataRestore/device/${deviceUuid}`,
+  staffExportUrl: type => `${wyfPrefix2}staff/import/${type}`,
   // 下载模板
   downloadUrl: `${wyfPrefix}staff/import/exportTemplate`,
   // 获取导入结果
@@ -149,6 +164,9 @@ export default {
   tokeGoodsUrl: `${fkPrefix}carryItem`,
   // 下发之前判断是否有下发任务了
   judgeTaskUrl: `${xfPrefix}checkConfigIssue`,
+  // 根据通道来获取设备的信息
+  getDeviceInfoByChannelUrl: channelUuid =>
+    `${sbPrefix}channel/${channelUuid}/deviceInfo`,
   // 获取本地服务列表
   serviceListUrl: `${sbPrefix}belong/server/list`,
 
@@ -176,5 +194,5 @@ export default {
   setImmediateSyncSettingUrl: deviceUuid =>
     `${
       window.config.protocolHeader
-    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/delaySync`
+    }${ip}/faceconfig-v1/project/${projectUuid}/face/${deviceUuid}/immediateSync`
 };

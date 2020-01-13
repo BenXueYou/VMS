@@ -9,6 +9,7 @@
 					type="datetime"
 					placeholder="选择日期"
 					value-format="yyyy-MM-dd HH:mm:ss"
+					@change="selectDate=null"
 				></el-date-picker>
 				<span class="timeText">至</span>
 				<el-date-picker
@@ -17,6 +18,7 @@
 					type="datetime"
 					placeholder="选择日期"
 					value-format="yyyy-MM-dd HH:mm:ss"
+					@change="selectDate=null"
 				></el-date-picker>
 			</div>
 			<div class="topBoxDiv topBoxDateRadioBtnBox">
@@ -34,6 +36,7 @@
 					:elPopoverClass="fRPopoverClass"
 					@transferCheckedChannel="transferCheckedChannel"
 					inputWidth="75%"
+					ref="FRDeviceRef"
 					:isCheckedAll="true"
 				></elPopverTree>
 			</div>
@@ -56,18 +59,45 @@
 			</div>
 			<div :span="4" class="topBoxDiv topBoxCheckBox topBoxQualityCheckBox">
 				<span class="topTitleTxt" style="margin-right:15px;">图片质量:</span>
-				<!-- <el-checkbox-group v-model="qualityOption">
-					<el-checkbox-button label="HIGH">高</el-checkbox-button>
-					<el-checkbox-button label="NORMAL">中</el-checkbox-button>
-					<el-checkbox-button label="LOW">低</el-checkbox-button>
-					<el-checkbox-button label="LOWER">无效</el-checkbox-button>
-				</el-checkbox-group>-->
-				<pic-qulity-select :selectedButtons.sync="qualityOption" />
+				<el-checkbox-group v-model="qualityOption">
+					<el-checkbox-button label="HIGH">
+						高
+						<img
+							src="@/assets/images/faceModule/selected.png"
+							class="checkBtnImg"
+							v-if="qualityOption.indexOf('HIGH')!==-1"
+						/>
+					</el-checkbox-button>
+					<el-checkbox-button label="NORMAL">
+						中
+						<img
+							src="@/assets/images/faceModule/selected.png"
+							class="checkBtnImg"
+							v-if="qualityOption.indexOf('NORMAL')!==-1"
+						/>
+					</el-checkbox-button>
+					<el-checkbox-button label="LOW">
+						低
+						<img
+							src="@/assets/images/faceModule/selected.png"
+							class="checkBtnImg"
+							v-if="qualityOption.indexOf('LOW')!==-1"
+						/>
+					</el-checkbox-button>
+					<el-checkbox-button label="LOWER">
+						无效
+						<img
+							src="@/assets/images/faceModule/selected.png"
+							class="checkBtnImg"
+							v-if="qualityOption.indexOf('LOWER')!==-1"
+						/>
+					</el-checkbox-button>
+				</el-checkbox-group>
+				<!-- <pic-qulity-select :selectedButtons.sync="qualityOption" /> -->
 			</div>
-
 			<div class="topBoxBtnBox">
 				<el-button icon="el-icon-search" class="search-btn" @click="queryAct" type="primary">查询</el-button>
-				<el-button class="search-btn" @click="queryAct" type="primary">重置</el-button>
+				<el-button class="search-btn" @click="resetQueryAct" type="primary">重置</el-button>
 			</div>
 		</el-row>
 		<el-row
@@ -86,22 +116,23 @@
 					:visible-arrow="false"
 					popper-class="FRelPopoverClass"
 					placement="center-center"
+					v-model="o.CellVisiblePopver"
 					:width="cellwidth"
-					trigger="click"
+					trigger="hover"
 				>
 					<el-row class="FRelPopoverRow" justify="space-between">
 						<el-col
 							class="FRelPopoverCol"
-							@click.native="searchImageToFace(o,index,'/FaceManage/searchFaceWithFace')"
+							@click.native="searchImageToFace(o,index,'searchFaceWithFace')"
 						>
 							<img src="@/assets/images/faceModule/2.png" />
 							以脸搜脸
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'/FaceManage/Companion')">
+						<el-col class="FRelPopoverCol" @click.native="analysisAct(o,index,'Companion')">
 							<img src="@/assets/images/faceModule/2.png" />
 							同行人分析
 						</el-col>
-						<el-col class="FRelPopoverCol" @click.native="judgeStaffTrace(o,'/FaceManage/PersonTrace')">
+						<el-col class="FRelPopoverCol" @click.native="judgeStaffTrace(o,'PersonTrace')">
 							<img src="@/assets/images/faceModule/4.png" />
 							人员轨迹
 						</el-col>
@@ -160,10 +191,16 @@
 		<!-- ======================================================= 人脸 弹 窗 ========================================================== -->
 		<el-dialog class="dialogPhotoClass" :visible.sync="dialogVisible" :title="titleTxt">
 			<div class="leftImgBox">
-				<img :src="dialogPhotoImgUrl?dialogPhotoImgUrl:require('@/assets/user.png')" alt />
+				<el-image
+					:src="$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)"
+					:preview-src-list="[$common.setPictureShow(dialogPhotoImgUrl,PicSourceType)]"
+				></el-image>
 			</div>
 			<div class="rightImgBox">
-				<img :src="dialogPanoramaImgUrl?dialogPanoramaImgUrl:require('@/assets/user.png')" alt />
+				<el-image
+					:src="$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)"
+					:preview-src-list="[$common.setPictureShow(dialogPanoramaImgUrl,PicSourceType)]"
+				></el-image>
 			</div>
 		</el-dialog>
 	</el-row>
@@ -209,14 +246,25 @@ export default {
     }
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    this.queryAct();
   },
   watch: {},
   activated: function() {
     console.log("抓拍记录刷新页面");
     this.checkNameString = "";
   },
+  deactivated: function() {},
   methods: {
+    resetQueryAct() {
+      this.checkedChannelsUuidList = [];
+      this.qualityOption = ["HIGH", "NORMAL", "LOW"];
+      this.genderOption = "";
+      this.propertyOption = "";
+      this.startTime = this.$common.getStartTime();
+      this.endTime = this.$common.getCurrentTime();
+      this.selectDate = null;
+      this.$refs.DeviceRef.clearAction();
+      this.queryAct();
+    },
     selectDateAct(dateStr) {
       let day = new Date();
       switch (dateStr) {
@@ -298,7 +346,6 @@ export default {
     },
     // 是否有人员轨迹
     judgeStaffTrace(item, routeName) {
-      //   this.$router.push({ path: routeName, query: { imgObj: item } });
       let data = {
         faceCaptureRecordUuid: item.faceCaptureUuid,
         captureDatetime: item.captureDatetime
@@ -308,7 +355,11 @@ export default {
         .then(res => {
           if (res.data.success) {
             item.faceUuid = res.data.data;
-            this.$router.push({ path: routeName, query: { imgObj: item } });
+            this.$set(item, "CellVisiblePopver", false);
+            this.$router.push({
+              name: routeName,
+              params: { imgObj: item }
+            });
           } else {
             this.$message({ type: "warning", message: res.data.msg });
           }
@@ -328,7 +379,12 @@ export default {
           this.mainScreenLoading = false;
           if (res.data.success) {
             o.faceUuid = res.data.data;
-            this.$router.push({ path: routeName, query: { imgObj: o } });
+            this.$set(o, "CellVisiblePopver", false);
+            // this.$router.push({ path: routeName, query: { imgObj: o } });
+            this.$router.push({
+              name: routeName,
+              params: { imgObj: o }
+            });
           } else {
             this.$message({
               message: "未找到分析记录",
@@ -341,7 +397,12 @@ export default {
         });
     },
     searchImageToFace(o, index, routeName) {
-      this.$router.push({ path: routeName, query: { imgObj: o } });
+      this.$set(o, "CellVisiblePopver", false);
+      // this.$router.push({ path: routeName, query: { imgObj: o } });
+      this.$router.push({
+        name: routeName,
+        params: { imgObj: o }
+      });
     },
     // 全景菜单的组件回调，返回选中的对象数组
     transferCheckedChannel(checkedChannel) {
@@ -350,17 +411,19 @@ export default {
       for (var i = 0; i < checkedChannel.length; i++) {
         this.checkedChannelsUuidList.push(checkedChannel[i].channelUuid);
       }
+      this.queryAct();
       console.log(this.checkedChannelsUuidList);
     },
     // 下载导出图片
     downloadImg(o, index) {
       this.$common.exportImageAct(o.faceCapturePhotoUrl, o);
+      this.$common.exportImageAct(o.panoramaCapturePhotoUrl, o);
     },
     // 查看大图
     shoWholeImgUrl(o, index) {
       this.dialogVisible = !this.dialogVisible;
-      this.dialogPhotoImgUrl = this.imageHeader + o.faceCapturePhotoUrl;
-      this.dialogPanoramaImgUrl = this.imageHeader + o.panoramaCapturePhotoUrl;
+      this.dialogPhotoImgUrl = o.faceCapturePhotoUrl;
+      this.dialogPanoramaImgUrl = o.panoramaCapturePhotoUrl;
       this.titleTxt = o.channelName;
     },
     queryAct() {
@@ -376,14 +439,19 @@ export default {
           });
           return;
         }
+        this.currentPage = 1;
+        this.total = 0;
+        this.getPhotoRecordList();
+      } else {
+        this.$message({
+          message: "查询时间不能为空！",
+          type: "warning"
+        });
       }
-      this.currentPage = 1;
-      this.total = 0;
-      this.getPhotoRecordList();
     },
     // 按照时间查询抓拍记录
     getPhotoRecordList() {
-      this.mainScreenLoading = true;
+      this.mainScreenLoading = !this.mainScreenLoading;
       this.totalPhotoItems = []; // 清除记录
       var data = {
         page: this.currentPage,
@@ -405,7 +473,7 @@ export default {
       api
         .getSnapshotList(data)
         .then(res => {
-          this.mainScreenLoading = false;
+          this.mainScreenLoading = !this.mainScreenLoading;
           if (res.data.success) {
             if (res.data.data && res.data.data.list) {
               this.totalPhotoItems = res.data.data.list;
@@ -418,7 +486,7 @@ export default {
           }
         })
         .catch(() => {
-          this.mainScreenLoading = false;
+          this.mainScreenLoading = !this.mainScreenLoading;
         });
     },
     handleSizeChange(val) {
@@ -456,13 +524,13 @@ export default {
     return {
       PicSourceType: window.config.PicSourceType,
       imageHeader: RestApi.api.imageUrl,
-      propertyOption: null,
+      propertyOption: "",
       selectDate: null,
       inputPlaceholder: "高，中",
       checkedUuid: ["HIGH", "NORMAL"],
       dialogPanoramaImgUrl: false,
       fRPopoverClass: "fRPopoverClass",
-      totalPhotoItems: 40,
+      totalPhotoItems: [],
       dialogPhotoImgUrl: false,
       dialogVisible: false, // 彈窗顯示標記
       checkedChannelsNameList: [], // 当前勾选的通道名称list
@@ -485,7 +553,7 @@ export default {
       },
       checkNameString: "全部任务",
       allChannelUuid: [],
-      genderOption: null,
+      genderOption: "",
       qualityOption: ["HIGH", "NORMAL", "LOW"],
       titleTxt: "抓拍设备",
       defaultQualityProps: {
@@ -501,7 +569,7 @@ export default {
 };
 </script>
 <style>
-.dialogPhotoClass .el-dialog__body {
+.faceRecord .dialogPhotoClass .el-dialog__body {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
@@ -509,24 +577,30 @@ export default {
 	box-sizing: border-box;
 	width: 100%;
 }
-.dialogPhotoClass .el-dialog {
+.faceRecord .dialogPhotoClass .el-dialog {
 	width: 800px;
 }
-.dialogPhotoClass img {
-	width: 100%;
-	height: 100%;
-}
-.dialogPhotoClass .leftImgBox {
+.faceRecord .dialogPhotoClass .leftImgBox {
 	width: 35%;
 	height: 100%;
 }
-.dialogPhotoClass .rightImgBox {
+.faceRecord .dialogPhotoClass .rightImgBox {
 	width: 63%;
 	height: 100%;
 	margin-left: 2%;
 }
-.reccordCellClass .FRelPopoverClass {
-	min-width: 118px;
+.faceRecord .dialogPhotoClass .rightImgBox img {
+	width: 100%;
+	height: 100%;
+}
+.dialogPhotoClass .rightImgBox .el-image .el-image-viewer__canvas img,
+.dialogPhotoClass .leftImgBox .el-image .el-image-viewer__canvas img {
+	width: auto;
+	max-width: 100%;
+	height: 100%;
+}
+.faceRecord .reccordCellClass .FRelPopoverClass {
+	min-width: 112px;
 	position: absolute !important;
 	bottom: 0px !important;
 	color: #ffffff !important;
@@ -537,6 +611,11 @@ export default {
 	border-radius: 2px;
 	padding: 4px 12px;
 	font-size: 10px;
+}
+.faceRecord .checkBtnImg {
+	position: absolute;
+	right: -5px;
+	top: -5px;
 }
 .fRPopoverClass {
 	width: 50%;
@@ -589,13 +668,13 @@ export default {
 	background: rgba(255, 255, 255, 0.1);
 	color: #ffffff;
 	margin-right: 9px;
-	border: 0;
+	border: 1px solid transparent;
 	padding: 8px 20px;
 	font-size: 13px;
 }
 .faceRecord .el-checkbox-button:first-child .el-checkbox-button__inner,
 .faceRecord .el-radio-button:first-child .el-radio-button__inner {
-	border: 0;
+	border: 1px solid transparent;
 }
 .faceRecord .topBoxDateRadioBtnBox {
 	min-width: 310px;
@@ -608,7 +687,7 @@ export default {
 	background: rgba(40, 255, 187, 0.1);
 	border-radius: 2px;
 	border-radius: 2px;
-	border: 0;
+	border: 1px solid #26d39d;
 	box-shadow: 0px 0 0 0 #26d39d;
 }
 .faceRecord .topBoxDeviceBox {
@@ -684,8 +763,8 @@ export default {
 	width: 800px;
 	height: 540px;
 }
-.el-pagination button,
-.el-pagination span:not([class*="suffix"]) {
+.faceRecord .el-pagination button,
+.faceRecord .el-pagination span:not([class*="suffix"]) {
 	display: inline-block;
 	font-size: 14px;
 	min-width: 35.5px;
@@ -717,6 +796,9 @@ export default {
 	margin: 2px 0px 2px;
 	cursor: pointer;
 }
+.FRelPopoverClass .FRelPopoverCol:hover {
+	background-color: rgba(38, 211, 157, 0.3);
+}
 .FRelPopoverClass .FRelPopoverCol img {
 	margin-right: 8px;
 	vertical-align: middle;
@@ -741,7 +823,7 @@ export default {
 	height: 28px;
 	padding: 2px;
 }
-.el-picker-panel__footer {
+.faceRecord .el-picker-panel__footer {
 	border-top: 1px solid #e4e4e4;
 	padding: 4px;
 	text-align: right;
@@ -755,18 +837,21 @@ export default {
 	-ms-transform: rotate(90deg);
 	-webkit-transform: rotate(90deg);
 }
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+.faceRecord .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
 	color: #28ffbb;
 	background-color: transparent;
 }
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+.faceRecord.el-select-dropdown.is-multiple
+	.el-select-dropdown__item.selected.hover {
 	background: transparent;
 }
-.el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
+.faceRecord
+	.el-select-dropdown.is-multiple
+	.el-select-dropdown__item.selected.hover {
 	background: rgba(40, 255, 187, 0.15);
 }
-.el-select-dropdown__item.hover,
-.el-select-dropdown__item:hover {
+.faceRecord .el-select-dropdown__item.hover,
+.faceRecord .el-select-dropdown__item:hover {
 	background-color: transparent;
 }
 
@@ -784,7 +869,7 @@ export default {
 	box-sizing: border-box;
 	cursor: pointer;
 }
-.el-select-dropdown {
+.faceRecord .el-select-dropdown {
 	position: absolute;
 	z-index: 1001;
 	border: 1px solid #e4e7ed;
@@ -797,12 +882,12 @@ export default {
 	box-sizing: border-box;
 	margin: 5px 0;
 }
-.el-select {
+.faceRecord .el-select {
 	width: 50%;
 	display: inline-block;
 	position: relative;
 }
-.el-select .el-tag {
+.faceRecord .el-select .el-tag {
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	border-color: transparent;
@@ -810,7 +895,7 @@ export default {
 	color: #e4e7ed;
 	background-color: transparent;
 }
-.el-picker-panel {
+.faceRecord .el-picker-panel {
 	background: #202127;
 	box-shadow: 2px 2px 16px 0 rgba(2, 0, 14, 0.3);
 	color: #606266;
@@ -837,7 +922,6 @@ export default {
 	outline: 0;
 	padding: 0 0px 0 15px;
 	/* text-align: center; */
-	-webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 	transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 	width: 100%;
 }
@@ -878,7 +962,7 @@ export default {
 	flex-wrap: wrap;
 	justify-content: flex-start;
 	background: rgba(36, 39, 42, 1);
-	padding: 10px 0px 0px 10px;
+	padding: 10px 0px 0px 1.5%;
 	box-sizing: border-box;
 	align-content: flex-start;
 }
@@ -894,8 +978,8 @@ export default {
 }
 .reccordCellClass {
 	display: inline-block;
-	border: 1px solid rgba(11, 33, 38, 1);
-	margin: 7px 9px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	margin: 7px 8px;
 	background: rgba(2, 0, 14, 0.2);
 	position: relative;
 }
@@ -915,7 +999,7 @@ export default {
 	box-sizing: border-box;
 }
 .bottomBox {
-	padding: 0px 27px 0;
+	padding: 0px 27px 10px;
 	display: flex;
 	align-items: center;
 	width: 100%;
@@ -927,7 +1011,7 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	padding: 25px 40px 0px 27px;
-	height: 140px;
+	/* height: 140px; */
 	background: rgba(36, 39, 42, 1);
 	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
 	/* overflow-y: auto; */

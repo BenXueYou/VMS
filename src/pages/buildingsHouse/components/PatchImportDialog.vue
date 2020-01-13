@@ -56,14 +56,14 @@
         <div class="import-text"
              v-if="resultMsg.length"
              style="width:300px;text-align:left;text-indent:30px;color:rgb(223, 86, 86);">
-          <!-- 成功{{successPeople}}人 失败{{failPeople}}人 -->
-          {{resultMsg}}
+          成功{{successPeople}}个 失败{{failPeople}}个
+          <!-- {{resultMsg}} -->
         </div>
         <div class="import-text"
              v-if="successResultMsg.length"
              style="width:300px;text-align:left;text-indent:30px;color:rgb(38, 211, 157);">
-          <!-- 成功{{successPeople}}人 失败{{failPeople}}人 -->
-          {{successResultMsg}}
+          成功{{successPeople}}个 失败{{failPeople}}个
+          <!-- {{successResultMsg}} -->
         </div>
         <div class="important-text download-text"
              @click="downloadLog"
@@ -117,7 +117,8 @@ export default {
       importTaksUuid: "",
       startProgress: false,
       resultMsg: "",
-      successResultMsg: ""
+      successResultMsg: "",
+      fileName: ""
     };
   },
   created() {},
@@ -144,6 +145,12 @@ export default {
             }
           }
         });
+      api.getResultImport({ taskUuid: this.importTaksUuid }).then(res => {
+        console.log(res);
+        let data = res.data.data || {};
+        this.successPeople = data.success;
+        this.failPeople = data.fail;
+      });
     },
     funBuildFile(url, name) {
       var xhr = new XMLHttpRequest();
@@ -184,7 +191,7 @@ export default {
         .then(res => {
           console.log(res);
           if (res.data.success) {
-            this.failPeople = res.data.data;
+            // this.failPeople = res.data.data;
           }
         });
     },
@@ -270,6 +277,9 @@ export default {
               file.percent = 0;
               _this.fileIdNum.push(file); //这里在外面使用个全局的数组来记录上传了多少个文件然后进行处理操作。
               console.log(_this.fileIdNum);
+              _this.fileName = _this.fileIdNum.length
+                ? _this.fileIdNum[0].name
+                : "";
             });
             // alert("文件选择成功");
           },
@@ -381,10 +391,10 @@ export default {
     onClickImportFile() {}
   },
   computed: {
-    fileName() {
-      let name = this.fileIdNum.length ? this.fileIdNum[0].name : "";
-      return name;
-    }
+    // fileName() {
+    //   let name = this.fileIdNum.length ? this.fileIdNum[0].name : "";
+    //   return name;
+    // }
   },
   watch: {
     isShow(val) {
@@ -463,6 +473,7 @@ export default {
       font-size: 12px;
       color: #dddddd;
       text-align: right;
+      white-space: nowrap;
     }
     .import-button {
       margin-left: 4%;

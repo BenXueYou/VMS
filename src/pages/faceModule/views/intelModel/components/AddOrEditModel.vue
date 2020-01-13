@@ -1,255 +1,273 @@
 <template>
-  <div class="control-main-add">
-    <select-face :isShow="isShowAddFaceDB"
-                 ref="selectFace"
-                 :initSelectData="initSelectFaceData"
-                 @onCancel="cancelAddFaceDB"
-                 @onConfirm="confirmAddFaceDB" />
-    <div class="access-main">
-      <div class="dialog-title">
-        <div class="title-text">{{isAdd ? "新建" : "编辑"}}模型</div>
-        <div class="title-button">
-          <el-button type="primary"
-                     @click="onClickCancel"
-                     size="small">返回</el-button>
-          <el-button type="primary"
-                     @click="onClickConfirm"
-                     size="small">确定</el-button>
-        </div>
-      </div>
-      <div class="form">
-        <el-form :rules="rules"
-                 ref="modelForm"
-                 label-position="right"
-                 label-width="180px"
-                 :model="formLabelAlign"
-                 class="info-form">
-          <el-form-item label="名称："
-                        prop="faceModelName">
-            <el-input class="time-interal left-space"
-                      v-model="formLabelAlign.faceModelName"></el-input>
-          </el-form-item>
-          <el-form-item label="人脸库："
-                        prop="faceLibraryUuids">
-            <div class="add-item"
-                 @click="addFaceDB">
-              <img src="@/assets/images/faceModule/add.png">
-              <span>添加</span>
-            </div>
-            <div class="item-select">
-              <template v-for="(item, index) in faceDBSelectedList">
-                <div :key="index"
-                     class="select-item">
-                  <img src="@/assets/images/person_g.png"
-                       width="11px"
-                       height="11px">
-                  <span style="margin-left: 4px">{{item.libraryName || item.faceLibraryName}}</span>
-                  <div class="del-image"
-                       @click="deleteItem(item)">
-                    <img src="@/assets/images/delete_x.png"
-                         width="13px"
-                         height="13px">
-                  </div>
-                </div>
-              </template>
-            </div>
-          </el-form-item>
-          <el-form-item label="相似度不低于："
-                        prop="faceSimilarityThreshold">
-            <el-input class="time-interal left-space"
-                      style="width: 60px"
-                      type="number"
-                      v-model="formLabelAlign.faceSimilarityThreshold"></el-input>
-            <span class="unit">%</span>
-          </el-form-item>
-          <el-form-item label="抓拍图片需达到的质量："
-                        prop="qualities">
-            <pic-qulity-select :selectedButtons.sync="formLabelAlign.qualities"
-                               class="left-space"
-                               :isShowLower="false" />
-          </el-form-item>
-          <el-form-item label="时间段：">
-            <div class="left-space time-select">
-              <template v-for="(item, index) in formLabelAlign.timeList">
-                <div class="time-item"
-                     :key="index">
-                  <el-time-picker v-model="item.startTime"
-                                  style="width: 100px"
-                                  value-format="HH:mm:ss"
-                                  format="HH:mm"
-                                  :picker-options="{
-                                    selectableRange: '00:00:00 - 23:59:59'
+	<div class="model-main-add">
+		<select-face
+			:isShow="isShowAddFaceDB"
+			ref="selectFace"
+			:initSelectData="initSelectFaceData"
+			faceLibraryType="systemFaceLib,captureFaceLib,dynamicFaceLib,staticFaceLib"
+			@onCancel="cancelAddFaceDB"
+			@onConfirm="confirmAddFaceDB"
+		/>
+		<div class="access-main">
+			<div class="dialog-title">
+				<div class="title-text">{{isAdd ? "新建" : "编辑"}}模型</div>
+				<div class="title-button">
+					<el-button type="primary" @click="onClickCancel" size="small">返回</el-button>
+					<el-button type="primary" @click="onClickConfirm" size="small">确定</el-button>
+				</div>
+			</div>
+			<div class="form">
+				<el-form
+					:rules="rules"
+					ref="modelForm"
+					label-position="right"
+					label-width="180px"
+					:model="formLabelAlign"
+					class="info-form"
+				>
+					<el-form-item label="名称：" prop="faceModelName">
+						<el-input class="time-interal left-space" v-model="formLabelAlign.faceModelName"></el-input>
+					</el-form-item>
+					<el-form-item label="人脸库：" prop="faceLibraryUuids">
+						<div class="add-item" @click="addFaceDB">
+							<img src="@/assets/images/faceModule/add.png" />
+							<span>添加</span>
+						</div>
+						<div class="item-select">
+							<template v-for="(item, index) in faceDBSelectedList">
+								<div :key="index" class="select-item">
+									<img src="@/assets/images/person_g.png" width="11px" height="11px" />
+									<span style="margin-left: 4px">{{item.libraryName || item.faceLibraryName}}</span>
+									<div class="del-image" @click="deleteItem(item)">
+										<img src="@/assets/images/delete_x.png" width="13px" height="13px" />
+									</div>
+								</div>
+							</template>
+						</div>
+					</el-form-item>
+					<el-form-item label="相似度不低于：" prop="faceSimilarityThreshold">
+						<el-input
+							class="time-interal left-space"
+							style="width: 60px"
+							type="number"
+							v-model="formLabelAlign.faceSimilarityThreshold"
+						></el-input>
+						<span class="unit">%</span>
+					</el-form-item>
+					<el-form-item label="抓拍图片需达到的质量：" prop="qualities">
+						<pic-qulity-select
+							:selectedButtons.sync="formLabelAlign.qualities"
+							class="left-space"
+							:isShowLower="false"
+						/>
+					</el-form-item>
+					<el-form-item label="时间段：">
+						<div class="left-space time-select">
+							<template v-for="(item, index) in formLabelAlign.timeList">
+								<div class="time-item" :key="index">
+									<el-time-picker
+										v-model="item.startTime"
+										style="width: 100px"
+										v-if="index === 0"
+                    :clearable="false"
+                    @change="changeStartTime(item)"
+										value-format="HH:mm:ss"
+										format="HH:mm"
+										:picker-options="{
+                                    selectableRange: `00:00:00 - ${item.endTime ? item.endTime : '23:59:59'}`
+                                  }"
+									></el-time-picker>
+									<el-time-picker
+										v-model="item.startTime"
+										style="width: 100px"
+										v-else
+                    :clearable="false"
+                    @change="changeStartTime(item)"
+										value-format="HH:mm:ss"
+										format="HH:mm"
+										:picker-options="{
+                                    selectableRange: `${formLabelAlign.timeList[index-1].endTime ? formLabelAlign.timeList[index-1].endTime : '00:00:00'} - ${item.endTime ? item.endTime : '23:59:59'}`
                                   }"
 									></el-time-picker>
 									<span style="margin: 0 5px">至</span>
 									<el-time-picker
 										v-model="item.endTime"
 										style="width: 100px"
+                    :clearable="false"
+                    @change="changeEndTime(item)"
 										value-format="HH:mm:ss"
 										format="HH:mm"
 										:picker-options="{
-                                    selectableRange: `${item.startTime ? item.startTime : '00:00:00'} - 23:59:59`,
-                                  }">
-                  </el-time-picker>
-                  <img src="@/assets/images/faceModule/add.png"
-                       width="14px"
-                       style="margin: 0 5px; cursor: pointer;"
-                       @click="addTimePicker(index)"
-                       height="14px">
-                  <img src="@/assets/images/faceModule/reduce.png"
-                       width="14px"
-                       height="14px"
-                       v-if="index !== 0"
-                       @click="reduceTimePicker(index)"
-                       style="margin: 0 5px; cursor: pointer;">
-                </div>
-              </template>
-              <div>
-                <span style="padding: 0 8px; box-sizing: border-box">最近</span>
-                <el-input style="width: 60px;"
-                          v-model="formLabelAlign.recentDays"></el-input>
-                <span>天</span>
-                <el-select v-model="formLabelAlign.statisticType"
-                           size="small"
-                           style="width: 80px; margin-left: 40px;"
-                           placeholder=" ">
-                  <el-option v-for="item in statisticTypeOpt"
-                             :key="item.typeStr"
-                             :label="item.typeName"
-                             :value="item.typeStr">
-                  </el-option>
-                </el-select>
-                <span>满足：</span>
-              </div>
-              <div>
-                <template v-for="(item, index) in allVideoSource">
-                  <div :key="index">
-                    <div v-if="index === 0">
-                      <elPopverTree :elPopoverClass="faceRecordPopoverClass"
-                                    @transferCheckedChannel="transferCheckedChannel($event, item)"
-                                    :defaultCheckedChannel="item.checkedChannel"
-                                    inputWidth="180px"></elPopverTree>
-                      <el-select v-model="item.logic"
-                                 size="small"
-                                 style="width: 64px; margin-left: 20px;">
-                        <el-option v-for="item in logicOptions"
-                                   :key="item.typeStr"
-                                   :label="item.typeStr"
-                                   :value="item.typeStr">
-                        </el-option>
-                      </el-select>
-                      <el-input style="width: 60px; margin-left: 20px;"
-                                v-model="item.frequency"
-                                type="number"></el-input>
-                      <span>次</span>
-                      <span style="margin-left: 40px;">且至少</span>
-                      <el-input style="width: 60px;"
-                                type="number"
-                                v-model="item.leastNumberOfChannel"></el-input>
-                      <span>个摄像机抓拍</span>
-                      <img src="@/assets/images/faceModule/add.png"
-                           width="14px"
-                           style="margin: 0 5px; cursor: pointer;"
-                           @click="addDevRes(index)"
-                           height="14px">
-                    </div>
-                    <div v-if="index !== 0">
-                      <el-select v-model="item.localType"
-                                 size="small"
-                                 style="width: 120px;">
-                        <el-option v-for="item in localTypeOpt"
-                                   :key="item.typeStr"
-                                   :label="item.typeName"
-                                   :value="item.typeStr">
-                        </el-option>
-                      </el-select>
-                      <elPopverTree :elPopoverClass="faceRecordPopoverClass"
-                                    @transferCheckedChannel="transferCheckedChannel($event, item)"
-                                    :defaultCheckedChannel="item.checkedChannel"
-                                    inputWidth="180px"></elPopverTree>
-                      <el-select v-model="item.logic"
-                                 size="small"
-                                 style="width: 64px; margin-left: 20px;">
-                        <el-option v-for="item in logicOptions"
-                                   :key="item.typeStr"
-                                   :label="item.typeStr"
-                                   :value="item.typeStr">
-                        </el-option>
-                      </el-select>
-                      <el-input style="width: 60px; margin-left: 15px;"
-                                v-model="item.frequency"
-                                type="number"></el-input>
-                      <span>次</span>
-                      <img src="@/assets/images/faceModule/add.png"
-                           width="14px"
-                           style="margin: 0 5px; cursor: pointer;"
-                           @click="addDevRes(index)"
-                           height="14px">
-                      <img src="@/assets/images/faceModule/reduce.png"
-                           width="14px"
-                           height="14px"
-                           v-if="index !== 0"
-                           @click="reduceDevRes(index)"
-                           style="margin: 0 5px; cursor: pointer;">
-                    </div>
-                  </div>
-                </template>
-              </div>
-              <div>
-                <span style="padding: 0 8px; box-sizing: border-box">排除</span>
-                <el-select v-model="formLabelAlign.notInlibrary"
-                           size="small"
-                           multiple
-                           clearable
-                           collapse-tags
-                           placeholder="请选择人脸库">
-                  <el-option v-for="item in libraryOptions"
-                             :key="item.faceLibraryUuid"
-                             :label="item.faceLibraryName"
-                             :value="item.faceLibraryUuid">
-                  </el-option>
-                </el-select>
-              </div>
-            </div>
-          </el-form-item>
-          <el-form-item label="两次抓拍间隔时间："
-                        prop="captureInterval">
-            <el-input class="time-interal left-space"
-                      style="width: 60px"
-                      type="number"
-                      v-model="formLabelAlign.captureInterval"></el-input>
-            <span class="unit">秒</span>
-          </el-form-item>
-          <el-form-item label="模型状态："
-                        prop="enabled"
-                        required>
-            <el-switch v-model="formLabelAlign.enabled"
-                       class="left-space"
-                       active-color="rgba(32,204,150,0.2)"
-                       inactive-color="rgba(255,255,255,0.2)"
-                       :active-value="1"
-                       :inactive-value="0"></el-switch>
-          </el-form-item>
-          <el-form-item label="备注："
-                        prop="remarks">
-            <el-input class="time-interal left-space"
-                      v-model="formLabelAlign.remarks"
-                      style="width: 630px"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="footer">
-        <div class="bottom-button">
-          <el-button type="primary"
-                     @click="onClickCancel"
-                     size="small">返回</el-button>
-          <el-button type="primary"
-                     @click="onClickConfirm"
-                     size="small">确定</el-button>
-        </div>
-      </div>
-    </div>
-  </div>
+                                    selectableRange: `${item.startTime ? item.startTime : '00:00:00'} - ${formLabelAlign.timeList[index+1] ? (formLabelAlign.timeList[index+1].startTime ? formLabelAlign.timeList[index+1].startTime : '23:59:59') : '23:59:59'}`,
+                                  }"
+									></el-time-picker>
+									<img
+										src="@/assets/images/faceModule/add.png"
+										width="14px"
+										style="margin: 0 5px; cursor: pointer;"
+										@click="addTimePicker(index)"
+										height="14px"
+									/>
+									<img
+										src="@/assets/images/faceModule/reduce.png"
+										width="14px"
+										height="14px"
+										v-if="index !== 0"
+										@click="reduceTimePicker(index)"
+										style="margin: 0 5px; cursor: pointer;"
+									/>
+								</div>
+							</template>
+							<div>
+								<span style="padding: 0 8px; box-sizing: border-box">最近</span>
+								<el-input style="width: 60px;" v-model="formLabelAlign.recentDays"></el-input>
+								<span>天</span>
+								<el-select
+									v-model="formLabelAlign.statisticType"
+									size="small"
+									style="width: 80px; margin-left: 40px;"
+									placeholder=" "
+								>
+									<el-option
+										v-for="item in statisticTypeOpt"
+										:key="item.typeStr"
+										:label="item.typeName"
+										:value="item.typeStr"
+									></el-option>
+								</el-select>
+								<span>满足：</span>
+							</div>
+							<div>
+								<template v-for="(item, index) in allVideoSource">
+									<div :key="index">
+										<div v-if="index === 0">
+											<elPopverTree
+												:elPopoverClass="faceRecordPopoverClass"
+												@transferCheckedChannel="transferCheckedChannel($event, item)"
+												:defaultCheckedChannel="item.checkedChannel"
+												inputWidth="180px"
+											></elPopverTree>
+											<el-select v-model="item.logic" size="small" style="width: 64px; margin-left: 20px;">
+												<el-option
+													v-for="item in logicOptions"
+													:key="item.typeStr"
+													:label="item.typeStr"
+													:value="item.typeStr"
+												></el-option>
+											</el-select>
+											<el-input style="width: 60px; margin-left: 20px;" v-model="item.frequency" type="number"></el-input>
+											<span>次</span>
+											<span style="margin-left: 40px;">且至少</span>
+											<el-input style="width: 60px;" type="number" v-model="item.leastNumberOfChannel"></el-input>
+											<span>个摄像机抓拍</span>
+											<img
+												src="@/assets/images/faceModule/add.png"
+												width="14px"
+												style="margin: 0 5px; cursor: pointer;"
+												@click="addDevRes(index)"
+												height="14px"
+											/>
+										</div>
+										<div v-if="index !== 0">
+											<el-select v-model="item.localType" size="small" style="width: 120px;">
+												<el-option
+													v-for="item in localTypeOpt"
+													:key="item.typeStr"
+													:label="item.typeName"
+													:value="item.typeStr"
+												></el-option>
+											</el-select>
+											<elPopverTree
+												:elPopoverClass="faceRecordPopoverClass"
+												@transferCheckedChannel="transferCheckedChannel($event, item)"
+												:defaultCheckedChannel="item.checkedChannel"
+												inputWidth="180px"
+											></elPopverTree>
+											<el-select v-model="item.logic" size="small" style="width: 64px; margin-left: 20px;">
+												<el-option
+													v-for="item in logicOptions"
+													:key="item.typeStr"
+													:label="item.typeStr"
+													:value="item.typeStr"
+												></el-option>
+											</el-select>
+											<el-input style="width: 60px; margin-left: 15px;" v-model="item.frequency" type="number"></el-input>
+											<span>次</span>
+											<img
+												src="@/assets/images/faceModule/add.png"
+												width="14px"
+												style="margin: 0 5px; cursor: pointer;"
+												@click="addDevRes(index)"
+												height="14px"
+											/>
+											<img
+												src="@/assets/images/faceModule/reduce.png"
+												width="14px"
+												height="14px"
+												v-if="index !== 0"
+												@click="reduceDevRes(index)"
+												style="margin: 0 5px; cursor: pointer;"
+											/>
+										</div>
+									</div>
+								</template>
+							</div>
+							<div>
+								<span style="padding: 0 8px; box-sizing: border-box">排除</span>
+								<el-select
+									v-model="formLabelAlign.notInlibrary"
+									size="small"
+									multiple
+									clearable
+									collapse-tags
+									placeholder="请选择人脸库"
+								>
+									<el-option
+										v-for="item in libraryOptions"
+										:key="item.faceLibraryUuid"
+										:label="item.faceLibraryName"
+										:value="item.faceLibraryUuid"
+									></el-option>
+								</el-select>
+							</div>
+						</div>
+					</el-form-item>
+					<el-form-item label="两次抓拍间隔时间：" prop="captureInterval">
+						<el-input
+							class="time-interal left-space"
+							style="width: 60px"
+							type="number"
+							v-model="formLabelAlign.captureInterval"
+						></el-input>
+						<span class="unit">秒</span>
+					</el-form-item>
+					<el-form-item label="模型状态：" prop="enabled" required>
+						<el-switch
+							v-model="formLabelAlign.enabled"
+							class="left-space"
+							active-color="rgba(32,204,150,0.2)"
+							inactive-color="rgba(255,255,255,0.2)"
+							:active-value="1"
+							:inactive-value="0"
+						></el-switch>
+					</el-form-item>
+					<el-form-item label="备注：" prop="remarks">
+						<el-input
+							class="time-interal left-space"
+							v-model="formLabelAlign.remarks"
+							style="width: 630px"
+						></el-input>
+					</el-form-item>
+				</el-form>
+			</div>
+			<div class="footer">
+				<div class="bottom-button">
+					<el-button type="primary" @click="onClickCancel" size="small">返回</el-button>
+					<el-button type="primary" @click="onClickConfirm" size="small">确定</el-button>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -282,7 +300,7 @@ export default {
             endTime: ""
           }
         ],
-        recentDays: 0,
+        recentDays: 1,
         statisticType: "everyday",
         videoSource: {},
         otherVideoSource: [],
@@ -327,14 +345,21 @@ export default {
           channelList: [],
           checkedChannel: [],
           logic: ">=",
-          frequency: 0,
-          leastNumberOfChannel: 0
+          frequency: 1,
+          leastNumberOfChannel: 1
         }
       ],
       initSelectFaceData: [],
       libraryOptions: [],
       statisticTypeOpt: [],
-      logicOptions: [],
+      logicOptions: [
+        {
+          typeStr: "<="
+        },
+        {
+          typeStr: ">="
+        }
+      ],
       localTypeOpt: [],
       deviceList: [],
       faceRecordPopoverClass: "popverClass"
@@ -349,15 +374,19 @@ export default {
       this.statisticTypeOpt = this.$common.getEnumByGroupStr(
         "model_analisis_s"
       );
-      this.logicOptions = this.$common.getEnumByGroupStr("compare_r");
       this.localTypeOpt = this.$common.getEnumByGroupStr("face_decision");
       this.getLibrarys();
     },
     getLibrarys() {
-      this.$faceControlHttp.getFacedbList().then(res => {
-        let body = res.data;
-        this.getFacedbListSuccess(body);
-      });
+      this.$faceControlHttp
+        .getFacedbList({
+          faceLibraryType:
+						"systemFaceLib,captureFaceLib,dynamicFaceLib,staticFaceLib"
+        })
+        .then(res => {
+          let body = res.data;
+          this.getFacedbListSuccess(body);
+        });
     },
     getFacedbListSuccess(body) {
       this.libraryOptions = body.data;
@@ -374,7 +403,7 @@ export default {
             endTime: ""
           }
         ],
-        recentDays: 0,
+        recentDays: 1,
         statisticType: "everyday",
         videoSource: {},
         otherVideoSource: [],
@@ -384,8 +413,18 @@ export default {
         enabled: 1,
         remarks: ""
       };
-      this.allVideoSource = [];
+      this.allVideoSource = [
+        {
+          localType: "videoSource",
+          channelList: [],
+          checkedChannel: [],
+          logic: ">=",
+          frequency: 1,
+          leastNumberOfChannel: 1
+        }
+      ];
       this.faceDBSelectedList = [];
+      this.$refs.modelForm.resetFields();
     },
     onClickConfirm() {
       this.$refs.modelForm.validate(valid => {
@@ -423,6 +462,28 @@ export default {
     },
     addIntelModel() {
       this.formatParams();
+      if (this.formLabelAlign) {
+        if (this.formLabelAlign.recentDays < 0) {
+          this.$cToast.warn("最近天数不可以小于0");
+          return;
+        }
+        if (
+          this.formLabelAlign.videoSource.frequency < 0 ||
+					this.formLabelAlign.otherVideoSource.some(v => v.frequency < 0) ||
+					this.formLabelAlign.notInVideoSource.some(v => v.frequency < 0)
+        ) {
+          this.$cToast.warn("抓拍次数不可以小于0");
+          return;
+        }
+        if (this.formLabelAlign.videoSource.leastNumberOfChannel < 1) {
+          this.$cToast.warn("摄像机个数不可以小于0");
+          return;
+        }
+        if (this.formLabelAlign.captureInterval < 0) {
+          this.$cToast.warn("抓拍时间间隔不可以小于0");
+          return;
+        }
+      }
       this.$intelModelHttp.addIntelModel(this.formLabelAlign).then(res => {
         let body = res.data;
         this.modelSuccess(body);
@@ -435,16 +496,38 @@ export default {
     },
     editIntelModel() {
       this.formatParams();
+      if (this.formLabelAlign) {
+        if (this.formLabelAlign.recentDays < 0) {
+          this.$cToast.warn("最近天数不可以小于0");
+          return;
+        }
+        if (
+          this.formLabelAlign.videoSource.frequency < 0 ||
+					this.formLabelAlign.otherVideoSource.some(v => v.frequency < 0) ||
+					this.formLabelAlign.notInVideoSource.some(v => v.frequency < 0)
+        ) {
+          this.$cToast.warn("抓拍次数不可以小于0");
+          return;
+        }
+        if (this.formLabelAlign.videoSource.leastNumberOfChannel < 0) {
+          this.$cToast.warn("摄像机个数不可以小于0");
+          return;
+        }
+      }
       this.$intelModelHttp.editIntelModel(this.formLabelAlign).then(res => {
         let body = res.data;
         this.modelSuccess(body);
       });
     },
     addTimePicker(index) {
-      this.formLabelAlign.timeList.splice(index + 1, 0, {
-        startTime: "",
-        endTime: ""
-      });
+      if (this.formLabelAlign.timeList.length < 10) {
+        this.formLabelAlign.timeList.splice(index + 1, 0, {
+          startTime: "",
+          endTime: ""
+        });
+      } else {
+        this.$cToast.warn("时间段最多只可添加10个");
+      }
     },
     reduceTimePicker(index) {
       this.formLabelAlign.timeList.splice(index, 1);
@@ -455,7 +538,7 @@ export default {
         channelList: [],
         checkedChannel: [],
         logic: ">=",
-        frequency: 0
+        frequency: 1
       });
     },
     reduceDevRes(index) {
@@ -484,16 +567,24 @@ export default {
       this.isShowAddFaceDB = false;
     },
     deleteItem(item) {
+      this.formLabelAlign.faceLibraryUuids = [];
       for (let [i, v] of this.faceDBSelectedList.entries()) {
-        if (v.id === item.id) {
+        if (v.faceLibraryUuid === item.faceLibraryUuid) {
           this.faceDBSelectedList.splice(i, 1);
         }
       }
       this.$refs.selectFace.deleteItem(item);
+      this.faceDBSelectedList.forEach(v => {
+        this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
+      });
+      this.$refs.modelForm.validateField("faceLibraryUuids");
     },
     transferCheckedChannel(checkedChannel, item) {
       item.channelList = [];
-      item.checkedChannel = this.$common.copyArray(checkedChannel, item.checkedChannel);
+      item.checkedChannel = this.$common.copyArray(
+        checkedChannel,
+        item.checkedChannel
+      );
       for (let i = 0; i < checkedChannel.length; i++) {
         item.channelList.push(checkedChannel[i].channelUuid);
       }
@@ -501,7 +592,10 @@ export default {
     popverHidden() {},
     popverShow() {},
     setFromDataForEdit(detailData) {
-      this.formLabelAlign = this.$common.copyObject(detailData, this.formLabelAlign);
+      this.formLabelAlign = this.$common.copyObject(
+        detailData,
+        this.formLabelAlign
+      );
       this.faceDBSelectedList = [];
       this.$set(this.formLabelAlign, "notInlibrary", []);
       if (detailData.notInlibrary) {
@@ -520,11 +614,14 @@ export default {
         channelList: [],
         checkedChannel: [],
         logic: ">=",
-        frequency: 0,
-        leastNumberOfChannel: 0
+        frequency: 1,
+        leastNumberOfChannel: 1
       });
       if (this.formLabelAlign.videoSource) {
-        this.setCheckChannel(this.formLabelAlign.videoSource, this.allVideoSource[0]);
+        this.setCheckChannel(
+          this.formLabelAlign.videoSource,
+          this.allVideoSource[0]
+        );
       }
       if (this.formLabelAlign.otherVideoSource) {
         this.formLabelAlign.otherVideoSource.forEach(v => {
@@ -533,9 +630,12 @@ export default {
             channelList: [],
             checkedChannel: [],
             logic: ">=",
-            frequency: 0
+            frequency: 1
           });
-          this.setCheckChannel(v, this.allVideoSource[this.allVideoSource.length - 1]);
+          this.setCheckChannel(
+            v,
+            this.allVideoSource[this.allVideoSource.length - 1]
+          );
         });
       }
       if (this.formLabelAlign.notInVideoSource) {
@@ -545,9 +645,12 @@ export default {
             channelList: [],
             checkedChannel: [],
             logic: ">=",
-            frequency: 0
+            frequency: 1
           });
-          this.setCheckChannel(v, this.allVideoSource[this.allVideoSource.length - 1]);
+          this.setCheckChannel(
+            v,
+            this.allVideoSource[this.allVideoSource.length - 1]
+          );
         });
       }
     },
@@ -564,7 +667,17 @@ export default {
       if (source.leastNumberOfChannel) {
         allSourceItem.leastNumberOfChannel = source.leastNumberOfChannel;
       }
-    }
+    },
+    changeStartTime(item) {
+      if (item.startTime) {
+        this.$set(item, "startTime", item.startTime.substr(0, 6) + "00");
+      }
+    },
+    changeEndTime(item) {
+      if (item.endTime) {
+        this.$set(item, "endTime", item.endTime.substr(0, 6) + "59");
+      }
+    },
   },
   watch: {
     "formLabelAlign.qualities": {
@@ -578,16 +691,19 @@ export default {
 };
 </script>
 <style lang="scss">
-.control-main-add {
+.model-main-add {
 	.el-form-item__label {
 		font-family: PingFangSC-Regular;
 		font-size: 12px !important;
 		color: #dddddd;
 	}
+  .el-input__prefix {
+    transform: translateX(-130%);
+  }
 }
 .popverClass {
-	width: 500px;
-	height: 200px;
+	width: 50%;
+	height: 45%;
 	position: absolute;
 	background: #202127;
 	border: 1px solid #ebeef5;
@@ -606,7 +722,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-.control-main-add {
+.model-main-add {
 	width: 100%;
 	height: 100%;
 	padding: 1.2% 1.5%;

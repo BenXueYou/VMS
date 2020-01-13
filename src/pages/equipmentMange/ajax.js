@@ -28,6 +28,21 @@ export function operatorOrgTree(data) {
     data
   });
 }
+export function getScond(viewType) {
+  let url = sbUrl.getScondUrl(viewType);
+  return axios({
+    method: "get",
+    url
+  });
+}
+export function getResultImport(params) {
+  let url = sbUrl.getResultImportUrl;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
 // 操作标签 上下移动
 export function opeartorTag(data) {
   let url = sbUrl.operatorTagUrl;
@@ -40,6 +55,14 @@ export function opeartorTag(data) {
 // 编辑权限组接口
 export function getTDByType(resUuid, resType) {
   let url = sbUrl.getTDByTypeUrl(resUuid, resType);
+  return axios({
+    method: "get",
+    url
+  });
+}
+// 编辑权限组接口
+export function getDeviceInfoByChannel(channelUuid) {
+  let url = sbUrl.getDeviceInfoByChannelUrl(channelUuid);
   return axios({
     method: "get",
     url
@@ -721,5 +744,20 @@ export function setImmediateSyncSettingl(uuid, data) {
     method: "put",
     url,
     data
+  });
+}
+export function getTongDaoType(resUuid, resType) {
+  let url = sbUrl.getTongDaoTypeUrl(resUuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+
+export function getViewTypeList(resUuid, resType) {
+  let url = sbUrl.getViewTypeListUrl(resUuid);
+  return axios({
+    method: "get",
+    url
   });
 }

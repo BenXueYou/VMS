@@ -66,17 +66,23 @@
             <el-table-column label="人脸照片"
                              width="190">
               <template slot-scope="scope">
-                <img :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl)"
+                <!-- <img :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl, 'facelog')"
                      width="30px"
-                     height="30px">
+                     height="30px"> -->
+                <el-image style="width: 30px; height: 30px"
+                          :src="$common.setPictureShow(scope.row.faceCapturePhotoUrl, 'facelog')"
+                          :preview-src-list="[$common.setPictureShow(scope.row.faceCapturePhotoUrl, 'facelog')]"></el-image>
               </template>
             </el-table-column>
             <el-table-column label="全景照片"
                              width="190">
               <template slot-scope="scope">
-                <img :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl)"
+                <!-- <img :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl, 'facelog')"
                      width="50px"
-                     height="30px">
+                     height="30px"> -->
+                <el-image style="width: 50px; height: 30px"
+                          :src="$common.setPictureShow(scope.row.panoramaCapturePhotoUrl, 'facelog')"
+                          :preview-src-list="[$common.setPictureShow(scope.row.panoramaCapturePhotoUrl, 'facelog')]"></el-image>
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -146,7 +152,10 @@ export default {
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.initData();
+    this.getFaceAnalysisTable();
+  },
   methods: {
     initData() {
       this.startTime = this.$common.formatDate(
@@ -202,16 +211,18 @@ export default {
       this.isShow = true;
     },
     getFaceAnalysisDetail() {
-      this.$factTragicHttp.getCompareDetail({
-        limit: 100,
-        page: 1,
-        faceUuid: this.faceUuid,
-        snapshotTimeStart: this.startTime,
-        snapshotTimeEnd: this.endTime,
-      }).then(res => {
-        let body = res.data;
-        this.getCompareDetailSuccess(body);
-      });
+      this.$factTragicHttp
+        .getCompareDetail({
+          limit: 30,
+          page: 1,
+          faceUuid: this.faceUuid,
+          snapshotTimeStart: this.startTime,
+          snapshotTimeEnd: this.endTime
+        })
+        .then(res => {
+          let body = res.data;
+          this.getCompareDetailSuccess(body);
+        });
     },
     getCompareDetailSuccess(body) {
       this.detailsData = body.data.list;
@@ -224,14 +235,13 @@ export default {
       for (let i = 0; i < checkedChannel.length; i++) {
         this.channelUuids.push(checkedChannel[i].channelUuid);
       }
-      console.log("this.channelUuids: ", this.channelUuids, checkedChannel);
     }
   },
   watch: {},
   destroyed() {},
   activated() {
-    this.initData();
-    this.getFaceAnalysisTable();
+    // this.initData();
+    // this.getFaceAnalysisTable();
   }
 };
 </script>
@@ -269,7 +279,7 @@ export default {
     width: 100%;
     height: 100%;
     .face-select {
-      height: 12%;
+      height: 90px;
       border: {
         width: 0 0 1px 0;
         style: dashed;
@@ -289,9 +299,9 @@ export default {
     }
     .face-table {
       height: 90%;
+      width: 100%;
       border-radius: 3px;
-      padding: 2% 2%;
-      box-sizing: border-box;
+      padding: 2% 0;
       box-sizing: border-box;
     }
   }

@@ -8,13 +8,14 @@ import sbUrl from "@/utils/restApi/equipment";
 import pmUrl from "@/utils/restApi/permission";
 import videoUrl from "@/utils/restApi/video";
 import vistorManageApi from "@/utils/restApi/vistorManageApi";
+import faceModuleAPi from "@/utils/restApi/faceModuleAPi";
 import store from '@/store/store.js';
 export default {
   api: {
     /**
      * 图片下载地址
      */
-    imageUrl:window.config.protocolHeader+window.config.ip+`/fileforward-server-v1/project/${store.state.home.projectUuid}/fileforward/fileByUrl?fileUrl=`,
+    imageUrl: window.config.protocolHeader + window.config.ip + `/fileforward-server-v1/project/${store.state.home.projectUuid}/fileforward/fileByUrl?fileUrl=`,
     /**
      * 全部翻译获取接口
      */
@@ -126,11 +127,11 @@ export default {
       getChannelStatusList: `/iaclog-v1/project/${store.state.home.projectUuid}/channelStatus`,
       getOrgDevTree: `/basedata-v1/project/${store.state.home.projectUuid}/organization/children`,
       handleDoorStatus: (channelUuid, action) =>
-        `/iacserv-v1/operation/operation/opendoor/channel/${channelUuid}/action/${action}`,
+        `/iacserv-v1/project/${store.state.home.projectUuid}/operation/opendoor/channel/${channelUuid}/action/${action}`,
       getStatistics: `/iacapp-v1/project/${store.state.home.projectUuid}/door/statistics`,
       removeAlarm: channelUuid =>
-        `/iacserv-v1/operation/operation/removeAlarm/channel/${channelUuid}`,
-      allOperation: `/iacserv-v1/operation/project/${store.state.home.projectUuid}/device/toMgr`
+        `/iacserv-v1/project/${store.state.home.projectUuid}/operation/removeAlarm/channel/${channelUuid}`,
+      allOperation: `/iacserv-v1/project/${store.state.home.projectUuid}/operation/device/toMgr`
     },
 
     /**
@@ -184,9 +185,14 @@ export default {
     // 权限组
     pmUrl,
     videoUrl,
+
+    // 访客管理
     vistorManageApi,
-    
     //人脸图片质量检测
-    faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`
+    faceQualityDetection: `/sppc-iacapp-service-v1/image/isQualified`,
+    /**
+   * 人脸模块（fengyw）
+   */
+    faceModuleAPi,
   }
 };

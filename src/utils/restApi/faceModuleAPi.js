@@ -19,6 +19,9 @@ export default {
     getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
     // 根据通道ID获取rtspUrl
     getRtspUrlByChannelUuidApi: projectUuid => `${URLHeaderVideoServer}/${projectUuid}/video/previewInfo`,
+
+    // 人流量统计
+    getStaticsPeopleApi:projectUuid=>`${URLHeaderFaceLog}/${projectUuid}/traffic/statistical/list`
   },
 
   baseConfigApi: {
@@ -51,6 +54,13 @@ export default {
     getFaceLibDetailUrl: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib`,
     getFaceLibOptionsUrl: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/select/list`,
     getFaceQualityUrl: (projectUuid, libraryuuid, faceUuid) => `${URLHeader}/${projectUuid}/faceInfo/${libraryuuid}/staff/${faceUuid}`,
+    addDaoKuTask: (projectUuid, faceLibUuid) => `${protocolHeader}${ip}/zuul/faceconfig-v1/project/${projectUuid}/faceLib/import/faceLib/${faceLibUuid}`,
+    getTaskList: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/list`,
+    getTaskErrorList: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/error/list`,
+    deleteTask: (projectUuid, importTaskUuid) => `${URLHeader}/${projectUuid}/faceLib/import/task/${importTaskUuid}`,
+    downloadDBTemp: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/download/templateType`,
+    downloadErrTemp: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/download/errorInfo`,
+    downloadFace: (projectUuid) => `${URLHeader}/${projectUuid}/faceLib/download/faceInfo`,
   },
 
   searchLogApi: {
@@ -72,7 +82,7 @@ export default {
   getModelDev: `${URLHeader}/${projectUuid}/IntelligentModel/channel/list`,
   getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list?asgName=${projectUuid}`,
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
-  getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list`,
+  getJudgedList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
   getModelList: `${URLHeaderFaceLog}/${projectUuid}/modelStatistics/list?asgName=${projectUuid}`,
   getFaceCaptureAll: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/all/list?asgName=${projectUuid}`,
   getFaceCaptureOne: `${URLHeaderFaceLog}/${projectUuid}/snapshotStatistics/one/list?asgName=${projectUuid}`,
@@ -93,7 +103,7 @@ export default {
   addIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
   editIntelModel: `${URLHeader}/${projectUuid}/IntelligentModel/info`,
   editIntelModelStatus: `${URLHeader}/${projectUuid}/IntelligentModel/status`,
-  getFacedbList: `${URLHeader}/${projectUuid}/faceLib/list`,
+  getFacedbList: `${URLHeader}/${projectUuid}/faceLib/select/list`,
   getDevList: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/organization/children`,
   getTagList: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/tag/list`,
   getTagDev: `${protocolHeader}${ip}/basedata-v1/project/${projectUuid}/tagElement/channelList`,

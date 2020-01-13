@@ -52,6 +52,14 @@ export const constantRouterMap = [
         type: "config"
       },
       {
+        path: "/ResidentManage",
+        name: "ResidentManage",
+        component: resident,
+        title: "居民管理",
+        icon: "residentManage",
+        type: "config"
+      },
+      {
         path: "/VistorMange",
         name: "VistorMange",
         component: VistorMangeSubRoute,
@@ -85,14 +93,6 @@ export const constantRouterMap = [
         type: "config"
       },
       {
-        path: "/ResidentManage",
-        name: "ResidentManage",
-        component: resident,
-        title: "居民管理",
-        icon: "residentManage",
-        type: "config"
-      },
-      {
         path: "/FaceManage",
         name: "FaceManage",
         component: faceModule.component,
@@ -100,7 +100,7 @@ export const constantRouterMap = [
         children: faceModule.children,
         icon: "FaceManage",
         type: "app",
-        redirect: "/FaceManage" //设置默认子路由
+        // redirect: "/FaceManage" //设置默认子路由
       },
       {
         path: "/VideoPreview",
@@ -115,7 +115,7 @@ export const constantRouterMap = [
         name: "VideoPlayback",
         component: VideoPlayback,
         title: "视频回放",
-        icon: "vistorMange",
+        icon: "VideoPlayback",
         type: "config"
       }
     ]

@@ -9,14 +9,26 @@
     <!-- <control-details :isShow="isShowDetailDialog"
                      @onCancel="onCancelDetailDialog"
                      :dialogParama="dialogParama" /> -->
-    <face-img-dialog :visible.sync="isShowDetailDialog" :faceImgDialogData="dialogParama" />
+    <!-- <face-img-dialog :visible.sync="isShowDetailDialog"
+                     :faceImgDialogData="dialogParama" /> -->
+    <el-dialog class="dialogClass"
+               :close-on-click-modal="false"
+               :visible.sync="faceImgDialogVisible"
+               @close="faceImgDialogVisible=false"
+               title="报警详情">
+      <AlarmDetailDialog v-loading="dialogfullscreenLoading"
+                         element-loading-background="rgba(0, 0, 0, 0.8)"
+                         :dialogParama="dialogParama"></AlarmDetailDialog>
+    </el-dialog>
     <div class="menu"
          v-show="isShowMain">
       <el-button @click="addNewMission"
                  type="primary"
                  size="small">
-        <img src="@/assets/images/faceModule/new_mission.png">
-        新建布控任务
+        <div style="display: flex; align-items: center;">
+          <img src="@/assets/images/faceModule/new_mission.png">
+          <span style="margin-left: 3px;">新建布控任务</span>
+        </div>
       </el-button>
       <div class="tab">
         <template v-for="(item, index) in missionButtArr">
@@ -58,22 +70,24 @@
                      active-color="rgba(32,204,150,0.2)"
                      inactive-color="rgba(255,255,255,0.2)"
                      @change="switchChange"
+                     :disabled="faceMonitorObj.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? true : false"
                      :active-value="1"
                      :inactive-value="0"></el-switch>
-          <span>状态</span>
+          <span style="margin-left: 3px;">状态</span>
           <div class="status"
                @click="editTaskInit">
             <img src="@/assets/images/edit.png"
                  width="14px"
                  height="14px" />
-            <span>编辑</span>
+            <span style="margin-left: 3px;">编辑</span>
           </div>
           <div class="status"
+               v-if="faceMonitorObj.faceMonitorUuid === 'temp_face_monitoruuid00020191104' ? false : true"
                @click="deleteCon">
             <img src="@/assets/images/delete2.png"
                  width="14px"
                  height="14px" />
-            <span>删除</span>
+            <span style="margin-left: 3px;">删除</span>
           </div>
         </div>
       </div>
@@ -117,7 +131,7 @@
                style="width: 13%; display: flex; align-items: center">
             <span>布控颜色：</span>
             <div class="monitor-color"
-                 :style="`background: ${faceMonitorObj.taskColour ? faceMonitorObj.taskColour : 'transparent'}`"></div>
+                 :style="`background-color:${faceMonitorObj.taskColour ? faceMonitorObj.taskColour : 'transparent'};`"></div>
           </div>
           <div class="info-block block-line"
                style="width: 13%">目标人列表：{{faceMonitorObj.reservedCount}} </div>
@@ -131,25 +145,30 @@
             <span class="topTitleTxt">时段：</span>
             <el-date-picker v-model="alarmDatetimeBegin"
                             type="datetime"
-                            style="width: 190px"
+                            style="width: 205px"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <span class="timeText">—</span>
             <el-date-picker v-model="alarmDatetimeEnd"
                             type="datetime"
-                            style="width: 190px; margin-right: 49px;"
+                            style="width: 205px; margin-right: 49px;"
                             placeholder="选择日期"
                             value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
             <el-button @click="queryAct"
                        type="primary"
-                       size="small"
-                       icon="el-icon-search">查询</el-button>
+                       size="small">
+              <div style="display: flex; align-items: center;">
+                <img src="@/assets/images/faceModule/search.png">
+                <span style="margin-left: 3px;">查询</span>
+              </div>
+            </el-button>
             <el-button @click="turnToAlarm"
                        type="primary"
                        size="small">
-              <img src="@/assets/images/faceModule/turn_record.png"
-                   height="10px">
-              跳转人脸报警记录
+              <div style="display: flex; align-items: center;">
+                <img src="@/assets/images/faceModule/turn_record.png" height="12.5px">
+                <span style="margin-left: 3px;">跳转人脸报警记录</span>
+              </div>
             </el-button>
           </div>
         </div>
@@ -172,7 +191,9 @@ import SourceShowMore from "@/pages/faceModule/views/faceControl/components/Sour
 import AddOrEditControl from "@/pages/faceModule/views/faceControl/components/AddOrEditControl";
 // import ControlDetails from "@/pages/faceModule/views/faceControl/components/ControlDetails";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
-import FaceImgDialog from "@/pages/faceModule/components/FaceImgDialog.vue";
+// import FaceImgDialog from "@/pages/faceModule/components/FaceImgDialog.vue";
+import AlarmDetailDialog from "@/pages/faceModule/components/AlarmDetailDialog.vue";
+import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 
 export default {
   components: {
@@ -180,7 +201,8 @@ export default {
     RecoginizeCard,
     // ControlDetails,
     AddOrEditControl,
-    FaceImgDialog
+    // FaceImgDialog
+    AlarmDetailDialog
   },
   props: {},
   data() {
@@ -255,8 +277,10 @@ export default {
       isAlarmLoading: false,
       faceMonitorUuid: "",
       alarmTotal: 0,
-      itemWidth: "31%",
-      limit: 9,
+      itemWidth: "32%",
+      limit: 6,
+      faceImgDialogVisible: false,
+      dialogfullscreenLoading: false
     };
   },
   created() {},
@@ -278,8 +302,8 @@ export default {
       setTimeout(() => {
         this.$refs.faceDB.isShowMoreButton();
         this.$refs.camera.isShowMoreButton();
-        this.limit = 12;
-        this.itemWidth = "23%";
+        this.limit = 8;
+        this.itemWidth = "24%";
         this.getAlarmList(this.faceMonitorUuid);
       }, 600);
     },
@@ -289,8 +313,8 @@ export default {
       setTimeout(() => {
         this.$refs.faceDB.isShowMoreButton();
         this.$refs.camera.isShowMoreButton();
-        this.limit = 9;
-        this.itemWidth = "31%";
+        this.limit = 6;
+        this.itemWidth = "32%";
         this.getAlarmList(this.faceMonitorUuid);
       }, 600);
     },
@@ -300,7 +324,7 @@ export default {
     },
     onConfirmEditOrAddControl() {
       this.isShowMain = true;
-      this.getMonitoringTaskList();
+      this.getMonitoringTaskList("add");
     },
     onCancelEditOrAddControl() {
       this.isShowMain = true;
@@ -320,6 +344,7 @@ export default {
       } else {
         this.enabled = 0;
       }
+      this.faceMonitorUuid = "";
       this.getMonitoringTaskList();
     },
     check(item) {
@@ -368,12 +393,34 @@ export default {
     },
     openDetail(item) {
       this.dialogParama = this.$common.copyObject(item, this.dialogParama);
-      this.isShowDetailDialog = true;
+      this.getAlarmShootPhotoList(this.dialogParama);
     },
-    // onCancelDetailDialog() {
-    //   this.isShowDetailDialog = false;
-    // },
-    getMonitoringTaskList() {
+    // 根据客户端的传的人员staffUuid查找抓拍图片
+    getAlarmShootPhotoList(rowData) {
+      var data = {
+        faceUuid: rowData.faceUuid,
+        triggerFaceMonitor: 1,
+        limit: 8,
+        page: 1
+      };
+      this.dialogfullscreenLoading = true;
+      this.dialogVisible = !this.dialogVisible;
+      api
+        .getRecognizeInfo(data)
+        .then(res => {
+          this.dialogfullscreenLoading = false;
+          this.faceImgDialogVisible = !this.faceImgDialogVisible;
+          if (res.data.success) {
+            this.dialogParama.showImg = false;
+            this.dialogParama = res.data.data;
+          }
+        })
+        .catch(() => {
+          this.dialogfullscreenLoading = false;
+          this.faceImgDialogVisible = !this.faceImgDialogVisible;
+        });
+    },
+    getMonitoringTaskList(type) {
       this.isLoading = true;
       this.$faceControlHttp
         .getMonitoringTaskList({
@@ -381,17 +428,20 @@ export default {
         })
         .then(res => {
           let body = res.data;
-          this.getMonitoringTaskListSuccess(body);
+          this.getMonitoringTaskListSuccess(body, type);
           this.isLoading = false;
         })
         .catch(() => {
           this.isLoading = false;
         });
     },
-    getMonitoringTaskListSuccess(body) {
+    getMonitoringTaskListSuccess(body, type) {
       this.menuList = body.data;
       this.formatMenuList();
       if (this.menuList && this.menuList.length !== 0) {
+        if (type === "add") {
+          this.faceMonitorUuid = "";
+        }
         if (!this.faceMonitorUuid) {
           this.check(this.menuList[0]);
         } else {
@@ -418,6 +468,8 @@ export default {
       this.formatObj();
     },
     getAlarmList(faceMonitorUuid) {
+      this.compareList = [];
+      this.alarmTotal = 0;
       this.isAlarmLoading = true;
       this.$faceControlHttp
         .getAlarmList({
@@ -512,6 +564,7 @@ export default {
     },
     editMonitoringTaskStatusSuccess(body) {
       this.$cToast.success(body.msg);
+      this.resetData();
       this.getMonitoringTaskList();
     },
     turnToAlarm() {
@@ -561,13 +614,14 @@ export default {
       margin-top: 15px;
       overflow-y: auto;
       height: 87%;
+      width: 100%;
       .menu-item {
         padding: 0 18px;
         box-sizing: border-box;
         font-family: PingFangSC-Regular;
         font-size: 13px;
         color: #dddddd;
-        width: 340px;
+        width: 100%;
         height: 50px;
         line-height: 50px;
         cursor: pointer;
@@ -634,6 +688,8 @@ export default {
         .status {
           cursor: pointer;
           margin-left: 25px;
+          display: flex;
+          align-items: center;
         }
       }
     }
@@ -705,7 +761,7 @@ export default {
       align-content: flex-start;
       margin-bottom: 10px;
       .list-item {
-        margin: 24px 0px 0px 18px;
+        margin: 24px 0px 0px 10px;
       }
     }
   }

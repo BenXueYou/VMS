@@ -32,13 +32,15 @@
                    width="10.9px"
                    height="9px"
                    style="margin-right: 4px;">
-              <span class="text-show">{{node.label}}</span>
+              <div class="text-show"
+                   style="width: 110px;"
+                   :title='node.label'>{{node.label}}</div>
               <el-dropdown trigger="click"
                            class="action-icon"
                            @command="handleDropDownMenuClick"
                            placement="bottom">
                 <div class="img-div"
-                     @click.stop="onClickMore(node, data)">
+                     @click="onClickMore(node, data)">
                   <img :src="icons.more_action"
                        width="16px"
                        height="13px">
@@ -51,7 +53,8 @@
                                     v-if="!isDisableMoveUp">上移</el-dropdown-item>
                   <el-dropdown-item command="moveDown"
                                     v-if="!isDisableMoveDown">下移</el-dropdown-item>
-                  <el-dropdown-item command="copy" v-if="isShowCopy">复制</el-dropdown-item>
+                  <el-dropdown-item command="copy"
+                                    v-if="isShowCopy">复制</el-dropdown-item>
                   <el-dropdown-item command="delete">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -64,7 +67,7 @@
 </template>
 
 <script>
-import icons from "@/common/icon.js";
+import icons from "@/common/js/icon.js";
 
 export default {
   components: {},
@@ -95,7 +98,8 @@ export default {
       isDisableAdd: false,
       lastLevelType: "",
       clickObj: {},
-      isShowCopy: true
+      isShowCopy: true,
+      isInit: true
     };
   },
   created() {},
@@ -186,11 +190,15 @@ export default {
       setTimeout(() => {
         this.$refs.buildingTree.setCurrentKey(id);
         this.$emit("setTreeRootData", this.treeData[0]);
-        this.clickObj = this.$common.copyObject(this.treeData[0], this.clickObj);
+        this.clickObj = this.$common.copyObject(
+          this.treeData[0],
+          this.clickObj
+        );
       }, 200);
     },
     handleNodeClick(obj, node, component) {
       console.log(node);
+      this.isInit = false;
       this.$emit("setTreeRootData", obj);
       this.clickObj = this.$common.copyObject(obj, this.clickObj);
       this.currentNode = node;
@@ -241,7 +249,10 @@ export default {
       }, 200);
     },
     refreshNode(param) {
+      console.log(param);
       if (param === "init") {
+        this.initData();
+      } else if (param !== "init" && this.isInit) {
         this.initData();
       } else {
         // if (!this.currentNode.expanded) {
@@ -450,7 +461,9 @@ export default {
     },
     getCopyName(label, index) {
       label = `${this.currentNode.data.label}(${index})`;
-      if (!this.currentNode.parent.childNodes.some((v) => v.data.label === label)) {
+      if (
+        !this.currentNode.parent.childNodes.some(v => v.data.label === label)
+      ) {
         return label;
       }
       return this.getCopyName(label, index + 1);
@@ -470,7 +483,7 @@ export default {
     copyInfrastructureSuccessResponse(body) {
       this.$cToast.success(body.msg);
       this.refreshParentNode();
-    },
+    }
   },
   watch: {
     filterText(val) {
@@ -523,7 +536,7 @@ export default {
 <style lang="scss" scoped>
 .left-tree {
   // width: 15%;
-  width:300px;
+  width: 300px;
   height: 100%;
   background: rgba($color: #232629, $alpha: 0.8);
   padding: 0 1%;

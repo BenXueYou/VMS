@@ -19,10 +19,12 @@
                   :showCloudControl="showCloudControl"
                   :channelUuid="operatorChannelUuid"></left-content>
     <div class='right'
-         ref='rigth'>
+         ref='right'>
+      <!-- :style="{'max-width':maxRightWidth+'px'}" -->
       <div class='vedioWrap'
+           :class="{'fullVideoWrap':fullscreen}"
            ref='vedioWrap'>
-        <video-wrap v-for="(item,index) in videoArr"
+        <video-wrap v-for="(item,index) in showFenlu"
                     :ref="'video'+index"
                     :key="index"
                     :index="index"
@@ -33,9 +35,14 @@
                     :streamType="item.streamType"
                     :IsShowMenu="!!item.rtspUrl"
                     :position="item.position"
+                    :left="item.left"
+                    :top="item.top"
                     :isRecord="!!item.isRecord"
+                    :isStopVoice="!!item.isStopVoice"
                     :fenlu="fenluIndex+1"
                     :isAutoScreen="isAutoScreen===index"
+                    :mode="item.mode"
+                    @playRtsp="playRtsp"
                     @dblclickhandler="dblclickhandler"
                     @closeVideo="closeVideo"
                     @startRecord="startRecord"
@@ -59,9 +66,22 @@
           </ul>
         </div>
         <div class="operator">
+
           <gt-button class='button'
                      @click='saveShiTu'
                      :showClose="false">保存视图</gt-button>
+          <el-dropdown @command="changeView"
+                       trigger="click">
+            <gt-button class='button'
+                       :showClose="false">
+              {{videoMode}}
+              <i class='el-icon-caret-bottom'></i></gt-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="original">原始比例</el-dropdown-item>
+              <el-dropdown-item command="fullscreen">充满屏幕</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
           <gt-button class='button'
                      :icon="icons.fullScreen"
                      @click="PreviewAreafullScreen"
@@ -100,6 +120,32 @@ import icons from "@/common/icon.js";
 
 export default {
   name: "VideoPreview",
+  computed: {
+    operatorChannelUuid() {
+      if (this.videoArr.length) {
+        return this.videoArr[this.operatorIndex].channelUuid;
+      } else {
+        return "";
+      }
+    },
+    showFenlu() {
+      return this.videoArr.slice(
+        0,
+        Math.min(this.fenlu[this.fenluIndex], this.videoArr.length)
+      );
+    },
+    videoMode() {
+      let name = {
+        original: "原始比例",
+        fullscreen: "充满屏幕"
+      };
+      if (this.operatorIndex >= this.videoArr.length) {
+        return "原始比例";
+      } else {
+        return name[this.videoArr[this.operatorIndex].mode];
+      }
+    }
+  },
   components: {
     LeftContent,
     VideoWrap,
@@ -111,6 +157,10 @@ export default {
   },
   data() {
     return {
+      tipsFlag: true,
+      fullscreen: false,
+      ip: "",
+      port: "",
       showCloudControl: false,
       videoinfo: {},
       appendViewVisible: false,
@@ -119,18 +169,20 @@ export default {
       videoInfoVisible: false,
       imageAdjustVisible: false,
       isAutoScreen: -1,
-      videoArr: [
-        {
-          position: 0, // 表示视频的位置，初始化的时候是从0-n的按顺序的，拖动之后position就会变化
-          rtspUrl: "", // 播放的视频 Url
-          streamType: ""
-        }
-      ],
+      videoArr: Array.from({ length: 36 }, (item, index) => {
+        item = {
+          width: 0,
+          height: 0,
+          rtspUrl: "",
+          position: index,
+          mode: "original"
+        };
+        return item;
+      }),
       icons,
-      fenlu: [1, 4, 9, 16, 25, 36],
+      fenlu: [1, 4, 8, 9, 16, 25, 36],
       fenluIndex: 0,
       operatorIndex: 0,
-      operatorChannelUuid: "",
       videoWidth: 0,
       videoHeight: 0,
       menuData: [
@@ -159,8 +211,8 @@ export default {
               value: "辅码流"
             },
             {
-              label: "三码流",
-              value: "三码流"
+              label: "第三码流",
+              value: "第三码流"
             }
           ]
         },
@@ -191,37 +243,79 @@ export default {
       ],
       src: "",
       dragStartIndex: -1,
-      dragEndIndex: -1
+      dragEndIndex: -1,
+      maxRightWidth: 10000,
+      parentArr: new Array(36), // 用来记录所有的视频
+      timer: null,
+      cnt: 0
     };
   },
   mounted() {
     this.jugdeJump();
-    this.$nextTick(() => {
-      this.initWrapDom();
-    });
-    window.addEventListener(
-      "resize",
-      this.$common.throttle(this.initWrapDom, 100, { trailing: false })
-    );
-  },
-  activated() {
+    this.chooseFenlu(1);
+    this.jishi();
+
+    // 监听F11事件
+
+    // 下面是MDZZ代码
     this.initWrapDom();
   },
-  destroyed() {},
+  destroyed() {
+    // clearInterval(this.timer);
+    // this.timer = null;
+    // window.onresize = null;
+  },
+  activated() {
+    this.$nextTick(() => {
+      let data = JSON.parse(JSON.stringify(this.videoArr));
+      this.videoArr = [];
+      setTimeout(() => {
+        this.videoArr = data;
+      }, 0);
+      this.initWrapDom();
+    });
+  },
   methods: {
+    changeView(val) {
+      this.videoArr[this.operatorIndex].mode = val;
+      // this.initWrapDom();
+      this.videoArr.concat();
+    },
+    jishi() {
+      const that = this;
+      // 下面的定时器是为了刷新页面的每个video框，
+      this.timer = setInterval(() => {
+        // if (
+        //   this.$route.fullPath.toLocaleLowerCase().indexOf("videopreview") ===
+        //   -1
+        // ) {
+        //   return;
+        // }
+        if (this.fullscreen) {
+          this.fullscreen = this.checkFull();
+        }
+        that.initWrapDom();
+      }, 100);
+    },
+    checkFull() {
+      return (
+        window.innerHeight === window.screen.height &&
+        window.innerWidth === window.screen.width
+      );
+    },
     dblclickhandler(index) {
+      if (this.fenluIndex === 2) {
+        // 在8分格的时候不进行放大缩小的操作
+        return;
+      }
       if (this.isAutoScreen === index) {
         // 已经满屏则退出满屏
         this.isAutoScreen = -1;
-        this.videoArr[index].width = this.videoWidth;
-        this.videoArr[index].height = this.videoHeight;
       } else {
         // 设置满屏
         this.isAutoScreen = index;
-        this.videoArr[index].width = this.videoWidth * (this.fenluIndex + 1);
-        this.videoArr[index].height = this.videoHeight * (this.fenluIndex + 1);
       }
-      this.videoArr.concat();
+      this.initWrapDom();
     },
     jugdeJump() {
       if (
@@ -240,17 +334,29 @@ export default {
 
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
-      let elements = data.elements.map((item, index) => {
+      let newdata = JSON.parse(JSON.stringify(data));
+      let elements = newdata.elements.map((item, index) => {
         item.position = index;
+        item.mode = "original";
         return item;
       });
-      console.log(elements);
-      this.videoArr = elements;
+      for (let i = 0, len = elements.length; i < len; i++) {
+        this.videoArr[i] = elements[i];
+      }
+      this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
     },
     updateView(viewData) {
-      console.log();
+      // console.log(viewData);
+      // 首先判断下视图有没有重复的名字
+      let da = this.$refs.leftTree.viewTreeData.filter(i => {
+        return i.viewName === viewData.viewInfo.view_name;
+      });
+      if (da.length > 0) {
+        this.$message.error("视图名字跟已有的重复!");
+        return;
+      }
       let data = JSON.parse(JSON.stringify(viewData));
       delete data.viewName;
       api2.updateView(data).then(res => {
@@ -264,6 +370,14 @@ export default {
       });
     },
     addView(name) {
+      // 首先判断下视图有没有重复的名字
+      let da = this.$refs.leftTree.viewTreeData.filter(i => {
+        return i.viewName === name;
+      });
+      if (da.length > 0) {
+        this.$message.error("视图名字跟已有的重复!");
+        return;
+      }
       // 保存视图
       // 这里需要将数组按照position重新排序一下，这样打开才会是正确的
       let dataArr = JSON.parse(JSON.stringify(this.videoArr));
@@ -337,8 +451,8 @@ export default {
       });
     },
     updatePreset(data) {
-      console.log(this.operatorIndex);
-      console.log(this.videoArr);
+      // console.log(this.operatorIndex);
+      // console.log(this.videoArr);
       api2.updatePreset(data).then(res => {
         if (res.data.success) {
           this.$message.success("预置点修改成功！");
@@ -361,7 +475,7 @@ export default {
       //   });
     },
     updatePeraaaaaa(data) {
-      console.log(data);
+      // console.log(data);
       api2.updatePreset(data).then(res => {
         if (res.data.success) {
           this.$message.success("预置点修改成功！");
@@ -378,7 +492,22 @@ export default {
         this.$refs.leftTree.getPreset(true);
       });
     },
-    playRtsp(channelUuid, streamType = "string", adata, operator = -1) {
+    playRtsp(
+      channelUuid,
+      streamType = "",
+      adata,
+      operator = -1,
+      isDrag = false
+    ) {
+      console.log(streamType);
+      // 这里做个判断，判断streamType是否为空，为空则判断是不是第一个播放，是则主码流，不是则辅码流
+      if (streamType === "") {
+        let flag = !!this.videoArr.filter(item => {
+          return item.rtspUrl !== "";
+        }).length;
+        streamType = flag ? "sub" : "main";
+      }
+      // console.log(channelUuid, streamType, adata, operator);
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
       api2
@@ -387,36 +516,72 @@ export default {
           streamType
         })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           let data = res.data.data;
           // 这里会得到rtsp的码流地址，然后进行一些操作,默认是主码流
           if (operator === -1) {
             this.playVideo(data.rtspUrl, channelUuid, streamType, adata);
           } else {
-            this.videoArr[operator].rtspUrl = data.rtspUrl;
-            this.videoArr[operator].streamType = streamType;
-            this.videoArr.concat();
+            if (isDrag) {
+              this.setData(
+                operator,
+                data.rtspUrl,
+                channelUuid,
+                streamType,
+                adata
+              );
+            } else {
+              this.setData(
+                this.operatorIndex,
+                data.rtspUrl,
+                channelUuid,
+                streamType,
+                adata
+              );
+            }
           }
         })
         .catch(err => {
           console.log(err);
         });
     },
+    setData(index, rtspUrl, channelUuid, streamType, operatorData) {
+      this.videoArr[index].streamType = streamType;
+      this.videoArr[index].operatorData = operatorData;
+      this.videoArr[index].channelUuid = channelUuid;
+      this.videoArr[index].rtspUrl = rtspUrl;
+      this.showCloudControl = this.updateCloud();
+    },
+    judgeEnoughBoard() {},
     playVideo(rtspUrl, channelUuid, streamType, data) {
-      // 根据通道获取到了视频流地址，从而进行播放
-      // 遍历videoArr数组，看哪个分路的rtspUrl为空，则在上面播放
-      for (let i = 0; i < this.videoArr.length; i++) {
-        if (!this.videoArr[i].rtspUrl) {
-          this.videoArr[i].operatorData = data;
-          this.videoArr[i].rtspUrl = rtspUrl;
-          this.videoArr[i].channelUuid = channelUuid;
-          this.videoArr[i].streamType = streamType;
-          this.operatorIndex = i;
-          // 左边的树添加到右边去播放
-          break;
+      // 做个判断如果，当前的画面不够播放，则自动扩容
+      if (this.operatorIndex + 1 > 36) {
+        // alert(1);
+        this.tipsFlag = false;
+        setTimeout(() => {
+          this.tipsFlag = true;
+        }, 1000);
+        this.operatorIndex = 35;
+        if (this.tipsFlag) {
+          this.$message.error("超过36路码流播放了！");
         }
+        return;
       }
-      this.videoArr.concat();
+      this.setData(this.operatorIndex, rtspUrl, channelUuid, streamType, data);
+      console.log(this.operatorIndex);
+      // 这里还要判断如果后面的视频框，如果有打开的视频，则进行跳过,未写
+      if (
+        ++this.operatorIndex >= this.fenlu[this.fenluIndex] &&
+        this.fenluIndex <= 5
+      ) {
+        this.chooseFenlu(this.fenluIndex + 1);
+      }
+      if (this.operatorIndex + 1 > 36) {
+        this.operatorIndex = 35;
+      }
+      console.log(this.videoArr);
+      this.updateCloud();
+      // 逻辑更改，直接根据用户选中的视频进行播放
     },
     dragstart(index, e) {
       // 拖拽开始
@@ -425,6 +590,7 @@ export default {
       this.dragStartIndex = index;
     },
     drop(index, e) {
+      console.log(e);
       // 拖拽结束
       console.log("drop:" + index);
       this.dragEndIndex = index;
@@ -437,6 +603,23 @@ export default {
       //   this.videoArr[this.dragStartIndex]
       // ];
       // 优化之后的写法
+      // 当每个视频的宽度不同的时候，这里也要交换宽高
+      // const exchange = (v1, v2) => {
+      //   [v1, v2] = [v2, v1];
+      // };
+      // exchange(
+      //   this.videoArr[this.dragStartIndex].position,
+      //   this.videoArr[this.dragEndIndex].position
+      // );
+      // exchange(
+      //   this.videoArr[this.dragStartIndex].width,
+      //   this.videoArr[this.dragEndIndex].width
+      // );
+      // exchange(
+      //   this.videoArr[this.dragStartIndex].height,
+      //   this.videoArr[this.dragEndIndex].height
+      // );
+      // 这里不交换rtsp的url，
       [
         this.videoArr[this.dragStartIndex].position,
         this.videoArr[this.dragEndIndex].position
@@ -444,7 +627,8 @@ export default {
         this.videoArr[this.dragEndIndex].position,
         this.videoArr[this.dragStartIndex].position
       ];
-      this.videoArr = this.videoArr;
+      this.videoArr.concat();
+      this.initWrapDom();
       this.dragStartIndex = -1;
       console.log(this.videoArr);
     },
@@ -457,40 +641,132 @@ export default {
       console.log(tab);
     },
     initWrapDom() {
+      // 这里要给他16:9的效果
+      // 而且right的高度不能超过
+      // console.log(this.$refs.right.clientWidth);
+      // console.log(this.$refs.right.offsetHeight);
+      // if (this.$refs.right) {
+      //   const rightRect = this.$refs.right.getBoundingClientRect();
+      //   // console.log(rightRect);
+      // }
+      if (!this.$refs.right) {
+        return;
+      }
+      const rightHeight = ~~(
+        this.$refs.right.clientHeight -
+        window.innerWidth * 0.03 -
+        2
+      );
+      // alert(rightHeight);
+      // 计算16:9的最大高度
+      const maxHeight = rightHeight - 20;
+      // console.log(maxHeight);
+      // 根据最大高度，反推最大宽度
+      this.maxRightWidth = ~~(maxHeight * 16) / 9;
+      // 根据这个高度算出来他的最大宽度，
+      // 获取系统的高度，然后减去多余的部分
+
       let vedioWrapDom = this.$refs.vedioWrap;
-      let fen = Math.sqrt(this.fenlu[this.fenluIndex]);
-      this.videoWidth = Math.floor((vedioWrapDom.clientWidth - 1) / fen);
-      this.videoHeight = Math.floor((vedioWrapDom.clientHeight - 1) / fen);
-      this.videoArr = this.videoArr.map(item => {
-        item.width = this.videoWidth;
-        item.height = this.videoHeight;
+
+      // this.videoWidth = ~~(
+      //   (Math.min(this.$refs.right.clientWidth, this.maxRightWidth) -
+      //     window.innerWidth * 0.04 -
+      //     -1) /
+      //   fen
+      // );
+      // this.videoHeight = ~~((maxHeight - 60 - 1) / fen);
+
+      // 这里计算每块视频的长高，因为正方形，且等分，所以
+      let fen = 1,
+        fenlu = this.fenlu[this.fenluIndex];
+      if (fenlu === 8) {
+        fen = 3;
+      } else {
+        fen = Math.sqrt(fenlu);
+      }
+      let videoWrapWidth = vedioWrapDom.clientWidth,
+        videoWrapHeight = vedioWrapDom.clientHeight;
+      this.videoWidth = Math.floor((videoWrapWidth - 1) / fen);
+      this.videoHeight = Math.floor((videoWrapHeight - 1) / fen);
+      let data = JSON.parse(JSON.stringify(this.videoArr));
+      this.videoArr = data.map((item, index) => {
+        if (index !== this.isAutoScreen) {
+          item.width = this.videoWidth;
+          item.height = this.videoHeight;
+          item.left = (item.position % fen) * item.width;
+          item.top = Math.floor(item.position / fen) * item.height;
+        } else {
+          item.width = videoWrapWidth;
+          item.height = videoWrapHeight;
+          item.left = 0;
+          item.top = 0;
+        }
+        // 这里8分路视频的布局不是等分的，所以需要不同的计算方式
+        // 中间一个大视频，围绕7个小视频，默认中间大视频的宽高占比70%;
+        if (fenlu === 8) {
+          let percent = 0.75;
+          if (item.position === 0) {
+            item.width = videoWrapWidth * percent;
+            // item.height = ~~((videoWrapHeight * 9) / 16);
+            item.height = videoWrapHeight * percent;
+            item.left = 0;
+            item.top = 0;
+          } else {
+            item.width = videoWrapWidth * (1 - percent);
+            // item.height = ~~((item.width * 9) / 16);
+            item.height = videoWrapHeight * (1 - percent);
+            if (item.position < 5) {
+              item.left = videoWrapWidth * percent;
+              item.top = ~~(
+                videoWrapHeight *
+                (1 - percent) *
+                (item.position - 1)
+              );
+            } else {
+              item.left = (item.position - 5) * item.width;
+              item.top = videoWrapHeight - item.height;
+            }
+          }
+        }
         return item;
       });
     },
     chooseFenlu(index) {
+      // this.operatorIndex = 0;
       this.fenluIndex = index;
-      this.isAutoScreen = -1;
+      this.isAutoScreen = -1; // 切换分路 将单个视频的全屏删除掉
       this.initWrapDom();
+      let dataArr = JSON.parse(JSON.stringify(this.videoArr));
+      dataArr.sort((a, b) => {
+        return a.position - b.position;
+      });
+      this.videoArr = dataArr;
+
+      // 如果从多路切换到少路的时候，选中的index小于显示的分路，则将他切换到0
+      // if (this.operatorIndex > this.fenlu[this.fenluIndex]) {
+      //   this.operatorIndex = 0;
+      // }
+
       // 切换分路，还需要保留之前已经打开的视频画面
 
-      let num = Array.from(
-        { length: this.fenlu[this.fenluIndex] },
-        (item, index) => {
-          item = {
-            width: this.videoWidth,
-            height: this.videoHeight,
-            rtspUrl: "",
-            position: index
-          };
-          if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
-            item = this.videoArr[index];
-            item.position = index;
-          }
-          return item;
-        }
-      );
-      this.videoArr = num;
-      console.log(num);
+      // let num = Array.from(
+      //   { length: this.fenlu[this.fenluIndex] },
+      //   (item, index) => {
+      //     item = {
+      //       width: this.videoWidth,
+      //       height: this.videoHeight,
+      //       rtspUrl: "",
+      //       position: index
+      //     };
+      //     if (this.videoArr[index] && this.videoArr[index].rtspUrl) {
+      //       item = this.videoArr[index];
+      //       item.position = index;
+      //     }
+      //     return item;
+      //   }
+      // );
+      // this.videoArr = num;
+      // console.log(num);
     },
     // 控制云台
     ctrl(action, start, speed) {
@@ -523,6 +799,7 @@ export default {
       this.$ContextMenu({
         data: this.menuData,
         event: e,
+        target: this.$refs.vedioWrap,
         callback(value) {
           // value表示点击按钮的value
           _this.dealContextMenu(value);
@@ -530,6 +807,7 @@ export default {
       });
     },
     closeVideo(index) {
+      this.operatorIndex = index;
       this.videoArr[index].rtspUrl = "";
       this.videoArr[index].streamType = "";
       this.videoArr[index].channelUuid = "";
@@ -540,19 +818,61 @@ export default {
       switch (value) {
         case "关闭窗口":
           // 清空rtspUrl，则触发video组件stop事件
-          this.closeVideo(this.operatorIndex);
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.$confirm(
+              `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭该窗口?</span>`,
+              {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                distinguishCancelAndClose: true,
+                confirmButtonClass: "confirm-button",
+                cancelButtonClass: "cancel-button",
+                center: true,
+                dangerouslyUseHTMLString: true,
+                customClass: "isCloseDialog"
+              }
+            )
+              .then(() => {
+                this.videoArr[this.operatorIndex].rtspUrl = "";
+                this.videoArr[this.operatorIndex].channelUuid = "";
+                this.videoArr[this.operatorIndex].startTime = "";
+                this.videoArr[this.operatorIndex].endTime = "";
+                this.videoArr[this.operatorIndex].mode = "original";
+                this.videoArr[this.operatorIndex].timeData = [];
+                this.videoArr.concat();
+              })
+              .catch(() => {});
+          }
 
-          this.videoArr.concat();
           break;
         case "关闭所有窗口":
-          // 把所有分路的rtspUrl都清空
-          this.videoArr = this.videoArr.map((item, index) => {
-            item.rtspUrl = "";
-            item.position = index;
-            item.streamType = "";
-            item.channelUuid = "";
-            return item;
-          });
+          this.$confirm(
+            `<span style="font-family: "PingFangSC-Regular";font-size: 14px;color: #FFFFFF;">是否关闭所有的窗口?</span>`,
+            {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              distinguishCancelAndClose: true,
+              confirmButtonClass: "confirm-button",
+              cancelButtonClass: "cancel-button",
+              center: true,
+              dangerouslyUseHTMLString: true,
+              customClass: "isCloseDialog"
+            }
+          )
+            .then(() => {
+              this.videoArr = this.videoArr.map(item => {
+                item.rtspUrl = "";
+                item.startTime = "";
+                item.endTime = "";
+                item.mode = "original";
+                item.timeData = [];
+                return item;
+              });
+            })
+            .catch(() => {});
+
           break;
         case "摄像机信息":
           if (!this.videoArr[this.operatorIndex].channelUuid) {
@@ -583,16 +903,24 @@ export default {
           if (!this.videoArr[this.operatorIndex].channelUuid) {
             this.$message.error("该分路上没有通道！");
           } else {
-            this.switchLuxiang(this.videoArr[this.operatorIndex].channelUuid);
+            this.switchLuxiang(
+              this.videoArr[this.operatorIndex].channelUuid,
+              this.videoArr[this.operatorIndex].operatorData.label
+            );
           }
           break;
         case "全屏":
-          this.setFullScreen(
-            this.$refs["video" + this.operatorIndex][0].getCanvas()
-          );
+          // this.setFullScreen(
+          //   this.$refs["video" + this.operatorIndex][0].getCanvas()
+          // );
+          this.PreviewAreafullScreen();
           break;
         case "图像调节":
-          this.imageAdjustVisible = true;
+          if (!this.videoArr[this.operatorIndex].channelUuid) {
+            this.$message.error("该分路上没有通道！");
+          } else {
+            this.imageAdjustVisible = true;
+          }
           break;
         case "开始录像":
           // this.jumpToPlayback();
@@ -607,7 +935,7 @@ export default {
         case "辅码流":
           this.switchMaLiu(this.operatorIndex, "sub");
           break;
-        case "三码流":
+        case "第三码流":
           this.switchMaLiu(this.operatorIndex, "thrid");
           break;
         case "打开音频":
@@ -617,7 +945,16 @@ export default {
           break;
       }
     },
-    openVideoVoice(index) {},
+    openVideoVoice(index) {
+      console.log(index);
+      console.log(this.videoArr);
+      let item = this.videoArr[index];
+      item.isStopVoice = !item.isStopVoice;
+
+      // this.videoArr[index].isStopVoice = !this.videoArr[index].isStopVoice;
+      this.videoArr.splice(index, 1, item);
+      this.videoArr.concat();
+    },
     startRecord(index) {
       if (!this.videoArr[index].channelUuid) {
         this.$message.error("该分路上没有播放的视频");
@@ -632,8 +969,10 @@ export default {
         }
         return item;
       });
-      this.videoArr[index].isRecord = true;
-      this.videoArr.concat();
+      let item = this.videoArr[index];
+      item.isRecord = true;
+      this.videoArr.splice(index, 1, item);
+
       this.$refs["video" + index][0].record();
     },
     stopRecord(index) {
@@ -650,15 +989,24 @@ export default {
         }
         return item;
       });
-
-      this.videoArr[index].isRecord = false;
-      this.videoArr.concat();
+      let item = this.videoArr[index];
+      item.isRecord = false;
+      this.videoArr.splice(index, 1, item);
       this.$refs["video" + index][0].stopRecord();
     },
-    switchLuxiang(channelUuid) {
+    switchLuxiang(channelUuid, channelName) {
+      this.$store.dispatch("addTagViewItem", {
+        icon: "VideoPlayback",
+        name: "VideoPlayback",
+        title: "视频回放",
+        type: "config",
+        path: "/VideoPlayback"
+      });
+      this.$store.dispatch("setLocalTag", "VideoPlayback");
+      this.$bus.$emit("setLocalTag", "VideoPlayback");
       this.$router.push({
         name: "VideoPlayback",
-        params: { channelUuid }
+        params: { channelUuid, channelName }
       });
     },
     screenShot(index) {
@@ -690,7 +1038,40 @@ export default {
       this.playRtsp(this.videoArr[index].channelUuid, streamType, {}, index);
     },
     PreviewAreafullScreen() {
-      this.setFullScreen(this.$refs.vedioWrap);
+      var element = document.documentElement;
+      // this.setFullScreen(this.$refs.vedioWrap);
+
+      if (this.fullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        console.log("已还原！");
+      } else {
+        // 否则，进入全屏
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          // IE11
+          element.msRequestFullscreen();
+        }
+        console.log("已全屏！");
+        // this.fullscreen = !this.fullscreen;
+        setTimeout(() => {
+          this.fullscreen = true;
+          this.initWrapDom();
+        }, 100);
+      }
+      // // 改变当前全屏状态
     },
     setFullScreen(target) {
       if (target.requestFullscreen) {
@@ -708,21 +1089,28 @@ export default {
     },
     getChannleUuid() {
       // eslint-disable-next-line
-      this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
+      // this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
     },
     updateCloud() {
-      if (!this.videoArr[this.operatorIndex].operatorData) {
+      if (this.operatorIndex < 0 || !this.videoArr[this.operatorIndex]) {
+        return false;
+      }
+      if (
+        !this.videoArr[this.operatorIndex].rtspUrl ||
+        !this.videoArr[this.operatorIndex].operatorData
+      ) {
         return false;
       }
       return (
-        ["bullet_camera_ptz", "bullet_camera"].indexOf(
-          this.videoArr[this.operatorIndex].operatorData.relType
+        ["bullet_camera_ptz", "ball_camera"].indexOf(
+          this.videoArr[this.operatorIndex].operatorData.realType
         ) !== -1
       );
     }
   },
   watch: {
     operatorIndex(val) {
+      // console.log(this.videoArr);
       this.showCloudControl = this.updateCloud();
     },
     videoArr(val) {
@@ -735,6 +1123,29 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.isCloseDialog {
+  .el-message-box__btns {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    button {
+      margin-right: 30px;
+    }
+  }
+}
+.VideoPreviewContent {
+  .el-message-box__title span {
+    color: #fff !important;
+  }
+  .el-message-box__message {
+    p {
+      text-align: center !important;
+    }
+  }
+}
+</style>
+
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .VideoPreviewContent {
@@ -743,22 +1154,30 @@ export default {
   display: flex;
   flex-wrap: wrap;
   box-sizing: border-box;
+
   .right {
-    width: calc(100% - #{$equLeftMenuWidth});
+    width: calc(100% - 220px);
     height: 100%;
-    padding: $rightContentMargin;
+    // padding: 0px;
     box-sizing: border-box;
     user-select: none;
+    padding: 0px;
+    box-sizing: border-box;
     .vedioWrap {
       position: relative;
-      height: calc(100% - 80px);
+      // height: calc(100% - 80px);
+      // padding-top: 56.25%;
+      height: calc(100vh - 122px);
+      margin: 2px 0px 0px;
     }
     .footer {
-      height: 60px;
-      margin: 10px;
+      height: 70px;
+      // margin: 10px;
       display: flex;
       justify-content: space-between;
       .operator {
+        margin-top: 16px;
+        margin-right: 40px;
         .button {
           background: rgba(40, 255, 187, 0.2);
           border: 0 solid rgba(38, 211, 157, 0.8);
@@ -792,6 +1211,16 @@ export default {
         }
       }
     }
+  }
+  .fullVideoWrap {
+    position: fixed !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    left: 0px;
+    top: 0px;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 10;
   }
 }
 </style>

@@ -3,15 +3,20 @@
 		title="拍照"
 		center
 		:visible.sync="shootPhotoDialogVisible"
-		width="400px"
-		:before-close="handleClose"
+		:width="`${canvWidth ? canvWidth + 50 : '1300'}px`"
+		:before-close="handleClosePhoto"
 		class="SnapShootDialogClass"
 	>
-		<video v-show="!shootPhotoShow" id="video" ref="video" width="350" height="300"></video>
+		<video
+			v-show="!shootPhotoShow"
+			id="video"
+			:height="`${canvHeight ? canvHeight : '800'}px`"
+			ref="video"
+		></video>
 		<img v-show="shootPhotoShow" id="img" src />
-		<span slot="footer" style="padding:15px;margin-bottom:30px;">
-			<el-button type="primary" @click="shootPhotoDialogVisible = false">取 消</el-button>
+		<span slot="footer" style="padding:15px">
 			<el-button type="primary" @click="shootAct">拍摄</el-button>
+			<el-button type="primary" @click="handleClosePhoto">取消</el-button>
 		</span>
 	</el-dialog>
 </template>
@@ -33,6 +38,9 @@ export default {
 			canvas: null,
 			video: null,
 			img: null,
+			canvWidth: "",
+			canvHeight: "",
+			mediaStreamTrack: null,
 			vendorUrl: window.URL || window.webkitURL
 		};
 	},
@@ -46,16 +54,19 @@ export default {
 		}
 	},
 	methods: {
-		handleClose() {
-            this.shootPhotoDialogVisible = false;
-            this.$emit('close');
+		handleClosePhoto() {
+			this.mediaStreamTrack.stop();
+			this.shootPhotoDialogVisible = false;
+			this.$emit("close");
 		},
 		// 拍照事件
 		shootAct() {
 			var canvas = document.createElement("canvas");
-			canvas.width = "350";
-			canvas.height = "260";
-			canvas.getContext("2d").drawImage(this.video, 0, 0, 350, 260);
+			canvas.width = this.canvWidth;
+			canvas.height = this.canvHeight;
+			canvas
+				.getContext("2d")
+				.drawImage(this.video, 0, 0, this.canvWidth, this.canvHeight);
 			// 把canvas图像转为img图片
 			this.shootPhotoShow = true;
 			this.img = document.getElementById("img");
@@ -67,7 +78,10 @@ export default {
 				.replace("data:image/jpg;base64,", "jpg:");
 			this.shootPhotoDialogVisible = false;
 
-			this.$emit("snapPhotoAct",{imageUrl:this.imageUrl,fileData:this.fileData});
+			this.$emit("snapPhotoAct", {
+				imageUrl: this.imageUrl,
+				fileData: this.fileData
+			});
 		},
 		// 调取摄像头
 		shootPhoto() {
@@ -86,11 +100,15 @@ export default {
 				if (window.navigator.getMedia) {
 					window.navigator.getMedia(
 						{
-							video: true, // 使用摄像头对象
+							video: {
+								width: { min: 1280 },
+								height: { min: 720 }
+							},
 							audio: false // 不适用音频
 						},
 						function(strem) {
 							console.log(strem);
+							_this.mediaStreamTrack = strem.getTracks()[0];
 							try {
 								_this.video.src = _this.vendorUrl.createObjectURL(strem);
 							} catch (e) {
@@ -98,6 +116,10 @@ export default {
 								_this.video.srcObject = strem;
 							}
 							_this.video.play();
+							_this.video.addEventListener("loadedmetadata", function() {
+								_this.canvWidth = this.videoWidth;
+								_this.canvHeight = this.videoHeight;
+							});
 						},
 						function(error) {
 							console.log(error);
@@ -106,6 +128,8 @@ export default {
 						}
 					);
 				} else {
+					console.log(window.navigator);
+					console.log(window.navigator.getMedia);
 					alert("不支持摄像头");
 					_this.shootPhotoDialogVisible = false;
 				}
@@ -117,5 +141,14 @@ export default {
 <style >
 .SnapShootDialogClass .el-dialog__footer {
 	padding-bottom: 30px;
+}
+.SnapShootDialogClass .el-dialog {
+	background: #25292d;
+	border-radius: 3px;
+	border-radius: 3px;
+	margin-top: 2vh !important;
+}
+.SnapShootDialogClass.el-dialog__wrapper {
+	overflow: auto;
 }
 </style>

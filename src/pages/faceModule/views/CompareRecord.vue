@@ -20,6 +20,7 @@
 					:defaultProps="defaultDeviceProps"
 					nodeKey="channelUuid"
 					inputWidth="160px"
+					ref="CPDeviceRef"
 					@transferAct="transferCheckedChannel"
 				></alPopverTree>
 			</div>
@@ -34,13 +35,21 @@
 					@transferAct="transferAct"
 				></alPopverTree>
 			</div>
-			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:center;display:block">
+			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
 				姓名：
 				<el-input placeholder v-model="staffName" />
 			</div>
-			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:center;display:block">
+			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
 				证件号：
 				<el-input placeholder v-model="certificateNum" />
+			</div>
+			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
+				<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
+				<el-radio-group v-model="genderOption">
+					<el-radio-button label>不限</el-radio-button>
+					<el-radio-button label="male">男</el-radio-button>
+					<el-radio-button label="female">女</el-radio-button>
+				</el-radio-group>
 			</div>
 			<div class="topBoxDiv topBoxDateTimeBox">
 				<span class="topTitleTxt" style="margin-right:15px;">时段：</span>
@@ -50,6 +59,7 @@
 					v-model="startTime"
 					type="datetime"
 					placeholder="选择日期"
+					@change="selectDate=null"
 				></el-date-picker>
 				<span class="compareRecordTxt">至</span>
 				<el-date-picker
@@ -58,19 +68,20 @@
 					v-model="endTime"
 					type="datetime"
 					placeholder="选择日期"
+					@change="selectDate=null"
 				></el-date-picker>
+				<div class="topBoxDiv topBoxDateRadioBtnBox" style="display:inline-block;padding-bottom:0px">
+					<el-radio-group style="margin-right:0px" v-model="selectDate" @change="selectDateAct">
+						<el-radio-button label="today">今天</el-radio-button>
+						<el-radio-button label="lastday">昨天</el-radio-button>
+						<el-radio-button label="thisWeek">本周</el-radio-button>
+						<el-radio-button label="thisMonth">本月</el-radio-button>
+					</el-radio-group>
+				</div>
 			</div>
-			<div class="topBoxDiv topBoxDateRadioBtnBox">
-				<el-radio-group v-model="selectDate" @change="selectDateAct">
-					<el-radio-button label="today">今天</el-radio-button>
-					<el-radio-button label="lastday">昨天</el-radio-button>
-					<el-radio-button label="thisWeek">本周</el-radio-button>
-					<el-radio-button label="thisMonth">本月</el-radio-button>
-				</el-radio-group>
-			</div>
-			<div :span="2">
+			<div :span="2" style="margin-top:-15px;">
 				<el-button icon="el-icon-search" class="search-btn" @click="queryAct" type="primary">查询</el-button>
-				<el-button class="search-btn" @click="queryAct" type="primary">重置</el-button>
+				<el-button class="search-btn" @click="resetQueryAct" type="primary">重置</el-button>
 			</div>
 		</el-row>
 		<div
@@ -79,7 +90,12 @@
 			element-loading-background="rgba(0, 0, 0, 0.8)"
 			class="reccordBoxClass"
 		>
-			<div class="elCardBoxClass" v-for="(item, index) in totalCompareItemList" :key="index">
+			<div
+				class="elCardBoxClass"
+				v-for="(item, index) in totalCompareItemList"
+				@dblclick="doComparethis(index)"
+				:key="index"
+			>
 				<recoginize-card
 					imgWidth="90"
 					:recoginizeItem="totalCompareItemList[index]"
@@ -97,14 +113,6 @@
 			v-dialogDrag
 			title="对比详情"
 		>
-			<!-- <el-row>
-				<div class="my_el-dialog__header">
-					<span class="el-dialog__title">对比详情</span>
-					<button type="button" aria-label="Close" class="el-dialog__headerbtn">
-						<i class="el-dialog__close el-icon el-icon-close" @click="dialogVisible = false"></i>
-					</button>
-				</div>
-			</el-row>-->
 			<dialogview
 				v-loading="dialogfullscreenLoading"
 				element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -149,7 +157,7 @@ export default {
 			document.documentElement.clientWidth ||
 			document.body.clientWidth;
     console.log(w);
-    h = h - 5;
+    h = h - 65;
     this.$refs.compareRecordHeight.$el.style.height = h + "px";
     // 当窗口发生变化时
     let that = this;
@@ -162,7 +170,7 @@ export default {
 				window.innerWidth ||
 				document.documentElement.clientWidth ||
 				document.body.clientWidth;
-      h = h - 5;
+      h = h - 65;
       console.log(w);
       that.$refs.compareRecordHeight.$el.style.height = h + "px";
     });
@@ -177,14 +185,38 @@ export default {
     this.deactivated = true;
     console.log("------deactivated------");
   },
-  watch: {},
+  watch: {
+    DeviceTreeList(val) {
+      this.checkedChannelsUuidList = val.map(item => {
+        return item.channelUuid;
+      });
+    },
+    faceDBList(val) {
+      this.checkedFaceUuidList = val.map(item => {
+        return item.faceLibraryUuid;
+      });
+    }
+  },
   methods: {
+    resetQueryAct() {
+      this.checkedChannelsUuidList = []; // string[]抓拍设备否
+      this.checkedTaskUuidList = []; // string[]布控任务否
+      this.checkedFaceUuidList = []; // string[]人脸库否
+      this.staffName = null; // string人员姓名否
+      this.certificateNum = null; // string证件号码否
+      this.genderOption = ""; // string抓拍性别否
+      this.startTime = this.$common.getStartTime();
+      this.endTime = this.$common.getCurrentTime();
+      this.selectDate = null;
+      this.$refs.DeviceRef.clearAction();
+    },
     transferAct(transferArray) {
       this.checkedFaceUuidList = transferArray;
     },
     transferTaskAct(transferArray) {
       this.checkedTaskUuidList = transferArray;
-      this.getFaceLibsAndDeviceList(transferArray);
+      let arr = JSON.parse(JSON.stringify(transferArray));
+      this.getFaceLibsAndDeviceList(arr);
     },
     changeShowStatus(flag) {
       this.showImg = flag;
@@ -233,7 +265,7 @@ export default {
     },
     // 点击查询按钮
     queryAct() {
-      if (this.startTime.length > 0 && this.endTime.length > 0) {
+      if (this.startTime && this.endTime) {
         /* eslint-disable */
 				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
 				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
@@ -245,10 +277,15 @@ export default {
           });
           return;
         }
+        this.total = 0;
+        this.currentPage = 1;
+        this.getCompareRecordList();
+      } else {
+        this.$message({
+          message: "查询时间不能为空！",
+          type: "warning"
+        });
       }
-      this.total = 0;
-      this.currentPage = 1;
-      this.getCompareRecordList();
     },
 
     // 获取数据
@@ -271,6 +308,8 @@ export default {
       if (!data.faceMonitorUuids) data.faceMonitorUuids = null;
       if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
       if (!data.genderCapture) data.genderCapture = null;
+      if (!data.staffName) data.staffName = null;
+      if (!data.credentialNo) data.credentialNo = null;
       api
         .getRecognizeList(data)
         .then(res => {
@@ -471,16 +510,16 @@ export default {
       dialogfullscreenLoading: false,
       staffName: null,
       certificateNum: null,
-      genderOption: null
+      genderOption: ""
     };
   }
 };
 </script>
 <style>
-.topBoxDateTimeBox .el-input--prefix .el-input__inner {
+.CompareRecord .el-input--prefix .el-input__inner {
 	padding-left: 10px;
 }
-.topBoxDateTimeBox .el-input--suffix .el-input__inner {
+.CompareRecord .el-input--suffix .el-input__inner {
 	padding-right: 10px;
 }
 
@@ -508,13 +547,14 @@ export default {
 	background: rgba(255, 255, 255, 0.1);
 	color: #ffffff;
 	margin-right: 9px;
-	border: 0;
+	border: 1px solid transparent;
 	padding: 8px 20px;
 	font-size: 13px;
 }
+.el-checkbox-button.is-focus .el-checkbox-button__inner,
 .CompareRecord .el-checkbox-button:first-child .el-checkbox-button__inner,
 .CompareRecord .el-radio-button:first-child .el-radio-button__inner {
-	border: 0;
+	border: 1px solid transparent;
 }
 .CompareRecord .topBoxDateRadioBtnBox {
 	min-width: 310px;
@@ -527,11 +567,11 @@ export default {
 	background: rgba(40, 255, 187, 0.1);
 	border-radius: 2px;
 	border-radius: 2px;
-	border: 0;
+	border: 1px solid #26d39d;
 	box-shadow: 0px 0 0 0 #26d39d;
 }
 .CompareRecord .topBoxDeviceBox {
-	min-width: 310px;
+	min-width: 240px;
 }
 .CompareRecord .topBoxTaskBox {
 	min-width: 240px;
@@ -559,7 +599,7 @@ export default {
 	color: #cccccc;
 }
 .compareRecordTxt {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 14px;
 	color: #888888;
 }
@@ -585,13 +625,6 @@ export default {
 	-webkit-transform: rotate(45deg) scaleY(0);
 	transform: rotate(45deg) scaleY(0);
 	width: 3px;
-	-webkit-transition: -webkit-transform 0.15s ease-in 0.05s;
-	transition: -webkit-transform 0.15s ease-in 0.05s;
-	transition: transform 0.15s ease-in 0.05s;
-	transition: transform 0.15s ease-in 0.05s,
-		-webkit-transform 0.15s ease-in 0.05s;
-	transition: transform 0.15s ease-in 0.05s,
-		-webkit-transform 0.15s ease-in 0.05s;
 	-webkit-transform-origin: center;
 	transform-origin: center;
 }
@@ -607,10 +640,6 @@ export default {
 	background-color: transparent;
 	z-index: 1;
 	margin: 0px;
-	-webkit-transition: border-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46),
-		background-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46);
-	transition: border-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46),
-		background-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46);
 }
 
 .CompareRecordPopoverClass
@@ -630,12 +659,6 @@ export default {
 	background-color: #000000;
 	/* color: #; */
 }
-.CompareRecord .elCardBoxHeaders {
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding-bottom: 12px;
-	padding: 9px 15px;
-	color: rgba(227, 53, 53, 0.8);
-}
 .CompareRecordPopoverClass .el-tree {
 	color: #aaaaaa;
 	background: none;
@@ -647,11 +670,6 @@ export default {
 	background: none;
 	/* color: #28FFBB; */
 }
-/* .CompareRecordPopoverClass .el-tree-node__expand-icon { */
-/* color: #28ffbb; */
-/* display: none; */
-/* } */
-
 .CRTaskPopoverClass {
 	position: absolute;
 	background: #202127;
@@ -689,9 +707,7 @@ export default {
 }
 .CompareRecord .el-date-editor.el-input,
 .CompareRecord .el-date-editor.el-input__inner {
-	/* width: 220px; */
-	/* width: 30%; */
-	max-width: 220px;
+	width: 180px;
 }
 .CompareRecord .dialogClass .el-dialog__body {
 	padding: 0;
@@ -713,7 +729,7 @@ export default {
 	background: rgba(40, 255, 187, 0.15);
 	border: 1px solid rgba(32, 204, 150, 0.8);
 	border-radius: 3px;
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 14px;
 	color: #ffffff;
 	/* margin-left: 8%; */
@@ -724,7 +740,7 @@ export default {
 	-webkit-transform: rotate(90deg);
 }
 .CompareRecord .topBoxInputBox {
-	width: 230px;
+	width: 220px;
 	padding-bottom: 20px;
 }
 .CompareRecord .topBoxInputBox .el-input {
@@ -741,7 +757,7 @@ export default {
 }
 .CompareRecord .el-dialog__title {
 	line-height: 24px;
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 20px;
 	color: #ffffff;
 	text-align: left;
@@ -755,27 +771,26 @@ export default {
 	color: #fff;
 	background: #24272a;
 	border-radius: 3px;
-
 	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
 .CompareRecord .fontColor {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 16px;
 	color: #cccccc;
 	letter-spacing: 0;
 }
 .CompareRecord .fontTheme {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 14px;
 	color: rgb(39, 150, 119) !important;
 	letter-spacing: 0;
 	cursor: pointer;
 }
 .CompareRecord .fontThemes {
-	font-family: PingFangSC-Regular;
+	font-family: "PingFangSC-Regular";
 	font-size: 14px;
 	color: #28ffbb;
 	letter-spacing: 0;
@@ -882,22 +897,6 @@ export default {
 	outline: 0;
 	margin-top: 8px;
 }
-.CompareRecord .recordCellFooterTxt {
-	/* opacity: 0.8; */
-	font-family: PingFangSC-Regular;
-	font-size: 14px;
-	color: rgba(255, 255, 255, 0.8);
-	letter-spacing: 0;
-}
-.CompareRecord .recordCellFooter {
-	width: 100%;
-	/* height: 80px; */
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: center;
-	padding: 9px;
-}
 .CompareRecord .reccordBoxClass {
 	width: 100%;
 	height: 100%;
@@ -905,30 +904,20 @@ export default {
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: flex-start;
+	align-content: flex-start;
 	background: rgba(36, 39, 42, 1);
-	margin-top: 20px;
 	box-sizing: border-box;
 	padding-left: 17px;
 	/* padding-right: 15px; */
 }
 .CompareRecord .elCardBoxClass {
-	margin: 16px auto 0 0;
+	margin: 16px 2% 0 0;
 	color: #ffffff;
 	box-sizing: border-box;
 	border-radius: 2px;
 	overflow: hidden;
 }
-/* .CompareRecord .reccordBoxClass::after {
-	content: "";
-	flex: auto;
-}
-.CompareRecord .reccordBoxClass > *:first-child {
-	margin-right: auto;
-}
-.CompareRecord .reccordBoxClass > *:nth-child(2) {
-	margin-right: auto;
-} */
 .textclipClass {
 	display: inline-block;
 	white-space: nowrap;
@@ -939,16 +928,6 @@ export default {
 	-webkit-box-orient: vertical;
 	/* autoprefixer: on */
 }
-.CompareRecord .recordCellImg {
-	width: 150px;
-	height: 150px;
-}
-.CompareRecord .reccordCellClass {
-	width: 180px;
-	height: 200px;
-	border: 1px solid rgba(11, 33, 38, 1);
-	margin: 13px 12px 14px;
-}
 .CompareRecord {
 	font-family: Helvetica, sans-serif;
 	text-align: center;
@@ -958,21 +937,14 @@ export default {
 	flex-direction: column;
 	justify-content: flex-start;
 	background: rgb(28, 29, 32);
-	padding: 40px 50px 30px;
+	padding: 2%;
 }
 .CompareRecord .topBox {
-	/* padding: 30px 50px 30px 27px;
-	display: flex;
-	align-items: center;
-	width: 100%;
-	height: 100px;
-	background: rgb(36, 39, 42); */
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: center;
 	padding: 25px 40px 0px 27px;
-	height: 140px;
 	background: rgba(36, 39, 42, 1);
 	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
 	/* overflow-y: auto; */

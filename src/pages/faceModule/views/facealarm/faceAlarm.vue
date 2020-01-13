@@ -11,6 +11,7 @@
 						nodeKey="faceMonitorUuid"
 						inputWidth="160px"
 						@transferAct="transferTaskAct"
+						ref="taskMonitorRef"
 					></alPopverTree>
 				</div>
 				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
@@ -22,6 +23,7 @@
 						nodeKey="channelUuid"
 						inputWidth="160px"
 						@transferAct="transferCheckedChannel"
+						ref="DeviceRef"
 					></alPopverTree>
 				</div>
 				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
@@ -31,6 +33,7 @@
 						:alPopoverClass="facealarmPopoverClass"
 						:defaultProps="faceDBDefaultProps"
 						nodeKey="faceLibraryUuid"
+						ref="faceLibRef"
 						inputWidth="160px"
 						@transferAct="transferCheckedFaceDB"
 					></alPopverTree>
@@ -118,16 +121,30 @@
 					@lookAlarmDetail="lookAlarmDetail"
 					@pagechange="pagechange"
 				></component>
+				<el-dialog
+					class="dialogClass"
+					:close-on-click-modal="false"
+					:visible.sync="faceImgDialogVisible"
+					@close="faceImgDialogVisible=false"
+					v-dialogDrag
+					title="报警详情"
+				>
+					<AlarmDetailDialog
+						v-loading="dialogfullscreenLoading"
+						element-loading-background="rgba(0, 0, 0, 0.8)"
+						:dialogParama="detail"
+					></AlarmDetailDialog>
+				</el-dialog>
 				<!-- <the-face-alarm-dialog
 				title="报警详情"
 				:detail="detail"
 				:detail2="detail2"
 				:facearr="facearr"
 				:alarminfoid="alarminfoid"
-				:faceDBDialogVisible="facealarmvisible"
+				:faceDBDialogVisible="faceImgDialogVisible"
 				@close="facealarmvisible=false"
 				></the-face-alarm-dialog>-->
-				<face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" />
+				<!-- <face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" /> -->
 			</div>
 		</div>
 	</div>
@@ -137,6 +154,7 @@
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import FaceImgDialog from "@/pages/faceModule/components/FaceImgDialog.vue";
 import alPopverTree from "@/pages/faceModule/components/AlElTree.vue";
+import AlarmDetailDialog from "@/pages/faceModule/components/AlarmDetailDialog.vue";
 import TheFaceAlarmDialog from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmDialog.vue";
 import faceAlarmTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmTable.vue";
 import theFaceAlarmImageTable from "@/pages/faceModule/views/facealarm/basic/TheFaceAlarmImageTable.vue";
@@ -150,10 +168,12 @@ export default {
     TheFaceAlarmDialog,
     elPopverTree,
     alPopverTree,
-    FaceImgDialog
+    FaceImgDialog,
+    AlarmDetailDialog
   },
   data() {
     return {
+      dialogfullscreenLoading: false,
       imageHeader: RestApi.api.imageUrl,
       isIndeterminate: false,
       checkTaskAll: true,
@@ -161,14 +181,14 @@ export default {
       checkLibAll: true,
       facealarmPopoverClass: "facealarmPopoverClass",
       faceDBDefaultProps: {
-        label: "faceLibraryName"
+        label: "faceLibraryName",
+        children: "children"
       },
       defaultProps: {
+        children: "children",
         label: "faceMonitorName"
       },
-      defaultDeviceProps: {
-        label: "channelName"
-      },
+      defaultDeviceProps: { children: "children", label: "channelName" },
       alarminfoid: "",
       startTime: null,
       endTime: null,
@@ -233,17 +253,29 @@ export default {
   },
   mounted() {
     console.log("mounted");
-    this.startTime = this.getStartTime();
+    this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
     this.statusOptions = this.$common.getEnumByGroupStr("alarm_r");
     this.getTaskList(false);
   },
   watch: {
     checkedTaskUuidList: function(newVal, oldVal) {
+      if (!newVal) return;
       this.checkTaskAll = newVal.length === this.taskItemList.length;
     },
     checkedFaceUuidList: function(newVal, oldVal) {
+      if (!newVal) return;
       this.checkLibAll = newVal.length === this.faceDBList.length;
+    },
+    DeviceTreeList(val) {
+      this.checkedChannelsUuidList = val.map(item => {
+        return item.channelUuid;
+      });
+    },
+    faceDBList(val) {
+      this.checkedFaceUuidList = val.map(item => {
+        return item.faceLibraryUuid;
+      });
     }
   },
   methods: {
@@ -253,7 +285,7 @@ export default {
         .getTaskList()
         .then(res => {
           if (res.data.success) {
-            this.taskItemList = res.data.data;
+            this.taskItemList = res.data.data || [];
             this.checkedTaskUuidList = [];
             for (var i = 0; i < this.taskItemList.length; i++) {
               var tempTask = this.taskItemList[i];
@@ -338,12 +370,14 @@ export default {
     transferTaskAct(val) {
       console.log("布控任务：", val);
       this.checkedTaskUuidList = val;
-      this.getFaceLibsAndDeviceList(this.checkedTaskUuidList);
+      let arr = JSON.parse(JSON.stringify(val));
+      this.getFaceLibsAndDeviceList(arr);
     },
     transferCheckedChannel(checkedChannel) {
       console.log("设备列表：", checkedChannel);
       this.checkedChannelsUuidList = checkedChannel;
     },
+    // 根据布控Uuid查询相关的人脸库和设备通道
     getFaceLibsAndDeviceList(taskuuidList) {
       console.log(taskuuidList);
       if (!taskuuidList.length) {
@@ -384,48 +418,76 @@ export default {
         })
         .catch(() => {});
     },
-    getidName(val) {
-      var str = val;
-      for (let i = 0, len = this.idtypetranslatearr.length; i < len; i++) {
-        if (this.idtypetranslatearr[i].typeStr === val) {
-          str = this.idtypetranslatearr[i].typeName;
-        }
-      }
-      return str;
-    },
+    // 查询按钮响应事件
     queryBtnAct() {
       this.init();
-      if (!this.statusOptions.length) {
-        // 点击搜索按钮从而发起请求
-        this.ajaxdata();
-      } else {
+      if (this.startTime && this.endTime) {
+        /* eslint-disable */
+				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
+				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
+				/* eslint-enable */
+        if (this.startTime !== "" && this.endTime !== "" && d1 >= d2) {
+          this.$message({
+            message: "开始时间必须小于结束时间！",
+            type: "warning"
+          });
+          return;
+        }
         this.pageNow = 1; // 点击搜索条件变更,当前页设置为第一页
         this.ajaxdata();
+      } else {
+        this.$message({
+          message: "查询时间不能为空！",
+          type: "warning"
+        });
       }
     },
+    // 条件重置
     resetData() {
-      this.detail = {
-        zhuapaiurl: "",
-        zhuapaiaddress: "",
-        zhuapaitime: "",
-        tezheng: "",
-        taskName: "",
-        jindu: 0,
-        kuurl: "",
-        belong: "",
-        staffName: "",
-        sex: "",
-        huji: "",
-        minzu: "",
-        bir: "",
-        cardtype: "",
-        credentialNo: ""
-      };
+      this.staffName = null;
+      this.credentialNo = null;
+      this.status = null;
+      this.checkedTaskUuidList = [];
+      this.checkedFaceUuidList = [];
+      this.checkedChannelsUuidList = [];
+      this.genderOption = null;
+      this.startTime = this.$common.getStartTime();
+      this.endTime = this.$common.getCurrentTime();
+      this.selectDate = null;
+      this.$refs.taskMonitorRef.clearAction();
+      this.$refs.DeviceRef.clearAction();
+      this.$refs.faceLibRef.clearAction();
     },
     lookAlarmDetail(detail) {
       this.detail = detail;
-      this.faceImgDialogVisible = !this.faceImgDialogVisible;
-      // this.facealarmvisible = true;
+      this.getAlarmShootPhotoList(detail);
+    },
+    // 根据客户端的传的人员staffUuid查找抓拍图片
+    getAlarmShootPhotoList(rowData, currentPage = 1, pageSize = 24) {
+      this.updatedFlag = true;
+      var data = {
+        faceUuid: rowData.faceUuid,
+        triggerFaceMonitor: 1,
+        limit: 8,
+        page: 1
+      };
+      this.dialogfullscreenLoading = true;
+      this.dialogVisible = !this.dialogVisible;
+      api
+        .getRecognizeInfo(data)
+        .then(res => {
+          this.dialogfullscreenLoading = false;
+          this.faceImgDialogVisible = !this.faceImgDialogVisible;
+          if (res.data.success) {
+            console.log(res.data.data);
+            this.detail.showImg = false;
+            this.detail = res.data.data;
+          }
+        })
+        .catch(() => {
+          this.dialogfullscreenLoading = false;
+          this.faceImgDialogVisible = !this.faceImgDialogVisible;
+        });
     },
     changeIndex(index) {
       this.showindex = index;
@@ -435,7 +497,6 @@ export default {
     init() {},
     ajaxdata() {
       this.isloading = true;
-      // 过滤空字符串
       let data = {
         staffName: this.staffName,
         credentialNo: this.credentialNo,
@@ -450,16 +511,20 @@ export default {
         gender: this.genderOption,
         credentialType: null
       };
+      // 过滤空字符串
       if (!data.channelUuids) data.channelUuids = null;
       if (!data.faceMonitorUuid) data.faceMonitorUuid = null;
       if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
       if (!data.gender) data.gender = null;
+      if (!data.staffName) data.staffName = null;
+      if (!data.credentialNo) data.credentialNo = null;
       api
         .getAlarmList(data)
         .then(res => {
           this.isloading = false;
           this.tableData = [];
-          if (res.data.success && res.data.data) {
+          this.pageCount = 0;
+          if (res.data.success && res.data.data && res.data.data.list) {
             this.pageCount = res.data.data.total;
             this.tableData = res.data.data.list;
           }

@@ -1,18 +1,20 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from "vue";
+import Vuex from "vuex";
 
-import home from './modules/home';
-import equipment from './modules/equipment'
-import resident from './modules/resident'
+import home from "./modules/home";
+import equipment from "./modules/equipment";
+import video from "./modules/video.js";
+import resident from "./modules/resident";
 
-Vue.use(Vuex);  
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
   modules: {
     home,
     equipment,
-    resident
+    resident,
+    video
   }
-})
+});
 
-export default store
+export default store;

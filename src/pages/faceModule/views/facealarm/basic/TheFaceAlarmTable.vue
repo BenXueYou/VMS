@@ -7,7 +7,7 @@
 				</el-table-column>
 				<el-table-column prop="faceMonitorName" label="布控任务"></el-table-column>
 				<el-table-column prop="captureDatetime" label="报警时间"></el-table-column>
-				<el-table-column prop="channelName" label="抓拍摄像机"></el-table-column>
+				<el-table-column prop="channelName" label="抓拍摄像机" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="staffName" label="人员姓名" width="100"></el-table-column>
 				<el-table-column prop="gender" label="性别" width="100">
 					<template
@@ -20,7 +20,7 @@
 						slot-scope="scope"
 					>{{scope.row.staffType?$common.getEnumItemName("staff_t", scope.row.staffType):''}}</template>
 				</el-table-column>
-				<el-table-column prop="libraryName" label="所属库" width="120"></el-table-column>
+				<el-table-column prop="libraryName" show-overflow-tooltip label="所属库" width="120"></el-table-column>
 				<el-table-column prop="faceSimilarity" label="相似度" width="80"></el-table-column>
 				<el-table-column prop="dealState" label="状态">
 					<template
@@ -37,8 +37,16 @@
 				</el-table-column>
 			</el-table>
 		</div>
-		<div class="footer">
+		<div class="FAMTableListFooter">
 			<el-pagination
+				@current-change="currentChange"
+				:current-page="pageNow"
+				layout="total,prev, pager, next,jumper"
+				:page-size="pageSize"
+				:total="pageCount"
+				background
+			></el-pagination>
+			<!-- <el-pagination
 				background
 				layout="prev, pager, next"
 				:page-size="pageSize"
@@ -49,8 +57,15 @@
 			<p class="totalpagetitle">共{{pageCount}}条</p>
 			<div class="tiaozhuan">
 				<span>跳转至</span>
-				<el-input class="yeshu" v-model="yeshu" @blur="blur" type="number"></el-input>
-			</div>
+				<el-input
+					class="yeshu"
+					onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"
+					v-model="yeshu"
+					@blur="blur"
+					@keyup.enter.native="blur"
+					type="number"
+				></el-input>
+			</div> -->
 		</div>
 	</div>
 </template>
@@ -62,16 +77,6 @@ export default {
       type: Array,
       default: function() {
         var num = [];
-        for (var i = 0; i < 13; i++) {
-          num.push({
-            index: ("0" + (i + 1)).slice(-2),
-            name: "王小虎",
-            sex: "男",
-            time: "2018-10-18 12:00:00",
-            id: "342626199411060399",
-            ku: "住户"
-          });
-        }
         return num;
       }
     },
@@ -106,15 +111,7 @@ export default {
       yeshu: ""
     };
   },
-  mounted() {
-    // this.$nextTick(function() {
-    //   var win_h = window.innerHeight;
-    //   var tableheight =
-    //     parseInt(getComputedStyle(this.$refs.tablelist).height) - 40;
-    //   this.pageSize = Math.floor(tableheight / 43);
-    //   //   alert(this.pageSize);
-    // });
-  },
+  mounted() {},
   methods: {
     blur() {
       if (this.yeshu !== "") {
@@ -155,7 +152,7 @@ export default {
 		overflow: auto;
 	}
 }
-.footer {
+.FAMTableListFooter {
 	position: relative;
 	// margin: 30px 0px 20px;
 	.totalpagetitle {
@@ -166,7 +163,7 @@ export default {
 		margin-top: 17px;
 	}
 	.el-pagination {
-		margin-right: 180px;
+		margin-right: 2px;
 		margin-top: 10px;
 		float: right;
 	}
@@ -191,16 +188,16 @@ export default {
 </style>
 <style lang="scss">
 .tablelist .yeshu {
-  display: inline-block;
-  width: 90px;
-  vertical-align: middle;
-  height: 40px;
-  .el-input__inner {
-    margin-top: 5px;
-    width: 50px;
-    height: 28px;
-    line-height: 28px;
-    padding: 0px 5px;
-  }
+	display: inline-block;
+	width: 90px;
+	vertical-align: middle;
+	height: 40px;
+	.el-input__inner {
+		margin-top: 5px;
+		width: 50px;
+		height: 28px;
+		line-height: 28px;
+		padding: 0px 5px;
+	}
 }
 </style>

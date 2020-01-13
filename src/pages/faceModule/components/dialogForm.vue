@@ -6,13 +6,20 @@
 				<p>抓拍图片</p>
 				<el-row type="flex" class="leftColBg" justify="center" :gutter="15">
 					<el-col :span="10">
-						<img
+						<!-- <img
+							class="xydialog-card-img"
+							v-image-preview
+							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
+						/>-->
+						<el-image
 							class="xydialog-card-img"
 							:src="$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)"
-						/>
+							:preview-src-list="[$common.setPictureShow(taskInfo.faceCapturePhotoUrl,PicSourceType)]"
+						></el-image>
 					</el-col>
 					<el-col :span="14">
 						<div class="firstTitle">
+							<div>{{taskInfo.channelName||'抓拍通道'}}</div>
 							<div>{{taskInfo.captureDatetime||'抓拍时间'}}</div>
 							<div>特征识别：{{taskInfo.sunglasses?'戴墨镜 ':" "}} {{taskInfo.mask?'戴口罩':""}}</div>
 							<div>布控任务：{{taskInfo.taskName}}</div>
@@ -34,10 +41,16 @@
 				<p>布控图片</p>
 				<el-row type="flex" justify="center" :gutter="15" class="leftColBg">
 					<el-col :span="7">
-						<img
+						<!-- <img
 							class="xydialog-card-img"
+							v-image-preview
 							:src="staffInfo.facePhotoUrl?imageHeader+staffInfo.facePhotoUrl:require('@/assets/user.png')"
-						/>
+						/>-->
+						<el-image
+							class="xydialog-card-img"
+							:src="$common.setPictureShow(staffInfo.facePhotoUrl)"
+							:preview-src-list="[$common.setPictureShow(staffInfo.facePhotoUrl)]"
+						></el-image>
 					</el-col>
 					<el-col :span="17">
 						<el-row type="flex" justify="space-between" class="rightTxt">
@@ -64,14 +77,26 @@
 		<div slot="footer" class="dialog-footer">
 			<div class="footerBox">
 				<div v-for="(item,index) in 8" :key="index" class="cardBox">
-					<el-row class="cardBoxHeader" type="flex" justify="center" :gutter="15">
+					<el-row class="cardBoxHeader" type="flex" justify="center">
 						<el-col class="facePhoto" :span="9">
+							<el-image
+								v-if="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl"
+								:src="$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)"
+								:preview-src-list="[$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType)]"
+							></el-image>
 							<img
+								v-else
 								:src="shootPhotoList[index]&&shootPhotoList[index].faceCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].faceCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 							/>
 						</el-col>
 						<el-col class="panoramaPhoto" :span="17">
+							<el-image
+								v-if="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl"
+								:src="$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)"
+								:preview-src-list="[$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType)]"
+							></el-image>
 							<img
+								v-else
 								:src="shootPhotoList[index]&&shootPhotoList[index].panoramaCapturePhotoUrl?$common.setPictureShow(shootPhotoList[index].panoramaCapturePhotoUrl,PicSourceType):require('@/assets/user.png')"
 							/>
 						</el-col>
@@ -136,7 +161,10 @@ export default {
         this.taskInfo.list.map((item, index) => {
           this.taskInfo.taskName += item.faceMonitorName + ",";
         });
-        this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
+        this.taskInfo.taskName = this.taskInfo.taskName.substr(
+          0,
+          this.taskInfo.taskName.length - 1
+        );
       },
       deep: true
     }
@@ -154,7 +182,10 @@ export default {
       this.taskInfo.list.map((item, index) => {
         this.taskInfo.taskName += item.faceMonitorName + ",";
       });
-      this.taskInfo.taskName.substr(0, this.taskInfo.taskName.length - 1);
+      this.taskInfo.taskName = this.taskInfo.taskName.substr(
+        0,
+        this.taskInfo.taskName.length - 1
+      );
     }
   },
   activated: function() {
@@ -295,7 +326,7 @@ export default {
 }
 .xydialog .dialog-footer .cardBox {
 	width: calc(50% - 18px);
-	height: calc(50% - 20px);
+	/* height: calc(50% - 20px); */
 	margin-top: 15px;
 	margin-right: 15px;
 	background-color: rgba(33, 35, 37, 0.8);
@@ -306,10 +337,16 @@ export default {
 .xydialog .cardBox .facePhoto {
 	width: 139px;
 	height: 139px;
+	margin-right: 7.5px;
 }
 .xydialog .cardBox .panoramaPhoto {
 	width: 248px;
 	height: 139px;
+}
+.xydialog .cardBox .facePhoto .el-image .el-image-viewer__canvas img{
+	width: auto;
+	max-width: 100%;
+	height: 100%;;
 }
 .xydialog .cardBox .facePhoto img,
 .xydialog .cardBox .panoramaPhoto img {

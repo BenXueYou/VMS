@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title='设备名称-设备'
+  <el-dialog :title='title'
              @close="close"
              :width="width"
              :class="{'dialogCenter':center}"
@@ -23,8 +23,7 @@
                :model="data"
                class='deviceInfoPanel'
                label-width="160px">
-        <el-form-item label="请添加人脸库："
-                      prop="interval">
+        <el-form-item label="请添加人脸库：">
           <el-button class='iconButton'
                      @click="openDB()"
                      type="primary"
@@ -88,6 +87,12 @@ export default {
   },
   props: {
     deviceUuid: {
+      type: String,
+      default() {
+        return "";
+      }
+    },
+    title: {
       type: String,
       default() {
         return "";
@@ -169,6 +174,10 @@ export default {
     },
     nowSync() {
       let data = this.getData();
+      if (!data.enable) {
+        this.$message.warning('请开启人脸识别');
+        return;
+      }
       api.setImmediateSyncSettingl(this.deviceUuid, data).then(res => {
         console.log(res);
         if (res.data.success) {
@@ -182,7 +191,7 @@ export default {
         .then(res => {
           console.log(res);
           if (res.data.success) {
-            let data = res.data.data;
+            let data = res.data.data || {};
             this.data = {
               isvideoset: data.enable || false,
               interval: (data.autoSyncIntervalMin || 0) / 60

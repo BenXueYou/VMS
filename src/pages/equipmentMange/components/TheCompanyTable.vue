@@ -92,7 +92,21 @@
         </el-table-column>
         <el-table-column prop="doorCount"
                          width="80"
+                         v-if="index==0"
+                         label="门数量"></el-table-column>
+        <el-table-column prop="videoCount"
+                         width="80"
+                         v-else-if="index==1"
+                         label="视频通道"></el-table-column>
+        <el-table-column prop="alarmCount"
+                         width="80"
+                         v-else-if="index==2"
+                         label="门数量"></el-table-column>
+        <el-table-column prop="vistorCount"
+                         width="80"
+                         v-else-if="index==3"
                          :label="index!=1?'门数量':'视频通道'"></el-table-column>
+
         <el-table-column prop="netStatus"
                          width="80"
                          label="网络状态">
@@ -125,6 +139,12 @@
                        @click="deleteEquip(scope.row)"
                        size="small">删除</el-button>
             <el-button type="text"
+                       v-if="index==1"
+                       @click="remoteControl(scope.row)"
+                       :disabled="(!!scope.row.extInfo.fdLib!=1)"
+                       size="small">配置</el-button>
+            <el-button type="text"
+                       v-if="index!=1"
                        @click="remoteControl(scope.row)"
                        :class="{'offLine':scope.row.netStatus==='offline'}"
                        :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig))"
@@ -179,6 +199,12 @@
                          :deviceTypeArr="deviceTypeArr"
                          @commit="addSuccess"
                          :localService="localService"></manual-add-dialog>
+      <video-set-dialog :visible.sync="videoDialogVisiable"
+                        :title="deviceTitle"
+                        :deviceUuid="deviceUuid">
+
+      </video-set-dialog>
+
     </div>
   </div>
 </template>
@@ -200,6 +226,7 @@ export default {
   name: "TheCompanyTable",
   data() {
     return {
+      deviceTitle: "",
       viewType: "door",
       deviceTypeArr: window.config.door_machine,
       door: window.config.door_machine,
@@ -254,6 +281,9 @@ export default {
     ...mapState({
       orgUuid: state => {
         return state.equipment.orgUuid;
+      },
+      DeviceOnOffArr: state => {
+        return state.equipment.DeviceOnOffArr;
       }
     })
   },
@@ -277,10 +307,10 @@ export default {
             });
             this.localService = num;
           }
-          this.$emit("serverList", this.localService);
+          this.$emit("serverList", this.localService, this.viewType);
         })
         .catch(() => {
-          this.$emit("serverList", this.localService);
+          this.$emit("serverList", this.localService, this.viewType);
         });
     },
     DType() {
@@ -353,7 +383,10 @@ export default {
               list[i].ip = list[i].deviceIp;
               list[i].devId = list[i].deviceSn;
               list[i].devMode = list[i].productType;
-              list[i].doorCount = list[i].doorCount;
+              list[i].doorCount = list[i].extInfo.doorCount;
+              list[i].videoCount = list[i].extInfo.videoCount;
+              list[i].alarmCount = list[i].extInfo.alarmCount;
+              list[i].vistorCount = 0;
               list[i].netStatus = list[i].deviceOnlineStatus;
               list[i].createTime = list[i].createTime;
             }
@@ -433,6 +466,7 @@ export default {
       // console.log(this.multipleSelection);
       // 修改:这边修改所有的数据
       let num = this.multipleSelection.map(item => {
+        item.deviceName = item.nickName;
         item.ipAddress = item.deviceIp || item.ip;
         return item;
       });
@@ -504,6 +538,7 @@ export default {
       this.getTableData();
       // this.deviceUuid = "123";
       // this.remoteControlDialogVisiable = true;
+      this.$emit("changeViewType", arr[index]);
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -512,11 +547,11 @@ export default {
       if (row.extInfo.source === "local") {
         // this.serviceList(this.viewType);
         this.$emit("showEdit", row.deviceUuid, row.netStatus);
-        this.serviceList(this.viewType);
-        this.DType(this.viewType);
       } else {
         this.$emit("showEdit", row.deviceUuid, row.netStatus);
       }
+      this.serviceList(this.viewType);
+      this.DType(this.viewType);
       // this.editEquipMentDialgoVisible = true;
     },
     deleteEquip(row) {
@@ -538,12 +573,11 @@ export default {
       // this.deviceUuid = deviceUuid;
 
       this.deviceUuid = row.deviceUuid;
-      this.remoteControlDialogVisiable = true;
-      this.deviceUuid = row.deviceUuid;
       // eslint-disable-next-line
       this[
         this.index === 1 ? "videoDialogVisiable" : "remoteControlDialogVisiable"
       ] = true;
+      this.deviceTitle = row.devName;
     }
   },
   mounted() {
@@ -568,6 +602,18 @@ export default {
     orgUuid(val) {
       // alert(val);
       this.getTableData();
+    },
+    DeviceOnOffArr(val) {
+      console.log(val);
+      console.log(this.tableData);
+      let array = this.tableData;
+      for (let index = 0; index < array.length; index++) {
+        const element = array[index];
+        if (val.deviceUuid === element.deviceUuid) {
+          this.$set(this.tableData[index], "netStatus", val.stateValue);
+          break;
+        }
+      }
     }
   }
 };

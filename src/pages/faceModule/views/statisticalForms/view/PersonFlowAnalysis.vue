@@ -4,6 +4,7 @@
       <div class="search">
         <span>统计方式：</span>
         <el-radio-group v-model="formType"
+                        style="margin-left: 3px;"
                         @change="handleFormTypeChange">
           <el-radio label="all">全部</el-radio>
           <el-radio label="one">单一</el-radio>
@@ -26,7 +27,7 @@
         <el-radio-group v-model="sort"
                         v-if="formType === 'all'"
                         @change="handleSortChange"
-                        style="margin: 2px 0 0 0">
+                        style="margin: 2px 0 0 3px">
           <el-radio label="desc">升序</el-radio>
           <el-radio label="asc">降序</el-radio>
         </el-radio-group>
@@ -37,7 +38,7 @@
         <span>报表类型：</span>
         <el-radio-group v-model="typeRadio"
                         @change="handleTypeChange"
-                        style="margin: 4px 0 0 0;">
+                        style="margin: 4px 0 0 3px;">
           <el-radio :label="1">日报表</el-radio>
           <el-radio :label="2">月报表</el-radio>
         </el-radio-group>
@@ -227,6 +228,8 @@ export default {
                 show: true, // flase直接隐藏图形
                 yAxisIndex: [0],
                 width: "15px",
+                borderColor: "rgba(221,221,221,0.3)",
+                fillerColor: "rgba(87,94,104,0.5)",
                 handleSize: 0,
                 top: 50, // 滚动条靠左侧的百分比
                 bottom: 50,
@@ -252,6 +255,8 @@ export default {
       ) {
         if (val > nowDateVal) {
           this.timeValue = nowDateVal;
+          this.setTableData();
+          this.drawLine();
         } else {
           this.timer1 = setInterval(() => {
             if (this.timeValue < nowDateVal) {
