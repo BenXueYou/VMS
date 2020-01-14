@@ -10,14 +10,14 @@
       </el-col>
       <el-col class="rightBox"
               :span="12">
-        <span :class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
+        <span :class="OwnAuthDisabled?'cursorClass':'disabled'"
               @click="updateTagName">
           <img class="img"
                src="../../../assets/images/resident/modify_icon.png"
                alt /> 修改标签
         </span>
         <span style="color:rgba(255,255,255,0.1)">|</span>
-        <span :class="$common.getAuthIsOwn('居民管理', 'isShow')?'cursorClass':'disabled'"
+        <span :class="ShowAuthDisabled?'cursorClass':'disabled'"
               @click="detailDialogAct">
           <img class="img"
                src="../../../assets/images/resident/detail_tag_icon.png"
@@ -28,11 +28,11 @@
 
     <el-main>
       <el-header>
-        <el-button :disabled="!$common.getAuthIsOwn('居民管理', 'isOwn')"
+        <el-button :disabled="!OwnAuthDisabled"
                    type="primary"
                    size="small"
                    @click="addElementToTagAct">添加楼栋房屋/居民</el-button>
-        <el-button :disabled="!$common.getAuthIsOwn('居民管理', 'isOwn')"
+        <el-button :disabled="!OwnAuthDisabled"
                    type="primary"
                    size="small"
                    @click="removeTagAct">移出</el-button>
@@ -179,10 +179,16 @@ export default {
         bayonet: "卡口",
         phase: "期",
         staff: "居民"
-      }
+      },
+      ShowAuthDisabled: false,
+      OwnAuthDisabled: false
     };
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("居民管理", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("居民管理", "isOwn");
+    // this.OwnAuthDisabled = false;
+
     let h =
       window.innerHeight ||
       document.documentElement.clientHeight ||
