@@ -633,7 +633,7 @@ export default {
         vertical-align: middle;
         border: none;
         padding: 0px;
-        margin: 0px 4px 0px 8px;
+        margin: 0px 4px 0px 4px;
       }
       .whitespan {
         margin-left: $iconleft;

@@ -636,8 +636,8 @@ export default {
     .channelStatus {
       user-select: none;
       img {
-        width: 12px;
-        height: 12px;
+        width: 10px;
+        height: 10px;
         margin-right: 7px;
       }
       span {
