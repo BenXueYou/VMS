@@ -639,7 +639,7 @@ export default {
         margin-left: $iconleft;
         display: inline-block;
         vertical-align: middle;
-        width: 6px;
+        width: 20px;
         height: 12px;
       }
       .treename {

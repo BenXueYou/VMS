@@ -543,7 +543,7 @@ export default {
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
   .is-leaf {
-    width: 0px !important;
+    width: 15px !important;
   }
   .el-tabs__content {
     overflow: auto;
