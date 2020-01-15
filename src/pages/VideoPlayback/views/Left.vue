@@ -542,6 +542,9 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
+  .el-tree-node__content > label.el-checkbox {
+    margin-right: 6px;
+  }
   .is-leaf {
     width: 15px !important;
   }
@@ -638,7 +641,7 @@ export default {
       img {
         width: 10px;
         height: 10px;
-        margin-right: 7px;
+        // margin-right: 7px;
       }
       span {
         font-size: 12px;
