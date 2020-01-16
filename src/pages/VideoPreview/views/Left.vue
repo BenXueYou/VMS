@@ -1658,6 +1658,9 @@ export default {
   .el-tabs__content {
     overflow: auto;
   }
+  .el-tree-node__content > .el-tree-node__expand-icon {
+    padding: 0px !important;
+  }
   .mypanel {
     // width: 380px;
     height: calc(100vh - 185px);
@@ -1770,8 +1773,8 @@ export default {
       flex-shrink: 20px;
       flex-flow: 20px;
       img {
-        width: 12px;
-        height: 12px;
+        width: 10px;
+        height: 10px;
         user-select: none;
       }
       .span {

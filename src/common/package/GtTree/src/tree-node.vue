@@ -571,7 +571,7 @@ export default {
   margin: 5px 0px 5px;
   transition: transform 0.3s;
   position: relative;
-  margin-left: 10px;
+  margin-left: 0px;
 }
 .triangle::before {
   content: "";
@@ -639,7 +639,7 @@ export default {
         margin-left: $iconleft;
         display: inline-block;
         vertical-align: middle;
-        width: 20px;
+        width: 11px;
         height: 12px;
       }
       .treename {
@@ -724,5 +724,3 @@ export default {
   }
 }
 </style>
-
-
