@@ -72,7 +72,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="k-form">
+		<!-- <div class="k-form">
 			<label for>关联的通道资源：</label>
 			<div class="aa">
 				<el-button type="text" size="small" @click="getResource" icon="el-icon-circle-plus-outline">新增</el-button>
@@ -85,7 +85,7 @@
 					>{{item.label || item.resourceName}}</gt-button>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<div class="dash-line"></div>
 		<div class="k-form">
 			<div class="label">
