@@ -1042,7 +1042,7 @@
                     :disabled='!OwnAuthDisabled'>修改名称</span>
             </div>
             <div type="primary"
-                 :disabled='!OwnAuthDisabled'
+                 :disabled='!ShowAuthDisabled'
                  @click="viewLabelDetail">
               <img src="./../../../assets/images/personMange/labelDetail.png" />
               <span type="primary"
@@ -1357,7 +1357,7 @@
       </div>
     </el-dialog>
     <!--标签详情弹窗-->
-    <el-dialog class="labelDetailDialog"
+    <el-dialog class="labelDetailDialog dialogCenter"
                :title="'标签详情'"
                :visible.sync="labelDetailDialog"
                @close="closeDialog"

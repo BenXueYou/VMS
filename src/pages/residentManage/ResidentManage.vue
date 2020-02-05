@@ -1,6 +1,8 @@
 <template>
   <div class="resident">
-    <the-leftmenu @tabClick="leftTabClick"></the-leftmenu>
+    <the-leftmenu @tabClick="leftTabClick"
+                  :ShowAuthDisabled="ShowAuthDisabled"
+                  :OwnAuthDisabled="OwnAuthDisabled"></the-leftmenu>
     <the-wrap :tabName="tabName"></the-wrap>
   </div>
 </template>
@@ -21,7 +23,9 @@ export default {
       tabName: "tree1",
       tagName: "",
       addTagDialogVisible: false,
-      residentTagType: "resident"
+      residentTagType: "resident",
+      ShowAuthDisabled: false,
+      OwnAuthDisabled: false
     };
   },
   created() {},
@@ -34,6 +38,10 @@ export default {
     })
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("居民管理", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("居民管理", "isOwn");
+    console.log(this.ShowAuthDisabled);
+    console.log(this.OwnAuthDisabled);
     // const { commit, state, getters } = this.$store;
     // console.log(state.resident.count);
     // commit("increment");
