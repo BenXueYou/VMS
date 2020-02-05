@@ -1,158 +1,177 @@
 <template>
-	<div class="accout">
-		<div class="title" v-show="!addDialogVisible">账户管理</div>
-		<div class="content" v-show="!addDialogVisible">
-			<div class="topBox">
-				<div class="topBoxLeft">
-					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="addBtnAct">新增</el-button>
-					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="volumeDelete">删除</el-button>
-					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="switchData(1)">启用</el-button>
-					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="switchData(0)">禁用</el-button>
-					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="resetPassword">密码重置</el-button>
-				</div>
-				<div class="topBoxRight">
-					<span class="tipsTxt">姓名：</span>
-					<el-input class="input staffNameInput" v-model="staffName"></el-input>
-					<span class="tipsTxt">在线状态：</span>
-					<el-select v-model="onlineStatus" placeholder="请选择在线状态">
-						<el-option
-							v-for="item in onlineStatusOptions"
-							:key="item.typeStr"
-							:label="item.typeName"
-							:value="item.typeStr"
-						></el-option>
-					</el-select>
-					<el-button
-						type="primary"
-						:disabled="!ShowAuthDisabled"
-						icon="el-icon-search"
-						@click="initData"
-					>检索</el-button>
-				</div>
-			</div>
-			<el-table
-				ref="loginLogBoxTable"
-				:data="tableData"
-				tooltip-effect="dark"
-				class="tableBoxClass"
-				@selection-change="handleSelectionChange"
-			>
-				<el-table-column type="selection" width="55"></el-table-column>
-				<el-table-column type="index" :index="tableIndex" label="序号" width="95">
-					<!-- <template slot-scope="scope">
+  <div class="accout">
+    <div class="title"
+         v-show="!addDialogVisible">账户管理</div>
+    <div class="content"
+         v-show="!addDialogVisible">
+      <div class="topBox">
+        <div class="topBoxLeft">
+          <el-button :disabled="!OwnAuthDisabled"
+                     type="primary"
+                     @click="addBtnAct">新增</el-button>
+          <el-button :disabled="!OwnAuthDisabled"
+                     type="primary"
+                     @click="volumeDelete">删除</el-button>
+          <el-button :disabled="!OwnAuthDisabled"
+                     type="primary"
+                     @click="switchData(1)">启用</el-button>
+          <el-button :disabled="!OwnAuthDisabled"
+                     type="primary"
+                     @click="switchData(0)">禁用</el-button>
+          <el-button :disabled="!OwnAuthDisabled"
+                     type="primary"
+                     @click="resetPassword">密码重置</el-button>
+        </div>
+        <div class="topBoxRight">
+          <span class="tipsTxt">姓名：</span>
+          <el-input class="input staffNameInput"
+                    v-model="staffName"></el-input>
+          <span class="tipsTxt">在线状态：</span>
+          <el-select v-model="onlineStatus"
+                     placeholder="请选择在线状态">
+            <el-option v-for="item in onlineStatusOptions"
+                       :key="item.typeStr"
+                       :label="item.typeName"
+                       :value="item.typeStr"></el-option>
+          </el-select>
+          <el-button type="primary"
+                     :disabled="!ShowAuthDisabled"
+                     icon="el-icon-search"
+                     @click="initData">检索</el-button>
+        </div>
+      </div>
+      <el-table ref="loginLogBoxTable"
+                :data="tableData"
+                tooltip-effect="dark"
+                class="tableBoxClass"
+                @selection-change="handleSelectionChange">
+        <el-table-column type="selection"
+                         width="55"></el-table-column>
+        <el-table-column type="index"
+                         :index="tableIndex"
+                         label="序号"
+                         width="95">
+          <!-- <template slot-scope="scope">
 						<el-checkbox
 							v-model="scope.row.checked"
 							@change="selectchange"
 						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
 					</template>-->
-				</el-table-column>
-				<el-table-column prop="accountName" label="账户"></el-table-column>
-				<el-table-column prop="staffName" label="姓名"></el-table-column>
-				<el-table-column prop="phoneNumber" label="手机号码"></el-table-column>
-				<el-table-column prop="roles" label="角色">
-					<template slot-scope="scope">
-						<span v-if="scope.row.accountType==='project_admin'">超级管理员</span>
-						<span v-if="scope.row.accountType!=='project_admin'">{{scope.row.roles}}</span>
-					</template>
-				</el-table-column>
-				<el-table-column prop="accountCreateTime" label="创建时间" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="loginTimes" label="登陆次数"></el-table-column>
-				<el-table-column prop="lastLoginTime" label="最后登录时间" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="onofflineStatus" label="状态">
-					<template
-						slot-scope="scope"
-					>{{$common.getEnumItemName("onoffline", scope.row.onofflineStatus)}}</template>
-				</el-table-column>
-				<el-table-column prop="description" label="账号描述"></el-table-column>
-				<el-table-column prop="reason" label="操作" width="200">
-					<template slot-scope="scope">
-						<div v-if="scope.row.accountType!=='project_admin'">
-							<el-button
-								:disabled="!OwnAuthDisabled"
-								@click="handleEditClick(scope.row)"
-								type="text"
-								size="small"
-							>编辑</el-button>
-							<el-button
-								:disabled="!OwnAuthDisabled"
-								@click="editRoleClick(scope.row)"
-								v-loading="showTreeAdd"
-								type="text"
-								size="small"
-							>分配角色</el-button>
-							<el-button
-								:disabled="!OwnAuthDisabled"
-								v-if="scope.row.enable===1"
-								class="onOffBtnClass"
-								@click="forbidBtnClick(scope.row)"
-								type="text"
-								size="small"
-							>禁用</el-button>
-							<el-button
-								v-if="scope.row.enable===0"
-								class="onOffBtnClass"
-								@click="startBtnClick(scope.row)"
-								type="text"
-								size="small"
-								:disabled="!OwnAuthDisabled"
-							>启用</el-button>
-							<el-button
-								:disabled="!OwnAuthDisabled"
-								class="deleteBtnClass"
-								@click="deleteBtnClick(scope.row)"
-								type="text"
-								size="small"
-							>删除</el-button>
-						</div>
-						<div v-if="scope.row.accountType==='project_admin'">
-							<el-button
-								:disabled="!OwnAuthDisabled"
-								@click="handleEditClick(scope.row)"
-								type="text"
-								size="small"
-							>编辑</el-button>
-							<el-button :disabled="!OwnAuthDisabled" type="text" size="small"></el-button>
-							<el-button :disabled="!OwnAuthDisabled" type="text" size="small"></el-button>
-							<el-button :disabled="!OwnAuthDisabled" class="onOffBtnClass" type="text" size="small"></el-button>
-							<el-button :disabled="!OwnAuthDisabled" class="deleteBtnClass" type="text" size="small"></el-button>
-						</div>
-					</template>
-				</el-table-column>
-			</el-table>
-			<!----------------------------------表格分页器---------------------------------->
-			<div class="footer">
-				<el-pagination
-					@size-change="handleSizeChange"
-					@current-change="handleCurrentChange"
-					:current-page="currentPage"
-					layout="total,prev, pager, next,jumper"
-					:page-size="pageSize"
-					:total="total"
-					background
-				></el-pagination>
-			</div>
-		</div>
-		<account-add
-			v-show="addDialogVisible"
-			:checkedRoles="defaultRoleData"
-			@close="close"
-			:rowData.sync="rowData"
-			@addRole="addRoleClick"
-		/>
-		<tree-panel-dialog
-			:treeData="roleDataList"
-			:initSelectData="defaultRoleData"
-			:props="defaultProps"
-			placeholder="请输入搜索的角色"
-			:isShow.sync="showTreeAdd"
-			title="分配角色"
-			checkedText="已分配的角色"
-			@onConfirm="getCheckedRole"
-			@onCancel="showTreeAdd=false"
-		></tree-panel-dialog>
-		<reset-password :visible.sync="resetPasswordVisible" @confirm="resetPWD"></reset-password>
-		<confirm-dialog :visible.sync="isConfirm" title="提示" confirmText="是否删除账号" @confirm="deleteData"></confirm-dialog>
-	</div>
+        </el-table-column>
+        <el-table-column prop="accountName"
+                         label="账户"></el-table-column>
+        <el-table-column prop="staffName"
+                         label="姓名"></el-table-column>
+        <el-table-column prop="phoneNumber"
+                         label="手机号码"></el-table-column>
+        <el-table-column prop="roles"
+                         label="角色">
+          <template slot-scope="scope">
+            <span v-if="scope.row.accountType==='project_admin'">超级管理员</span>
+            <span v-if="scope.row.accountType!=='project_admin'">{{scope.row.roles}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="accountCreateTime"
+                         label="创建时间"
+                         show-overflow-tooltip></el-table-column>
+        <el-table-column prop="loginTimes"
+                         label="登陆次数"></el-table-column>
+        <el-table-column prop="lastLoginTime"
+                         label="最后登录时间"
+                         show-overflow-tooltip></el-table-column>
+        <el-table-column prop="onofflineStatus"
+                         label="状态">
+          <template slot-scope="scope">{{$common.getEnumItemName("onoffline", scope.row.onofflineStatus)}}</template>
+        </el-table-column>
+        <el-table-column prop="description"
+                         label="账号描述"></el-table-column>
+        <el-table-column prop="reason"
+                         label="操作"
+                         width="200">
+          <template slot-scope="scope">
+            <div v-if="scope.row.accountType!=='project_admin'">
+              <el-button :disabled="!OwnAuthDisabled"
+                         @click="handleEditClick(scope.row)"
+                         type="text"
+                         size="small">编辑</el-button>
+              <el-button :disabled="!OwnAuthDisabled"
+                         @click="editRoleClick(scope.row)"
+                         v-loading="showTreeAdd"
+                         type="text"
+                         size="small">分配角色</el-button>
+              <el-button :disabled="!OwnAuthDisabled"
+                         v-if="scope.row.enable===1"
+                         class="onOffBtnClass"
+                         @click="forbidBtnClick(scope.row)"
+                         type="text"
+                         size="small">禁用</el-button>
+              <el-button v-if="scope.row.enable===0"
+                         class="onOffBtnClass"
+                         @click="startBtnClick(scope.row)"
+                         type="text"
+                         size="small"
+                         :disabled="!OwnAuthDisabled">启用</el-button>
+              <el-button :disabled="!OwnAuthDisabled"
+                         class="deleteBtnClass"
+                         @click="deleteBtnClick(scope.row)"
+                         type="text"
+                         size="small">删除</el-button>
+            </div>
+            <div v-if="scope.row.accountType==='project_admin'">
+              <el-button :disabled="!OwnAuthDisabled"
+                         @click="handleEditClick(scope.row)"
+                         type="text"
+                         size="small">编辑</el-button>
+              <el-button :disabled="!OwnAuthDisabled"
+                         type="text"
+                         size="small"></el-button>
+              <el-button :disabled="!OwnAuthDisabled"
+                         type="text"
+                         size="small"></el-button>
+              <el-button :disabled="!OwnAuthDisabled"
+                         class="onOffBtnClass"
+                         type="text"
+                         size="small"></el-button>
+              <el-button :disabled="!OwnAuthDisabled"
+                         class="deleteBtnClass"
+                         type="text"
+                         size="small"></el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!----------------------------------表格分页器---------------------------------->
+      <div class="footer">
+        <el-pagination @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       layout="total,prev, pager, next,jumper"
+                       :page-size="pageSize"
+                       :total="total"
+                       background></el-pagination>
+      </div>
+    </div>
+    <account-add v-show="addDialogVisible"
+                 :checkedRoles="defaultRoleData"
+                 @close="close"
+                 :rowData.sync="rowData"
+                 @addRole="addRoleClick" />
+    <tree-panel-dialog :treeData="roleDataList"
+                       :initSelectData="defaultRoleData"
+                       :props="defaultProps"
+                       placeholder="请输入搜索的角色"
+                       :isShow.sync="showTreeAdd"
+                       title="分配角色"
+                       checkedText="已分配的角色"
+                       @onConfirm="getCheckedRole"
+                       @onCancel="showTreeAdd=false"></tree-panel-dialog>
+    <reset-password :visible.sync="resetPasswordVisible"
+                    @confirm="resetPWD"></reset-password>
+    <confirm-dialog :visible.sync="isConfirm"
+                    title="提示"
+                    confirmText="是否删除账号"
+                    @confirm="deleteData"></confirm-dialog>
+  </div>
 </template>
 <script>
 import AccountAdd from "../components/accountAdd.vue";
@@ -429,6 +448,10 @@ export default {
         this.$message({ type: "warning", message: "请选择删除的账号" });
         return;
       }
+      if (this.adminUuids.length) {
+        this.$message.warning("勾选之中的超级管理员没有权限");
+        return;
+      }
       this.isConfirm = !this.isConfirm;
     },
     // 删除
@@ -447,7 +470,7 @@ export default {
         }
       } else {
         if (this.adminUuids.length) {
-          this.$message.warning("勾选之中的超级管理员没有权限");
+          this.$message.warning("勾选账号中包括管理员账号没有权限");
           return;
         }
       }
@@ -500,94 +523,94 @@ export default {
 </script>
 <style lang="scss" scoped>
 .accout {
-	height: 100%;
-	.title {
-		position: relative;
-		height: 60px;
-		line-height: 60px;
-		padding-left: 60px;
-		background: #212325;
-		&::after {
-			content: "";
-			width: 3px;
-			height: 14px;
-			position: absolute;
-			top: 23px;
-			left: 40px;
-			background: #26d39d;
-		}
-	}
-	.content {
-		height: calc(100% - 80px);
-		margin-top: 20px;
-		background: #212325;
-		padding: 20px 40px 0;
-		box-sizing: border-box;
-		.topBox {
-			display: flex;
-			justify-content: space-between;
-			margin-bottom: 20px;
-			font-family: "PingFangSC-Regular";
-			font-size: 13px;
-			color: #ffffff;
-			.topBoxLeft {
-				width: 450px;
-				.el-button {
-					background: rgba(40, 255, 187, 0.08);
-					border: 1px solid rgba(38, 211, 157, 0.64);
-					border-radius: 2px;
-					height: 32px;
-					line-height: 32px;
-					padding: 0 5%;
-					font-family: "PingFangSC-Regular";
-					font-size: 13px;
-					color: #ffffff;
-					text-align: justify;
-				}
-			}
-			.topBoxRight {
-				width: 550px;
-				.staffNameInput {
-					margin-right: 30px;
-				}
-				.el-select {
-					margin-right: 15px;
-				}
-				.el-select,
-				.staffNameInput {
-					width: 140px;
-				}
-				.el-button {
-					background: rgba(40, 255, 187, 0.08);
-					border: 1px solid rgba(38, 211, 157, 0.64);
-					border-radius: 2px;
-					height: 32px;
-					line-height: 32px;
-					padding: 0 3%;
-					font-family: "PingFangSC-Regular";
-					font-size: 13px;
-					color: #ffffff;
-					text-align: justify;
-				}
-			}
-		}
-		.tableBoxClass {
-			height: calc(100% - 100px);
-			overflow: auto;
-			.onOffBtnClass {
-				font-family: "PingFangSC-Regular";
-				font-size: 13px;
-				color: #ffba22;
-			}
-			.deleteBtnClass {
-				font-family: "PingFangSC-Regular";
-				font-size: 13px;
-				color: #ff5f5f;
-			}
-		}
-		.footer {
-			text-align: right;
-		}
-	}
+  height: 100%;
+  .title {
+    position: relative;
+    height: 60px;
+    line-height: 60px;
+    padding-left: 60px;
+    background: #212325;
+    &::after {
+      content: "";
+      width: 3px;
+      height: 14px;
+      position: absolute;
+      top: 23px;
+      left: 40px;
+      background: #26d39d;
+    }
+  }
+  .content {
+    height: calc(100% - 80px);
+    margin-top: 20px;
+    background: #212325;
+    padding: 20px 40px 0;
+    box-sizing: border-box;
+    .topBox {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      font-family: "PingFangSC-Regular";
+      font-size: 13px;
+      color: #ffffff;
+      .topBoxLeft {
+        width: 450px;
+        .el-button {
+          background: rgba(40, 255, 187, 0.08);
+          border: 1px solid rgba(38, 211, 157, 0.64);
+          border-radius: 2px;
+          height: 32px;
+          line-height: 32px;
+          padding: 0 5%;
+          font-family: "PingFangSC-Regular";
+          font-size: 13px;
+          color: #ffffff;
+          text-align: justify;
+        }
+      }
+      .topBoxRight {
+        width: 550px;
+        .staffNameInput {
+          margin-right: 30px;
+        }
+        .el-select {
+          margin-right: 15px;
+        }
+        .el-select,
+        .staffNameInput {
+          width: 140px;
+        }
+        .el-button {
+          background: rgba(40, 255, 187, 0.08);
+          border: 1px solid rgba(38, 211, 157, 0.64);
+          border-radius: 2px;
+          height: 32px;
+          line-height: 32px;
+          padding: 0 3%;
+          font-family: "PingFangSC-Regular";
+          font-size: 13px;
+          color: #ffffff;
+          text-align: justify;
+        }
+      }
+    }
+    .tableBoxClass {
+      height: calc(100% - 100px);
+      overflow: auto;
+      .onOffBtnClass {
+        font-family: "PingFangSC-Regular";
+        font-size: 13px;
+        color: #ffba22;
+      }
+      .deleteBtnClass {
+        font-family: "PingFangSC-Regular";
+        font-size: 13px;
+        color: #ff5f5f;
+      }
+    }
+    .footer {
+      text-align: right;
+    }
+  }
 }
 </style>

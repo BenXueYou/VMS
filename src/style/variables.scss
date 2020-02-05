@@ -1,23 +1,27 @@
-$--color-primary: #26D39D;
+$--color-primary: #26d39d;
 
-$add-text-color: #26D39D;
-$delete-text-color:#FF5F5F;
+$add-text-color: #26d39d;
+$delete-text-color: #ff5f5f;
 // 权限相关页面的css变量配置
-$rightContentMargin:1.5% 2%;
-$rightContentPadding:20px 30px;
-$rigthContentBackgroundColor:#212325;
+$rightContentMargin: 1.5% 2%;
+$rightContentPadding: 20px 30px;
+$rigthContentBackgroundColor: #212325;
 
 $dash-line-color: rgb(55, 57, 59);
 
-$timePanelBackgroundColor:rgb(43, 47, 51);
+$timePanelBackgroundColor: rgb(43, 47, 51);
 
 // 设备相关页面的css变量配置
-$equLeftMenuWidth:280px;
+$equLeftMenuWidth: 280px;
 
-$fontFamily:"PingFangSC-Regular";
-$fontColor:#DDDDDD;
+$fontFamily: "PingFangSC-Regular";
+$fontColor: #dddddd;
 
 $white15: rgba(255, 255, 255, 0.15);
+
+.el-switch.is-disabled {
+  opacity: 0.3 !important;
+}
 
 .succeesTextColor {
   color: $add-text-color;
@@ -58,7 +62,7 @@ $white15: rgba(255, 255, 255, 0.15);
   height: 30px;
   padding: 7px 20px;
   background: rgba(40, 255, 187, 0.12);
-  border: 1px solid rgba(40, 255, 187, 0.80);
+  border: 1px solid rgba(40, 255, 187, 0.8);
   border-radius: 2px;
   border-radius: 2px;
 }
@@ -79,20 +83,21 @@ $white15: rgba(255, 255, 255, 0.15);
   margin: 20px 0px;
 }
 
-
-
 .dash-line {
   height: 1px;
-  background:linear-gradient(to right, #{$dash-line-color} 50%, transparent 50%);
+  background: linear-gradient(
+    to right,
+    #{$dash-line-color} 50%,
+    transparent 50%
+  );
   background-size: 8px 2px;
   background-repeat: repeat-x;
 }
 
-
 // $activemenubg:rgba(40, 255, 187, 0.15);
 // $activemenuborder:rgba(40, 255, 187, 0.80);
-$activemenubg:rgba(37, 72, 66, 1);
-$activemenuborder:rgba(40, 255, 187, 0.80);
+$activemenubg: rgba(37, 72, 66, 1);
+$activemenuborder: rgba(40, 255, 187, 0.8);
 
 .activeMenu {
   position: relative;

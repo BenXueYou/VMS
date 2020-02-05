@@ -94,6 +94,12 @@ export default {
     isShow: {
       type: Boolean,
       default: false
+    },
+    unitName: {
+      type: String,
+      default() {
+        return "";
+      }
     }
   },
   data() {
@@ -142,6 +148,7 @@ export default {
       this.isLoading = true;
       this.$unitHttp
         .selPeople({
+          unitName: this.unitName,
           staffName: this.staffName,
           gender: this.gender,
           contact: this.contact,

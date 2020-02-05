@@ -231,6 +231,8 @@ export default {
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("黑名单管理", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("黑名单管理", "isOwn");
     let h =
       window.innerHeight ||
       document.documentElement.clientHeight ||
@@ -270,8 +272,6 @@ export default {
       ? this.tableSize
       : this.tableCellSize;
     this.currentPage = !this.tableOrTableCell ? this.currentPage : 1;
-    this.ShowAuthDisabled = this.$common.getAuthIsOwn("黑名单管理", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("黑名单管理", "isOwn");
   },
   activated() {
     setTimeout(() => {

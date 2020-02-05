@@ -145,7 +145,7 @@ export default {
     }
     this.currentPage = 1;
     Object.assign(this.otherSearchData, data);
-    // this.initData();
+    this.initData();
   },
   methods: {
     initData() {

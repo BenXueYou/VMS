@@ -160,6 +160,8 @@ export default {
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("黑名单报警", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("黑名单报警", "isOwn");
     let h =
       window.innerHeight ||
       document.documentElement.clientHeight ||
@@ -181,8 +183,6 @@ export default {
       that.pageSize = parseInt((h - 295) / 50) - 1;
       console.log(that.pageSize);
     });
-    this.ShowAuthDisabled = this.$common.getAuthIsOwn("黑名单报警", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("黑名单报警", "isOwn");
   },
   activated() {
     console.log(this.$route.params.data, "---------blacklistAlarm-------");
@@ -253,6 +253,9 @@ export default {
       }
     },
     initData() {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       var params = {
         pageSize: this.pageSize,
         currentPage: this.currentPage
