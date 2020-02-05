@@ -156,7 +156,7 @@
                       <img class="img"
                            v-else
                            src="@/assets/images/personMange/detail1.png" />
-                      详情1
+                      详情
                     </el-col>
                     <el-col :class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
                             class="FRelPopoverCol"
@@ -175,7 +175,7 @@
                       <img class="img"
                            v-if="!$common.getAuthIsOwn('居民管理', 'isOwn')"
                            src="@/assets/images/personMange/delete1.png" />
-                      <img class="img"
+                      <img v-else class="img"
                            src="@/assets/images/personMange/delete2.png" />
                       删除
                     </el-col>
