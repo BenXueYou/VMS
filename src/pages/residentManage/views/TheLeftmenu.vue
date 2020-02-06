@@ -92,6 +92,7 @@
         <gt-tree title="修改标签"
                  ref="tree2"
                  class="tree"
+                 :operatorDisabled="!OwnAuthDisabled"
                  @clickmenu="clickmenu2"
                  @exportData="exportData2"
                  :initdata="data2"></gt-tree>

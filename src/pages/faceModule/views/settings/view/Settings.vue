@@ -59,7 +59,7 @@
             </p>
             <p v-for="tag in tags"
                :key="tag.soundUrl">
-              <el-tag closable
+              <el-tag :closable="OwnAuthDisabled"
                       @close="handleClose(tag)"
                       :disable-transitions="false">
                 <img class="img"

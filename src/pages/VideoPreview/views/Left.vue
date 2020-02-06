@@ -467,6 +467,9 @@ export default {
   },
   methods: {
     dragstart(data, e) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       console.log(JSON.stringify(data));
       // 使用whereform记录拖拽源
       e.dataTransfer.setData("whereform", "tree");

@@ -1,6 +1,7 @@
 <template>
   <gt-tree-node :isdrag='isdrag'
                 :sereach='search'
+                :operatorDisabled="operatorDisabled"
                 :searchtype="searchtype"
                 :data='newData'
                 :show-checkbox="showCheckbox"
@@ -399,6 +400,12 @@ export default {
   },
   props: {
     showCheckbox: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    operatorDisabled: {
       type: Boolean,
       default() {
         return false;

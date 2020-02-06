@@ -55,7 +55,7 @@
       </el-form-item>
 
       <el-button type="primary"
-                 disabled="!OwnAuthDisabled"
+                 :disabled="!OwnAuthDisabled"
                  @click='save'>
         保存
       </el-button>

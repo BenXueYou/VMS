@@ -28,6 +28,7 @@
         </span>
 
         <span class="threeline"
+              :class="{'disabled':operatorDisabled}"
               @click.stop.prevent='$emit("clickmenu",{index:index,version:item.version,rankOrder:item.rankOrder,orgUuid:item.orgUuid,sliblings:root,isLastOne:index===(root.length-1),node:parent+"-"+index,value:item.label,e:$event})'>
 
         </span>
@@ -42,6 +43,7 @@
              v-if='item.isextend&&item.havechildren'>
           <gt-tree-node :data='item.children'
                         :changeparent="changeparent"
+                        :operatorDisabled="operatorDisabled"
                         :parent='parent+"-"+index'
                         :nodeLevel="nodeLevel+1"
                         @operator='$emit("operator",$event)'
@@ -173,6 +175,12 @@ export default {
     }
   },
   props: {
+    operatorDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     data: {
       //传递的数据
       type: Array,
@@ -681,6 +689,13 @@ export default {
           left: 0px;
           bottom: -7px;
           @include line;
+        }
+      }
+      .disabled {
+        background-color: gainsboro !important;
+        &::after,
+        &::before {
+          background-color: gainsboro !important;
         }
       }
 

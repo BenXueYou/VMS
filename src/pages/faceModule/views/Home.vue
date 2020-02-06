@@ -618,6 +618,14 @@ export default {
         // 勾了单选
         this.checkedChannelsUuidList = [];
         this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
+        // 添加日志
+        api2.log1([
+          {
+            channelUuid: this.checkedChannel.channelUuid,
+            channelName: this.checkedChannel.channelName
+          }
+        ]);
+        console.log(this.checkedChannel);
       } else {
         // 去掉单选
         let tempArr = [];
@@ -683,13 +691,6 @@ export default {
           }
         })
         .catch(() => {});
-      // 添加日志
-      api2.log1([
-        {
-          channelUuid,
-          channelName
-        }
-      ]);
     },
     async loadVideo(data) {
       if (data) {

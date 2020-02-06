@@ -30,6 +30,7 @@
                  @getChidrendata="getChidrendata"
                  @clickmenu="clickmenu"
                  @exportData="exportData"
+                 :operatorDisabled="!OwnAuthDisabled"
                  :initdata="data"></gt-tree>
       </el-tab-pane>
       <el-tab-pane label="标签"
@@ -38,6 +39,7 @@
                  class="mypanel"
                  @clickmenu="clickmenu2"
                  @exportData="exportData2"
+                 :operatorDisabled="!OwnAuthDisabled"
                  :initdata="data2"></gt-tree>
       </el-tab-pane>
     </el-tabs>
@@ -903,9 +905,9 @@ export default {
       margin-top: 9px;
     }
   }
-	.searchWrap .el-input__inner {
-		padding-left: 30px;
-	}
+  .searchWrap .el-input__inner {
+    padding-left: 30px;
+  }
 }
 </style>
 
