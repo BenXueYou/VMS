@@ -150,33 +150,32 @@
                     <el-col :class="$common.getAuthIsOwn('居民管理', 'isShow')?'cursorClass':'disabled'"
                             class="FRelPopoverCol"
                             @click.native="detailResident(item)">
-                      <img class="img"
+                      <!-- <img class="img"
                            v-if="!$common.getAuthIsOwn('居民管理', 'isShow')"
                            src="@/assets/images/personMange/detail.png" />
                       <img class="img"
                            v-else
-                           src="@/assets/images/personMange/detail1.png" />
+                           src="@/assets/images/personMange/detail1.png" /> -->
                       详情
                     </el-col>
                     <el-col :class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
                             class="FRelPopoverCol"
                             @click.native="editResident(item)">
-                      <img class="img"
+                      <!-- <img class="img"
                            v-if="!$common.getAuthIsOwn('居民管理', 'isOwn')"
                            src="@/assets/images/personMange/edit.png" />
                       <img class="img"
                            v-else
-                           src="@/assets/images/personMange/edit2.png" />
+                           src="@/assets/images/personMange/edit2.png" /> -->
                       编辑
                     </el-col>
                     <el-col :class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
                             class="FRelPopoverCol"
                             @click.native="deleteResident(item)">
-                      <img class="img"
+                      <!-- <img class="img"
                            v-if="!$common.getAuthIsOwn('居民管理', 'isOwn')"
-                           src="@/assets/images/personMange/delete1.png" />
-                      <img v-else class="img"
-                           src="@/assets/images/personMange/delete2.png" />
+                           src="@/assets/images/personMange/delete1.png" /> -->
+                      <!-- <img v-else src="@/assets/images/delete2.png" alt /> -->
                       删除
                     </el-col>
                   </el-row>

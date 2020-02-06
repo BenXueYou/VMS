@@ -201,6 +201,8 @@ export default {
       this.isCurrentShow = val;
       if (val) {
         // this.treeList = this.treeData;
+      } else {
+        this.filterText = "";
       }
       this.formatData();
     }
