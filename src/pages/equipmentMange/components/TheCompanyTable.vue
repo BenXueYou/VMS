@@ -2,20 +2,20 @@
   <div class="wrap thecompanygroup">
     <div class="btn-group">
       <el-button :class="{'default':index!=0}"
-                 :disabled="!OwnAuthDisabled"
+                 :disabled="!ShowAuthDisabled"
                  @click="switchType(0)"
                  type="primary">门禁</el-button>
       <el-button :class="{'default':index!=1}"
-                 :disabled="!OwnAuthDisabled"
+                 :disabled="!ShowAuthDisabled"
                  @click="switchType(1)"
                  type="primary">视频</el-button>
       <el-button :class="{'default':index!=2}"
-                 :disabled="!OwnAuthDisabled"
+                 :disabled="!ShowAuthDisabled"
                  @click="switchType(2)"
                  type="primary">报警</el-button>
       <el-button :class="{'default':index!=3}"
                  @click="switchType(3)"
-                 :disabled="!OwnAuthDisabled"
+                 :disabled="!ShowAuthDisabled"
                  type="primary">访客机</el-button>
     </div>
     <div class="tablecontent"

@@ -29,7 +29,7 @@
                     readonly></el-input>
           <el-button class='addIcon'
                      type="primary"
-                     disabled="!OwnAuthDisabled"
+                     :disabled="!OwnAuthDisabled"
                      id="fileSelect"
                      size='small'>
             <img :src="icons.selectfile"
@@ -38,7 +38,7 @@
           </el-button>
           <el-button class='update'
                      size='small'
-                     disabled="!OwnAuthDisabled"
+                     :disabled="!OwnAuthDisabled"
                      @click="upgrade"
                      type="primary">
             升级

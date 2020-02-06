@@ -73,7 +73,6 @@
           <el-dropdown @command="changeView"
                        trigger="click">
             <gt-button class="button"
-                       :disabled="!OwnAuthDisabled"
                        :showClose="false">
               {{videoMode}}
               <i class="el-icon-caret-bottom"></i>
@@ -85,7 +84,6 @@
           </el-dropdown>
 
           <gt-button class="button"
-                     :disabled="!OwnAuthDisabled"
                      :icon="icons.fullScreen"
                      @click="PreviewAreafullScreen"
                      :showClose="false"
@@ -1010,6 +1008,10 @@ export default {
       this.$refs["video" + index][0].stopRecord();
     },
     switchLuxiang(channelUuid, channelName) {
+      // 判断有没有操作权限，没有则不进行跳转
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.$store.dispatch("addTagViewItem", {
         icon: "VideoPlayback",
         name: "VideoPlayback",

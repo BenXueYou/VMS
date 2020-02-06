@@ -399,7 +399,7 @@ export default {
       }
     },
     jumpVideo(id, name) {
-      if (this.ShowAuthDisabled) {
+      if (!this.ShowAuthDisabled) {
         return;
       }
       let d = new Date();
@@ -1020,6 +1020,10 @@ export default {
       this.setTimeVisible = true;
     },
     swithlive(channelUuid) {
+      // 判断有没有操作权限，没有则不进行跳转
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.$store.dispatch("addTagViewItem", {
         icon: "VideoPreview",
         name: "VideoPreview",

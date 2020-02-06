@@ -173,7 +173,7 @@
 
     </el-form>
     <el-button type="primary"
-               disabled="!OwnAuthDisabled"
+               :disabled="!OwnAuthDisabled"
                class="saveBtn button22"
                @click='save'>
       保存
