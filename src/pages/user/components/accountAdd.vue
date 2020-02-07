@@ -11,7 +11,11 @@
 						class="firstBtnClass"
 						v-loading="isload"
 					>保存并继续添加</el-button>
-					<el-button v-if="queryBody.accountType!=='project_admin'" @click="editBtnAct('save')" v-loading="isload">确认</el-button>
+					<el-button
+						v-if="queryBody.accountType!=='project_admin'"
+						@click="editBtnAct('save')"
+						v-loading="isload"
+					>确认</el-button>
 					<el-button @click="close">取消</el-button>
 				</div>
 			</el-header>
@@ -105,7 +109,7 @@
 							:show-close="false"
 						>{{item.roleName}}</gt-button>-->
 						<gt-button
-              style="margin-right: 5px;"
+							style="margin-right: 5px;"
 							v-for="(item,index) in rowData.roles || []"
 							class="bilibili"
 							@close="deleteChannelAuth(index)"
@@ -121,7 +125,11 @@
 					class="firstBtnClass"
 					v-loading="isload"
 				>保存并继续添加</el-button>
-				<el-button v-if="queryBody.accountType!=='project_admin'" @click="editBtnAct('save')" v-loading="isload">确认</el-button>
+				<el-button
+					v-if="queryBody.accountType!=='project_admin'"
+					@click="editBtnAct('save')"
+					v-loading="isload"
+				>确认</el-button>
 				<el-button @click="close">取消</el-button>
 			</div>
 		</div>
@@ -235,10 +243,18 @@ export default {
     editBtnAct(status) {
       console.log("queryBody==", this.queryBody);
       console.log("staffName==", this.queryBody.staffName);
-      if (this.queryBody.accountName === null || this.queryBody.accountName === "null") {
-        this.$message.warning("账号长度在 4 到 16 个字符"); return;
-      } else if (this.queryBody.accountName.length < 4 || this.queryBody.accountName.length > 16) {
-        this.$message.warning("账号长度在 4 到 16 个字符"); return;
+      if (
+        this.queryBody.accountName === null ||
+				this.queryBody.accountName === "null"
+      ) {
+        this.$message.warning("账号长度在 4 到 16 个字符");
+        return;
+      } else if (
+        this.queryBody.accountName.length < 4 ||
+				this.queryBody.accountName.length > 16
+      ) {
+        this.$message.warning("账号长度在 4 到 16 个字符");
+        return;
       }
       if (this.queryBody.roles) {
         let roleUuids = [];
@@ -246,6 +262,26 @@ export default {
           roleUuids.push(i.roleUuid);
         });
         this.queryBody.roleUuids = roleUuids;
+      }
+      /* eslint-disable */
+			var eRegName2 = /^[^\[\]\?\|\\\/\:\;\+\*\<\>]*$/;
+			/* eslint-enable */
+      if (!eRegName2.test(this.queryBody.accountName)) {
+        this.$message({
+          type: "warning",
+          message: "用户名不能包含特殊字符 /[]:;丨+*?<>"
+        });
+        return;
+      }
+      /* eslint-disable */
+			var eRegName3 = /^[^\s]*$/;
+			/* eslint-enable */
+      if (!eRegName3.test(this.queryBody.accountName)) {
+        this.$message({
+          type: "warning",
+          message: "用户名不能包含空格"
+        });
+        return;
       }
       if (this.rowData.accountUuid) {
         // 修改
