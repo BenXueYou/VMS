@@ -44,32 +44,39 @@
 						<el-input type="password" v-model="queryBody.confirmPassword" :disabled="isEditPassWord"></el-input>
 					</div>
 					<p style="margin:17px 0">
-						<el-radio-group v-model="queryBody.enable">
+						<el-radio-group :disabled="isSuperAdminAccount" v-model="queryBody.enable">
 							<el-radio :label="1">启用</el-radio>
 							<el-radio :label="0">禁用</el-radio>
 						</el-radio-group>
 					</p>
 					<p style="text-align: left;margin:28px 0 0 0">
 						<el-switch
+							:disabled="isSuperAdminAccount"
 							v-model="isAssociateSwitch"
 							active-color="rgba(32, 204, 150, 0.2)"
 							inactive-color="rgba(255,255,255,0.2)"
 						></el-switch>
 					</p>
 					<div>
-						<el-input :disabled="isAssociateSwitch" v-model="queryBody.staffName"></el-input>
+						<el-input :disabled="isSuperAdminAccount || isAssociateSwitch" v-model="queryBody.staffName"></el-input>
 						<span class="cursorClass" v-if="isAssociateSwitch" @click="addSystemStaff">
 							<img class="img" src="@/assets/images/resident/modify_icon.png" alt srcset />请选择
 						</span>
 					</div>
 					<div>
-						<el-input :disabled="isAssociateSwitch" v-model="queryBody.phoneNumber"></el-input>
+						<el-input
+							:disabled="isSuperAdminAccount || isAssociateSwitch"
+							v-model="queryBody.phoneNumber"
+						></el-input>
 					</div>
 					<div>
-						<el-input :disabled="isAssociateSwitch" v-model="queryBody.emailNumber"></el-input>
+						<el-input
+							:disabled="isSuperAdminAccount || isAssociateSwitch"
+							v-model="queryBody.emailNumber"
+						></el-input>
 					</div>
 					<p style="margin:17px 0">
-						<el-radio-group v-model="isLongTIme">
+						<el-radio-group :disabled="isSuperAdminAccount" v-model="isLongTIme">
 							<el-radio :label="1">长期</el-radio>
 							<el-radio :label="0">短期</el-radio>
 						</el-radio-group>
@@ -81,11 +88,18 @@
 							class="time-interal-date"
 							placeholder="选择日期"
 							size="small"
+							:disabled='isSuperAdminAccount'
 							value-format="yyyy-MM-dd HH:mm:ss"
 						></el-date-picker>
 					</div>
 					<p>
-						<el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="queryBody.description"></el-input>
+						<el-input
+							:disabled="isSuperAdminAccount"
+							type="textarea"
+							:rows="2"
+							placeholder="请输入内容"
+							v-model="queryBody.description"
+						></el-input>
 					</p>
 				</div>
 			</div>
@@ -126,7 +140,7 @@
 					v-loading="isload"
 				>保存并继续添加</el-button>
 				<el-button
-					v-if="queryBody.accountType!=='project_admin'"
+					v-if="queryBody.accountType!=='projectadmin'"
 					@click="editBtnAct('save')"
 					v-loading="isload"
 				>确认</el-button>
@@ -163,6 +177,7 @@ export default {
   },
   data() {
     return {
+      isSuperAdminAccount: false,
       isEditPassWord: true,
       title: "添加账号",
       icons,
@@ -399,6 +414,7 @@ export default {
     addRoleBtn() {
       // 分配角色 向父组件传值
       //   this.showTreeAdd = !this.showTreeAdd;
+      if (this.isSuperAdminAccount) return;
       console.log(this.rowData);
       this.$emit("addRole", this.rowData);
     },
@@ -412,10 +428,9 @@ export default {
   watch: {
     rowData: {
       handler(newVal, old) {
+        // 判断编辑还是新增
         if (this.rowData.accountUuid) {
-          // this.initData();
           this.title = "编辑账号";
-          // this.initData();
           console.log("rowData==", this.rowData);
           this.isEditPassWord = true;
           if (this.rowData.isAssociateStaff === 1) {
@@ -424,12 +439,16 @@ export default {
             this.isAssociateSwitch = false;
           }
         } else {
-          // this.initData();
           this.title = "添加账号";
           this.isEditPassWord = false;
         }
-        console.log("newVal===", newVal);
-        console.log("old===", old);
+        // 判断是否超级管理员账号
+        this.isSuperAdminAccount = false;
+        if (newVal.accountType === "project_admin") {
+          this.isEditPassWord = false;
+          this.isSuperAdminAccount = true;
+        }
+        console.log("newVal===", newVal, "old===", old);
         if (!newVal.roles) {
           this.initData();
         }
