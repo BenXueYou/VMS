@@ -1021,7 +1021,10 @@ export default {
     },
     swithlive(channelUuid) {
       // 判断有没有操作权限，没有则不进行跳转
-      if (!this.OwnAuthDisabled) {
+      if (
+        !this.$common.getAuthIsOwn("视频预览", "isShow") ||
+        !this.$common.getAuthIsOwn("视频预览", "isOwn")
+      ) {
         return;
       }
       this.$store.dispatch("addTagViewItem", {

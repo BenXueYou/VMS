@@ -96,7 +96,7 @@
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                      style="margin-right: 20%;">
               </span>
-              <el-dropdown-menu slot="dropdown">
+              <el-dropdown-menu :slot="!OwnAuthDisabled?'':'dropdown'">
                 <el-dropdown-item command="video">打开视频</el-dropdown-item>
                 <el-dropdown-item command="playback">查看录像</el-dropdown-item>
               </el-dropdown-menu>
@@ -128,7 +128,7 @@
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                      style="margin-right: 20%;">
               </span>
-              <el-dropdown-menu slot="dropdown">
+              <el-dropdown-menu :slot="!OwnAuthDisabled?'':'dropdown'">
                 <el-dropdown-item command="view">打开视图</el-dropdown-item>
                 <el-dropdown-item command="renameView">重命名</el-dropdown-item>
                 <el-dropdown-item command="deleteView">删除</el-dropdown-item>

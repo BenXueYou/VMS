@@ -1009,7 +1009,11 @@ export default {
     },
     switchLuxiang(channelUuid, channelName) {
       // 判断有没有操作权限，没有则不进行跳转
-      if (!this.OwnAuthDisabled) {
+      // 这里的操作权限是看视频回放的，而不是视频预览的
+      if (
+        !this.$common.getAuthIsOwn("视频回放", "isShow") ||
+        !this.$common.getAuthIsOwn("视频回放", "isOwn")
+      ) {
         return;
       }
       this.$store.dispatch("addTagViewItem", {
