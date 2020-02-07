@@ -472,6 +472,7 @@ export default {
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
+      api2.log3(data.viewName);
     },
     addView(name) {
       // 保存视图
@@ -1021,7 +1022,10 @@ export default {
     },
     swithlive(channelUuid) {
       // 判断有没有操作权限，没有则不进行跳转
-      if (!this.OwnAuthDisabled) {
+      if (
+        !this.$common.getAuthIsOwn("视频预览", "isShow") ||
+        !this.$common.getAuthIsOwn("视频预览", "isOwn")
+      ) {
         return;
       }
       this.$store.dispatch("addTagViewItem", {

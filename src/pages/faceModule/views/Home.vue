@@ -585,7 +585,7 @@ export default {
         }
       }
       console.log(num);
-      api2.log2(num);
+      api2.log1(num);
     },
     // 点击选中任务树的任务节点
     checkChanges(data, node) {
@@ -619,7 +619,7 @@ export default {
         this.checkedChannelsUuidList = [];
         this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
         // 添加日志
-        api2.log1([
+        api2.log2([
           {
             channelUuid: this.checkedChannel.channelUuid,
             channelName: this.checkedChannel.channelName

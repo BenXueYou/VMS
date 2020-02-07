@@ -91,7 +91,7 @@
         <el-col :span="12"></el-col>
         <el-col :span="12">
           <el-button @click="addToWhitelisttAct"
-                     :OwnAuthDisabled="OwnAuthDisabled"
+                     :disabled="!OwnAuthDisabled"
                      type="primary">解除拉黑</el-button>
           <el-button @click="close"
                      type="primary">关闭</el-button>
@@ -206,6 +206,9 @@ export default {
     },
     // 添加到黑名单
     addToWhitelisttAct() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.$confirm(
         `<span style="font-family: PingFangSC-Regular;font-size: 14px;color: #FFFFFF;">是否确认移出 ？</span>`,
         "",

@@ -74,9 +74,12 @@
 
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <div class="deleteText"
-                   style="cursor:pointer"
-                   @click="deleteDev(scope.row)">移出</div>
+              <el-button class="deleteText"
+                         type="text"
+                         style="cursor:pointer"
+                         :disabled="!OwnAuthDisabled"
+                         @click="deleteDev(scope.row)">移出
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
