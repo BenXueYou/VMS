@@ -69,5 +69,5 @@ export default {
   }${ip}/faceconfig-v1/project/${projectUuid}/faceInfo/capture/log`,
   log3Url: `${
     window.config.protocolHeader
-  }${ip}/faceconfig-v1/project/${projectUuid}/video/view/log`
+  }${ip}/video-v1/project/${projectUuid}/video/view/log`
 };
