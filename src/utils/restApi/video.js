@@ -66,5 +66,8 @@ export default {
   }${ip}/faceconfig-v1/project/${projectUuid}/monitoringTask/log/info`,
   log2Url: `${
     window.config.protocolHeader
-  }${ip}/faceconfig-v1/project/${projectUuid}/faceInfo/capture/log`
+  }${ip}/faceconfig-v1/project/${projectUuid}/faceInfo/capture/log`,
+  log3Url: `${
+    window.config.protocolHeader
+  }${ip}/faceconfig-v1/project/${projectUuid}/video/view/log`
 };

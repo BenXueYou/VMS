@@ -338,7 +338,7 @@ export default {
     },
     openView(data) {
       // 打开视图
-
+      console.log(data);
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
       let newdata = JSON.parse(JSON.stringify(data));
@@ -353,6 +353,7 @@ export default {
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
+      api2.log3(data.viewName);
     },
     updateView(viewData) {
       // console.log(viewData);

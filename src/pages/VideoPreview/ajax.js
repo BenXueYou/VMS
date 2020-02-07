@@ -44,6 +44,13 @@ export function log2(data) {
     data
   });
 }
+export function log3(viewName) {
+  let url = vUrl.log3Url + `?viewName=${viewName}`;
+  return axios({
+    method: "POST",
+    url
+  });
+}
 export function ctrl(deviceUuid, data) {
   let url = vUrl.ctrlUrl + "?channelUuid=" + deviceUuid;
   return axios({
