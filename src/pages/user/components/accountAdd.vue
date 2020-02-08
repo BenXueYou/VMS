@@ -38,10 +38,10 @@
 						<el-input v-model="queryBody.accountName"></el-input>
 					</div>
 					<div>
-						<el-input type="password" v-model="queryBody.password" :disabled="isEditPassWord"></el-input>
+						<el-input clearable type="password" v-model="queryBody.password" :disabled="isEditPassWord"></el-input>
 					</div>
 					<div>
-						<el-input type="password" v-model="queryBody.confirmPassword" :disabled="isEditPassWord"></el-input>
+						<el-input clearable type="password" v-model="queryBody.confirmPassword" :disabled="isEditPassWord"></el-input>
 					</div>
 					<p style="margin:17px 0">
 						<el-radio-group :disabled="isSuperAdminAccount" v-model="queryBody.enable">
