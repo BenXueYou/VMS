@@ -28,7 +28,7 @@
 						@selection-change="handleSelectionChange"
 					>
 						<el-table-column type="selection" width="55"></el-table-column>
-						<el-table-column label="角色名称" prop="roleName" width="120"></el-table-column>
+						<el-table-column label="角色名称" show-overflow-tooltip prop="roleName" width="120"></el-table-column>
 						<el-table-column prop="roleStatus" label="状态" width="120"></el-table-column>
 						<el-table-column prop="invalidTime" label="过期时间" show-overflow-tooltip>
 							<template slot-scope="scope">

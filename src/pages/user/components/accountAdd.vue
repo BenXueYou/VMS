@@ -35,7 +35,7 @@
 				</div>
 				<div class="bodyBoxDiv">
 					<div>
-						<el-input v-model="queryBody.accountName"></el-input>
+						<el-input :disabled="isSuperAdminAccount" v-model="queryBody.accountName"></el-input>
 					</div>
 					<div>
 						<el-input clearable type="password" v-model="queryBody.password" :disabled="isEditPassWord"></el-input>
@@ -512,6 +512,12 @@ export default {
 	background: rgba(40, 255, 187, 0.1);
 	border: 1px solid rgba(40, 255, 187, 0.45);
 	border-radius: 2px;
+}
+.el-textarea.is-disabled .el-textarea__inner {
+    background-color: #1b1b1b;
+    border-color: #E4E7ED;
+    color: #C0C4CC;
+    cursor: not-allowed;
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
