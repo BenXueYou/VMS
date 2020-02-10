@@ -338,7 +338,7 @@ export default {
             //   this.rowData.isLongTIme = 0;
             // }
             this.defaultRoleData = this.rowData.roles;
-            this.rowData.password = "********";
+            // this.rowData.password = "********";
             console.log("rowData===", this.rowData);
           } else {
             this.$message.warning(res.data.msg);
