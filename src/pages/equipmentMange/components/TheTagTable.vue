@@ -15,13 +15,13 @@
           <div class="rightgroup">
             <span class='title'>通道名称：</span>
             <el-input class='input'
-                      :disabled="!OwnAuthDisabled"
+                      :disabled="!ShowAuthDisabled"
                       v-model='devName'>
             </el-input>
 
             <span class='title'>类型：</span>
             <el-select v-model="devMode"
-                       :disabled="!OwnAuthDisabled"
+                       :disabled="!ShowAuthDisabled"
                        @change="modeChange">
               <el-option v-for="item in options"
                          :key="item.key"

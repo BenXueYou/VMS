@@ -7,11 +7,35 @@
       </div>
       <div class="dash-line"></div>
       <ul class="operator">
-        <li @click='reboot'>重启</li>
-        <li @click='backup'>备份数据</li>
-        <li @click='importData'>导入数据</li>
-        <li @click="saveReset">保留人员数据并恢复默认设置</li>
-        <li @click="deleteReset">删除全部数据并恢复出厂设置</li>
+        <li>
+          <el-button type='text'
+                     @click='reboot'
+                     style="color:#fff;">重启</el-button>
+        </li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='backup'
+                     style="color:#fff;">备份数据</el-button>
+        </li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='importData'
+                     style="color:#fff;">导入数据</el-button>
+        </li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='saveReset'
+                     style="color:#fff;">保留人员数据并恢复默认设置</el-button>
+        </li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='deleteReset'
+                     style="color:#fff;">删除全部数据并恢复出厂设置</el-button>
+        </li>
       </ul>
       <div class="title ">
         远程升级
@@ -404,11 +428,11 @@ export default {
       background-color: rgba(255, 2555, 255, 0.05);
       margin-bottom: 15px;
       cursor: pointer;
-      &:hover {
-        font-family: PingFangSC-Regular;
-        background: rgba(40, 255, 187, 0.05);
-        color: #26d39d;
-      }
+      // &:hover {
+      //   font-family: PingFangSC-Regular;
+      //   background: rgba(40, 255, 187, 0.05);
+      //   color: #26d39d;
+      // }
     }
   }
   .dash-line {

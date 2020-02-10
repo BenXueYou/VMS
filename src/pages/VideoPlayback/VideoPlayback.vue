@@ -449,6 +449,9 @@ export default {
       });
     },
     openView(data) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
       let newdata = JSON.parse(JSON.stringify(data));

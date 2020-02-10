@@ -337,6 +337,9 @@ export default {
       }
     },
     openView(data) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // 打开视图
       console.log(data);
       // 打开视图之后，默认选中第一分路的视频

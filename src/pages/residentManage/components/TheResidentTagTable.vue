@@ -13,8 +13,16 @@
         <span :class="OwnAuthDisabled?'cursorClass':'disabled'"
               @click="updateTagName">
           <img class="img"
+               v-if="OwnAuthDisabled"
                src="../../../assets/images/resident/modify_icon.png"
-               alt /> 修改标签
+               alt />
+          <img class="img"
+               style="width:15px;height:15px;"
+               v-else
+               src="../../../assets/images/resident/unabled_modify.png"
+               alt />
+          修改标签
+
         </span>
         <span style="color:rgba(255,255,255,0.1)">|</span>
         <span :class="ShowAuthDisabled?'cursorClass':'disabled'"
@@ -235,6 +243,7 @@ export default {
           "居民管理",
           "isShow"
         );
+        this.$bus.$emit("ModifyTagName", this.changeDialogVisible);
       }
     },
     addElementToTagAct() {
@@ -435,12 +444,12 @@ export default {
       this.tagName = val.tagName;
       this.currentPage = 1;
       this.getTagTreeDetail();
-    },
-    changeDialogVisible(val) {
-      if (val) {
-        this.$bus.$emit("ModifyTagName", val);
-      }
     }
+    // changeDialogVisible(val) {
+    //   if (val) {
+    //     this.$bus.$emit("ModifyTagName", val);
+    //   }
+    // }
   }
 };
 </script>

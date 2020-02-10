@@ -177,6 +177,7 @@
       </el-form-item>
 
       <el-button type="primary"
+                 :disabled="!OwnAuthDisabled"
                  size="small"
                  style="margin-left:180px;"
                  @click='save'>
@@ -196,6 +197,18 @@ import AppendReson from "@/common/AppendReson.vue";
 export default {
   name: "vistor",
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     deviceUuid: {
       type: String,
       default() {
