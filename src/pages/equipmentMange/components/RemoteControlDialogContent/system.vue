@@ -9,6 +9,7 @@
       <ul class="operator">
         <li>
           <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
                      @click='reboot'
                      style="color:#fff;">重启</el-button>
         </li>
