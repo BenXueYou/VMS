@@ -44,8 +44,8 @@ export function log2(data) {
     data
   });
 }
-export function log3(viewName) {
-  let url = vUrl.log3Url + `?viewName=${viewName}`;
+export function log3(viewName, logEvent) {
+  let url = vUrl.log3Url + `?viewName=${viewName}&logEvent=${logEvent}`;
   return axios({
     method: "POST",
     url

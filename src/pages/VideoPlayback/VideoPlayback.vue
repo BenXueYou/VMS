@@ -475,7 +475,7 @@ export default {
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
-      api2.log3(data.viewName);
+      api2.log3(data.viewName, "视频回放");
     },
     addView(name) {
       // 保存视图

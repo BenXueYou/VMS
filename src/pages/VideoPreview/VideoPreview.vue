@@ -356,7 +356,7 @@ export default {
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
-      api2.log3(data.viewName);
+      api2.log3(data.viewName, "视频预览");
     },
     updateView(viewData) {
       // console.log(viewData);

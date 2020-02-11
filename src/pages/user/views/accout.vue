@@ -379,6 +379,9 @@ export default {
     // 重置密码
     resetPWD(data) {
       console.log(data);
+      console.log(this.accountNames);
+      console.log(this.$store.state.home.account);
+      console.log(this.accountNames.indexOf(this.$store.state.home.account));
       if (!this.accountNames) {
         this.$message.warning("请选择重置密码的账户");
         return;
@@ -391,6 +394,19 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.$message({ type: "success", message: res.data.msg });
+            if (
+              this.accountNames.indexOf(this.$store.state.home.account) !== -1
+            ) {
+              // this.$store.dispatch("setAuthorization", "");
+              this.$store.dispatch("setProjectUuid", "");
+              this.$store.dispatch("setTagViewArr", []);
+              this.$store.dispatch("setLocalTag", "Home");
+              sessionStorage.setItem("iccSignalRule", "");
+              sessionStorage.setItem("iccMediaRule", "");
+              this.$router.push({
+                name: "Login"
+              });
+            }
           }
         })
         .catch(() => {});
