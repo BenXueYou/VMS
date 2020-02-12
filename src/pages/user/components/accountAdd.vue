@@ -404,6 +404,8 @@ export default {
       console.log(arr);
       this.queryBody.staffUuid = arr[0].id;
       this.queryBody.staffName = arr[0].label;
+      this.queryBody.phoneNumber = arr[0].label;// 电话号码
+      this.queryBody.emailNumber = arr[0].label; // 邮箱号码
       this.systemStaffDialogVisible = !this.systemStaffDialogVisible;
     },
     // 选择系统人员
