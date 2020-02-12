@@ -87,15 +87,16 @@
                          min-width="100">
           <template slot-scope="scope">
             <div class="tableCertificateBtnClass">
-              <span :class="OwnAuthDisabled?'cursorClass':''"
-                    @click="editBtnAct(scope.row)"
-                    class="editFontClass">编辑</span>
-              <span :class="ShowAuthDisabled?'cursorClass':''"
-                    @click="detailBtnAct(scope.row)"
-                    class="editFontClass cursorClass">详情</span>
-              <span :class="OwnAuthDisabled?'cursorClass':''"
-                    @click="signWhitelistBtnAct(scope.row)"
-                    class="deleteBtnClass cursorClass">从黑名单中移出</span>
+              <el-button type='text'
+                         @click="editBtnAct(scope.row)"
+                         :disabled="!OwnAuthDisabled">编辑</el-button>
+              <el-button type='text'
+                         @click="detailBtnAct(scope.row)"
+                         :disabled="!ShowAuthDisabled">详情</el-button>
+              <el-button type='text'
+                         @click="signWhitelistBtnAct(scope.row)"
+                         :disabled="!OwnAuthDisabled"
+                         style="color:red;">从黑名单中移出</el-button>
             </div>
           </template>
         </el-table-column>
