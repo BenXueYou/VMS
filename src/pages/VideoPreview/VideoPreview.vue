@@ -69,6 +69,7 @@
           <gt-button class="button"
                      @click="saveShiTu"
                      :disabled="!OwnAuthDisabled"
+                     :style="{'backgroundColor':'gray'}"
                      :showClose="false">保存视图</gt-button>
           <el-dropdown @command="changeView"
                        trigger="click">

@@ -614,7 +614,7 @@ export default {
 }
 .videoTree3 {
   .span {
-    padding-left: 20px;
+    // padding-left: 20px;
   }
 }
 </style>

@@ -1658,11 +1658,11 @@ export default {
   .is-leaf {
     width: 15px !important;
   }
-  .el-tabs__content {
-    overflow: auto;
-  }
   .el-tree-node__content > .el-tree-node__expand-icon {
     padding: 0px !important;
+  }
+  .el-tabs__content {
+    overflow: auto;
   }
   .mypanel {
     // width: 380px;
@@ -1801,8 +1801,8 @@ export default {
       flex-shrink: 20px;
       flex-flow: 20px;
       img {
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
         user-select: none;
       }
       .span {
@@ -1822,7 +1822,7 @@ export default {
       // overflow: hidden;
       // display: block;
       // text-overflow: ellipsis;
-      margin-left: 5px;
+      margin-left: 2px;
       white-space: nowrap;
       user-select: none;
       // float: left;
