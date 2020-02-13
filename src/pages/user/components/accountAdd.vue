@@ -411,7 +411,7 @@ export default {
       this.queryBody.staffUuid = arr[0].id;
       this.queryBody.staffName = arr[0].label;
       // if(arr[0].contact[0].contactType) {
-        
+
       // }
       this.queryBody.phoneNumber = arr[0].cellphone;// 电话号码
       this.queryBody.emailNumber = arr[0].email; // 邮箱号码
