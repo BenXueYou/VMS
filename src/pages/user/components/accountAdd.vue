@@ -39,13 +39,13 @@
             <el-input clearable
                       type="password"
                       v-model="queryBody.password"
-                      :disabled="isEditPassWord||isSuperAdminAccount"></el-input>
+                      :disabled="!isEditPassWord||isSuperAdminAccount"></el-input>
           </div>
           <div>
             <el-input clearable
                       type="password"
                       v-model="queryBody.confirmPassword"
-                      :disabled="isEditPassWord||isSuperAdminAccount"></el-input>
+                      :disabled="!isEditPassWord||isSuperAdminAccount"></el-input>
           </div>
           <p style="margin:17px 0">
             <el-radio-group :disabled="isSuperAdminAccount"
@@ -179,6 +179,12 @@ export default {
       default() {
         return false;
       }
+    },
+    addDialogVisible: {
+      type: Boolean,
+      default() {
+        return false;
+      }
     }
   },
   data() {
@@ -215,17 +221,17 @@ export default {
       isAssociateSwitch: false,
       isLongTIme: 1,
       queryBody: {
-        accountName: null, // 用户账号
-        accountType: null, // 账号类型
-        password: null, // 用户密码
-        confirmPassword: null, // 用户确认密码
+        accountName: "", // 用户账号
+        accountType: "", // 账号类型
+        password: "", // 用户密码
+        confirmPassword: "", // 用户确认密码
         enable: 1, // 使能状态
         enableValue: 1, // 使能状态
-        staffUuid: null, // 人员UUID (可选)
-        staffName: null, // 用户名
-        phoneNumber: null, // 电话号码
-        emailNumber: null, // 邮箱号码
-        description: null, // 描述
+        staffUuid: "", // 人员UUID (可选)
+        staffName: "", // 用户名
+        phoneNumber: "", // 电话号码
+        emailNumber: "", // 邮箱号码
+        description: "", // 描述
         roleUuids: [], // 角色uuid数组
         isAssociateStaff: "",
         invalidTime: "" // 失效时间 (可选)
@@ -241,20 +247,20 @@ export default {
   },
   methods: {
     initData() {
-      this.invalidTimeVal = null; // 失效时间 (可选)
+      this.invalidTimeVal = ""; // 失效时间 (可选)
       this.isAssociateSwitch = false;
       this.isLongTIme = 1;
-      this.queryBody.accountName = null; // 用户账号
-      this.queryBody.accountType = null; // 账号类型
-      this.queryBody.password = null; // 用户密码
-      this.queryBody.confirmPassword = null; // 用户确认密码
+      this.queryBody.accountName = ""; // 用户账号
+      this.queryBody.accountType = ""; // 账号类型
+      this.queryBody.password = ""; // 用户密码
+      this.queryBody.confirmPassword = ""; // 用户确认密码
       this.queryBody.enable = 1; // 使能状态
       this.queryBody.enableValue = 1; // 使能状态
-      this.queryBody.staffUuid = null; // 人员UUID (可选)
-      this.queryBody.staffName = null; // 用户名
-      this.queryBody.phoneNumber = null; // 电话号码
-      this.queryBody.emailNumber = null; // 邮箱号码
-      this.queryBody.description = null; // 描述
+      this.queryBody.staffUuid = ""; // 人员UUID (可选)
+      this.queryBody.staffName = ""; // 用户名
+      this.queryBody.phoneNumber = ""; // 电话号码
+      this.queryBody.emailNumber = ""; // 邮箱号码
+      this.queryBody.description = ""; // 描述
       this.queryBody.roleUuids = []; // 角色uuid数组
       this.queryBody.roles = [];
       this.queryBody.isAssociateStaff = "";
@@ -439,13 +445,17 @@ export default {
   watch: {
     rowData: {
       handler(newVal, old) {
-        console.log(newVal);
-        if (newVal && newVal.roles && newVal.roles.length) {
-          return;
-        }
-        if (this.showTreeAddRole) {
-          return;
-        }
+        // if (
+        //   !this.rowData.accountUuid &&
+        //   newVal &&
+        //   newVal.roles &&
+        //   newVal.roles.length
+        // ) {
+        //   return;
+        // }
+        // if (this.showTreeAddRole) {
+        //   return;
+        // }
         // 判断编辑还是新增
         if (this.rowData.accountUuid) {
           this.title = "编辑账号";
@@ -458,18 +468,17 @@ export default {
           }
         } else {
           this.title = "添加账号";
-          this.isEditPassWord = false;
+          this.isEditPassWord = true;
         }
-        // 判断是否超级管理员账号
+        // // 判断是否超级管理员账号
         this.isSuperAdminAccount = false;
         if (newVal.accountType === "project_admin") {
           this.isEditPassWord = false;
           this.isSuperAdminAccount = true;
         }
-        console.log("newVal===", newVal, "old===", old);
-        if (!newVal.roles) {
-          this.initData();
-        }
+        // console.log("newVal===", newVal, "old===", old);
+        console.log(newVal);
+        console.log(this.queryBody);
         Object.assign(this.queryBody, newVal);
         console.log("--------------------", this.queryBody);
         if (this.rowData.accountUuid) {
@@ -484,6 +493,13 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    addDialogVisible(val) {
+      if (val) {
+        if (!this.rowData.accountUuid) {
+          this.initData();
+        }
+      }
     }
   },
   destroyed() {}

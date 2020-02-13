@@ -152,6 +152,7 @@
       </div>
     </div>
     <account-add v-show="addDialogVisible"
+                 :addDialogVisible="addDialogVisible"
                  :checkedRoles="defaultRoleData"
                  :showTreeAddRole="showTreeAdd"
                  @close="close"

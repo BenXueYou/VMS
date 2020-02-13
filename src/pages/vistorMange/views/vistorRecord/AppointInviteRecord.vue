@@ -22,7 +22,7 @@
                           class="time-interal-date"
                           placeholder="选择日期"
                           value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
-          <el-button :disabled="!$common.getAuthIsOwn('预约邀请记录','isShow')"
+          <el-button :disabled="!$common.getAuthIsOwn('预约/邀请记录','isShow')"
                      type="primary"
                      size="mini">数据统计</el-button>
         </div>
@@ -31,12 +31,12 @@
           <span class="title">访客姓名：</span>
           <el-input class="input staffNameInput"
                     v-model="staffName"></el-input>
-          <el-button :disabled="!$common.getAuthIsOwn('预约邀请记录','isShow')"
+          <el-button :disabled="!$common.getAuthIsOwn('预约/邀请记录','isShow')"
                      type="primary"
                      @click="queryBtnAct"
                      icon="el-icon-search"
                      size="small">检索</el-button>
-          <el-button :disabled="!$common.getAuthIsOwn('预约邀请记录','isShow')"
+          <el-button :disabled="!$common.getAuthIsOwn('预约/邀请记录','isShow')"
                      type="primary"
                      v-popover:popover1
                      size="small">其他条件检索</el-button>
@@ -100,7 +100,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <div class="tableCertificateBtnClass">
-              <span :class="$common.getAuthIsOwn('预约邀请记录', 'isShow')?'cursorClass':'disabled'"
+              <span :class="$common.getAuthIsOwn('预约/邀请记录', 'isShow')?'cursorClass':'disabled'"
                     @click="detailBtnAct(scope.row)"
                     class="editFontClass">详情</span>
             </div>
@@ -193,8 +193,8 @@ export default {
       console.log(that.pageSize);
     });
     // this.initData();
-    this.ShowAuthDisabled = this.$common.getAuthIsOwn("预约邀请记录", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("预约邀请记录", "isOwn");
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("预约/邀请记录", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("预约/邀请记录", "isOwn");
   },
   activated() {
     this.currentPage = 1;
