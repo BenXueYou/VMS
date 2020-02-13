@@ -47,6 +47,11 @@ service.interceptors.response.use(
         response.data.msg === "权限不足" ||
         response.data.errCode === 7000
       ) {
+        sessionStorage.setItem("projectUuid", "");
+        sessionStorage.setItem("tagViewArr", "");
+        sessionStorage.setItem("localTag", "");
+        sessionStorage.setItem("iccSignalRule", "");
+        sessionStorage.setItem("iccMediaRule", "");
         sessionStorage.setItem("Authorization", "");
         sessionStorage.setItem("projectUuid", "");
         Toast.error(response.data.msg);
