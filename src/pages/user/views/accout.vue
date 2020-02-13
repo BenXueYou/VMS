@@ -153,6 +153,7 @@
     </div>
     <account-add v-show="addDialogVisible"
                  :checkedRoles="defaultRoleData"
+                 :showTreeAddRole="showTreeAdd"
                  @close="close"
                  :rowData.sync="rowData"
                  @addRole="addRoleClick" />
@@ -363,6 +364,7 @@ export default {
     },
     // 获取分配角色弹窗内树列表数据
     getRoleList() {
+      this.showTreeAdd = !this.showTreeAdd;
       api
         .getRoleList({
           limt: 10000000, // 不分页
@@ -370,7 +372,6 @@ export default {
         })
         .then(res => {
           if (res.data.success) {
-            this.showTreeAdd = !this.showTreeAdd;
             let data = res.data.data || {};
             this.roleDataList = data.list || [];
           }

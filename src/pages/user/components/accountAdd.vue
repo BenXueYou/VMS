@@ -173,6 +173,12 @@ export default {
       default() {
         return {};
       }
+    },
+    showTreeAddRole: {
+      type: Boolean,
+      default() {
+        return false;
+      }
     }
   },
   data() {
@@ -433,6 +439,13 @@ export default {
   watch: {
     rowData: {
       handler(newVal, old) {
+        console.log(newVal);
+        if (newVal && newVal.roles && newVal.roles.length) {
+          return;
+        }
+        if (this.showTreeAddRole) {
+          return;
+        }
         // 判断编辑还是新增
         if (this.rowData.accountUuid) {
           this.title = "编辑账号";
