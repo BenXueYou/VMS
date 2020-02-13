@@ -428,6 +428,7 @@ export default {
                 if (res.data.data && res.data.data.length) {
                   for (let i = 0; i < res.data.data.length; i++) {
                     if (
+                      res.data.data[i].nextCount === undefined ||
                       res.data.data[i].source === "staff" ||
                       res.data.data[i].nextCount === "0" ||
                       res.data.data[i].nextCount === 0 ||
@@ -617,7 +618,7 @@ export default {
   height: 100%;
   overflow: auto;
 }
-.treeTabs .el-input__inner{
+.treeTabs .el-input__inner {
   padding-left: 30px;
 }
 </style>
