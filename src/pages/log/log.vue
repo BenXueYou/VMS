@@ -21,9 +21,12 @@
             <img class="left_menu_right_icon"
                  src="../../assets/images/select-down.png" />
           </template>
-          <el-menu-item index="/log/setLog">配置日志</el-menu-item>
-          <el-menu-item index="/log/operatorLog">操作日志</el-menu-item>
-          <el-menu-item index="/log/loginLog">登陆日志</el-menu-item>
+          <el-menu-item index="/log/setLog"
+                        :disabled="!$common.getAuthIsOwn('配置日志', 'isShow')">配置日志</el-menu-item>
+          <el-menu-item index="/log/operatorLog"
+                        :disabled="!$common.getAuthIsOwn('操作日志', 'isShow')">操作日志</el-menu-item>
+          <el-menu-item index="/log/loginLog"
+                        :disabled="!$common.getAuthIsOwn('登陆日志', 'isShow')">登陆日志</el-menu-item>
         </el-submenu>
       </el-menu>
     </div>
