@@ -109,10 +109,9 @@ export default {
       this.menuTitle = key;
     },
     handleSelect(index, indexpath) {
-      return;
-      console.log(index, indexpath);
+      // console.log(index, indexpath);
       this.menuTitle = indexpath[0];
-      console.log(this.menuTitle);
+      // console.log(this.menuTitle);
       this.subRoute = index.split("/")[index.split("/").length - 1];
     }
   }

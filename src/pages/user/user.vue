@@ -12,12 +12,14 @@
                active-text-color="#26D39D">
         <el-menu-item index="/user/accout">
           <div class='iamtired'>
-            <img src="../../assets/images/auth/accout.png" />账号管理
+            <img src="../../assets/images/auth/accout.png"
+                 :disabled="!$common.getAuthIsOwn('账号管理', 'isShow')" />账号管理
           </div>
         </el-menu-item>
         <el-menu-item index="/user/role">
           <div class='iamtired'>
-            <img src="../../assets/images/auth/role.png" />角色管理
+            <img src="../../assets/images/auth/role.png"
+                 :disabled="!$common.getAuthIsOwn('角色管理', 'isShow')" />角色管理
           </div>
         </el-menu-item>
       </el-menu>
