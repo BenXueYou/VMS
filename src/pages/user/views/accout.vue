@@ -59,17 +59,21 @@
 					</template>-->
         </el-table-column>
         <el-table-column prop="accountName"
+                         show-overflow-tooltip
                          label="账户"></el-table-column>
         <el-table-column prop="staffName"
+                         show-overflow-tooltip
                          label="姓名"></el-table-column>
         <el-table-column prop="phoneNumber"
+                         show-overflow-tooltip
                          label="手机号码"></el-table-column>
-        <el-table-column prop="roles"
+        <el-table-column prop="rolesName"
+                         show-overflow-tooltip
                          label="角色">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <span v-if="scope.row.accountType==='project_admin'">超级管理员</span>
             <span v-if="scope.row.accountType!=='project_admin'">{{scope.row.roles}}</span>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column prop="accountCreateTime"
                          label="创建时间"
@@ -96,7 +100,6 @@
                          size="small">编辑</el-button>
               <el-button :disabled="!OwnAuthDisabled"
                          @click="editRoleClick(scope.row)"
-                         v-loading="showTreeAdd"
                          type="text"
                          size="small">分配角色</el-button>
               <el-button :disabled="!OwnAuthDisabled"
@@ -288,7 +291,18 @@ export default {
         .getAccountListApi(data)
         .then(res => {
           if (res.data.success) {
-            this.tableData = res.data.data.list;
+            let list = res.data.data.list;
+            //    <template slot-scope="scope">
+            //   <span v-if="scope.row.accountType==='project_admin'">超级管理员</span>
+            //   <span v-if="scope.row.accountType!=='project_admin'">{{scope.row.roles}}</span>
+            // </template>
+            for (let i = 0, len = list.length; i < len; i++) {
+              list[i].rolesName =
+                list[i].accountType === "project_admin"
+                  ? "超级管理员"
+                  : list[i].roles;
+            }
+            this.tableData = list;
             this.total = res.data.data.total;
           }
         })

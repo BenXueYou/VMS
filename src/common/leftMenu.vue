@@ -12,6 +12,7 @@
                  @select="handleSelect">
           <div class="magg">
             <el-menu-item index="/FaceManage/FaceHome"
+                          :disabled="!$common.getAuthIsOwn('人脸预览', 'isShow')"
                           :class="{isActive:($route.path == '/FaceHome')}">
               <el-row class="images hover_carflow">
                 <img :src="$route.path == '/FaceHome'?require('@/assets/images/faceModule/face_preview_select.png'):require('@/assets/images/faceModule/face_preview_icon.png')" />
@@ -28,12 +29,18 @@
                        :class="{activeClass:this.hoverClass}">检索</div>
                 </div>
               </template>
-              <el-menu-item index="/FaceManage/FaceRecord">抓拍查询</el-menu-item>
-              <el-menu-item index="/FaceManage/CompareRecord">对比查询</el-menu-item>
-              <el-menu-item index="/FaceManage/searchFaceWithFace">以脸搜脸</el-menu-item>
-              <el-menu-item index="/FaceManage/faceAlarm">报警查询</el-menu-item>
-              <el-menu-item index="/FaceManage/judgeAnalysis">研判查询</el-menu-item>
-              <el-menu-item index="/FaceManage/OVO">1V1对比</el-menu-item>
+              <el-menu-item index="/FaceManage/FaceRecord"
+                            :disabled="!$common.getAuthIsOwn('抓拍查询', 'isShow')">抓拍查询</el-menu-item>
+              <el-menu-item index="/FaceManage/CompareRecord"
+                            :disabled="!$common.getAuthIsOwn('对比查询', 'isShow')">对比查询</el-menu-item>
+              <el-menu-item index="/FaceManage/searchFaceWithFace"
+                            :disabled="!$common.getAuthIsOwn('以脸搜脸', 'isShow')">以脸搜脸</el-menu-item>
+              <el-menu-item index="/FaceManage/faceAlarm"
+                            :disabled="!$common.getAuthIsOwn('报警查询', 'isShow')">报警查询</el-menu-item>
+              <el-menu-item index="/FaceManage/judgeAnalysis"
+                            :disabled="!$common.getAuthIsOwn('研判查询', 'isShow')">研判查询</el-menu-item>
+              <el-menu-item index="/FaceManage/OVO"
+                            :disabled="!$common.getAuthIsOwn('1V1对比', 'isShow')">1V1对比</el-menu-item>
             </el-submenu>
             <el-submenu index="/FaceManage/ManBodyAnalysis"
                         :class="{isActive:($route.path == '/ManBodyAnalysis')}">
@@ -42,17 +49,22 @@
                   <img :src="$route.path == '/ManBodyAnalysis'?require('@/assets/images/faceModule/real_sight_select.png'):require('@/assets/images/faceModule/real_sight_icon.png')" />
                 </div>实景战法
               </template>
-              <el-menu-item index="/FaceManage/PersonTrace">人员轨迹</el-menu-item>
-              <el-menu-item index="/FaceManage/FaceAnalysisTable">频次分析</el-menu-item>
-              <el-menu-item index="/FaceManage/Companion">同行人分析</el-menu-item>
+              <el-menu-item index="/FaceManage/PersonTrace"
+                            :disabled="!$common.getAuthIsOwn('人员轨迹', 'isShow')">人员轨迹</el-menu-item>
+              <el-menu-item index="/FaceManage/FaceAnalysisTable"
+                            :disabled="!$common.getAuthIsOwn('频次分析', 'isShow')">频次分析</el-menu-item>
+              <el-menu-item index="/FaceManage/Companion"
+                            :disabled="!$common.getAuthIsOwn('同行人分析', 'isShow')">同行人分析</el-menu-item>
             </el-submenu>
             <el-menu-item index="/FaceManage/FaceControl"
+                          :disabled="!$common.getAuthIsOwn('人脸布控', 'isShow')"
                           :class="{isActive:($route.path == '/FaceManage/FaceControl')}">
               <div class="images">
                 <img :src="$route.path == '/FaceControl'?require('@/assets/images/faceModule/face_task_select.png'):require('@/assets/images/faceModule/face_task_icon.png')" />
               </div>人脸布控
             </el-menu-item>
             <el-menu-item index="/FaceManage/IntelModel"
+                          :disabled="!$common.getAuthIsOwn('智能模型', 'isShow')"
                           :class="{isActive:($route.path == '/FaceManage/IntelModel')}"
                           class>
               <div class="images">
@@ -60,6 +72,7 @@
               </div>智能模型
             </el-menu-item>
             <el-menu-item index="/FaceManage/faceDB"
+                          :disabled="!$common.getAuthIsOwn('人脸库', 'isShow')"
                           :class="{isActive:($route.path == '/faceDB')}"
                           class>
               <div class="images">
@@ -73,9 +86,12 @@
                   <img :src="recordAnalysisImgSrc?require('@/assets/images/faceModule/static_analysis_select.png'):require('@/assets/images/faceModule/static_analysis_icon.png')" />
                 </div>统计
               </div>
-              <el-menu-item index="/FaceManage/PersonFlowAnalysis">抓拍统计</el-menu-item>
-              <el-menu-item index="/FaceManage/PersonCompareCount">比对统计</el-menu-item>
-              <el-menu-item index="/FaceManage/ModuleCount">模型统计</el-menu-item>
+              <el-menu-item index="/FaceManage/PersonFlowAnalysis"
+                            :disabled="!$common.getAuthIsOwn('抓拍统计', 'isShow')">抓拍统计</el-menu-item>
+              <el-menu-item index="/FaceManage/PersonCompareCount"
+                            :disabled="!$common.getAuthIsOwn('比对统计', 'isShow')">比对统计</el-menu-item>
+              <el-menu-item index="/FaceManage/ModuleCount"
+                            :disabled="!$common.getAuthIsOwn('模型统计', 'isShow')">模型统计</el-menu-item>
             </el-submenu>
             <el-submenu index="/FaceManage/Setting">
               <div class="menuItemTitle"
@@ -84,7 +100,8 @@
                   <img :src="recordAnalysisImgSrc?require('@/assets/images/faceModule/setting_select.png'):require('@/assets/images/faceModule/setting_icon.png')" />
                 </div>设置
               </div>
-              <el-menu-item index="/FaceManage/Settings">基础设置</el-menu-item>
+              <el-menu-item index="/FaceManage/Settings"
+                            :disabled="!$common.getAuthIsOwn('基础设置', 'isShow')">基础设置</el-menu-item>
             </el-submenu>
             <!-- <el-menu-item index="/FaceManage/Settings" :class="{isActive:($route.path == '/Settings')}" class>
 							<div class="images">

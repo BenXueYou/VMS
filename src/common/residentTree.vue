@@ -177,7 +177,9 @@ export default {
     },
     nodeClick(data, node, nodeTree) {
       // 新增选择节点的类型字段，只有当点击节点type跟传进来的type一样才会选中
-      if (this.selectSingleNode !== "" && this.selectSingleNode !== data.type) {
+      console.log(this.selectSingleNode);
+      console.log(data.type);
+      if (this.selectSingleNode && this.selectSingleNode !== data.type) {
         return;
       }
       var tree = this.activeName;
@@ -428,7 +430,8 @@ export default {
                 if (res.data.data && res.data.data.length) {
                   for (let i = 0; i < res.data.data.length; i++) {
                     if (
-                      res.data.data[i].nextCount === undefined ||
+                      (res.data.data[i].nextCount === undefined &&
+                        !res.data.data[i].hasOwnProperty("deviceUuid")) ||
                       res.data.data[i].source === "staff" ||
                       res.data.data[i].nextCount === "0" ||
                       res.data.data[i].nextCount === 0 ||
