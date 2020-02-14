@@ -89,8 +89,8 @@ CDeque.prototype.get = function() {
     lastData.ts - firstData.ts <= 1000 &&
     !firstData.type
   ) {
-    console.log("丢帧了,数据如下");
-    console.log(firstData);
+    // console.log("丢帧了,数据如下");
+    // console.log(firstData);
     while (1) {
       firstData = this.n_num.shift();
       if (lastData.ts - firstData.ts < 200 || this.n_num.length < 2) {
@@ -100,10 +100,10 @@ CDeque.prototype.get = function() {
   } else if (lastData.ts - firstData.ts > 1000) {
     this.n_num = [];
   }
-  console.log(
-    `队列长度：${this.n_num.length} -- ,队列首尾两帧间隔时间：${lastData.ts -
-      firstData.ts}`
-  );
+  // console.log(
+  //   `队列长度：${this.n_num.length} -- ,队列首尾两帧间隔时间：${lastData.ts -
+  //     firstData.ts}`
+  // );
   // console.log(firstData.ts);
   // console.log(lastData.type + " -- " + firstData.type);
   // console.log(lastData.ts - firstData.ts);
