@@ -12,3 +12,20 @@ export function getLogList(params) {
     params
   });
 }
+
+export function downloadLog(params) {
+  let { downloadLogUrl: url } = logUrl;
+  url += "?";
+  for (var k in params) {
+    if (params[k]) {
+      url += `${k}=${params[k] || ""}&`;
+    }
+  }
+  url = url.slice(0, url.length - 1);
+  return url;
+  // return axios({
+  //   method: "get",
+  //   url,
+  //   params
+  // });
+}
