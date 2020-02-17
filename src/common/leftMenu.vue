@@ -40,7 +40,7 @@
               <el-menu-item index="/FaceManage/judgeAnalysis"
                             :disabled="!$common.getAuthIsOwn('研判查询', 'isShow')">研判查询</el-menu-item>
               <el-menu-item index="/FaceManage/OVO"
-                            :disabled="!$common.getAuthIsOwn('1V1对比', 'isShow')">1V1对比</el-menu-item>
+                            :disabled="!$common.getAuthIsOwn('1v1对比', 'isShow')">1V1对比</el-menu-item>
             </el-submenu>
             <el-submenu index="/FaceManage/ManBodyAnalysis"
                         :class="{isActive:($route.path == '/ManBodyAnalysis')}">
@@ -89,7 +89,7 @@
               <el-menu-item index="/FaceManage/PersonFlowAnalysis"
                             :disabled="!$common.getAuthIsOwn('抓拍统计', 'isShow')">抓拍统计</el-menu-item>
               <el-menu-item index="/FaceManage/PersonCompareCount"
-                            :disabled="!$common.getAuthIsOwn('比对统计', 'isShow')">比对统计</el-menu-item>
+                            :disabled="!$common.getAuthIsOwn('对比统计', 'isShow')">比对统计</el-menu-item>
               <el-menu-item index="/FaceManage/ModuleCount"
                             :disabled="!$common.getAuthIsOwn('模型统计', 'isShow')">模型统计</el-menu-item>
             </el-submenu>
@@ -101,7 +101,7 @@
                 </div>设置
               </div>
               <el-menu-item index="/FaceManage/Settings"
-                            :disabled="!$common.getAuthIsOwn('基础设置', 'isShow')">基础设置</el-menu-item>
+                            :disabled="!$common.getAuthIsOwn('设置', 'isShow')">基础设置</el-menu-item>
             </el-submenu>
             <!-- <el-menu-item index="/FaceManage/Settings" :class="{isActive:($route.path == '/Settings')}" class>
 							<div class="images">
