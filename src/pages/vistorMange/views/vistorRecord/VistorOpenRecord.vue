@@ -106,7 +106,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<vistor-open-detail :visible="isShow" :openDoorDetail="openDoorDetail" @close="closeDetail"></vistor-open-detail>
+			<vistor-open-detail :visible.sync="isShow" :openDoorDetail="openDoorDetail" @close="closeDetail"></vistor-open-detail>
 			<!----------------------------------表格分页器---------------------------------->
 			<div class="footer">
 				<el-pagination
@@ -293,7 +293,7 @@ export default {
       this.initData();
     },
     closeDetail() {
-      this.isShow = !this.isShow;
+      this.isShow = false;
     },
     sortChange(column) {
       console.log(column);
@@ -320,7 +320,7 @@ export default {
           this.showloading = !this.showloading;
           if (res.data.success && res.data.data) {
             this.openDoorDetail = res.data.data;
-            this.isShow = !this.isShow;
+            this.isShow = true;
           } else {
             this.$message({ type: "error", message: "没有找到相关详情" });
           }

@@ -281,6 +281,7 @@ export default {
     initData() {
       if (!this.ShowAuthDisabled) return;
       this.tableData = [];
+      this.total = 0;
       let data = {
         staffName: this.staffName,
         onlineStatus: this.onlineStatus,

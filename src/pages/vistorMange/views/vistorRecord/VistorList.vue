@@ -113,16 +113,20 @@
                 <el-col :class="$common.getAuthIsOwn('访客列表', 'isShow')?'cursorClass':'disabled'"
                         class="VCelPopoverCol"
                         @click.native="detailBtnAct(item)">
-                  <img class="img"
+                  <img v-if="!$common.getAuthIsOwn('访客列表', 'isShow')" class="img"
                        src="@/assets/images/personMange/detail1.png" />
+                  <img v-else class="img"
+                       src="@/assets/images/personMange/detail.png" />
                   详情
                 </el-col>
                 <el-col v-if="!item.black"
                         class="VCelPopoverCol"
                         :class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'"
                         @click.native="signBlacklistBtnAct(item)">
-                  <img class="img"
+                  <img v-if="!$common.getAuthIsOwn('访客列表', 'isOwn')" class="img"
                        src="@/assets/images/personMange/delete1.png" />
+                  <img v-else class="img"
+                       src="@/assets/images/personMange/delete2.png" />
                   拉黑
                 </el-col>
                 <el-col v-if="item.black"

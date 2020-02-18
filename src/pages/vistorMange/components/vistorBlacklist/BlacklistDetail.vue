@@ -197,6 +197,11 @@ export default {
   },
   methods: {
     transferVistorRecord(data) {
+      let ShowAuthDisabled = this.$common.getAuthIsOwn("黑名单报警", "isShow");
+      if (!ShowAuthDisabled) {
+        this.$message({type: 'warnning', message: '没有权限'});
+        return;
+      }
       // 跳转到黑名单报警记录
       this.$router.push({
         name: "VistorBlacklistAlarm",

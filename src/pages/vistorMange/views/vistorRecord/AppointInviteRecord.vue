@@ -110,6 +110,8 @@
       <vistor-a-i-detail :visible="isShow"
                          :vistorAIDetail="vistorAIDetail"
                          @close="closeDetail"
+                         :OwnAuthDisabled='OwnAuthDisabled'
+                         :ShowAuthDisabled='ShowAuthDisabled'
                          @showStaffDetail="showStaffDetail"></vistor-a-i-detail>
       <component v-show="isStaffDetailShow"
                  :visible.sync="isStaffDetailShow"
