@@ -274,6 +274,7 @@ export default {
         })
         .catch(() => {
           this.isLoading = false;
+          this.onClickClear();
         });
     },
     getPublicMessageListSuccessResponse(body) {
@@ -287,6 +288,7 @@ export default {
     },
     handleDefaultChooseFirstData() {
       if (!this.tableData || this.tableData.length === 0) {
+        this.onClickClear();
         return;
       }
       let index = 0;

@@ -228,6 +228,11 @@ export default {
   },
   methods: {
     transferVistorOpenRecord(data) {
+      let ShowAuthDisabled = this.$common.getAuthIsOwn("访客开门记录", "isShow");
+      if (!ShowAuthDisabled) {
+        this.$message({type: 'warnning', message: '没有权限'});
+        return;
+      }
       // 跳转到访客开门记录
       this.$router.push({
         name: "VistorOpenRecord",
@@ -236,6 +241,11 @@ export default {
       this.close();
     },
     transferVistorRecord(value) {
+      let ShowAuthDisabled = this.$common.getAuthIsOwn("访客记录", "isShow");
+      if (!ShowAuthDisabled) {
+        this.$message({type: 'warnning', message: '没有权限'});
+        return;
+      }
       // 跳转到访客记录
       this.$router.push({
         name: "VistorRecord",

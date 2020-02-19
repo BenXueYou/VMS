@@ -119,12 +119,12 @@
       <el-row type="flex"
               justify="center">
         <div v-if="vistorAIDetail.black !== 2 && vistorAIDetail.visitState">
-          <el-button v-if="vistorAIDetail.black"
+          <el-button v-if="!vistorAIDetail.black"
                      class="deleteBtn"
                      @click="addToBlacklistAct"
                      :disabled="!OwnAuthDisabled"
                      type="primary">拉黑</el-button>
-          <el-button v-if="vistorAIDetail.black"
+          <el-button v-else
                      class="deleteBtn"
                      :disabled="!OwnAuthDisabled"
                      @click="addToWhitelistAct"
@@ -279,6 +279,11 @@ export default {
       return currentDateTime < validDatetimeEnd;
     },
     transferVistorOpenRecord(data) {
+      let ShowAuthDisabled = this.$common.getAuthIsOwn("访客开门记录", "isShow");
+      if (!ShowAuthDisabled) {
+        this.$message({type: 'warnning', message: '没有权限'});
+        return;
+      }
       // 跳转到访客开门记录
       this.$router.push({
         name: "VistorOpenRecord",

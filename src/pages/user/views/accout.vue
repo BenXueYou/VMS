@@ -37,7 +37,7 @@
           <el-button type="primary"
                      :disabled="!ShowAuthDisabled"
                      icon="el-icon-search"
-                     @click="initData">检索</el-button>
+                     @click="queryBtnData">检索</el-button>
         </div>
       </div>
       <el-table ref="loginLogBoxTable"
@@ -232,6 +232,10 @@ export default {
   },
   watch: {},
   methods: {
+    queryBtnData() {
+      this.currentPage = 1;
+      this.initData();
+    },
     addBtnAct() {
       this.isAddRole = "add";
       this.defaultRoleData = [];
@@ -290,6 +294,7 @@ export default {
       api
         .getAccountListApi(data)
         .then(res => {
+          this.total = 0;
           if (res.data.success) {
             let list = res.data.data.list;
             //    <template slot-scope="scope">
@@ -306,7 +311,9 @@ export default {
             this.total = res.data.data.total;
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          this.total = 0;
+        });
     },
     // 编辑
     handleEditClick(rowData) {

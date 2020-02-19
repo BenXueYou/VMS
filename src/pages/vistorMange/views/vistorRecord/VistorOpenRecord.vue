@@ -106,7 +106,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<vistor-open-detail :visible="isShow" :openDoorDetail="openDoorDetail" @close="closeDetail"></vistor-open-detail>
+			<vistor-open-detail :visible.sync="isShow" :openDoorDetail="openDoorDetail" @close="closeDetail"></vistor-open-detail>
 			<!----------------------------------表格分页器---------------------------------->
 			<div class="footer">
 				<el-pagination
@@ -293,7 +293,7 @@ export default {
       this.initData();
     },
     closeDetail() {
-      this.isShow = !this.isShow;
+      this.isShow = false;
     },
     sortChange(column) {
       console.log(column);
@@ -308,7 +308,7 @@ export default {
     },
     // 详情
     detailBtnAct(rowData) {
-      if (!this.$common.getAuthIsOwn("访客开门记录", "isOwn")) return;
+      if (!this.$common.getAuthIsOwn("访客开门记录", "isShow")) return;
       this.httpOpenDoorDetail(rowData);
     },
     // 开门记录详情
@@ -320,7 +320,7 @@ export default {
           this.showloading = !this.showloading;
           if (res.data.success && res.data.data) {
             this.openDoorDetail = res.data.data;
-            this.isShow = !this.isShow;
+            this.isShow = true;
           } else {
             this.$message({ type: "error", message: "没有找到相关详情" });
           }
@@ -446,7 +446,6 @@ export default {
 	border: 0 solid rgba(38, 211, 157, 0.8);
 	border-radius: 2px;
 	border-radius: 2px;
-	margin-left: 20px;
 	font-family: "PingFangSC-Regular";
 	font-size: 13px;
 	color: #ffffff;

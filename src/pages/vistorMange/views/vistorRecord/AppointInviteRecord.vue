@@ -110,6 +110,8 @@
       <vistor-a-i-detail :visible="isShow"
                          :vistorAIDetail="vistorAIDetail"
                          @close="closeDetail"
+                         :OwnAuthDisabled='OwnAuthDisabled'
+                         :ShowAuthDisabled='ShowAuthDisabled'
                          @showStaffDetail="showStaffDetail"></vistor-a-i-detail>
       <component v-show="isStaffDetailShow"
                  :visible.sync="isStaffDetailShow"
@@ -403,13 +405,12 @@ export default {
 .AppointInviteRecord .el-button--primary:active,
 .AppointInviteRecord .el-button--primary:focus {
   font-family: "PingFangSC-Regular";
-  font-size: 16px;
   height: 34px;
   background: rgba(40, 255, 187, 0.08);
   border: 0 solid rgba(38, 211, 157, 0.8);
   border-radius: 2px;
   border-radius: 2px;
-  margin-left: 20px;
+  margin-left: 10px;
   font-family: "PingFangSC-Regular";
   font-size: 13px;
   color: #ffffff;
