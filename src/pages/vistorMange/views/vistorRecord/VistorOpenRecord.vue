@@ -308,7 +308,7 @@ export default {
     },
     // 详情
     detailBtnAct(rowData) {
-      if (!this.$common.getAuthIsOwn("访客开门记录", "isOwn")) return;
+      if (!this.$common.getAuthIsOwn("访客开门记录", "isShow")) return;
       this.httpOpenDoorDetail(rowData);
     },
     // 开门记录详情

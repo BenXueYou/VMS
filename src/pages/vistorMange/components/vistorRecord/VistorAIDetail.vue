@@ -119,12 +119,12 @@
       <el-row type="flex"
               justify="center">
         <div v-if="vistorAIDetail.black !== 2 && vistorAIDetail.visitState">
-          <el-button v-if="vistorAIDetail.black"
+          <el-button v-if="!vistorAIDetail.black"
                      class="deleteBtn"
                      @click="addToBlacklistAct"
                      :disabled="!OwnAuthDisabled"
                      type="primary">拉黑</el-button>
-          <el-button v-if="vistorAIDetail.black"
+          <el-button v-else
                      class="deleteBtn"
                      :disabled="!OwnAuthDisabled"
                      @click="addToWhitelistAct"
