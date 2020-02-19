@@ -446,7 +446,6 @@ export default {
 	border: 0 solid rgba(38, 211, 157, 0.8);
 	border-radius: 2px;
 	border-radius: 2px;
-	margin-left: 20px;
 	font-family: "PingFangSC-Regular";
 	font-size: 13px;
 	color: #ffffff;

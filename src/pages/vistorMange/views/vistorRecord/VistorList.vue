@@ -86,7 +86,7 @@
                     @click="signBlacklistBtnAct(scope.row)"
                     class="deleteBtnClass"
                     :class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'">拉黑</span>
-              <span :class="false?'cursorClass':'disabled'"
+              <span :class="$common.getAuthIsOwn('访客列表', 'isOwn')?'cursorClass':'disabled'"
                     v-if="scope.row.black"
                     @click="signWhitelistBtnAct(scope.row)"
                     class="signOffBtnClass">解除拉黑</span>

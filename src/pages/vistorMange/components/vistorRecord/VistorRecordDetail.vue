@@ -479,16 +479,15 @@ export default {
 }
 .dialogHeaderClass .el-button {
   font-family: "PingFangSC-Regular";
-  font-size: 12px;
+  font-size: 12px!important;
   color: #ffffff;
   letter-spacing: 0;
   margin: 0 10px;
 }
 .dialogHeaderClass .deleteBtn {
-  background: rgba(253, 84, 94, 0.05);
-  border: 1px solid rgba(255, 95, 95, 0.89);
-  border-radius: 2px;
-  border-radius: 2px;
+  background: rgba(253, 84, 94, 0.05)!important;
+  border: 1px solid rgba(255, 95, 95, 0.89)!important;
+  border-radius: 2px!important;
 }
 .VistorRecordDetail .dialogHeaderClass .header_left_txt {
   border-left: 2px solid #26d39d;
