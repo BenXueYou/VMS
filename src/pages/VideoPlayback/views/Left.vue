@@ -546,7 +546,7 @@ export default {
     margin-right: 4px;
   }
   .is-leaf {
-    width: 15px !important;
+    // width: 15px !important;
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
     padding: 0px !important;
