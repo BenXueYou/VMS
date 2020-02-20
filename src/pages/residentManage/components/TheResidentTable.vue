@@ -600,52 +600,7 @@ export default {
       this.addResidentDialogVisible = false;
     },
     transferResidentData(xhr) {
-      console.log("添加居民信息", xhr);
-
-      if (this.residentDetail.staffUuid) {
-        this.mainScreenLoading = true;
-        this.$ResidentManageAjax
-          .putResidentApi(xhr)
-          .then(res => {
-            this.mainScreenLoading = false;
-            console.log(res.data);
-            if (res.data.success) {
-              console.log("修改成功！");
-              this.getResident();
-              this.$message({
-                type: "success",
-                message: "修改成功"
-              });
-            }
-          })
-          .catch(() => {
-            this.mainScreenLoading = false;
-          });
-      } else {
-        this.mainScreenLoading = true;
-        this.$ResidentManageAjax
-          .postResidentApi(xhr)
-          .then(res => {
-            console.log(res.data);
-            this.mainScreenLoading = false;
-            if (res.data.success) {
-              console.log("添加成功");
-              this.$message({
-                type: "success",
-                message: "添加成功！"
-              });
-              this.getResident();
-            } else {
-              this.$message({
-                type: "error",
-                message: "添加失败！"
-              });
-            }
-          })
-          .catch(() => {
-            this.mainScreenLoading = false;
-          });
-      }
+      this.getResident();
     },
     // 删除按钮的确定 getResidentFromDevice
     confirm() {

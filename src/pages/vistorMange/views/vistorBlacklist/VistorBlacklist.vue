@@ -595,8 +595,8 @@ export default {
 	background: rgba(40, 255, 187, 0.08);
 	border: 1px solid rgba(38, 211, 157, 0.45);
 	border-radius: 2px;
-	border-radius: 2px;
-	margin: 0 10px;
+	/* border-radius: 2px;
+	margin: 0 10px; */
 	font-family: "PingFangSC-Regular";
 	font-size: 13px;
 	color: #ffffff;

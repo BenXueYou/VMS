@@ -135,7 +135,7 @@ export default {
   methods: {
     initData() {
       if (!this.ShowAuthDisabled) return;
-      this.alarmTypeOptions = this.$common.getEnumByGroupStr("alarm_t");
+      this.alarmTypeOptions = this.$common.getEnumByGroupStr("door_alarms");
       this.handleStatusOptions = this.$common.getEnumByGroupStr("alarm_r");
       this.getAlarmLog();
     },
