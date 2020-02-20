@@ -601,7 +601,7 @@ export default {
       this.deleteConfirmDialogVisible = true;
     },
     remoteControl(row) {
-      // debug
+      // debugger;
       // let deviceUuid = "494F1F75B788464BB05AE87DAB1E8AF2";
       // this.deviceUuid = deviceUuid;
 
