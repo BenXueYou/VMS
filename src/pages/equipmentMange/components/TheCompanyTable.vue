@@ -161,7 +161,7 @@
                        v-if="index!=1"
                        @click="remoteControl(scope.row)"
                        :class="{'offLine':scope.row.netStatus==='offline'}"
-                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig) || !ShowAuthDisabled)"
+                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig) || !OwnAuthDisabled)"
                        size="small">配置</el-button>
           </template>
         </el-table-column>
