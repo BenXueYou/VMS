@@ -768,6 +768,9 @@ export default {
     },
     showMenu(e, index) {
       console.log(e);
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.operatorIndex = index;
       this.getVideoSpeed();
       const _this = this;
