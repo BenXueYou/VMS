@@ -155,7 +155,7 @@
             <el-button type="text"
                        v-if="index==1"
                        @click="remoteControl(scope.row)"
-                       :disabled="(!!(scope.row.extInfo.fdLib!=1) || !ShowAuthDisabled)"
+                       :disabled="(!!(scope.row.extInfo.fdLib!=1) || !OwnAuthDisabled)"
                        size="small">配置</el-button>
             <el-button type="text"
                        v-if="index!=1"

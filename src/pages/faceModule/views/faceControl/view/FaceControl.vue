@@ -83,6 +83,7 @@
 						:inactive-value="0"
 					></el-switch>
 					<span v-if="OwnAuthDisabled" style="margin-left: 3px;">状态</span>
+					<span v-else style="margin-left: 3px; color: #82848a !important;">状态</span>
 					<div :disabled="!OwnAuthDisabled" class="status" @click="editTaskInit">
 						<img v-if="OwnAuthDisabled" src="@/assets/images/edit.png" width="14px" height="14px" />
 						<span :disabled="!OwnAuthDisabled" style="margin-left: 3px;">编辑</span>

@@ -247,10 +247,11 @@ export default {
       console.log(arr);
       this.defaultRoleData = arr;
       // this.rowData.roles = arr;
-      this.$set(this.rowData, "roles", arr);
       if (this.isAddRole === "edit") {
+        this.$set(this.rowData, "roles", arr);
         this.editAccountRoleApi();
       } else if (this.isAddRole === "add") {
+        this.$set(this.rowData, "roles", arr);
         console.log("defaultRoleData==", this.defaultRoleData);
         this.showTreeAdd = false;
       } else if (this.isAddRole === "editRole") {
@@ -322,16 +323,16 @@ export default {
     },
     // 修改角色
     editRoleClick(rowData) {
-      // this.getRoleDetail(rowData);
       this.isAddRole = "editRole";
+      this.defaultRoleData = [];
       this.accountUuid = rowData.accountUuid;
+      this.rowData = rowData;
       this.getRoleList();
-      // this.$emit("addRole", rowData);
-      this.getRoleDetail(rowData);
+      // this.getRoleDetail(rowData);
       // this.$set(this.rowData, 'roles', this.defaultRoleData);
-      console.log("rowData===", rowData);
+      console.log("editRole,rowData===", rowData);
     },
-    // 分配角色
+    // 账号编辑
     addRoleClick(rowData) {
       console.log("rowData===", rowData);
       // debugger
@@ -349,6 +350,7 @@ export default {
     },
     // 查详情
     getAccountDetail(data) {
+      if (data.accountNames) {}
       api
         .getAccountDetail(data)
         .then(res => {
@@ -362,7 +364,7 @@ export default {
             // }
             this.defaultRoleData = this.rowData.roles;
             // this.rowData.password = "********";
-            console.log("rowData===", this.rowData);
+            console.log("rowData==详情=", this.rowData);
           } else {
             this.$message.warning(res.data.msg);
           }
@@ -386,7 +388,6 @@ export default {
     },
     // 获取分配角色弹窗内树列表数据
     getRoleList() {
-      this.showTreeAdd = !this.showTreeAdd;
       api
         .getRoleList({
           limt: 10000000, // 不分页
@@ -394,6 +395,10 @@ export default {
         })
         .then(res => {
           if (res.data.success) {
+            this.showTreeAdd = !this.showTreeAdd;
+            if (this.isAddRole === 'editRole') {
+              this.getRoleDetail(this.rowData);
+            }
             let data = res.data.data || {};
             this.roleDataList = data.list || [];
           }

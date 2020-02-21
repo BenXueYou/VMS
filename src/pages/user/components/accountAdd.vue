@@ -453,9 +453,9 @@ export default {
         // ) {
         //   return;
         // }
-        // if (this.showTreeAddRole) {
-        //   return;
-        // }
+        if (this.showTreeAddRole) {
+          return;
+        }
         // 判断编辑还是新增
         if (this.rowData.accountUuid) {
           this.title = "编辑账号";

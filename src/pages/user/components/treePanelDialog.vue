@@ -144,11 +144,9 @@ export default {
   mounted() {},
   methods: {
     formatData() {
-      if (!this.treeList) {
+      if (!this.treeList || !this.initSelectData) {
         return;
       }
-      console.log(this.treeList);
-      console.log(this.initSelectData);
       let data = this.treeList.map(v => {
         v.checked = this.initSelectData.some(item => {
           return item[this.props.id] === v[this.props.id];
@@ -205,10 +203,10 @@ export default {
         this.filterText = "";
       }
       this.formatData();
-    }
-    // initSelectData(val){
-    //   this.formatData();
-    // },
+    },
+    initSelectData(val) {
+      this.formatData();
+    },
   }
 };
 </script>

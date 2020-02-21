@@ -7,7 +7,7 @@
     <div class="loginLogMain">
       <div class="main-header">
         <div class="leftgroup">
-          <el-button :disabled="!OwnAuthDisabled"
+          <el-button :disabled="!ShowAuthDisabled"
                      type="primary"
                      @click="exportLog"
                      size="mini">导出</el-button>

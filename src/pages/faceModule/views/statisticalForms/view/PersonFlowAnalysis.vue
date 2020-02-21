@@ -377,6 +377,10 @@ export default {
           this.getFaceCaptureSumByMonth();
         }
       } else {
+        if (!this.checkedChannelsUuid || !this.checkedChannelsUuid.length) {
+          this.$message({type: 'warning', message: '请选择设备'});
+          return;
+        }
         if (this.typeRadio === 1) {
           this.getSingleFaceCapSumByDay();
         } else if (this.typeRadio === 2) {

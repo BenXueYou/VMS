@@ -428,9 +428,11 @@
                       <img class="img"
                            v-if="OwnAuthDisabled"
                            src="@/assets/images/personMange/edit.png" />
-                      <img class="img"
+                      <i class="el-icon-edit-outline" style="margin-right:10px;opacity:0.5;"></i>
+
+                      <!-- <img class="img"
                            v-else
-                           src="@/assets/images/personMange/edit2.png" />
+                           src="@/assets/images/personMange/edit2.png" /> -->
                       <!-- <img src="./../../../assets/images/personMange/edit.png" /> -->
                       <span>编辑</span>
                     </div>
@@ -467,11 +469,13 @@
                 </div>
                 <div class="btnWrap">
                   <el-button type="primary"
+                             :loading='isloading'
                              :disabled='!OwnAuthDisabled'
                              style="width: 120px;"
                              @click="addPersonMember('continue')"
                              v-show="addEditMember==='add'">保存并继续添加</el-button>
                   <el-button type="primary"
+                             :loading='isloading'
                              :disabled='!OwnAuthDisabled'
                              style="width: 80px;"
                              @click="addEditPerson()">确认</el-button>
@@ -1017,9 +1021,11 @@
                 <div class="text">信息来源：<span v-if="source!='platform'">{{this.source}}设备</span><span v-if="source=='platform'">平台录入</span></div>
                 <div class="btnWrap">
                   <el-button style="width: 120px;"
+                   :loading='isloading'
                              @click="addPersonMember('continue')"
                              v-show="addEditMember==='add'">保存并继续添加</el-button>
                   <el-button style="width: 80px;"
+                   :loading='isloading'
                              @click="addEditPerson()">确认</el-button>
                   <el-button style="width: 80px;margin-right: 15px;"
                              @click="closeAddEdit">取消</el-button>
@@ -1927,7 +1933,8 @@ export default {
       canvHeight: "",
       mediaStreamTrack: null,
       ShowAuthDisabled: true,
-      OwnAuthDisabled: true
+      OwnAuthDisabled: true,
+      isloading: false,
     };
   },
   created() {},
@@ -2102,12 +2109,6 @@ export default {
           return;
         }
       }
-      if (title === "add") {
-        this.closeAddEdit();
-      } else if (title === "continue") {
-        this.addEditMembers = true;
-        this.isListForm = false;
-      }
       var cardList = [];
       if (this.islListWrap1 === true) {
         var isSwitch1 = true;
@@ -2192,6 +2193,7 @@ export default {
       if (this.staffInfo === "0") {
         this.leaderOrgUuid = [];
       }
+      this.isloading = true;
       this.$http
         .post(
           this.api +
@@ -2235,8 +2237,15 @@ export default {
         )
         .then(res => {
           console.log("新增人员====", res);
+          this.isloading = false;
           if (res.status === 200) {
             if (res.data.success) {
+              if (title === "add") {
+                this.closeAddEdit();
+              } else if (title === "continue") {
+                this.addEditMembers = true;
+                this.isListForm = false;
+              }
               this.clickNodeList();
               this.newPersonList();
               this.$message({
@@ -2257,6 +2266,7 @@ export default {
           }
         })
         .catch(err => {
+          this.isloading = false;
           console.log("请求错误：" + err);
         });
     },
@@ -2287,8 +2297,6 @@ export default {
           return;
         }
       }
-      this.addEditMembers = false;
-      this.isListForm = true;
       var cardList = [];
       if (this.islListWrap1 === true) {
         var isSwitch1 = true;
@@ -2373,6 +2381,7 @@ export default {
       if (this.staffInfo === "0") {
         this.leaderOrgUuid = [];
       }
+      this.isloading = true;
       this.$http
         .put(
           this.api +
@@ -2417,9 +2426,12 @@ export default {
           }
         )
         .then(res => {
+          this.isloading = false;
           console.log("编辑人员====", res);
           if (res.status === 200) {
             if (res.data.success) {
+              this.addEditMembers = false;
+              this.isListForm = true;
               this.clickNodeList();
               this.$message({
                 message: "编辑成功",
@@ -2440,6 +2452,7 @@ export default {
         })
         .catch(err => {
           console.log("请求错误：" + err);
+          this.isloading = false;
         });
     },
     addEditPerson() {

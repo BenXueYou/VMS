@@ -6,8 +6,8 @@
 					<div class="header_left_txt">{{titleTxt}}</div>
 				</el-col>
 				<el-col class="header_right_box" :span="20">
-					<el-button v-if="titleTxt === '新增居民'" @click="confirm(false)" type="primary">保存并新增</el-button>
-					<el-button @click="confirm(true)" type="primary">确认</el-button>
+					<el-button :loading="isloading" v-if="titleTxt === '新增居民'" @click="confirm(false)" type="primary">保存并新增</el-button>
+					<el-button :loading="isloading" @click="confirm(true)" type="primary">确认</el-button>
 					<el-button @click="close" type="primary">取消</el-button>
 				</el-col>
 			</el-row>
