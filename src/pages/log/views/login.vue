@@ -8,7 +8,7 @@
 				<div class="leftgroup">
 					<div class="leftgroupitem">
 						<span class="topTitleTxt">事件：</span>
-						<el-select class="left-space time-interal" v-model="eventType" clearable size="small">
+						<el-select v-model="eventType" clearable>
 							<el-option
 								v-for="item in eventTypeOptions"
 								:key="item.typeStr"
@@ -28,36 +28,28 @@
 				</div>
 				<!-- <div> -->
 				<div class="rightgroup">
-					<span class="title">时间：</span>
-					<el-date-picker
-						v-model="validateTimeStart"
-						type="datetime"
+						<span class="title">时间：</span>
+						<el-date-picker
+							v-model="validateTimeStart"
+							type="datetime"
+							style="margin-left: 13px;"
+							placeholder="选择日期"
+							value-format="yyyy-MM-dd HH:mm:ss"
+						></el-date-picker>
+						<span class="time-line">-</span>
+						<el-date-picker
+							v-model="validateTimeEnd"
+							type="datetime"
+							placeholder="选择日期"
+							value-format="yyyy-MM-dd HH:mm:ss"
+						></el-date-picker>
+					<el-button
+						:disabled="!ShowAuthDisabled"
+						type="primary"
+						@click="queryBtnAct"
+						icon="el-icon-search"
 						size="small"
-						class="time-interal-date"
-						style="margin-left: 13px;"
-						placeholder="选择日期"
-						value-format="yyyy-MM-dd HH:mm:ss"
-					></el-date-picker>
-					<span class="time-line">-</span>
-					<el-date-picker
-						v-model="validateTimeEnd"
-						type="datetime"
-						size="small"
-						class="time-interal-date"
-						placeholder="选择日期"
-						value-format="yyyy-MM-dd HH:mm:ss"
-					></el-date-picker>
-					<el-button :disabled="!ShowAuthDisabled" type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
-					<!-- <el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button> -->
-					<el-popover
-						ref="popover1"
-						placement="bottom-end"
-						:visible-arrow="false"
-						width="270"
-						trigger="click"
-					>
-						<search-option-view @query="queryAct"></search-option-view>
-					</el-popover>
+					>检索</el-button>
 				</div>
 				<!-- </div> -->
 			</div>
@@ -261,7 +253,7 @@ export default {
 	position: relative;
 	font-size: 14px;
 	display: inline-block;
-	width: 150px;
+	width: 150px !important;
 }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -296,7 +288,6 @@ export default {
 		}
 		.main-header {
 			width: 100%;
-			overflow: auto;
 			margin-bottom: 18px;
 			display: flex;
 			justify-content: space-between;
@@ -304,16 +295,16 @@ export default {
 				display: flex;
 				justify-content: space-between;
 				.leftgroupitem {
-					width: 220px;
+					// width: 220px;
 					margin-right: 25px;
 					.el-input {
 						display: inline-block;
-						width: 150px;
+						// width: 150px;
 					}
 				}
 			}
 			.rightgroup {
-				// min-width: 600px;
+				width: 460px;
 			}
 		}
 		.footer {

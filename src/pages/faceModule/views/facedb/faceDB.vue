@@ -75,6 +75,7 @@
 					<li :disabled="!OwnAuthDisabled" class="active" @click="addfile">
 						<el-button :disabled="!OwnAuthDisabled" type="text">
 							<img v-if="OwnAuthDisabled" src="@/assets/images/faceModule/add.png" alt />
+							<img v-else src="@/assets/icon/dis_add.png" alt />
 							<span :disabled="!OwnAuthDisabled">新增</span>
 						</el-button>
 					</li>
@@ -85,10 +86,11 @@
 							<span :disabled="!OwnAuthDisabled">删除</span>
 						</el-button>
 					</li>
-					<li :disabled="!ShowAuthDisabled" class="active" @click="exportExcel2">
-						<el-button :disabled="!ShowAuthDisabled" type="text">
-							<img v-if="ShowAuthDisabled" src="@/assets/images/faceModule/expert.png" alt />
-							<span :disabled="!ShowAuthDisabled">导出</span>
+					<li :disabled="!OwnAuthDisabled" class="active" @click="exportExcel2">
+						<el-button :disabled="!OwnAuthDisabled" type="text">
+							<img v-if="OwnAuthDisabled" src="@/assets/images/faceModule/expert.png" alt />
+							<img v-else src="@/assets/icon/dis_export.png" alt />
+							<span :disabled="!OwnAuthDisabled">导出</span>
 						</el-button>
 					</li>
 					<li

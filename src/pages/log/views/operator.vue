@@ -7,7 +7,7 @@
     <div class="loginLogMain">
       <div class="main-header">
         <div class="leftgroup">
-          <el-button :disabled="!ShowAuthDisabled"
+          <el-button :disabled="!OwnAuthDisabled"
                      type="primary"
                      @click="exportLog"
                      size="mini">导出</el-button>
@@ -123,7 +123,7 @@ export default {
   created() {},
   mounted() {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("操作日志", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn(" 操作日志", "isOwn");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("操作日志", "isOwn");
     sessionStorage.setItem("eventType", "operation");
     let h =
       window.innerHeight ||
@@ -239,6 +239,15 @@ export default {
 };
 </script>
 <style>
+.operatorLogBox .el-button.is-disabled,
+.operatorLogBox .el-button.is-disabled:hover,
+.operatorLogBox .el-button.is-disabled:focus {
+    color: #C0C4CC;
+    cursor: not-allowed;
+    background-image: none;
+    background-color: #82848a !important;
+    border-color: #EBEEF5;
+}
 .operatorLogBox .editFontClass {
   font-family: "PingFangSC-Regular";
   font-size: 13px;

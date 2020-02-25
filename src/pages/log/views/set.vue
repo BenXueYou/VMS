@@ -6,7 +6,7 @@
 		<div class="loginLogMain">
 			<div class="main-header">
 				<div class="leftgroup">
-					<el-button type="default" :disabled="!ShowAuthDisabled" size="mini" @click="exportLog">导出</el-button>
+					<el-button type="default" :disabled="!OwnAuthDisabled" size="mini" @click="exportLog">导出</el-button>
 				</div>
 				<!-- <div> -->
 				<div class="rightgroup">
@@ -254,6 +254,14 @@ export default {
 };
 </script>
 <style>
+.setLogBox .el-button.is-disabled,
+.setLogBox .el-button.is-disabled:hover,
+.setLogBox .el-button.is-disabled:focus {
+    color: #C0C4CC;
+    cursor: not-allowed;
+    background-image: none;
+    background-color: #82848a !important;
+}
 .setLogBox .editFontClass {
 	font-family: "PingFangSC-Regular";
 	font-size: 13px;
@@ -336,7 +344,7 @@ export default {
 	font-size: 16px;
 	height: 34px;
 	background: rgba(40, 255, 187, 0.08);
-	border: 0 solid rgba(38, 211, 157, 0.8);
+	border: 1px solid rgba(38, 211, 157, 0.8);
 	border-radius: 2px;
 	border-radius: 2px;
 	font-family: "PingFangSC-Regular";

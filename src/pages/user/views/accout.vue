@@ -565,6 +565,11 @@ export default {
   }
 };
 </script>
+<style>
+.accout .el-button--small {
+    font-size: 13px!important;
+}
+</style>
 <style lang="scss" scoped>
 .accout {
   height: 100%;

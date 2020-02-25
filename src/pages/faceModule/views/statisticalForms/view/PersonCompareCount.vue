@@ -349,7 +349,7 @@ export default {
         }
       } else {
         if (!this.faceMonitorUuid || this.faceMonitorUuid.length) {
-          this.$message({type: 'warning', message: '请选择设备'});
+          this.$message({type: 'warning', message: '请选择任务'});
           return;
         }
         if (this.typeRadio === 1) {

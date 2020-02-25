@@ -139,7 +139,7 @@ export default {
       })),
       treeProps: { id: "accountUuid", label: "accountName" },
       pageNow: 1,
-      pageSize: 11,
+      pageSize: 13,
       dataTotal: 0,
       roleName: "",
       roleUuid: "",
@@ -354,6 +354,11 @@ export default {
   }
 };
 </script>
+<style>
+.role .el-button--small {
+    font-size: 13px!important;
+}
+</style>
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .role {
