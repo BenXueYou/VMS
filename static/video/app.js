@@ -21,29 +21,17 @@ async function slot_createCanvas() {
   //var video = video_mgr.play('{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.199", "port":"4400"}}}', '{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.199", "port":"4401"}}}', "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast", "rtsp", "preview", canvas);
   //var video = video_mgr.play('{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.21", "port":"4400"}}}', '{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.21", "port":"4401"}}}', "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast", "rtsp", "preview", canvas);
   let jSignal = {
-    identity: "slave",
-    param: {
-      location: {
-        ip: "192.168.9.199",
-        port: "39549",
-        protocol: "icc-ws"
-      }
-    },
+    srcUuid: "signal_channel",
     routeType: "location",
-    srcUuid: "signal_channel_271106FE9BBB4fc8A10546AE32C314CE"
+    param: { location: { protocol: "icc-ws", port: "4400" } }
   };
+  jSignal.param.location.ip = ip;
   let jMedia = {
-    identity: "slave",
-    param: {
-      location: {
-        ip: "192.168.9.199",
-        port: "39550",
-        protocol: "icc-ws"
-      }
-    },
+    srcUuid: "media_channel",
     routeType: "location",
-    srcUuid: "media_channel_271106FE9BBB4fc8A10546AE32C314CE"
+    param: { location: { protocol: "icc-ws", port: "4401" } }
   };
+  jMedia.param.location.ip = ip;
 
   // create video
   var video = await video_mgr.setup({
@@ -68,6 +56,7 @@ async function slot_createCanvas() {
   video_list[video_list.length] = t;
 }
 async function slot_createVideo() {
+
   //var canvas = document.getElementById("playCanvas");
 
   let url = document.getElementById("url").value;
@@ -85,29 +74,17 @@ async function slot_createVideo() {
   //var video = video_mgr.play('{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.199", "port":"4400"}}}', '{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.199", "port":"4401"}}}', "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast", "rtsp", "preview", canvas);
   //var video = video_mgr.play('{"srcUuid":"signal_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.21", "port":"4400"}}}', '{"srcUuid":"media_channel", "routeType":"location", "param":{"location":{"protocol":"icc-ws", "ip": "192.168.9.21", "port":"4401"}}}', "rtsp://admin:a88888888@192.168.9.114/Streaming/Channels/102?transportmode=unicast", "rtsp", "preview", canvas);
   let jSignal = {
-    identity: "slave",
-    param: {
-      location: {
-        ip: "192.168.9.199",
-        port: "41057",
-        protocol: "icc-ws"
-      }
-    },
+    srcUuid: "signal_channel",
     routeType: "location",
-    srcUuid: "signal_channel_146FAA56A3B84fd894485B0816C5DD04"
+    param: { location: { protocol: "icc-ws", port: "4400" } }
   };
+  jSignal.param.location.ip = ip;
   let jMedia = {
-    identity: "slave",
-    param: {
-      location: {
-        ip: "192.168.9.199",
-        port: "41058",
-        protocol: "icc-ws"
-      }
-    },
+    srcUuid: "media_channel",
     routeType: "location",
-    srcUuid: "media_channel_146FAA56A3B84fd894485B0816C5DD04"
+    param: { location: { protocol: "icc-ws", port: "4401" } }
   };
+  jMedia.param.location.ip = ip;
 
   // create video
   var videoTag = document.createElement("video");

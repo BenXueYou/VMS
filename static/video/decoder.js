@@ -3,17 +3,8 @@ function CDecoder(elment, decodeMod) {
   this.decodeMod = decodeMod;
   this.m_player = null;
   this.m_cache = new CDeque();
-  this.n_num = [];
-  this.m_queue = new CDeque();
-  this.m_timer = null;
-  this.timeInterval = 40;
 }
 
-CDecoder.prototype.clearQueure = function() {
-  if (!this.m_queue) {
-    this.m_queue.n_num = [];
-  }
-};
 CDecoder.prototype.setup = function(sdp) {
   if (this.decodeMod == "canvas") {
     this.m_player = new Player(); // fix: 分辨率先保留
@@ -22,7 +13,6 @@ CDecoder.prototype.setup = function(sdp) {
     this.m_player = new wfsControl(); // fix: 分辨率先保留
     this.m_player.setup(this.m_canvas);
   }
-  this.m_player.clearQueure = this.clearQueure;
 };
 
 CDecoder.prototype.play = function() {
@@ -54,29 +44,22 @@ CDecoder.prototype.drag = function() {
 };
 
 CDecoder.prototype.media = function(data) {
-  // console.log(data);
-  var player = this.m_player;
-  var _this = this;
+  
   if (this.m_cache != null && this.m_cache.empty()) {
     // 缓存中无数据 写入解码
     var ret = 0;
 
     var reader = new FileReader();
-
+    var player = this.m_player;
+    var _this = this;
     reader.addEventListener("loadend", function() {
-      console.time("appendBuffer");
-      _this.m_queue.add(reader.result, data.size);
       if (player != null) {
-        // 将数据放入到队列
-        // console.log(vdata);
-        // var vdata = _this.m_queue.get();
-        // if (_this.decodeMod === "canvas") {
-        //   player.h264AVFrmaeData(vdata.vdata, vdata.size);
-        // } else if (_this.decodeMod === "video") {
-        //   player.play(vdata.vdata);
-        // }
+        if (_this.decodeMod === "canvas") {
+          player.h264AVFrmaeData(reader.result, data.size);
+        } else if (_this.decodeMod === "video") {
+          player.play(reader.result);
+        }
       } else ret = -1;
-      console.timeEnd("appendBuffer");
     });
     reader.readAsArrayBuffer(data);
 
@@ -90,33 +73,6 @@ CDecoder.prototype.media = function(data) {
     // 缓存中有数据 尾插入缓存
     this.m_cache.push_back(data);
   } else {
-  }
-
-  // 开启定时器，准备40毫秒拿个数据
-  if (!this.m_timer) {
-    this.m_timer = setInterval(function() {
-      if (player != null) {
-        while (1) {
-          var vdata = _this.m_queue.get();
-          // console.log(vdata);
-          if (!vdata || !vdata.vdata) {
-            break;
-          }
-          if (_this.decodeMod === "canvas") {
-            player.h264AVFrmaeData(vdata.vdata, vdata.size);
-          } else if (_this.decodeMod === "video") {
-            player.play(vdata.vdata);
-          }
-          // 如果size小于100，则继续获取队列下个数据，不等待40毫秒
-          // 否则继续拿队列下一帧数据
-          if (vdata.size > 100) {
-            break;
-          } else {
-            console.log("size小于100,继续获取下一帧数据");
-          }
-        }
-      }
-    }, this.timeInterval);
   }
 };
 
