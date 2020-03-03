@@ -342,6 +342,22 @@ export function setDoor(data, uuid) {
     data
   });
 }
+
+export function getTempMeasure(uuid) {
+  let url = sbUrl.getTempMeasure(uuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+export function setTempMeasure(data, uuid) {
+  let url = sbUrl.setTempMeasure(uuid);
+  return axios({
+    method: "get",
+    url,
+    data
+  });
+}
 // 获取校时的接口
 export function getJiaoXiao(uuid) {
   let url = sbUrl.getJiaoXiaoUrl(uuid);

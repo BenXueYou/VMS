@@ -91,6 +91,11 @@ export default {
   getDoorListUrl: deviceUuid => `${ycPrefix}deviceDoorList/${deviceUuid}/`,
   getDoorDutouUrl: channelUuid => `${ycPrefix}deviceDoor/${channelUuid}`,
   setDoorDutouUrl: channelUuid => `${sbPrefix}deviceDoor/${channelUuid}`,
+  getTempMeasure: channelUuid =>
+    `${
+      window.config.protocolHeader
+    }${ip}/${zhengyu}/tempMeasure/${channelUuid}`,
+  setTempMeasure: channelUuid => `${sbPrefix}tempMeasure/${channelUuid}`,
   // 根据类型来获取耳机菜单
   getScondUrl: viewType =>
     `${ycPrefix}project/${projectUuid}/chnType/select/list`,
