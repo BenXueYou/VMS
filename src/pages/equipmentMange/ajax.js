@@ -353,7 +353,7 @@ export function getTempMeasure(uuid) {
 export function setTempMeasure(data, uuid) {
   let url = sbUrl.setTempMeasure(uuid);
   return axios({
-    method: "get",
+    method: "put",
     url,
     data
   });

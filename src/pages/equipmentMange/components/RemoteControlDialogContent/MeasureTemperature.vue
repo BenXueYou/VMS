@@ -1,147 +1,151 @@
 <template>
-  <div class='wrap faceParam'>
+  <div class='tempWrap'>
     <div class="title cube">
       体温配置
     </div>
-    <el-form ref="form"
-             :rules="rules"
-             :model="data"
-             class='deviceInfoPanel'
-             label-width="180px">
+    <div style='height:420px;overflow:auto;'>
+      <el-form ref="form"
+               :rules="rules"
+               :model="data"
+               class='deviceInfoPanel'
+               label-width="180px">
 
-      <el-form-item label="开启测温功能：">
-        <el-switch v-model="data.tempMeasureEnable"
-                   active-color="rgb(38,78,70)"
-                   inactive-color="rgb(75,78,82)">
-        </el-switch>
-      </el-form-item>
-
-      <el-form-item label="高温报警上传：">
-        <el-switch v-model="data.highTempAlarmUploadEnable"
-                   active-color="rgb(38,78,70)"
-                   inactive-color="rgb(75,78,82)">
-        </el-switch>
-      </el-form-item>
-
-      <el-form-item label="高温阈值："
-                    prop="highTemperatureThrold">
-        <el-input v-model='data.highTemperatureThrold'
-                  type="number">
-        </el-input>
-        <span class='timetips'>
-          ℃
-        </span>
-      </el-form-item>
-
-      <el-form-item label="显示测温结果：">
-        <el-switch v-model="showTempMeasureEnable"
-                   active-color="rgb(38,78,70)"
-                   inactive-color="rgb(75,78,82)">
-        </el-switch>
-      </el-form-item>
-
-      <el-form-item label="播报测温结果：">
-        <el-switch v-model="data.broadcastTempMeasureEnable"
-                   active-color="rgb(38,78,70)"
-                   inactive-color="rgb(75,78,82)">
-        </el-switch>
-      </el-form-item>
-
-      <el-form-item label="测温参数：">
-        <span class="operator"
-              @click="opening=true"
-              v-if="!opening">展开<img src="@/assets/temperature/slideup.png"
-               alt=""></span>
-        <span class="operator"
-              @click="opening=false"
-              v-else>收起<img src="@/assets/temperature/slidedown.png"
-               alt=""></span>
-      </el-form-item>
-
-      <div>
-        <el-form-item label="目标距离："
-                      prop="destDistance">
-          <el-input v-model='data.destDistance'
-                    type="number">
-          </el-input>
+        <el-form-item label="开启测温功能：">
+          <el-switch v-model="data.tempMeasureEnable"
+                     active-color="rgb(38,78,70)"
+                     inactive-color="rgb(75,78,82)">
+          </el-switch>
         </el-form-item>
 
-        <el-form-item label="发射率："
-                      prop="emissivity">
-          <el-input v-model='data.emissivity'
-                    type="number">
-          </el-input>
+        <el-form-item label="高温报警上传：">
+          <el-switch v-model="data.highTempAlarmUploadEnable"
+                     active-color="rgb(38,78,70)"
+                     inactive-color="rgb(75,78,82)">
+          </el-switch>
         </el-form-item>
 
-        <el-form-item label="气温："
-                      prop="airTemperature">
-          <el-input v-model='data.airTemperature'
+        <el-form-item label="高温阈值："
+                      prop="highTemperatureThrold">
+          <el-input v-model='data.highTemperatureThrold'
                     type="number">
           </el-input>
+          <span class='timetips'>
+            ℃
+          </span>
         </el-form-item>
 
-        <el-form-item label="相对湿度："
-                      prop="relativeTemperature">
-          <el-input v-model='data.relativeTemperature'
-                    type="number">
-          </el-input>
+        <el-form-item label="显示测温结果：">
+          <el-switch v-model="data.showTempMeasureEnable"
+                     active-color="rgb(38,78,70)"
+                     inactive-color="rgb(75,78,82)">
+          </el-switch>
         </el-form-item>
 
-        <el-form-item label="能见度："
-                      prop="visibility">
-          <el-input v-model='data.visibility'
-                    type="number">
-          </el-input>
+        <el-form-item label="播报测温结果：">
+          <el-switch v-model="data.broadcastTempMeasureEnable"
+                     active-color="rgb(38,78,70)"
+                     inactive-color="rgb(75,78,82)">
+          </el-switch>
         </el-form-item>
 
-        <el-form-item label="降雨强度："
-                      prop="rainfallIntensity">
-          <el-input v-model='data.rainfallIntensity'
-                    type="number">
-          </el-input>
+        <el-form-item label="测温参数：">
+          <span class="operator"
+                @click="opening=true"
+                v-if="!opening">展开<img src="@/assets/temperature/slideup.png"
+                 alt=""></span>
+          <span class="operator"
+                @click="opening=false"
+                v-else>收起<img src="@/assets/temperature/slidedown.png"
+                 alt=""></span>
         </el-form-item>
 
-        <el-form-item label="降雪强度："
-                      prop="snowfallIntensity">
-          <el-input v-model='data.snowfallIntensity'
-                    type="number">
-          </el-input>
-        </el-form-item>
+        <div v-show="opening">
+          <el-form-item label="目标距离："
+                        prop="destDistance">
+            <el-input v-model='data.destDistance'
+                      type="number">
+            </el-input>
+          </el-form-item>
 
-        <el-form-item label="修正参数1："
-                      prop="correctionParameter1">
-          <el-input v-model='data.correctionParameter1'
-                    type="number">
-          </el-input>
-        </el-form-item>
+          <el-form-item label="发射率："
+                        prop="emissivity">
+            <el-input v-model='data.emissivity'
+                      type="number">
+            </el-input>
+          </el-form-item>
 
-        <el-form-item label="修正参数2："
-                      prop="correctionParameter2">
-          <el-input v-model='data.correctionParameter2'
-                    type="number">
-          </el-input>
-        </el-form-item>
+          <el-form-item label="气温："
+                        prop="airTemperature">
+            <el-input v-model='data.airTemperature'
+                      type="number">
+            </el-input>
+          </el-form-item>
 
-        <el-form-item label="大气透过率："
-                      prop="atmosphericTransmittance">
-          <el-input v-model='data.atmosphericTransmittance'
-                    type="number">
-          </el-input>
-        </el-form-item>
+          <el-form-item label="相对湿度："
+                        prop="relativeTemperature">
+            <el-input v-model='data.relativeTemperature'
+                      type="number">
+            </el-input>
+          </el-form-item>
 
-        <el-form-item label="窗口/滤光片透过率："
-                      prop="windowFilterTransmittance">
-          <el-input v-model='data.windowFilterTransmittance'
-                    type="number">
-          </el-input>
-        </el-form-item>
-      </div>
-      <el-button type="primary"
-                 :disabled="!OwnAuthDisabled"
-                 @click='save'>
-        保存
-      </el-button>
-    </el-form>
+          <el-form-item label="能见度："
+                        prop="visibility">
+            <el-input v-model='data.visibility'
+                      type="number">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="降雨强度："
+                        prop="rainfallIntensity">
+            <el-input v-model='data.rainfallIntensity'
+                      type="number">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="降雪强度："
+                        prop="snowfallIntensity">
+            <el-input v-model='data.snowfallIntensity'
+                      type="number">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="修正参数1："
+                        prop="correctionParameter1">
+            <el-input v-model='data.correctionParameter1'
+                      type="number">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="修正参数2："
+                        prop="correctionParameter2">
+            <el-input v-model='data.correctionParameter2'
+                      type="number">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="大气透过率："
+                        prop="atmosphericTransmittance">
+            <el-input v-model='data.atmosphericTransmittance'
+                      type="number">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="窗口/滤光片透过率："
+                        prop="windowFilterTransmittance">
+            <el-input v-model='data.windowFilterTransmittance'
+                      type="number">
+            </el-input>
+          </el-form-item>
+        </div>
+
+      </el-form>
+    </div>
+    <el-button type="primary"
+               style="margin:10px auto;display:block;"
+               :disabled="!OwnAuthDisabled"
+               @click='save'>
+      保存
+    </el-button>
   </div>
 </template>
 
@@ -283,7 +287,7 @@ export default {
           windowFilterTransmittance: this.data.windowFilterTransmittance // 窗口/滤光片透过率
         }
       };
-      api.setDoor(data, this.deviceUuid).then(res => {
+      api.setTempMeasure(data, this.deviceUuid).then(res => {
         if (res.data.success) {
           this.$message.success("保存成功！");
         }
@@ -295,8 +299,8 @@ export default {
 
 <style lang="scss">
 @import "@/style/variables.scss";
-.faceParam {
-  $inputwidth: 66px;
+.tempWrap {
+  $inputwidth: 106px;
   .el-input {
     width: $inputwidth;
   }
@@ -326,14 +330,11 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
-.wrap {
+.tempWrap {
   height: 100%;
   padding: 13px 15px;
   box-sizing: border-box;
   overflow: auto;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
   .title {
     display: block;
     width: 100%;
