@@ -34,9 +34,9 @@
 						class="info-details-items"
 						v-if="validateType === 'card'"
 					>卡号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.mediumNo) : ""}}</div>
-					<div class="info-details-items" v-if="itemData && itemData.staffInfo.temperature">
+					<div class="info-details-items" v-if="itemData && itemData.staffInfo && itemData.staffInfo.tempValue">
 						体温：
-						<span style="color:#00D8A0">{{$common.setStringText(itemData.tempValue)}}</span>
+						<span style="color:#00D8A0">{{$common.setStringText(itemData.staffInfo.tempValue)}}℃</span>
 					</div>
 				</div>
 			</div>

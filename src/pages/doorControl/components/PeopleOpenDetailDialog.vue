@@ -30,9 +30,9 @@
 					<div class="info-details-items">验证方式：{{$common.getEnumItemName("pass", itemData.validateType)}}</div>
 					<div class="info-details-items">验证地址：{{$common.setStringText(itemData.doorName)}}</div>
 					<div class="info-details-items">验证设备：{{$common.setStringText(itemData.readHeadName)}}</div>
-					<div class="info-details-items" v-if="itemData && itemData.temperature">
+					<div class="info-details-items" v-if="itemData && itemData.staffInfo && itemData.staffInfo.tempValue">
 						体温：
-						<span style="color:#00D8A0">{{$common.setStringText(itemData.tempValue)}}</span>
+						<span style="color:#00D8A0">{{itemData.staffInfo.tempValue}}℃</span>
 					</div>
 				</div>
 			</div>

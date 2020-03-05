@@ -433,27 +433,10 @@ export default {
     exportAct() {
       // 1、通知服务端需要导出的数据
       // 2、获取生成excel文件的下载路径
-      this.$ResidentManageAjax
-        .downLoadResidentData()
-        .then(res => {
-          if (res.data.success) {
-            const content = res.data.data;
-            const blob = new Blob([content]);
-            const fileName = new Date().getTime() + ".xlsx";
-            if ("download" in document.createElement("a")) {
-              // 非IE下载
-              const elink = document.createElement("a");
-              elink.download = fileName;
-              elink.style.display = "none";
-              elink.href = URL.createObjectURL(blob);
-              document.body.appendChild(elink);
-              elink.click();
-              URL.revokeObjectURL(elink.href); // 释放URL 对象
-              document.body.removeChild(elink);
-            }
-          }
-        })
-        .catch(() => {});
+      let ip = window.config.ip;
+      let protocolHeader = window.config.protocolHeader;
+      let url = `${protocolHeader}${ip}${RestApi.api.residentManage.downLoadResidentApi}`;
+      this.$common.funBuildFile(url, "居民.zip", "get");
     },
     queryAct(data) {
       this.queryData = data;

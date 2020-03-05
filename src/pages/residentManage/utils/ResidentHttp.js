@@ -116,7 +116,6 @@ export let ResidentManageAjax = {
     let api = `${protocolHeader}${ip}${
       RestApi.api.residentManage.getResidentTagDetailApi
     }`;
-    debugger;
     xhr.tagType = "resident";
     return axios({
       method: "get",
@@ -258,7 +257,7 @@ version	integer($int32)
     let url = `${protocolHeader}${ip}${RestApi.api.residentManage.downLoadResidentApi}`;
     return axios({
       method: "get",
-      responseType: 'arraybuffer', // 二进制流
+      responseType: 'blob', // 二进制流
       url,
     });
   },
