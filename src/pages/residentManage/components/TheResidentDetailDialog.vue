@@ -9,27 +9,30 @@
 		<div class="body">
 			<div class="body_box" style="border-top:0px;">
 				<el-row type="flex" justify="flex-start" :gutter="20">
-
-							<el-col style="text-align:right;" :span="5">
-								<p>姓名：</p>
-								<p>性别：</p>
-								<p>民族：</p>
-								<p>证件号：</p>
-							</el-col>
-							<el-col :span="14">
-								<p>{{defaultResident.staffName}}</p>
-								<p>{{$common.getEnumItemName("gender", defaultResident.gender)}}</p>
-								<p>{{$common.getEnumItemName("nation", defaultResident.nation)}}</p>
-								<p>{{defaultResident.credentialNo}}</p>
-							</el-col>
-
 					<el-col style="text-align:right;" :span="5">
-						<div class="imgBox">
-							<img
-								:src="defaultResident.lifePictureUrl? imageUrl+defaultResident.lifePictureUrl : require('@/assets/images/user.png')"
-								alt
-								srcset
-							>
+						<p>姓名：</p>
+						<p>性别：</p>
+						<p>民族：</p>
+						<p>证件号：</p>
+					</el-col>
+					<el-col :span="5">
+						<p>{{defaultResident.staffName}}</p>
+						<p>{{$common.getEnumItemName("gender", defaultResident.gender)}}</p>
+						<p>{{$common.getEnumItemName("nation", defaultResident.nation)}}</p>
+						<p>{{defaultResident.credentialNo}}</p>
+					</el-col>
+					<el-col style="text-align:right;display:flex;justify-content:flex-end" :span="14">
+						<div v-if="showStaffPicture" class="imgBox" style="margin-right:10px">
+							<img :src="$common.setPictureShow(defaultResident.idCardPictureUrl)" alt srcset />
+						</div>
+						<div>
+							<div class="imgBox">
+								<img :src="$common.setPictureShow(defaultResident.lifePictureUrl)" alt srcset />
+							</div>
+							<p
+								@click="showStaffPicture = !showStaffPicture"
+								style="text-align:center;font-family: PingFangSC-Regular;font-size: 10px;color: #00D8A0;"
+							>查看证件照</p>
 						</div>
 					</el-col>
 				</el-row>
@@ -64,13 +67,12 @@
 					</el-col>
 					<el-col :span="19">
 						<p>{{defaultResident.addressString}}</p>
-							<tag-view
-								style="display:inline;margin-top:-15px"
-								:tags="dynamicTags"
-								:closable="false"
-								@handleClose="handleClose"
-							></tag-view>
-
+						<tag-view
+							style="display:inline;margin-top:-15px"
+							:tags="dynamicTags"
+							:closable="false"
+							@handleClose="handleClose"
+						></tag-view>
 					</el-col>
 				</el-row>
 			</div>
@@ -82,7 +84,7 @@
 					<el-col :span="19">
 						<div class="pBox" v-for="(item, index) in defaultResident.cardList" :key="index">
 							<div>
-								<img class="img" src="@/assets/images/resident/card_icon.png" alt srcset>
+								<img class="img" src="@/assets/images/resident/card_icon.png" alt srcset />
 								{{item.cardId}}
 							</div>
 						</div>
@@ -96,7 +98,7 @@
 					<el-col :span="19">
 						<div class="pBox" v-for="(item, index) in defaultResident.fingerprintList" :key="index">
 							<div>
-								<img class="img" src="@/assets/images/resident/finger_prints_icon.png" alt srcset>
+								<img class="img" src="@/assets/images/resident/finger_prints_icon.png" alt srcset />
 								{{item.name}}
 							</div>
 						</div>
@@ -192,6 +194,7 @@ export default {
   },
   data() {
     return {
+      showStaffPicture: false,
       countryOptions: window.config.options,
       countryOption: "",
       maritalOptions: window.config.options,
@@ -340,14 +343,14 @@ export default {
 
 .EditResidentdialogClass .imgBox {
 	display: inline-block;
-	width: 100%;
+	width: 100px;
 	height: 100px;
 	background: rgba(0, 0, 0, 0.1);
 	border: 0 solid rgba(255, 255, 255, 0.1);
 }
 .EditResidentdialogClass .imgBox img {
 	width: 100%;
-	height: 100%;
+	height: calc(100% - 30px);
 }
 .EditResidentdialogClass .left_tips_txt {
 	font-family: PingFangSC-Regular;
@@ -418,7 +421,7 @@ export default {
 	box-sizing: border-box;
 }
 .body {
-	height:80vh;
+	height: 80vh;
 	max-height: 600px;
 	overflow: auto;
 	@include padding;

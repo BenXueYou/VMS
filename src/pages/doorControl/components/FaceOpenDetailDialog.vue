@@ -1,64 +1,86 @@
 <template>
-  <el-dialog width="550px"
-             title="详情信息"
-             :visible.sync="isCurrentShow"
-             :before-close="onClickCancel"
-             :close-on-click-modal="false">
-    <div class="dialog-content">
-      <!--内容-->
-      <div class="lock-info">
-        <div class="info-pic">
-          <el-row slot="reference"
-                  class="ImgBox">
-            <img :src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.openDoorUrl) : require('@/assets/images/user.png')"
-                 height="100%"
-                 style="object-fit: contain;max-width:100%;" />
-            <div class="FRelPopoverCol"
-                 @click="downloadImg(itemData)">
-              <img src="@/assets/images/6s.png" />
-            </div>
-          </el-row>
-        </div>
-        <div class="info-details">
-          <div class="info-details-title">
-            <img src="@/assets/images/calendar.png"
-                 width="15px"
-                 height="15px" />
-            <div class="info-details-title-text">开锁图片1</div>
-          </div>
-          <div class="info-details-items">验证时间：{{$common.setStringText(itemData.validateTime)}}</div>
-          <div class="info-details-items">验证方式：{{$common.getEnumItemName("pass", itemData.validateType)}}</div>
-          <div class="info-details-items">验证地址：{{$common.setStringText(itemData.doorName)}}</div>
-          <div class="info-details-items">验证设备：{{$common.setStringText(itemData.readHeadName)}}</div>
-          <div class="info-details-items"
-               v-if="validateType === 'card'">卡号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.mediumNo) : ""}}</div>
-        </div>
-      </div>
-      <div class="person-info">
-        <div class="info-pic">
-          <img :src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
-               height="100%"
-               style="object-fit: contain;max-width:100%;" />
-        </div>
-        <div class="info-details">
-          <div class="info-details-title">
-            <img src="@/assets/images/calendar.png"
-                 width="15px"
-                 height="15px" />
-            <div class="info-details-title-text">人员信息</div>
-          </div>
-          <div class="info-details-items">姓名：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.staffName) : ''}}</div>
-          <div class="info-details-items">性别：{{itemData && itemData.staffInfo ? $common.getEnumItemName("gender", itemData.staffInfo.gender) : ''}}</div>
-          <div class="info-details-items">住址：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.adrees) : ''}}</div>
-          <div class="info-details-items">身份证号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.idCard) : ''}}</div>
-          <div class="info-details-items">民族：{{itemData && itemData.staffInfo ? $common.getEnumItemName("nation", itemData.staffInfo.nation) : ''}}</div>
-          <div class="info-details-items">人员类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName("staff_t", itemData.staffInfo.staffType) : ''}}</div>
-          <div class="info-details-items">电话：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.cellphone) : ''}}</div>
-          <div class="info-details-items">备注：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.remarks) : ''}}</div>
-        </div>
-      </div>
-    </div>
-  </el-dialog>
+	<el-dialog
+		width="550px"
+		title="详情信息"
+		:visible.sync="isCurrentShow"
+		:before-close="onClickCancel"
+		:close-on-click-modal="false"
+	>
+		<div class="dialog-content">
+			<!--内容-->
+			<div class="lock-info">
+				<div class="info-pic">
+					<el-row slot="reference" class="ImgBox">
+						<img
+							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.openDoorUrl) : require('@/assets/images/user.png')"
+							height="100%"
+							style="object-fit: contain;max-width:100%;"
+						/>
+						<div class="FRelPopoverCol" @click="downloadImg(itemData)">
+							<img src="@/assets/images/6s.png" />
+						</div>
+					</el-row>
+				</div>
+				<div class="info-details">
+					<div class="info-details-title">
+						<img src="@/assets/images/calendar.png" width="15px" height="15px" />
+						<div class="info-details-title-text">开锁图片1</div>
+					</div>
+					<div class="info-details-items">验证时间：{{$common.setStringText(itemData.validateTime)}}</div>
+					<div class="info-details-items">验证方式：{{$common.getEnumItemName("pass", itemData.validateType)}}</div>
+					<div class="info-details-items">验证地址：{{$common.setStringText(itemData.doorName)}}</div>
+					<div class="info-details-items">验证设备：{{$common.setStringText(itemData.readHeadName)}}</div>
+					<div
+						class="info-details-items"
+						v-if="validateType === 'card'"
+					>卡号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.mediumNo) : ""}}</div>
+					<div class="info-details-items" v-if="itemData && itemData.staffInfo.temperature">
+						体温：
+						<span style="color:#00D8A0">{{$common.setStringText(itemData.tempValue)}}</span>
+					</div>
+				</div>
+			</div>
+			<div class="person-info">
+				<div class="info-pic">
+					<img
+						:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
+						height="100%"
+						style="object-fit: contain;max-width:100%;"
+					/>
+				</div>
+				<div class="info-details">
+					<div class="info-details-title">
+						<img src="@/assets/images/calendar.png" width="15px" height="15px" />
+						<div class="info-details-title-text">人员信息</div>
+					</div>
+					<div
+						class="info-details-items"
+					>姓名：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.staffName) : ''}}</div>
+					<div
+						class="info-details-items"
+					>性别：{{itemData && itemData.staffInfo ? $common.getEnumItemName("gender", itemData.staffInfo.gender) : ''}}</div>
+					<div
+						class="info-details-items"
+					>住址：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.adrees) : ''}}</div>
+					<div
+						class="info-details-items"
+					>身份证号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.idCard) : ''}}</div>
+					<div
+						class="info-details-items"
+					>民族：{{itemData && itemData.staffInfo ? $common.getEnumItemName("nation", itemData.staffInfo.nation) : ''}}</div>
+					<div
+						class="info-details-items"
+					>人员类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName("staff_t", itemData.staffInfo.staffType) : ''}}</div>
+					<div
+						class="info-details-items"
+					>电话：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.cellphone) : ''}}</div>
+					<div
+						class="info-details-items"
+					>备注：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.remarks) : ''}}</div>
+				</div>
+			</div>
+		</div>
+	</el-dialog>
 </template>
 
 <script>
@@ -158,8 +180,8 @@ export default {
             let event = new MouseEvent("click");
             if (
               itemData &&
-              itemData.staffInfo &&
-              itemData.staffInfo.staffName
+							itemData.staffInfo &&
+							itemData.staffInfo.staffName
             ) {
               a.download = itemData.staffInfo.staffName + "." + type;
             } else {
@@ -246,82 +268,82 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @mixin setFontStyle($fontsize, $color) {
-  font-family: "PingFangSC-Regular";
-  font-size: $fontsize;
-  color: $color;
-  letter-spacing: 1px;
+	font-family: "PingFangSC-Regular";
+	font-size: $fontsize;
+	color: $color;
+	letter-spacing: 1px;
 }
 @mixin flexBlock($direction) {
-  display: flex;
-  flex-direction: $direction;
+	display: flex;
+	flex-direction: $direction;
 }
 .dialog-content {
-  padding: 10px 30px;
-  box-sizing: border-box;
-  @mixin info-common($margin-bottom1, $margin-bottom2) {
-    @include flexBlock(row);
-    width: 100%;
-    box-sizing: border-box;
-    .info-pic {
-      width: 145px;
-      height: 145px;
-      text-align: center;
-      .FRelPopoverCol {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-        color: rgb(159, 157, 153);
-        cursor: pointer;
-        text-align: center;
-        margin-top: -40px;
-        text-align: right;
-        background: rgba(0, 0, 0, 0.6);
-        border-radius: 14px;
-        margin-left: 115px;
-        padding: 8px;
-        box-sizing: border-box;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-      .ImgBox {
-        width: 100%;
-        height: 100%;
-        text-align: center;
-      }
-    }
-    .info-details {
-      margin-left: 5%;
-      @include flexBlock(column);
-      .info-details-title {
-        @include flexBlock(row);
-        align-items: center;
-        margin-bottom: $margin-bottom2;
-        .info-details-title-text {
-          margin-left: 10px;
-          @include setFontStyle(14px, #ebecec);
-        }
-      }
-      .info-details-items {
-        @include setFontStyle(14px, #afafb0);
-        margin-bottom: $margin-bottom1;
-      }
-      &:last-child {
-        margin-bottom: 0px;
-      }
-    }
-  }
-  .lock-info {
-    @include info-common(8px, 20px);
-    border-width: 0 0 1px 0;
-    border-style: dashed;
-    border-color: #444749;
-    padding: 20px 20px 28px 20px;
-  }
-  .person-info {
-    @include info-common(2px, 10px);
-    padding: 28px 20px 8px 20px;
-  }
+	padding: 10px 30px;
+	box-sizing: border-box;
+	@mixin info-common($margin-bottom1, $margin-bottom2) {
+		@include flexBlock(row);
+		width: 100%;
+		box-sizing: border-box;
+		.info-pic {
+			width: 145px;
+			height: 145px;
+			text-align: center;
+			.FRelPopoverCol {
+				width: 28px;
+				height: 28px;
+				font-size: 12px;
+				color: rgb(159, 157, 153);
+				cursor: pointer;
+				text-align: center;
+				margin-top: -40px;
+				text-align: right;
+				background: rgba(0, 0, 0, 0.6);
+				border-radius: 14px;
+				margin-left: 115px;
+				padding: 8px;
+				box-sizing: border-box;
+				img {
+					width: 100%;
+					height: 100%;
+				}
+			}
+			.ImgBox {
+				width: 100%;
+				height: 100%;
+				text-align: center;
+			}
+		}
+		.info-details {
+			margin-left: 5%;
+			@include flexBlock(column);
+			.info-details-title {
+				@include flexBlock(row);
+				align-items: center;
+				margin-bottom: $margin-bottom2;
+				.info-details-title-text {
+					margin-left: 10px;
+					@include setFontStyle(14px, #ebecec);
+				}
+			}
+			.info-details-items {
+				@include setFontStyle(14px, #afafb0);
+				margin-bottom: $margin-bottom1;
+			}
+			&:last-child {
+				margin-bottom: 0px;
+			}
+		}
+	}
+	.lock-info {
+		@include info-common(8px, 20px);
+		border-width: 0 0 1px 0;
+		border-style: dashed;
+		border-color: #444749;
+		padding: 20px 20px 28px 20px;
+	}
+	.person-info {
+		@include info-common(2px, 10px);
+		padding: 28px 20px 8px 20px;
+	}
 }
 </style>

@@ -19,6 +19,7 @@
           <div class="info-details-items">开锁方式：{{"刷卡开门"}}</div>
           <div class="info-details-items">卡号：{{"10123456251020"}}</div>
           <div class="info-details-items">开锁地址：{{"上海演示测试地区南门"}}</div>
+          <div class="info-details-items">体温：{{"上海演示测试地区南门"}}</div>
         </div>
       </div>
       <div class="person-info">

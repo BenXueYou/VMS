@@ -3,7 +3,7 @@ import axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 let ip = window.config.ip;
 let protocolHeader = window.config.protocolHeader;
-export var ResidentManageAjax = {
+export let ResidentManageAjax = {
   /**
    * 获取居民列表
    * address string (query) 住址
@@ -116,6 +116,7 @@ export var ResidentManageAjax = {
     let api = `${protocolHeader}${ip}${
       RestApi.api.residentManage.getResidentTagDetailApi
     }`;
+    debugger;
     xhr.tagType = "resident";
     return axios({
       method: "get",
@@ -129,10 +130,10 @@ export var ResidentManageAjax = {
   addElementToTag(xhr, tagObj) {
     console.log(xhr, tagObj);
     let api = `${protocolHeader}${ip}${RestApi.api.residentManage.addElementToTag}`;
-    var params = [];
+    let params = [];
     for (let i = 0; i < xhr.length; i++) {
       let element = xhr[i];
-      var item = {
+      let item = {
         elementSn: i,
         elementUuid: element.id,
         elementType: element.type,
@@ -211,9 +212,9 @@ version	integer($int32)
  */
   getResidentFromDevice(xhr) {
     let api = `${protocolHeader}${ip}${RestApi.api.residentManage.getResidentFromDevice}`;
-    var params = [];
-    for (var i = 0; i < xhr.length; i++) {
-      var item = {};
+    let params = [];
+    for (let i = 0; i < xhr.length; i++) {
+      let item = {};
       item.resSn = i;
       item.resType = xhr[i].type;
       item.resUuid = xhr[i].id;
@@ -234,23 +235,33 @@ version	integer($int32)
   },
   // 获取单元(楼栋)基建下的层与房屋展开信息
   getFloorAndHouse(infrastructureUuid) {
-    var api = `${protocolHeader}${ip}${
+    let api = `${protocolHeader}${ip}${
       RestApi.api.residentManage.getFloorAndHouse
     }${infrastructureUuid}/floorAndHouse`;
     return axios.get(api);
   },
   // 统计居民管理信息
   getResidentStaticData() {
-    var api = `${protocolHeader}${ip}${RestApi.api.residentManage.getResidentStaticData}`;
+    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.getResidentStaticData}`;
     return axios.get(api);
   },
   // 获取居民标签概要信息
   getResidentTagBriefDetail(tagUuid, needType) {
-    var api = `${protocolHeader}${ip}${
+    let api = `${protocolHeader}${ip}${
       RestApi.api.residentManage.getResidentTagBriefDetail
     }${tagUuid}/tagElement/${needType}`;
     return axios.get(api);
-  }
+  },
+
+  // 居民导出
+  downLoadResidentData() {
+    let url = `${protocolHeader}${ip}${RestApi.api.residentManage.downLoadResidentApi}`;
+    return axios({
+      method: "get",
+      responseType: 'arraybuffer', // 二进制流
+      url,
+    });
+  },
 };
 
 function install(Vue) {

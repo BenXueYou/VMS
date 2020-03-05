@@ -30,7 +30,7 @@ export default {
       setLogUuid: `sysLog-v1/project/${store.state.home.projectUuid}/log`,
       setLogUuidByNoPrjectUuid: (projectUuid) => `sysLog-v1/project/${projectUuid}/log`,
       loginOutApi: `oauth-v1/exit`,
-      updatePasswordApi:`upms-v1/account/updatePwd`,
+      updatePasswordApi: `upms-v1/account/updatePwd`,
     },
 
     /**
@@ -121,23 +121,56 @@ export default {
       getResidentStaticData: `/iacapp-v1/project/${store.state.home.projectUuid}/staff/statistics/resident`,
 
       // 居民标签概要详情 /project/{store.state.home.projectUuid}/Resident/tagElement/tag/{tagUuid}
-      getResidentTagBriefDetail: `/basedata-v1/project/${store.state.home.projectUuid}/tag/`
+      getResidentTagBriefDetail: `/basedata-v1/project/${store.state.home.projectUuid}/tag/`,
+    
+      // 居民导出 API
+      downLoadResidentApi:`/iacapp-v1/project/${store.state.home.projectUuid}/staff/import/resident`
     },
 
     /**
      * 记录查询/门禁控制模块
      */
     recordSearch: {
-      getDoorLog: `/iaclog-v1/project/${store.state.home.projectUuid}/ioclog/info/list`,
+      // 门禁通行记录
+      getDoorLog: `/iaclog-v1/project/${
+        store.state.home.projectUuid
+        }/ioclog/info/list`,
+      // 门禁报警记录
       getAlarmLog: `/alarmlog-v1/project/${store.state.home.projectUuid}/alarm`,
-      getChannelStatusList: `/iaclog-v1/project/${store.state.home.projectUuid}/channelStatus`,
-      getOrgDevTree: `/basedata-v1/project/${store.state.home.projectUuid}/organization/children`,
+      // 门禁报警详情
+      getAlarmLogDetail: (Uuid) => `/alarmlog-v1/project/${store.state.home.projectUuid}/alarm/${Uuid}`,
+      // 门禁报警新增处理
+      postAlarmLogDeteal: `/alarmlog-v1/project/${store.state.home.projectUuid}/alarmdeal`,
+      // 门禁报警修改处理
+      putAlarmLogDeteal: (Uuid) => `/alarmlog-v1/project/${store.state.home.projectUuid}/alarmdeal/${Uuid}`,
+
+      // 通道状态
+      getChannelStatusList: `/iaclog-v1/project/${
+        store.state.home.projectUuid
+        }/channelStatus`,
+      // 设备树
+      getOrgDevTree: `/basedata-v1/project/${
+        store.state.home.projectUuid
+        }/organization/children`,
+
+      // 门状态操作
       handleDoorStatus: (channelUuid, action) =>
-        `/iacserv-v1/project/${store.state.home.projectUuid}/operation/opendoor/channel/${channelUuid}/action/${action}`,
-      getStatistics: `/iacapp-v1/project/${store.state.home.projectUuid}/door/statistics`,
+        `/iacserv-v1/project/${
+        store.state.home.projectUuid
+        }/operation/opendoor/channel/${channelUuid}/action/${action}`,
+      // 门状态统计
+      getStatistics: `/iacapp-v1/project/${
+        store.state.home.projectUuid
+        }/door/statistics`,
+      // 门状态销警
       removeAlarm: channelUuid =>
-        `/iacserv-v1/project/${store.state.home.projectUuid}/operation/removeAlarm/channel/${channelUuid}`,
-      allOperation: `/iacserv-v1/project/${store.state.home.projectUuid}/operation/device/toMgr`
+        `/iacserv-v1/project/${
+        store.state.home.projectUuid
+        }/operation/removeAlarm/channel/${channelUuid}`,
+      // 所有操作
+      allOperation: `/iacserv-v1/project/${
+        store.state.home.projectUuid
+        }/operation/device/toMgr`
     },
 
     /**
