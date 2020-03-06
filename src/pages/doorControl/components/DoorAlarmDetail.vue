@@ -35,13 +35,13 @@
 					</p>
 					<p v-if="defaultDetail.extInfo && defaultDetail.extInfo.temperature">
 						体温：
-						<span>{{defaultDetail.extInfo?defaultDetail.extInfo.tempValue:''}}</span>
+						<span style="color:#FF5F5F">{{defaultDetail.extInfo?defaultDetail.extInfo.temperature:''}}℃</span>
 					</p>
 					<p>
 						报警等级：
 						<span
-							:style="defaultDetail.alarmLevel == 0 ? `color: #EDAE22;` : `color: #FF5F5F;`"
-						>{{$common.getEnumItemName("alarm_l", defaultDetail.alarmLevel)}}</span>
+							style="color: #FF5F5F;"
+						>{{defaultDetail.alarmLevel?$common.getEnumItemName("alarm_l", defaultDetail.alarmLevel):'紧急'}}</span>
 					</p>
 				</div>
 			</div>
@@ -124,7 +124,7 @@ export default {
   },
   data() {
     return {
-      valided: "1",
+      valided: 1,
       textarea: "",
       isShow: false,
       alarmDetail: {}
@@ -133,25 +133,18 @@ export default {
   methods: {
     AlarmDetailBtnAct() {
       let data = {
-        alarmUuid: "",
-        userUuid: "",
-        userName: "",
-        dealTime: "",
-        valided: this.valided,
-        dealState: "",
+        alarmUuid: this.defaultDetail.alarmUuid,
+        userUuid: this.$store.state.home.userUuid,
+        userName: this.$store.state.home.account,
+        dealTime: this.$common.getCurrentTime(),
+        valided: Number(this.valided),
+        dealState: this.defaultDetail.dealState,
         content: this.textarea,
         extInfo: {},
-        remarks: ""
+        remarks: "",
+        dealUuid: this.defaultDetail.dealUuid
       };
-      Object.assign(data, this.defaultDetail);
-      data.valided = this.valided;
-      // 根据当前详情的处理状态
-      if (this.defaultDetail.dealState === "to_be_processed") {
-        // 待处理
-        this.httpPostAlarmDeteal(data);
-      } else {
-        this.httpPutAlarmDeteal(data);
-      }
+      this.httpPostAlarmDeteal(data);
     },
     httpPutAlarmDeteal(data) {
       this.$logSearchHttp
@@ -188,9 +181,14 @@ export default {
     visible(val) {
       this.isShow = val;
       if (!val) {
-        this.valided = "1";
+        this.valided = 1;
         this.textarea = "";
+      } else {
       }
+    },
+    defaultDetail(val) {
+      this.valided = String(val.valided);
+      this.textarea = val.content;
     }
   }
 };

@@ -45,9 +45,22 @@ export var LogSearchHttp = {
     }
     return axios.get(api, {params: params});
   },
+  // 报警记录处理
+  getAlarmLogDeal(holder) {
+    let logDetail = RestApi.api.recordSearch.getAlarmLogDeal(holder.alarmUuid);
+    let api = `${protocolHeader}${ip}${logDetail}`;
+
+    let params = {};
+    for (let k in holder) {
+      if (holder[k]) {
+        params[k] = holder[k];
+      }
+    }
+    return axios.get(api, {params: params});
+  },
   // 新增报警记录处理
   postAlarmLogDeteal(holder) {
-    let logDetail = RestApi.api.recordSearch.getAlarmLogDetail(holder.alarmUuid);
+    let logDetail = RestApi.api.recordSearch.postAlarmLogDeteal;
     let api = `${protocolHeader}${ip}${logDetail}`;
 
     let params = {};
@@ -60,7 +73,7 @@ export var LogSearchHttp = {
   },
   // 修改报警记录处理
   putAlarmLogDeteal(holder) {
-    let logDetail = RestApi.api.recordSearch.getAlarmLogDetail(holder.alarmUuid);
+    let logDetail = RestApi.api.recordSearch.putAlarmLogDeteal(holder.alarmUuid);
     let api = `${protocolHeader}${ip}${logDetail}`;
 
     let params = {};

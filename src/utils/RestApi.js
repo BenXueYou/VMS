@@ -139,10 +139,12 @@ export default {
       getAlarmLog: `/alarmlog-v1/project/${store.state.home.projectUuid}/alarm`,
       // 门禁报警详情
       getAlarmLogDetail: (Uuid) => `/alarmlog-v1/project/${store.state.home.projectUuid}/alarm/${Uuid}`,
+      // 查询报警处理
+      getAlarmLogDeal: (Uuid) => `/alarmlog-v1/project/${store.state.home.projectUuid}/alarmDeal/${Uuid}`,
       // 门禁报警新增处理
-      postAlarmLogDeteal: `/alarmlog-v1/project/${store.state.home.projectUuid}/alarmdeal`,
+      postAlarmLogDeteal: `/alarmlog-v1/project/${store.state.home.projectUuid}/alarmDeal`,
       // 门禁报警修改处理
-      putAlarmLogDeteal: (Uuid) => `/alarmlog-v1/project/${store.state.home.projectUuid}/alarmdeal/${Uuid}`,
+      putAlarmLogDeteal: (Uuid) => `/alarmlog-v1/project/${store.state.home.projectUuid}/alarmDeal/${Uuid}`,
 
       // 通道状态
       getChannelStatusList: `/iaclog-v1/project/${

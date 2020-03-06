@@ -34,7 +34,10 @@
 						class="info-details-items"
 						v-if="validateType === 'card'"
 					>卡号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.mediumNo) : ""}}</div>
-					<div class="info-details-items" v-if="itemData && itemData.staffInfo && itemData.staffInfo.tempValue">
+					<div
+						class="info-details-items"
+						v-if="itemData && itemData.staffInfo && itemData.staffInfo.tempValue"
+					>
 						体温：
 						<span style="color:#00D8A0">{{$common.setStringText(itemData.staffInfo.tempValue)}}℃</span>
 					</div>
@@ -61,22 +64,31 @@
 					>性别：{{itemData && itemData.staffInfo ? $common.getEnumItemName("gender", itemData.staffInfo.gender) : ''}}</div>
 					<div
 						class="info-details-items"
-					>住址：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.adrees) : ''}}</div>
+					>证件类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName('cred',itemData.staffInfo.idCardType):'身份证'}}</div>
 					<div
 						class="info-details-items"
 					>身份证号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.idCard) : ''}}</div>
 					<div
 						class="info-details-items"
 					>民族：{{itemData && itemData.staffInfo ? $common.getEnumItemName("nation", itemData.staffInfo.nation) : ''}}</div>
-					<div
-						class="info-details-items"
-					>人员类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName("staff_t", itemData.staffInfo.staffType) : ''}}</div>
-					<div
-						class="info-details-items"
-					>电话：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.cellphone) : ''}}</div>
-					<div
-						class="info-details-items"
-					>备注：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.remarks) : ''}}</div>
+					<!-- 在库人员显示该字段 -->
+					<template v-if="itemData && itemData.staffInfo && itemData.staffInfo.staffType!=='no_record'">
+						<div
+							class="info-details-items"
+						>人员类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName("staff_t", itemData.staffInfo.staffType) : ''}}</div>
+						<div
+							class="info-details-items"
+						>手机号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.cellphone) : ''}}</div>
+						<div
+							class="info-details-items"
+						>车牌号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.vehicleNo) : ''}}</div>
+					</template>
+					<!-- 非在库人员显示的字段 -->
+					<template v-else>
+						<div
+							class="info-details-items"
+						>住址：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.adrees) : ''}}</div>
+					</template>
 				</div>
 			</div>
 		</div>

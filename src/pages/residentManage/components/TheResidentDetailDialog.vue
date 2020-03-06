@@ -350,7 +350,7 @@ export default {
 }
 .EditResidentdialogClass .imgBox img {
 	width: 100%;
-	height: calc(100% - 30px);
+	height: 100%;
 }
 .EditResidentdialogClass .left_tips_txt {
 	font-family: PingFangSC-Regular;
