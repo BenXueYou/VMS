@@ -44,12 +44,27 @@
 				</div>
 			</div>
 			<div class="person-info">
-				<div class="info-pic">
-					<img
-						:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
-						height="100%"
-						style="object-fit: contain;max-width:100%;"
-					/>
+				<div class="leftBox">
+					<div class="info-pic">
+            <!-- 如果是不在库人员。默认显示证件照，隐藏查看证件照的按钮 -->
+						<img
+							v-if="isShowPicture || (itemData && itemData.staffInfo && itemData.staffInfo.staffType==='no_record')"
+							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
+							height="100%"
+							style="object-fit: contain;max-width:100%;"
+						/>
+						<img
+							v-else
+							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.lifePictureUrl) : require('@/assets/images/user.png')"
+							height="100%"
+							style="object-fit: contain;max-width:100%;"
+						/>
+					</div>
+					<div
+						v-if="itemData && itemData.staffInfo && itemData.staffInfo.staffType!=='no_record'"
+						class="leftBottomTips cursorClass"
+						@click="isShowPicture=!isShowPicture"
+					>查看证件照</div>
 				</div>
 				<div class="info-details">
 					<div class="info-details-title">
@@ -112,6 +127,7 @@ export default {
   },
   data() {
     return {
+      isShowPicture: false,
       isCurrentShow: false,
       validateType: "",
       itemData: {
@@ -323,6 +339,15 @@ export default {
 				width: 100%;
 				height: 100%;
 				text-align: center;
+			}
+		}
+		.leftBox {
+			.leftBottomTips {
+				text-align: center;
+				margin-top: 15px;
+				font-family: "PingFangSC-Regular";
+				font-size: 12px;
+				color: #00d8a0;
 			}
 		}
 		.info-details {

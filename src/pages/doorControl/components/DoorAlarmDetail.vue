@@ -22,8 +22,8 @@
 						<span>{{defaultDetail.alarmTime}}</span>
 					</p>
 					<p>
-						报警原因：
-						<span>{{defaultDetail.extInfo?defaultDetail.extInfo.reason:''}}</span>
+						报警类型：
+						<span>{{$common.getEnumItemName("alarm_t", defaultDetail.subType)}}</span>
 					</p>
 					<p>
 						报警地点：
@@ -94,7 +94,7 @@
 		<div class="detalBox">
 			<div class="topBox">
 				<div>
-					<img src="@/assets/images/temperature/temperature_deteal_icon.png" alt srcset />人员信息
+					<img src="@/assets/images/temperature/temperature_deteal_icon.png" alt srcset />警情处理
 				</div>
 				<el-radio-group v-model="valided">
 					<el-radio label="1">有效</el-radio>
@@ -136,15 +136,16 @@ export default {
         alarmUuid: this.defaultDetail.alarmUuid,
         userUuid: this.$store.state.home.userUuid,
         userName: this.$store.state.home.account,
-        dealTime: this.$common.getCurrentTime(),
-        valided: Number(this.valided),
+        valided: this.valided,
         dealState: this.defaultDetail.dealState,
         content: this.textarea,
-        extInfo: {},
-        remarks: "",
         dealUuid: this.defaultDetail.dealUuid
       };
-      this.httpPostAlarmDeteal(data);
+      if (this.defaultDetail.dealState === "to_be_processed") {
+        this.httpPostAlarmDeteal(data);
+      } else {
+        this.httpPutAlarmDeteal(data);
+      }
     },
     httpPutAlarmDeteal(data) {
       this.$logSearchHttp
@@ -184,6 +185,8 @@ export default {
         this.valided = 1;
         this.textarea = "";
       } else {
+        this.valided = String(this.defaultDetail.valided);
+        this.textarea = this.defaultDetail.content;
       }
     },
     defaultDetail(val) {

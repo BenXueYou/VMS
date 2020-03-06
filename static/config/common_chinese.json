@@ -651,7 +651,8 @@
         "not_closed": "门超时未关",
         "invalid_auth": "无效授权多次",
         "illegal_open": "门被异常打开",
-        "dev_alarm": "设备报警"
+        "dev_alarm": "设备报警",
+        "body_temp_abnormal": "人员体温异常"
     },
     "fire_alarms": {
         "dev_fault": "设备故障",

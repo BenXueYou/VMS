@@ -89,7 +89,7 @@
 					<el-table-column prop="alarmInfo" label="报警信息" show-overflow-tooltip>
 						<template slot-scope="scope">
 							<div
-								v-if="scope.row.extInfo"
+								v-if="scope.row.extInfo && scope.row.extInfo.temperature"
 								style="color: #FF5F5F;"
 							>{{scope.row.extInfo.staffName+scope.row.extInfo.temperature+'℃'}}</div>
 						</template>
@@ -171,7 +171,17 @@ export default {
     initData() {
       if (!this.ShowAuthDisabled) return;
       this.alarmTypeOptions = this.$common.getEnumByGroupStr("door_alarms");
-      this.handleStatusOptions = this.$common.getEnumByGroupStr("alarm_r");
+      //   this.handleStatusOptions = this.$common.getEnumByGroupStr("alarm_r");
+      this.handleStatusOptions = [
+        {
+          typeStr: "processed",
+          typeName: "已处理"
+        },
+        {
+          typeStr: "to_be_processed",
+          typeName: "待处理"
+        }
+      ];
       this.getAlarmLog();
     },
     queryAct() {

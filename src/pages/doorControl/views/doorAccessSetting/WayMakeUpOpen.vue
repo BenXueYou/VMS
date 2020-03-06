@@ -20,9 +20,7 @@
                :data="treeData"
                :props="defaultProps"
                node-key="id"
-               @check-change="checkChange"
                @node-click="nodeClick"
-               @current-change="currentChange"
                :filter-node-method="filterNode"
                :expand-on-click-node="true"
                ref="tree"
@@ -111,12 +109,20 @@ export default {
           label: "卡/指纹"
         },
         {
+          value: "card,id_card ",
+          label: "卡/身份证"
+        },
+        {
           value: "card,qrcode",
           label: "卡/二维码"
         },
         {
           value: "face,fingerprint",
           label: "脸/指纹"
+        },
+        {
+          value: "face,id_card",
+          label: "脸/身份证"
         },
         {
           value: "face,qrcode",
@@ -139,6 +145,14 @@ export default {
           label: "脸/指纹/二维码"
         },
         {
+          value: "face,fingerprint,qrcode,id_card",
+          label: "脸/指纹/二维码/身份证"
+        },
+        {
+          value: "card,face,fingerprint,qrcode,id_card",
+          label: "卡/脸/指纹/二维码/身份证"
+        },
+        {
           value: "card",
           label: "仅卡"
         },
@@ -151,6 +165,10 @@ export default {
           label: "仅指纹"
         },
         {
+          value: "id_card",
+          label: "仅身份证"
+        },
+        {
           value: "card&face&fingerprint",
           label: "卡+脸+指纹"
         },
@@ -159,8 +177,16 @@ export default {
           label: "卡+脸"
         },
         {
+          value: "card&id_card",
+          label: "卡+身份证"
+        },
+        {
           value: "card&fingerprint",
           label: "卡+指纹"
+        },
+        {
+          value: "face&id_card",
+          label: "脸+身份证"
         },
         {
           value: "face&fingerprint",
@@ -249,12 +275,6 @@ export default {
           this.mainListLoading = false;
           console.log("请求错误：" + err);
         });
-    },
-    checkChange(node, nodeBool, subBool) {
-      // 节点被点击选中时的变化
-    },
-    currentChange() {
-      // 当前选中节点变化时触发的事件
     },
     filterNode(value, data) {
       if (!value) return true;

@@ -73,7 +73,7 @@ export var LogSearchHttp = {
   },
   // 修改报警记录处理
   putAlarmLogDeteal(holder) {
-    let logDetail = RestApi.api.recordSearch.putAlarmLogDeteal(holder.alarmUuid);
+    let logDetail = RestApi.api.recordSearch.putAlarmLogDeteal(holder.dealUuid);
     let api = `${protocolHeader}${ip}${logDetail}`;
 
     let params = {};
