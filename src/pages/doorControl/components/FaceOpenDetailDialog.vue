@@ -16,7 +16,7 @@
 							height="100%"
 							style="object-fit: contain;max-width:100%;"
 						/>
-						<div class="FRelPopoverCol" @click="downloadImg(itemData)">
+						<div class="DRelPopoverClass" @click="downloadImg(itemData)">
 							<img src="@/assets/images/6s.png" />
 						</div>
 					</el-row>
@@ -316,7 +316,7 @@ export default {
 			width: 145px;
 			height: 145px;
 			text-align: center;
-			.FRelPopoverCol {
+			.DRelPopoverClass {
 				width: 28px;
 				height: 28px;
 				font-size: 12px;
