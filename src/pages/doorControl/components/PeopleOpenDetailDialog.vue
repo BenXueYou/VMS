@@ -21,7 +21,7 @@
 						</div>
 					</template>
 				</div>
-				<div class="info-details">
+				<div class="info-details" style="margin-left:15px">
 					<div class="info-details-title">
 						<img src="@/assets/images/calendar.png" width="15px" height="15px" />
 						<div class="info-details-title-text">开锁图片</div>
@@ -173,12 +173,12 @@ export default {
 		width: 100%;
 		box-sizing: border-box;
 		.info-pic {
-			width: 280px;
+			max-width: 280px;
 			height: 145px;
 			@include flexBlock(row);
 			flex-wrap: wrap;
 			.img-block {
-				width: 30%;
+				width: 80px;
 				height: 80px;
 				margin-right: 6px;
 				margin-bottom: 5px;
@@ -209,7 +209,7 @@ export default {
 			}
 		}
 		.info-details {
-			margin-left: $margin-left;
+			margin-left: 1%;
 			@include flexBlock(column);
 			.info-details-title {
 				@include flexBlock(row);
@@ -234,7 +234,7 @@ export default {
 		border-width: 0 0 1px 0;
 		border-style: dashed;
 		border-color: #444749;
-		padding: 20px 20px 38px 20px;
+		padding: 20px 10px 38px 20px;
 	}
 	.person-info {
 		@include info-common(5px, 20px, 0);
