@@ -179,7 +179,7 @@ export default {
   },
   data() {
     const validatorlength = (rule, value, callback) => {
-      if (value > 30 && value < 42) {
+      if (value >= 30 && value <= 42) {
         callback();
       } else {
         callback(new Error("请输入30-42的数字"));
