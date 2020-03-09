@@ -573,6 +573,11 @@ export default {
           this.updateTime = "";
           this.createTime = "";
           this.updateMan = "";
+          this.peopleNum = [];
+          this.doorList = [];
+          this.doorNum = [];
+          this.peopleCount = 0;
+          this.doorCount = 0;
           this.getQXList();
         }
       });

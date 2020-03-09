@@ -238,8 +238,12 @@ export default {
         });
     },
     getPublicMessageListSuccessResponse(body) {
-      this.tableData = body.data.list;
-      this.handleDefaultChooseFirstData();
+      if (body.data) {
+        this.tableData = body.data.list || [];
+        this.handleDefaultChooseFirstData();
+      } else {
+        this.onClickClear();
+      }
     },
     setCurrentRow(index) {
       if (this.$refs.elTable) {
@@ -248,6 +252,8 @@ export default {
     },
     handleDefaultChooseFirstData() {
       if (!this.tableData || this.tableData.length === 0) {
+        // 清除右边的页面数据
+        this.onClickClear();
         return;
       }
       let index = 0;
