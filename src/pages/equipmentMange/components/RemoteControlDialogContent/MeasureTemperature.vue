@@ -17,7 +17,8 @@
           </el-switch>
         </el-form-item>
 
-        <el-form-item label="高温报警上传：">
+        <el-form-item label="高温报警上传："
+                      v-show="data.tempMeasureEnable">
           <el-switch v-model="data.highTempAlarmUploadEnable"
                      active-color="rgb(38,78,70)"
                      inactive-color="rgb(75,78,82)">
@@ -25,6 +26,7 @@
         </el-form-item>
 
         <el-form-item label="高温阈值："
+                      v-show="data.tempMeasureEnable"
                       prop="highTemperatureThrold">
           <el-input v-model='data.highTemperatureThrold'
                     type="number">
@@ -34,21 +36,23 @@
           </span>
         </el-form-item>
 
-        <el-form-item label="显示测温结果：">
+        <el-form-item label="显示测温结果："
+                      v-show="data.tempMeasureEnable">
           <el-switch v-model="data.showTempMeasureEnable"
                      active-color="rgb(38,78,70)"
                      inactive-color="rgb(75,78,82)">
           </el-switch>
         </el-form-item>
 
-        <el-form-item label="播报测温结果：">
+        <el-form-item label="播报测温结果："
+                      v-show="data.tempMeasureEnable">
           <el-switch v-model="data.broadcastTempMeasureEnable"
                      active-color="rgb(38,78,70)"
                      inactive-color="rgb(75,78,82)">
           </el-switch>
         </el-form-item>
 
-        <el-form-item label="测温参数：">
+        <!-- <el-form-item label="测温参数：">
           <span class="operator"
                 @click="opening=true"
                 v-if="!opening">展开<img src="@/assets/temperature/slideup.png"
@@ -57,7 +61,7 @@
                 @click="opening=false"
                 v-else>收起<img src="@/assets/temperature/slidedown.png"
                  alt=""></span>
-        </el-form-item>
+        </el-form-item> -->
 
         <div v-show="opening">
           <el-form-item label="目标距离："
@@ -175,14 +179,10 @@ export default {
   },
   data() {
     const validatorlength = (rule, value, callback) => {
-      if (value > 0 && value < 100) {
-        if (value.toString().indexOf(".") === -1) {
-          callback();
-        } else {
-          callback(new Error("人脸识别阈值不可以是小数!"));
-        }
+      if (value > 30 && value < 42) {
+        callback();
       } else {
-        callback(new Error("请输入1-99的值"));
+        callback(new Error("请输入30-42的数字"));
       }
     };
     return {
@@ -215,7 +215,8 @@ export default {
             validator: validatorlength,
             trigger: "blur"
           }
-        ]
+        ],
+        highTemperatureThrold: [{ validator: validatorlength, trigger: "blur" }]
       }
     };
   },
