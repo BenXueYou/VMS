@@ -335,7 +335,7 @@
         "staff_group": "多人组合开门",
         "platformremote": "平台远程",
         "id_card": "身份证",
-        "body_temp": "测温"
+        "body_temp": "认证+测温"
     },
     "attendence": {
         "on_duty": "上班",

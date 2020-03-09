@@ -69,7 +69,7 @@
 					<el-table-column prop="subType" label="报警类型" show-overflow-tooltip>
 						<template slot-scope="scope">{{$common.getEnumItemName("alarm_t", scope.row.subType)}}</template>
 					</el-table-column>
-					<el-table-column prop="address" label="地址" show-overflow-tooltip></el-table-column>
+					<el-table-column prop="resName" label="地址" show-overflow-tooltip></el-table-column>
 					<el-table-column prop="resName" label="报警源" show-overflow-tooltip></el-table-column>
 					<el-table-column prop="valided" label="报警有效性" show-overflow-tooltip>
 						<template slot-scope="scope">{{scope.row.valided === 0 ? "无效" : "有效"}}</template>
@@ -215,18 +215,6 @@ export default {
     },
     handleGetAlarmLogSuccessResponse(data) {
       this.tableData = data.list || [];
-      if (!this.tableData.length) {
-        this.tableData.push({
-          dealState: "已处理",
-          alarmTime: "已处理",
-          subType: "已处理",
-          address: "已处理",
-          resName: "已处理",
-          valided: "已处理",
-          alarmLevel: "已处理",
-          alarmMsg: "已处理"
-        });
-      }
       this.handlePageInfo(data);
     },
     handlePageInfo(data) {

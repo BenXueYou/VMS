@@ -523,6 +523,7 @@
 			:addCardDialog.sync="addCardDialogVisible"
 			:checkedCard="currentCard"
 			:cardList="cardList"
+      :currentCardIndex='currentCardIndex'
 			@transferCard="transferCard"
 		></add-card-dialog>
 	</div>
