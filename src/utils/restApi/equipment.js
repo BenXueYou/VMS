@@ -135,6 +135,7 @@ export default {
     `${
       window.config.protocolHeader
     }${ip}/iacserv-v1/operation/operation/dataRestore/device/${deviceUuid}`,
+  // 居民管理的导入
   staffExportUrl: type => `${wyfPrefix}staff/import/${type}`,
   // 下载模板
   downloadUrl: `${wyfPrefix}staff/import/exportTemplate`,

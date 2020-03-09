@@ -63,12 +63,7 @@
 				<el-table :data="tableData" style="width: 100%">
 					<el-table-column type="index" label="序号" :index="indexMethod" width="90"></el-table-column>
 					<el-table-column prop="dealState" label="处理状态" show-overflow-tooltip width="120">
-						<template slot-scope="scope">
-							{{$common.getEnumItemName("alarm_r", scope.row.dealState)}}
-							<!-- <div :style="scope.row.dealState==0 ? `color: #FF5F5F` : ``">
-                {{$common.getEnumItemName("alarm_r", scope.row.dealState)}}
-							</div>-->
-						</template>
+						<template slot-scope="scope">{{$common.getEnumItemName("alarm_r", scope.row.dealState)}}</template>
 					</el-table-column>
 					<el-table-column prop="alarmTime" label="报警时间" show-overflow-tooltip width="220"></el-table-column>
 					<el-table-column prop="subType" label="报警类型" show-overflow-tooltip>
@@ -76,15 +71,32 @@
 					</el-table-column>
 					<el-table-column prop="address" label="地址" show-overflow-tooltip></el-table-column>
 					<el-table-column prop="resName" label="报警源" show-overflow-tooltip></el-table-column>
-					<el-table-column prop="valided" label="报警有效等级" show-overflow-tooltip>
+					<el-table-column prop="valided" label="报警有效性" show-overflow-tooltip>
 						<template slot-scope="scope">{{scope.row.valided === 0 ? "无效" : "有效"}}</template>
 					</el-table-column>
 					<el-table-column prop="alarmLevel" label="报警等级" show-overflow-tooltip>
 						<template slot-scope="scope">
+							<!-- <div
+								class="level-div"
+								:style="scope.row.alarmLevel? `color: #EDAE22;` : `color: #FF5F5F;`"
+							>{{$common.getEnumItemName("alarm_l", scope.row.alarmLevel)}}</div>-->
 							<div
 								class="level-div"
-								:style="scope.row.alarmLevel == 0 ? `color: #EDAE22;` : `color: #FF5F5F;`"
-							>{{$common.getEnumItemName("alarm_l", scope.row.alarmLevel)}}</div>
+								style="color: #FF5F5F;"
+							>{{scope.row.alarmLevel?$common.getEnumItemName("alarm_l", scope.row.alarmLevel):'紧急'}}</div>
+						</template>
+					</el-table-column>
+					<el-table-column prop="alarmInfo" label="报警信息" show-overflow-tooltip>
+						<template slot-scope="scope">
+							<div
+								v-if="scope.row.extInfo && scope.row.extInfo.temperature"
+								style="color: #FF5F5F;"
+							>{{scope.row.extInfo.staffName+scope.row.extInfo.temperature+'℃'}}</div>
+						</template>
+					</el-table-column>
+					<el-table-column label="操作">
+						<template slot-scope="scope">
+							<el-button type="text" @click="rowDetailBtnAct(scope.row)" size="mini">详情</el-button>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -100,15 +112,22 @@
 				></el-pagination>
 			</div>
 		</div>
+		<door-alarm-detail
+			:visible.sync="isDoorAlarmDetailVisible"
+			:defaultDetail="defaultDetail"
+			@close="initData"
+		></door-alarm-detail>
 	</div>
 </template>
-
 <script>
+import DoorAlarmDetail from "@/pages/doorControl/components/DoorAlarmDetail.vue";
 export default {
-  components: {},
+  components: { DoorAlarmDetail },
   props: {},
   data() {
     return {
+      defaultDetail: {},
+      isDoorAlarmDetailVisible: false,
       pageInfo: {
         total: 0,
         pageSize: 13,
@@ -133,10 +152,36 @@ export default {
     this.initData();
   },
   methods: {
+    rowDetailBtnAct(rowData) {
+      this.isDoorAlarmDetailVisible = true;
+      this.httpAlarmDealAct(rowData);
+    },
+    httpAlarmDealAct(data) {
+      this.$logSearchHttp
+        .getAlarmLogDeal({ alarmUuid: data.alarmUuid })
+        .then(res => {
+          if (res.data.success && res.data.data) {
+            res.data.data.extInfo = data.extInfo || {};
+            Object.assign(data, res.data.data);
+          }
+          this.defaultDetail = data;
+        })
+        .catch(() => {});
+    },
     initData() {
       if (!this.ShowAuthDisabled) return;
       this.alarmTypeOptions = this.$common.getEnumByGroupStr("door_alarms");
-      this.handleStatusOptions = this.$common.getEnumByGroupStr("alarm_r");
+      //   this.handleStatusOptions = this.$common.getEnumByGroupStr("alarm_r");
+      this.handleStatusOptions = [
+        {
+          typeStr: "processed",
+          typeName: "已处理"
+        },
+        {
+          typeStr: "to_be_processed",
+          typeName: "待处理"
+        }
+      ];
       this.getAlarmLog();
     },
     queryAct() {
@@ -169,7 +214,19 @@ export default {
         });
     },
     handleGetAlarmLogSuccessResponse(data) {
-      this.tableData = data.list;
+      this.tableData = data.list || [];
+      if (!this.tableData.length) {
+        this.tableData.push({
+          dealState: "已处理",
+          alarmTime: "已处理",
+          subType: "已处理",
+          address: "已处理",
+          resName: "已处理",
+          valided: "已处理",
+          alarmLevel: "已处理",
+          alarmMsg: "已处理"
+        });
+      }
       this.handlePageInfo(data);
     },
     handlePageInfo(data) {
