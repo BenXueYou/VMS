@@ -205,7 +205,13 @@
 											/>
 										</div>
 										<div class="txtBox">
-											<p style="height:18px;">
+											<p
+												class="textClips"
+												style="height:18px;"
+												@mouseover="mymouseover"
+												@mouseout="mymouseout"
+												@mousemove="mymousemove"
+											>
 												<span>{{item.staffName}}</span>
 												<span>{{$common.transferEnumItemName($store.getters.GET_GENDEROPTIONS, item.gender)}}</span>
 												<span>{{$common.transferEnumItemName($store.getters.GET_STAFFOPTIONS, item.staffType)}}</span>
