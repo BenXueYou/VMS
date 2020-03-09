@@ -313,7 +313,7 @@ export default {
     initData() {
       if (!this.ShowAuthDisabled) return;
       this.personTypeOptions = this.$common.getEnumByGroupStr("staff_t");
-	  this.validateTypeOptions = this.$common.getEnumByGroupStr("pass");
+      this.validateTypeOptions = this.$common.getEnumByGroupStr("pass");
       //   this.validateTypeOptions.push({typeStr:'',typeName:''});
       this.mediumUseOptions = this.$common.getEnumByGroupStr("card_u");
       this.resultOptions = [
