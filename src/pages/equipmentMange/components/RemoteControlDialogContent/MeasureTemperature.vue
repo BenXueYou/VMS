@@ -175,14 +175,10 @@ export default {
   },
   data() {
     const validatorlength = (rule, value, callback) => {
-      if (value > 0 && value < 100) {
-        if (value.toString().indexOf(".") === -1) {
-          callback();
-        } else {
-          callback(new Error("人脸识别阈值不可以是小数!"));
-        }
+      if (value > 30 && value < 42) {
+        callback();
       } else {
-        callback(new Error("请输入1-99的值"));
+        callback(new Error("请输入30-42的数字"));
       }
     };
     return {
@@ -215,7 +211,8 @@ export default {
             validator: validatorlength,
             trigger: "blur"
           }
-        ]
+        ],
+        highTemperatureThrold: [{ validator: validatorlength, trigger: "blur" }]
       }
     };
   },
