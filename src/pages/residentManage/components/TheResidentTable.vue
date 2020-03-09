@@ -157,7 +157,7 @@
 									<el-row class="popoverBox" justify="space-between">
 										<el-col
 											:class="$common.getAuthIsOwn('居民管理', 'isShow')?'cursorClass':'disabled'"
-											class="FRelPopoverCol"
+											class="RelPopoverClass"
 											@click.native="detailResident(item)"
 										>
 											<img
@@ -170,7 +170,7 @@
 										</el-col>
 										<el-col
 											:class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
-											class="FRelPopoverCol"
+											class="RelPopoverClass"
 											@click.native="editResident(item)"
 										>
 											<img
@@ -183,7 +183,7 @@
 										</el-col>
 										<el-col
 											:class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
-											class="FRelPopoverCol"
+											class="RelPopoverClass"
 											@click.native="deleteResident(item)"
 										>
 											<img
@@ -787,7 +787,7 @@ export default {
 	justify-content: space-around;
 	color: #dddddd;
 }
-.FRelPopoverCol {
+.RelPopoverClass {
 	height: 33%;
 	line-height: 30px;
 	color: #dddddd;

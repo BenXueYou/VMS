@@ -184,7 +184,7 @@ export default {
 				margin-bottom: 5px;
 				cursor: pointer;
 			}
-			.FRelPopoverCol {
+			.PRelPopoverClass {
 				width: 28px;
 				height: 28px;
 				font-size: 12px;

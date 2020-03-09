@@ -184,16 +184,16 @@
 						</template>
 					</el-table-column>
 					<el-table-column prop="validateType" label="验证类型" width="110" show-overflow-tooltip>
-						<!-- <template slot-scope="scope">
-              <div>{{}}</div>
-						</template>-->
+						<template slot-scope="scope">
+							<div>{{transferValidateType(scope.row.validateType)}}</div>
+						</template>
 					</el-table-column>
 					<el-table-column prop="staffType" label="人员类型" width="100" show-overflow-tooltip>
 						<template slot-scope="scope">
-							<span>{{$common.getEnumItemName("staff_t", scope.row.staffType)}}</span>
+							<span>{{transferValidateType(scope.row.staffType,',','staff_t')}}</span>
 						</template>
 					</el-table-column>
-					<el-table-column prop="staffName" label="人员姓名" width="120"></el-table-column>
+					<el-table-column prop="staffName" show-overflow-tooltip label="人员姓名" width="120"></el-table-column>
 					<el-table-column prop="eventType" label="事件" show-overflow-tooltip>
 						<template slot-scope="scope">
 							<span>{{getEventType(scope.row)}}</span>
@@ -375,20 +375,18 @@ export default {
           this.isLoading = false;
         });
     },
+    transferValidateType(item, signal = "&", typeStr = "pass") {
+      let validateTypeArr = item.split(signal);
+      let str = "";
+      validateTypeArr.map(im => {
+        str += this.$common.getEnumItemName(typeStr, im);
+        str += ",";
+      });
+      return str.substr(0, str.length - 1);
+    },
     handleGetDoorLogSuccessResponse(data) {
       // 解决组合开门的翻译
-      if (data && data.list) {
-        data.list.map(item => {
-          let validateTypeArr = item.validateType.split("&");
-          let str = "";
-          validateTypeArr.map(im => {
-            str += this.$common.getEnumItemName("pass", im);
-            str += ",";
-          });
-          item.validateType = str.substr(0, str.length - 1);
-        });
-      }
-      this.tableData = data.list;
+      this.tableData = data.list || [];
       this.handlePageInfo(data);
     },
     handlePageInfo(data) {
