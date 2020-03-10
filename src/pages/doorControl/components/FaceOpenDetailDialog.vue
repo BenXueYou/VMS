@@ -49,13 +49,13 @@
 						<!-- 如果是不在库人员。默认显示证件照，隐藏查看证件照的按钮 -->
 						<img
 							v-if="isShowPicture || (itemData && itemData.staffInfo && itemData.staffInfo.staffUuid)"
-							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
+							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.lifePictureUrl) : require('@/assets/images/user.png')"
 							height="100%"
 							style="object-fit: contain;max-width:100%;"
 						/>
 						<img
 							v-else
-							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.lifePictureUrl) : require('@/assets/images/user.png')"
+							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
 							height="100%"
 							style="object-fit: contain;max-width:100%;"
 						/>
