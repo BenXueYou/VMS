@@ -46,9 +46,9 @@
 			<div class="person-info">
 				<div class="leftBox">
 					<div class="info-pic">
-            <!-- 如果是不在库人员。默认显示证件照，隐藏查看证件照的按钮 -->
+						<!-- 如果是不在库人员。默认显示证件照，隐藏查看证件照的按钮 -->
 						<img
-							v-if="isShowPicture || (itemData && itemData.staffInfo && itemData.staffInfo.staffType==='no_record')"
+							v-if="isShowPicture || (itemData && itemData.staffInfo && itemData.staffInfo.staffUuid)"
 							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
 							height="100%"
 							style="object-fit: contain;max-width:100%;"
@@ -61,7 +61,7 @@
 						/>
 					</div>
 					<div
-						v-if="itemData && itemData.staffInfo && itemData.staffInfo.staffType!=='no_record'"
+						v-if="itemData && itemData.staffInfo && itemData.staffInfo.staffUuid"
 						class="leftBottomTips cursorClass"
 						@click="isShowPicture=!isShowPicture"
 					>查看证件照</div>
@@ -87,7 +87,7 @@
 						class="info-details-items"
 					>民族：{{itemData && itemData.staffInfo ? $common.getEnumItemName("nation", itemData.staffInfo.nation) : ''}}</div>
 					<!-- 在库人员显示该字段 -->
-					<template v-if="itemData && itemData.staffInfo && itemData.staffInfo.staffType!=='no_record'">
+					<template v-if="itemData && itemData.staffInfo && itemData.staffInfo.staffUuid">
 						<div
 							class="info-details-items"
 						>人员类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName("staff_t", itemData.staffInfo.staffType) : ''}}</div>
