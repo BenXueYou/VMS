@@ -27,7 +27,7 @@
 						<div class="info-details-title-text">开锁图片1</div>
 					</div>
 					<div class="info-details-items">验证时间：{{$common.setStringText(itemData.validateTime)}}</div>
-					<div class="info-details-items">验证方式：{{$common.getEnumItemName("pass", itemData.validateType)}}</div>
+					<div class="info-details-items">验证方式：{{transferValidateType(itemData.validateType)}}</div>
 					<div class="info-details-items">验证地址：{{$common.setStringText(itemData.doorName)}}</div>
 					<div class="info-details-items">验证设备：{{$common.setStringText(itemData.readHeadName)}}</div>
 					<div
@@ -48,7 +48,7 @@
 					<div class="info-pic">
 						<!-- 如果是不在库人员。默认显示证件照，隐藏查看证件照的按钮 -->
 						<img
-							v-if="isShowPicture || (itemData && itemData.staffInfo && itemData.staffInfo.staffUuid)"
+							v-if="!isShowPicture && (itemData && itemData.staffInfo && itemData.staffInfo.staffUuid)"
 							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.lifePictureUrl) : require('@/assets/images/user.png')"
 							height="100%"
 							style="object-fit: contain;max-width:100%;"
@@ -157,6 +157,15 @@ export default {
   created() {},
   mounted() {},
   methods: {
+    transferValidateType(item, signal = "&", typeStr = "pass") {
+      let validateTypeArr = item.split(signal);
+      let str = "";
+      validateTypeArr.map(im => {
+        str += this.$common.getEnumItemName(typeStr, im);
+        str += ",";
+      });
+      return str.substr(0, str.length - 1);
+    },
     downloadImg(itemData) {
       if (!this.OwnAuthDisabled) {
         return;
