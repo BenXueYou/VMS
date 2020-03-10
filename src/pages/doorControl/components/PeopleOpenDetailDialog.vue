@@ -27,10 +27,13 @@
 						<div class="info-details-title-text">开锁图片</div>
 					</div>
 					<div class="info-details-items">验证时间：{{$common.setStringText(itemData.validateTime)}}</div>
-					<div class="info-details-items">验证方式：{{$common.getEnumItemName("pass", itemData.validateType)}}</div>
+					<div class="info-details-items">验证方式：{{transferValidateType(itemData.validateType)}}</div>
 					<div class="info-details-items">验证地址：{{$common.setStringText(itemData.doorName)}}</div>
 					<div class="info-details-items">验证设备：{{$common.setStringText(itemData.readHeadName)}}</div>
-					<div class="info-details-items" v-if="itemData && itemData.staffInfo && itemData.staffInfo.tempValue">
+					<div
+						class="info-details-items"
+						v-if="itemData && itemData.staffInfo && itemData.staffInfo.tempValue"
+					>
 						体温：
 						<span style="color:#00D8A0">{{itemData.staffInfo.tempValue}}℃</span>
 					</div>
@@ -122,6 +125,15 @@ export default {
   created() {},
   mounted() {},
   methods: {
+    transferValidateType(item, signal = "&", typeStr = "pass") {
+      let validateTypeArr = item.split(signal);
+      let str = "";
+      validateTypeArr.map(im => {
+        str += this.$common.getEnumItemName(typeStr, im);
+        str += ",";
+      });
+      return str.substr(0, str.length - 1);
+    },
     onClickCancel() {
       this.$emit("onCancel");
     },
