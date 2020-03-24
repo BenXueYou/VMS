@@ -9,7 +9,6 @@ export var HomeAjax = {
    */
   queryBaseTypeByGroup() {
     let api = RestApi.api.queryBaseTypeByGroup;
-
     return axios.get(api);
   }
 };

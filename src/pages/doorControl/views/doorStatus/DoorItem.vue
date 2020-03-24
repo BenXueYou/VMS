@@ -8,7 +8,7 @@
         <img :src="icon"
              width="8px"
              height="10px"
-             style="margin-right: 5px;">
+             style="margin-right: 5px;" />
         <span>{{text}}</span>
       </div>
     </div>
@@ -26,15 +26,20 @@
     </div>
     <div class="item-button"
          v-if="doorItem.onoffline === 'online'">
-      <div class="button"
+      <div :disabled="!OwnAuthDisabled"
+           class="button"
            @click="onClickHandleDoorStatus('open')">开门</div>
-      <div class="button"
+      <div :disabled="!OwnAuthDisabled"
+           class="button"
            @click="onClickHandleDoorStatus('close')">关门</div>
-      <div class="button"
+      <div :disabled="!OwnAuthDisabled"
+           class="button"
            @click="onClickHandleDoorStatus('no')">常开</div>
-      <div class="button"
+      <div :disabled="!OwnAuthDisabled"
+           class="button"
            @click="onClickHandleDoorStatus('nc')">常闭</div>
-      <div class="button"
+      <div :disabled="!OwnAuthDisabled"
+           class="button"
            @click="onClickHandleDoorStatus('cancelAlarm')">消警</div>
     </div>
   </div>
@@ -54,15 +59,21 @@ export default {
       backgroundColor: "rgba($color: #FFFFFF, $alpha: 0.1)",
       fontColor: "#DDDDDD",
       icon: require("@/assets/images/door_open.png"),
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true,
       text: ""
     };
   },
   created() {
     this.setData();
   },
-  mounted() {},
+  mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("门状态", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("门状态", "isOwn");
+  },
   methods: {
     setData() {
+      if (!this.ShowAuthDisabled) return;
       this.handleClass();
       this.getDoorStatus();
     },

@@ -2,6 +2,8 @@
   <div class='VideoPlaybackContent'>
     <left-content @playRtsp="playRtsp"
                   @updateView="updateView"
+                  :ShowAuthDisabled="ShowAuthDisabled"
+                  :OwnAuthDisabled="OwnAuthDisabled"
                   ref="leftTree"
                   @openView="openView"></left-content>
     <div class='right'
@@ -51,6 +53,8 @@
                        @PreviewAreafullScreen="PreviewAreafullScreen"
                        @chooseFenlu="chooseFenlu"
                        @changeMode="changeMode"
+                       :ShowAuthDisabled="ShowAuthDisabled"
+                       :OwnAuthDisabled="OwnAuthDisabled"
                        :downloadStatus="downloadStatus"
                        :playStatus="playStatus"
                        :mode="videoMode"
@@ -221,7 +225,9 @@ export default {
           label: "全屏",
           value: "全屏"
         }
-      ]
+      ],
+      ShowAuthDisabled: false,
+      OwnAuthDisabled: false
     };
   },
   computed: {
@@ -264,6 +270,8 @@ export default {
     }
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("视频回放", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("视频回放", "isOwn");
     this.jugdeJump();
     this.$nextTick(() => {
       this.chooseFenlu(1);
@@ -391,6 +399,9 @@ export default {
       }
     },
     jumpVideo(id, name) {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       let d = new Date();
       let ymd = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
       let hms = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
@@ -438,6 +449,9 @@ export default {
       });
     },
     openView(data) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
       let newdata = JSON.parse(JSON.stringify(data));
@@ -461,6 +475,7 @@ export default {
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
+      api2.log3(data.viewName, "视频回放");
     },
     addView(name) {
       // 保存视图
@@ -753,6 +768,9 @@ export default {
     },
     showMenu(e, index) {
       console.log(e);
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.operatorIndex = index;
       this.getVideoSpeed();
       const _this = this;
@@ -1009,6 +1027,13 @@ export default {
       this.setTimeVisible = true;
     },
     swithlive(channelUuid) {
+      // 判断有没有操作权限，没有则不进行跳转
+      if (
+        !this.$common.getAuthIsOwn("视频预览", "isShow") ||
+        !this.$common.getAuthIsOwn("视频预览", "isOwn")
+      ) {
+        return;
+      }
       this.$store.dispatch("addTagViewItem", {
         icon: "VideoPreview",
         name: "VideoPreview",

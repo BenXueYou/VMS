@@ -1,55 +1,73 @@
 <template>
-  <el-row class="WayMakeUpOpen" ref="mainWMHeight" type="flex">
-    <el-col class="WMBox leftBox" :span="4">
+  <el-row class="WayMakeUpOpen"
+          ref="mainWMHeight"
+          type="flex">
+    <el-col class="WMBox leftBox"
+            :span="4">
       <el-header>
-        <img class="img" src="../../../../assets/images/doorAccess/device_list_icon.png" alt>设备列表
+        <img class="img"
+             src="../../../../assets/images/doorAccess/device_list_icon.png"
+             alt />设备列表
       </el-header>
-  <!--     <the-leftmenu @changetab="changetab" ref="leftMenu" @clickNode="clickNodeAll" needType="" tagType="devide"  orgType="devide"></the-leftmenu> -->
-      <el-input prefix-icon="el-icon-search" placeholder="搜索设备地址" v-model="filterText" style="margin-bottom: 21px;"></el-input>
-      <el-tree
-        class="filter-tree"
-        :show-checkbox="false"
-        :check-strictly="false"
-        :data="treeData"
-        :props="defaultProps"
-        node-key="id"
-        @check-change="checkChange"
-        @node-click="nodeClick"
-        @current-change="currentChange"
-        :filter-node-method="filterNode"
-        :expand-on-click-node="true"
-        ref="tree"
-        :highlight-current="true"
-        lazy
-      >
-         <div class="custom-tree-node i-tree-item"
-            slot-scope="{ node }">
+      <!--     <the-leftmenu @changetab="changetab" ref="leftMenu" @clickNode="clickNodeAll" needType="" tagType="devide"  orgType="devide"></the-leftmenu> -->
+      <el-input prefix-icon="el-icon-search"
+                placeholder="搜索设备地址"
+                v-model="filterText"
+                style="margin-bottom: 21px;"></el-input>
+      <el-tree class="filter-tree"
+               :show-checkbox="false"
+               :check-strictly="false"
+               :data="treeData"
+               :props="defaultProps"
+               node-key="id"
+               @node-click="nodeClick"
+               :filter-node-method="filterNode"
+               :expand-on-click-node="true"
+               ref="tree"
+               :highlight-current="true"
+               lazy>
+        <div class="custom-tree-node i-tree-item"
+             slot-scope="{ node }">
           <div class="i-tree-item-icon">
             <img :src="iconShow(node)"
-                width="12.2px"
-                height="7.9px"
-                style="margin-right: 4px;">
+                 width="12.2px"
+                 height="7.9px"
+                 style="margin-right: 4px;" />
             {{ node.label }}
           </div>
         </div>
       </el-tree>
     </el-col>
-    <el-col class="WMBox rightBox" :span="20" v-loading="mainListLoading" element-loading-background="rgba(0, 0, 0, 0.8)">
+    <el-col class="WMBox rightBox"
+            :span="20"
+            v-loading="mainListLoading"
+            element-loading-background="rgba(0, 0, 0, 0.8)">
       <el-header>
-        <img class="img" src="../../../../assets/images/doorAccess/men_verify.png" alt>多种验证方式组合开门
+        <img class="img"
+             src="../../../../assets/images/doorAccess/men_verify.png"
+             alt />多种验证方式组合开门
       </el-header>
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column type="index" :index="tableIndex" label="序号" width="80"></el-table-column>
-        <el-table-column prop="nickName" label="读头" width="200"></el-table-column>
-        <el-table-column prop="options" label="开门方式">
+      <el-table :data="tableData"
+                style="width: 100%">
+        <el-table-column type="index"
+                         :index="tableIndex"
+                         label="序号"
+                         width="80"></el-table-column>
+        <el-table-column prop="nickName"
+                         label="读头"
+                         width="200"></el-table-column>
+        <el-table-column prop="options"
+                         label="开门方式">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.recognitionMode" @change="changeOpenStyle(scope.row)" size="large" placeholder="请选择">
-              <el-option
-                v-for="item in scope.row.newOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
+            <el-select :disabled="!OwnAuthDisabled"
+                       v-model="scope.row.recognitionMode"
+                       @change="changeOpenStyle(scope.row)"
+                       size="large"
+                       placeholder="请选择">
+              <el-option v-for="item in scope.row.newOption"
+                         :key="item.value"
+                         :label="item.label"
+                         :value="item.value"></el-option>
             </el-select>
           </template>
         </el-table-column>
@@ -60,7 +78,7 @@
 <script>
 import TheLeftmenu from "./../../../equipmentMange/views/TheLeftmenu";
 export default {
-  components: {TheLeftmenu},
+  components: { TheLeftmenu },
   props: {},
   data() {
     return {
@@ -91,12 +109,20 @@ export default {
           label: "卡/指纹"
         },
         {
+          value: "card,id_card ",
+          label: "卡/身份证"
+        },
+        {
           value: "card,qrcode",
           label: "卡/二维码"
         },
         {
           value: "face,fingerprint",
           label: "脸/指纹"
+        },
+        {
+          value: "face,id_card",
+          label: "脸/身份证"
         },
         {
           value: "face,qrcode",
@@ -119,6 +145,14 @@ export default {
           label: "脸/指纹/二维码"
         },
         {
+          value: "face,fingerprint,qrcode,id_card",
+          label: "脸/指纹/二维码/身份证"
+        },
+        {
+          value: "card,face,fingerprint,qrcode,id_card",
+          label: "卡/脸/指纹/二维码/身份证"
+        },
+        {
           value: "card",
           label: "仅卡"
         },
@@ -131,6 +165,10 @@ export default {
           label: "仅指纹"
         },
         {
+          value: "id_card",
+          label: "仅身份证"
+        },
+        {
           value: "card&face&fingerprint",
           label: "卡+脸+指纹"
         },
@@ -139,8 +177,16 @@ export default {
           label: "卡+脸"
         },
         {
+          value: "card&id_card",
+          label: "卡+身份证"
+        },
+        {
           value: "card&fingerprint",
           label: "卡+指纹"
+        },
+        {
+          value: "face&id_card",
+          label: "脸+身份证"
         },
         {
           value: "face&fingerprint",
@@ -150,7 +196,8 @@ export default {
       newChildData: [],
       isExpanded: false,
       treeNode: "",
-      treeId: ""
+      treeId: "",
+      OwnAuthDisabled: false
     };
   },
   created() {},
@@ -160,6 +207,13 @@ export default {
     this.initDeviceTree();
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn(
+      "多验证方式开门",
+      "isShow"
+    );
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("多验证方式开门", "isOwn");
+    // this.OwnAuthDisabled = false;
+    if (!this.ShowAuthDisabled) return;
     this.initDeviceTree();
   },
   methods: {
@@ -185,40 +239,42 @@ export default {
       this.$set(node, "childNodes", []);
       var that = this;
       this.mainListLoading = true;
-      this.$http.get(this.api + "/basedata-v1/project/" + this.projectUuid + "/deviceReadHeadList/" + treeId,
-      ).then((res) => {
-        console.log("获取设备读头====", res);
-        if (res.status === 200) {
-          if (res.data.success) {
-            console.log("treeData==", this.treeData);
-            this.dealResult(res.data.data);
-            for (let item of res.data.data) {
-              that.$set(item, "leaf", true);
+      this.$http
+        .get(
+          this.api +
+            "/basedata-v1/project/" +
+            this.projectUuid +
+            "/deviceReadHeadList/" +
+            treeId
+        )
+        .then(res => {
+          console.log("获取设备读头====", res);
+          if (res.status === 200) {
+            if (res.data.success) {
+              console.log("treeData==", this.treeData);
+              this.dealResult(res.data.data);
+              for (let item of res.data.data) {
+                that.$set(item, "leaf", true);
+              }
+              node.doCreateChildren(res.data.data);
+            } else {
+              this.$message({
+                message: res.data.msg,
+                type: "error"
+              });
             }
-            node.doCreateChildren(res.data.data);
           } else {
             this.$message({
               message: res.data.msg,
-              type: 'error'
+              type: "error"
             });
           }
-        } else {
-          this.$message({
-            message: res.data.msg,
-            type: 'error'
-          });
-        }
-        this.mainListLoading = false;
-      }).catch((err) => {
-        this.mainListLoading = false;
-        console.log("请求错误：" + err);
-      });
-    },
-    checkChange(node, nodeBool, subBool) {
-      // 节点被点击选中时的变化
-    },
-    currentChange() {
-      // 当前选中节点变化时触发的事件
+          this.mainListLoading = false;
+        })
+        .catch(err => {
+          this.mainListLoading = false;
+          console.log("请求错误：" + err);
+        });
     },
     filterNode(value, data) {
       if (!value) return true;
@@ -228,34 +284,38 @@ export default {
       val += 1;
       return val < 10 ? "0" + val : val;
     },
-    clickNodeAll() {
-
-    },
-    changetab() {
-
-    },
+    clickNodeAll() {},
+    changetab() {},
     initDeviceTree() {
-      this.$http.get(this.api + "/basedata-v1/project/" + this.projectUuid + "/device/list?viewType=door&limit=900000000&page=1",
-      ).then((res) => {
-        console.log("获取设备通道====", res);
-        if (res.status === 200) {
-          if (res.data.success) {
-            this.treeData = res.data.data.list;
+      if (!this.ShowAuthDisabled) return;
+      this.$http
+        .get(
+          this.api +
+            "/basedata-v1/project/" +
+            this.projectUuid +
+            "/device/list?viewType=door&limit=900000000&page=1"
+        )
+        .then(res => {
+          console.log("获取设备通道====", res);
+          if (res.status === 200) {
+            if (res.data.success) {
+              this.treeData = res.data.data.list;
+            } else {
+              this.$message({
+                message: res.data.msg,
+                type: "error"
+              });
+            }
           } else {
             this.$message({
               message: res.data.msg,
-              type: 'error'
+              type: "error"
             });
           }
-        } else {
-          this.$message({
-            message: res.data.msg,
-            type: 'error'
-          });
-        }
-      }).catch((err) => {
-        console.log("请求错误：" + err);
-      });
+        })
+        .catch(err => {
+          console.log("请求错误：" + err);
+        });
     },
     iconShow(node) {
       let icon = "";
@@ -274,7 +334,7 @@ export default {
         arr = [];
         for (var i = 0; i < data[j].openDoorMode.length; i++) {
           let obj = {
-            value: data[j].openDoorMode[i],
+            value: data[j].openDoorMode[i]
           };
           arr.push(obj);
         }
@@ -283,53 +343,59 @@ export default {
     },
     myFilter2(arr1, arr2, data, index) {
       var ret = [];
-      arr2.forEach(
-        ele => {
-          var findEle = arr1.find(x => x.value === ele.value);
-          // 如果在arr1中找到,添加到arr1中
-          // findEle ? ret.push(findEle) : '';
-          if (findEle) {
-            ret.push(findEle);
-          } else {
-            findEle = "";
-          }
+      arr2.forEach(ele => {
+        var findEle = arr1.find(x => x.value === ele.value);
+        // 如果在arr1中找到,添加到arr1中
+        // findEle ? ret.push(findEle) : '';
+        if (findEle) {
+          ret.push(findEle);
+        } else {
+          findEle = "";
         }
-      );
+      });
       data[index].newOption = ret;
       this.tableData = data;
       return ret;
     },
     changeOpenStyle(row) {
-      this.$http.put(this.api + "/iacconfig-v1/project/" + this.projectUuid + "/advancedConf/checkCombinationDoorOpen/channelInfo/" + row.channelUuid,
-        {
-          channelUuid: row.channelUuid,
-          recognitionMode: row.recognitionMode,
-          version: Number(row.version)
-        }
-      ).then((res) => {
-        console.log("编辑人员====", res);
-        if (res.status === 200) {
-          if (res.data.success) {
-            this.$message({
-              message: "修改成功",
-              type: 'success'
-            });
-            this.setChild();
+      this.$http
+        .put(
+          this.api +
+            "/iacconfig-v1/project/" +
+            this.projectUuid +
+            "/advancedConf/checkCombinationDoorOpen/channelInfo/" +
+            row.channelUuid,
+          {
+            channelUuid: row.channelUuid,
+            recognitionMode: row.recognitionMode,
+            version: Number(row.version)
+          }
+        )
+        .then(res => {
+          console.log("编辑人员====", res);
+          if (res.status === 200) {
+            if (res.data.success) {
+              this.$message({
+                message: "修改成功",
+                type: "success"
+              });
+              this.setChild();
+            } else {
+              this.$message({
+                message: res.data.msg,
+                type: "error"
+              });
+            }
           } else {
             this.$message({
               message: res.data.msg,
-              type: 'error'
+              type: "error"
             });
           }
-        } else {
-          this.$message({
-            message: res.data.msg,
-            type: 'error'
-          });
-        }
-      }).catch((err) => {
-        console.log("请求错误：" + err);
-      });
+        })
+        .catch(err => {
+          console.log("请求错误：" + err);
+        });
     }
   },
   watch: {

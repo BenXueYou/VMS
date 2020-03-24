@@ -1,1246 +1,1372 @@
 {
-  "other": {},
-  "lang": {
-    "zh_cn": "简体中文",
-    "zh_tw": "繁体中文",
-    "en_us": "美式英语",
-    "en_uk": "英式英语",
-    "japanese": "日语",
-    "korean": "韩语",
-    "russian": "俄语"
-  },
-  "res": {
-    "platform": "平台",
-    "account": "账号",
-    "address_book": "账号通讯录",
-    "role": "角色",
-    "permission": "权限",
-    "permission_m": "权限模块",
-    "organization": "组织机构",
-    "infrastructure": "基建",
-    "infrastructure_r": "基建规则",
-    "company": "单位",
-    "device": "设备",
-    "channel": "通道",
-    "staff": "人员",
-    "masses": "群众",
-    "staff_photo": "人员照片",
-    "face_library": "人脸库",
-    "face_task": "人脸布控任务",
-    "medium": "媒介",
-    "parking_lot": "停车场",
-    "parking_space": "车位",
-    "vehicle": "车辆",
-    "vehicle_library": "车辆库",
-    "vehicle_task": "车辆布控任务",
-    "face_analysis": "人脸智能分析",
-    "map_node": "地图节点",
-    "map_element": "地图元素",
-    "alarm_plan": "报警预案",
-    "alarm_voice": "报警声音",
-    "system_config": "系统配置",
-    "staff_auth": "人员权限",
-    "period": "普通时段",
-    "special_period": "特殊时段",
-    "staff_group": "人员组信息",
-    "first_card": "首卡开门信息",
-    "vehicle_analysis": "车辆智能分析",
-    "user_group": "账号群",
-    "user_data": "账号数据",
-    "access_ctrl": "门禁设备",
-    "door": "门禁通道",
-    "tag": "标签",
-    "set": "黑洞",
-    "vc": "视频通道",
-    "aic": "报警输入通道",
-    "aoc": "报警输出通道",
-    "readHead": "读头",
-    "encoder": "编码设备",
-    "decoder": "解码设备",
-    "alarm": "报警设备",
-    "fire_equip": "消防设备",
-    "perception": "泛感知设备",
-    "gate": "闸机",
-    "project": "项目"
-  },
-  "platform": {
-    "self": "自身",
-    "superior": "上级平台",
-    "subordinate": "下级平台"
-  },
-  "manuf": {
-    "gato": "广拓",
-    "beian": "倍安",
-    "crsc": "通号"
-  },
-  "account": {
-    "normal": "普通账号",
-    "qq": "QQ账号",
-    "wechat": "微信账号",
-    "management_platform": "管理平台"
-  },
-  "role": {
-    "super_admin": "超级管理员",
-    "admin": "管理员",
-    "operator": "操作员"
-  },
-  "rw": {
-    "r": "读",
-    "w": "写",
-    "rw": "读写"
-  },
-  "auth": {
-    "button": "按钮权限",
-    "menu": "菜单权限"
-  },
-  "org": {
-    "device": "设备组织",
-    "account": "账号组织",
-    "staff": "人力资源组织",
-    "equip": "装备组织",
-    "vehicle": "车辆组织",
-    "common": "通用组织",
-    "project": "项目组织"
-  },
-  "infras": {
-    "area": "区域",
-    "building": "楼栋",
-    "unit": "单元",
-    "floor": "层",
-    "house": "房屋",
-    "affiliated": "附属基建",
-    "bayonet": "卡口",
-    "phase": "期"
-  },
-  "house_u": {
-    "complete": "成套住宅",
-    "non_complete": "非套住宅",
-    "dormitory": "集体宿舍",
-    "other": "其它住宅"
-  },
-  "house_t": {
-    "commodity": "商品住房",
-    "after_sale": "售后公房",
-    "direct": "直管公房",
-    "new_lane": "新式里弄",
-    "old_lane": "旧式里弄",
-    "other": "其他住宅"
-  },
-  "dev_g": {
-    "encoder": "编码设备",
-    "decoder": "解码设备",
-    "alarm": "报警设备",
-    "perception": "泛感知设备",
-    "access_ctrl": "门禁设备",
-    "gate": "闸机设备",
-    "fire_equip": "消防设备"
-  },
-  "dev": {
-    "nvr": "NVR",
-    "ipc": "IPC",
-    "decoder": "解码器",
-    "a7": "A7",
-    "f5": "F5",
-    "f7": "F7",
-    "rfid_detected": "RFID",
-    "cover_sensor": "井盖",
-    "smoke_sensor": "烟感",
-    "door_magnet": "门磁",
-    "water_pressure": "水压",
-    "ladder_ctrl": "梯控",
-    "electric_arc": "电弧",
-    "perimeter": "周界",
-    "geomagnetic": "地磁",
-    "wall_machine": "围墙机",
-    "door_machine": "门口机",
-    "manual_vistor_machine": "人工访客机",
-    "room_machine": "室内机",
-    "manager_machine": "管理机",
-    "auto_vistor_machine": "自助访客机",
-    "vehicle_gate": "车闸",
-    "water_line": "液位",
-    "hydrant": "消火栓/消防栓",
-    "alarm_button": "手动报警按钮",
-    "sound_light": "声光告警器",
-    "pipe_gauge": "管网压力表",
-    "temperature": "温感",
-    "spray_loop": "喷淋回路",
-    "water_pump": "水泵",
-    "water_connon": "水炮",
-    "ctrl_cabinet": "控制柜",
-    "fire_ctrl": "控制器",
-    "fire_heat": "热感",
-    "fire_screen": "显示器",
-    "fire_blank": "空白标号",
-    "fire_orbital_ehv": "轨道超高压",
-    "manual_alarm": "手动报警器"
-  },
-  "dev_manuf": {
-    "gato": "广拓",
-    "hk": "海康",
-    "dh": "大华",
-    "beian": "倍安",
-    "axis": "安讯士"
-  },
-  "chn_g": {
-    "vc": "视频通道",
-    "aic": "报警输入通道",
-    "aoc": "报警输出通道",
-    "display": "显示屏",
-    "door": "门",
-    "gate": "闸机"
-  },
-  "chn": {
-    "bullet_camera": "枪机",
-    "dome_camera": "半球机",
-    "ball_camera": "球机",
-    "bullet_camera_ptz": "带云台的枪机",
-    "door_ipc": "门禁视频",
-    "fire_ipc": "消防视频",
-    "pulse_fence": "脉冲电子围栏",
-    "rfid_detected": "RFID",
-    "cover_sensor": "井盖",
-    "smoke_sensor": "烟感",
-    "door_magnet": "门磁",
-    "water_pressure": "水压",
-    "ladder_ctrl": "梯控",
-    "electric_arc": "电弧",
-    "perimeter": "周界",
-    "geomagnetic": "地磁",
-    "water_line": "液位",
-    "temperature": "温感",
-    "alarm_button": "手动报警按钮",
-    "hydrant": "消火栓/消防栓",
-    "pipe_gauge": "管网压力表",
-    "door_aic": "门禁报警输入",
-    "door_aoc": "门禁报警输出",
-    "spray_loop": "喷淋回路",
-    "water_pump": "水泵",
-    "water_connon": "水炮",
-    "ctrl_cabinet": "消防控制柜",
-    "fire_ctrl": "消防控制器",
-    "fire_heat": "消防热感",
-    "fire_screen": "消防显示器",
-    "fire_blank": "消防空白标号",
-    "fire_orbital_ehv": "消防轨道超高压",
-    "f5_aic": "F5报警输入",
-    "f7_aic": "F7报警输入",
-    "contact_pulse_fence": "触网脉冲电子围栏",
-    "tension_fence": "张力围栏",
-    "optical_fiber": "振动光纤",
-    "leak_cable": "泄漏电缆",
-    "infrared_detector": "红外探测器",
-    "hlc_dc": "红外对射",
-    "dumidity_detector": "湿度",
-    "emergency_button": "紧急按钮",
-    "fire": "火警",
-    "bell": "警号",
-    "printer": "打印机",
-    "lcm": "灯控模块（输出）",
-    "sound_light": "声光告警器",
-    "emap": "电子地图模块",
-    "aom": "视频联动模块",
-    "relay": "继电器",
-    "f5_aom": "f5报警输出",
-    "chl_f7_aom": "f7报警输出",
-    "screen": "屏幕",
-    "electric_lock": "电锁",
-    "door": "门",
-    "readhead": "读头",
-    "vehicle_gate": "车闸"
-  },
-  "dev_sys": {
-    "video": "视频系统",
-    "access_ctrl": "门禁系统",
-    "fire_fighting": "消防系统",
-    "anti_crossing": "防穿越系统",
-    "vehicle_gate": "车闸系统",
-    "shift": "位移系统",
-    "perimeter": "周界报警系统"
-  },
-  "stream": {
-    "main": "主码流",
-    "sub": "辅码流",
-    "thrid": "第三码流"
-  },
-  "record": {
-    "normal_vod": "普通录像",
-    "timer_vod": "定时录像",
-    "detect_vod": "移动侦测录像",
-    "alarm_vod": "报警录像",
-    "acs_vod": "门禁事件录像",
-    "manual_vod": "手动录像",
-    "face_detect_vod": "人脸侦测",
-    "other_vod": "其他录像",
-    "all_vod": "所有录像"
-  },
-  "chn_d": {
-    "in": "进",
-    "out": "出"
-  },
-  "protocol": {
-    "hk_vdp": "海康视频设备协议",
-    "hk_acdp": "海康门禁设备协议",
-    "gato_acpp": "广拓门禁平台协议",
-    "beian_fpp": "倍安消防平台协议",
-    "tianyi_iotpp": "中国电信物联网开放平台",
-    "gato_f5dp": "广拓F5工控机设备协议",
-    "gato_f7dp": "广拓F7工控机设备协议"
-  },
-  "staff_t": {
-    "resident": "住户人员",
-    "tenant": "租户人员",
-    "subdistrictServer": "小区服务人员",
-    "security_guard": "小区保安人员",
-    "property": "小区物业人员",
-    "worker": "小区工作人员",
-    "visitor": "访客人员",
-    "kindness": "亲情人员",
-    "residentServer": "住户服务",
-    "courier": "快递人员",
-    "take-out": "外卖人员",
-    "other": "其他人员",
-    "cleaning_worker": "保洁"
-  },
-  "cred": {
-    "id_card": "身份证",
-    "residence_permit": "居住证",
-    "visa": "签证",
-    "passport": "护照",
-    "military_card": "军人证",
-    "hk_macau": "港澳通行证",
-    "case_no": "在逃人员编号",
-    "fugitive_no": "案件编号",
-    "driver_license": "驾驶证",
-    "other": "其他证件类型"
-  },
-  "photo": {
-    "front": "正面照",
-    "id_card": "身份证照",
-    "full_body": "全身照"
-  },
-  "pass": {
-    "card": "刷卡",
-    "face": "刷脸",
-    "fingerprint": "刷指纹",
-    "rfid": "RFID",
-    "key": "钥匙",
-    "call": "呼叫",
-    "qrcode": "APP扫码",
-    "linkage": "联动开门",
-    "comparison": "人证比对",
-    "button": "开门按钮",
-    "staff_group": "多人组合开门",
-    "platformremote": "平台远程"
-  },
-  "attendence": {
-    "on_duty": "上班",
-    "off_duty": "下班"
-  },
-  "gender": {
-    "male": "男",
-    "female": "女"
-  },
-  "staff_lib": {
-    "black": "黑名单",
-    "white": "白名单",
-    "dynamic": "动态人员"
-  },
-  "staff_status": {
-    "on_duty": "上班",
-    "off_duty": "下班",
-    "holiday": "休假",
-    "business_trip": "出差",
-    "retire": "退休",
-    "leave": "请假"
-  },
-  "nation": {
-    "han": "汉族",
-    "man": "满族",
-    "hui": "回族",
-    "weiwuer": "维吾尔族",
-    "mengguzu": "蒙古族",
-    "zangzu": "藏族",
-    "miaozu": "苗族",
-    "xizu": "彝族",
-    "zhuangzu": "壮族",
-    "buyizu": "布依族",
-    "chaoxianzu": "朝鲜族",
-    "dongzu": "侗族",
-    "yaozu": "瑶族",
-    "baizu": "白族",
-    "tujiazu": "土家族",
-    "hanizu": "哈尼族",
-    "hasakezu": "哈萨克族",
-    "daizu": "傣族",
-    "lizu": "黎族",
-    "lilizu": "傈僳族",
-    "wazu": "佤族",
-    "shezu": "畲族",
-    "gaoshanzu": "高山族",
-    "lahuzu": "拉祜族",
-    "shuizu": "水族",
-    "dongxiangzu": "东乡族",
-    "naxizu": "纳西族",
-    "jingpozu": "景颇族",
-    "keerkezizu": "柯尔克孜族",
-    "tuzu": "土族",
-    "dahanerzu": "达翰尔族",
-    "melaozu": "么佬族",
-    "qiangzu": "羌族",
-    "bulangzu": "布朗族",
-    "salazu": "撒拉族",
-    "maonanzu": "毛南族",
-    "yilaozu": "仡佬族",
-    "xibozu": "锡伯族",
-    "achagnzu": "阿昌族",
-    "pumizu": "普米族",
-    "tajiekezu": "塔吉克族",
-    "nvzu": "怒族",
-    "wuzibiekezu": "乌孜别克族",
-    "eluosizu": "俄罗斯族",
-    "ewenkezu": "鄂温克族",
-    "deangzu": "德昂族",
-    "baoanzu": "保安族",
-    "yuguzu": "裕固族",
-    "jingzu": "京族",
-    "tataerzu": "塔塔尔族",
-    "dulongzu": "独龙族",
-    "elunchunzu": "鄂伦春族",
-    "hezhezu": "赫哲族",
-    "menbazu": "门巴族",
-    "luobazu": "珞巴族",
-    "jinuozu": "基诺族"
-  },
-  "nationality": {
-    "china": "中国",
-    "american": "美国",
-    "japan": "日本",
-    "south_korean": "韩国",
-    "russia": "俄罗斯"
-  },
-  "edu": {
-    "school": "小学及以下",
-    "junior_high": "初中",
-    "senior_high": "高中",
-    "secondary": "中专",
-    "junior_college": "大专",
-    "graduate": "本科",
-    "master": "硕士",
-    "doctor": "博士"
-  },
-  "marital": {
-    "single": "未婚",
-    "married": "已婚",
-    "divorce": "离异"
-  },
-  "public_s": {
-    "policeman": "警察",
-    "e_prisoner": "逃犯",
-    "scalper": "黄牛",
-    "b_driver": "黑车司机",
-    "stranger": "路人",
-    "prisoner": "看守所在押人员",
-    "travel_c_suspect": "旅财案件嫌疑人",
-    "station_staff": "车站工作人员",
-    "shop_staff": "商铺工作人员"
-  },
-  "job_l": {
-    "normal": "普通成员",
-    "superior": "上级"
-  },
-  "medium": {
-    "card": "卡",
-    "face": "脸",
-    "fingerprint": "指纹",
-    "qrcode": "二维码"
-  },
-  "medium_u": {
-    "normal": "普通",
-    "first_card": "首卡",
-    "stress": "胁迫",
-    "patrol": "巡更",
-    "maintenance": "维保"
-  },
-  "card_u": {
-    "normal": "普通",
-    "stress": "胁迫",
-    "patrol": "巡更",
-    "maintenance": "维保"
-  },
-  "vehicle_no": {
-    "blue": "普通蓝牌",
-    "black": "普通黑牌",
-    "yellow": "普通黄牌",
-    "double_yellow": "双层黄牌",
-    "coach": "教练车牌",
-    "police": "警车车牌",
-    "armed_police": "新式武警车牌",
-    "military": "新式军牌",
-    "embassy": "大使馆车牌",
-    "new_energy": "新能源车牌"
-  },
-  "color": {
-    "red": "红",
-    "orange": "橙",
-    "yellow": "黄",
-    "green": "绿",
-    "cyan": "青",
-    "blue": "蓝",
-    "purple": "紫",
-    "black": "黑",
-    "white": "白",
-    "silver": "银白色",
-    "gray": "灰",
-    "brown": "棕",
-    "pink": "粉"
-  },
-  "vehicle": {
-    "mini_car": "微型轿车",
-    "light_car": "轻级轿车",
-    "medium_car": "中级轿车",
-    "advanced_car": "中高级轿车",
-    "premium_car": "高级轿车",
-    "mini_bus": "微型客车",
-    "light_bus": "小型客车",
-    "medium_bus": "中型客车",
-    "large_bus": "大型客车",
-    "truck": "货车",
-    "ambulance": "救护车",
-    "fire_engine": "消防车",
-    "sanitation_truck": "环卫车",
-    "motorcycle": "摩托车",
-    "electric_vehicle": "电动车",
-    "bicycle": "自行车"
-  },
-  "vehicle_lib": {
-    "black": "黑名单",
-    "white": "白名单",
-    "dynamic": "动态车辆"
-  },
-  "map": {
-    "2D": "2D地图",
-    "3D": "3D地图"
-  },
-  "map_node": {
-    "root": "根节点",
-    "org": "机构",
-    "map": "地图"
-  },
-  "map_unit": {
-    "channel": "通道元素",
-    "custom": "自定义元素",
-    "heat_map": "热图元素",
-    "area": "区域",
-    "house": "房屋",
-    "staff": "人员"
-  },
-  "fence_fill": {
-    "color": "颜色填充",
-    "picture": "图片填充"
-  },
-  "gis_t": {
-    "wgs84": "WGS84",
-    "cgcs2000": "CGCS2000",
-    "bd09": "BD09",
-    "gcj02": "GCJ02",
-    "xian80": "西安80",
-    "beijing54": "北京54",
-    "3D": "3D",
-    "ltxy": "左上角原点坐标",
-    "rbxy": "右下角原点坐标",
-    "lbxy": "左下原点坐标",
-    "rtxy": "右上原点坐标",
-    "center": "中心原点坐标"
-  },
-  "alarm_t": {
-    "comm": "通讯",
-    "fault": "故障",
-    "tamper": "防拆",
-    "intrusion": "入侵",
-    "emergency": "紧急",
-    "alarm_in": "输入报警",
-    "intruder": "胁迫报警",
-    "motion_detection": "移动侦测",
-    "video_occlusion": "视频遮挡",
-    "video_loss": "视频丢失",
-    "audio_exception": "音频异常",
-    "dev_offline": "设备掉线",
-    "dev_fault": "设备故障",
-    "dev_tamper": "设备防拆",
-    "dev_hd_full": "设备硬盘满",
-    "dev_hd_fault": "设备硬盘故障",
-    "svr_hd_full": "服务器硬盘满",
-    "svr_hd_fault": "服务器硬盘故障",
-    "fire_equip": "消防设备报警",
-    "face_ctrl": "人脸布控报警",
-    "face_analysis": "人脸模型分析报警",
-    "vehicle_ctrl": "车辆布控报警",
-    "vehicle_analysis": "车辆模型分析报警",
-    "dev_perception": "设备感知",
-    "chn_alarm": "通道报警",
-    "chn_fault": "通道故障",
-    "report_event": "接报事件",
-    "dev_alarm": "设备报警",
-    "main_power_fault": "主电源故障",
-    "battery_fault": "蓄电池故障",
-    "illegal_disarming": "非法撤防/旁路",
-    "fused": "短路报警",
-    "break": "断路报警",
-    "touch_net": "触网报警",
-    "broken_line": "断线报警",
-    "undervoltage": "欠压报警",
-    "loss_power": "失电报警",
-    "climb_alarm": "攀爬报警",
-    "low_voltage": "低压报警",
-    "lowest_voltage": "超低压报警",
-    "high_voltage": "高压报警",
-    "broken_fiber": "断纤报警",
-    "fire_alarm": "火警",
-    "smoke_s_fault": "烟感故障",
-    "mute": "静音",
-    "low_electricity": "电量过低",
-    "blacklist": "黑名单报警",
-    "whitelist": "白名单报警",
-    "b_driver": "黑车司机报警",
-    "e_prisoner": "逃犯报警",
-    "scalper": "黄牛报警",
-    "analysis_tickets": "涉票人员智能分析",
-    "cover_loosen": "井盖松动",
-    "cover_open": "井盖打开",
-    "not_open": "门超时未开",
-    "not_closed": "门超时未关",
-    "invalid_auth": "无效授权多次",
-    "illegal_open": "无效授权门开"
-  },
-  "alarm_l": {
-    "urgent": "紧急",
-    "exception": "异常"
-  },
-  "alarm_op": {
-    "generation": "产生",
-    "disappear": "消失"
-  },
-  "video_alarms": {
-    "motion_detection": "移动侦测",
-    "video_occlusion": "视频遮挡",
-    "video_loss": "视频丢失",
-    "audio_exception": "音频异常",
-    "face_ctrl": "人脸布控报警",
-    "face_analysis": "人脸模型分析报警",
-    "vehicle_ctrl": "车辆布控报警",
-    "vehicle_analysis": "车辆模型分析报警",
-    "comm": "通讯"
-  },
-  "door_alarms": {
-    "dev_offline": "设备掉线",
-    "dev_tamper": "设备防拆",
-    "dev_hd_full": "设备硬盘满",
-    "dev_hd_fault": "设备硬盘故障",
-    "chl_alarm": "通道报警",
-    "chl_fault": "通道故障",
-    "zone_invasion": "入侵报警",
-    "fire_alarm": "火警",
-    "not_open": "门超时未开",
-    "not_closed": "门超时未关",
-    "invalid_auth": "无效授权多次",
-    "illegal_open": "门被异常打开",
-    "dev_alarm": "设备报警"
-  },
-  "fire_alarms": {
-    "dev_fault": "设备故障",
-    "dev_tamper": "设备防拆",
-    "fire_equip": "消防设备报警",
-    "dev_perception": "设备感知",
-    "fire_alarm": "火警",
-    "undervoltage": "欠压报警",
-    "low_voltage": "低压报警",
-    "lowest_voltage": "超低压报警",
-    "high_voltage": "高压报警"
-  },
-  "shift_alarms": {
-    "dev_perception": "设备感知",
-    "undervoltage": "欠压报警",
-    "loss_power": "失电报警",
-    "low_voltage": "低压报警",
-    "lowest_voltage": "超低压报警",
-    "high_voltage": "高压报警",
-    "low_electricity": "电量过低",
-    "cover_loosen": "井盖松动",
-    "cover_open": "井盖打开",
-    "dev_fault": "设备故障"
-  },
-  "linkage": {
-    "record": "联动录像",
-    "video": "联动视频",
-    "output": "联动输出",
-    "serial_port": "联动本地串口",
-    "sms": "联动短信",
-    "email": "联动邮件",
-    "door": "联动开关门"
-  },
-  "linkage_r": {
-    "success": "成功",
-    "failure": "失败"
-  },
-  "alarm_r": {
-    "to_be_processed": "待处理",
-    "processing": "正在处理",
-    "processed": "已处理",
-    "dispatched": "已派警",
-    "received": "已接警"
-  },
-  "zone_ctrl": {
-    "arming": "布防",
-    "disarm": "撤防",
-    "disalarm": "消警",
-    "bypass": "旁路"
-  },
-  "config": {
-    "add": "增加",
-    "delete": "删除",
-    "update": "修改",
-    "query": "查询（异常）"
-  },
-  "sys_log": {
-    "information": "普通",
-    "warning": "警告",
-    "error": "错误"
-  },
-  "config_s_r": {
-    "masses_record": "群众记录",
-    "staff_access": "人员出入记录",
-    "face_detected": "人脸检测",
-    "face_recognition": "人脸识别",
-    "attendance": "考勤记录",
-    "history_pos": "人员历史轨迹",
-    "vehicle_access": "车辆出入记录",
-    "vehicle_perception": "车辆感知记录",
-    "alarm_record": "报警记录",
-    "config_log": "配置日志",
-    "system_log": "系统日志",
-    "comm_log": "通讯日志",
-    "image_res": "图片资源"
-  },
-  "media_res": {
-    "image": "图片",
-    "video": "视频",
-    "text": "文本"
-  },
-  "belong_area": {
-    "hong_kou": "虹口区",
-    "chong_ming": "崇明区",
-    "jia_ding": "嘉定区",
-    "jing_an": "静安区",
-    "jin_shan": "金山区",
-    "pu_tuo": "普陀区",
-    "chang_ling": "长宁区",
-    "yang_pu": "杨浦区",
-    "huang_pu": "黄浦区",
-    "xu_hui": "徐汇区",
-    "qing_pu": "青浦区",
-    "feng_xian": "奉贤区",
-    "pu_dong": "浦东新区",
-    "free_trade": "自由贸易试验区",
-    "bao_shan": "宝山区",
-    "song_jiang": "松江区",
-    "min_hang": "闵行区"
-  },
-  "belong_street": {
-    "xin_hong": "闵行区新虹街道",
-    "other": "其他街道"
-  },
-  "week": {
-    "monday": "星期一",
-    "tuesday": "星期二",
-    "wednesday": "星期天",
-    "thursday": "星期四",
-    "friday": "星期五",
-    "saturday": "星期六",
-    "sunday": "星期天"
-  },
-  "vehicle_ctrl": {
-    "single_vehicle": "单一车辆布控",
-    "speed_limit": "限速布控",
-    "red_list": "红名单布控"
-  },
-  "face_r_c": {
-    "name": "姓名",
-    "gender": "性别",
-    "id_card": "身份证号",
-    "cellphone": "联系电话",
-    "address": "地址",
-    "nation": "户籍",
-    "email": "邮箱",
-    "company": "公司",
-    "career": "职业",
-    "remarks": "备注",
-    "tag": "标签"
-  },
-  "vehicle_m_d": {
-    "s_illegal_cab": "疑似黑车"
-  },
-  "contact": {
-    "cellphone": "手机号码",
-    "email": "电子邮箱",
-    "fax": "传真",
-    "fixed_line": "固定电话"
-  },
-  "ptz": {
-    "right": "右转",
-    "left": "左转",
-    "up": "上仰",
-    "down": "下俯",
-    "up_right": "上仰和右转",
-    "up_left": "上仰和左转",
-    "down_right": "下俯和右转",
-    "down_left": "下俯和左转",
-    "zoom_in": "焦距变大",
-    "zoom_out": "焦距变小",
-    "focus_near": "焦点前调",
-    "focus_far": "焦点后调",
-    "iris_open": "光圈扩大",
-    "iris_close": "光圈缩小",
-    "set_preset": "设置预置点",
-    "clear_preset": "清除预置点",
-    "goto_preset": "转到预置点",
-    "add_seq_preset": "添巡航序列",
-    "run_seq": "运行巡航",
-    "stop_seq": "停止巡航",
-    "close_seq": "清除巡航"
-  },
-  "screen_scale": {
-    "original": "原画",
-    "full_screen": "全屏",
-    "1:1": "1:1",
-    "4:3": "4:3",
-    "3:4": "3:4",
-    "5:4": "5:4",
-    "4:5": "4:5",
-    "16:9": "16:9",
-    "9:16": "9:16"
-  },
-  "user_data": {
-    "preview": "预览视图",
-    "map_view": "地图视角"
-  },
-  "police_equip": {
-    "handcuffs": "手铐",
-    "interphone": "对讲机",
-    "flashlight": "强光手电",
-    "package": "警用包",
-    "water_bottle": "警用水壶",
-    "baton": "警棍",
-    "pistol": "手枪",
-    "stun_rod": "电击棒",
-    "catcher": "抓捕器",
-    "recorder": "执法记录仪",
-    "riot_shield": "防暴盾牌",
-    "bdu": "作战服",
-    "battle_vest": "作战背心",
-    "tear_gun": "催泪枪"
-  },
-  "3d_dev_s": {
-    "face_ipc": "人脸抓拍相机",
-    "vehicle_ipc": "车辆抓拍相机",
-    "ipc": "普通相机",
-    "door_machine": "门禁",
-    "vehicle_gate": "车辆道闸",
-    "shift": "位移",
-    "anti_crossing": "防穿越",
-    "fire_fighting": "消防"
-  },
-  "face_quality": {
-    "HIGH": "高",
-    "NORMAL": "中",
-    "LOW": "低",
-    "LOWER": "无效"
-  },
-  "model_analisis_s": {
-    "everyday": "每天",
-    "total": "累计"
-  },
-  "compare_r": {
-    ">=": "大于等于",
-    ">": "大于",
-    "=": "等于",
-    "<=": "小于等于",
-    "<": "小于"
-  },
-  "staff_lib_clr": {
-    "red": "红",
-    "yellow": "黄",
-    "green": "绿",
-    "black": "黑"
-  },
-  "staff_temp": {
-    "e_prisoner": "逃犯模板",
-    "scalper": "黄牛模板",
-    "staff": "员工模板",
-    "static_person": "静态人员模板"
-  },
-  "staff_i_u_m": {
-    "once": "本次",
-    "everyday": "每天"
-  },
-  "staff_i_m": {
-    "local": "本地",
-    "ftp": "ftp"
-  },
-  "staff_i_s": {
-    "waiting_start": "等待开始",
-    "wating_upload": "等待上传",
-    "upload_overtime": "上传超时",
-    "uploading": "正在上传",
-    "upload_error": "上传出错",
-    "upload_finish": "上传完成",
-    "waiting_import": "等待入库",
-    "importing": "正在入库",
-    "import_error": "入库出错",
-    "import_finish": "导入完成",
-    "waiting_scan": "等待扫库",
-    "scanning": "正在扫库",
-    "scan_finish": "扫库完成"
-  },
-  "face_decision": {
-    "conform": "同时符合",
-    "inconformity": "同时不符合"
-  },
-  "company_t": {
-    "state_admin": "国家行政企业",
-    "public_private": "公私合作企业",
-    "sino_foreign": "中外合资企业",
-    "social_org": "社会组织机构",
-    "international_org": "国际组织机构",
-    "foreign_funds": "外资企业",
-    "private": "私营企业",
-    "collective": "集体企业"
-  },
-  "source": {
-    "platform": "平台",
-    "device": "设备"
-  },
-  "import_t": {
-    "resident": "居民导入",
-    "staff": "人力资源导入"
-  },
-  "group_t": {
-    "normal": "普通",
-    "visitor": "访客"
-  },
-  "anti_s_t": {
-    "line": "线路反潜回",
-    "entry_exit": "出入口反潜回"
-  },
-  "pass_r": {
-    "all": "全时间段",
-    "normal": "普通时段"
-  },
-  "tag_t": {
-    "device": "设备",
-    "resident": "居民",
-    "staff": "人力资源"
-  },
-  "timing_m": {
-    "platform": "本地平台",
-    "server": "服务器校时"
-  },
-  "default_c": {
-    "setting": "设置参数",
-    "data": "数据",
-    "all": "全部"
-  },
-  "protocol_t": {
-    "anywhere": "anywhere"
-  },
-  "verify_t": {
-    "sys_run_error": "系统运行出现错误（请求超时，数据错误）",
-    "medium_repetition": "单个凭证复验证",
-    "medium_wait": "等待后续凭证验证",
-    "medium_nosupport": "不支持的凭证类型",
-    "medium_wait_timeout": "凭证验证间隔时间超时",
-    "medium_no_auth": "凭证没有授权记录",
-    "medium_no_enable": "凭证未启用",
-    "no_belong_staff": "凭证组合验证中当前凭证不属于正在验证的人员",
-    "valid_time_failure": "人员有效时间失效",
-    "auth_time_failure": "人员授权时段无效",
-    "group_repetition": "人员组人员重复验证",
-    "group_not_find_staff": "人员不属于正在验证的人员组",
-    "group_wait": "人员组等待后续人员验证",
-    "group_wait_timeout": "人员组等待后续人员验证超时",
-    "oppose_sneak_back": "反潜回",
-    "door_nc": "门处于常闭模式",
-    "door_no": "门处于常开模式",
-    "door_interlock_nc": "互锁常闭",
-    "door_first_card_detach": "首卡开门关闭",
-    "read_head_disabled": "读头已关闭",
-    "group_valid_time_failure": "人员组授权时段无效",
-    "door_manual": "门处于手动模式"
-  },
-  "door_ctrl_t": {
-    "open": "开门",
-    "close": "关门",
-    "no": "常开",
-    "nc": "常关"
-  },
-  "door_plan_t": {
-    "alarm_in": "报警输入报警",
-    "not_closed": "门开超时报警",
-    "illegal_open": "门被异常打开",
-    "invalid_auth": "无效授权多次"
-  },
-  "door_plan_d": {
-    "open": "开",
-    "close": "关",
-    "no": "常开",
-    "nc": "常关"
-  },
-  "door_plan_aio": {
-    "open": "开",
-    "close": "关"
-  },
-  "blacklist_trigger_reason": {
-    "match_id": "证件号码匹配",
-    "match_face": "人脸匹配"
-  },
-  "visitor_singoff_ways": {
-    "auto": "自动签离",
-    "hand": "手动签离",
-    "verify": "验证签离"
-  },
-  "visitor_singon_ways": {
-    "hand_visitordevice": "人工访客机",
-    "auto_visitordevice": "自助访客机",
-    "smallprogram": "小程序",
-    "app": "APP"
-  },
-  "visitor_type": {
-    "invite": "邀请访客",
-    "reservation": "预约访客",
-    "register": "登记访客"
-  },
-  "serverBinding": {
-    "server_binding": "绑定",
-    "server_unbinding": "解绑"
-  },
-  "blacklistSource": {
-    "platform_add": "平台新增",
-    "visitor_machine": "访客机拉黑",
-    "platform_import": "平台导入",
-    "platform_machine": "平台拉黑"
-  },
-  "exist_t": {
-    "exist": "存在",
-    "none": "不存在"
-  },
-  "ServerType": {
-    "GT_DOOR_HK": "海康门禁服务",
-    "GT_DOOR_DH": "大华门禁服务",
-    "GT_VIDEO_HK": "海康视频服务",
-    "GT_VIDEO_HW": "华为视频服务",
-    "GT_VIDEO_UNV": "宇视视频服务",
-    "GT_VIDEO_KS": "旷视视频服务",
-    "GT_VIDEO_DH": "大华视频服务",
-    "GT_UPLOAD_POLICE1400": "公安1400上传服务",
-    "GT_STATISTICAL_POLICE1400": "公安1400统计服务",
-    "GT_FACELOG": "人脸日志服务",
-    "GT_FACEBASE": "人脸基础服务",
-    "GT_MTS": "流媒体转发服务",
-    "GT_FILEFORWARD": "文件转发服务",
-    "GT_EUREKA": "注册中心服务",
-    "GT_GATEWAY": "网关服务",
-    "GT_GUESTSLAVE": "网桥服务",
-    "GT_DATACENTER": "数据中心"
-  },
-  "face_lib_type": {
-    "systemFaceLib": "系统人员库",
-    "captureFaceLib": "抓拍库",
-    "dynamicFaceLib": "动态库",
-    "staticFaceLib": "静态库"
-  },
-  "face_h5_lib_group_type": {
-    "systemFaceLib,staticFaceLib,dynamicFaceLib": "人脸库",
-    "captureFaceLib": "抓拍库"
-  },
-  "face_report_type": {
-    "faceDailyReport": "日报表",
-    "faceMonthlyReport": "月报表"
-  },
-  "face_algorithm_type": {
-    "GT-FCK": "GT-FCK",
-    "GT-FCD": "GT-FCD",
-    "GT-FCH": "GT-FCH"
-  },
-  "model_analysis_s": {
-    "model_to_be_processed": "待处理",
-    "model_processed": "已处理"
-  },
-  "onoffline": {
-    "online": "在线",
-    "offline": "离线"
-  },
-  "alarm_s": {
-    "alarm": "报警",
-    "normal": "正常"
-  },
-  "aos": {
-    "signal_on": "信号开",
-    "signal_off": "信号关"
-  },
-  "arming": {
-    "arming": "布防",
-    "disarm": "撤防",
-    "bypass": "旁路",
-    "temp_pass": "暂时旁路"
-  },
-  "door_s": {
-    "open": "开",
-    "close": "关"
-  },
-  "doorlock_s": {
-    "open": "开",
-    "close": "关"
-  },
-  "doorcontact_enable_s": {
-    "enable": "启用",
-    "disable": "禁用"
-  },
-  "doorcontact_s": {
-    "open": "门开",
-    "close": "门关"
-  },
-  "door_workmode_s": {
-    "no": "常开",
-    "nc": "常闭",
-    "normal": "正常"
-  },
-  "tamper_s": {
-    "normal": "正常",
-    "tamper": "被拆开"
-  },
-  "trigger_m": {
-    "pulse": "脉冲",
-    "t_net": "触网",
-    "pulse_t_net": "脉冲+触网"
-  },
-  "power_l": {
-    "1": "等级一",
-    "2": "等级二",
-    "3": "等级三",
-    "4": "等级四"
-  },
-  "sensitivity": {
-    "1": "等级一",
-    "2": "等级二",
-    "3": "等级三",
-    "4": "等级四"
-  },
-  "line": {
-    "1": "一线制",
-    "2": "二线制",
-    "3": "三线制",
-    "4": "四线制",
-    "5": "五线制",
-    "6": "六线制"
-  },
-  "temp_s": {
-    "normal": "正常",
-    "low": "低温",
-    "high": "高温"
-  },
-  "cover_s": {
-    "normal": "正常",
-    "open": "打开",
-    "loosen": "松动",
-    "reset": "复位"
-  },
-  "electric_s": {
-    "normal": "正常",
-    "low": "低电压",
-    "lowest": "超低电压",
-    "high": "高电压"
-  },
-  "signal_s": {
-    "normal": "正常",
-    "weak": "信号弱",
-    "no_signal": "无信号"
-  },
-  "water_l": {
-    "normal": "正常",
-    "high": "高水位",
-    "middle": "中水位",
-    "low": "低水位"
-  },
-  "identity_verify_status": {
-    "identity_unverified": "未验证",
-    "identity_verified": "已验证",
-    "identity_fail": "验证失败"
-  },
-  "project_auth_s": {
-    "trial_edition": "测试版",
-    "unauthorized": "未授权",
-    "authorized": "已授权",
-    "expiration": "停用"
-  },
-  "reservation_record_s": {
-    "unexamine": "未审批",
-    "rejected": "已拒绝",
-    "cancled": "已取消",
-    "unchecked": "待人证核验",
-    "approve": "已通过"
-  },
-  "visitor_record_push_s": {
-    "unpush": "待下发",
-    "pushed": "已下发",
-    "unrecycle": "待回收",
-    "recycled": "已回收"
-  },
-  "visitor_record_s": {
-    "come_overtime": "到访超时",
-    "uncome": "未到访",
-    "comed": "已到访",
-    "cancled": "已取消",
-    "unleave": "到访未签离",
-    "leave_overtime": "签离超时",
-    "leaved": "到访已签离",
-    "ineffective": "未生效"
-  },
-  "glasses_s": {
-    "normal": "普通眼镜",
-    "sunglasses": "墨镜",
-    "none": "不戴"
-  },
-  "mask_s": {
-    "normal": "戴口罩",
-    "none": "不戴"
-  },
-  "SystemLogEventEnum": {
-    "login": "登陆",
-    "add": "增加",
-    "edit": "修改",
-    "delete": "删除",
-    "query": "查看",
-    "input": "导入",
-    "export": "导出",
-    "open_close_door": "开关门",
-    "remove_alarm": "门消警"
-  },
-  "auth_video": {
-    "auth_video_monitor": "监控点",
-    "auth_video_input": "输入",
-    "auth_video_output": "输出"
-  },
-  "auth_door": {
-    "auth_door_access": "门禁点",
-    "auth_door_input": "输入",
-    "auth_door_output": "输出"
-  },
-  "auth_alarm": {
-    "auth_alarm_zone": "防区",
-    "auth_alarm_subsystem": "子系统",
-    "auth_alarm_output": "输出"
-  },
-  "auth_visitor": {
-    "": ""
-  }
+    "other": {},
+    "lang": {
+        "zh_cn": "简体中文",
+        "zh_tw": "繁体中文",
+        "en_us": "美式英语",
+        "en_uk": "英式英语",
+        "japanese": "日语",
+        "korean": "韩语",
+        "russian": "俄语"
+    },
+    "res": {
+        "platform": "平台",
+        "account": "账号",
+        "address_book": "账号通讯录",
+        "role": "角色",
+        "permission": "权限",
+        "permission_m": "权限模块",
+        "organization": "组织机构",
+        "infrastructure": "基建",
+        "infrastructure_r": "基建规则",
+        "company": "单位",
+        "device": "设备",
+        "channel": "通道",
+        "staff": "人员",
+        "masses": "群众",
+        "staff_photo": "人员照片",
+        "face_library": "人脸库",
+        "face_task": "人脸布控任务",
+        "medium": "媒介",
+        "parking_lot": "停车场",
+        "parking_space": "车位",
+        "vehicle": "车辆",
+        "vehicle_library": "车辆库",
+        "vehicle_task": "车辆布控任务",
+        "face_analysis": "人脸智能分析",
+        "map_node": "地图节点",
+        "map_element": "地图元素",
+        "alarm_plan": "报警预案",
+        "alarm_voice": "报警声音",
+        "system_config": "系统配置",
+        "staff_auth": "人员权限",
+        "period": "普通时段",
+        "special_period": "特殊时段",
+        "staff_group": "人员组信息",
+        "first_card": "首卡开门信息",
+        "vehicle_analysis": "车辆智能分析",
+        "user_group": "账号群",
+        "user_data": "账号数据",
+        "access_ctrl": "门禁设备",
+        "door": "门禁通道",
+        "tag": "标签",
+        "set": "黑洞",
+        "vc": "视频通道",
+        "aic": "报警输入通道",
+        "aoc": "报警输出通道",
+        "readHead": "读头",
+        "encoder": "编码设备",
+        "decoder": "解码设备",
+        "alarm": "报警设备",
+        "fire_equip": "消防设备",
+        "perception": "泛感知设备",
+        "gate": "闸机",
+        "project": "项目"
+    },
+    "platform": {
+        "self": "自身",
+        "superior": "上级平台",
+        "subordinate": "下级平台"
+    },
+    "manuf": {
+        "gato": "广拓",
+        "beian": "倍安",
+        "crsc": "通号"
+    },
+    "account": {
+        "normal": "普通账号",
+        "qq": "QQ账号",
+        "wechat": "微信账号",
+        "management_platform": "管理平台"
+    },
+    "role": {
+        "super_admin": "超级管理员",
+        "admin": "管理员",
+        "operator": "操作员"
+    },
+    "rw": {
+        "r": "读",
+        "w": "写",
+        "rw": "读写"
+    },
+    "auth": {
+        "button": "按钮权限",
+        "menu": "菜单权限"
+    },
+    "org": {
+        "device": "设备组织",
+        "account": "账号组织",
+        "staff": "人力资源组织",
+        "equip": "装备组织",
+        "vehicle": "车辆组织",
+        "common": "通用组织",
+        "project": "项目组织"
+    },
+    "infras": {
+        "area": "区域",
+        "building": "楼栋",
+        "unit": "单元",
+        "floor": "层",
+        "house": "房屋",
+        "affiliated": "附属基建",
+        "bayonet": "卡口",
+        "phase": "期"
+    },
+    "house_u": {
+        "complete": "成套住宅",
+        "non_complete": "非套住宅",
+        "dormitory": "集体宿舍",
+        "other": "其它住宅"
+    },
+    "house_t": {
+        "commodity": "商品住房",
+        "after_sale": "售后公房",
+        "direct": "直管公房",
+        "new_lane": "新式里弄",
+        "old_lane": "旧式里弄",
+        "other": "其他住宅"
+    },
+    "dev_g": {
+        "encoder": "编码设备",
+        "decoder": "解码设备",
+        "alarm": "报警设备",
+        "perception": "泛感知设备",
+        "access_ctrl": "门禁设备",
+        "gate": "闸机设备",
+        "fire_equip": "消防设备"
+    },
+    "dev": {
+        "nvr": "NVR",
+        "ipc": "IPC",
+        "decoder": "解码器",
+        "a7": "A7",
+        "f5": "F5",
+        "f7": "F7",
+        "rfid_detected": "RFID",
+        "cover_sensor": "井盖",
+        "smoke_sensor": "烟感",
+        "door_magnet": "门磁",
+        "water_pressure": "水压",
+        "ladder_ctrl": "梯控",
+        "electric_arc": "电弧",
+        "perimeter": "周界",
+        "geomagnetic": "地磁",
+        "wall_machine": "围墙机",
+        "door_machine": "门口机",
+        "manual_vistor_machine": "人工访客机",
+        "room_machine": "室内机",
+        "manager_machine": "管理机",
+        "auto_vistor_machine": "自助访客机",
+        "vehicle_gate": "车闸",
+        "water_line": "液位",
+        "hydrant": "消火栓/消防栓",
+        "alarm_button": "手动报警按钮",
+        "sound_light": "声光告警器",
+        "pipe_gauge": "管网压力表",
+        "temperature": "温感",
+        "spray_loop": "喷淋回路",
+        "water_pump": "水泵",
+        "water_connon": "水炮",
+        "ctrl_cabinet": "控制柜",
+        "fire_ctrl": "控制器",
+        "fire_heat": "热感",
+        "fire_screen": "显示器",
+        "fire_blank": "空白标号",
+        "fire_orbital_ehv": "轨道超高压",
+        "manual_alarm": "手动报警器"
+    },
+    "dev_manuf": {
+        "gato": "广拓",
+        "hk": "海康",
+        "dh": "大华",
+        "beian": "倍安",
+        "axis": "安讯士"
+    },
+    "chn_g": {
+        "vc": "视频通道",
+        "aic": "报警输入通道",
+        "aoc": "报警输出通道",
+        "display": "显示屏",
+        "door": "门",
+        "gate": "闸机"
+    },
+    "chn": {
+        "bullet_camera": "枪机",
+        "dome_camera": "半球机",
+        "ball_camera": "球机",
+        "bullet_camera_ptz": "带云台的枪机",
+        "door_ipc": "门禁视频",
+        "fire_ipc": "消防视频",
+        "pulse_fence": "脉冲电子围栏",
+        "rfid_detected": "RFID",
+        "cover_sensor": "井盖",
+        "smoke_sensor": "烟感",
+        "door_magnet": "门磁",
+        "water_pressure": "水压",
+        "ladder_ctrl": "梯控",
+        "electric_arc": "电弧",
+        "perimeter": "周界",
+        "geomagnetic": "地磁",
+        "water_line": "液位",
+        "temperature": "温感",
+        "alarm_button": "手动报警按钮",
+        "hydrant": "消火栓/消防栓",
+        "pipe_gauge": "管网压力表",
+        "door_aic": "门禁报警输入",
+        "door_aoc": "门禁报警输出",
+        "spray_loop": "喷淋回路",
+        "water_pump": "水泵",
+        "water_connon": "水炮",
+        "ctrl_cabinet": "消防控制柜",
+        "fire_ctrl": "消防控制器",
+        "fire_heat": "消防热感",
+        "fire_screen": "消防显示器",
+        "fire_blank": "消防空白标号",
+        "fire_orbital_ehv": "消防轨道超高压",
+        "f5_aic": "F5报警输入",
+        "f7_aic": "F7报警输入",
+        "contact_pulse_fence": "触网脉冲电子围栏",
+        "tension_fence": "张力围栏",
+        "optical_fiber": "振动光纤",
+        "leak_cable": "泄漏电缆",
+        "infrared_detector": "红外探测器",
+        "hlc_dc": "红外对射",
+        "dumidity_detector": "湿度",
+        "emergency_button": "紧急按钮",
+        "fire": "火警",
+        "bell": "警号",
+        "printer": "打印机",
+        "lcm": "灯控模块（输出）",
+        "sound_light": "声光告警器",
+        "emap": "电子地图模块",
+        "aom": "视频联动模块",
+        "relay": "继电器",
+        "f5_aom": "f5报警输出",
+        "chl_f7_aom": "f7报警输出",
+        "screen": "屏幕",
+        "electric_lock": "电锁",
+        "door": "门",
+        "readhead": "读头",
+        "vehicle_gate": "车闸"
+    },
+    "dev_sys": {
+        "video": "视频系统",
+        "access_ctrl": "门禁系统",
+        "fire_fighting": "消防系统",
+        "anti_crossing": "防穿越系统",
+        "vehicle_gate": "车闸系统",
+        "shift": "位移系统",
+        "perimeter": "周界报警系统"
+    },
+    "stream": {
+        "main": "主码流",
+        "sub": "辅码流",
+        "third": "三码流"
+    },
+    "record": {
+        "normal_vod": "普通录像",
+        "timer_vod": "定时录像",
+        "detect_vod": "移动侦测录像",
+        "alarm_vod": "报警录像",
+        "acs_vod": "门禁事件录像",
+        "manual_vod": "手动录像",
+        "face_detect_vod": "人脸侦测",
+        "other_vod": "其他录像",
+        "all_vod": "所有录像"
+    },
+    "chn_d": {
+        "in": "进",
+        "out": "出"
+    },
+    "protocol": {
+        "hk_vdp": "海康视频设备协议",
+        "hk_acdp": "海康门禁设备协议",
+        "gato_acpp": "广拓门禁平台协议",
+        "beian_fpp": "倍安消防平台协议",
+        "tianyi_iotpp": "中国电信物联网开放平台",
+        "gato_f5dp": "广拓F5工控机设备协议",
+        "gato_f7dp": "广拓F7工控机设备协议"
+    },
+    "staff_t": {
+        "resident": "住户人员",
+        "tenant": "租户人员",
+        "subdistrictServer": "小区服务人员",
+        "security_guard": "小区保安人员",
+        "property": "小区物业人员",
+        "worker": "小区工作人员",
+        "visitor": "访客人员",
+        "kindness": "亲情人员",
+        "residentServer": "住户服务",
+        "courier": "快递人员",
+        "take-out": "外卖人员",
+        "cleaning_worker": "保洁",
+        "no_record": "非在库人员",
+        "other": "其他人员",
+        "": ""
+    },
+    "cred": {
+        "id_card": "身份证",
+        "residence_permit": "居住证",
+        "visa": "签证",
+        "passport": "护照",
+        "military_card": "军人证",
+        "hk_macau": "港澳通行证",
+        "case_no": "在逃人员编号",
+        "fugitive_no": "案件编号",
+        "driver_license": "驾驶证",
+        "other": "其他证件类型"
+    },
+    "photo": {
+        "front": "正面照",
+        "id_card": "身份证照",
+        "full_body": "全身照"
+    },
+    "pass": {
+        "card": "刷卡",
+        "face": "刷脸",
+        "fingerprint": "刷指纹",
+        "rfid": "RFID",
+        "key": "钥匙",
+        "call": "呼叫",
+        "qrcode": "APP扫码",
+        "linkage": "联动开门",
+        "comparison": "人证比对",
+        "button": "开门按钮",
+        "staff_group": "多人组合开门",
+        "platformremote": "平台远程",
+        "id_card": "身份证",
+        "body_temp": "认证+测温"
+    },
+    "attendence": {
+        "on_duty": "上班",
+        "off_duty": "下班"
+    },
+    "gender": {
+        "male": "男",
+        "female": "女"
+    },
+    "staff_lib": {
+        "black": "黑名单",
+        "white": "白名单",
+        "dynamic": "动态人员"
+    },
+    "staff_status": {
+        "on_duty": "上班",
+        "off_duty": "下班",
+        "holiday": "休假",
+        "business_trip": "出差",
+        "retire": "退休",
+        "leave": "请假"
+    },
+    "nation": {
+        "han": "汉族",
+        "man": "满族",
+        "hui": "回族",
+        "weiwuer": "维吾尔族",
+        "mengguzu": "蒙古族",
+        "zangzu": "藏族",
+        "miaozu": "苗族",
+        "xizu": "彝族",
+        "zhuangzu": "壮族",
+        "buyizu": "布依族",
+        "chaoxianzu": "朝鲜族",
+        "dongzu": "侗族",
+        "yaozu": "瑶族",
+        "baizu": "白族",
+        "tujiazu": "土家族",
+        "hanizu": "哈尼族",
+        "hasakezu": "哈萨克族",
+        "daizu": "傣族",
+        "lizu": "黎族",
+        "lilizu": "傈僳族",
+        "wazu": "佤族",
+        "shezu": "畲族",
+        "gaoshanzu": "高山族",
+        "lahuzu": "拉祜族",
+        "shuizu": "水族",
+        "dongxiangzu": "东乡族",
+        "naxizu": "纳西族",
+        "jingpozu": "景颇族",
+        "keerkezizu": "柯尔克孜族",
+        "tuzu": "土族",
+        "dahanerzu": "达翰尔族",
+        "melaozu": "么佬族",
+        "qiangzu": "羌族",
+        "bulangzu": "布朗族",
+        "salazu": "撒拉族",
+        "maonanzu": "毛南族",
+        "yilaozu": "仡佬族",
+        "xibozu": "锡伯族",
+        "achagnzu": "阿昌族",
+        "pumizu": "普米族",
+        "tajiekezu": "塔吉克族",
+        "nvzu": "怒族",
+        "wuzibiekezu": "乌孜别克族",
+        "eluosizu": "俄罗斯族",
+        "ewenkezu": "鄂温克族",
+        "deangzu": "德昂族",
+        "baoanzu": "保安族",
+        "yuguzu": "裕固族",
+        "jingzu": "京族",
+        "tataerzu": "塔塔尔族",
+        "dulongzu": "独龙族",
+        "elunchunzu": "鄂伦春族",
+        "hezhezu": "赫哲族",
+        "menbazu": "门巴族",
+        "luobazu": "珞巴族",
+        "jinuozu": "基诺族"
+    },
+    "nationality": {
+        "china": "中国",
+        "american": "美国",
+        "japan": "日本",
+        "south_korean": "韩国",
+        "russia": "俄罗斯"
+    },
+    "edu": {
+        "school": "小学及以下",
+        "junior_high": "初中",
+        "senior_high": "高中",
+        "secondary": "中专",
+        "junior_college": "大专",
+        "graduate": "本科",
+        "master": "硕士",
+        "doctor": "博士"
+    },
+    "marital": {
+        "single": "未婚",
+        "married": "已婚",
+        "divorce": "离异"
+    },
+    "public_s": {
+        "policeman": "警察",
+        "e_prisoner": "逃犯",
+        "scalper": "黄牛",
+        "b_driver": "黑车司机",
+        "stranger": "路人",
+        "prisoner": "看守所在押人员",
+        "travel_c_suspect": "旅财案件嫌疑人",
+        "station_staff": "车站工作人员",
+        "shop_staff": "商铺工作人员"
+    },
+    "job_l": {
+        "normal": "普通成员",
+        "superior": "上级"
+    },
+    "medium": {
+        "card": "卡",
+        "face": "脸",
+        "fingerprint": "指纹",
+        "qrcode": "二维码",
+        "id_card": "身份证"
+    },
+    "medium_u": {
+        "normal": "普通",
+        "first_card": "首卡",
+        "stress": "胁迫",
+        "patrol": "巡更",
+        "maintenance": "维保"
+    },
+    "card_u": {
+        "normal": "普通",
+        "stress": "胁迫",
+        "patrol": "巡更",
+        "maintenance": "维保"
+    },
+    "vehicle_no": {
+        "blue": "普通蓝牌",
+        "black": "普通黑牌",
+        "yellow": "普通黄牌",
+        "double_yellow": "双层黄牌",
+        "coach": "教练车牌",
+        "police": "警车车牌",
+        "armed_police": "新式武警车牌",
+        "military": "新式军牌",
+        "embassy": "大使馆车牌",
+        "new_energy": "新能源车牌"
+    },
+    "color": {
+        "red": "红",
+        "orange": "橙",
+        "yellow": "黄",
+        "green": "绿",
+        "cyan": "青",
+        "blue": "蓝",
+        "purple": "紫",
+        "black": "黑",
+        "white": "白",
+        "silver": "银白色",
+        "gray": "灰",
+        "brown": "棕",
+        "pink": "粉"
+    },
+    "vehicle": {
+        "mini_car": "微型轿车",
+        "light_car": "轻级轿车",
+        "medium_car": "中级轿车",
+        "advanced_car": "中高级轿车",
+        "premium_car": "高级轿车",
+        "mini_bus": "微型客车",
+        "light_bus": "小型客车",
+        "medium_bus": "中型客车",
+        "large_bus": "大型客车",
+        "truck": "货车",
+        "ambulance": "救护车",
+        "fire_engine": "消防车",
+        "sanitation_truck": "环卫车",
+        "motorcycle": "摩托车",
+        "electric_vehicle": "电动车",
+        "bicycle": "自行车"
+    },
+    "vehicle_lib": {
+        "black": "黑名单",
+        "white": "白名单",
+        "dynamic": "动态车辆"
+    },
+    "map": {
+        "2D": "2D地图",
+        "3D": "3D地图"
+    },
+    "map_node": {
+        "root": "根节点",
+        "org": "机构",
+        "map": "地图"
+    },
+    "map_unit": {
+        "channel": "通道元素",
+        "custom": "自定义元素",
+        "heat_map": "热图元素",
+        "area": "区域",
+        "house": "房屋",
+        "staff": "人员"
+    },
+    "fence_fill": {
+        "color": "颜色填充",
+        "picture": "图片填充"
+    },
+    "gis_t": {
+        "wgs84": "WGS84",
+        "cgcs2000": "CGCS2000",
+        "bd09": "BD09",
+        "gcj02": "GCJ02",
+        "xian80": "西安80",
+        "beijing54": "北京54",
+        "3D": "3D",
+        "ltxy": "左上角原点坐标",
+        "rbxy": "右下角原点坐标",
+        "lbxy": "左下原点坐标",
+        "rtxy": "右上原点坐标",
+        "center": "中心原点坐标"
+    },
+    "alarm_t": {
+        "comm": "通讯",
+        "fault": "故障",
+        "tamper": "防拆",
+        "intrusion": "入侵",
+        "emergency": "紧急",
+        "alarm_in": "输入报警",
+        "intruder": "胁迫报警",
+        "motion_detection": "移动侦测",
+        "video_occlusion": "视频遮挡",
+        "video_loss": "视频丢失",
+        "audio_exception": "音频异常",
+        "dev_offline": "设备掉线",
+        "dev_fault": "设备故障",
+        "dev_tamper": "设备防拆",
+        "dev_hd_full": "设备硬盘满",
+        "dev_hd_fault": "设备硬盘故障",
+        "svr_hd_full": "服务器硬盘满",
+        "svr_hd_fault": "服务器硬盘故障",
+        "fire_equip": "消防设备报警",
+        "face_ctrl": "人脸布控报警",
+        "face_analysis": "人脸模型分析报警",
+        "vehicle_ctrl": "车辆布控报警",
+        "vehicle_analysis": "车辆模型分析报警",
+        "dev_perception": "设备感知",
+        "chn_alarm": "通道报警",
+        "chn_fault": "通道故障",
+        "report_event": "接报事件",
+        "dev_alarm": "设备报警",
+        "main_power_fault": "主电源故障",
+        "battery_fault": "蓄电池故障",
+        "illegal_disarming": "非法撤防/旁路",
+        "fused": "短路报警",
+        "break": "断路报警",
+        "touch_net": "触网报警",
+        "broken_line": "断线报警",
+        "undervoltage": "欠压报警",
+        "loss_power": "失电报警",
+        "climb_alarm": "攀爬报警",
+        "low_voltage": "低压报警",
+        "lowest_voltage": "超低压报警",
+        "high_voltage": "高压报警",
+        "broken_fiber": "断纤报警",
+        "fire_alarm": "火警",
+        "smoke_s_fault": "烟感故障",
+        "mute": "静音",
+        "low_electricity": "电量过低",
+        "blacklist": "黑名单报警",
+        "whitelist": "白名单报警",
+        "b_driver": "黑车司机报警",
+        "e_prisoner": "逃犯报警",
+        "scalper": "黄牛报警",
+        "analysis_tickets": "涉票人员智能分析",
+        "cover_loosen": "井盖松动",
+        "cover_open": "井盖打开",
+        "not_open": "门超时未开",
+        "not_closed": "门超时未关",
+        "invalid_auth": "无效授权多次",
+        "illegal_open": "无效授权门开",
+        "body_temp_abnormal": "人员体温异常"
+    },
+    "alarm_l": {
+        "urgent": "紧急",
+        "exception": "异常"
+    },
+    "alarm_op": {
+        "generation": "产生",
+        "disappear": "消失"
+    },
+    "video_alarms": {
+        "motion_detection": "移动侦测",
+        "video_occlusion": "视频遮挡",
+        "video_loss": "视频丢失",
+        "audio_exception": "音频异常",
+        "face_ctrl": "人脸布控报警",
+        "face_analysis": "人脸模型分析报警",
+        "vehicle_ctrl": "车辆布控报警",
+        "vehicle_analysis": "车辆模型分析报警",
+        "comm": "通讯"
+    },
+    "door_alarms": {
+        "dev_offline": "设备掉线",
+        "dev_tamper": "设备防拆",
+        "dev_hd_full": "设备硬盘满",
+        "dev_hd_fault": "设备硬盘故障",
+        "chl_alarm": "通道报警",
+        "chl_fault": "通道故障",
+        "zone_invasion": "入侵报警",
+        "fire_alarm": "火警",
+        "not_open": "门超时未开",
+        "not_closed": "门超时未关",
+        "invalid_auth": "无效授权多次",
+        "illegal_open": "门被异常打开",
+        "dev_alarm": "设备报警",
+        "body_temp_abnormal": "人员体温异常"
+    },
+    "fire_alarms": {
+        "dev_fault": "设备故障",
+        "dev_tamper": "设备防拆",
+        "fire_equip": "消防设备报警",
+        "dev_perception": "设备感知",
+        "fire_alarm": "火警",
+        "undervoltage": "欠压报警",
+        "low_voltage": "低压报警",
+        "lowest_voltage": "超低压报警",
+        "high_voltage": "高压报警"
+    },
+    "shift_alarms": {
+        "dev_perception": "设备感知",
+        "undervoltage": "欠压报警",
+        "loss_power": "失电报警",
+        "low_voltage": "低压报警",
+        "lowest_voltage": "超低压报警",
+        "high_voltage": "高压报警",
+        "low_electricity": "电量过低",
+        "cover_loosen": "井盖松动",
+        "cover_open": "井盖打开",
+        "dev_fault": "设备故障"
+    },
+    "linkage": {
+        "record": "联动录像",
+        "video": "联动视频",
+        "output": "联动输出",
+        "serial_port": "联动本地串口",
+        "sms": "联动短信",
+        "email": "联动邮件",
+        "door": "联动开关门"
+    },
+    "linkage_r": {
+        "success": "成功",
+        "failure": "失败"
+    },
+    "alarm_r": {
+        "to_be_processed": "待处理",
+        "processing": "正在处理",
+        "processed": "已处理",
+        "dispatched": "已派警",
+        "received": "已接警"
+    },
+    "zone_ctrl": {
+        "arming": "布防",
+        "disarm": "撤防",
+        "disalarm": "消警",
+        "bypass": "旁路"
+    },
+    "config": {
+        "add": "增加",
+        "delete": "删除",
+        "update": "修改",
+        "query": "查询（异常）"
+    },
+    "sys_log": {
+        "information": "普通",
+        "warning": "警告",
+        "error": "错误"
+    },
+    "config_s_r": {
+        "masses_record": "群众记录",
+        "staff_access": "人员出入记录",
+        "face_detected": "人脸检测",
+        "face_recognition": "人脸识别",
+        "attendance": "考勤记录",
+        "history_pos": "人员历史轨迹",
+        "vehicle_access": "车辆出入记录",
+        "vehicle_perception": "车辆感知记录",
+        "alarm_record": "报警记录",
+        "config_log": "配置日志",
+        "system_log": "系统日志",
+        "comm_log": "通讯日志",
+        "image_res": "图片资源"
+    },
+    "media_res": {
+        "image": "图片",
+        "video": "视频",
+        "text": "文本"
+    },
+    "belong_area": {
+        "hong_kou": "虹口区",
+        "chong_ming": "崇明区",
+        "jia_ding": "嘉定区",
+        "jing_an": "静安区",
+        "jin_shan": "金山区",
+        "pu_tuo": "普陀区",
+        "chang_ling": "长宁区",
+        "yang_pu": "杨浦区",
+        "huang_pu": "黄浦区",
+        "xu_hui": "徐汇区",
+        "qing_pu": "青浦区",
+        "feng_xian": "奉贤区",
+        "pu_dong": "浦东新区",
+        "free_trade": "自由贸易试验区",
+        "bao_shan": "宝山区",
+        "song_jiang": "松江区",
+        "min_hang": "闵行区"
+    },
+    "belong_street": {
+        "xin_hong": "闵行区新虹街道",
+        "other": "其他街道"
+    },
+    "week": {
+        "monday": "星期一",
+        "tuesday": "星期二",
+        "wednesday": "星期天",
+        "thursday": "星期四",
+        "friday": "星期五",
+        "saturday": "星期六",
+        "sunday": "星期天"
+    },
+    "vehicle_ctrl": {
+        "single_vehicle": "单一车辆布控",
+        "speed_limit": "限速布控",
+        "red_list": "红名单布控"
+    },
+    "face_r_c": {
+        "name": "姓名",
+        "gender": "性别",
+        "id_card": "身份证号",
+        "cellphone": "联系电话",
+        "address": "地址",
+        "nation": "户籍",
+        "email": "邮箱",
+        "company": "公司",
+        "career": "职业",
+        "remarks": "备注",
+        "tag": "标签"
+    },
+    "vehicle_m_d": {
+        "s_illegal_cab": "疑似黑车"
+    },
+    "contact": {
+        "cellphone": "手机号码",
+        "email": "电子邮箱",
+        "fax": "传真",
+        "fixed_line": "固定电话"
+    },
+    "ptz": {
+        "right": "右转",
+        "left": "左转",
+        "up": "上仰",
+        "down": "下俯",
+        "up_right": "上仰和右转",
+        "up_left": "上仰和左转",
+        "down_right": "下俯和右转",
+        "down_left": "下俯和左转",
+        "zoom_in": "焦距变大",
+        "zoom_out": "焦距变小",
+        "focus_near": "焦点前调",
+        "focus_far": "焦点后调",
+        "iris_open": "光圈扩大",
+        "iris_close": "光圈缩小",
+        "set_preset": "设置预置点",
+        "clear_preset": "清除预置点",
+        "goto_preset": "转到预置点",
+        "add_seq_preset": "添巡航序列",
+        "run_seq": "运行巡航",
+        "stop_seq": "停止巡航",
+        "close_seq": "清除巡航"
+    },
+    "screen_scale": {
+        "original": "原画",
+        "full_screen": "全屏",
+        "1:1": "1:1",
+        "4:3": "4:3",
+        "3:4": "3:4",
+        "5:4": "5:4",
+        "4:5": "4:5",
+        "16:9": "16:9",
+        "9:16": "9:16"
+    },
+    "user_data": {
+        "preview": "预览视图",
+        "map_view": "地图视角"
+    },
+    "police_equip": {
+        "handcuffs": "手铐",
+        "interphone": "对讲机",
+        "flashlight": "强光手电",
+        "package": "警用包",
+        "water_bottle": "警用水壶",
+        "baton": "警棍",
+        "pistol": "手枪",
+        "stun_rod": "电击棒",
+        "catcher": "抓捕器",
+        "recorder": "执法记录仪",
+        "riot_shield": "防暴盾牌",
+        "bdu": "作战服",
+        "battle_vest": "作战背心",
+        "tear_gun": "催泪枪"
+    },
+    "3d_dev_s": {
+        "face_ipc": "人脸抓拍相机",
+        "vehicle_ipc": "车辆抓拍相机",
+        "ipc": "普通相机",
+        "door_machine": "门禁",
+        "vehicle_gate": "车辆道闸",
+        "shift": "位移",
+        "anti_crossing": "防穿越",
+        "fire_fighting": "消防"
+    },
+    "face_quality": {
+        "HIGH": "高",
+        "NORMAL": "中",
+        "LOW": "低",
+        "LOWER": "无效"
+    },
+    "model_analisis_s": {
+        "everyday": "每天",
+        "total": "累计"
+    },
+    "compare_r": {
+        ">=": "大于等于",
+        ">": "大于",
+        "=": "等于",
+        "<=": "小于等于",
+        "<": "小于"
+    },
+    "staff_lib_clr": {
+        "red": "红",
+        "yellow": "黄",
+        "green": "绿",
+        "black": "黑"
+    },
+    "staff_temp": {
+        "e_prisoner": "逃犯模板",
+        "scalper": "黄牛模板",
+        "staff": "员工模板",
+        "static_person": "静态人员模板"
+    },
+    "staff_i_u_m": {
+        "once": "本次",
+        "everyday": "每天"
+    },
+    "staff_i_m": {
+        "local": "本地",
+        "ftp": "ftp"
+    },
+    "staff_i_s": {
+        "waiting_start": "等待开始",
+        "wating_upload": "等待上传",
+        "upload_overtime": "上传超时",
+        "uploading": "正在上传",
+        "upload_error": "上传出错",
+        "upload_finish": "上传完成",
+        "waiting_import": "等待入库",
+        "importing": "正在入库",
+        "import_error": "入库出错",
+        "import_finish": "导入完成",
+        "waiting_scan": "等待扫库",
+        "scanning": "正在扫库",
+        "scan_finish": "扫库完成"
+    },
+    "face_decision": {
+        "conform": "同时符合",
+        "inconformity": "同时不符合"
+    },
+    "company_t": {
+        "state_admin": "国家行政企业",
+        "public_private": "公私合作企业",
+        "sino_foreign": "中外合资企业",
+        "social_org": "社会组织机构",
+        "international_org": "国际组织机构",
+        "foreign_funds": "外资企业",
+        "private": "私营企业",
+        "collective": "集体企业"
+    },
+    "source": {
+        "platform": "平台",
+        "device": "设备"
+    },
+    "import_t": {
+        "resident": "居民导入",
+        "staff": "人力资源导入"
+    },
+    "group_t": {
+        "normal": "普通",
+        "visitor": "访客"
+    },
+    "anti_s_t": {
+        "line": "线路反潜回",
+        "entry_exit": "出入口反潜回"
+    },
+    "pass_r": {
+        "all": "全时间段",
+        "normal": "普通时段"
+    },
+    "tag_t": {
+        "device": "设备",
+        "resident": "居民",
+        "staff": "人力资源"
+    },
+    "timing_m": {
+        "platform": "本地平台",
+        "server": "服务器校时"
+    },
+    "default_c": {
+        "setting": "设置参数",
+        "data": "数据",
+        "all": "全部"
+    },
+    "protocol_t": {
+        "anywhere": "anywhere"
+    },
+    "verify_t": {
+        "sys_run_error": "系统运行出现错误（请求超时，数据错误）",
+        "medium_repetition": "单个凭证复验证",
+        "medium_wait": "等待后续凭证验证",
+        "medium_nosupport": "不支持的凭证类型",
+        "medium_wait_timeout": "凭证验证间隔时间超时",
+        "medium_no_auth": "凭证没有授权记录",
+        "medium_no_enable": "凭证未启用",
+        "no_belong_staff": "凭证组合验证中当前凭证不属于正在验证的人员",
+        "valid_time_failure": "人员有效时间失效",
+        "auth_time_failure": "人员授权时段无效",
+        "group_repetition": "人员组人员重复验证",
+        "group_not_find_staff": "人员不属于正在验证的人员组",
+        "group_wait": "人员组等待后续人员验证",
+        "group_wait_timeout": "人员组等待后续人员验证超时",
+        "oppose_sneak_back": "反潜回",
+        "door_nc": "门处于常闭模式",
+        "door_no": "门处于常开模式",
+        "door_interlock_nc": "互锁常闭",
+        "door_first_card_detach": "首卡开门关闭",
+        "read_head_disabled": "读头已关闭",
+        "group_valid_time_failure": "人员组授权时段无效",
+        "door_manual": "门处于手动模式",
+        "temp_abnormal_verify_fail": "认证失败，温度异常",
+        "temp_abnormal_verify_succ": "认证通过，温度异常",
+        "temp_wait_timeout": "测温超时"
+    },
+    "door_ctrl_t": {
+        "open": "开门",
+        "close": "关门",
+        "no": "常开",
+        "nc": "常关"
+    },
+    "door_plan_t": {
+        "alarm_in": "报警输入报警",
+        "not_closed": "门开超时报警",
+        "illegal_open": "门被异常打开",
+        "invalid_auth": "无效授权多次"
+    },
+    "door_plan_d": {
+        "open": "开",
+        "close": "关",
+        "no": "常开",
+        "nc": "常关"
+    },
+    "door_plan_aio": {
+        "open": "开",
+        "close": "关"
+    },
+    "blacklist_trigger_reason": {
+        "match_id": "证件号码匹配",
+        "match_face": "人脸匹配"
+    },
+    "visitor_singoff_ways": {
+        "auto": "自动签离",
+        "hand": "手动签离",
+        "verify": "验证签离"
+    },
+    "visitor_singon_ways": {
+        "hand_visitordevice": "人工访客机",
+        "auto_visitordevice": "自助访客机",
+        "smallprogram": "小程序",
+        "app": "APP"
+    },
+    "visitor_type": {
+        "invite": "邀请访客",
+        "reservation": "预约访客",
+        "register": "登记访客"
+    },
+    "serverBinding": {
+        "server_binding": "绑定",
+        "server_unbinding": "解绑"
+    },
+    "blacklistSource": {
+        "platform_add": "平台新增",
+        "visitor_machine": "访客机拉黑",
+        "platform_import": "平台导入",
+        "platform_machine": "平台拉黑"
+    },
+    "exist_t": {
+        "exist": "存在",
+        "none": "不存在"
+    },
+    "ServerType": {
+        "GT_DOOR_HK": "海康门禁服务",
+        "GT_DOOR_DH": "大华门禁服务",
+        "GT_VIDEO_HK": "海康视频服务",
+        "GT_VIDEO_DH": "大华视频服务",
+        "GT_UPLOAD_POLICE1400": "公安1400上传服务",
+        "GT_STATISTICAL_POLICE1400": "公安1400统计服务",
+        "GT_FACELOG": "人脸日志服务",
+        "GT_FACEBASE": "人脸基础服务",
+        "GT_MTS": "流媒体转发服务",
+        "GT_FILEFORWARD": "文件转发服务",
+        "GT_EUREKA": "注册中心服务",
+        "GT_GATEWAY": "网关服务",
+        "GT_GUESTSLAVE": "网桥服务",
+        "GT_DATACENTER": "数据中心服务",
+        "GT_VIDEO_HW": "华为视频服务",
+        "GT_VIDEO_UNV": "宇视视频服务",
+        "GT_VIDEO_KS": "旷视视频服务",
+        "GT_DOOR_AGBOX": "AGBOX门禁服务"
+    },
+    "face_lib_type": {
+        "systemFaceLib": "系统人员库",
+        "captureFaceLib": "抓拍库",
+        "dynamicFaceLib": "动态库",
+        "staticFaceLib": "静态库"
+    },
+    "face_h5_lib_group_type": {
+        "systemFaceLib,staticFaceLib,dynamicFaceLib": "人脸库",
+        "captureFaceLib": "抓拍库"
+    },
+    "face_report_type": {
+        "faceDailyReport": "日报表",
+        "faceMonthlyReport": "月报表"
+    },
+    "face_algorithm_type": {
+        "GT-FCK": "GT-FCK",
+        "GT-FCD": "GT-FCD",
+        "GT-FCH": "GT-FCH"
+    },
+    "model_analysis_s": {
+        "model_to_be_processed": "待处理",
+        "model_processed": "已处理"
+    },
+    "eventType": {
+        "login": "登陆",
+        "logout": "登出",
+        "add": "增加",
+        "edit": "修改",
+        "delete": "删除",
+        "query": "查看",
+        "input": "导入",
+        "export": "导出",
+        "open_close_door": "开关门",
+        "remove_alarm": "消警",
+        "batch_upgrade": "批量升级",
+        "data_distribution": "下发数据",
+        "move": "移动",
+        "move_out": "移出",
+        "statistics": "统计",
+        "real_time_preview": "实时预览",
+        "pan_tilt_control": "云台控制",
+        "local_video": "本地录像",
+        "image_adjustment": "图像调节",
+        "snapshot": "抓图",
+        "stream_switching": "码流切换",
+        "video_download": "录像下载",
+        "normallyopen_normallyclosed": "常开常闭",
+        "face_preview": "人脸预览",
+        "subscribe": "订阅",
+        "video_replay": "录像回放"
+    },
+    "onoffline": {
+        "online": "在线",
+        "offline": "离线"
+    },
+    "alarm_s": {
+        "alarm": "报警",
+        "normal": "正常"
+    },
+    "aos": {
+        "signal_on": "信号开",
+        "signal_off": "信号关"
+    },
+    "arming": {
+        "arming": "布防",
+        "disarm": "撤防",
+        "bypass": "旁路",
+        "temp_pass": "暂时旁路"
+    },
+    "door_s": {
+        "open": "开",
+        "close": "关"
+    },
+    "doorlock_s": {
+        "open": "开",
+        "close": "关"
+    },
+    "doorcontact_enable_s": {
+        "enable": "启用",
+        "disable": "禁用"
+    },
+    "doorcontact_s": {
+        "open": "门开",
+        "close": "门关"
+    },
+    "door_workmode_s": {
+        "no": "常开",
+        "nc": "常闭",
+        "normal": "正常"
+    },
+    "tamper_s": {
+        "normal": "正常",
+        "tamper": "被拆开"
+    },
+    "trigger_m": {
+        "pulse": "脉冲",
+        "t_net": "触网",
+        "pulse_t_net": "脉冲+触网"
+    },
+    "power_l": {
+        "1": "等级一",
+        "2": "等级二",
+        "3": "等级三",
+        "4": "等级四"
+    },
+    "sensitivity": {
+        "1": "等级一",
+        "2": "等级二",
+        "3": "等级三",
+        "4": "等级四"
+    },
+    "line": {
+        "1": "一线制",
+        "2": "二线制",
+        "3": "三线制",
+        "4": "四线制",
+        "5": "五线制",
+        "6": "六线制"
+    },
+    "temp_s": {
+        "normal": "正常",
+        "low": "低温",
+        "high": "高温"
+    },
+    "cover_s": {
+        "normal": "正常",
+        "open": "打开",
+        "loosen": "松动",
+        "reset": "复位"
+    },
+    "electric_s": {
+        "normal": "正常",
+        "low": "低电压",
+        "lowest": "超低电压",
+        "high": "高电压"
+    },
+    "signal_s": {
+        "normal": "正常",
+        "weak": "信号弱",
+        "no_signal": "无信号"
+    },
+    "water_l": {
+        "normal": "正常",
+        "high": "高水位",
+        "middle": "中水位",
+        "low": "低水位"
+    },
+    "identity_verify_status": {
+        "identity_unverified": "未验证",
+        "identity_verified": "已验证",
+        "identity_fail": "验证失败"
+    },
+    "project_auth_s": {
+        "trial_edition": "测试版",
+        "unauthorized": "未授权",
+        "authorized": "已授权",
+        "expiration": "停用"
+    },
+    "reservation_record_s": {
+        "unexamine": "未审批",
+        "rejected": "已拒绝",
+        "cancled": "已取消",
+        "unchecked": "待人证核验",
+        "approve": "已通过"
+    },
+    "visitor_record_push_s": {
+        "unpush": "待下发",
+        "pushed": "已下发",
+        "unrecycle": "待回收",
+        "recycled": "已回收"
+    },
+    "visitor_record_s": {
+        "come_overtime": "到访超时",
+        "uncome": "未到访",
+        "comed": "已到访",
+        "cancled": "已取消",
+        "unleave": "到访未签离",
+        "leave_overtime": "签离超时",
+        "leaved": "到访已签离",
+        "ineffective": "未生效"
+    },
+    "glasses_s": {
+        "normal": "普通眼镜",
+        "sunglasses": "墨镜",
+        "none": "不戴"
+    },
+    "mask_s": {
+        "normal": "戴口罩",
+        "none": "不戴"
+    },
+    "auth_video": {
+        "auth_video_monitor": "监控点",
+        "auth_video_input": "输入",
+        "auth_video_output": "输出"
+    },
+    "auth_door": {
+        "auth_door_access": "门禁点",
+        "auth_door_input": "输入",
+        "auth_door_output": "输出"
+    },
+    "auth_alarm": {
+        "auth_alarm_zone": "防区",
+        "auth_alarm_subsystem": "子系统",
+        "auth_alarm_output": "输出"
+    },
+    "auth_visitor": {
+        "": ""
+    },
+    "feature": {
+        "ordinary": "普通人员",
+        "famous": "知名人员",
+        "cripple": "残疾人员",
+        "alone": "独居老人",
+        "treatment": "重点治疗人员",
+        "helpers": "安置帮教人员",
+        "focus": "重点关注人员",
+        "other": "其他关注人员"
+    },
+    "strength": {
+        "security_guard": "保安人员",
+        "security_responsible": "保安负责",
+        "security_assistance": "治安协助",
+        "fire_assistance": "消防协助",
+        "building_leader": "楼栋组长",
+        "property_staff": "物业人员",
+        "resident_staff": "居委人员",
+        "street_staff": "街道人员",
+        "area_police": "片区民警",
+        "other": "其他人员"
+    },
+    "equip_type": {
+        "six_piec": "六件套",
+        "mini_fire_station": "微型消防站",
+        "garbage_dump": "垃圾站",
+        "other": "其他装备"
+    },
+    "coordinate": {
+        "wgs84": "WGS84",
+        "cgcs2000": "CGCS2000",
+        "bd09": "BD09",
+        "gcj02": "GCJ02",
+        "xian80": "西安80",
+        "beijing54": "北京54",
+        "other": "其他"
+    },
+    "gender_generation": {
+        "male_one_to_sixteen": "男1-16",
+        "female_one_to_sixteen": "女1-16",
+        "male_seventeen_to_forty": "男17-40",
+        "female_seventeen_to_forty": "女17-40",
+        "male_forty_to_sixty": "男41-60",
+        "female_forty_to_sixty": "女41-60",
+        "male_sixty_to_eighty": "男61-80",
+        "female_sixty_to_eighty": "女61-80",
+        "male_eighty_plus": "男80+",
+        "female_eighty_plus": "女80+"
+    },
+    "category": {
+        "census_staff": "户籍人员",
+        "come_shanghai_staff": "来沪人员",
+        "foreign_staff": "外籍人员"
+    },
+    "staff_feature": {
+        "": ""
+    },
+    "staff_strength": {
+        "": ""
+    },
+    "real_face_identify": {
+        "resident": "居民",
+        "visitor": "访客",
+        "focus": "重点关注对象"
+    },
+    "real_car_identify": {
+        "register": "登记车",
+        "temporary": "临停车"
+    },
+    "real_door_identify": {
+        "resident": "居民",
+        "visitor": "访客"
+    },
+    "license_type": {
+        "normal_blue_license": "普通蓝牌",
+        "normal_black_license": "普通黑牌",
+        "normal_yellow_license": "普通黄牌",
+        "double_yellow_license": "双层黄牌",
+        "coach_license": "教练车辆",
+        "police_license": "警车车辆",
+        "new_police_license": "新式武警车牌",
+        "new_army_license": "新式军牌",
+        "embassy_license": "大使馆车牌",
+        "new_energy_license": "新能源车牌",
+        "other_license": "其他车牌"
+    },
+    "vehicle_type": {
+        "resident_vehicle": "住户车辆",
+        "tenant_vehicle": "租户车辆",
+        "affection_vehicle": "亲情车辆",
+        "service_vehicle": "服务车辆",
+        "visitor_vehicle": "访客车辆",
+        "express_delivery_vehicle": "快递车辆",
+        "takeaway_vehicle": "外卖车辆",
+        "plot_service_vehicle": "小区服务车辆",
+        "plot_work_vehicle": "小区工作车辆",
+        "other_vehicle": "其他车辆"
+    }
 }

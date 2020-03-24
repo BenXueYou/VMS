@@ -21,8 +21,11 @@
 			<el-input class="input" v-model="address"></el-input>
 		</div>
 		<div class="form-item">
+			<label for>证件号：</label>
+			<el-input class="input" v-model="credentialNo"></el-input>
+		</div>
+		<div class="form-item">
 			<label for>人员类型：</label>
-			<!-- <el-input class="input" v-model="personType"></el-input> -->
 			<el-select v-model="personType" placeholder="请选择人员类型">
 				<el-option
 					v-for="item in personTypeOptions"
@@ -34,10 +37,22 @@
 		</div>
 		<div class="form-item">
 			<label for>注册时间：</label>
-			<el-date-picker v-model="registerTime" type="date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' placeholder="选择日期" class="input"></el-date-picker>
+			<el-date-picker
+				v-model="registerTime"
+				type="date"
+				value-format="yyyy-MM-dd"
+				format="yyyy-MM-dd"
+				placeholder="选择日期"
+				class="input"
+			></el-date-picker>
 		</div>
 		<div class="btn-group">
-			<el-button type="primary" size="small" @click="query">查询</el-button>
+			<el-button
+				:disabled="!this.$common.getAuthIsOwn('居民管理', 'isShow')"
+				type="primary"
+				size="small"
+				@click="query"
+			>查询</el-button>
 			<span class="btn-text" @click="resetValue">重置</span>
 		</div>
 	</div>
@@ -55,12 +70,13 @@ export default {
   },
   data() {
     return {
-      gender: "",
-      phone: "",
-      address: "",
-      personType: "",
-      registerTime: "",
+      gender: null,
+      phone: null,
+      address: null,
+      personType: null,
+      registerTime: '',
       genderOptions: [],
+      credentialNo: null,
       personTypeOptions: []
     };
   },
@@ -71,7 +87,7 @@ export default {
   },
   methods: {
     query() {
-      console.log('注册时间：', this.registerTime);
+      console.log("注册时间：", this.registerTime);
 
       var createTimeOver = "";
       var createTimeStart = "";
@@ -86,16 +102,18 @@ export default {
         createTimeOver: createTimeOver,
         createTimeStart: createTimeStart,
         gender: this.gender,
+        credentialNo: this.credentialNo,
         staffType: this.personType
       };
       this.$emit("query", data);
     },
     resetValue() {
-      this.gender = "";
-      this.phone = "";
-      this.address = "";
+      this.gender = null;
+      this.phone = null;
+      this.address = null;
+      this.credentialNo = null;
       this.personType = this.personTypeOptions[0].typeStr;
-      this.registerTime = "";
+      this.registerTime = '';
     }
   }
 };

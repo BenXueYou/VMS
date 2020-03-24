@@ -6,21 +6,27 @@
 		<div class="main">
 			<div class="main-header">
 				<div>
-					<el-button type="default" @click="addBtnAct" size="mini">
+					<el-button :disabled="!OwnAuthDisabled" type="primary" @click="addBtnAct" size="mini">
 						<img class="img" src="@/assets/images/doorAccess/add_btn_icon.png" alt />新增
 					</el-button>
-					<el-button type="default" size="mini">
+					<el-button :disabled="!OwnAuthDisabled" type="primary" size="mini">
 						<img class="img" src="@/assets/images/vistorManage/import_icon.png" alt />导入
 					</el-button>
-					<el-button type="default" size="mini">
+					<el-button :disabled="!OwnAuthDisabled" type="primary" size="mini">
 						<img class="img" src="@/assets/images/vistorManage/export_icon.png" alt />导出
 					</el-button>
 				</div>
 				<div class="rightgroup">
 					<span class="title">姓名：</span>
 					<el-input class="input staffNameInput" v-model="staffName"></el-input>
-					<el-button type="primary" @click="queryBtnAct" icon="el-icon-search" size="small">检索</el-button>
-					<el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
+					<el-button
+						:disabled="!ShowAuthDisabled"
+						type="primary"
+						@click="queryBtnAct"
+						icon="el-icon-search"
+						size="small"
+					>检索</el-button>
+					<el-button :disabled="!ShowAuthDisabled" type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
 					<el-popover
 						ref="popover1"
 						placement="bottom"
@@ -30,7 +36,12 @@
 					>
 						<blacklist-search-view @query="queryAct"></blacklist-search-view>
 					</el-popover>
-					<el-button type="primary" @click="tableOrTableCell = !tableOrTableCell" size="small">切换视图</el-button>
+					<el-button
+						:disabled="!ShowAuthDisabled"
+						type="primary"
+						@click="tableOrTableCell = !tableOrTableCell"
+						size="small"
+					>切换视图</el-button>
 				</div>
 			</div>
 			<el-table
@@ -55,9 +66,14 @@
 				<el-table-column label="操作" min-width="100">
 					<template slot-scope="scope">
 						<div class="tableCertificateBtnClass">
-							<span @click="editBtnAct(scope.row)" class="editFontClass cursorClass">编辑</span>
-							<span @click="detailBtnAct(scope.row)" class="editFontClass cursorClass">详情</span>
-							<span @click="signWhitelistBtnAct(scope.row)" class="deleteBtnClass cursorClass">从黑名单中移出</span>
+							<el-button type="text" @click="editBtnAct(scope.row)" :disabled="!OwnAuthDisabled">编辑</el-button>
+							<el-button type="text" @click="detailBtnAct(scope.row)" :disabled="!ShowAuthDisabled">详情</el-button>
+							<el-button
+								type="text"
+								@click="signWhitelistBtnAct(scope.row)"
+								:disabled="!OwnAuthDisabled"
+								style="color:red;"
+							>从黑名单中移出</el-button>
 						</div>
 					</template>
 				</el-table-column>
@@ -73,16 +89,35 @@
 							trigger="click"
 						>
 							<el-row class="popoverBox" justify="space-between">
-								<el-col class="BLelPopoverCol cursorClass" @click.native="detailBtnAct(item)">
-									<img class="img" src="@/assets/images/personMange/detail1.png" />
+								<el-col
+									:class="ShowAuthDisabled?'cursorClass':''"
+									class="BLelPopoverCol cursorClass"
+									@click.native="detailBtnAct(item)"
+								>
+									<img v-if="!ShowAuthDisabled" class="img" src="@/assets/images/personMange/detail1.png" />
+									<img v-else class="img" src="@/assets/images/personMange/detail.png" />
 									详情
 								</el-col>
-								<el-col class="BLelPopoverCol cursorClass" @click.native="editBtnAct(item)">
-									<img class="img" src="@/assets/images/personMange/edit.png" />
+								<el-col
+									:class="OwnAuthDisabled?'cursorClass':''"
+									class="BLelPopoverCol cursorClass"
+									@click.native="editBtnAct(item)"
+								>
+									<img v-if="OwnAuthDisabled" class="img" src="@/assets/images/personMange/edit.png" />
+									<img v-else class="img" src="@/assets/images/personMange/edit2.png" />
 									编辑
 								</el-col>
-								<el-col class="BLelPopoverCol cursorClass" @click.native="signWhitelistBtnAct(item)">
-									<img class="img" src="@/assets/images/personMange/delete1.png" />
+								<el-col
+									:class="OwnAuthDisabled?'cursorClass':''"
+									class="BLelPopoverCol cursorClass"
+									@click.native="signWhitelistBtnAct(item)"
+								>
+									<img
+										v-if="!OwnAuthDisabled"
+										class="img"
+										src="@/assets/images/personMange/delete1.png"
+									/>
+									<img v-else class="img" src="@/assets/images/personMange/delete2.png" />
 									移除
 								</el-col>
 							</el-row>
@@ -124,7 +159,12 @@
 					</div>
 				</div>
 			</div>
-			<blacklist-detail :visible="isShow" :defaultRow="defaultRow" @close="closeDetail"></blacklist-detail>
+			<blacklist-detail
+				:visible="isShow"
+				:defaultRow="defaultRow"
+				:OwnAuthDisabled="OwnAuthDisabled"
+				@close="closeDetail"
+			></blacklist-detail>
 			<blacklist-add
 				:visible="isAddDialogShow"
 				:title="title"
@@ -178,11 +218,15 @@ export default {
       showLoading: false,
       checkStaffUuids: [],
       title: "添加黑名单",
-      otherSearchData: {}
+      otherSearchData: {},
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("黑名单管理", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("黑名单管理", "isOwn");
     let h =
 			window.innerHeight ||
 			document.documentElement.clientHeight ||
@@ -224,15 +268,20 @@ export default {
     this.currentPage = !this.tableOrTableCell ? this.currentPage : 1;
   },
   activated() {
-    this.currentPage = 1;
-    this.initData();
+    setTimeout(() => {
+      this.currentPage = 1;
+      this.initData();
+    }, 0);
   },
   methods: {
     imageUrl(a) {
-    //   console.log(RestApi.api.imageUrl(a));
+      //   console.log(RestApi.api.imageUrl(a));
       return RestApi.api.imageUrl + a;
     },
     initData() {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       var params = {
         pageSize: this.pageSize,
         page: this.currentPage,
@@ -327,6 +376,7 @@ export default {
     },
     // 详情
     detailBtnAct(rowData) {
+      if (!this.ShowAuthDisabled) return;
       this.defaultRow = rowData;
       this.httpGetAlarmFromBlackkistUuid(rowData);
     },
@@ -359,6 +409,7 @@ export default {
     },
     // 移出黑名单
     signWhitelistBtnAct(rowData) {
+      if (!this.OwnAuthDisabled) return;
       this.$confirm(
         `<span style="font-family: PingFangSC-Regular;font-size: 14px;color: #FFFFFF;">是否确认移出 ？</span>`,
         "",
@@ -391,6 +442,7 @@ export default {
         });
     },
     editBtnAct(rowData) {
+      if (!this.OwnAuthDisabled) return;
       this.isAddDialogShow = !this.isAddDialogShow;
       this.defaultRow = rowData;
       this.title = "编辑黑名单";
@@ -480,7 +532,7 @@ export default {
 	box-shadow: none;
 }
 .BacklistPopoverClass .BLelPopoverCol {
-	font-family: 'PingFangSC-Regular';
+	font-family: "PingFangSC-Regular";
 	font-size: 12px;
 	color: #dddddd;
 	height: 30%;
@@ -532,19 +584,19 @@ export default {
 	top: 50%;
 	left: 120%;
 }
-.Backlist .el-button--default,
-.Backlist .el-button--default:hover,
-.Backlist .el-button--default:active,
-.Backlist .el-button--default:focus {
+.Backlist .el-button--primary,
+.Backlist .el-button--primary:hover,
+.Backlist .el-button--primary:active,
+.Backlist .el-button--primary:focus {
 	font-family: "PingFangSC-Regular";
 	font-size: 16px;
-	width: 90px;
+	min-width: 90px;
 	height: 34px;
 	background: rgba(40, 255, 187, 0.08);
 	border: 1px solid rgba(38, 211, 157, 0.45);
 	border-radius: 2px;
-	border-radius: 2px;
-	margin: 0 10px;
+	/* border-radius: 2px;
+	margin: 0 10px; */
 	font-family: "PingFangSC-Regular";
 	font-size: 13px;
 	color: #ffffff;

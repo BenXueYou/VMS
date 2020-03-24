@@ -7,11 +7,36 @@
       </div>
       <div class="dash-line"></div>
       <ul class="operator">
-        <li @click='reboot'>重启</li>
-        <li @click='backup'>备份数据</li>
-        <li @click='importData'>导入数据</li>
-        <li @click="saveReset">保留人员数据并恢复默认设置</li>
-        <li @click="deleteReset">删除全部数据并恢复出厂设置</li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='reboot'
+                     style="color:#fff;">重启</el-button>
+        </li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='backup'
+                     style="color:#fff;">备份数据</el-button>
+        </li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='importData'
+                     style="color:#fff;">导入数据</el-button>
+        </li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='saveReset'
+                     style="color:#fff;">保留人员数据并恢复默认设置</el-button>
+        </li>
+        <li>
+          <el-button type='text'
+                     :disabled="!OwnAuthDisabled"
+                     @click='deleteReset'
+                     style="color:#fff;">删除全部数据并恢复出厂设置</el-button>
+        </li>
       </ul>
       <div class="title ">
         远程升级
@@ -29,6 +54,7 @@
                     readonly></el-input>
           <el-button class='addIcon'
                      type="primary"
+                     :disabled="!OwnAuthDisabled"
                      id="fileSelect"
                      size='small'>
             <img :src="icons.selectfile"
@@ -37,6 +63,7 @@
           </el-button>
           <el-button class='update'
                      size='small'
+                     :disabled="!OwnAuthDisabled"
                      @click="upgrade"
                      type="primary">
             升级
@@ -79,6 +106,18 @@ import icons from "@/common/icon.js";
 export default {
   name: "system",
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     data: {
       type: Array,
       default() {
@@ -280,11 +319,17 @@ export default {
       }
     },
     reboot() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.confirmText = "是否重启";
       this.select = 1;
       this.comfirmDialogVisiable = true;
     },
     backup() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // this.backupDialogVisiable = true;
 
       api.dataBackup(this.deviceUuid).then(res => {
@@ -303,14 +348,23 @@ export default {
       });
     },
     importData() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.importantDialogVisiable = true;
     },
     saveReset() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.confirmText = "是否保留人员数据并恢复默认设置？";
       this.select = 2;
       this.comfirmDialogVisiable = true;
     },
     deleteReset() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.confirmText = "是否删除全部数据并恢复默认设置？";
       this.select = 3;
       this.comfirmDialogVisiable = true;
@@ -375,11 +429,11 @@ export default {
       background-color: rgba(255, 2555, 255, 0.05);
       margin-bottom: 15px;
       cursor: pointer;
-      &:hover {
-        font-family: PingFangSC-Regular;
-        background: rgba(40, 255, 187, 0.05);
-        color: #26d39d;
-      }
+      // &:hover {
+      //   font-family: PingFangSC-Regular;
+      //   background: rgba(40, 255, 187, 0.05);
+      //   color: #26d39d;
+      // }
     }
   }
   .dash-line {

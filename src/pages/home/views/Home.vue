@@ -25,9 +25,8 @@
 </template>
 
 <script>
-import { constantRouterMap } from "@/router";
+// import { constantRouterMap } from "@/router";
 import MenuItem from "@/pages/home/components/MenuItem";
-
 export default {
   components: {
     MenuItem
@@ -47,11 +46,15 @@ export default {
     initData() {
       // 这里暂时将访客功能页面给注释掉
       // 解开只需要删掉val.name!=="VistorMange" 这个判断条件 && val.name !== "VistorMange"
-      constantRouterMap[0].children = constantRouterMap[0].children.filter(
-        val => val.icon !== undefined
-      );
-      console.log(constantRouterMap);
-      this.menuArr = constantRouterMap;
+      // console.log(this.$router);
+      // constantRouterMap[0].children = constantRouterMap[0].children.filter(
+      // val => val.icon !== undefined
+      // );
+      // this.menuArr = constantRouterMap;
+      // console.log(constantRouterMap[0].children);
+      // console.log(window.sessionStorage.getItem("useruuid"));
+      // console.log(this.$router);
+      this.menuArr = JSON.parse(window.sessionStorage.getItem("routerData"));
     },
     onClickMenu(compomentItem) {
       console.log(compomentItem);

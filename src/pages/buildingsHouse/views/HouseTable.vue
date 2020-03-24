@@ -2,24 +2,28 @@
   <div class="house-main">
     <div class="access-main">
       <div class="access-search">
-        <el-button @click="addHouse"
+        <el-button :disabled="!OwnAuthDisabled"
+                   @click="addHouse"
                    type="primary"
                    size="small">新增房屋</el-button>
-        <el-button style="margin-left: 1%;"
+        <el-button :disabled="!OwnAuthDisabled"
+                   style="margin-left: 1%;"
                    @click="batchImport"
                    type="primary"
                    size="small">批量导入</el-button>
-        <el-button style="margin-left: 1%;"
+        <el-button :disabled="!OwnAuthDisabled"
+                   style="margin-left: 1%;"
                    @click="batchExport"
                    type="primary"
                    size="small">批量导出</el-button>
-        <el-button style="margin-left: 1%;"
+        <el-button :disabled="!OwnAuthDisabled"
+                   style="margin-left: 1%;"
                    @click="deleteHouses"
                    type="primary"
                    size="small">删除</el-button>
         <div class="search-btn">
           <div style="margin-right: 10px;">
-            <span class='topTitleTxt'>房屋名称：</span>
+            <span class="topTitleTxt">房屋名称：</span>
             <el-input v-model="roomName"
                       class="time-interal"
                       size="small"></el-input>
@@ -28,8 +32,10 @@
                      icon="el-icon-search"
                      style="margin-left: 10px;"
                      type="primary"
-                     size="small">检索</el-button>
-          <el-button v-popover:popover
+                     size="small"
+                     :disabled="!ShowAuthDisabled">检索</el-button>
+          <el-button :disabled="!ShowAuthDisabled"
+                     v-popover:popover
                      type="primary"
                      size="small">其他检索条件</el-button>
           <el-popover ref="popover"
@@ -39,7 +45,7 @@
                       popper-class="i-popover-box"
                       trigger="click">
             <div class="house-more-action">
-              <span class='topTitleTxtMore'
+              <span class="topTitleTxtMore"
                     style="margin-left: -40px;">楼栋单元：</span>
               <build-floor-popover-tree width="170px"
                                         :initTreeRootData="initTreeRootData"
@@ -50,7 +56,7 @@
                                         :isAllCanSelected="true" />
             </div>
             <div class="house-more-action">
-              <span class='topTitleTxtMore'>房屋类型：</span>
+              <span class="topTitleTxtMore">房屋类型：</span>
               <el-select class="time-interal"
                          v-model="roomsType"
                          size="small"
@@ -59,12 +65,11 @@
                 <el-option v-for="item in houseTypeOptions"
                            :key="item.typeStr"
                            :label="item.typeName"
-                           :value="item.typeStr">
-                </el-option>
+                           :value="item.typeStr"></el-option>
               </el-select>
             </div>
             <div class="house-more-action">
-              <span class='topTitleTxtMore'>房屋用途：</span>
+              <span class="topTitleTxtMore">房屋用途：</span>
               <el-select class="time-interal"
                          v-model="roomsUse"
                          size="small"
@@ -73,16 +78,17 @@
                 <el-option v-for="item in houseUseOptions"
                            :key="item.typeStr"
                            :label="item.typeName"
-                           :value="item.typeStr">
-                </el-option>
+                           :value="item.typeStr"></el-option>
               </el-select>
             </div>
             <div class="house-more-action">
-              <el-button @click="queryAct"
+              <el-button :disabled="!ShowAuthDisabled"
+                         @click="queryAct"
                          size="small"
                          style="margin-top:5px;margin-right: 10px;"
                          type="primary">检索</el-button>
-              <el-button @click="resetQuery"
+              <el-button :disabled="!ShowAuthDisabled"
+                         @click="resetQuery"
                          style="margin-top:5px;"
                          type="text">重置</el-button>
             </div>
@@ -95,26 +101,21 @@
                     @selection-change="handleSelectionChange"
                     v-loading="isLoading"
                     style="width: 99%">
-            <el-table-column type="selection">
-            </el-table-column>
+            <el-table-column type="selection"></el-table-column>
             <el-table-column type="index"
                              label="序号"
-                             width="60">
-            </el-table-column>
+                             width="60"></el-table-column>
             <el-table-column prop="infrastructureName"
                              label="房屋名称"
-                             show-overflow-tooltip>
-            </el-table-column>
+                             show-overflow-tooltip></el-table-column>
             <el-table-column prop="floor"
                              v-if="isHaveFloor"
                              label="楼层"
-                             width="90">
-            </el-table-column>
+                             width="90"></el-table-column>
             <el-table-column prop="address"
                              label="楼栋单元"
                              width="250"
-                             show-overflow-tooltip>
-            </el-table-column>
+                             show-overflow-tooltip></el-table-column>
             <el-table-column prop="roomType"
                              label="房屋类型">
               <template slot-scope="scope">
@@ -123,8 +124,7 @@
             </el-table-column>
             <el-table-column prop="people"
                              label="入住人数"
-                             width="90">
-            </el-table-column>
+                             width="90"></el-table-column>
             <el-table-column prop="roomUse"
                              label="房屋用途">
               <template slot-scope="scope">
@@ -133,26 +133,24 @@
             </el-table-column>
             <el-table-column prop="remarks"
                              label="备注"
-                             show-overflow-tooltip>
-            </el-table-column>
+                             show-overflow-tooltip></el-table-column>
             <el-table-column label="操作"
                              width="200">
               <template slot-scope="scope">
                 <div class="detail-icon">
-                  <el-button @click="lookDetail(scope.row)"
+                  <el-button :disabled="!ShowAuthDisabled"
+                             @click="lookDetail(scope.row)"
+                             type="text"
+                             size="small">一房一档</el-button>
+                  <el-button :disabled="!OwnAuthDisabled"
+                             @click="editHouse(scope.row)"
+                             type="text"
+                             size="small">编辑</el-button>
+                  <el-button :disabled="!OwnAuthDisabled"
+                             @click="deleteHouse(scope.row)"
                              type="text"
                              size="small">
-                    一房一档
-                  </el-button>
-                  <el-button @click="editHouse(scope.row)"
-                             type="text"
-                             size="small">
-                    编辑
-                  </el-button>
-                  <el-button @click="deleteHouse(scope.row)"
-                             type="text"
-                             size="small">
-                    <span style="color: #DF5656">删除</span>
+                    <span :style="OwnAuthDisabled?`color:'#DF5656'`: `color:'#82848a'`">删除</span>
                   </el-button>
                 </div>
               </template>
@@ -164,9 +162,8 @@
                          layout="total, prev, pager, next, jumper"
                          :page-size="pageInfo.pageSize"
                          :current-page="pageInfo.currentPage"
-                         @current-change='handleCurrentChange'
-                         :total="pageInfo.total">
-          </el-pagination>
+                         @current-change="handleCurrentChange"
+                         :total="pageInfo.total"></el-pagination>
         </div>
       </div>
     </div>
@@ -202,15 +199,21 @@ export default {
         pageSize: 12,
         currentPage: 1
       },
-      roomsUuidArr: []
+      roomsUuidArr: [],
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
     // this.initData();
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isOwn");
+    // this.OwnAuthDisabled = false;
   },
   methods: {
     initData() {
+      if (!this.ShowAuthDisabled) return;
       this.houseTypeOptions = this.$common.getEnumByGroupStr("house_t");
       this.houseUseOptions = this.$common.getEnumByGroupStr("house_u");
       this.getHouseList();

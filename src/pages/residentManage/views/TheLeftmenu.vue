@@ -10,7 +10,7 @@
              alt />
       </el-input>
       <img @click="addTagClick"
-           v-if="this.treeName !='tree1'"
+           v-if="this.treeName !=='tree1'"
            :src="icons.add"
            alt />
     </div>
@@ -92,6 +92,7 @@
         <gt-tree title="修改标签"
                  ref="tree2"
                  class="tree"
+                 :operatorDisabled="!OwnAuthDisabled"
                  @clickmenu="clickmenu2"
                  @exportData="exportData2"
                  :initdata="data2"></gt-tree>
@@ -144,6 +145,20 @@ export default {
     TreeAppendChildDialog,
     TreeChangeNameDialog,
     ConfirmDialog
+  },
+  props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    }
   },
   data() {
     return {
@@ -204,6 +219,7 @@ export default {
       this.$refs.tree1.setCurrentKey(node.data.id);
     },
     addTagClick(evt) {
+      if (!this.$common.getAuthIsOwn("居民管理", "isOwn")) return;
       this.newTagName = "";
       this.addTagDialogVisible = !this.addTagDialogVisible;
     },
@@ -235,6 +251,9 @@ export default {
         });
     },
     getOrgTag(isFi) {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       api
         .getTagList({
           tagType: this.tagType
@@ -351,6 +370,10 @@ export default {
     },
     // 根据点击树节点的id获取当前节点的字节
     loadNode(node, resolve) {
+      if (!this.ShowAuthDisabled) {
+        resolve([]);
+        return;
+      }
       if (node.level === 0) {
         resolve([]);
         return;
@@ -460,6 +483,9 @@ export default {
       value,
       e
     }) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.tagIndex = index;
       // 树节点右边菜单的点击事件
       var data = [

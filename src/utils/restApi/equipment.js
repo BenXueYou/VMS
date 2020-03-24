@@ -21,9 +21,6 @@ let zwzPrefix = `${
 let wyfPrefix = `${window.config.protocolHeader}${ip}/${
   window.config.wyf
 }/project/${projectUuid}/`;
-let wyfPrefix2 = `${window.config.protocolHeader}${ip}/zuul/${
-  window.config.wyf
-}/project/${projectUuid}/`;
 let fkPrefix = `${
   window.config.protocolHeader
 }${ip}/visitant-v1/project/${projectUuid}/`;
@@ -98,6 +95,11 @@ export default {
   getDoorListUrl: deviceUuid => `${ycPrefix}deviceDoorList/${deviceUuid}/`,
   getDoorDutouUrl: channelUuid => `${ycPrefix}deviceDoor/${channelUuid}`,
   setDoorDutouUrl: channelUuid => `${sbPrefix}deviceDoor/${channelUuid}`,
+  getTempMeasure: channelUuid =>
+    `${
+      window.config.protocolHeader
+    }${ip}/${zhengyu}/tempMeasure/${channelUuid}`,
+  setTempMeasure: channelUuid => `${sbPrefix}tempMeasure/${channelUuid}`,
   // 根据类型来获取耳机菜单
   getScondUrl: viewType =>
     `${ycPrefix}project/${projectUuid}/chnType/select/list`,
@@ -137,7 +139,8 @@ export default {
     `${
       window.config.protocolHeader
     }${ip}/iacserv-v1/operation/dataRestore/device/${deviceUuid}`,
-  staffExportUrl: type => `${wyfPrefix2}staff/import/${type}`,
+  // 居民管理的导入
+  staffExportUrl: type => `${wyfPrefix}staff/import/${type}`,
   // 下载模板
   downloadUrl: `${wyfPrefix}staff/import/exportTemplate`,
   // 获取导入结果

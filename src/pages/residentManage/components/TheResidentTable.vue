@@ -9,19 +9,47 @@
 			<div class="tablecontent">
 				<div class="overflowX">
 					<div class="btn-group">
-						<el-button type="primary" @click="addResident" style="margin-bottom:10px;">新增居民</el-button>
-						<el-button type="primary" @click="deleteMoreResidents">删除</el-button>
-						<el-button type="primary" @click="isShowPatchImportDialog=!isShowPatchImportDialog">批量导入</el-button>
-						<el-button type="primary" @click="exportAct">批量导出</el-button>
 						<el-button
 							type="primary"
+							:disabled="!$common.getAuthIsOwn('居民管理', 'isOwn')"
+							@click="addResident"
+							style="margin-bottom:10px;"
+						>新增居民</el-button>
+						<el-button
+							type="primary"
+							:disabled="!$common.getAuthIsOwn('居民管理', 'isOwn')"
+							@click="deleteMoreResidents"
+						>删除</el-button>
+						<el-button
+							type="primary"
+							:disabled="!$common.getAuthIsOwn('居民管理', 'isOwn')"
+							@click="isShowPatchImportDialog=!isShowPatchImportDialog"
+						>批量导入</el-button>
+						<el-button
+							type="primary"
+							:disabled="!$common.getAuthIsOwn('居民管理', 'isOwn')"
+							@click="exportAct"
+						>批量导出</el-button>
+						<el-button
+							type="primary"
+							:disabled="!$common.getAuthIsOwn('居民管理', 'isOwn')"
 							@click="getMsgToDeviceDialogVisiable=!getMsgToDeviceDialogVisiable"
 						>从设备内获取居民信息</el-button>
-						<el-button type="primary" @click="staticsData">统计</el-button>
+						<el-button
+							type="primary"
+							:disabled="!$common.getAuthIsOwn('居民管理', 'isShow')"
+							@click="staticsData"
+						>统计</el-button>
 						<div class="rightgroup">
 							<span class="title">姓名：</span>
 							<el-input class="input" v-model="staffName"></el-input>
-							<el-button type="primary" @click="getResident" icon="el-icon-search" size="small">检索</el-button>
+							<el-button
+								type="primary"
+								:disabled="!$common.getAuthIsOwn('居民管理', 'isShow')"
+								@click="getResident"
+								icon="el-icon-search"
+								size="small"
+							>检索</el-button>
 							<el-button type="primary" v-popover:popover1 size="small">其他条件检索</el-button>
 							<el-button type="primary" @click="tableOrTableCell = !tableOrTableCell" size="small">切换视图</el-button>
 						</div>
@@ -83,21 +111,40 @@
 						<el-table-column label="操作" width="200">
 							<template slot-scope="scope">
 								<div class="tableCertificateBtnClass">
-									<span class="tableOperateBtnClass cursorClass" @click="detailResident(scope.row)">
+									<span
+										:class="$common.getAuthIsOwn('居民管理', 'isShow')?'cursorClass':'disabled'"
+										class="tableOperateBtnClass"
+										@click="detailResident(scope.row)"
+									>
 										<img
+											v-if="$common.getAuthIsOwn('居民管理', 'isShow')"
 											class="img"
 											src="@/assets/images/personMange/detail.png"
 											style="margin-right: 5.9px;"
 										/>详情
 									</span>
-									<span @click="editResident(scope.row)" class="editFontClass cursorClass">编辑</span>
-									<span @click="deleteResident(scope.row)" class="deleteBtnClass cursorClass">删除</span>
+									<span
+										:class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
+										@click="editResident(scope.row)"
+										class="editFontClass"
+									>编辑</span>
+									<span
+										:class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
+										@click="deleteResident(scope.row)"
+										class="deleteBtnClass"
+									>删除</span>
 								</div>
 							</template>
 						</el-table-column>
 					</el-table>
 					<div v-else class="tableView">
-						<el-checkbox class="checkedAll" v-model="checkedAll" @change="checkedAllChange" label="本页全选"></el-checkbox>
+						<el-checkbox
+							class="checkedAll"
+							:disabled="!$common.getAuthIsOwn('居民管理', 'isShow')"
+							v-model="checkedAll"
+							@change="checkedAllChange"
+							label="本页全选"
+						></el-checkbox>
 						<div class="tableCellContent">
 							<div class="cellBox" v-for="(item,index) in tableCellData" :key="index">
 								<el-popover
@@ -108,16 +155,43 @@
 								>
 									<!-- width="92" -->
 									<el-row class="popoverBox" justify="space-between">
-										<el-col class="FRelPopoverCol cursorClass" @click.native="detailResident(item)">
-											<img class="img" src="@/assets/images/personMange/detail1.png" />
+										<el-col
+											:class="$common.getAuthIsOwn('居民管理', 'isShow')?'cursorClass':'disabled'"
+											class="RelPopoverClass"
+											@click.native="detailResident(item)"
+										>
+											<img
+												class="img"
+												v-if="!$common.getAuthIsOwn('居民管理', 'isShow')"
+												src="@/assets/images/personMange/detail1.png"
+											/>
+											<img class="img" v-else src="@/assets/images/personMange/detail.png" />
 											详情
 										</el-col>
-										<el-col class="FRelPopoverCol cursorClass" @click.native="editResident(item)">
-											<img class="img" src="@/assets/images/personMange/edit.png" />
+										<el-col
+											:class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
+											class="RelPopoverClass"
+											@click.native="editResident(item)"
+										>
+											<img
+												class="img"
+												v-if="$common.getAuthIsOwn('居民管理', 'isOwn')"
+												src="@/assets/images/personMange/edit.png"
+											/>
+											<img class="img" v-else src="@/assets/images/personMange/edit2.png" />
 											编辑
 										</el-col>
-										<el-col class="FRelPopoverCol cursorClass" @click.native="deleteResident(item)">
-											<img class="img" src="@/assets/images/personMange/delete1.png" />
+										<el-col
+											:class="$common.getAuthIsOwn('居民管理', 'isOwn')?'cursorClass':'disabled'"
+											class="RelPopoverClass"
+											@click.native="deleteResident(item)"
+										>
+											<img
+												class="img"
+												v-if="!$common.getAuthIsOwn('居民管理', 'isOwn')"
+												src="@/assets/images/personMange/delete1.png"
+											/>
+											<img v-else src="@/assets/images/delete2.png" alt />
 											删除
 										</el-col>
 									</el-row>
@@ -131,7 +205,13 @@
 											/>
 										</div>
 										<div class="txtBox">
-											<p style="height:18px;">
+											<p
+												class="textClips"
+												style="height:18px;"
+												@mouseover="mymouseover"
+												@mouseout="mymouseout"
+												@mousemove="mymousemove"
+											>
 												<span>{{item.staffName}}</span>
 												<span>{{$common.transferEnumItemName($store.getters.GET_GENDEROPTIONS, item.gender)}}</span>
 												<span>{{$common.transferEnumItemName($store.getters.GET_STAFFOPTIONS, item.staffType)}}</span>
@@ -359,6 +439,10 @@ export default {
     exportAct() {
       // 1、通知服务端需要导出的数据
       // 2、获取生成excel文件的下载路径
+      let ip = window.config.ip;
+      let protocolHeader = window.config.protocolHeader;
+      let url = `${protocolHeader}${ip}${RestApi.api.residentManage.downLoadResidentApi}`;
+      this.$common.funBuildFile(url, "居民.zip", "get");
     },
     queryAct(data) {
       this.queryData = data;
@@ -401,6 +485,7 @@ export default {
       }
     },
     getResident() {
+      if (!this.$common.getAuthIsOwn("居民管理", "isShow")) return;
       this.pageSize = this.tableOrTableCell
         ? this.tableSize
         : this.tableCellSize;
@@ -523,14 +608,6 @@ export default {
       this.getHttpStaticsData();
     },
     // 请求居民管理的统计
-    // "data": {
-    //   "total": 32,
-    //   "male": 31,
-    //   "female": 1,
-    //   "photos": 20,
-    //   "mediums": 13,
-    //   "fingerprints": 0
-    // }
     getHttpStaticsData() {
       this.$ResidentManageAjax.getResidentStaticData().then(res => {
         if (res.data.success) {
@@ -556,52 +633,7 @@ export default {
       this.addResidentDialogVisible = false;
     },
     transferResidentData(xhr) {
-      console.log("添加居民信息", xhr);
-
-      if (this.residentDetail.staffUuid) {
-        this.mainScreenLoading = true;
-        this.$ResidentManageAjax
-          .putResidentApi(xhr)
-          .then(res => {
-            this.mainScreenLoading = false;
-            console.log(res.data);
-            if (res.data.success) {
-              console.log("修改成功！");
-              this.getResident();
-              this.$message({
-                type: "success",
-                message: "修改成功"
-              });
-            }
-          })
-          .catch(() => {
-            this.mainScreenLoading = false;
-          });
-      } else {
-        this.mainScreenLoading = true;
-        this.$ResidentManageAjax
-          .postResidentApi(xhr)
-          .then(res => {
-            console.log(res.data);
-            this.mainScreenLoading = false;
-            if (res.data.success) {
-              console.log("添加成功");
-              this.$message({
-                type: "success",
-                message: "添加成功！"
-              });
-              this.getResident();
-            } else {
-              this.$message({
-                type: "error",
-                message: "添加失败！"
-              });
-            }
-          })
-          .catch(() => {
-            this.mainScreenLoading = false;
-          });
-      }
+      this.getResident();
     },
     // 删除按钮的确定 getResidentFromDevice
     confirm() {
@@ -645,6 +677,7 @@ export default {
     // 详情弹窗
     detailResident(data) {
       console.log("详情弹窗");
+      if (!this.$common.getAuthIsOwn("居民管理", "isShow")) return;
       this.mainScreenLoading = true;
       this.$ResidentManageAjax
         .getResidentDetailApi({ staffUuid: data.staffUuid })
@@ -663,6 +696,7 @@ export default {
     },
     // 编辑弹窗
     editResident(row) {
+      if (!this.$common.getAuthIsOwn("居民管理", "isOwn")) return;
       this.cellPopoverVisible = false;
       let staffUuid = row.staffUuid;
       this.TitleTxt = "编辑居民";
@@ -685,6 +719,7 @@ export default {
     },
     // 删除按钮
     deleteResident(value) {
+      if (!this.$common.getAuthIsOwn("居民管理", "isOwn")) return;
       this.deleteConfirmDialogVisible = true;
       this.residentDetail = value;
       this.checkStaffUuids = [];
@@ -758,7 +793,7 @@ export default {
 	justify-content: space-around;
 	color: #dddddd;
 }
-.FRelPopoverCol {
+.RelPopoverClass {
 	height: 33%;
 	line-height: 30px;
 	color: #dddddd;
@@ -867,7 +902,7 @@ export default {
 			}
 		}
 		.tableOperateBtnClass {
-			font-family: 'PingFangSC-Regular';
+			font-family: "PingFangSC-Regular";
 			font-size: 13px;
 			color: #26d39d;
 			display: flex;
@@ -876,13 +911,13 @@ export default {
 			display: inline-block;
 		}
 		.editFontClass {
-			font-family: 'PingFangSC-Regular';
+			font-family: "PingFangSC-Regular";
 			font-size: 13px;
 			color: #26d39d;
 			margin: 0 22px;
 		}
 		.deleteBtnClass {
-			font-family: 'PingFangSC-Regular';
+			font-family: "PingFangSC-Regular";
 			font-size: 13px;
 			color: #ff5f5f;
 		}

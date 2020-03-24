@@ -1,6 +1,7 @@
 <template>
   <gt-tree-node :isdrag='isdrag'
                 :sereach='search'
+                :operatorDisabled="operatorDisabled"
                 :searchtype="searchtype"
                 :data='newData'
                 :show-checkbox="showCheckbox"
@@ -12,7 +13,6 @@
 
 <script>
 import GtTreeNode from "./tree-node.vue";
-import { setTime } from "../../../../pages/equipmentMange/ajax";
 
 export default {
   name: "GtTree",
@@ -400,6 +400,12 @@ export default {
   },
   props: {
     showCheckbox: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    operatorDisabled: {
       type: Boolean,
       default() {
         return false;

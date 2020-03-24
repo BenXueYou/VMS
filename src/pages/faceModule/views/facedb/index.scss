@@ -24,7 +24,6 @@ $maincolor: #28ffbb;
       height: auto;
       padding-bottom: 20px;
       border-bottom: 1px dashed gray;
-
       ul {
         list-style: none;
         padding-left: 0;
@@ -46,7 +45,7 @@ $maincolor: #28ffbb;
             display: inline-block;
             height: 16px;
             padding-right: 16px;
-            vertical-align: middle;
+            vertical-align: inherit;
           }
 
           span {

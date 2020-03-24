@@ -28,6 +28,7 @@
         </span>
 
         <span class="threeline"
+              :class="{'disabled':operatorDisabled}"
               @click.stop.prevent='$emit("clickmenu",{index:index,version:item.version,rankOrder:item.rankOrder,orgUuid:item.orgUuid,sliblings:root,isLastOne:index===(root.length-1),node:parent+"-"+index,value:item.label,e:$event})'>
 
         </span>
@@ -42,6 +43,7 @@
              v-if='item.isextend&&item.havechildren'>
           <gt-tree-node :data='item.children'
                         :changeparent="changeparent"
+                        :operatorDisabled="operatorDisabled"
                         :parent='parent+"-"+index'
                         :nodeLevel="nodeLevel+1"
                         @operator='$emit("operator",$event)'
@@ -173,6 +175,12 @@ export default {
     }
   },
   props: {
+    operatorDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     data: {
       //传递的数据
       type: Array,
@@ -571,7 +579,7 @@ export default {
   margin: 5px 0px 5px;
   transition: transform 0.3s;
   position: relative;
-  margin-left: 10px;
+  margin-left: 0px;
 }
 .triangle::before {
   content: "";
@@ -633,13 +641,13 @@ export default {
         vertical-align: middle;
         border: none;
         padding: 0px;
-        margin: 0px 4px 0px 8px;
+        margin: 0px 4px 0px 4px;
       }
       .whitespan {
         margin-left: $iconleft;
         display: inline-block;
         vertical-align: middle;
-        width: 6px;
+        width: 11px;
         height: 12px;
       }
       .treename {
@@ -683,6 +691,13 @@ export default {
           @include line;
         }
       }
+      .disabled {
+        background-color: gainsboro !important;
+        &::after,
+        &::before {
+          background-color: gainsboro !important;
+        }
+      }
 
       &:hover {
         background-color: rgba(40, 255, 187, 0.05);
@@ -724,5 +739,3 @@ export default {
   }
 }
 </style>
-
-

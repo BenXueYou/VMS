@@ -16,7 +16,7 @@
 							height="100%"
 							style="object-fit: contain;max-width:100%;"
 						/>
-						<div class="FRelPopoverCol" @click="downloadImg(itemData)">
+						<div class="DRelPopoverClass" @click="downloadImg(itemData)">
 							<img src="@/assets/images/6s.png" />
 						</div>
 					</el-row>
@@ -27,22 +27,44 @@
 						<div class="info-details-title-text">开锁图片1</div>
 					</div>
 					<div class="info-details-items">验证时间：{{$common.setStringText(itemData.validateTime)}}</div>
-					<div class="info-details-items">验证方式：{{$common.getEnumItemName("pass", itemData.validateType)}}</div>
+					<div class="info-details-items">验证方式：{{transferValidateType(itemData.validateType)}}</div>
 					<div class="info-details-items">验证地址：{{$common.setStringText(itemData.doorName)}}</div>
 					<div class="info-details-items">验证设备：{{$common.setStringText(itemData.readHeadName)}}</div>
 					<div
 						class="info-details-items"
 						v-if="validateType === 'card'"
 					>卡号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.mediumNo) : ""}}</div>
+					<div
+						class="info-details-items"
+						v-if="itemData && itemData.staffInfo && itemData.staffInfo.tempValue"
+					>
+						体温：
+						<span style="color:#00D8A0">{{$common.setStringText(itemData.staffInfo.tempValue)}}℃</span>
+					</div>
 				</div>
 			</div>
 			<div class="person-info">
-				<div class="info-pic">
-					<img
-						:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
-						height="100%"
-            style="object-fit: contain;max-width:100%;"
-					/>
+				<div class="leftBox">
+					<div class="info-pic">
+						<!-- 如果是不在库人员。默认显示证件照，隐藏查看证件照的按钮 -->
+						<img
+							v-if="!isShowPicture && (itemData && itemData.staffInfo && itemData.staffInfo.staffUuid)"
+							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.lifePictureUrl) : require('@/assets/images/user.png')"
+							height="100%"
+							style="object-fit: contain;max-width:100%;"
+						/>
+						<img
+							v-else
+							:src="itemData && itemData.staffInfo ? $common.setPictureShow(itemData.staffInfo.idCardPictureUrl) : require('@/assets/images/user.png')"
+							height="100%"
+							style="object-fit: contain;max-width:100%;"
+						/>
+					</div>
+					<div
+						v-if="itemData && itemData.staffInfo && itemData.staffInfo.staffUuid"
+						class="leftBottomTips cursorClass"
+						@click="isShowPicture=!isShowPicture"
+					>查看证件照</div>
 				</div>
 				<div class="info-details">
 					<div class="info-details-title">
@@ -57,22 +79,31 @@
 					>性别：{{itemData && itemData.staffInfo ? $common.getEnumItemName("gender", itemData.staffInfo.gender) : ''}}</div>
 					<div
 						class="info-details-items"
-					>住址：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.adrees) : ''}}</div>
+					>证件类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName('cred',itemData.staffInfo.idCardType):'身份证'}}</div>
 					<div
 						class="info-details-items"
 					>身份证号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.idCard) : ''}}</div>
 					<div
 						class="info-details-items"
 					>民族：{{itemData && itemData.staffInfo ? $common.getEnumItemName("nation", itemData.staffInfo.nation) : ''}}</div>
-					<div
-						class="info-details-items"
-					>人员类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName("staff_t", itemData.staffInfo.staffType) : ''}}</div>
-					<div
-						class="info-details-items"
-					>电话：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.cellphone) : ''}}</div>
-					<div
-						class="info-details-items"
-					>备注：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.remarks) : ''}}</div>
+					<!-- 在库人员显示该字段 -->
+					<template v-if="itemData && itemData.staffInfo && itemData.staffInfo.staffUuid">
+						<div
+							class="info-details-items"
+						>人员类型：{{itemData && itemData.staffInfo ? $common.getEnumItemName("staff_t", itemData.staffInfo.staffType) : ''}}</div>
+						<div
+							class="info-details-items"
+						>手机号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.cellphone) : ''}}</div>
+						<div
+							class="info-details-items"
+						>车牌号：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.vehicleNo) : ''}}</div>
+					</template>
+					<!-- 非在库人员显示的字段 -->
+					<template v-else>
+						<div
+							class="info-details-items"
+						>住址：{{itemData && itemData.staffInfo ? $common.setStringText(itemData.staffInfo.adrees) : ''}}</div>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -86,10 +117,17 @@ export default {
     isShow: {
       type: Boolean,
       default: false
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
     }
   },
   data() {
     return {
+      isShowPicture: false,
       isCurrentShow: false,
       validateType: "",
       itemData: {
@@ -119,7 +157,19 @@ export default {
   created() {},
   mounted() {},
   methods: {
+    transferValidateType(item, signal = "&", typeStr = "pass") {
+      let validateTypeArr = item.split(signal);
+      let str = "";
+      validateTypeArr.map(im => {
+        str += this.$common.getEnumItemName(typeStr, im);
+        str += ",";
+      });
+      return str.substr(0, str.length - 1);
+    },
     downloadImg(itemData) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       if (itemData && itemData.staffInfo && itemData.staffInfo.openDoorUrl) {
         var url = this.$common.setPictureShow(itemData.staffInfo.openDoorUrl);
         if (!!window.ActiveXObject || "ActiveXObject" in window) {
@@ -275,7 +325,7 @@ export default {
 			width: 145px;
 			height: 145px;
 			text-align: center;
-			.FRelPopoverCol {
+			.DRelPopoverClass {
 				width: 28px;
 				height: 28px;
 				font-size: 12px;
@@ -298,6 +348,15 @@ export default {
 				width: 100%;
 				height: 100%;
 				text-align: center;
+			}
+		}
+		.leftBox {
+			.leftBottomTips {
+				text-align: center;
+				margin-top: 15px;
+				font-family: "PingFangSC-Regular";
+				font-size: 12px;
+				color: #00d8a0;
 			}
 		}
 		.info-details {

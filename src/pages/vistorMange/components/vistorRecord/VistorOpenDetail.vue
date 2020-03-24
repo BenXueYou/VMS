@@ -1,5 +1,5 @@
 <template>
-	<el-dialog :title="title" :width="width" class="VistorOpenDetail" :visible.sync="dialogVisible">
+	<el-dialog :title="title" :width="width" class="VistorOpenDetail" :visible.sync="dialogVisible"  :before-close="close">
 		<div slot="title" class="dialogTitleClass">
 			<el-row type="flex" justify="flex-start">
 				<el-col :span="12">
@@ -168,7 +168,6 @@ export default {
     };
   },
   mounted() {
-    this.dialogVisible = this.visible;
     this.name = this.value;
   },
   methods: {

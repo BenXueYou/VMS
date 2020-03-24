@@ -1,9 +1,11 @@
 <template>
-  <div class='VideoPreviewContent'>
+  <div class="VideoPreviewContent">
     <left-content orgType="device"
-                  needType=""
+                  needType
                   tagType="device"
-                  ref='leftTree'
+                  ref="leftTree"
+                  :ShowAuthDisabled="ShowAuthDisabled"
+                  :OwnAuthDisabled="OwnAuthDisabled"
                   @playRtsp="playRtsp"
                   @jumpToPlayback="jumpToPlayback"
                   @updateView="updateView"
@@ -18,12 +20,12 @@
                   @switchLuxiang="switchLuxiang"
                   :showCloudControl="showCloudControl"
                   :channelUuid="operatorChannelUuid"></left-content>
-    <div class='right'
-         ref='right'>
+    <div class="right"
+         ref="right">
       <!-- :style="{'max-width':maxRightWidth+'px'}" -->
-      <div class='vedioWrap'
+      <div class="vedioWrap"
            :class="{'fullVideoWrap':fullscreen}"
-           ref='vedioWrap'>
+           ref="vedioWrap">
         <video-wrap v-for="(item,index) in showFenlu"
                     :ref="'video'+index"
                     :key="index"
@@ -52,8 +54,7 @@
                     @dragstart="dragstart(index)"
                     @drop="drop(index)"
                     @contextmenu="showMenu"
-                    @click="ClickViDeoA(index)">
-        </video-wrap>
+                    @click="ClickViDeoA(index)"></video-wrap>
       </div>
       <div class="footer">
         <div class="fenlu">
@@ -61,28 +62,29 @@
             <li v-for="(item,index) in fenlu"
                 :class="{active:fenluIndex===index}"
                 @click="chooseFenlu(index)"
-                :key="index">
-              {{item}}</li>
+                :key="index">{{item}}</li>
           </ul>
         </div>
         <div class="operator">
-
-          <gt-button class='button'
-                     @click='saveShiTu'
+          <gt-button class="button"
+                     @click="saveShiTu"
+                     :disabled="!OwnAuthDisabled"
+                     :style="{'backgroundColor':OwnAuthDisabled?'':'gray'}"
                      :showClose="false">保存视图</gt-button>
           <el-dropdown @command="changeView"
                        trigger="click">
-            <gt-button class='button'
+            <gt-button class="button"
                        :showClose="false">
               {{videoMode}}
-              <i class='el-icon-caret-bottom'></i></gt-button>
+              <i class="el-icon-caret-bottom"></i>
+            </gt-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="original">原始比例</el-dropdown-item>
               <el-dropdown-item command="fullscreen">充满屏幕</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 
-          <gt-button class='button'
+          <gt-button class="button"
                      :icon="icons.fullScreen"
                      @click="PreviewAreafullScreen"
                      :showClose="false"
@@ -94,11 +96,9 @@
                        :videoinfo="videoinfo"
                        :visible.sync="videoInfoVisible"></video-info-Dialog>
     <image-adjust-dialog title="画面调节"
-                         :visible.sync="imageAdjustVisible">
-    </image-adjust-dialog>
+                         :visible.sync="imageAdjustVisible"></image-adjust-dialog>
     <screenshot-dialog :visible.sync="screenShotVisible"
-                       :src="src">
-    </screenshot-dialog>
+                       :src="src"></screenshot-dialog>
     <tree-append-tag-dialog @confirm="addView"
                             title="添加视图"
                             labelName="视图名称"
@@ -247,10 +247,18 @@ export default {
       maxRightWidth: 10000,
       parentArr: new Array(36), // 用来记录所有的视频
       timer: null,
-      cnt: 0
+      cnt: 0,
+      ShowAuthDisabled: false,
+      OwnAuthDisabled: false
     };
   },
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isOwn");
+    // this.OwnAuthDisabled = false;
+    // this.ShowAuthDisabled = true;
+    // this.OwnAuthDisabled = false;
+    // this.OwnAuthDisabled = true;
     this.jugdeJump();
     this.chooseFenlu(1);
     this.jishi();
@@ -330,8 +338,11 @@ export default {
       }
     },
     openView(data) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // 打开视图
-
+      console.log(data);
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
       let newdata = JSON.parse(JSON.stringify(data));
@@ -346,6 +357,7 @@ export default {
       this.videoArr.concat();
       this.fenluIndex = data.colTotal - 1;
       this.initWrapDom();
+      api2.log3(data.viewName, "视频预览");
     },
     updateView(viewData) {
       // console.log(viewData);
@@ -499,6 +511,9 @@ export default {
       operator = -1,
       isDrag = false
     ) {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       console.log(streamType);
       // 这里做个判断，判断streamType是否为空，为空则判断是不是第一个播放，是则主码流，不是则辅码流
       if (streamType === "") {
@@ -792,6 +807,9 @@ export default {
       this.getChannleUuid();
     },
     showMenu(e, index) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       console.log(e);
       this.operatorIndex = index;
       const _this = this;
@@ -995,6 +1013,14 @@ export default {
       this.$refs["video" + index][0].stopRecord();
     },
     switchLuxiang(channelUuid, channelName) {
+      // 判断有没有操作权限，没有则不进行跳转
+      // 这里的操作权限是看视频回放的，而不是视频预览的
+      if (
+        !this.$common.getAuthIsOwn("视频回放", "isShow") ||
+        !this.$common.getAuthIsOwn("视频回放", "isOwn")
+      ) {
+        return;
+      }
       this.$store.dispatch("addTagViewItem", {
         icon: "VideoPlayback",
         name: "VideoPlayback",

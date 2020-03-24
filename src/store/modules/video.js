@@ -1,7 +1,7 @@
 const video = {
   state: {
-    iccSignalRule: "{}",
-    iccMediaRule: "{}"
+    iccSignalRule: {},
+    iccMediaRule: {}
   },
   getters: {
     jSignal(state) {

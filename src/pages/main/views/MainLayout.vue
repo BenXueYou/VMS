@@ -1,86 +1,64 @@
 <template>
-  <div class="main"
-       id='maina'>
-    <el-container class="main-container">
-      <el-header class="main-container-header">
-        <div class="header-title">
-          <img src="@/assets/images/logo.png" />
-        </div>
-        <tag-view />
-        <el-dropdown trigger="click"
-                     @command="handleCommand"
-                     class="quit-btn">
-          <span class="el-dropdown-link myAccountHeader">
-            <img src="@/assets/images/header.png"
-                 alt />
-            <span class="userName">{{username}}</span>
-            <i class="el-icon-caret-bottom el-icon--right"
-               style="color:#FFF;"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item class="dropdown-li"
-                              disabled
-                              command="xiugai">
-              <span class="myAccountItem">
-                <img src="@/assets/images/mima.png"
-                     class="normal"
-                     width="14px"
-                     height="14px" />
-                <img src="@/assets/images/mima_l.png"
-                     class="active"
-                     width="14px"
-                     height="14px" />
-                <span>修改密码</span>
-              </span>
-            </el-dropdown-item>
-            <el-dropdown-item class="dropdown-li"
-                              command="qiehuan">
-              <span class="myAccountItem">
-                <img src="@/assets/images/qiehuan.png"
-                     class="normal"
-                     width="14px"
-                     height="14px" />
-                <img src="@/assets/images/qiehuan_l.png"
-                     width="14px"
-                     class="active"
-                     height="14px" />
-                <span>切换项目</span>
-              </span>
-            </el-dropdown-item>
-            <el-dropdown-item class="dropdown-li"
-                              command="tuichu">
-              <span class="myAccountItem">
-                <img src="@/assets/images/tuichu.png"
-                     class="normal"
-                     width="14px"
-                     height="14px" />
-                <img src="@/assets/images/tuichu_l.png"
-                     class="active"
-                     width="14px"
-                     height="14px" />
-                <span>退出</span>
-              </span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </el-header>
-      <el-main class="main-container-main">
-        <!-- <router-view></router-view> -->
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
-      </el-main>
-    </el-container>
-    <template v-for="(dialogParama,index) in GlobalAlarmList">
-      <global-alarm-dialog :key="index"
-                           @close="closeDialog(dialogParama,index)"
-                           @closeAudio="closeAudio"
-                           :dialogParama="dialogParama" />
-    </template>
-  </div>
+	<div class="main" id="maina">
+		<el-container class="main-container">
+			<el-header class="main-container-header">
+				<div class="header-title">
+					<img src="@/assets/images/logo.png" />
+				</div>
+				<tag-view />
+				<el-dropdown trigger="click" @command="handleCommand" class="quit-btn">
+					<span class="el-dropdown-link myAccountHeader">
+						<img src="@/assets/images/header.png" alt />
+						<span class="userName">{{username}}</span>
+						<i class="el-icon-caret-bottom el-icon--right" style="color:#FFF;"></i>
+					</span>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item class="dropdown-li" command="xiugai">
+							<span class="myAccountItem">
+								<img src="@/assets/images/mima.png" class="normal" width="14px" height="14px" />
+								<img src="@/assets/images/mima_l.png" class="active" width="14px" height="14px" />
+								<span>修改密码</span>
+							</span>
+						</el-dropdown-item>
+						<el-dropdown-item class="dropdown-li" command="qiehuan">
+							<span class="myAccountItem">
+								<img src="@/assets/images/qiehuan.png" class="normal" width="14px" height="14px" />
+								<img src="@/assets/images/qiehuan_l.png" width="14px" class="active" height="14px" />
+								<span>切换项目</span>
+							</span>
+						</el-dropdown-item>
+						<el-dropdown-item class="dropdown-li" command="tuichu">
+							<span class="myAccountItem">
+								<img src="@/assets/images/tuichu.png" class="normal" width="14px" height="14px" />
+								<img src="@/assets/images/tuichu_l.png" class="active" width="14px" height="14px" />
+								<span>退出</span>
+							</span>
+						</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
+			</el-header>
+			<el-main class="main-container-main">
+				<!-- <router-view></router-view> -->
+				<keep-alive>
+					<router-view></router-view>
+				</keep-alive>
+			</el-main>
+		</el-container>
+		<template v-for="(dialogParama,index) in GlobalAlarmList">
+			<global-alarm-dialog
+				:key="index"
+				@close="closeDialog(dialogParama,index)"
+				@closeAudio="closeAudio"
+				:dialogParama="dialogParama"
+			/>
+		</template>
+
+		<TheChangePassWord :visible.sync="showPassWordDialogVisible" @onConfirm="confirm"></TheChangePassWord>
+	</div>
 </template>
 <script>
-import TheChangePassWord from "@/common/EditPasswordDialog";
+// import TheChangePassWord from "@/common/EditPasswordDialog";
+import TheChangePassWord from "@/common/TheChangePassWord";
 import TagView from "@/pages/main/views/TagView";
 import { mapState } from "vuex";
 import GlobalAlarmDialog from "@/pages/alarmDialog/GlobalAlarmDialog.vue";
@@ -112,19 +90,14 @@ export default {
   },
   mounted() {
     this.initWebSocket();
-    // 添加用户交互模拟事件
-    var btn = document.createElement("button");
-    let event = new MouseEvent("click");
-    btn.onclick = function() {
-      console.log("模拟点击事件");
-    };
-    btn.dispatchEvent(event);
-    btn.onclick();
     window.addEventListener("beforeunload", e => this.browerStatus(e));
     window.addEventListener("onunload", e => this.browerStatusOff(e));
   },
   activated() {},
   methods: {
+    confirm(data) {
+      this.onClickQuit();
+    },
     browerStatus(e) {
       e = window.event || e;
       // e.returnValue = "确定离开当前页面吗？";
@@ -164,17 +137,17 @@ export default {
       if (this.webSocket) return;
       if (this.stompClient) return;
       /* eslint-disable */
-      let url = window.config.protocolHeader + window.config.socketIP;
-      this.webSocket = new SockJS(url);
-      this.stompClient = Stomp.over(this.webSocket);
-      /* eslint-enable */
+			let url = window.config.protocolHeader + window.config.socketIP;
+			this.webSocket = new SockJS(url);
+			this.stompClient = Stomp.over(this.webSocket);
+			/* eslint-enable */
       this.stompClient.connect(
         { projectUuid: this.$store.state.home.projectUuid },
         frame => {
           console.log("connect success----------------:", frame);
           const subCaptureApi = "/user/topic/face-1.3/client/capture";
           const subRecognizationApi =
-            "/user/topic/face-1.3/client/recognization";
+						"/user/topic/face-1.3/client/recognization";
           const subMonitorAlarmApi = "/user/topic/face-1.3/client/monitorAlarm";
           const subDeviceOnOffApi = "/user/topic/status/device";
           // 订阅通知
@@ -236,7 +209,7 @@ export default {
       let his = data.captureDatetime.split(" ")[1];
       let ymd = data.captureDatetime.split(" ")[0];
       let mdy =
-        ymd.split("-")[1] + "-" + ymd.split("-")[2] + "-" + ymd.split("-")[0];
+				ymd.split("-")[1] + "-" + ymd.split("-")[2] + "-" + ymd.split("-")[0];
       data.captureDatetime = his + " " + mdy;
       CapturePhotoArr.push(data);
       if (CapturePhotoArr && CapturePhotoArr.length > 10) {
@@ -278,15 +251,27 @@ export default {
     },
     // 退出账号
     onClickQuit() {
-      this.$store.dispatch("setAuthorization", "");
-      this.$store.dispatch("setProjectUuid", "");
-      this.$store.dispatch("setTagViewArr", []);
-      this.$store.dispatch("setLocalTag", "Home");
-      sessionStorage.setItem("iccSignalRule", "");
-      sessionStorage.setItem("iccMediaRule", "");
-      this.$router.push({
-        name: "Login"
-      });
+      this.$loginAjax
+        .loginOut()
+        .then(res => {
+          if (res.data.success) {
+            this.$store.dispatch("setAuthorization", "");
+            this.$store.dispatch("setProjectUuid", "");
+            this.$store.dispatch("setTagViewArr", []);
+            this.$store.dispatch("setLocalTag", "Home");
+            sessionStorage.setItem("iccSignalRule", "");
+            sessionStorage.setItem("iccMediaRule", "");
+            this.$router.push({
+              name: "Login"
+            });
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          // this.$message.error("退出失败");
+        });
     },
     // 获取本地翻译
     queryBaseTypeByGroup() {
@@ -297,11 +282,12 @@ export default {
     },
     handleQueryBaseTypeByGroupSuccessResponse(body) {
       this.local_enums = body;
+      // console.log(body);
       this.$store.dispatch("setLocalEnums", this.local_enums);
-      this.localStorageResidentTypeTransfer();
+      this.sessionStorageResidentTypeTransfer();
     },
     // 居民管理模块的部分本地翻译数组
-    localStorageResidentTypeTransfer() {
+    sessionStorageResidentTypeTransfer() {
       this.$store.commit(
         "SET_CERTIFICATE",
         this.$common.getEnumByGroupStr("cred")
@@ -367,99 +353,99 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .dropdown-li {
-  text-align: left;
-  .myAccountItem {
-    span {
-      padding-left: 4px;
-    }
-    img {
-      width: 11px;
-      height: 11px;
-    }
-    .active {
-      display: none;
-    }
+	text-align: left;
+	.myAccountItem {
+		span {
+			padding-left: 4px;
+		}
+		img {
+			width: 11px;
+			height: 11px;
+		}
+		.active {
+			display: none;
+		}
 
-    vertical-align: top;
-  }
-  &:hover {
-    color: #26d39d;
-    .normal {
-      display: none !important;
-    }
-    .active {
-      display: inline-block;
-    }
-  }
+		vertical-align: top;
+	}
+	&:hover {
+		color: #26d39d;
+		.normal {
+			display: none !important;
+		}
+		.active {
+			display: inline-block;
+		}
+	}
 }
 #maina {
-  height: 100%;
-  .main-container {
-    height: 100%;
-    .main-container-header {
-      background: #222326;
-      display: flex;
-      flex-flow: row nowrap;
-      align-items: center;
-      background-image: linear-gradient(
-        -180deg,
-        #353a3f 4%,
-        #272a2d 47%,
-        #202124 90%
-      );
-      box-shadow: 0 6px 25px 0 rgba(0, 0, 0, 0.4);
-      z-index: 1;
-      height: 50px !important;
-      .header-title {
-        margin-right: 20px;
-        margin-left: 10px;
-        width: 100px;
-        height: 33%;
-      }
-      .el-dropdown-header {
-        float: right;
-      }
-      .myAccountHeader {
-        cursor: pointer;
-        line-height: 30px;
-        font-family: "PingFangSC-Light";
-        font-size: 12px;
-        color: #dddddd;
-        letter-spacing: 0;
-        text-align: left;
-        span {
-          padding-left: 15px;
-        }
-        img {
-          vertical-align: top;
-        }
-      }
-      .quit-btn {
-        margin-left: auto;
-        margin-right: 1%;
-        .quit-btn-icon {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-          .quit-btn-text {
-            font-family: PingFangSC-Regular;
-            font-size: 12px;
-            color: #dddddd;
-            letter-spacing: 0;
-            text-align: right;
-            margin-left: 6px;
-          }
-        }
-      }
-    }
-    .main-container-main {
-      height: calc(100% - 50px);
-      box-sizing: border-box;
-      overflow: hidden;
-      padding: 0px;
-      background: #1b1b1b;
-    }
-  }
+	height: 100%;
+	.main-container {
+		height: 100%;
+		.main-container-header {
+			background: #222326;
+			display: flex;
+			flex-flow: row nowrap;
+			align-items: center;
+			background-image: linear-gradient(
+				-180deg,
+				#353a3f 4%,
+				#272a2d 47%,
+				#202124 90%
+			);
+			box-shadow: 0 6px 25px 0 rgba(0, 0, 0, 0.4);
+			z-index: 1;
+			height: 50px !important;
+			.header-title {
+				margin-right: 20px;
+				margin-left: 10px;
+				width: 100px;
+				height: 33%;
+			}
+			.el-dropdown-header {
+				float: right;
+			}
+			.myAccountHeader {
+				cursor: pointer;
+				line-height: 30px;
+				font-family: "PingFangSC-Light";
+				font-size: 12px;
+				color: #dddddd;
+				letter-spacing: 0;
+				text-align: left;
+				span {
+					padding-left: 15px;
+				}
+				img {
+					vertical-align: top;
+				}
+			}
+			.quit-btn {
+				margin-left: auto;
+				margin-right: 1%;
+				.quit-btn-icon {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					justify-content: center;
+					.quit-btn-text {
+						font-family: PingFangSC-Regular;
+						font-size: 12px;
+						color: #dddddd;
+						letter-spacing: 0;
+						text-align: right;
+						margin-left: 6px;
+					}
+				}
+			}
+		}
+		.main-container-main {
+			height: calc(100% - 50px);
+			box-sizing: border-box;
+			overflow: hidden;
+			padding: 0px;
+			background: #1b1b1b;
+		}
+	}
 }
 </style>

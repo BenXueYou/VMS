@@ -7,16 +7,17 @@
       <el-col :span="20">
         <img class="img"
              src="@/assets/images/doorAccess/careful_icon.png"
-             alt>
+             alt />
         <span class="header-title">注：配置好多门互锁之后，最多只能开启组内一扇门，且其他门必须处于关闭状态才能开启这扇门</span>
       </el-col>
       <el-col :span="4"
               class="header-buttton-box">
-        <el-button type="primary"
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
                    @click="addInterLockingAct">
           <img class="img"
                src="@/assets/images/doorAccess/add_btn_icon.png"
-               alt> 新增
+               alt /> 新增
         </el-button>
       </el-col>
     </el-row>
@@ -42,13 +43,16 @@
                          width="200">
           <template slot-scope="scope">
             <el-button type="text"
+                       :disabled="!OwnAuthDisabled"
                        size="small"
                        @click.stop="editButtonAct(scope.row)">编辑</el-button>
-            <el-button type="text"
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="text"
                        size="small"
                        class="delete-button"
                        @click.stop="openDeleteDialog(scope.row)">删除</el-button>
-            <el-switch :width="27"
+            <el-switch :disabled="!OwnAuthDisabled"
+                       :width="27"
                        v-model="scope.row.enabled"
                        @change="changeSwith(scope.row)"
                        active-color="#26D39D40"
@@ -93,11 +97,15 @@ export default {
       total: 0,
       tempValue: false,
       tableData: [],
-      row: {}
+      row: {},
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("互锁", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("互锁", "isOwn");
     let h =
       window.innerHeight ||
       document.documentElement.clientHeight ||
@@ -114,7 +122,10 @@ export default {
     });
   },
   activated() {
-    this.initData();
+    setTimeout(() => {
+      if (!this.ShowAuthDisabled) return;
+      this.initData();
+    }, 0);
   },
   methods: {
     initData() {

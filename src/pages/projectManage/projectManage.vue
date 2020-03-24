@@ -30,7 +30,7 @@ export default {
       // this.data = this.$store.state.home.projectList;
       this.data = this.$store.state.home.projectList;
       if (!this.data || !this.data.length) {
-        this.data = JSON.parse(localStorage.projectList);
+        this.data = JSON.parse(sessionStorage.projectList);
       }
     });
   },
@@ -42,6 +42,14 @@ export default {
     selectRow(index) {
       let uuid = this.data[index].projectUuid;
       this.$store.dispatch("setProjectUuid", uuid);
+      this.$ProjectManageAjax
+        .setLogUuid({
+          logUuid: sessionStorage.getItem("logUuid")
+        })
+        .then(res => {
+          // let body = res.data;
+          // this.loginSuccessResponse(body);
+        });
       // 刷新页面以便于更新projectUuid
       this.$nextTick(() => {
         this.$router.push("/home");

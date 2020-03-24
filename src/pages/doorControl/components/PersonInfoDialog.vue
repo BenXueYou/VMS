@@ -19,7 +19,7 @@
 							width="100%"
 							height="100%"
 						/>
-						<div class="FRelPopoverCol" @click="downloadImg(personItem)">
+						<div class="PRelPopoverClass" @click="downloadImg(personItem)">
 							<img src="@/assets/images/6s.png" />
 						</div>
 					</el-row>
@@ -32,7 +32,7 @@
 						width="100%"
 						height="100%"
 					/>
-					<!-- <div class="FRelPopoverCol" @click.native="downloadImg(personItem)">
+					<!-- <div class="PRelPopoverClass" @click.native="downloadImg(personItem)">
 							<img src="@/assets/images/6s.png">
 					</div>-->
 					<!-- </el-row> -->
@@ -216,7 +216,7 @@ export default {
 		.pictures-capture {
 			@extend %pictures-common;
 			margin-bottom: 20px;
-			.FRelPopoverCol {
+			.PRelPopoverClass {
 				width: 28px;
 				height: 28px;
 				font-size: 12px;

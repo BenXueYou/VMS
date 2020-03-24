@@ -2,7 +2,7 @@
 	<el-row class="PublicMessage" ref="mainWMHeight" type="flex" style="height: 100%">
 		<el-col class="PMBox PBoxMenu" :span="4" style="height: 100%">
 			<el-header>
-				<el-button type="primary" @click="addReportMessageAct">
+				<el-button :disabled="!OwnAuthDisabled" type="primary" @click="addReportMessageAct">
 					<img class="img" src="../../../../assets/images/doorAccess/add_btn_icon.png" alt />新建公告
 				</el-button>
 			</el-header>
@@ -19,6 +19,7 @@
 				<el-table-column label="操作" width>
 					<template slot-scope="scope">
 						<el-button
+							:disabled="!OwnAuthDisabled"
 							type="text"
 							size="small"
 							class="delete-button"
@@ -38,12 +39,13 @@
 					</el-col>
 					<el-col class="right_box" :span="19">
 						<el-header>
-							<span class="left_tips_txt" @click="addDeviceTag">
+							<span :disabled="!OwnAuthDisabled" class="left_tips_txt" @click="addDeviceTag">
 								<i class="el-icon-circle-plus-outline img"></i>选取设备
 							</span>
 						</el-header>
 						<div class="showAllSelect">
 							<gt-button
+								:disabled="!OwnAuthDisabled"
 								class="sbtn"
 								@close="deleteDev(index)"
 								v-for="(item, index) in resourceSet"
@@ -70,15 +72,15 @@
 					<el-col class="right_box" :span="19">
 						<el-header>
 							<el-upload
+								:disabled="(!OwnAuthDisabled) || isDisable"
 								class="uploadClass"
 								:action="updateFileImage"
 								:show-file-list="false"
 								:headers="myHeaders"
 								:auto-upload="true"
-								:disabled="isDisable"
 								:http-request="httpRequest"
 							>
-								<span class="left_tips_txt">
+								<span class="left_tips_txt" :disabled="!OwnAuthDisabled">
 									<img class="img" src="../../../../assets/images/doorAccess/add_img_icon.png" alt /> 添加图片
 								</span>
 							</el-upload>
@@ -124,8 +126,20 @@
 				<el-row type="flex" justify="center" :gutter="30">
 					<el-col class="left_box" :span="5"></el-col>
 					<el-col class="right_box right_box_textarea" :span="19">
-						<el-button type="primary" size="mini" @click="submitAct" class="footer-button">发送</el-button>
-						<el-button type="primary" size="mini" @click="onClickClear" class="footer-button">清空</el-button>
+						<el-button
+							:disabled="!OwnAuthDisabled"
+							type="primary"
+							size="mini"
+							@click="submitAct"
+							class="footer-button"
+						>发送</el-button>
+						<el-button
+							:disabled="!ShowAuthDisabled"
+							type="primary"
+							size="mini"
+							@click="onClickClear"
+							class="footer-button"
+						>清空</el-button>
 					</el-col>
 				</el-row>
 			</el-scrollbar>
@@ -188,15 +202,22 @@ export default {
       isLoading: false,
       noticeUuid: "",
       version: 0,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true,
       currentRowIndex: -1
     };
   },
   created() {},
   mounted() {
     // this.getPublicMessageList();
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("发布公告", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("发布公告", "isOwn");
   },
   activated() {
-    this.getPublicMessageList();
+    setTimeout(() => {
+      if (!this.ShowAuthDisabled) return;
+      this.getPublicMessageList();
+    }, 0);
   },
   methods: {
     getPublicMessageList() {
@@ -217,8 +238,12 @@ export default {
         });
     },
     getPublicMessageListSuccessResponse(body) {
-      this.tableData = body.data.list;
-      this.handleDefaultChooseFirstData();
+      if (body.data) {
+        this.tableData = body.data.list || [];
+        this.handleDefaultChooseFirstData();
+      } else {
+        this.onClickClear();
+      }
     },
     setCurrentRow(index) {
       if (this.$refs.elTable) {
@@ -227,6 +252,8 @@ export default {
     },
     handleDefaultChooseFirstData() {
       if (!this.tableData || this.tableData.length === 0) {
+        // 清除右边的页面数据
+        this.onClickClear();
         return;
       }
       let index = 0;
@@ -320,16 +347,16 @@ export default {
       }
       if (
         !this.noticeUuid &&
-          this.pictureForLocalShow.length > 1 &&
-          parseInt(this.duration) === 0
+				this.pictureForLocalShow.length > 1 &&
+				parseInt(this.duration) === 0
       ) {
         this.$cToast.warn("照片停留时间不能为0秒");
         return;
       }
       if (
         this.noticeUuid &&
-          this.picture.length > 1 &&
-          parseInt(this.duration) === 0
+				this.picture.length > 1 &&
+				parseInt(this.duration) === 0
       ) {
         this.$cToast.warn("照片停留时间不能为0秒");
         return;

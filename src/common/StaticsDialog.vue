@@ -59,7 +59,8 @@ export default {
 				{ value: 0, name: "女" },
 				{ value: 0, name: "比对照片数" },
 				{ value: 0, name: "比对指纹数" },
-				{ value: 0, name: "比对卡片数" }
+				{ value: 0, name: "比对卡片数" },
+				{ value: 0, name: "比对证件数" }
 			]
 		};
 	},
@@ -89,6 +90,7 @@ export default {
 				this.pieData[3].value = this.staticDefaultData.photos;
 				this.pieData[4].value = this.staticDefaultData.fingerprints;
 				this.pieData[5].value = this.staticDefaultData.mediums;
+				this.pieData[6].value = this.staticDefaultData.idCardCount;
 			}
 			var dom = document.getElementById("canvasPie");
 			let myChart = this.$echarts.init(dom);
@@ -109,7 +111,8 @@ export default {
 						"女",
 						"比对人脸数",
 						"比对指纹数",
-						"比对卡片数"
+						"比对卡片数",
+						"比对证件数"
 					].reverse()
 				},
 				color: this.color,

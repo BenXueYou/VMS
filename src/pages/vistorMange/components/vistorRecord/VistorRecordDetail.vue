@@ -1,134 +1,149 @@
 <template>
-	<el-dialog
-		:title="title"
-		:width="width"
-		class="VistorRecordDetail"
-		:visible.sync="dialogVisible"
-		:before-close="close"
-		:v-loading="showLoading"
-	>
-		<div class="body">
-			<div class="body_box" style="border-top:0px;">
-				<el-row type="flex" justify="flex-start" :gutter="20">
-					<el-col style="text-align:right;" :span="5">
-						<p>姓名：</p>
-						<p>性别：</p>
-						<p>证件号：</p>
-						<p>手机号：</p>
-						<p>车牌号：</p>
-					</el-col>
-					<el-col :span="9">
-						<p>{{VistorRecordDetail.visitorName}}</p>
-						<p>{{$common.getEnumItemName("gender", VistorRecordDetail.gender)}}</p>
-						<p>{{VistorRecordDetail.certificateNo}}</p>
-						<p>{{VistorRecordDetail.phoneNo}}</p>
-						<p>{{VistorRecordDetail.plateNo}}</p>
-					</el-col>
-					<el-col style="text-align:right;margin-right:-15px;" :span="5">
-						<div v-if="showImg" class="imgBox">
-							<img
-								:src="VistorRecordDetail.certificatePhotoUri? imageUrl+VistorRecordDetail.certificatePhotoUri : require('@/assets/images/user.png')"
-								alt
-								srcset
-							/>
-						</div>
-					</el-col>
-					<el-col style="text-align:right;" :span="5">
-						<div class="imgBox">
-							<img
-								:src="VistorRecordDetail.snapPhotoUri? imageUrl+VistorRecordDetail.snapPhotoUri : require('@/assets/images/user.png')"
-								alt
-								srcset
-							/>
-						</div>
-						<p style="text-align:center">
-							<span class="activeFontClass" @click="showImg = !showImg">查看证件照</span>
-						</p>
-					</el-col>
-				</el-row>
-				<el-row type="flex" justify="flex-start" :gutter="20">
-					<el-col style="text-align:right;" :span="5">访客单位：</el-col>
-					<el-col :span="14">{{VistorRecordDetail.company}}</el-col>
-				</el-row>
-			</div>
-			<div class="body_box">
-				<el-row type="flex" justify="flex-start" :gutter="20">
-					<el-col style="text-align:right;" :span="5">
-						<p>登记设备：</p>
-						<p>登记途径：</p>
-						<p>登记人：</p>
-						<p>登记时间：</p>
-						<p>有效开始时间：</p>
-						<p>有效结束时间：</p>
-						<p>被访人员：</p>
-						<p>被访人手机：</p>
-						<p>来访事由：</p>
-						<p>访客状态：</p>
-					</el-col>
-					<el-col :span="19">
-						<p>{{VistorRecordDetail.regDeviceNickName || ''}}</p>
-						<p>{{$common.getEnumItemName("visitor_singon_ways", VistorRecordDetail.source) || ''}}</p>
-						<p>{{VistorRecordDetail.regUserName || ''}}</p>
-						<p>{{VistorRecordDetail.regDatetime || ''}}</p>
-						<p>{{VistorRecordDetail.validDatetimeBegin || ''}}</p>
-						<p>{{VistorRecordDetail.validDatetimeEnd || ''}}</p>
-						<p>
-							<span
-								class="activeFontClass"
-								@click="transferVistorList()"
-							>{{VistorRecordDetail.staffName || ''}}</span>
-						</p>
-						<p>{{VistorRecordDetail.staffPhoneNo || ''}}</p>
-						<p>{{VistorRecordDetail.reason || ''}}</p>
-						<p>
-							{{$common.getEnumItemName("visitor_record_s", VistorRecordDetail.visitState)}}
-							{{VistorRecordDetail.bracketContext}}
-						</p>
-					</el-col>
-				</el-row>
-			</div>
-			<div class="body_box">
-				<el-row type="flex" justify="flex-start" :gutter="20">
-					<el-col style="text-align:right;" :span="5">
-						<p>访客开门记录：</p>
-					</el-col>
-					<el-col :span="19">
-						<p
-							class="activeFontClass"
-							v-for="(item ,index) in openDoorRecord"
-							:key="index"
-							@click="transferVistorOpenRecord(item)"
-						>
-							<span class="activeFontClass">{{item.time}}</span>
-							<span class="activeFontClass">{{item.channelName}}</span>
-							<span class="activeFontClass">{{$common.getEnumItemName("chn_d", item.direction)}}</span>
-							<span class="activeFontClass">{{$common.getEnumItemName("pass", item.recognitionMode)}}</span>
-						</p>
-					</el-col>
-				</el-row>
-			</div>
-		</div>
-		<div slot="footer" class="dialogHeaderClass">
-			<!--black 值为 1 表在黑名单  0 表不在黑名单-->
-			<el-row type="flex" justify="center">
-				<el-button
-					v-if="!VistorRecordDetail.black"
-					class="deleteBtn"
-					@click="addToBlacklistAct"
-					type="primary"
-				>拉黑</el-button>
-				<el-button v-else class="deleteBtn" @click="addToWhitelistAct" type="primary">解除拉黑</el-button>
-				<el-button
-					v-if="VistorRecordDetail.forbid"
-					class="deleteBtn"
-					@click="forbidBtnAct"
-					type="primary"
-				>回收通行权限</el-button>
-				<el-button v-if="VistorRecordDetail.signOff" @click="confirm" type="primary">签离</el-button>
-				<el-button @click="close" type="primary">关闭</el-button>
-			</el-row>
-		</div>
-	</el-dialog>
+  <el-dialog :title="title"
+             :width="width"
+             class="VistorRecordDetail"
+             :visible.sync="dialogVisible"
+             :before-close="close"
+             :v-loading="showLoading">
+    <div class="body">
+      <div class="body_box"
+           style="border-top:0px;">
+        <el-row type="flex"
+                justify="flex-start"
+                :gutter="20">
+          <el-col style="text-align:right;"
+                  :span="5">
+            <p>姓名：</p>
+            <p>性别：</p>
+            <p>证件号：</p>
+            <p>手机号：</p>
+            <p>车牌号：</p>
+          </el-col>
+          <el-col :span="9">
+            <p>{{VistorRecordDetail.visitorName}}</p>
+            <p>{{$common.getEnumItemName("gender", VistorRecordDetail.gender)}}</p>
+            <p>{{VistorRecordDetail.certificateNo}}</p>
+            <p>{{VistorRecordDetail.phoneNo}}</p>
+            <p>{{VistorRecordDetail.plateNo}}</p>
+          </el-col>
+          <el-col style="text-align:right;margin-right:-15px;"
+                  :span="5">
+            <div v-if="showImg"
+                 class="imgBox">
+              <img :src="VistorRecordDetail.certificatePhotoUri? imageUrl+VistorRecordDetail.certificatePhotoUri : require('@/assets/images/user.png')"
+                   alt
+                   srcset />
+            </div>
+          </el-col>
+          <el-col style="text-align:right;"
+                  :span="5">
+            <div class="imgBox">
+              <img :src="VistorRecordDetail.snapPhotoUri? imageUrl+VistorRecordDetail.snapPhotoUri : require('@/assets/images/user.png')"
+                   alt
+                   srcset />
+            </div>
+            <p style="text-align:center">
+              <span class="activeFontClass"
+                    @click="showImg = !showImg">查看证件照</span>
+            </p>
+          </el-col>
+        </el-row>
+        <el-row type="flex"
+                justify="flex-start"
+                :gutter="20">
+          <el-col style="text-align:right;"
+                  :span="5">访客单位：</el-col>
+          <el-col :span="14">{{VistorRecordDetail.company}}</el-col>
+        </el-row>
+      </div>
+      <div class="body_box">
+        <el-row type="flex"
+                justify="flex-start"
+                :gutter="20">
+          <el-col style="text-align:right;"
+                  :span="5">
+            <p>登记设备：</p>
+            <p>登记途径：</p>
+            <p>登记人：</p>
+            <p>登记时间：</p>
+            <p>有效开始时间：</p>
+            <p>有效结束时间：</p>
+            <p>被访人员：</p>
+            <p>被访人手机：</p>
+            <p>来访事由：</p>
+            <p>访客状态：</p>
+          </el-col>
+          <el-col :span="19">
+            <p>{{VistorRecordDetail.regDeviceNickName || ''}}</p>
+            <p>{{$common.getEnumItemName("visitor_singon_ways", VistorRecordDetail.source) || ''}}</p>
+            <p>{{VistorRecordDetail.regUserName || ''}}</p>
+            <p>{{VistorRecordDetail.regDatetime || ''}}</p>
+            <p>{{VistorRecordDetail.validDatetimeBegin || ''}}</p>
+            <p>{{VistorRecordDetail.validDatetimeEnd || ''}}</p>
+            <p>
+              <span class="activeFontClass"
+                    @click="transferVistorList()">{{VistorRecordDetail.staffName || ''}}</span>
+            </p>
+            <p>{{VistorRecordDetail.staffPhoneNo || ''}}</p>
+            <p>{{VistorRecordDetail.reason || ''}}</p>
+            <p>
+              {{$common.getEnumItemName("visitor_record_s", VistorRecordDetail.visitState)}}
+              {{VistorRecordDetail.bracketContext}}
+            </p>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="body_box">
+        <el-row type="flex"
+                justify="flex-start"
+                :gutter="20">
+          <el-col style="text-align:right;"
+                  :span="5">
+            <p>访客开门记录：</p>
+          </el-col>
+          <el-col :span="19">
+            <p class="activeFontClass"
+               v-for="(item ,index) in openDoorRecord"
+               :key="index"
+               @click="transferVistorOpenRecord(item)">
+              <span class="activeFontClass">{{item.time}}</span>
+              <span class="activeFontClass">{{item.channelName}}</span>
+              <span class="activeFontClass">{{$common.getEnumItemName("chn_d", item.direction)}}</span>
+              <span class="activeFontClass">{{$common.getEnumItemName("pass", item.recognitionMode)}}</span>
+            </p>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
+    <div slot="footer"
+         class="dialogHeaderClass">
+      <!--black 值为 1 表在黑名单  0 表不在黑名单-->
+      <el-row type="flex"
+              justify="center">
+        <el-button v-if="!VistorRecordDetail.black"
+                   :disabled="!OwnAuthDisabled"
+                   class="deleteBtn"
+                   @click="addToBlacklistAct"
+                   type="primary">拉黑</el-button>
+        <el-button v-else
+                   class="deleteBtn"
+                   :disabled="!OwnAuthDisabled"
+                   @click="addToWhitelistAct"
+                   type="primary">解除拉黑</el-button>
+        <el-button v-if="VistorRecordDetail.forbid"
+                   class="deleteBtn"
+                   :disabled="!OwnAuthDisabled"
+                   @click="forbidBtnAct"
+                   type="primary">回收通行权限</el-button>
+        <el-button v-if="VistorRecordDetail.signOff"
+                   :disabled="!OwnAuthDisabled"
+                   @click="confirm"
+                   type="primary">签离</el-button>
+        <el-button @click="close"
+                   type="primary">关闭</el-button>
+      </el-row>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -158,6 +173,18 @@ export default {
       }
     },
     visible: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    ShowAuthDisabled: {
       type: Boolean,
       default() {
         return false;
@@ -221,6 +248,11 @@ export default {
       return currentDateTime < validDatetimeEnd;
     },
     transferVistorOpenRecord(data) {
+      let ShowAuthDisabled = this.$common.getAuthIsOwn("访客开门记录", "isShow");
+      if (!ShowAuthDisabled) {
+        this.$message({type: 'warnning', message: '没有权限'});
+        return;
+      }
       // 跳转到访客开门记录
       this.$router.push({
         name: "VistorOpenRecord",
@@ -290,7 +322,11 @@ export default {
       rowData.reason = "";
       rowData.blockDatetime = this.$common.getCurrentTime();
       console.log("添加到黑名单", rowData);
-      if (!rowData.credentialType && !rowData.credentialNo && !rowData.visitorRecordUuid) {
+      if (
+        !rowData.credentialType &&
+        !rowData.credentialNo &&
+        !rowData.visitorRecordUuid
+      ) {
         this.$message({ type: "wraning", message: "证件信息为空" });
         return;
       }
@@ -346,8 +382,8 @@ export default {
           if (action === "cancel") {
             if (
               !row.credentialType &&
-							!row.credentialNo &&
-							!row.visitorRecordUuid
+              !row.credentialNo &&
+              !row.visitorRecordUuid
             ) {
               this.$message({ type: "wraning", message: "证件信息为空" });
               return;
@@ -408,157 +444,156 @@ export default {
 </script>
 <style>
 .VistorRecordDetail .el-dialog__body {
-	overflow-y: auto;
-	max-height: 53.7%;
+  overflow-y: auto;
+  max-height: 53.7%;
 }
 .VistorRecordDetail .activeFontClass {
-	font-family: "PingFangSC-Regular";
-	font-size: 12px;
-	color: #26d39d;
+  font-family: "PingFangSC-Regular";
+  font-size: 12px;
+  color: #26d39d;
 }
 .VistorRecordDetail .el-dialog {
-	position: relative;
-	top: 50%;
-	left: 50%;
-	-webkit-transform: translate(-50%, -50%);
-	transform: translate(-50%, -50%);
-	margin: 0px !important;
-	background: #25292d;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  margin: 0px !important;
+  background: #25292d;
 }
 .VistorRecordDetail .el-input__icon {
-	line-height: 30px;
-	color: #26d39d;
+  line-height: 30px;
+  color: #26d39d;
 }
 .VistorRecordDetail .el-dialog__headerbtn {
-	top: 18px;
-	display: none;
+  top: 18px;
+  display: none;
 }
 .VistorRecordDetail .el-dialog__header {
-	height: 60px;
+  height: 60px;
 }
 .dialogHeaderClass {
-	width: 100%;
-	padding: 25px 40px 24px;
-	box-sizing: border-box;
+  width: 100%;
+  padding: 25px 40px 24px;
+  box-sizing: border-box;
 }
 .dialogHeaderClass .el-button {
-	font-family: "PingFangSC-Regular";
-	font-size: 12px;
-	color: #ffffff;
-	letter-spacing: 0;
-	margin: 0 10px;
+  font-family: "PingFangSC-Regular";
+  font-size: 12px!important;
+  color: #ffffff;
+  letter-spacing: 0;
+  margin: 0 10px;
 }
 .dialogHeaderClass .deleteBtn {
-	background: rgba(253, 84, 94, 0.05);
-	border: 1px solid rgba(255, 95, 95, 0.89);
-	border-radius: 2px;
-	border-radius: 2px;
+  background: rgba(253, 84, 94, 0.05)!important;
+  border: 1px solid rgba(255, 95, 95, 0.89)!important;
+  border-radius: 2px!important;
 }
 .VistorRecordDetail .dialogHeaderClass .header_left_txt {
-	border-left: 2px solid #26d39d;
-	font-family: "PingFangSC-Regular";
-	font-size: 14px;
-	color: #ffffff;
-	padding-left: 10px;
+  border-left: 2px solid #26d39d;
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #ffffff;
+  padding-left: 10px;
 }
 .VistorRecordDetail .pBox {
-	display: flex;
-	justify-content: flex-start;
-	margin: 7px 0 8px;
+  display: flex;
+  justify-content: flex-start;
+  margin: 7px 0 8px;
 }
 .VistorRecordDetail .pBox div {
-	width: 50%;
-	text-align: left;
+  width: 50%;
+  text-align: left;
 }
 .VistorRecordDetail .header_right_box {
-	text-align: center;
+  text-align: center;
 }
 .VistorRecordDetail .header_right_box button {
-	height: 32px;
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #ffffff;
-	text-align: justify;
-	padding: 7px 17px;
+  height: 32px;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #ffffff;
+  text-align: justify;
+  padding: 7px 17px;
 }
 
 .VistorRecordDetail .imgBox {
-	display: inline-block;
-	width: 100%;
-	height: 100px;
-	background: rgba(0, 0, 0, 0.1);
-	border: 0 solid rgba(255, 255, 255, 0.1);
-	padding: 7px;
-	box-sizing: border-box;
+  display: inline-block;
+  width: 100%;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 0 solid rgba(255, 255, 255, 0.1);
+  padding: 7px;
+  box-sizing: border-box;
 }
 .VistorRecordDetail .imgBox img {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 .VistorRecordDetail .left_tips_txt {
-	font-family: PingFangSC-Regular;
-	font-size: 12px;
-	color: #26d39d;
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #26d39d;
 }
 .VistorRecordDetail .el-upload {
-	display: inline-block;
-	text-align: center;
-	width: 100%;
-	line-height: 130px;
-	cursor: pointer;
-	outline: none;
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+  line-height: 130px;
+  cursor: pointer;
+  outline: none;
 }
 .VistorRecordDetail .authBox {
-	display: flex;
-	justify-content: flex-start;
-	flex-direction: row;
-	flex-wrap: wrap;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 .VistorRecordDetail .el-select {
-	display: inline-block;
-	position: relative;
-	width: 30%;
+  display: inline-block;
+  position: relative;
+  width: 30%;
 }
 .VistorRecordDetail .el-select .el-input {
-	width: 100%;
+  width: 100%;
 }
 .VistorRecordDetail .el-select .el-select-dropdown__list {
-	width: 100%;
+  width: 100%;
 }
 .VistorRecordDetail .el-input {
-	display: inline-block;
-	width: 30%;
-	height: 30px;
+  display: inline-block;
+  width: 30%;
+  height: 30px;
 }
 .VistorRecordDetail .el-input .el-input__inner {
-	height: 30px;
-	padding-right: 15px;
+  height: 30px;
+  padding-right: 15px;
 }
 .VistorRecordDetail .body_box {
-	border-top: 1px dashed rgba(255, 255, 255, 0.1);
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding: 15px 0px 20px;
-	color: #dddddd;
-	font-size: 12px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding: 15px 0px 20px;
+  color: #dddddd;
+  font-size: 12px;
 }
 .el-dialog__wrapper {
-	overflow: auto;
+  overflow: auto;
 }
 .VistorRecordDetail .time-line {
-	display: inline-block;
-	border-width: 1px 0px 0px 0px;
-	width: 8px;
-	border-color: #7a7b7c;
-	border-style: solid;
-	margin: 0px 3px;
+  display: inline-block;
+  border-width: 1px 0px 0px 0px;
+  width: 8px;
+  border-color: #7a7b7c;
+  border-style: solid;
+  margin: 0px 3px;
 }
 .VistorRecordDetail .img {
-	vertical-align: baseline;
+  vertical-align: baseline;
 }
 .VistorRecordDetail {
-	font-family: "PingFangSC-Regular";
-	font-size: 12px;
-	color: #dddddd;
+  font-family: "PingFangSC-Regular";
+  font-size: 12px;
+  color: #dddddd;
 }
 </style>
 
@@ -566,75 +601,75 @@ export default {
 @import "@/style/variables.scss";
 
 @mixin padding {
-	padding: 10px 46px 0px;
-	box-sizing: border-box;
+  padding: 10px 46px 0px;
+  box-sizing: border-box;
 }
 .body {
-	@include padding;
-	.title {
-		height: 40px;
-		line-height: 30px;
-		@include font-s;
-	}
-	.righttips {
-		float: right;
-		.test {
-			padding-right: 20px;
-		}
-		.refresh {
-			cursor: pointer;
-			img {
-				display: inline-block;
-				vertical-align: middle;
-			}
-			color: $add-text-color;
-		}
-	}
-	.body_box {
-		p {
-			font-family: PingFangSC-Regular;
-			font-size: 12px;
-			color: #dddddd;
-			margin: 7px 0 8px;
-			height: 16px;
-		}
-	}
-	.card_icon_class {
-		text-align: center;
-		p {
-			background: rgba(255, 255, 255, 0.03);
-			border-radius: 2px;
-			border-radius: 2px;
-			font-family: PingFangSC-Regular;
-			font-size: 12px;
-			color: #dddddd;
-			line-height: 35px;
-			margin: 0 20%;
-			padding: 0 20px;
-			width: 60%;
-			text-align: center;
-			display: flex;
-			justify-content: space-between;
-		}
-	}
-	.finger_icon_class {
-		padding-left: 30px;
-	}
+  @include padding;
+  .title {
+    height: 40px;
+    line-height: 30px;
+    @include font-s;
+  }
+  .righttips {
+    float: right;
+    .test {
+      padding-right: 20px;
+    }
+    .refresh {
+      cursor: pointer;
+      img {
+        display: inline-block;
+        vertical-align: middle;
+      }
+      color: $add-text-color;
+    }
+  }
+  .body_box {
+    p {
+      font-family: PingFangSC-Regular;
+      font-size: 12px;
+      color: #dddddd;
+      margin: 7px 0 8px;
+      height: 16px;
+    }
+  }
+  .card_icon_class {
+    text-align: center;
+    p {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 2px;
+      border-radius: 2px;
+      font-family: PingFangSC-Regular;
+      font-size: 12px;
+      color: #dddddd;
+      line-height: 35px;
+      margin: 0 20%;
+      padding: 0 20px;
+      width: 60%;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+  .finger_icon_class {
+    padding-left: 30px;
+  }
 }
 .footer {
-	@include padding;
-	overflow: hidden;
-	button {
-		height: 30px;
-		padding: 7px 21px;
-		background: rgba(40, 255, 187, 0.12);
-		border: 1px solid rgba(40, 255, 187, 0.8);
-		border-radius: 2px;
-		border-radius: 2px;
-		font-family: "PingFangSC-Regular";
-		font-size: 12px;
-		color: #ffffff;
-		letter-spacing: 0;
-	}
+  @include padding;
+  overflow: hidden;
+  button {
+    height: 30px;
+    padding: 7px 21px;
+    background: rgba(40, 255, 187, 0.12);
+    border: 1px solid rgba(40, 255, 187, 0.8);
+    border-radius: 2px;
+    border-radius: 2px;
+    font-family: "PingFangSC-Regular";
+    font-size: 12px;
+    color: #ffffff;
+    letter-spacing: 0;
+  }
 }
 </style>

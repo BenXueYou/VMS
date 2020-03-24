@@ -1,16 +1,16 @@
 <template>
-  <div class='wrap'
+  <div class="wrap"
        ref="tablecontent">
-
     <!-- <el-button class='button'
                type="primary"
                @click='add'>
       <img :src="icons.newAdd"
            alt="">
       新增
-    </el-button> -->
-    <el-button type="primary"
-               style='margin-bottom:20px;'
+		</el-button>-->
+    <el-button :disabled="!OwnAuthDisabled"
+               type="primary"
+               style="margin-bottom:20px;"
                size="small"
                @click="add"
                icon="el-icon-edit-outline">新增</el-button>
@@ -22,13 +22,12 @@
                 style="width: 100%;overflow:initial;">
         <el-table-column prop="name"
                          width="180"
-                         label="名称">
-        </el-table-column>
+                         label="名称"></el-table-column>
         <el-table-column prop="weeks"
                          label="自然周">
           <template slot-scope="scope">
             <p v-for="(item , index) in scope.row.weeks"
-               :key="index">{{item}} </p>
+               :key="index">{{item}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="timeAreas"
@@ -37,28 +36,26 @@
             <el-tooltip :content="item"
                         v-for="(item , index) in scope.row.timeAreas"
                         :key="index">
-              <div>
-                {{item}}
-              </div>
+              <div>{{item}}</div>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="remarks"
-                         label="备注">
-        </el-table-column>
+                         label="备注"></el-table-column>
         <el-table-column label="操作"
                          width="210">
           <template slot-scope="scope">
-            <el-button @click="editEquipment(scope.row)"
+            <el-button :disabled="!OwnAuthDisabled"
+                       @click="editEquipment(scope.row)"
                        type="text"
                        size="small">编辑</el-button>
-            <el-button type="text"
-                       class='deleteText'
-                       @click='deleteEquip(scope.row)'
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="text"
+                       class="deleteText"
+                       @click="deleteEquip(scope.row)"
                        size="small">删除</el-button>
           </template>
         </el-table-column>
-
       </el-table>
     </div>
 
@@ -68,17 +65,15 @@
                    background
                    class="pagination"
                    layout="total, prev, pager, next, jumper"
-                   :total="dataTotal">
-    </el-pagination>
+                   :total="dataTotal"></el-pagination>
 
-    <add-access-time-dialog :visible.sync='AddAccesTimeDialogVisible'
+    <add-access-time-dialog :visible.sync="AddAccesTimeDialogVisible"
                             :title="title"
                             :mark="mark"
                             :value="value"
                             :row="row"
                             @confirm="addSuccess"
-                            :data="timeData">
-    </add-access-time-dialog>
+                            :data="timeData"></add-access-time-dialog>
 
     <confirm-dialog :visible.sync="confirmVisible"
                     :confirmText="confirmText"
@@ -251,7 +246,9 @@ export default {
           }
         ],
         remark: ""
-      })
+      }),
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   mounted() {
@@ -267,6 +264,9 @@ export default {
     // }
     // this.pageSize = ~~(this.tableHeight / 70);
     this.tableHeight = window.innerHeight - 30 - 120 - 100;
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("通行时间段", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("通行时间段", "isOwn");
+    if (!this.ShowAuthDisabled) return;
     this.getTimeList();
   }
 };

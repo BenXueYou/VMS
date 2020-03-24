@@ -10,7 +10,6 @@ export var LogSearchHttp = {
    */
   getDoorLog(holder) {
     let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.getDoorLog}`;
-
     let params = {};
     for (let k in holder) {
       if (holder[k] !== "" && holder[k] !== null && holder[k] !== undefined) {
@@ -32,6 +31,58 @@ export var LogSearchHttp = {
       }
     }
     return axios.get(api, {params: params});
+  },
+  // 报警记录详情
+  getAlarmLogDetail(holder) {
+    let logDetail = RestApi.api.recordSearch.getAlarmLogDetail(holder.alarmUuid);
+    let api = `${protocolHeader}${ip}${logDetail}`;
+
+    let params = {};
+    for (let k in holder) {
+      if (holder[k]) {
+        params[k] = holder[k];
+      }
+    }
+    return axios.get(api, {params: params});
+  },
+  // 报警记录处理
+  getAlarmLogDeal(holder) {
+    let logDetail = RestApi.api.recordSearch.getAlarmLogDeal(holder.alarmUuid);
+    let api = `${protocolHeader}${ip}${logDetail}`;
+
+    let params = {};
+    for (let k in holder) {
+      if (holder[k]) {
+        params[k] = holder[k];
+      }
+    }
+    return axios.get(api, {params: params});
+  },
+  // 新增报警记录处理
+  postAlarmLogDeteal(holder) {
+    let logDetail = RestApi.api.recordSearch.postAlarmLogDeteal;
+    let api = `${protocolHeader}${ip}${logDetail}`;
+
+    let params = {};
+    for (let k in holder) {
+      if (holder[k]) {
+        params[k] = holder[k];
+      }
+    }
+    return axios.post(api, params);
+  },
+  // 修改报警记录处理
+  putAlarmLogDeteal(holder) {
+    let logDetail = RestApi.api.recordSearch.putAlarmLogDeteal(holder.dealUuid);
+    let api = `${protocolHeader}${ip}${logDetail}`;
+
+    let params = {};
+    for (let k in holder) {
+      if (holder[k]) {
+        params[k] = holder[k];
+      }
+    }
+    return axios.put(api, params);
   },
   /**
    * 获取门状态列表

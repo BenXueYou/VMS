@@ -92,11 +92,16 @@ export default {
       initTreeRootData: null,
       lastLevelType: "",
       specialType: "",
-      isInitArea: false
+      isInitArea: false,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: false
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isOwn");
+    // this.OwnAuthDisabled = false;
     this.initData();
   },
   activated() {
@@ -106,6 +111,7 @@ export default {
   },
   methods: {
     initData() {
+      if (!this.ShowAuthDisabled) return;
       this.getAreaStruct();
     },
     getAreaStruct() {

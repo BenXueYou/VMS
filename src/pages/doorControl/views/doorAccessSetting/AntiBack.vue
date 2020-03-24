@@ -7,7 +7,7 @@
       <el-col :span="20">
         <img class="img"
              src="../../../../assets/images/doorAccess/careful_icon.png"
-             alt>
+             alt />
         <span class="header-title">
           <span class="header-title-tips">线路反潜回：</span>设置好开门路径，如果不按照此路径验证，门将无法打开
         </span>
@@ -17,11 +17,12 @@
       </el-col>
       <el-col :span="4"
               class="header-buttton-box">
-        <el-button type="primary"
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
                    @click="addAntiBackAct">
           <img class="img"
                src="../../../../assets/images/doorAccess/add_btn_icon.png"
-               alt>新增
+               alt />新增
         </el-button>
       </el-col>
     </el-row>
@@ -71,10 +72,12 @@
                          label="操作"
                          width="200">
           <template slot-scope="scope">
-            <el-button type="text"
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="text"
                        size="small"
                        @click.stop="editButtonAct(scope.row)">编辑</el-button>
-            <el-button type="text"
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="text"
                        size="small"
                        class="delete-button"
                        @click.stop="openDeleteDialog(scope.row)">删除</el-button>
@@ -85,7 +88,8 @@
 							active-color="rgba(255,255,255,0.2)"
 							inactive-color="#26D39D40"
 						></el-switch>-->
-            <el-switch :width="27"
+            <el-switch :disabled="!OwnAuthDisabled"
+                       :width="27"
                        v-model="scope.row.enabled"
                        @change="changeSwith(scope.row)"
                        active-color="#26D39D40"
@@ -133,11 +137,15 @@ export default {
       tempValue: false,
       tableData: [],
       antiBackDetail: {},
-      isResize: true
+      isResize: true,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("反潜回", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("反潜回", "isOwn");
     let h =
       window.innerHeight ||
       document.documentElement.clientHeight ||
@@ -154,6 +162,7 @@ export default {
       var pageSize = parseInt((h - 240) / 50) - 1;
       if (pageSize !== that.pageSize && that.isResize) {
         that.pageSize = pageSize;
+        if (!that.ShowAuthDisabled) return;
         that.initData();
       }
     }
@@ -163,8 +172,12 @@ export default {
     );
   },
   activated() {
-    this.isResize = true;
-    this.initData();
+    setTimeout(() => {
+      this.isResize = true;
+      if (this.ShowAuthDisabled) {
+        this.initData();
+      }
+    }, 0);
   },
   deactivated() {
     this.isResize = false;

@@ -10,7 +10,7 @@
         </el-col>
         <el-col :span="4"
                 class="asidFontColor fontClass">
-          <el-button class
+          <el-button :disabled="!OwnAuthDisabled"
                      type="primary plain"
                      icon="el-icon-delete"
                      @click="deleteImgRecord()">删除</el-button>
@@ -42,7 +42,6 @@
           </el-col>
         </el-row>
         <el-row>
-          <!-- @click="scrollToRight"	-->
           <i class="el-icon-caret-right"
              @mouseup="mouseUp"
              @mousedown="mouseDown('right')"
@@ -61,7 +60,8 @@
                      :on-change="statuschange"
                      :show-file-list="false"
                      :auto-upload="true"
-                     :http-request="httpRequest1">
+                     :http-request="httpRequest1"
+                     :disabled="!OwnAuthDisabled">
             <div v-if="imageUrl1"
                  class="avatar">
               <img :src="imageUrl1"
@@ -87,7 +87,8 @@
                          type="circle"
                          color="#ffffff"
                          :percentage="scores"></el-progress>
-            <el-button type="primary plain"
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="primary plain"
                        :loading="compareBtnLoad"
                        @click="compareTwoFacePhoto()">开始比对</el-button>
           </div>
@@ -101,6 +102,7 @@
                      :show-file-list="false"
                      :headers="myHeaders"
                      :auto-upload="true"
+                     :disabled="!OwnAuthDisabled"
                      :http-request="httpRequest2">
             <div v-if="imageUrl2"
                  class="avatar">
@@ -122,28 +124,20 @@
   </div>
 </template>
 <script type="text/javascript">
-import { mouseover, mouseout, mousemove } from "@/common/mouse.js";
-import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
   name: "ovo",
   props: {
     dialogParama: {}
   },
-  components: { "big-img": BigImg },
+  components: {},
   data: function() {
     return {
       fileList: [],
-
-      showImg: false,
-      imgSrc: "",
       photoCompareDeals: false,
       scrollValue: 180, // 点击左右箭头，移动的偏移量
-      api: this.$store.state.api, // http://172.20.10.11:5000/mppr-face
-      socketIP: this.$store.state.socketIP, //
       mainVideoScreenLoading: false,
       updatedFlag: false,
-      on_off: true,
       shootPhotoList: [],
       imageUrl1: false,
       imageUrl2: false,
@@ -157,18 +151,16 @@ export default {
       compareBtnLoad: false,
       mouseDownFlag: false,
       setInt: null,
-      imageArr: ["image/jpeg", "image/jpg", "image/png", "image/bmp"]
+      imageArr: ["image/jpeg", "image/jpg", "image/png", "image/bmp"],
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   mounted: function(e) {
-    // 父組件向子組件傳值
-    console.log(this.dialogParama);
-    //  this.shootPhotoList = this.dialogParama.shootPhotoList;
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("1v1对比", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("1v1对比", "isOwn");
   },
-  activated: function() {
-    console.log("刷新页面");
-    // this.getAlarmShootPhotoList();
-  },
+  activated: function() {},
   methods: {
     dbclickAct(index) {
       if (index < this.shootPhotoList.length) {
@@ -213,8 +205,6 @@ export default {
       //   alert("文件选择成功！");
     },
     httpRequest2(e2) {
-      console.log(e2, "---", e2.file, "---", e2.type);
-
       if (this.imageArr.indexOf(e2.file.type) === -1) {
         this.$message({ type: "warning", message: "不支持改图片类型" });
         return;
@@ -233,7 +223,6 @@ export default {
       this.imageUrl2 = URL.createObjectURL(e2.file);
     },
     httpRequest1(e1) {
-      console.log(e1, "---", e1.file, "---", e1.file.raw);
       if (this.imageArr.indexOf(e1.file.type) === -1) {
         this.$message({ type: "warning", message: "不支持改图片类型" });
         return;
@@ -250,22 +239,6 @@ export default {
           .replace("data:image/jpg;base64,", "jpg:");
       };
       this.imageUrl1 = URL.createObjectURL(e1.file);
-    },
-    submitUpload() {
-      this.$refs.upload.submit();
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePreview(file) {
-      console.log(file);
-    },
-
-    abortAct(e) {
-      console.log("--abortAct--", e);
-    },
-    submitAct(e) {
-      console.log("--submit--", e);
     },
     // 开始对比
     compareTwoFacePhoto() {
@@ -286,7 +259,7 @@ export default {
         })
         .then(res => {
           this.compareBtnLoad = !this.compareBtnLoad;
-          if (res.data.success && res.data.data) {
+          if (res.data.success && typeof res.data.data === "number") {
             this.scores = parseInt(res.data.data);
           } else {
             this.$message({ message: res.data.msg, type: "warning" });
@@ -327,38 +300,6 @@ export default {
       }
       console.log(this.shootPhotoList);
     },
-    // 上传成功的回调 该函数废弃
-    handleAvatarSuccess1(res, file) {
-      console.log("=====", file, "res=====", res);
-
-      if (res.msg === "ok") {
-        if (this.imageUrl1) {
-          this.imageUrl1 = res.data.imageUrl;
-          this.leftImg = res.data;
-          this.shootPhotoList.unshift({
-            url: this.imageUrl1,
-            base64Url: this.imageBase641
-          });
-        }
-      } else {
-        this.$message.error("上传图片失败!");
-      }
-    },
-    // 上传成功的回调 该函数废弃
-    handleAvatarSuccess2(res, file) {
-      this.imageUrl2 = res.data.imageUrl;
-      this.rightImg = res.data;
-      if (res.msg === "ok") {
-        if (this.imageUrl2) {
-          this.shootPhotoList.unshift({
-            url: this.imageUrl2,
-            base64Url: this.imageBase642
-          });
-        }
-      } else {
-        this.$message.error("上传图片失败!");
-      }
-    },
     beforeAvatarUpload(file) {
       console.log(file);
       if (this.compareBtnLoad) {
@@ -377,48 +318,15 @@ export default {
       // return isJPG && isLt10M;
       return isLt10M;
     },
-    clickImg(e) {
-      this.showImg = true;
-      // 获取当前图片地址
-      this.imgSrc = e.currentTarget.src;
-    },
-    viewImg() {
-      this.showImg = false;
-    },
-
-    // 鼠标划过覆盖的hover弹窗事件
-    mymouseover: event => {
-      mouseover(event);
-    },
-    mymouseout(event) {
-      mouseout(event);
-    },
-    mymousemove(event) {
-      mousemove(event);
-    },
-    // 关于照片类型展示
-    photoTypeSwitch(onoff) {
-      this.on_off = onoff;
-    },
-
-    closeDialog() {
-      this.$emit("transferCloseDialog", false);
-    },
-
     scrollToRight() {
       let dom = document.getElementById("scrollView");
       console.log(dom, "向左滚动", dom.scrollLeft);
       document.getElementById("scrollView").scrollLeft += this.scrollValue;
-
-      console.log("向左滚动", document.getElementById("scrollView").scrollLeft);
     },
     scrollToLeft() {
-      console.log("向右滚动");
       let dom = document.getElementById("scrollView");
       console.log(dom, "向右滚动", dom.scrollLeft);
       document.getElementById("scrollView").scrollLeft -= this.scrollValue;
-
-      console.log("向右滚动", document.getElementById("scrollView").scrollLeft);
     },
     handleAvatarError(err, file, fileList) {
       console.log(err, "===", file, "====", fileList);

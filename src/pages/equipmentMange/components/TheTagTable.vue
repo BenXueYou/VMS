@@ -6,18 +6,22 @@
 
         <div class="btn-group">
           <el-button type="primary"
+                     :disabled="!OwnAuthDisabled"
                      @click='exportDoor'>导入通道</el-button>
           <el-button type="primary"
+                     :disabled="!OwnAuthDisabled"
                      @click="removeDoor">移出通道</el-button>
 
           <div class="rightgroup">
             <span class='title'>通道名称：</span>
             <el-input class='input'
+                      :disabled="!ShowAuthDisabled"
                       v-model='devName'>
             </el-input>
 
             <span class='title'>类型：</span>
             <el-select v-model="devMode"
+                       :disabled="!ShowAuthDisabled"
                        @change="modeChange">
               <el-option v-for="item in options"
                          :key="item.key"
@@ -27,15 +31,18 @@
             </el-select>
             <span class='title'>所属设备：</span>
             <el-input class='input'
+                      :disabled="!ShowAuthDisabled"
                       v-model='devBelong'>
             </el-input>
 
             <el-button type="primary"
                        @click="search"
+                       :disabled="!ShowAuthDisabled"
                        icon="el-icon-search"
                        size="small">查询</el-button>
             <el-button type="primary"
                        @click="reset"
+                       :disabled="!ShowAuthDisabled"
                        size="small">重置</el-button>
           </div>
         </div>
@@ -67,9 +74,12 @@
 
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <div class="deleteText"
-                   style="cursor:pointer"
-                   @click="deleteDev(scope.row)">移出</div>
+              <el-button class="deleteText"
+                         type="text"
+                         style="cursor:pointer"
+                         :disabled="!OwnAuthDisabled"
+                         @click="deleteDev(scope.row)">移出
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -115,6 +125,18 @@ import * as api from "../ajax";
 export default {
   name: "TheTagTable",
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     uuid: {
       type: String,
       default() {
@@ -230,6 +252,9 @@ export default {
       this.getTagList();
     },
     getTagList() {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       let data = {
         page: this.pageNow,
         limit: this.pageSize,

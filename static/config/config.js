@@ -3,7 +3,7 @@ var hostname = window.location.hostname;
 var ip, websocketIp, imageUrl;
 // var Authorization = "Basic d2ViOjEyMzQ1Ng=="
 var Authorization = "Basic YXBwOjEyMzQ1Ng==";
-var DEBUG = "TEST";
+var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
   ip = "192.168.9.232:15000";
@@ -16,8 +16,8 @@ if (DEBUG == "DEBUG") {
 } else if (DEBUG == "TEST") {
   // 提测环境
   // ip = "192.168.9.141:15000";
-  ip = "192.168.9.238:15000";   
-  websocketIp = "192.168.9.238:15007";
+  ip = "192.168.9.232:15000";
+  websocketIp = "192.168.9.232:80";
   imageUrl =
     protocolHeader +
     "//" +
@@ -41,11 +41,11 @@ if (DEBUG == "DEBUG") {
 var resourceType = {
   video: [
     {
-      id: "auth_video",
+      id: "ipc/nvr/decoder",
       label: "视频设备"
     },
     {
-      id: "auth_video_monitor",
+      id: "bullet_camera/dome_camera/ball_camera/bullet_camera_ptz",
       label: "监控点"
     },
     {
@@ -59,23 +59,23 @@ var resourceType = {
   ],
   door: [
     {
-      id: "auth_door",
+      id: "access_ctrl",
       label: "门禁设备"
     },
     {
-      id: "auth_door_monitor",
+      id: "door",
       label: "门禁点"
     },
     {
-      id: "auth_door_input",
+      id: "door_aic",
       label: "输入"
     },
     {
-      id: "auth_door_output",
+      id: "door_aoc",
       label: "输出"
     },
     {
-      id: "auth_door_readhead",
+      id: "readhead",
       label: "读头"
     }
   ],

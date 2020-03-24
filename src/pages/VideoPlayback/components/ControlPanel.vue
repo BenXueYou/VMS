@@ -84,7 +84,14 @@
         <li style='width:50px;'>
           <div class='center'
                @click="download"
-               style='cursor:pointer;'><img :src="icons.download"
+               :style="{'color':OwnAuthDisabled?'':'gray'}"
+               style='cursor:pointer;'>
+            <img :src="icons.download"
+                 v-if="OwnAuthDisabled"
+                 alt="">
+            <img src="@/assets/download_huise.png"
+                 v-else
+                 style='width:14px'
                  alt="">
             {{downloadStatus}}
           </div>
@@ -92,7 +99,13 @@
         <li style='width:70px;'>
           <div class='center'
                style='cursor:pointer;'
-               @click='saveView'><img :src="icons.save"
+               :style="{'color':OwnAuthDisabled?'':'gray'}"
+               @click='saveView'>
+            <img :src="icons.save"
+                 v-if="OwnAuthDisabled"
+                 alt="">
+            <img src="@/assets/save_huise.png"
+                 v-else
                  alt="">
             保存视图</div>
         </li>
@@ -193,6 +206,18 @@ export default {
     timeSelect
   },
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     data: {
       type: Array
     },
@@ -323,9 +348,15 @@ export default {
       this.$emit("choosetime", index, chooseTime);
     },
     saveView() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.$emit("saveView");
     },
     download() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.$emit("download");
     },
     zoomFc(value) {

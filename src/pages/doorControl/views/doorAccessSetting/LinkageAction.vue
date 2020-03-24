@@ -7,15 +7,16 @@
         <el-col :span="20">
           <img class="img"
                src="../../../../assets/images/doorAccess/linkage_action_icon.png"
-               alt>联动动作
+               alt />联动动作
         </el-col>
         <el-col :span="4"
                 class="header-buttton-box">
-          <el-button type="primary"
+          <el-button :disabled="!OwnAuthDisabled"
+                     type="primary"
                      @click="addLinkageAct">
             <img class="img"
                  src="../../../../assets/images/doorAccess/add_btn_icon.png"
-                 alt> 新增
+                 alt /> 新增
           </el-button>
         </el-col>
       </el-row>
@@ -51,7 +52,7 @@
           <template slot-scope="scope">
             <span>{{$common.getEnumItemName("linkage", scope.row.linkageType)}}</span>
           </template>
-        </el-table-column> -->
+				</el-table-column>-->
         <el-table-column prop="linkagePosName"
                          label="联动位置"
                          width="200"></el-table-column>
@@ -63,12 +64,14 @@
           </template>
         </el-table-column>
         <el-table-column label="操作"
-                         width>
+                         width='200px'>
           <template slot-scope="scope">
-            <el-button type="text"
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="text"
                        size="small"
                        @click.stop="editButtonAct(scope.row)">编辑</el-button>
-            <el-button type="text"
+            <el-button :disabled="!OwnAuthDisabled"
+                       type="text"
                        size="small"
                        class="delete-button"
                        @click.stop="deleteDialog(scope.row)">删除</el-button>
@@ -95,13 +98,18 @@ export default {
       tableData: [],
       isLoading: false,
       isAdd: true,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
   mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("联动动作", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("联动动作", "isOwn");
     // this.getLinkageAct();
   },
   activated() {
+    if (!this.ShowAuthDisabled) return;
     this.getLinkageAct();
   },
   methods: {
@@ -140,26 +148,22 @@ export default {
         }
       )
         .then(() => {})
-        .catch((action) => {
+        .catch(action => {
           if (action === "cancel") {
-            this.$DoorSetAjax
-              .deleteLinkageActApi(row.planUuid)
-              .then(res => {
-                let body = res.data;
-                this.$cToast.success(body.msg);
-                this.getLinkageAct();
-              });
+            this.$DoorSetAjax.deleteLinkageActApi(row.planUuid).then(res => {
+              let body = res.data;
+              this.$cToast.success(body.msg);
+              this.getLinkageAct();
+            });
           }
         });
     },
     editButtonAct(row) {
       this.isAdd = false;
-      this.$DoorSetAjax
-        .getLinkageActDetailApi(row.planUuid)
-        .then(res => {
-          let body = res.data;
-          this.getLinkageActDetailSuccessResponse(body);
-        });
+      this.$DoorSetAjax.getLinkageActDetailApi(row.planUuid).then(res => {
+        let body = res.data;
+        this.getLinkageActDetailSuccessResponse(body);
+      });
     },
     getLinkageActDetailSuccessResponse(body) {
       this.getDeviceDoorVO(body.data.deviceUuid);
@@ -170,12 +174,10 @@ export default {
       if (!deviceUuid) {
         return;
       }
-      this.$DoorSetAjax
-        .getDeviceDoorVO(deviceUuid)
-        .then(res => {
-          let body = res.data;
-          this.getDeviceDoorVOSuccessResponse(body);
-        });
+      this.$DoorSetAjax.getDeviceDoorVO(deviceUuid).then(res => {
+        let body = res.data;
+        this.getDeviceDoorVOSuccessResponse(body);
+      });
     },
     getDeviceDoorVOSuccessResponse(body) {
       this.$refs.linkActionDialog.linkagePosOptions = [];

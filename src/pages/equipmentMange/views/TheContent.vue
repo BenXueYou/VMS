@@ -7,6 +7,8 @@
                  @updateTree="updateTree"
                  @switch="changeDevTypeArr"
                  @serverList="serverList"
+                 :ShowAuthDisabled="ShowAuthDisabled"
+                 :OwnAuthDisabled="OwnAuthDisabled"
                  :viewType="viewType"
                  :is="tabMap[tabName]"></component>
     </keep-alive>
@@ -46,6 +48,18 @@ export default {
           tag: "TheTagTable"
         };
       }
+    },
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
     }
   },
   components: { TheTagTable, TheCompanyTable, TheCompanyEditEquipmentDialog },
@@ -62,6 +76,7 @@ export default {
       update: 0 // 新建一个int变量，监听他来进行修改数据
     };
   },
+  mounted() {},
   methods: {
     changeViewType(viewType) {
       this.viewType = viewType;

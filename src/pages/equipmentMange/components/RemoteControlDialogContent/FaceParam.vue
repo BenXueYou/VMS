@@ -35,6 +35,7 @@
         </span>
       </el-form-item>
       <el-button type="primary"
+                 :disabled="!OwnAuthDisabled"
                  @click='save'>
         保存
       </el-button>
@@ -47,6 +48,18 @@ import * as api from "@/pages/equipmentMange/ajax.js";
 export default {
   name: "faceParam",
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     deviceUuid: {
       type: String,
       default() {

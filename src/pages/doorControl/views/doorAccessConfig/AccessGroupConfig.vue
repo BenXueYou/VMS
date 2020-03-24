@@ -2,11 +2,13 @@
   <div class="wrap adasjdka">
     <div class="left">
       <div class="button_group">
-        <el-button type="primary"
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
                    size="small"
                    @click="addNewPowerClick"
                    icon="el-icon-edit-outline">新增</el-button>
-        <el-button type="primary"
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
                    @click="xiafaAll"
                    size="small">全部下发</el-button>
       </div>
@@ -29,15 +31,18 @@
     <div class="right"
          v-show="!powerDialogVisible">
       <div class="button_group">
-        <el-button type="primary"
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
                    size="small"
                    @click="deletePermission"
                    icon="el-icon-delete">删除</el-button>
-        <el-button type="primary"
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
                    size="small"
                    @click="editPermission"
                    icon="el-icon-edit-outline">编辑</el-button>
-        <el-button type="primary"
+        <el-button :disabled="!OwnAuthDisabled"
+                   type="primary"
                    @click="xiafa"
                    size="small">下发权限</el-button>
       </div>
@@ -52,17 +57,17 @@
         <div class="timeInfo">
           <div class="flexItem">
             <img :src="icons.time"
-                 alt>
+                 alt />
             <span>更新时间：{{updateTime}}</span>
           </div>
           <div class="flexItem">
             <img :src="icons.time"
-                 alt>
+                 alt />
             <span>创建时间：{{createTime}}</span>
           </div>
           <div class="flexItem">
             <img :src="icons.time"
-                 alt>
+                 alt />
             <span>更新人：{{updateMan}}</span>
           </div>
         </div>
@@ -102,7 +107,7 @@
             <span>共{{doorCount}}个门</span>
             <img :src="icons.down_btn"
                  @click="MH=(MH!=='inherit'?'inherit':'160px')"
-                 alt>
+                 alt />
           </p>
 
           <div class="doorWrap"
@@ -151,7 +156,7 @@
             <span>共{{peopleCount}}个人</span>
             <img :src="icons.down_btn"
                  @click="MH2=(MH2!=='inherit'?'inherit':'160px')"
-                 alt>
+                 alt />
           </p>
 
           <div class="doorWrap"
@@ -167,7 +172,7 @@
                    class="hoverPerson">
                 <div class="head">
                   <img :src="staffInfo.pic"
-                       alt>
+                       alt />
                 </div>
                 <div class="personainfo">
                   <p>
@@ -297,10 +302,15 @@ export default {
       staffList: [],
       doorList: [],
       personDialogVisible: false,
-      doorDialogVisible: false
+      doorDialogVisible: false,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   activated() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("权限组", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("权限组", "isOwn");
+    if (!this.ShowAuthDisabled) return;
     this.getQXList();
   },
   mounted() {
@@ -353,7 +363,7 @@ export default {
         api.staffDetail(data).then(res => {
           let data = res.data || {};
           if (data) {
-            let transfer = JSON.parse(localStorage.localEnums);
+            let transfer = JSON.parse(sessionStorage.localEnums);
             if (data.lifePictureUrl) {
               data.lifePictureUrl = RestApi.api.imageUrl + data.lifePictureUrl;
             }
@@ -375,7 +385,7 @@ export default {
           console.log(res);
           if (res.data.success) {
             let result = res.data.data || [];
-            let transfer = JSON.parse(localStorage.localEnums);
+            let transfer = JSON.parse(sessionStorage.localEnums);
             for (let i = 0, len = result.length; i < len; i++) {
               result[i].sex = transfer.gender[result[i].gender];
               result[i].nation = transfer.nation[result[i].nation];
@@ -482,6 +492,7 @@ export default {
       api.getQXList({ limit: 1000, page: 1, groupType: "normal" }).then(res => {
         console.log(res);
         let data = res.data.data;
+        this.tableData = [];
         if (data && data.list) {
           let num = [];
           for (let i = 0; i < data.list.length; i++) {
@@ -573,6 +584,15 @@ export default {
         if (res.data.success) {
           this.$message.success("删除权限组成功！");
           this.row = {};
+          this.groupName = "";
+          this.updateTime = "";
+          this.createTime = "";
+          this.updateMan = "";
+          this.peopleNum = [];
+          this.doorList = [];
+          this.doorNum = [];
+          this.peopleCount = 0;
+          this.doorCount = 0;
           this.getQXList();
         }
       });

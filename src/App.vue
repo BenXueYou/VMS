@@ -20,7 +20,9 @@ export default {
       doorRoute: "/DoorControl/AccessGroupConfig",
       vistorRoute: "/VistorMange/VistorRecord",
       faceRoute: "/FaceManage/FaceHome",
-      isGetIpOnce: false
+      isGetIpOnce: false,
+      logRoute: "/log/setLog",
+      userRoute: "/user/accout"
     };
   },
   methods: {
@@ -51,6 +53,7 @@ export default {
       ) {
         const { jSignal, jMedia } = this.$store.getters;
         if (!jSignal.srcUuid || !jMedia.srcUuid) {
+          // 请求接口前判断有没有权限 先不弄了，就调用流媒体服务吧
           let data = await this.getPreviewInfoAA();
           this.$store.commit("setIccSignalRule", data.iccSignalRule);
           this.$store.commit("setIccMediaRule", data.iccMediaRule);
@@ -63,10 +66,17 @@ export default {
     if (this.$route.fullPath.indexOf("/DoorControl") !== -1) {
       this.doorRoute = this.$route.fullPath;
     }
-    if (
-      this.$route.fullPath.toLocaleLowerCase().indexOf("/vistormange") !== -1
-    ) {
+    if (this.$route.fullPath.indexOf("/VistorMange") !== -1) {
       this.vistorRoute = this.$route.fullPath;
+    }
+    if (this.$route.fullPath.indexOf("/FaceHome") !== -1) {
+      this.faceRoute = this.$route.fullPath;
+    }
+    if (this.$route.fullPath.indexOf("/log") !== -1) {
+      this.logRoute = this.$route.fullPath;
+    }
+    if (this.$route.fullPath.indexOf("/user") !== -1) {
+      this.userRoute = this.$route.fullPath;
     }
     this.getPreviewInfo();
   },
@@ -82,6 +92,9 @@ export default {
       if (newVal === "/VistorMange") {
         this.$router.push(this.vistorRoute);
       }
+      if (newVal === "/log") {
+        this.$router.push(this.logRoute);
+      }
       if (newVal === "/FaceManage") {
         this.$router.push(this.faceRoute);
       }
@@ -89,9 +102,15 @@ export default {
       if (newVal.indexOf("/DoorControl") !== -1) {
         this.doorRoute = newVal;
       }
+      if (newVal === "/user") {
+        this.$router.push(this.userRoute);
+      }
       // 恢复访客管理的上一次的操作路径
       if (newVal.toLocaleLowerCase().indexOf("/vistormange") !== -1) {
         this.vistorRoute = newVal;
+      }
+      if (newVal.indexOf("/FaceManage") !== -1) {
+        this.faceRoute = newVal;
       }
       if (newVal.indexOf("/FaceManage") !== -1) {
         this.faceRoute = newVal;
@@ -113,5 +132,6 @@ body {
   /* min-width: 1920px; */
   overflow-x: auto;
   margin: auto;
+  background: #1b1b1b;
 }
 </style>

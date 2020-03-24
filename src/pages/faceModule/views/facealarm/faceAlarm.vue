@@ -102,12 +102,23 @@
 					</el-select>
 				</div>
 				<div :span="2" style="margin-top:-15px;">
-					<el-button icon="el-icon-search" class="search-btn" @click="queryBtnAct" type="primary">查询</el-button>
-					<el-button class="search-btn" @click="resetData" type="primary">重置</el-button>
+					<el-button
+						:disabled="!ShowAuthDisabled"
+						icon="el-icon-search"
+						class="search-btn"
+						@click="queryBtnAct"
+						type="primary"
+					>查询</el-button>
+					<el-button
+						:disabled="!ShowAuthDisabled"
+						class="search-btn"
+						@click="resetData"
+						type="primary"
+					>重置</el-button>
 				</div>
 			</el-row>
 			<div class="facealarm-table">
-				<el-radio-group class="switchBtn" v-model="showindex" @change="changeIndex">
+				<el-radio-group :disabled="!ShowAuthDisabled" class="switchBtn" v-model="showindex" @change="changeIndex">
 					<el-radio label="0">图片</el-radio>
 					<el-radio label="1">列表</el-radio>
 				</el-radio-group>
@@ -243,20 +254,29 @@ export default {
       checkedFaceUuidList: [],
       checkedFaceLibObj: [],
       checkFaceDBNameString: "对比人脸库",
-      selectDate: null
+      selectDate: null,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   fiters: {},
   activated() {
     console.log("activated");
-    this.getTaskList();
+    if (this.ShowAuthDisabled) {
+      this.getTaskList();
+    }
   },
   mounted() {
     console.log("mounted");
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
     this.statusOptions = this.$common.getEnumByGroupStr("alarm_r");
-    this.getTaskList(false);
+
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("报警查询", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("报警查询", "isOwn");
+    if (this.ShowAuthDisabled) {
+      this.getTaskList(false);
+    }
   },
   watch: {
     checkedTaskUuidList: function(newVal, oldVal) {
@@ -460,7 +480,9 @@ export default {
     },
     lookAlarmDetail(detail) {
       this.detail = detail;
-      this.getAlarmShootPhotoList(detail);
+      if (this.ShowAuthDisabled) {
+        this.getAlarmShootPhotoList(detail);
+      }
     },
     // 根据客户端的传的人员staffUuid查找抓拍图片
     getAlarmShootPhotoList(rowData, currentPage = 1, pageSize = 24) {
@@ -496,6 +518,7 @@ export default {
     },
     init() {},
     ajaxdata() {
+      if (!this.ShowAuthDisabled) return;
       this.isloading = true;
       let data = {
         staffName: this.staffName,

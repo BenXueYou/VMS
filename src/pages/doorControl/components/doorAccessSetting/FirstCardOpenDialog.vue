@@ -72,9 +72,7 @@
 						@close="handleClose(tag,index)"
 					>
 						<el-row type="flex" style="width:calc(100% - 20px)" justify="space-around">
-							<el-col
-								:span="6" style="text-align: left;"
-							>
+							<el-col :span="6" style="text-align: left;">
 								<el-tooltip class="item" effect="dark" :content="tag.label" placement="top-start">
 									<span class="text-item-Title textClips">{{tag.label}}</span>
 								</el-tooltip>
@@ -128,7 +126,13 @@
 			</div>
 		</el-container>
 		<div slot="footer" class="dialog-footer">
-			<el-button type="primary" size="mini" @click="onClickConfirm" class="footer-button">确定</el-button>
+			<el-button
+				type="primary"
+				size="mini"
+				:loading="isLoading"
+				@click="onClickConfirm"
+				class="footer-button"
+			>确定</el-button>
 			<el-button type="primary" size="mini" @click="onClickCancel" class="footer-button">取消</el-button>
 		</div>
 	</el-dialog>
@@ -152,6 +156,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       medium: [
         { typeStr: "card", typeName: "卡片" },
         { typeStr: "face", typeName: "人脸" },
@@ -214,7 +219,9 @@ export default {
           nodeKey: "id"
         }
       ],
-      checkeTreedNodes: [],
+      checkeTreedNodes: [
+        { id: "628D8B5DCA6C492DA4F1B4B3591BBFDC", label: "192.168.9.239-门1" }
+      ],
       inputMinTime: 600,
       startTime: "",
       endTime: "",
@@ -337,6 +344,7 @@ export default {
       var data = {
         beginTime: this.startTime,
         nickName: this.checkedDoor.nickName,
+        channelName: this.checkedDoor.channelName,
         channelUuid: this.checkedDoor.channelUuid,
         deviceUuid: this.checkedDoor.deviceUuid,
         duration: this.inputMinTime,
@@ -357,28 +365,42 @@ export default {
     // 新增
     httpFirstCardOpenDoor(data) {
       console.log("新增");
-      this.$DoorSetAjax.postFirstCardApi(data).then(res => {
-        console.log(res);
-        if (res.data.success) {
-          this.$message({ type: "success", message: "新增成功" });
-          this.$emit("onConfirm");
-        } else {
-          this.$message({ type: "warning", message: "新增失败" });
-        }
-      });
+      this.isLoading = !this.isLoading;
+      this.$DoorSetAjax
+        .postFirstCardApi(data)
+        .then(res => {
+          this.isLoading = !this.isLoading;
+          console.log(res);
+          if (res.data.success) {
+            this.$message({ type: "success", message: "新增成功" });
+            this.$emit("onConfirm");
+          } else {
+            this.$message({ type: "warning", message: "新增失败" });
+          }
+        })
+        .catch(() => {
+          this.isLoading = !this.isLoading;
+        });
     },
     // 修改
     httpPutFirstCardApi(data) {
       console.log("修改");
-      this.$DoorSetAjax.putFirstCardApi(data).then(res => {
-        console.log(res);
-        if (res.data.success) {
-          this.$message({ type: "success", message: "修改成功" });
-          this.$emit("onConfirm");
-        } else {
-          this.$message({ type: "warning", message: "修改失败" });
-        }
-      });
+      this.isLoading = !this.isLoading;
+      this.$DoorSetAjax
+        .putFirstCardApi(data)
+        .then(res => {
+          console.log(res);
+          this.isLoading = !this.isLoading;
+          if (res.data.success) {
+            this.$message({ type: "success", message: "修改成功" });
+            this.$emit("onConfirm");
+          } else {
+            this.$message({ type: "warning", message: "修改失败" });
+          }
+        })
+        .catch(() => {
+          this.isLoading = !this.isLoading;
+        });
     },
     filterNode(value, data) {
       if (!value) return true;
@@ -413,7 +435,8 @@ export default {
         this.checkedDoor.channelUuid = this.FCDetail.channelUuid;
         this.checkedDoor.deviceUuid = this.FCDetail.deviceUuid;
         this.checkedDoor.deviceName = this.FCDetail.deviceName;
-        this.checkedNodeName = this.checkedDoor.nickName;
+        this.checkedDoor.channelName = this.FCDetail.channelName;
+        this.checkedNodeName = this.FCDetail.channelName;
         this.inputMinTime = this.FCDetail.duration || 600;
         this.endTime =
 					this.FCDetail.endTime || this.$common.getCurrentEndTime();

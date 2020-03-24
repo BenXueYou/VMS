@@ -3,6 +3,7 @@
        id='VideoPlaybackContentLeft'>
     <div class="searchWrap">
       <el-input placeholder='搜索组织/标签/名称'
+                :disabled="!OwnAuthDisabled"
                 v-model="searchText">
         <img slot="prefix"
              class="image"
@@ -90,10 +91,15 @@
               <span class="el-dropdown-link"
                     @click="saveClickData(node, data)">
                 <img class="checked-img"
+                     v-if="OwnAuthDisabled"
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                      style="margin-right: 20%;">
+                <img class="checked-img"
+                     v-else
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA7UlEQVRYR+2VPQrCQBBGvy1E2DbVTAptJbaWgkfw5wSW4n1SewJzBMHSwk6bNNpM2mCpgUgKQSXbCEMi7PY73+PtzKxBw8c0nA8P4A20y4CI7ABMNCfDGLMhouUr48OAiBwAjJQBTkQ0rAXIsqxfFEVfE8BaewyC4FYLoBnsqt2uJvQGKgMi0tM0wczX9/rfY7gFMNMEALBl5oVrDyQApsoACTPPnWNY7QJNACK6OJ9AM9jvgf8wkKZp11o71uyFPM/3URTdXWN4BjDQBABwZubIBRADWNUAPH6E6nzfK8syDsNw7b9jb8AbaI2BJ65iOiHBES+mAAAAAElFTkSuQmCC"
+                     style="width:12px;margin-right: 20%;">
               </span>
-              <el-dropdown-menu slot="dropdown">
+              <el-dropdown-menu :slot="!OwnAuthDisabled?'':'dropdown'">
                 <el-dropdown-item command="view">打开视图</el-dropdown-item>
                 <el-dropdown-item command="renameView">重命名</el-dropdown-item>
                 <el-dropdown-item command="deleteView">删除</el-dropdown-item>
@@ -134,6 +140,7 @@
       <div class="startWrap">
         <el-button type="primary"
                    @click='search'
+                   :disabled="!OwnAuthDisabled"
                    style='margin:0px auto;'>查询</el-button>
       </div>
     </div>
@@ -155,6 +162,18 @@ import ConfirmDialog from "@/common/ConfirmDialog";
 export default {
   name: "leftwrap",
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     tagType: {
       type: String,
       default() {
@@ -235,6 +254,9 @@ export default {
       this.operatorData = data;
     },
     handleCommand(command) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       console.log(command);
       console.log(this.operatorData);
       if (command === "video") {
@@ -278,24 +300,29 @@ export default {
       }
     },
     getViewTree() {
-      api2
-        .getView({
-          viewUuid: "",
-          viewType: "playback"
-        })
-        .then(res => {
-          console.log(res);
-          let data = res.data.data;
-          let list = (data && data.list) || [] || [];
-          this.viewTreeData = list
-            .filter(item => {
-              return item.viewType === "playback";
-            })
-            .map(item => {
-              item.viewName = item.viewInfo.view_name;
-              return item;
-            });
-        });
+      setTimeout(() => {
+        if (!this.ShowAuthDisabled) {
+          return;
+        }
+        api2
+          .getView({
+            viewUuid: "",
+            viewType: "playback"
+          })
+          .then(res => {
+            console.log(res);
+            let data = res.data.data;
+            let list = (data && data.list) || [] || [];
+            this.viewTreeData = list
+              .filter(item => {
+                return item.viewType === "playback";
+              })
+              .map(item => {
+                item.viewName = item.viewInfo.view_name;
+                return item;
+              });
+          });
+      }, 0);
     },
     handleCheckChange(data, checked, indeterminate) {
       // 树上的节点选中发生了改变
@@ -324,40 +351,45 @@ export default {
       return icon;
     },
     async devloadNode(node, resolve) {
-      //  懒加载子结点
-      console.log(node);
-      let data = await this.videoTree(
-        node.data && node.data.id,
-        node.data && node.data.nodeType
-      );
-      // data = [];
-      if (node.level === 0) {
-        if (data.length) {
-          this.defaultExpKeys.push(data[0].id);
-          this.showMaxWidth = true;
+      setTimeout(async () => {
+        if (!this.ShowAuthDisabled) {
+          return resolve([]);
         }
-      }
-      data = data.map(item => {
-        item.leaf = !item.openFlag;
-        item.isOnline = true;
-        if (item.nodeType === "chnNode") {
-          item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+        //  懒加载子结点
+        console.log(node);
+        let data = await this.videoTree(
+          node.data && node.data.id,
+          node.data && node.data.nodeType
+        );
+        // data = [];
+        if (node.level === 0) {
+          if (data.length) {
+            this.defaultExpKeys.push(data[0].id);
+            this.showMaxWidth = true;
+          }
         }
-        if (item.nodeType === "devNode") {
-          item.isOnline = item.extInfo.devOnlineOrNot === "online";
-        }
-        item.icon = this.getIcon(item.isOnline, item.realType);
-        return item;
-      });
-      // data = [
-      //   {
-      //     label: "测试",
-      //     id: "49D2B7299EAAA3AF295E33F03B982D32",
-      //     h5Type: "channel",
-      //     leaf: true
-      //   }
-      // ];
-      return resolve(data);
+        data = data.map(item => {
+          item.leaf = !item.openFlag;
+          item.isOnline = true;
+          if (item.nodeType === "chnNode") {
+            item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          }
+          if (item.nodeType === "devNode") {
+            item.isOnline = item.extInfo.devOnlineOrNot === "online";
+          }
+          item.icon = this.getIcon(item.isOnline, item.realType);
+          return item;
+        });
+        // data = [
+        //   {
+        //     label: "测试",
+        //     id: "49D2B7299EAAA3AF295E33F03B982D32",
+        //     h5Type: "channel",
+        //     leaf: true
+        //   }
+        // ];
+        return resolve(data);
+      }, 0);
     },
     videoTree(parentUuid, parentType) {
       let data = {};
@@ -391,18 +423,23 @@ export default {
       // 点击展开
     },
     async tagloadNode(node, resolve) {
-      // 加载子结点
-      console.log(node);
-      if (node.level === 0) {
-        let data = await this.getTagTreeData();
-        if (data.length) {
-          this.defaultExpKeys.push(data[0].id);
+      setTimeout(async () => {
+        if (!this.ShowAuthDisabled) {
+          return resolve([]);
         }
-        return resolve(data);
-      } else if (node.level === 1) {
-        let data = await this.getChannelByNode(node.data.id);
-        return resolve(data);
-      }
+        // 加载子结点
+        console.log(node);
+        if (node.level === 0) {
+          let data = await this.getTagTreeData();
+          if (data.length) {
+            this.defaultExpKeys.push(data[0].id);
+          }
+          return resolve(data);
+        } else if (node.level === 1) {
+          let data = await this.getChannelByNode(node.data.id);
+          return resolve(data);
+        }
+      }, 0);
     },
     getChannelByNode(tagUuid) {
       return new Promise((resolve, reject) => {
@@ -510,8 +547,17 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
+  .el-tree-node__content > label.el-checkbox {
+    margin-right: 4px;
+  }
   .is-leaf {
-    width: 0px !important;
+    // width: 15px !important;
+  }
+  .el-tree-node__content > .el-tree-node__expand-icon {
+    padding: 0px !important;
+  }
+  .el-tree-node__content > label.el-checkbox {
+    margin-right: 4px;
   }
   .el-tabs__content {
     overflow: auto;
@@ -573,7 +619,7 @@ export default {
 }
 .videoTree3 {
   .span {
-   padding-left: 20px;
+    // padding-left: 20px;
   }
 }
 </style>
@@ -604,9 +650,9 @@ export default {
     .channelStatus {
       user-select: none;
       img {
-        width: 12px;
-        height: 12px;
-        margin-right: 7px;
+        width: 10px;
+        height: 10px;
+        // margin-right: 7px;
       }
       span {
         font-size: 12px;

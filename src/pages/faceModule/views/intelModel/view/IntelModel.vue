@@ -1,200 +1,205 @@
 <template>
-  <div class="model-main">
-    <add-or-edit-model v-show="!isShowMain"
-                        ref="addOrEditModel"
-                        style="height: 100%;"
-                        :isAdd="isAdd"
-                        @onConfirm="onConfirmEditOrAddModel"
-                        @onCancel="onCancelEditOrAddModel" />
-    <div class="menu"
-         v-show="isShowMain">
-      <el-button @click="addNewMission"
-                 type="primary"
-                 size="small">
-        <div style="display: flex; align-items: center;">
-          <img src="@/assets/images/faceModule/new_mission.png">
-          <span style="margin-left: 3px;">新建模型</span>
-        </div>
-      </el-button>
-      <div class="tab">
-        <template v-for="(item, index) in missionButtArr">
-          <div :key="index"
-               class="button-item"
-               @click="select(item)"
-               :style="`${item.selected ? 'background: rgba(40, 255, 187, 0.10); border: 1px #226652 solid;' : 'background: rgba(255, 255, 255, 0.1)'};`">
-            {{item.text}}
-          </div>
-        </template>
-      </div>
-      <div class="list">
-        <template v-for="(item, index) in menuList">
-          <div :key="index"
-               class="menu-item"
-               @click="check(item)"
-               :style="`${item.selected ? 'background: #24282C;' : ''};`">
-            <img src="@/assets/images/faceModule/useing_mis.png"
-                 style="margin-right: 10px;">
-            {{item.faceModelName}}
-          </div>
-        </template>
-      </div>
-    </div>
-    <div class="details"
-         :style="`width: ${width}`"
-         v-show="isShowMain">
-      <img class="drag-left"
-           src="@/assets/images/faceModule/left_drag.png"
-           v-if="isShowDrag"
-           @click="clickLeft">
-      <img class="drag-right"
-           src="@/assets/images/faceModule/right_drag.png"
-           v-else
-           @click="clickRight">
-      <div class="button">
-        <div class="button-right">
-          <el-switch v-model="intelModelObj.enabled"
-                     active-color="rgba(32,204,150,0.2)"
-                     inactive-color="rgba(255,255,255,0.2)"
-                     @change="switchChange"
-                     :active-value="1"
-                     :inactive-value="0"></el-switch>
-          <span style="margin-left: 3px;">状态</span>
-          <div class="status"
-               @click="editTaskInit">
-            <img src="@/assets/images/edit.png"
-                 width="14px"
-                 height="14px" />
-            <span style="margin-left: 3px;">编辑</span>
-          </div>
-          <div class="status"
-               @click="deleteIntel">
-            <img src="@/assets/images/delete2.png"
-                 width="14px"
-                 height="14px" />
-            <span style="margin-left: 3px;">删除</span>
-          </div>
-        </div>
-      </div>
-      <div class="container">
-        <div class="info-container"
-             style="margin: 18px 0;">
-          <div class="info-block block-line"
-               style="width: 23%">名称：{{intelModelObj.faceModelName}} </div>
-          <div class="info-block block-line"
-               style="width: 23%">创建人：{{intelModelObj.createUserName}} </div>
-          <div class="info-block block-line"
-               style="width: 23%">创建时间：{{intelModelObj.createTime}} </div>
-          <div class="info-block block-line"
-               style="width: 23%;background: transparent"></div>
-        </div>
-        <source-show-more :title="`人脸库： 共${intelModelObj.faceLibraryList ? intelModelObj.faceLibraryList.length : 0}个人脸库`"
-                          blockHeight="80px"
-                          :itemIcon="require('@/assets/images/faceModule/crime_db.png')"
-                          :dataList="faceDBItemList"
-                          :lineLimit="1"
-                          ref="faceDB"
-                          containerId="faceDB" />
-        <div class="info-container"
-             style="margin: 18px 0; justify-content: flex-start;">
-          <div class="info-block block-line"
-               style="width: 10%; margin-right: 30px;">阈值：{{intelModelObj.faceSimilarityThreshold}}% </div>
-          <div class="info-block block-line"
-               style="width: 20%">人脸抓拍图片需达到的质量：{{intelModelObj.qualities ? $common.getEnumItemName("face_quality", intelModelObj.qualities[intelModelObj.qualities.length-1]) : ""}} </div>
-        </div>
-        <div class="info-block">
-          <div class="block-line"
-               style="width:100%;display:flex;flex-flow: row wrap;">时间段：
-            <template v-for="(item, index) in intelModelObj.timeList">
-              <span :key="index">
-                {{item.startTime ? item.startTime.substr(0, 5) : ""}}至{{item.endTime ? item.endTime.substr(0, 5) : ""}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </span>
-            </template>
-          </div>
-          <div class="block-camera">
-            <span>最近{{intelModelObj.recentDays}}天，{{$common.getEnumItemName("model_analisis_s", intelModelObj.statisticType)}}满足</span>
-            <camera-show-more blockHeight="37px"
-                              :itemIcon="require('@/assets/images/faceModule/camera.png')"
-                              :dataList="intelModelObj.videoSource.channelList"
-                              :lineLimit="1"
-                              style="width: 60%; margin-left: 75px;"
-                              ref="camera1"
-                              containerId="camera1" />
-          </div>
-          <div class="block-line">抓拍次数{{intelModelObj.videoSource.logic}}{{intelModelObj.videoSource.frequency}}，且至少{{intelModelObj.videoSource.leastNumberOfChannel}}个摄像机有抓拍</div>
-          <div class="block-camera">
-            <span>同时符合：</span>
-            <camera-show-more blockHeight="74px"
-                              :itemIcon="require('@/assets/images/faceModule/camera.png')"
-                              :dataList="otherVideoSourceList"
-                              :lineLimit="2"
-                              style="width: 60%; margin-left: 40px;"
-                              ref="camera2"
-                              containerId="camera2" />
-          </div>
-          <div class="block-camera">
-            <span>同时不符合：</span>
-            <camera-show-more blockHeight="74px"
-                              :itemIcon="require('@/assets/images/faceModule/camera.png')"
-                              :dataList="notInVideoSourceList"
-                              :lineLimit="2"
-                              style="width: 60%; margin-left: 28px;"
-                              ref="camera3"
-                              containerId="camera3" />
-          </div>
-          <div class="block-line">排除人脸库：&nbsp;&nbsp;&nbsp;&nbsp;
-            <template v-for="(item, index) in intelModelObj.notInlibrary">
-              <span :key="index">
-                {{index === 0 ? item.libraryName : `；&nbsp;&nbsp;${item.libraryName}`}}
-              </span>
-            </template>
-          </div>
-          <div class="block-line">两次抓拍时间间隔：{{intelModelObj.captureInterval}}秒</div>
-          <div class="block-line">备注：{{intelModelObj.remarks}}</div>
-        </div>
-        <div class="list-title">
-          <img src="@/assets/images/faceModule/alarm.png">
-          <span class="alarm-num">共{{judgeItemTotal}}个感知报警</span>
-          <div class="title-right">
-            <span class="topTitleTxt">时段：</span>
-            <el-date-picker v-model="createTimeStart"
-                            type="datetime"
-                            style="width: 205px"
-                            placeholder="选择日期"
-                            value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
-            <span class="timeText">—</span>
-            <el-date-picker v-model="createTimeEnd"
-                            type="datetime"
-                            style="width: 205px; margin-right: 49px;"
-                            placeholder="选择日期"
-                            value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
-            <el-button @click="queryAct"
-                       type="primary"
-                       size="small">
-              <div style="display: flex; align-items: center;">
-                <img src="@/assets/images/faceModule/search.png">
-                <span style="margin-left: 3px;">查询</span>
-              </div>
-            </el-button>
-            <el-button @click="turnToJudge"
-                       type="primary"
-                       size="small">
-              <div style="display: flex; align-items: center;">
-                <img src="@/assets/images/faceModule/turn_record.png" height="12.5px">
-                <span style="margin-left: 3px;">跳转研判记录</span>
-              </div>
-            </el-button>
-          </div>
-        </div>
-        <div class="items-list">
-          <template v-for="(item, index) in compareList">
-            <model-item :key="index"
-                        :item="item"
-                        class="list-item"/>
-          </template>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="model-main">
+		<add-or-edit-model
+			v-show="!isShowMain"
+			ref="addOrEditModel"
+			style="height: 100%;"
+			:isAdd="isAdd"
+			@onConfirm="onConfirmEditOrAddModel"
+			@onCancel="onCancelEditOrAddModel"
+		/>
+		<div class="menu" v-show="isShowMain">
+			<el-button :disabled="!OwnAuthDisabled" @click="addNewMission" type="primary" size="small">
+				<div style="display: flex; align-items: center;">
+					<img src="@/assets/images/faceModule/new_mission.png" />
+					<span style="margin-left: 3px;">新建模型</span>
+				</div>
+			</el-button>
+			<div class="tab">
+				<template v-for="(item, index) in missionButtArr">
+					<div
+						:key="index"
+						class="button-item"
+						@click="select(item)"
+						:disabled="!ShowAuthDisabled"
+						:style="`${item.selected ? 'background: rgba(40, 255, 187, 0.10); border: 1px #226652 solid;' : 'background: rgba(255, 255, 255, 0.1)'};`"
+					>{{item.text}}</div>
+				</template>
+			</div>
+			<div class="list">
+				<template v-for="(item, index) in menuList">
+					<div
+						:key="index"
+						class="menu-item"
+						@click="check(item)"
+						:style="`${item.selected ? 'background: #24282C;' : ''};`"
+					>
+						<img src="@/assets/images/faceModule/useing_mis.png" style="margin-right: 10px;" />
+						{{item.faceModelName}}
+					</div>
+				</template>
+			</div>
+		</div>
+		<div class="details" :style="`width: ${width}`" v-show="isShowMain">
+			<img
+				class="drag-left"
+				src="@/assets/images/faceModule/left_drag.png"
+				v-if="isShowDrag"
+				@click="clickLeft"
+			/>
+			<img
+				class="drag-right"
+				src="@/assets/images/faceModule/right_drag.png"
+				v-else
+				@click="clickRight"
+			/>
+			<div class="button">
+				<div class="button-right">
+					<el-switch
+						v-model="intelModelObj.enabled"
+						active-color="rgba(32,204,150,0.2)"
+						inactive-color="rgba(255,255,255,0.2)"
+						@change="switchChange"
+						:active-value="1"
+            :disabled="!OwnAuthDisabled"
+						:inactive-value="0"
+					></el-switch>
+					<span :disabled="!OwnAuthDisabled" style="margin-left: 3px;">状态</span>
+					<div :disabled="!OwnAuthDisabled" class="status" @click="editTaskInit">
+						<img v-if="OwnAuthDisabled"  src="@/assets/images/edit.png" width="14px" height="14px" />
+						<span style="margin-left: 3px;">编辑</span>
+					</div>
+					<div :disabled="!OwnAuthDisabled" class="status" @click="deleteIntel">
+						<img v-if="OwnAuthDisabled"  src="@/assets/images/delete2.png" width="14px" height="14px" />
+						<span style="margin-left: 3px;">删除</span>
+					</div>
+				</div>
+			</div>
+			<div class="container">
+				<div class="info-container" style="margin: 18px 0;">
+					<div class="info-block block-line" style="width: 23%">名称：{{intelModelObj.faceModelName}}</div>
+					<div class="info-block block-line" style="width: 23%">创建人：{{intelModelObj.createUserName}}</div>
+					<div class="info-block block-line" style="width: 23%">创建时间：{{intelModelObj.createTime}}</div>
+					<div class="info-block block-line" style="width: 23%;background: transparent"></div>
+				</div>
+				<source-show-more
+					:title="`人脸库： 共${intelModelObj.faceLibraryList ? intelModelObj.faceLibraryList.length : 0}个人脸库`"
+					blockHeight="80px"
+					:itemIcon="require('@/assets/images/faceModule/crime_db.png')"
+					:dataList="faceDBItemList"
+					:lineLimit="1"
+					ref="faceDB"
+					containerId="faceDB"
+				/>
+				<div class="info-container" style="margin: 18px 0; justify-content: flex-start;">
+					<div
+						class="info-block block-line"
+						style="width: 10%; margin-right: 30px;"
+					>阈值：{{intelModelObj.faceSimilarityThreshold}}%</div>
+					<div
+						class="info-block block-line"
+						style="width: 20%"
+					>人脸抓拍图片需达到的质量：{{intelModelObj.qualities ? $common.getEnumItemName("face_quality", intelModelObj.qualities[intelModelObj.qualities.length-1]) : ""}}</div>
+				</div>
+				<div class="info-block">
+					<div class="block-line" style="width:100%;display:flex;flex-flow: row wrap;">
+						时间段：
+						<template v-for="(item, index) in intelModelObj.timeList">
+							<span
+								:key="index"
+							>{{item.startTime ? item.startTime.substr(0, 5) : ""}}至{{item.endTime ? item.endTime.substr(0, 5) : ""}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+						</template>
+					</div>
+					<div class="block-camera">
+						<span>最近{{intelModelObj.recentDays}}天，{{$common.getEnumItemName("model_analisis_s", intelModelObj.statisticType)}}满足</span>
+						<camera-show-more
+							blockHeight="37px"
+							:itemIcon="require('@/assets/images/faceModule/camera.png')"
+							:dataList="intelModelObj.videoSource.channelList"
+							:lineLimit="1"
+							style="width: 60%; margin-left: 75px;"
+							ref="camera1"
+							containerId="camera1"
+						/>
+					</div>
+					<div
+						class="block-line"
+					>抓拍次数{{intelModelObj.videoSource.logic}}{{intelModelObj.videoSource.frequency}}，且至少{{intelModelObj.videoSource.leastNumberOfChannel}}个摄像机有抓拍</div>
+					<div class="block-camera">
+						<span>同时符合：</span>
+						<camera-show-more
+							blockHeight="74px"
+							:itemIcon="require('@/assets/images/faceModule/camera.png')"
+							:dataList="otherVideoSourceList"
+							:lineLimit="2"
+							style="width: 60%; margin-left: 40px;"
+							ref="camera2"
+							containerId="camera2"
+						/>
+					</div>
+					<div class="block-camera">
+						<span>同时不符合：</span>
+						<camera-show-more
+							blockHeight="74px"
+							:itemIcon="require('@/assets/images/faceModule/camera.png')"
+							:dataList="notInVideoSourceList"
+							:lineLimit="2"
+							style="width: 60%; margin-left: 28px;"
+							ref="camera3"
+							containerId="camera3"
+						/>
+					</div>
+					<div class="block-line">
+						排除人脸库：&nbsp;&nbsp;&nbsp;&nbsp;
+						<template v-for="(item, index) in intelModelObj.notInlibrary">
+							<span :key="index">{{index === 0 ? item.libraryName : `；&nbsp;&nbsp;${item.libraryName}`}}</span>
+						</template>
+					</div>
+					<div class="block-line">两次抓拍时间间隔：{{intelModelObj.captureInterval}}秒</div>
+					<div class="block-line">备注：{{intelModelObj.remarks}}</div>
+				</div>
+				<div class="list-title">
+					<img src="@/assets/images/faceModule/alarm.png" />
+					<span class="alarm-num">共{{judgeItemTotal}}个感知报警</span>
+					<div class="title-right">
+						<span class="topTitleTxt">时段：</span>
+						<el-date-picker
+							v-model="createTimeStart"
+							type="datetime"
+							style="width: 205px"
+							placeholder="选择日期"
+							value-format="yyyy-MM-dd HH:mm:ss"
+						></el-date-picker>
+						<span class="timeText">—</span>
+						<el-date-picker
+							v-model="createTimeEnd"
+							type="datetime"
+							style="width: 205px; margin-right: 49px;"
+							placeholder="选择日期"
+							value-format="yyyy-MM-dd HH:mm:ss"
+						></el-date-picker>
+						<el-button :disabled="!ShowAuthDisabled" @click="queryAct" type="primary" size="small">
+							<div style="display: flex; align-items: center;">
+								<img src="@/assets/images/faceModule/search.png" />
+								<span style="margin-left: 3px;">查询</span>
+							</div>
+						</el-button>
+						<el-button :disabled="!ShowAuthDisabled" @click="turnToJudge" type="primary" size="small">
+							<div style="display: flex; align-items: center;">
+								<img src="@/assets/images/faceModule/turn_record.png" height="12.5px" />
+								<span style="margin-left: 3px;">跳转研判记录</span>
+							</div>
+						</el-button>
+					</div>
+				</div>
+				<div class="items-list">
+					<template v-for="(item, index) in compareList">
+						<model-item :key="index" :item="item" class="list-item" />
+					</template>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -252,14 +257,14 @@ export default {
           channelList: [],
           logic: "",
           frequency: 0,
-          leastNumberOfChannel: "",
+          leastNumberOfChannel: ""
         },
         otherVideoSource: [],
         notInVideoSource: [],
         notInlibrary: [],
         captureInterval: "",
         enabled: 1,
-        remarks: "",
+        remarks: ""
       },
       isJudgeLoading: false,
       faceModelUuid: "",
@@ -267,13 +272,19 @@ export default {
       notInVideoSourceList: [],
       limit: 7,
       judgeItemTotal: 0,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true,
     };
   },
   created() {},
   activated() {},
   mounted() {
-    this.initData();
-    this.getIntelModelList();
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("智能模型", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("智能模型", "isOwn");
+    if (this.ShowAuthDisabled) {
+      this.initData();
+      this.getIntelModelList();
+    }
   },
   methods: {
     initData() {
@@ -352,14 +363,14 @@ export default {
           channelList: [],
           logic: "",
           frequency: 0,
-          leastNumberOfChannel: "",
+          leastNumberOfChannel: ""
         },
         otherVideoSource: [],
         notInVideoSource: [],
         notInlibrary: [],
         captureInterval: "",
         enabled: 1,
-        remarks: "",
+        remarks: ""
       };
     },
     check(item) {
@@ -398,7 +409,11 @@ export default {
       if (this.intelModelObj.otherVideoSource) {
         this.intelModelObj.otherVideoSource.forEach(v => {
           v.channelList.forEach(v2 => {
-            if (!this.otherVideoSourceList.some(v3 => v3.channelUuid === v2.channelUuid)) {
+            if (
+              !this.otherVideoSourceList.some(
+                v3 => v3.channelUuid === v2.channelUuid
+              )
+            ) {
               this.otherVideoSourceList.push({
                 channelUuid: v2.channelUuid,
                 channelName: v2.channelName
@@ -410,7 +425,11 @@ export default {
       if (this.intelModelObj.notInVideoSource) {
         this.intelModelObj.notInVideoSource.forEach(v => {
           v.channelList.forEach(v2 => {
-            if (!this.notInVideoSourceList.some(v3 => v3.channelUuid === v2.channelUuid)) {
+            if (
+              !this.notInVideoSourceList.some(
+                v3 => v3.channelUuid === v2.channelUuid
+              )
+            ) {
               this.notInVideoSourceList.push({
                 channelUuid: v2.channelUuid,
                 channelName: v2.channelName
@@ -570,194 +589,194 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .model-main {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  .menu {
-    width: 25%;
-    padding: 2%;
-    box-sizing: border-box;
-    height: 100%;
-    .tab {
-      display: flex;
-      width: 100%;
-      margin-top: 25px;
-      border: {
-        width: 0 0 1px 0;
-        style: solid;
-        color: rgba($color: #ffffff, $alpha: 0.05);
-      }
-      .button-item {
-        font-family: PingFangSC-Regular;
-        font-size: 13px;
-        color: #ffffff;
-        text-align: center;
-        width: 120px;
-        height: 34px;
-        line-height: 34px;
-        margin-right: 2px;
-        cursor: pointer;
-        border: 1px transparent solid;
-      }
-    }
-    .list {
-      margin-top: 15px;
-      overflow-y: auto;
-      height: 87%;
-      width: 100%;
-      .menu-item {
-        padding: 0 18px;
-        box-sizing: border-box;
-        font-family: PingFangSC-Regular;
-        font-size: 13px;
-        color: #dddddd;
-        width: 100%;
-        height: 50px;
-        line-height: 50px;
-        cursor: pointer;
-        // &:hover {
-        //   background: #24282C;
-        // }
-        border: {
-          width: 1px 1px 0px 1px;
-          style: solid;
-          color: rgba($color: #ffffff, $alpha: 0.05);
-        }
-        &:last-child {
-          border: {
-            width: 1px;
-            style: solid;
-            color: rgba($color: #ffffff, $alpha: 0.05);
-          }
-        }
-      }
-    }
-  }
-  .details {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 75%;
-    height: 100%;
-    transition: 0.5s all;
-    background: #212325;
-    padding: 0 30px;
-    box-sizing: border-box;
-    .drag-left {
-      position: absolute;
-      top: 50%;
-      left: -10px;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
-    }
-    .drag-right {
-      position: absolute;
-      top: 50%;
-      left: 15px;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
-    }
-    .button {
-      width: 100%;
-      height: 60px;
-      border: {
-        width: 0 0 1px 0;
-        style: dashed;
-        color: rgba($color: #ffffff, $alpha: 0.2);
-      }
-      display: flex;
-      align-items: center;
-      .button-right {
-        margin-left: auto;
-        margin-right: 0px;
-        font-family: PingFangSC-Regular;
-        font-size: 14px;
-        color: #26d39d;
-        display: flex;
-        align-items: center;
-        .status {
-          cursor: pointer;
-          margin-left: 25px;
-          display: flex;
-          align-items: center;
-        }
-      }
-    }
-    .container {
-      overflow-y: auto;
-      height: calc(100% - 70px);
-      margin-top: 8px;
-    }
-    .info-block {
-      background: rgba($color: #ffffff, $alpha: 0.03);
-      border-radius: 2px;
-      padding: 9px 0px 9px 20px;
-      box-sizing: border-box;
-      font-family: PingFangSC-Regular;
-      font-size: 13px;
-      color: #dddddd;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      transition: 0.5s all;
-      .block-camera {
-        width: 100%;
-        display: flex;
-        line-height: 37px;
-      }
-    }
-    .block-line {
-      height: 37px;
-      display: flex;
-      align-items: center;
-    }
-    .info-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .list-title {
-      width: 100%;
-      height: 98px;
-      border: {
-        width: 0 0 1px 0;
-        style: dashed;
-        color: rgba($color: #ffffff, $alpha: 0.2);
-      }
-      display: flex;
-      align-items: center;
-      .alarm-num {
-        font-family: PingFangSC-Regular;
-        font-size: 16px;
-        color: #ffffff;
-        letter-spacing: 0;
-        margin-left: 10px;
-      }
-      .title-right {
-        margin-left: auto;
-        margin-right: 0px;
-        .topTitleTxt {
-          font-family: PingFangSC-Regular;
-          font-size: 13px;
-          color: #ffffff;
-        }
-        .timeText {
-          font-family: PingFangSC-Regular;
-          font-size: 14px;
-          color: #888888;
-          width: 28px;
-        }
-      }
-    }
-    .items-list {
-      display: flex;
-      flex-flow: row wrap;
-      align-content: flex-start;
-      margin-bottom: 10px;
-      .list-item {
-        margin: 24px 0px 0px 14px;
-      }
-    }
-  }
+	position: relative;
+	width: 100%;
+	height: 100%;
+	.menu {
+		width: 25%;
+		padding: 2%;
+		box-sizing: border-box;
+		height: 100%;
+		.tab {
+			display: flex;
+			width: 100%;
+			margin-top: 25px;
+			border: {
+				width: 0 0 1px 0;
+				style: solid;
+				color: rgba($color: #ffffff, $alpha: 0.05);
+			}
+			.button-item {
+				font-family: PingFangSC-Regular;
+				font-size: 13px;
+				color: #ffffff;
+				text-align: center;
+				width: 120px;
+				height: 34px;
+				line-height: 34px;
+				margin-right: 2px;
+				cursor: pointer;
+				border: 1px transparent solid;
+			}
+		}
+		.list {
+			margin-top: 15px;
+			overflow-y: auto;
+			height: 87%;
+			width: 100%;
+			.menu-item {
+				padding: 0 18px;
+				box-sizing: border-box;
+				font-family: PingFangSC-Regular;
+				font-size: 13px;
+				color: #dddddd;
+				width: 100%;
+				height: 50px;
+				line-height: 50px;
+				cursor: pointer;
+				// &:hover {
+				//   background: #24282C;
+				// }
+				border: {
+					width: 1px 1px 0px 1px;
+					style: solid;
+					color: rgba($color: #ffffff, $alpha: 0.05);
+				}
+				&:last-child {
+					border: {
+						width: 1px;
+						style: solid;
+						color: rgba($color: #ffffff, $alpha: 0.05);
+					}
+				}
+			}
+		}
+	}
+	.details {
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		width: 75%;
+		height: 100%;
+		transition: 0.5s all;
+		background: #212325;
+		padding: 0 30px;
+		box-sizing: border-box;
+		.drag-left {
+			position: absolute;
+			top: 50%;
+			left: -10px;
+			transform: translate(-50%, -50%);
+			cursor: pointer;
+		}
+		.drag-right {
+			position: absolute;
+			top: 50%;
+			left: 15px;
+			transform: translate(-50%, -50%);
+			cursor: pointer;
+		}
+		.button {
+			width: 100%;
+			height: 60px;
+			border: {
+				width: 0 0 1px 0;
+				style: dashed;
+				color: rgba($color: #ffffff, $alpha: 0.2);
+			}
+			display: flex;
+			align-items: center;
+			.button-right {
+				margin-left: auto;
+				margin-right: 0px;
+				font-family: PingFangSC-Regular;
+				font-size: 14px;
+				color: #26d39d;
+				display: flex;
+				align-items: center;
+				.status {
+					cursor: pointer;
+					margin-left: 25px;
+					display: flex;
+					align-items: center;
+				}
+			}
+		}
+		.container {
+			overflow-y: auto;
+			height: calc(100% - 70px);
+			margin-top: 8px;
+		}
+		.info-block {
+			background: rgba($color: #ffffff, $alpha: 0.03);
+			border-radius: 2px;
+			padding: 9px 0px 9px 20px;
+			box-sizing: border-box;
+			font-family: PingFangSC-Regular;
+			font-size: 13px;
+			color: #dddddd;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			transition: 0.5s all;
+			.block-camera {
+				width: 100%;
+				display: flex;
+				line-height: 37px;
+			}
+		}
+		.block-line {
+			height: 37px;
+			display: flex;
+			align-items: center;
+		}
+		.info-container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.list-title {
+			width: 100%;
+			height: 98px;
+			border: {
+				width: 0 0 1px 0;
+				style: dashed;
+				color: rgba($color: #ffffff, $alpha: 0.2);
+			}
+			display: flex;
+			align-items: center;
+			.alarm-num {
+				font-family: PingFangSC-Regular;
+				font-size: 16px;
+				color: #ffffff;
+				letter-spacing: 0;
+				margin-left: 10px;
+			}
+			.title-right {
+				margin-left: auto;
+				margin-right: 0px;
+				.topTitleTxt {
+					font-family: PingFangSC-Regular;
+					font-size: 13px;
+					color: #ffffff;
+				}
+				.timeText {
+					font-family: PingFangSC-Regular;
+					font-size: 14px;
+					color: #888888;
+					width: 28px;
+				}
+			}
+		}
+		.items-list {
+			display: flex;
+			flex-flow: row wrap;
+			align-content: flex-start;
+			margin-bottom: 10px;
+			.list-item {
+				margin: 24px 0px 0px 14px;
+			}
+		}
+	}
 }
 </style>

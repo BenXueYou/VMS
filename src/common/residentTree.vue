@@ -69,151 +69,153 @@
 import icons from "@/common/icon.js";
 import * as api from "@/pages/equipmentMange/ajax.js";
 export default {
-	components: {},
-	props: {
-		radio: {
-			type: Boolean,
-			default: false
-		},
-		hasDoor: {
-			type: Boolean,
-			default: true
-		},
-		searchText: {
-			type: String,
-			default() {
-				return "";
-			}
-		},
-		options: {
-			type: Array,
-			default() {
-				return [];
-			}
-		},
-		treeNodeType: {
-			type: String,
-			default() {
-				return "staff";
-			}
-		},
-		treeType: {
-			type: String,
-			default: "person"
-		},
-		searchType: {
-			type: String,
-			default() {
-				return "";
-			}
-		},
-		treeLeafType: {
-			type: String,
-			default: ""
-		},
-		showInput: {
-			type: Boolean,
-			default: true
-		},
-		visible: {
-			type: Boolean,
-			default: false
-		},
-		checkedKeys: {
-			type: Array,
-			default: () => []
-		},
-		checkeTreedNodes: {
-			type: Array,
-			default: () => []
-		},
-		selectSingleNode: {
-			type: String,
-			default() {
-				return "";
-			}
-		}
-	},
-	data() {
-		return {
-			icons,
-			selectValue: null,
-			filterText: "",
-			activeName: "",
-			inputModel: "",
-			isCurrentShow: false,
-			data2: [],
-			defaultProps: {
-				children: "children",
-				label: "label",
-				isLeaf: "isLeaf"
-			},
-			defaultExpandedKeys: [],
-			checkedNodes: {},
-			isSetChange: false,
-			orgType: "device",
-			treeData: [],
-			deviceTreeData: [],
-			residentTagData: [],
-			personTreeData: [],
-			personTagData: [],
-			deviceTagData: [],
-			buildTreeData: [],
-			nodeKey: "id",
-			needType: "staffAndOrg",
-			flag: false,
-			currentNodeId: false
-		};
-	},
-	created() {},
-	mounted() {},
-	methods: {
-		init() {
-			if (this.treeType === "resident") {
-				this.initResidentData();
-			} else {
-				this.needType =
-					this.treeType === "person" ? "staffAndOrg" : "orgAndDev";
-				this.needType = this.treeType === "department" ? "" : this.needType;
-				if (this.treeType === "orgAndAllDev") {
-					this.needType = "orgAndAllDev";
-				}
-				this.getPersonData();
-			}
-		},
-		nodeClick(data, node, nodeTree) {
-			// 新增选择节点的类型字段，只有当点击节点type跟传进来的type一样才会选中
-			if (this.selectSingleNode !== "" && this.selectSingleNode !== data.type) {
-				return;
-			}
-			var tree = this.activeName;
-			var checked = true;
-			console.log(node);
-			let i = this.defaultExpandedKeys.indexOf(data.id);
-			this.currentNodeId = data.id;
-			if (node.checked) {
-				checked = false;
-				// this.defaultExpandedKeys.splice(i, 1);
-			} else {
-				// this.defaultExpandedKeys.push(data.id);
-			}
-			// 判断是否单选，并且是否是最末一级
-			if (this.radio && !node.isLeaf) {
-				console.log(data.nodeType);
-				checked = false;
-			}
-			// 判断：单选、节点类型、树类型 针对wang yi fei数据类型判断
-			if (
-				this.radio &&
-				data.nodeType !== "door" &&
-				this.treeType === "resident"
-			) {
-				checked = false;
-			}
-			//判断：单选、节点类型， 树类型 针对zhengyu 接口数据类型判断
-			if (this.radio && data.type !== "door" && this.treeType !== "person") {
-				checked = false;
-			}
+  components: {},
+  props: {
+    radio: {
+      type: Boolean,
+      default: false
+    },
+    hasDoor: {
+      type: Boolean,
+      default: true
+    },
+    searchText: {
+      type: String,
+      default() {
+        return "";
+      }
+    },
+    options: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    treeNodeType: {
+      type: String,
+      default() {
+        return "staff";
+      }
+    },
+    treeType: {
+      type: String,
+      default: "person"
+    },
+    searchType: {
+      type: String,
+      default() {
+        return "";
+      }
+    },
+    treeLeafType: {
+      type: String,
+      default: ""
+    },
+    showInput: {
+      type: Boolean,
+      default: true
+    },
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    checkedKeys: {
+      type: Array,
+      default: () => []
+    },
+    checkeTreedNodes: {
+      type: Array,
+      default: () => []
+    },
+    selectSingleNode: {
+      type: String,
+      default() {
+        return "";
+      }
+    }
+  },
+  data() {
+    return {
+      icons,
+      selectValue: null,
+      filterText: "",
+      activeName: "",
+      inputModel: "",
+      isCurrentShow: false,
+      data2: [],
+      defaultProps: {
+        children: "children",
+        label: "label",
+        isLeaf: "isLeaf"
+      },
+      defaultExpandedKeys: [],
+      checkedNodes: {},
+      isSetChange: false,
+      orgType: "device",
+      treeData: [],
+      deviceTreeData: [],
+      residentTagData: [],
+      personTreeData: [],
+      personTagData: [],
+      deviceTagData: [],
+      buildTreeData: [],
+      nodeKey: "id",
+      needType: "staffAndOrg",
+      flag: false,
+      currentNodeId: false
+    };
+  },
+  created() {},
+  mounted() {},
+  methods: {
+    init() {
+      if (this.treeType === "resident") {
+        this.initResidentData();
+      } else {
+        this.needType =
+          this.treeType === "person" ? "staffAndOrg" : "orgAndDev";
+        this.needType = this.treeType === "department" ? "" : this.needType;
+        if (this.treeType === "orgAndAllDev") {
+          this.needType = "orgAndAllDev";
+        }
+        this.getPersonData();
+      }
+    },
+    nodeClick(data, node, nodeTree) {
+      // 新增选择节点的类型字段，只有当点击节点type跟传进来的type一样才会选中
+      console.log(this.selectSingleNode);
+      console.log(data.type);
+      if (this.selectSingleNode && this.selectSingleNode !== data.type) {
+        return;
+      }
+      var tree = this.activeName;
+      var checked = true;
+      console.log(node);
+      let i = this.defaultExpandedKeys.indexOf(data.id);
+      this.currentNodeId = data.id;
+      if (node.checked) {
+        checked = false;
+        // this.defaultExpandedKeys.splice(i, 1);
+      } else {
+        // this.defaultExpandedKeys.push(data.id);
+      }
+      // 判断是否单选，并且是否是最末一级
+      if (this.radio && !node.isLeaf) {
+        console.log(data.nodeType);
+        checked = false;
+      }
+      // 判断：单选、节点类型、树类型 针对wang yi fei数据类型判断
+      if (
+        this.radio &&
+        data.nodeType !== "door" &&
+        this.treeType === "resident"
+      ) {
+        checked = false;
+      }
+      //判断：单选、节点类型， 树类型 针对zhengyu 接口数据类型判断
+      if (this.radio && data.type !== "door" && this.treeType !== "person") {
+        checked = false;
+      }
 
 			// 组织设备树，设备只选择到通道， 节点不被选择，
 			if (
@@ -427,188 +429,190 @@ export default {
 					this.orgType =
 						this.treeType === "department" ? "staff" : this.orgType;
 
-					api
-						.getOrgTree(data, this.orgType)
-						.then(
-							res => {
-								if (res.data.data && res.data.data.length) {
-									for (let i = 0; i < res.data.data.length; i++) {
-										if (
-											res.data.data[i].source === "staff" ||
-											res.data.data[i].nextCount === "0" ||
-											res.data.data[i].nextCount === 0 ||
-											(!res.data.data[i].hasOwnProperty("nextCount") &&
-												!this.hasDoor)
-										) {
-											this.$set(res.data.data[i], "isLeaf", true);
-										}
-									}
-									resolve(res.data.data);
-								} else {
-									resolve([]);
-								}
-							},
-							() => {
-								this.$set(node, "loading", false);
-							}
-						)
-						.catch(err => {
-							resolve([]);
-						});
-					// 当该节点为设备节点时 处理逻辑
-				} else if (node.data.hasOwnProperty("deviceType")) {
-					if (!this.hasDoor) {
-						resolve([]);
-						return;
-					}
-					// 当树的节点为设备时，想要拿取下面的读头通道
-					if (this.treeNodeType === "channel") {
-						// pxy
-						this.$DoorSetAjax
-							.getDeviceReadingHeadApi(node.data.id)
-							.then(res => {
-								if (res.data.data && res.data.data.length) {
-									let data = res.data.data;
-									for (let i = 0, len = data.length; i < len; i++) {
-										if (parseInt(data[i].nextCount) === 0) {
-											data[i].isLeaf = true;
-										}
-									}
-									resolve(data);
-								} else {
-									resolve([]);
-								}
-							});
-						// 当树的节点为设备时，想要拿取下面的门通道
-					} else if (this.treeNodeType === "all") {
-						api
-							.getChnByD(node.data.deviceUuid)
-							.then(
-								res => {
-									if (res.data.data && res.data.data.length) {
-										for (let i = 0; i < res.data.data.length; i++) {
-											res.data.data[i].isLeaf = true;
-										}
-										resolve(res.data.data);
-									} else {
-										resolve([]);
-									}
-								},
-								() => {
-									this.$set(node, "loading", false);
-								}
-							)
-							.catch(() => {
-								this.$set(node, "loading", false);
-							});
-					} else {
-						// kj
-						api.getTDByDUuid(node.data.deviceUuid).then(
-							res => {
-								if (res.data.data && res.data.data.length) {
-									for (let i = 0; i < res.data.data.length; i++) {
-										res.data.data[i].isLeaf = true;
-									}
-									resolve(res.data.data);
-								} else {
-									resolve([]);
-								}
-							},
-							() => {
-								this.$set(node, "loading", false);
-							}
-						);
-					}
-				} else {
-					// 未知 树的节点
-					resolve([]);
-				}
-			} else {
-				// 未知类型的树
-				resolve([]);
-			}
-		},
-		checkChange(data, nodeBool, subNodeBool) {},
-		changeOptions(val) {
-			this.$refs.treeRef.filter({ value: val, type: 1 });
-		},
-		filterNode(obj, data) {
-			if (data.hasOwnProperty("channelType")) {
-				console.log(obj);
-				console.log(data);
-			}
-			// obj 里面有type字段,0表示筛选value值，1表示筛选类型
-			if (!obj.value) {
-				return true;
-			} else {
-				if (obj.type == 0) {
-					return data.label.indexOf(obj.value) !== -1;
-				} else if (obj.type == 1) {
-					if (data.hasOwnProperty("channelType")) {
-						return data.channelType.indexOf(obj.value) !== -1;
-					} else {
-						return true;
-					}
-				}
-			}
-		},
-		setkey() {
-			var num = [];
-			var numKeys = [];
-			for (var i = 0, len = this.checkeTreedNodes.length; i < len; i++) {
-				num.push(this.checkeTreedNodes[i]);
-				numKeys.push(this.checkeTreedNodes[i].id);
-			}
-			if (this.$refs.treeRef) {
-				this.$nextTick(() => {
-					this.$refs.treeRef.setCheckedNodes(num);
-					this.$refs.treeRef.setCheckedKeys(numKeys);
-				});
-			}
-		}
-	},
-	watch: {
-		visible: {
-			handler(val, oldVal) {
-				if (val) {
-					this.init();
-				} else {
-					this.treeData = [];
-				}
-				this.$nextTick(() => {
-					this.setkey();
-				});
-			},
-			deep: true,
-			immediate: true
-		},
-		residentTreeData(val) {},
-		filterText(val) {
-			this.$refs.treeRef.filter({ value: val, type: 0 });
-		},
-		searchText(val) {
-			this.$refs.treeRef.filter({ value: val, type: 0 });
-		},
-		searchType(val) {
-			this.$refs.treeRef.filter({ value: val, type: 1 });
-		},
-		activeName(val) {
-			console.log("===activeName===", val);
-			this.setkey();
-		},
-		checkedNodes(val) {
-			// 向父组件传值
-		},
-		checkedKeys(val) {},
-		checkeTreedNodes: {
-			handler(newVal, oldVal) {
-				this.setkey();
-			},
-			immediate: true,
-			deep: true
-		}
-	},
-	destroyed() {}
+          api
+            .getOrgTree(data, this.orgType)
+            .then(
+              res => {
+                if (res.data.data && res.data.data.length) {
+                  for (let i = 0; i < res.data.data.length; i++) {
+                    if (
+                      (res.data.data[i].nextCount === undefined &&
+                        !res.data.data[i].hasOwnProperty("deviceUuid")) ||
+                      res.data.data[i].source === "staff" ||
+                      res.data.data[i].nextCount === "0" ||
+                      res.data.data[i].nextCount === 0 ||
+                      (!res.data.data[i].hasOwnProperty("nextCount") &&
+                        !this.hasDoor)
+                    ) {
+                      this.$set(res.data.data[i], "isLeaf", true);
+                    }
+                  }
+                  resolve(res.data.data);
+                } else {
+                  resolve([]);
+                }
+              },
+              () => {
+                this.$set(node, "loading", false);
+              }
+            )
+            .catch(err => {
+              resolve([]);
+            });
+          // 当该节点为设备节点时 处理逻辑
+        } else if (node.data.hasOwnProperty("deviceType")) {
+          if (!this.hasDoor) {
+            resolve([]);
+            return;
+          }
+          // 当树的节点为设备时，想要拿取下面的读头通道
+          if (this.treeNodeType === "channel") {
+            // pxy
+            this.$DoorSetAjax
+              .getDeviceReadingHeadApi(node.data.id)
+              .then(res => {
+                if (res.data.data && res.data.data.length) {
+                  let data = res.data.data;
+                  for (let i = 0, len = data.length; i < len; i++) {
+                    if (parseInt(data[i].nextCount) === 0) {
+                      data[i].isLeaf = true;
+                    }
+                  }
+                  resolve(data);
+                } else {
+                  resolve([]);
+                }
+              });
+            // 当树的节点为设备时，想要拿取下面的门通道
+          } else if (this.treeNodeType === "all") {
+            api
+              .getChnByD(node.data.deviceUuid)
+              .then(
+                res => {
+                  if (res.data.data && res.data.data.length) {
+                    for (let i = 0; i < res.data.data.length; i++) {
+                      res.data.data[i].isLeaf = true;
+                    }
+                    resolve(res.data.data);
+                  } else {
+                    resolve([]);
+                  }
+                },
+                () => {
+                  this.$set(node, "loading", false);
+                }
+              )
+              .catch(() => {
+                this.$set(node, "loading", false);
+              });
+          } else {
+            // kj
+            api.getTDByDUuid(node.data.deviceUuid).then(
+              res => {
+                if (res.data.data && res.data.data.length) {
+                  for (let i = 0; i < res.data.data.length; i++) {
+                    res.data.data[i].isLeaf = true;
+                  }
+                  resolve(res.data.data);
+                } else {
+                  resolve([]);
+                }
+              },
+              () => {
+                this.$set(node, "loading", false);
+              }
+            );
+          }
+        } else {
+          // 未知 树的节点
+          resolve([]);
+        }
+      } else {
+        // 未知类型的树
+        resolve([]);
+      }
+    },
+    checkChange(data, nodeBool, subNodeBool) {},
+    changeOptions(val) {
+      this.$refs.treeRef.filter({ value: val, type: 1 });
+    },
+    filterNode(obj, data) {
+      if (data.hasOwnProperty("channelType")) {
+        console.log(obj);
+        console.log(data);
+      }
+      // obj 里面有type字段,0表示筛选value值，1表示筛选类型
+      if (!obj.value) {
+        return true;
+      } else {
+        if (obj.type == 0) {
+          return data.label.indexOf(obj.value) !== -1;
+        } else if (obj.type == 1) {
+          if (data.hasOwnProperty("channelType")) {
+            return data.channelType.indexOf(obj.value) !== -1;
+          } else {
+            return true;
+          }
+        }
+      }
+    },
+    setkey() {
+      var num = [];
+      var numKeys = [];
+      for (var i = 0, len = this.checkeTreedNodes.length; i < len; i++) {
+        num.push(this.checkeTreedNodes[i]);
+        numKeys.push(this.checkeTreedNodes[i].id);
+      }
+      if (this.$refs.treeRef) {
+        this.$nextTick(() => {
+          this.$refs.treeRef.setCheckedNodes(num);
+          this.$refs.treeRef.setCheckedKeys(numKeys);
+        });
+      }
+    }
+  },
+  watch: {
+    visible: {
+      handler(val, oldVal) {
+        if (val) {
+          this.init();
+        } else {
+          this.treeData = [];
+        }
+        this.$nextTick(() => {
+          this.setkey();
+        });
+      },
+      deep: true,
+      immediate: true
+    },
+    residentTreeData(val) {},
+    filterText(val) {
+      this.$refs.treeRef.filter({ value: val, type: 0 });
+    },
+    searchText(val) {
+      this.$refs.treeRef.filter({ value: val, type: 0 });
+    },
+    searchType(val) {
+      this.$refs.treeRef.filter({ value: val, type: 1 });
+    },
+    activeName(val) {
+      console.log("===activeName===", val);
+      this.setkey();
+    },
+    checkedNodes(val) {
+      // 向父组件传值
+    },
+    checkedKeys(val) {},
+    checkeTreedNodes: {
+      handler(newVal, oldVal) {
+        this.setkey();
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  destroyed() {}
 };
 </script>
 <style>
@@ -624,7 +628,7 @@ export default {
 	overflow: auto;
 }
 .treeTabs .el-input__inner {
-	padding-left: 30px;
+  padding-left: 30px;
 }
 </style>
 

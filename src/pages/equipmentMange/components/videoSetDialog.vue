@@ -1,79 +1,55 @@
 <template>
-  <el-dialog :title='title'
-             @close="close"
-             :width="width"
-             :class="{'dialogCenter':center}"
-             :close-on-click-modal="false"
-             :modal="false"
-             :append-to-body="true"
-             class="editEquip"
-             :visible.sync="editEquipmentDialogVisible">
-    <div class='wrap videoset'>
-      <div class="title ">
-        <el-checkbox class='checkbox'
-                     style='margin-right:10px;'
-                     v-model="data.isvideoset"
-                     size='small'>
+	<el-dialog
+		:title="title"
+		@close="close"
+		:width="width"
+		:class="{'dialogCenter':center}"
+		:close-on-click-modal="false"
+		:modal="false"
+		:append-to-body="true"
+		class="editEquip"
+		:visible.sync="editEquipmentDialogVisible"
+	>
+		<div class="wrap videoset">
+			<div class="title">
+				<el-checkbox class="checkbox" style="margin-right:10px;" v-model="data.isvideoset" size="small"></el-checkbox>是否启用人脸识别
+			</div>
+			<el-form ref="form" :rules="rules" :model="data" class="deviceInfoPanel" label-width="160px">
+				<el-form-item label="请添加人脸库：">
+					<el-button class="iconButton" @click="openDB()" type="primary" size="small">
+						<img :src="icons.tianjia" alt />
+						添加
+					</el-button>
+					<span>共{{initSelectData.length}}个</span>
+					<div>
+						<gt-button
+							class="sbtn"
+							@close="delteDBitem(index)"
+							v-for="(item,index) in initSelectData"
+							:key="index"
+							:icon="icons.door"
+						>{{item.libraryName||item.faceLibraryName}}</gt-button>
+					</div>
+				</el-form-item>
 
-        </el-checkbox>
-        是否启用人脸识别
-      </div>
-      <el-form ref="form"
-               :rules="rules"
-               :model="data"
-               class='deviceInfoPanel'
-               label-width="160px">
-        <el-form-item label="请添加人脸库：">
-          <el-button class='iconButton'
-                     @click="openDB()"
-                     type="primary"
-                     size='small'>
-            <img :src="icons.tianjia"
-                 alt="">
-            添加
-          </el-button>
-          <span>共{{initSelectData.length}}个</span>
-          <div>
-            <gt-button class='sbtn'
-                       @close="delteDBitem(index)"
-                       v-for="(item,index) in initSelectData"
-                       :key="index"
-                       :icon="icons.door">
-              {{item.libraryName||item.faceLibraryName}}
-            </gt-button>
-          </div>
-        </el-form-item>
-
-        <el-form-item label="人脸库自动同步间隔："
-                      prop="interval">
-          <el-input v-model='data.interval'
-                    class='interval'
-                    type="number">
-          </el-input>
-          <span class='timetips'>
-            h
-          </span>
-          <el-button type="primary"
-                     @click="nowSync"
-                     size="middle">立即同步</el-button>
-        </el-form-item>
-
-        <el-button type="primary"
-                   class='marginLeft'
-                   @click='save'>
-          确定
-        </el-button>
-        <el-button type="primary"
-                   @click='close'>
-          取消
-        </el-button>
-        <select-face-d-b :isShow.sync="isShow"
-                         :initSelectData="initSelectData"
-                         @onConfirm="onConfirm"
-                         @onCancel="onCancel"></select-face-d-b>
-      </el-form>
-    </div>
-  </el-dialog>
+				<el-form-item label="人脸库自动同步间隔：" prop="interval">
+					<el-input v-model="data.interval" class="interval" type="number"></el-input>
+					<span class="timetips">h</span>
+					<el-button type="primary" @click="nowSync" size="middle">立即同步</el-button>
+				</el-form-item>
+				<div style="margin:20px auto 30px;padding-top:15px">
+					<el-button type="primary" class="marginLeft" @click="save">确定</el-button>
+					<el-button type="primary" @click="close">取消</el-button>
+				</div>
+				<select-face-d-b
+					:isShow.sync="isShow"
+					:initSelectData="initSelectData"
+					@onConfirm="onConfirm"
+					@onCancel="onCancel"
+				></select-face-d-b>
+			</el-form>
+		</div>
+	</el-dialog>
 </template>
 
 <script>
@@ -175,7 +151,7 @@ export default {
     nowSync() {
       let data = this.getData();
       if (!data.enable) {
-        this.$message.warning('请开启人脸识别');
+        this.$message.warning("请开启人脸识别");
         return;
       }
       api.setImmediateSyncSettingl(this.deviceUuid, data).then(res => {
@@ -261,75 +237,75 @@ export default {
 <style lang="scss">
 @import "@/style/variables.scss";
 .videoset {
-  .iconButton {
-    @include buttonnoborder;
-  }
-  input {
-    width: 250px;
-    @include input30;
-  }
-  .el-form-item {
-    margin-bottom: 15px;
-  }
-  button {
-    @include button30;
-  }
-  .marginLeft {
-    margin-left: 120px;
-  }
-  .interval {
-    width: 66px;
-    input {
-      width: 66px;
-    }
-  }
+	.iconButton {
+		@include buttonnoborder;
+	}
+	input {
+		width: 250px;
+		@include input30;
+	}
+	.el-form-item {
+		margin-bottom: 20px;
+	}
+	button {
+		@include button30;
+	}
+	.marginLeft {
+		margin-left: 120px;
+	}
+	.interval {
+		width: 66px;
+		input {
+			width: 66px;
+		}
+	}
 }
 </style>
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .wrap {
-  height: 100%;
-  padding: 13px 15px;
-  box-sizing: border-box;
-  overflow: auto;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  .title {
-    display: block;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    @include font-s;
-  }
-  .cube {
-    position: relative;
-    padding-left: 18px;
-    box-sizing: border-box;
-    &::after {
-      content: "";
-      position: absolute;
-      left: 0px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 5px;
-      height: 5px;
-      background-color: #aaa;
-    }
-  }
-  .deviceInfoPanel {
-    width: 90%;
-    max-width: 400px;
-    margin: 0 auto;
-    .sbtn {
-      margin: 5px;
-    }
-    .timetips {
-      display: inline-block;
-      padding-left: 10px;
-      @include font-s;
-    }
-  }
+	height: 100%;
+	padding: 13px 15px;
+	box-sizing: border-box;
+	overflow: auto;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	.title {
+		display: block;
+		width: 100%;
+		height: 40px;
+		line-height: 40px;
+		@include font-s;
+	}
+	.cube {
+		position: relative;
+		padding-left: 18px;
+		box-sizing: border-box;
+		&::after {
+			content: "";
+			position: absolute;
+			left: 0px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 5px;
+			height: 5px;
+			background-color: #aaa;
+		}
+	}
+	.deviceInfoPanel {
+		width: 90%;
+		max-width: 400px;
+		margin: 0 auto;
+		.sbtn {
+			margin: 5px;
+		}
+		.timetips {
+			display: inline-block;
+			padding-left: 10px;
+			@include font-s;
+		}
+	}
 }
 </style>

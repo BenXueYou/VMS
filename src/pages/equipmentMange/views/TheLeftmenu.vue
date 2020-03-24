@@ -8,27 +8,30 @@
 			<img v-else-if="activeName==='tag'" @click="showAddTagDialog" :src="icons.addSign" alt />
 		</div>
 
-		<el-tabs v-model="activeName" class="tabs" @tab-click="handleClick">
-			<el-tab-pane :label="orgType==='device'?'设备树':'组织架构'" class="mypanel" name="organiza">
-				<gt-tree
-					ref="tree1"
-					class="tree"
-					@getChidrendata="getChidrendata"
-					@clickmenu="clickmenu"
-					@exportData="exportData"
-					:initdata="data"
-				></gt-tree>
-			</el-tab-pane>
-			<el-tab-pane label="标签" name="tag">
-				<gt-tree
-					ref="tree2"
-					class="mypanel"
-					@clickmenu="clickmenu2"
-					@exportData="exportData2"
-					:initdata="data2"
-				></gt-tree>
-			</el-tab-pane>
-		</el-tabs>
+    <el-tabs v-model="activeName"
+             class="tabs"
+             @tab-click="handleClick">
+      <el-tab-pane :label="orgType==='device'?'设备树':'组织架构'"
+                   class="mypanel"
+                   name="organiza">
+        <gt-tree ref="tree1"
+                 class="tree"
+                 @getChidrendata="getChidrendata"
+                 @clickmenu="clickmenu"
+                 @exportData="exportData"
+                 :operatorDisabled="!OwnAuthDisabled"
+                 :initdata="data"></gt-tree>
+      </el-tab-pane>
+      <el-tab-pane label="标签"
+                   name="tag">
+        <gt-tree ref="tree2"
+                 class="mypanel"
+                 @clickmenu="clickmenu2"
+                 @exportData="exportData2"
+                 :operatorDisabled="!OwnAuthDisabled"
+                 :initdata="data2"></gt-tree>
+      </el-tab-pane>
+    </el-tabs>
 
 		<tree-append-child-dialog
 			@confirm="addchildren"
@@ -79,6 +82,18 @@ export default {
     ConfirmDialog
   },
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     orgType: {
       type: String,
       default() {
@@ -156,7 +171,9 @@ export default {
     this.data2 = [];
     this.parentOrgUuid = "";
     this.Treeparent = "";
-    this.getOrgTree(true);
+    setTimeout(() => {
+      this.getOrgTree(true);
+    }, 0);
   },
   activated() {},
   computed: {
@@ -168,6 +185,9 @@ export default {
   },
   methods: {
     showAddChildrenDialog() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // this.appendChildrenDialogVisible = true;
       this.showOrgDialogVisible = true;
     },
@@ -181,6 +201,9 @@ export default {
       return max + 1;
     },
     showAddTagDialog() {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.appendTagDialogVisible = true;
       this.addTitle = "新增标签";
       // if (this.orgType === "device") {
@@ -203,6 +226,9 @@ export default {
         });
     },
     getOrgTag(flag = false, uuid) {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       api
         .getTagList({
           tagType: this.tagType
@@ -264,6 +290,9 @@ export default {
         });
     },
     getOrgTree(isFirst = false) {
+      if (!this.ShowAuthDisabled) {
+        return;
+      }
       // 这个添加树的方法
       let data = {
         parentOrgUuid: this.parentOrgUuid,
@@ -484,7 +513,9 @@ export default {
         downData,
         upData
       });
-
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       // console.log(downData);
       // console.log(upData);
       this.downData = downData;
@@ -550,6 +581,9 @@ export default {
       value,
       e
     }) {
+      if (!this.OwnAuthDisabled) {
+        return;
+      }
       this.tagIndex = index;
       // 树节点右边菜单的点击事件
       var data = [
@@ -869,6 +903,9 @@ export default {
 	.searchWrap .el-input__inner {
 		padding-left: 30px;
 	}
+  .searchWrap .el-input__inner {
+    padding-left: 30px;
+  }
 }
 </style>
 

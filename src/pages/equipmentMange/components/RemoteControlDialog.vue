@@ -21,6 +21,8 @@
       <div class="content">
         <!-- <keep-alive> -->
         <component :is='currentComponents'
+                   :ShowAuthDisabled="ShowAuthDisabled"
+                   :OwnAuthDisabled="OwnAuthDisabled"
                    :deviceUuid="deviceUuid">
         </component>
         <!-- </keep-alive> -->
@@ -40,6 +42,7 @@ import system from "./RemoteControlDialogContent/system";
 import WorkStatus from "./RemoteControlDialogContent/WorkStatus";
 import Timing from "./RemoteControlDialogContent/Timing";
 import alarmSeting from "./RemoteControlDialogContent/alarmSeting";
+import MeasureTemperature from "./RemoteControlDialogContent/MeasureTemperature";
 
 let menuData = [
   {
@@ -77,6 +80,10 @@ let menuData = [
   {
     component: "alarmSeting",
     label: "设备报警配置"
+  },
+  {
+    component: "MeasureTemperature",
+    label: "体温配置"
   }
 ];
 let menuData2 = [
@@ -114,9 +121,22 @@ export default {
     FaceParam,
     Relay,
     alarmSeting,
-    Vistor
+    Vistor,
+    MeasureTemperature
   },
   props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     deviceUuid: {
       type: String,
       default() {

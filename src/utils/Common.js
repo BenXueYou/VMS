@@ -1,6 +1,27 @@
 import store from "@/store/store.js";
-import { callbackify } from "util";
 export var COMMON = {
+  // 根据模块按钮查找权限
+  /**
+   * moduleName,模块名称，名字全匹配，传汉字
+   * isOwnOrShow, 模块的权限(查看权限或操作权限)  传 isShow 或 isOwn
+   * 注：均以汉字名为索引 $common.getAuthIsOwn();
+   */
+  getAuthIsOwn(moduleName, isOwnOrShow) {
+    let AllAuthList = store.state.auth.AuthList;
+    if (isOwnOrShow === "isOwn" || "isShow") {
+      // 判断是不是超级管理员，超级管理员，权限全部开放
+      if (store.state.home.accountType === "project_admin") return true;
+      // 根据功能模块名称获取，功能模块的权限配置
+      let cnd1 = AllAuthList.filter(modelObj => {
+        return modelObj.nodeName === moduleName;
+      });
+      // 根据按钮的名称 从 功能模块的权限配置中，获取权限的对象
+      // 判断是否拥有操作权限
+      return !!(cnd1 && cnd1.length && cnd1[0][isOwnOrShow]);
+    } else {
+      alert("请传入isShow 或 isOwn");
+    }
+  },
   // 校验手机号格式
   isPhoneNum(PhoneNum) {
     let prep = /^1[3456789]\d{9}$/;
@@ -9,7 +30,6 @@ export var COMMON = {
 
   //校验身份证号
   isCredentialNo(value) {
-
     var num = value.toUpperCase();
     // 身份证号码为15位或者18位，15位时全为数字，18位前17位为数字，最后一位是校验位，可能为数字或字符X。
     var reg = /^(\d{18,18}|\d{15,15}|\d{17,17}X)$/;
@@ -21,16 +41,17 @@ export var COMMON = {
     var len, re;
     len = num.length;
     if (len == 15) {
-      re = new RegExp(
-        /^(\d{6})(\d{2})(\d{2})(\d{2})(\d{3})$/);
+      re = new RegExp(/^(\d{6})(\d{2})(\d{2})(\d{2})(\d{3})$/);
       var arrSplit = num.match(re);
       // 检查生日日期是否正确
-      var dtmBirth = new Date('19' + arrSplit[2] +
-        '/' + arrSplit[3] + '/' + arrSplit[4]);
+      var dtmBirth = new Date(
+        "19" + arrSplit[2] + "/" + arrSplit[3] + "/" + arrSplit[4]
+      );
       var bGoodDay;
-      bGoodDay = (dtmBirth.getYear() == Number(arrSplit[2])) &&
-        ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) &&
-        (dtmBirth.getDate() == Number(arrSplit[4]));
+      bGoodDay =
+        dtmBirth.getYear() == Number(arrSplit[2]) &&
+        dtmBirth.getMonth() + 1 == Number(arrSplit[3]) &&
+        dtmBirth.getDate() == Number(arrSplit[4]);
       if (!bGoodDay) {
         return false;
       }
@@ -39,12 +60,14 @@ export var COMMON = {
       re = new RegExp(/^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X)$/);
       var arrSplit = num.match(re);
       // 检查生日日期是否正确
-      var dtmBirth = new Date(arrSplit[2] + "/" +
-        arrSplit[3] + "/" + arrSplit[4]);
+      var dtmBirth = new Date(
+        arrSplit[2] + "/" + arrSplit[3] + "/" + arrSplit[4]
+      );
       var bGoodDay;
-      bGoodDay = (dtmBirth.getFullYear() == Number(arrSplit[2])) &&
-        ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) &&
-        (dtmBirth.getDate() == Number(arrSplit[4]));
+      bGoodDay =
+        dtmBirth.getFullYear() == Number(arrSplit[2]) &&
+        dtmBirth.getMonth() + 1 == Number(arrSplit[3]) &&
+        dtmBirth.getDate() == Number(arrSplit[4]);
       if (!bGoodDay) {
         return false;
       } else {
@@ -52,10 +75,38 @@ export var COMMON = {
         // 校验位按照ISO 7064:1983.MOD
         // 11-2的规定生成，X可以认为是数字10。
         var valnum;
-        var arrInt = new Array(7, 9, 10, 5, 8, 4,
-          2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
-        var arrCh = new Array('1', '0', 'X', '9',
-          '8', '7', '6', '5', '4', '3', '2');
+        var arrInt = new Array(
+          7,
+          9,
+          10,
+          5,
+          8,
+          4,
+          2,
+          1,
+          6,
+          3,
+          7,
+          9,
+          10,
+          5,
+          8,
+          4,
+          2
+        );
+        var arrCh = new Array(
+          "1",
+          "0",
+          "X",
+          "9",
+          "8",
+          "7",
+          "6",
+          "5",
+          "4",
+          "3",
+          "2"
+        );
         var nTemp = 0,
           i;
         for (var i = 0; i < 17; i++) {
@@ -102,13 +153,13 @@ export var COMMON = {
     console.log(url, itemData);
     var xhr = new XMLHttpRequest();
     xhr.responseType = "blob"; // 返回类型blob
-    xhr.onload = function () {
+    xhr.onload = function() {
       // 定义请求完成的处理函数
       if (this.status === 200) {
         var blob = this.response;
         var reader = new FileReader();
         reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签href
-        reader.onload = function (e) {
+        reader.onload = function(e) {
           var str = e.target.result;
           var type = str.substring(str.indexOf("/") + 1, str.indexOf(";"));
           var a = document.createElement("a"); // 转换完成，创建一个a标签用于下载
@@ -141,7 +192,7 @@ export var COMMON = {
     // 通过Images对象
     let image = new Image();
     image.setAttribute("crossOrigin", "anonymous");
-    image.onload = function (e) {
+    image.onload = function(e) {
       let canvas = document.createElement("canvas");
       canvas.width = image.width;
       canvas.height = image.height;
@@ -199,14 +250,17 @@ export var COMMON = {
   },
   /**
    * image url 转 base64
-   * @param {imageUrl }  
+   * @param {imageUrl }
    */
   imageToBase64(url, callback) {
-    url = window.config.protocolHeader +
+    url =
+      window.config.protocolHeader +
       window.config.ip +
       `/fileforward-server-v1/project/${
-      store.state.home.projectUuid
-      }/fileforward/fileByUrl?asgName=${store.state.home.projectUuid}&fileUrl=` +
+        store.state.home.projectUuid
+      }/fileforward/fileByUrl?asgName=${
+        store.state.home.projectUuid
+      }&fileUrl=` +
       url;
 
     let httpRequest = null;
@@ -217,13 +271,13 @@ export var COMMON = {
       httpRequest = new ActiveXObject("MsXml2.XmlHttp");
     }
     httpRequest.responseType = "blob";
-    httpRequest.onreadystatechange = function () {
+    httpRequest.onreadystatechange = function() {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
           var value = this.response;
           var reader = new window.FileReader();
           reader.readAsDataURL(value);
-          reader.onloadend = function () {
+          reader.onloadend = function() {
             var base64data = reader.result;
             base64data = base64data
               .replace("data:image/jpeg;base64,", "jpeg:")
@@ -237,7 +291,10 @@ export var COMMON = {
       }
     };
     httpRequest.open("GET", url, true);
-    httpRequest.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
+    httpRequest.setRequestHeader(
+      "Accept",
+      "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
+    );
     httpRequest.send(null);
     // this.getJSON(url).then(function (data) {
     //   console.log(data);
@@ -248,11 +305,14 @@ export var COMMON = {
     //   })
   },
   getJSON(url) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest();
-      xhr.open('get', url, true);
-      xhr.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3');
-      xhr.onload = function () {
+      xhr.open("get", url, true);
+      xhr.setRequestHeader(
+        "Accept",
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
+      );
+      xhr.onload = function() {
         var status = xhr.status;
         if (status == 200) {
           resolve(xhr.response);
@@ -269,7 +329,7 @@ export var COMMON = {
   isJustify(obj) {
     for (var key in obj) {
       if (!obj[key]) return true;
-      return false
+      return false;
     }
   },
   /**
@@ -454,20 +514,22 @@ export var COMMON = {
     let imgUrlReturn;
     if (imgUrl == null || !imgUrl || imgUrl === "" || imgUrl === undefined) {
       imgUrlReturn = require("@/assets/images/user.png");
-    } else if (picType === 'facelog') {
+    } else if (picType === "facelog") {
       imgUrlReturn =
         window.config.protocolHeader +
         window.config.ip +
         `/fileforward-server-v1/project/${
-        store.state.home.projectUuid
-        }/fileforward/fileByUrl?asgName=${store.state.home.projectUuid}&fileUrl=` +
+          store.state.home.projectUuid
+        }/fileforward/fileByUrl?asgName=${
+          store.state.home.projectUuid
+        }&fileUrl=` +
         imgUrl;
     } else {
       imgUrlReturn =
         window.config.protocolHeader +
         window.config.ip +
         `/fileforward-server-v1/project/${
-        store.state.home.projectUuid
+          store.state.home.projectUuid
         }/fileforward/fileByUrl?fileUrl=` +
         imgUrl;
     }
@@ -525,8 +587,12 @@ export var COMMON = {
       return [];
     }
     let types = [];
+
+    // console.log(store.state.home.localEnums);
+    // console.log(typeof store.state.home.localEnums);
     for (let groupStrKey in store.state.home.localEnums) {
       if (groupStr === groupStrKey) {
+        // console.log(store.state.home.localEnums[groupStrKey]);
         for (let typeStrKey in store.state.home.localEnums[groupStrKey]) {
           types.push({
             typeStr: typeStrKey,
@@ -629,17 +695,17 @@ export var COMMON = {
     xhr.open(method, url, true); // 也可以使用POST方式，根据接口
     xhr.setRequestHeader("Authorization", store.state.home.Authorization);
     xhr.responseType = "blob"; // 返回类型blob
-    if(method=='POST'){
-      xhr.setRequestHeader("Content-type","application/json");
+    if (method == "POST") {
+      xhr.setRequestHeader("Content-type", "application/json");
     }
-    xhr.onload = function () {
+    xhr.onload = function() {
       // 请求完成
       if (this.status == 200) {
         // 返回200
         var blob = this.response;
         var reader = new FileReader();
         reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签
-        reader.onload = function (e) {
+        reader.onload = function(e) {
           // 转换完成，创建一个a标签用于下载
           var a = document.createElement("a");
           a.download = name;
@@ -664,7 +730,7 @@ export var COMMON = {
     var previous = 0;
     if (!options) options = {};
 
-    var later = function () {
+    var later = function() {
       //
       previous = options.leading === false ? 0 : new Date().getTime();
       timeout = null;
@@ -672,7 +738,7 @@ export var COMMON = {
       if (!timeout) context = args = null;
     };
 
-    var throttled = function () {
+    var throttled = function() {
       // 记录当前时间
       var now = new Date().getTime();
       // 如果是第一次进来，并且leading等于false,设置previous等于now,可以阻止事件立即执行
@@ -696,7 +762,7 @@ export var COMMON = {
       }
     };
 
-    throttled.cancel = function () {
+    throttled.cancel = function() {
       clearTimeout(timeout);
       previous = 0;
       timeout = null;
@@ -709,18 +775,20 @@ export var COMMON = {
    */
   genLocalId() {
     let idStr = Date.now().toString(36);
-    idStr += Math.random().toString(36).substr(3);
+    idStr += Math.random()
+      .toString(36)
+      .substr(3);
     return idStr;
   },
   downloadImage(src) {
-    const $a = document.createElement('a');
+    const $a = document.createElement("a");
     $a.setAttribute("href", src);
     $a.setAttribute("download", "");
 
-    const event = new MouseEvent('click');
+    const event = new MouseEvent("click");
     $a.dispatchEvent(event);
   }
-}
+};
 function install(Vue) {
   Vue.prototype.$common = COMMON;
 }

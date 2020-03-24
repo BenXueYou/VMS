@@ -6,15 +6,16 @@ const home = {
     // localTag: Cookies.get('localTag') || 'Home',
     tagViewArr: Storage.readSession("tagViewArr") || [],
     localTag: Storage.readSession("localTag") || "Home",
-    localEnums: Storage.read("localEnums") || {},
-    CapturePhotoArr: Storage.read("CapturePhotoArr") || [],
-    RecognizationArr: Storage.read("RecognizationArr") || [],
+    localEnums: Storage.readSession("localEnums") || {},
+    CapturePhotoArr: Storage.readSession("CapturePhotoArr") || [],
+    RecognizationArr: Storage.readSession("RecognizationArr") || [],
     Authorization: Storage.readSession("Authorization") || "",
     projectUuid: Storage.readSession("projectUuid") || "",
-    account: Storage.read("account") || "",
-    userUuid: Storage.read("userUuid") || "",
-    projectList: Storage.read("projectList") || []
-    // username: localStorage.getItem("username") || ""
+    account: Storage.readSession("account") || "",
+    userUuid: Storage.readSession("userUuid") || "",
+    accountType: Storage.readSession("accountType") || "",
+    projectList: Storage.readSession("projectList") || []
+    // username: sessionStorage.getItem("username") || ""
   },
   mutations: {
     SET_TAG_VIEW_ARR: (state, tagViewArr) => {
@@ -42,15 +43,16 @@ const home = {
     },
     SET_LOCAL_ENUMS: (state, localEnums) => {
       state.localEnums = localEnums;
-      Storage.save("localEnums", localEnums);
+      console.log(typeof localEnums);
+      Storage.saveSession("localEnums", localEnums);
     },
     SET_CAPTURE_PHOTO_ARR: (state, CapturePhotoArr) => {
       state.CapturePhotoArr = CapturePhotoArr;
-      Storage.save("CapturePhotoArr", CapturePhotoArr);
+      Storage.saveSession("CapturePhotoArr", CapturePhotoArr);
     },
     SET_RECOGNIZATION_ARR: (state, RecognizationArr) => {
       state.RecognizationArr = RecognizationArr;
-      Storage.save("RecognizationArr", RecognizationArr);
+      Storage.saveSession("RecognizationArr", RecognizationArr);
     },
     SET_AUTHORIZATION: (state, Authorization) => {
       state.Authorization = Authorization;
@@ -67,15 +69,19 @@ const home = {
     },
     SET_PROJECT_LIST: (state, projectList) => {
       state.projectList = projectList;
-      Storage.save("projectList", projectList);
+      Storage.saveSession("projectList", projectList);
     },
     SET_ACCOUNT: (state, account) => {
       state.account = account;
-      Storage.save("account", account);
+      Storage.saveSession("account", account);
     },
     SET_USERUUID: (state, userUuid) => {
       state.userUuid = userUuid;
-      Storage.save("userUuid", userUuid);
+      Storage.saveSession("userUuid", userUuid);
+    },
+    SET_ACCOUNTTYPE: (state, accountType) => {
+      state.accountType = accountType;
+      Storage.save("accountType", accountType);
     }
   },
   actions: {
@@ -111,7 +117,10 @@ const home = {
     },
     SET_USERUUID({ commit }, userUuid) {
       commit("SET_USERUUID", userUuid);
-    }
+    },
+    setAccountType({ commit }, accountType) {
+      commit("SET_ACCOUNTTYPE", accountType);
+    },
   }
 };
 

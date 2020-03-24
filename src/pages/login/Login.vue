@@ -195,8 +195,10 @@ export default {
               grant_type: "password"
             })
             .then(res => {
-              let body = res.data;
-              this.loginSuccessResponse(body);
+              let body = res && res.data;
+              if (body) {
+                this.loginSuccessResponse(body);
+              }
             });
         } else {
           this.$cToast.error("请正确填写内容");
@@ -212,6 +214,7 @@ export default {
           this.$store.dispatch("setAccount", "");
           this.$store.dispatch("SET_USERUUID", "");
         }
+        // TOKEN
         let Authorization =
 					body.data.token.tokenType + " " + body.data.token.accessToken;
         this.$store.dispatch("setAuthorization", Authorization);
@@ -221,10 +224,12 @@ export default {
         this.$store.commit("SET_PROJECT_LIST", projects);
 
         // 设置ProjectUuid 默认设置第一个，其他Uuid可以在切换项目更改
-
-        localStorage.setItem("username", body.data.adminUser.username);
+        sessionStorage.setItem("username", body.data.adminUser.username);
+        // 这里存储userUuid, 后面调用菜单的时候会使用到
+        sessionStorage.setItem("useruuid", body.data.adminUser.useruuid);
+        // 这里存储logUuid, 后面选择项目的时候会使用到
+        sessionStorage.setItem("logUuid", body.data.adminUser.logUuid);
         // this.$store.dispatch("setUserName", body.data.adminUser.username);
-
         if (projects.length > 1) {
           // 如果要从登陆页面跳转到项目选择的页面，则执行下面的代码
           this.$router.push("/projectManage");
@@ -233,6 +238,12 @@ export default {
             "setProjectUuid",
             body.data.adminUser.projects[0].projectUuid
           );
+          this.$loginAjax
+            .setLogUuidByNoPrjectUuid({
+              projectUuid: body.data.adminUser.projects[0].projectUuid,
+              logUuid: sessionStorage.getItem("logUuid")
+            })
+            .then(res => {});
           // 刷新页面以便于更新projectUuid
           this.$nextTick(() => {
             window.location.reload();
@@ -243,6 +254,7 @@ export default {
         }
       }
     },
+
     hrefToCloud() {
       window.location.href =
 				window.config.protocolHeader +
@@ -268,7 +280,7 @@ export default {
 	.el-input__inner {
 		background: rgba($color: #000000, $alpha: 0.05) !important;
 		height: 46px;
-		font-family: PingFangSC-Regular;
+		font-family: "PingFangSC-Regular";
 		font-size: 14px;
 		color: #575757;
 		letter-spacing: 0;
@@ -284,6 +296,7 @@ export default {
 	}
 	.el-checkbox__label {
 		font-family: PingFangSC-Regular;
+		font-family: "PingFangSC-Regular";
 		font-size: 12px;
 		color: #999999;
 		letter-spacing: 0;
@@ -291,7 +304,7 @@ export default {
 	.el-button--primary {
 		background-color: #26d39d !important;
 		height: 46px;
-		font-family: PingFangSC-Regular;
+		font-family: "PingFangSC-Regular";
 		font-size: 14px;
 		color: #ffffff;
 		letter-spacing: 0;
@@ -314,7 +327,7 @@ export default {
 		padding: 2% 3%;
 		box-sizing: border-box;
 		.head-title {
-			font-family: PingFangSC-Regular;
+			font-family: "PingFangSC-Regular";
 			font-size: 16px;
 			color: #dddddd;
 			display: flex;
@@ -361,7 +374,7 @@ export default {
 				margin-left: 10px;
 				justify-content: space-between;
 				.button-text {
-					font-family: PingFangSC-Regular;
+					font-family: "PingFangSC-Regular";
 					font-size: 12px;
 					color: #999999;
 					letter-spacing: 0;

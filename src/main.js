@@ -37,10 +37,14 @@ import StatisticHttp from "@/pages/faceModule/views/statisticalForms/util/Statis
 import FactTragicHttp from "@/pages/faceModule/views/companion/util/FactTragicHttp.js";
 import FaceControlHttp from "@/pages/faceModule/views/faceControl/utils/FaceControlHttp.js";
 import IntelModelHttp from "@/pages/faceModule/views/intelModel/utils/IntelModelHttp.js";
+import ProjectManageAjax from "@/pages/projectManage/utils/ProjectManageAjax.js";
 
 Vue.prototype.$echarts = echarts;
+
 Vue.prototype.$http = Axios;
+
 Vue.config.productionTip = false;
+
 Vue.use(Vuex);
 Vue.use(ElementUI);
 Vue.use(EventBus);
@@ -61,6 +65,7 @@ Vue.use(IntelModelHttp);
 Vue.use(DoorSetAjax);
 Vue.use(ResidentHttp);
 Vue.use(LoginAjax);
+Vue.use(ProjectManageAjax);
 
 /* eslint-disable no-new */
 new Vue({
