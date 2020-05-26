@@ -1,142 +1,105 @@
 <template>
-  <div class='wrap deviceInfo'>
-
-    <div class="deviceInfoPanel">
-      <div class="title cube">
-        查看设备工作状态
-      </div>
-      <el-table ref="doorTableData"
-                :data="doorTableData"
-                tooltip-effect="dark"
-                class='table'
-                style="width: 100%">
-
-        <el-table-column prop="name"
-                         width='450'
-                         label="门名称">
-          <template slot-scope="scope">
-            <span>{{scope.row.name}}</span>
-            <el-tooltip class="item"
-                        effect="dark"
-                        content="互锁"
-                        v-if="scope.row.interlockConfig"
-                        placement="right">
-              <img :src="icons.husuo"
-                   alt="">
-            </el-tooltip>
-            <el-tooltip class="item"
-                        effect="dark"
-                        content="多人组合"
-                        v-if="scope.row.duoren"
-                        placement="right">
-              <img :src="icons.duoren"
-                   alt="">
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column prop="lockStatus"
-                         label="门锁状态">
-        </el-table-column>
-        <el-table-column prop="doorStatus"
-                         label="门状态">
-        </el-table-column>
-        <el-table-column prop="magnetStatus"
-                         label="门磁状态">
-        </el-table-column>
-      </el-table>
-      <el-table ref="dutouTableData"
-                :data="dutouTableData"
-                tooltip-effect="dark"
-                class='table'
-                style="width: 100%">
-
-        <el-table-column prop="name"
-                         width='200'
-                         label="读头">
-        </el-table-column>
-        <el-table-column prop="dutouOnlineStatus"
-                         width='120'
-                         label="读头在线状态">
-        </el-table-column>
-        <el-table-column prop="dutouFangchaiStatus"
-                         width='120'
-                         label="读头防拆状态">
-        </el-table-column>
-        <el-table-column prop="verificationStatus"
-                         label="验证方式">
-          <template slot-scope="scope">
-            <el-tooltip :content="scope.row.verificationStatus">
-              <div>
-                {{scope.row.verificationStatus}}
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column prop="dutouDirection"
-                         label="读头方向">
-        </el-table-column>
-        <el-table-column prop="dutouStatus"
-                         label="读头状态">
-        </el-table-column>
-      </el-table>
-      <el-table ref="equipmentTableData"
-                :data="equipmentTableData"
-                class='table'
-                tooltip-effect="dark"
-                style="width: 100%">
-
-        <el-table-column prop="name"
-                         width='222'
-                         label="设备内容">
-        </el-table-column>
-        <el-table-column prop="value"
-                         label="已使用/总量">
-        </el-table-column>
-      </el-table>
-      <el-table ref="inputTableData"
-                :data="inputTableData"
-                class='table'
-                tooltip-effect="dark"
-                style="width: 100%">
-
-        <el-table-column prop="name"
-                         width='222'
-                         label="报警接入">
-          <template slot-scope="scope">
-            <el-tooltip :content="scope.row.name">
-              <div>
-                {{scope.row.name}}
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status"
-                         label="状态">
-        </el-table-column>
-      </el-table>
-      <el-table ref="outputTableData"
-                :data="outputTableData"
-                class='table'
-                tooltip-effect="dark"
-                style="width: 100%">
-
-        <el-table-column prop="name"
-                         width='222'
-                         label="报警输出">
-          <template slot-scope="scope">
-            <el-tooltip :content="scope.row.name">
-              <div>
-                {{scope.row.name}}
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status"
-                         label="状态">
-        </el-table-column>
-      </el-table>
-    </div>
-  </div>
+	<div class="wrap deviceInfo">
+		<div class="deviceInfoPanel">
+			<div class="title cube">查看设备工作状态</div>
+			<el-table
+				ref="doorTableData"
+				:data="doorTableData"
+				tooltip-effect="dark"
+				class="table"
+				style="width: 100%"
+			>
+				<el-table-column prop="name" width="450" label="门名称">
+					<template slot-scope="scope">
+						<span>{{scope.row.name}}</span>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							content="互锁"
+							v-if="scope.row.interlockConfig"
+							placement="right"
+						>
+							<img :src="icons.husuo" alt />
+						</el-tooltip>
+						<el-tooltip
+							class="item"
+							effect="dark"
+							content="多人组合"
+							v-if="scope.row.duoren"
+							placement="right"
+						>
+							<img :src="icons.duoren" alt />
+						</el-tooltip>
+					</template>
+				</el-table-column>
+				<el-table-column prop="lockStatus" label="门锁状态"></el-table-column>
+				<el-table-column prop="doorStatus" label="门状态"></el-table-column>
+				<el-table-column prop="magnetStatus" label="门磁状态"></el-table-column>
+			</el-table>
+			<el-table
+				ref="dutouTableData"
+				:data="dutouTableData"
+				tooltip-effect="dark"
+				class="table"
+				style="width: 100%"
+			>
+				<el-table-column prop="name" width="200" label="读头"></el-table-column>
+				<el-table-column prop="dutouOnlineStatus" width="120" label="读头在线状态"></el-table-column>
+				<el-table-column prop="dutouFangchaiStatus" width="120" label="读头防拆状态"></el-table-column>
+				<el-table-column prop="verificationStatus" label="验证方式">
+					<template slot-scope="scope">
+						<el-tooltip :content="scope.row.verificationStatus">
+							<div>{{scope.row.verificationStatus}}</div>
+						</el-tooltip>
+					</template>
+				</el-table-column>
+				<el-table-column prop="dutouDirection" label="读头方向"></el-table-column>
+				<el-table-column prop="dutouStatus" label="读头状态"></el-table-column>
+			</el-table>
+			<el-table
+				ref="equipmentTableData"
+				:data="equipmentTableData"
+				class="table"
+				tooltip-effect="dark"
+				style="width: 100%"
+			>
+				<el-table-column prop="name" width="222" label="设备内容"></el-table-column>
+				<el-table-column prop="value" label="已使用/总量"></el-table-column>
+			</el-table>
+			<el-table
+				ref="inputTableData"
+				:data="inputTableData"
+				class="table"
+				tooltip-effect="dark"
+				style="width: 100%"
+			>
+				<el-table-column prop="name" width="222" label="报警接入">
+					<template slot-scope="scope">
+						<el-tooltip :content="scope.row.name">
+							<div>{{scope.row.name}}</div>
+						</el-tooltip>
+					</template>
+				</el-table-column>
+				<el-table-column prop="status" label="状态"></el-table-column>
+			</el-table>
+			<el-table
+				ref="outputTableData"
+				:data="outputTableData"
+				class="table"
+				tooltip-effect="dark"
+				style="width: 100%"
+			>
+				<el-table-column prop="name" width="222" label="报警输出">
+					<template slot-scope="scope">
+						<el-tooltip :content="scope.row.name">
+							<div>{{scope.row.name}}</div>
+						</el-tooltip>
+					</template>
+				</el-table-column>
+				<el-table-column prop="status" label="状态"></el-table-column>
+			</el-table>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -155,7 +118,11 @@ export default {
   methods: {
     getWorkStatus() {
       // alert(this.deviceUuid);
-      let fanyi = JSON.parse(localStorage.localEnums);
+      let localEnums = sessionStorage.getItem("localEnums");
+      if (!localEnums) {
+        localEnums = "";
+      }
+      let fanyi = JSON.parse(localEnums);
       console.log(fanyi.alarm_s);
       api.getDeivceWorkStatus(this.deviceUuid).then(res => {
         console.log(res);
@@ -178,7 +145,7 @@ export default {
                   doorStatus = fanyi.door_s[statusArr[j].statusValue];
                 } else if (statusArr[j].statusType === "doorcontact_enable_s") {
                   magnetStatus =
-                    fanyi.doorcontact_enable_s[statusArr[j].statusValue];
+										fanyi.doorcontact_enable_s[statusArr[j].statusValue];
                 }
               }
               num.push({
@@ -207,7 +174,7 @@ export default {
               for (let j = 0; j < statusArr.length; j++) {
                 if (statusArr[j].statusType === "tamperEnable") {
                   dutouFangchaiStatus =
-                    statusArr[j].statusValue === "0" ? "否" : "是";
+										statusArr[j].statusValue === "0" ? "否" : "是";
                 } else if (statusArr[j].statusType === "onoffline") {
                   dutouOnlineStatus = fanyi.onoffline[statusArr[j].statusValue];
                 } else if (statusArr[j].statusType === "verificationMode") {
@@ -222,7 +189,7 @@ export default {
                   }
                 } else if (statusArr[j].statusType === "direction") {
                   dutouDirection =
-                    statusArr[j].statusValue === "in" ? "进" : "出";
+										statusArr[j].statusValue === "in" ? "进" : "出";
                 } else if (statusArr[j].statusType === "alarm_s") {
                   dutouStatus = fanyi.doorcontact_s[statusArr[j].statusValue];
                 }
@@ -353,41 +320,41 @@ export default {
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
 .wrap {
-  height: 100%;
-  padding: 13px 15px;
-  box-sizing: border-box;
-  overflow: auto;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  .title {
-    display: block;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    @include font-s;
-  }
-  .cube {
-    position: relative;
-    padding-left: 18px;
-    box-sizing: border-box;
-    &::after {
-      content: "";
-      position: absolute;
-      left: 0px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 5px;
-      height: 5px;
-      background-color: #aaa;
-    }
-  }
-  .deviceInfoPanel {
-    width: 750px;
-    margin: 0 auto;
-  }
-  .table {
-    margin-bottom: 25px;
-  }
+	height: 100%;
+	padding: 13px 15px;
+	box-sizing: border-box;
+	overflow: auto;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	.title {
+		display: block;
+		width: 100%;
+		height: 40px;
+		line-height: 40px;
+		@include font-s;
+	}
+	.cube {
+		position: relative;
+		padding-left: 18px;
+		box-sizing: border-box;
+		&::after {
+			content: "";
+			position: absolute;
+			left: 0px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 5px;
+			height: 5px;
+			background-color: #aaa;
+		}
+	}
+	.deviceInfoPanel {
+		width: 750px;
+		margin: 0 auto;
+	}
+	.table {
+		margin-bottom: 25px;
+	}
 }
 </style>

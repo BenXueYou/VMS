@@ -184,7 +184,7 @@ export default {
     // 查看录像
     reviewVideo() {
       this.$store.dispatch("addTagViewItem", {
-        icon: "vistorMange",
+        icon: "VisitorManage",
         name: "VideoPlayback",
         title: "视频回放",
         type: "config",

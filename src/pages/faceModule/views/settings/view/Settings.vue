@@ -191,9 +191,10 @@ export default {
         saveImageUriDay: 0 /* 人脸抓拍人脸图保存天数 */,
         savePanoramauriDay: 0 /* 人脸抓全景图保存天数 */,
         saveAlarmImageType: true /* 人脸报警图片保存天数类型，true长期，false短期 */,
-        savaAlarmIangeDay: 0 /* 人脸报警图片保存天数 */
+        savaAlarmIangeDay: 180 /* 人脸报警图片保存天数 */
       };
       Object.assign(data, this.queryBody);
+      // 过滤输入的非数字的值
       data.savaAlarmIangeDay = data.savaAlarmIangeDay
         .toString()
         .replace(/^(0+)|[^\d]+/g, 0);
@@ -208,19 +209,24 @@ export default {
         .replace(/^(0+)|[^\d]+/g, 0);
       data.similarity = data.similarity.toString().replace(/^(0+)|[^\d]+/g, 0);
       data.alarmSound = this.tags;
-
-      delete data.saveAlarmImageType;
-      delete data.saveQualityLowerImage;
-      delete data.removeDuplicationImage;
-      console.log(data);
+      // 输入框返回的转字符串为number
+      data.savaAlarmIangeDay = Number(data.savaAlarmIangeDay);
+      data.savePanoramauriDay = Number(data.savePanoramauriDay);
+      data.saveImageUriDay = Number(data.saveImageUriDay);
+      data.captureInterval = Number(data.captureInterval);
+      data.similarity = Number(data.similarity);
+      delete data.extInfo;
+      delete this.queryBody.extInfo;
       if (
         Object.getOwnPropertyNames(data).every(item => {
+          if (item === "saveAlarmImageType") return true;
+          if (item === "saveQualityLowerImage") return true;
+          if (item === "removeDuplicationImage") return true;
+          if (data["saveAlarmImageType"] && item === "savaAlarmIangeDay") { return true; }
+          if (typeof data[item] === "boolean") return true;
           return Boolean(data[item]);
         })
       ) {
-        // 无空值
-        Object.assign(data, this.queryBody);
-        console.log(data);
         api
           .postFaceModuleConfig(data)
           .then(res => {
@@ -232,6 +238,7 @@ export default {
           })
           .catch(() => {});
       } else {
+        console.log(data);
         this.$message.warning("基础设置项不允许空值");
       }
     },

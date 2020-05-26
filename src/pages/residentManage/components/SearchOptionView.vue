@@ -48,7 +48,7 @@
 		</div>
 		<div class="btn-group">
 			<el-button
-				:disabled="!this.$common.getAuthIsOwn('居民管理', 'isShow')"
+				:disabled="!ShowAuthDisabled"
 				type="primary"
 				size="small"
 				@click="query"
@@ -62,6 +62,12 @@ export default {
   name: "SearchOptionView",
   props: {
     visible: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    ShowAuthDisabled: {
       type: Boolean,
       default() {
         return false;
@@ -88,7 +94,6 @@ export default {
   methods: {
     query() {
       console.log("注册时间：", this.registerTime);
-
       var createTimeOver = "";
       var createTimeStart = "";
       if (this.registerTime) {

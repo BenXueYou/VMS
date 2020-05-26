@@ -82,7 +82,7 @@ export default {
   methods: {
     confirm() {
       if (!this.name) {
-        this.$message.error("标签名称不可以为空!");
+        this.$message.error("名称不可以为空!");
         return;
       }
       this.$emit("confirm", this.name);

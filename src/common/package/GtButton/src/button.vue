@@ -1,9 +1,11 @@
 <template>
   <button class='gt-button'
           :disabled="disabled"
+          :style="`${disabled ? 'background: rgba(197,202,201, 0.2); cursor: not-allowed' : ''};`"
           @click="clickbutton">
     <img v-if='icon'
          :src="icon"
+         style="width: 15px;"
          alt="">
     <span class='text'
           v-if="showText">
@@ -11,7 +13,7 @@
     </span>
     <span class="close"
           v-if="showClose"
-          @click='close'>
+          @click.stop.prevent='close'>
     </span>
   </button>
 </template>

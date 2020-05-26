@@ -155,6 +155,9 @@ export default {
   },
   methods: {
     exportLog() {
+      if (this.otherSearchData.modelName === "全部") {
+        this.otherSearchData.modelName = null;
+      }
       let url = api.downloadLog({
         page: this.currentPage,
         pageSize: 111111,
@@ -173,6 +176,9 @@ export default {
     },
     initData() {
       if (!this.ShowAuthDisabled) return;
+      if (this.otherSearchData.modelName === "全部") {
+        this.otherSearchData.modelName = null;
+      }
       var params = {
         beginTime: this.validateTimeStart,
         endTime: this.validateTimeEnd,

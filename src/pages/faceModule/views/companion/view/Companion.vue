@@ -38,7 +38,7 @@
 						<elPopverTree
 							:elPopoverClass="faceRecordPopoverClass"
 							@transferCheckedChannel="transferCheckedChannel"
-							:isCheckedAll="true"
+							:isCheckedAll="isCheckedAll"
 							inputWidth="230px"
 						></elPopverTree>
 						<span class="topTitleTxt left-space">抓拍时间间隔：</span>
@@ -112,13 +112,16 @@ export default {
       isLoading: false,
       imageUrl: "",
       ShowAuthDisabled: true,
-      OwnAuthDisabled: true
+      OwnAuthDisabled: true,
+      isOneProject: true,
     };
   },
   created() {},
   mounted() {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("同行人分析", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("同行人分析", "isOwn");
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
     if (this.ShowAuthDisabled) {
       this.initData();
     }
@@ -148,6 +151,7 @@ export default {
       }
     },
     getCompanionList() {
+      this.fellowItemData = [];
       this.isLoading = true;
       this.$factTragicHttp
         .getCompanionList({
@@ -186,6 +190,11 @@ export default {
     }
   },
   watch: {},
+  computed: {
+    isCheckedAll() {
+      return this.isOneProject;
+    }
+  },
   destroyed() {},
   activated() {
     if (this.$route.params.imgObj) {

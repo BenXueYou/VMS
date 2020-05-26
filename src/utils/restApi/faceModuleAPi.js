@@ -17,6 +17,7 @@ export default {
     getTaskDetailChannelAndLibs: (projectUuid, taskUuid) => `${URLHeader}/${projectUuid}/monitoringTask/info/${taskUuid}`,
     // 获取布控任务
     getTaskListApi: projectUuid => `${URLHeader}/${projectUuid}/monitoringTask/info/list`,
+    
     // 根据通道ID获取rtspUrl
     getRtspUrlByChannelUuidApi: projectUuid => `${URLHeaderVideoServer}/${projectUuid}/video/previewInfo`,
 
@@ -67,7 +68,9 @@ export default {
     // 日志查询
     faceComparison1v1: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/faceComparison/1v1?asgName=${projectUuid}`,
     getSnapshotList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/snapshot/list?asgName=${projectUuid}`,
+    // TODO zxd 增加新接口 前缀增加/dashboard
     getRecognizeList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/list?asgName=${projectUuid}`,
+    getRecognizeList_zxd: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/dashboard/recognize/list?asgName=${projectUuid}`,
     getRecognizeInfo: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/recognize/info?asgName=${projectUuid}`,
     getAlarmInfoList: projectUuid => `${URLHeaderFaceLog}/${projectUuid}/alarm/list?asgName=${projectUuid}`,
     // 根据抓拍的UUid查找人脸ID 判断的是是否有人员轨迹
@@ -79,6 +82,7 @@ export default {
   },
   // @fengyawen
   getJudgeList: `${URLHeaderFaceLog}/${projectUuid}/judged/info/list?asgName=${projectUuid}`,
+  handleJudgeDetail: `${URLHeaderFaceLog}/${projectUuid}/judged/info?asgName=${projectUuid}`,
   getModelDev: `${URLHeader}/${projectUuid}/IntelligentModel/channel/list`,
   getJudgeDetails: `${URLHeaderFaceLog}/${projectUuid}/judged/info/recognition/list?asgName=${projectUuid}`,
   searchFace: `${URLHeaderFaceLog}/${projectUuid}/searchFace/list?asgName=${projectUuid}`,
@@ -111,5 +115,6 @@ export default {
   getAlarmSound: `${URLHeader}/${projectUuid}/face/config/alarmSound`,
   tempMonitor: `${URLHeader}/${projectUuid}/monitoringTask/temp/info`,
   getCompareDetail: `${URLHeaderFaceLog}/${projectUuid}/recognize/info?asgName=${projectUuid}`,
-  getTragicList: `${URLHeaderFaceLog}/${projectUuid}/staffTrajectory/list?asgName=${projectUuid}`
+  getTragicList: `${URLHeaderFaceLog}/${projectUuid}/staffTrajectory/list?asgName=${projectUuid}`,
+  getTragicItemList: `${URLHeaderFaceLog}/${projectUuid}/staffTrajectory/singleFace/list?asgName=${projectUuid}`,
 };

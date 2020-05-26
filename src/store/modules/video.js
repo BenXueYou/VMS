@@ -1,25 +1,18 @@
+import { Storage } from "@/utils/Storage";
 const video = {
   state: {
-    iccSignalRule: {},
-    iccMediaRule: {}
+    jDescription: Storage.readSession("jDescription") || {}
   },
   getters: {
-    jSignal(state) {
-      return state.iccSignalRule;
+    jDescription(state) {
+      return state.jDescription;
     },
-    jMedia(state) {
-      return state.iccMediaRule;
-    }
   },
   mutations: {
-    setIccSignalRule(state, res) {
-      window.sessionStorage.setItem("iccSignalRule", JSON.stringify(res));
-      state.iccSignalRule = res;
+    setJDescription(state, res) {
+      state.jDescription = res;
+      Storage.saveSession("jDescription", res);
     },
-    setIccMediaRule(state, res) {
-      window.sessionStorage.setItem("iccMediaRule", JSON.stringify(res));
-      state.iccMediaRule = res;
-    }
   }
 };
 export default video;

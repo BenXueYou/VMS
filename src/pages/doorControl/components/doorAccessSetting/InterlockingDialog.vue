@@ -121,25 +121,16 @@ export default {
           nodeKey: "id",
           selectSingleNode: "door"
         },
-        {
-          id: "2",
-          label: "地址",
-          treeType: "resident",
-          treeNodeType: "door",
-          treeRef: "tree2",
-          nodeKey: "id",
-          selectSingleNode: "door"
-        },
-        {
-          id: "3",
-          label: "标签",
-          treeType: "device",
-          treeNodeType: "door",
-          treeRef: "tree3",
-          isTag: true,
-          nodeKey: "tagUuid",
-          selectSingleNode: "door"
-        }
+        // {
+        //   id: "3",
+        //   label: "标签",
+        //   treeType: "device",
+        //   treeNodeType: "door",
+        //   treeRef: "tree3",
+        //   isTag: true,
+        //   nodeKey: "tagUuid",
+        //   selectSingleNode: "door"
+        // }
       ],
       defaultExpandedKeys: [],
       orgType: "device",
@@ -148,7 +139,27 @@ export default {
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    let projectType = this.$store.state.home.projectType;
+    // 判断不是学校项目则加入基建的选项
+    if (projectType.platformType !== "school") {
+      this.tabs.push({
+        id: "2",
+        label: "地址",
+        treeType: "resident",
+        treeNodeType: "door",
+        treeRef: "tree2",
+        nodeKey: "id",
+        selectSingleNode: "door"
+      });
+      // 按照id 大小排序
+      this.tabs.sort((item1, item2) => {
+        let id1 = Number(item1.id);
+        let id2 = Number(item2.id);
+        return id1 - id2;
+      });
+    }
+  },
   methods: {
     submit() {
       if (!this.inputModel) {

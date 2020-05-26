@@ -2,7 +2,7 @@ import Axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 import store from '@/store/store.js';
 
-let FaceModuleApi = RestApi.api.faceModuleAPi;
+let FaceModuleApi = RestApi.faceModuleAPi;
 /** ******************************************* 检索 ************************************** */
 // 根据布控任务查询关联的设备以及人脸库
 export function getTaskDeatailChannelAndLib(uuid) {
@@ -17,7 +17,13 @@ export function getTaskDeatailChannelAndLib(uuid) {
    * @param {enabled} 布控任务启用状态(1启用，0不启用)
    */
 export function getTaskList(enabled) {
-  let url = FaceModuleApi.baseDataApi.getTaskListApi(store.state.home.projectUuid);
+  let projectUuid = '';
+  if (enabled && enabled.projectUuid) {
+    projectUuid = enabled.projectUuid;
+  } else {
+    projectUuid = store.state.home.projectUuid;
+  }
+  let url = FaceModuleApi.baseDataApi.getTaskListApi(projectUuid);
   return Axios({
     method: 'get',
     url,
@@ -46,7 +52,16 @@ export function getSnapshotList(data) {
 export function getRecognizeList(data) {
   let url = FaceModuleApi.searchLogApi.getRecognizeList(store.state.home.projectUuid);
   return Axios({
-    method: "get",
+    method: "POST",
+    url,
+    data
+  });
+}
+// 识别列表 张旭东 人脸识别查询接口增加dashboard 2020-04-23
+export function getRecognizeListZxd(data) {
+  let url = FaceModuleApi.searchLogApi.getRecognizeList_zxd(store.state.home.projectUuid);
+  return Axios({
+    method: "GET",
     url,
     params: data
   });
@@ -64,9 +79,9 @@ export function getRecognizeInfo(data) {
 export function getAlarmList(data) {
   let url = FaceModuleApi.searchLogApi.getAlarmInfoList(store.state.home.projectUuid);
   return Axios({
-    method: "get",
+    method: "post",
     url,
-    params: data
+    data
   });
 }
 // 是否能跳转人员轨迹

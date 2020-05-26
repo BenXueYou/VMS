@@ -1,207 +1,206 @@
 <template style="background-color:#0C0F1E">
-	<el-row ref="compareRecordHeight" class="CompareRecord">
-		<el-row class="topBox" type="flex" justify="space-between">
-			<div class="topBoxDiv topTitleTxt topBoxTaskBox">
-				任务：
-				<alPopverTree
-					:treeDataList="taskItemList"
-					:alPopoverClass="CRTaskPopoverClass"
-					:defaultProps="defaultProps"
-					nodeKey="faceMonitorUuid"
-					inputWidth="160px"
-					@transferAct="transferTaskAct"
-				></alPopverTree>
-			</div>
-			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
-				抓拍设备：
-				<alPopverTree
-					:treeDataList="DeviceTreeList"
-					:alPopoverClass="CRTaskPopoverClass"
-					:defaultProps="defaultDeviceProps"
-					nodeKey="channelUuid"
-					inputWidth="160px"
-					ref="CPDeviceRef"
-					@transferAct="transferCheckedChannel"
-				></alPopverTree>
-			</div>
-			<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
-				所属库：
-				<alPopverTree
-					:treeDataList="faceDBList"
-					:alPopoverClass="CRTaskPopoverClass"
-					:defaultProps="faceDBDefaultProps"
-					nodeKey="faceLibraryUuid"
-					inputWidth="160px"
-					@transferAct="transferAct"
-				></alPopverTree>
-			</div>
-			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
-				姓名：
-				<el-input placeholder v-model="staffName" />
-			</div>
-			<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
-				证件号：
-				<el-input placeholder v-model="certificateNum" />
-			</div>
-			<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
-				<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
-				<el-radio-group v-model="genderOption">
-					<el-radio-button label>不限</el-radio-button>
-					<el-radio-button label="male">男</el-radio-button>
-					<el-radio-button label="female">女</el-radio-button>
-				</el-radio-group>
-			</div>
-			<div class="topBoxDiv topBoxDateTimeBox">
-				<span class="topTitleTxt" style="margin-right:15px;">时段：</span>
-				<el-date-picker
-					class="left-space"
-					value-format="yyyy-MM-dd HH:mm:ss"
-					v-model="startTime"
-					type="datetime"
-					placeholder="选择日期"
-					@change="selectDate=null"
-				></el-date-picker>
-				<span class="compareRecordTxt">至</span>
-				<el-date-picker
-					class="left-space"
-					value-format="yyyy-MM-dd HH:mm:ss"
-					v-model="endTime"
-					type="datetime"
-					placeholder="选择日期"
-					@change="selectDate=null"
-				></el-date-picker>
-				<div class="topBoxDiv topBoxDateRadioBtnBox" style="display:inline-block;padding-bottom:0px">
-					<el-radio-group style="margin-right:0px" v-model="selectDate" @change="selectDateAct">
-						<el-radio-button label="today">今天</el-radio-button>
-						<el-radio-button label="lastday">昨天</el-radio-button>
-						<el-radio-button label="thisWeek">本周</el-radio-button>
-						<el-radio-button label="thisMonth">本月</el-radio-button>
-					</el-radio-group>
-				</div>
-			</div>
-			<div :span="2" style="margin-top:-15px;">
-				<el-button
-					:disabled="!ShowAuthDisabled"
-					icon="el-icon-search"
-					class="search-btn"
-					@click="queryAct"
-					type="primary"
-				>查询</el-button>
-				<el-button
-					:disabled="!ShowAuthDisabled"
-					class="search-btn"
-					@click="resetQueryAct"
-					type="primary"
-				>重置</el-button>
-			</div>
-		</el-row>
-		<div
-			ref="compareMiddleHeight"
-			v-loading="mainScreenLoading"
-			element-loading-background="rgba(0, 0, 0, 0.8)"
-			class="reccordBoxClass"
-		>
-			<div
-				class="elCardBoxClass"
-				v-for="(item, index) in totalCompareItemList"
-				@dblclick="doComparethis(index)"
-				:key="index"
-			>
-				<recoginize-card
-					imgWidth="90"
-					:recoginizeItem="totalCompareItemList[index]"
-					@detailClick="doComparethis(index)"
-				/>
-			</div>
-		</div>
-		<!-- ==========				:close-on-click-modal="false"
+  <el-row ref="compareRecordHeight"
+          class="CompareRecord">
+    <el-row class="topBox"
+            type="flex"
+            justify="space-between">
+      <!-- <div v-if="!isOneProject"
+           class="topBoxDiv topTitleTxt topBoxTaskBox">
+        请选择小区：
+        <el-select v-model="activeProject"
+                   clearable>
+          <el-option v-for="item in selectData"
+                     :label="item.childProjectName"
+                     :value="item.childProjectUuid"
+                     :key="item.childProjectUuid"></el-option>
+        </el-select>
+      </div> -->
+      <div class="topBoxDiv topTitleTxt topBoxTaskBox">
+        任务：
+        <alPopverTree :treeDataList="taskItemList"
+                      :alPopoverClass="CRTaskPopoverClass"
+                      :defaultProps="defaultProps"
+                      nodeKey="faceMonitorUuid"
+                      inputWidth="160px"
+                      @transferAct="transferTaskAct"></alPopverTree>
+      </div>
+      <div class="topBoxDeviceBox topBoxDiv topTitleTxt"
+           style="text-align:left;">
+        抓拍设备：
+        <alPopverTree :treeDataList="DeviceTreeList"
+                      :alPopoverClass="CRTaskPopoverClass"
+                      :defaultProps="defaultDeviceProps"
+                      nodeKey="channelUuid"
+                      inputWidth="160px"
+                      @transferAct="transferCheckedChannel"></alPopverTree>
+      </div>
+      <div class="topBoxDeviceBox topBoxDiv topTitleTxt"
+           style="text-align:left;display:block">
+        所属库：
+        <alPopverTree :treeDataList="faceDBList"
+                      :alPopoverClass="CRTaskPopoverClass"
+                      :defaultProps="faceDBDefaultProps"
+                      nodeKey="faceLibraryUuid"
+                      inputWidth="160px"
+                      @transferAct="transferAct"></alPopverTree>
+      </div>
+      <div :span="4"
+           class="topTitleTxt topBoxInputBox"
+           style="text-align:left;display:block">
+        姓名：
+        <el-input placeholder
+                  v-model="staffName" />
+      </div>
+      <div :span="4"
+           class="topTitleTxt topBoxInputBox"
+           style="text-align:left;display:block">
+        证件号：
+        <el-input placeholder
+                  v-model="certificateNum" />
+      </div>
+      <div :span="4"
+           class="topBoxDiv topBoxGenderRadioBtnBox">
+        <span class="topTitleTxt"
+              style="margin-right:15px;">性别:</span>
+        <el-radio-group v-model="genderOption">
+          <el-radio-button label>不限</el-radio-button>
+          <el-radio-button label="male">男</el-radio-button>
+          <el-radio-button label="female">女</el-radio-button>
+        </el-radio-group>
+      </div>
+      <div class="topBoxDiv topBoxDateTimeBox">
+        <span class="topTitleTxt"
+              style="margin-right:15px;">时段：</span>
+        <el-date-picker class="left-space"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        v-model="startTime"
+                        type="datetime"
+                        placeholder="选择日期"
+                        @change="selectDate=null"></el-date-picker>
+        <span class="compareRecordTxt">至</span>
+        <el-date-picker class="left-space"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        v-model="endTime"
+                        type="datetime"
+                        placeholder="选择日期"
+                        @change="selectDate=null"></el-date-picker>
+        <div class="topBoxDiv topBoxDateRadioBtnBox"
+             style="display:inline-block;padding-bottom:0px">
+          <el-radio-group style="margin-right:0px"
+                          v-model="selectDate"
+                          @change="selectDateAct">
+            <el-radio-button label="today">今天</el-radio-button>
+            <el-radio-button label="lastday">昨天</el-radio-button>
+            <el-radio-button label="thisWeek">本周</el-radio-button>
+            <el-radio-button label="thisMonth">本月</el-radio-button>
+          </el-radio-group>
+        </div>
+      </div>
+      <div :span="2"
+           style="margin-top:-15px;">
+        <el-button :disabled="!ShowAuthDisabled"
+                   icon="el-icon-search"
+                   class="search-btn"
+                   @click="queryAct"
+                   type="primary">查询</el-button>
+        <el-button :disabled="!ShowAuthDisabled"
+                   class="search-btn"
+                   @click="resetQueryAct"
+                   type="primary">重置</el-button>
+      </div>
+    </el-row>
+    <div ref="compareMiddleHeight"
+         v-loading="mainScreenLoading"
+         element-loading-background="rgba(0, 0, 0, 0.8)"
+         class="reccordBoxClass">
+      <div class="elCardBoxClass"
+           v-for="(item, index) in totalCompareItemList"
+           @dblclick="doComparethis(index)"
+           :key="index">
+        <recoginize-card imgWidth="90"
+                         :recoginizeItem="totalCompareItemList[index]"
+                         @detailClick="doComparethis(index)" />
+      </div>
+    </div>
+    <!-- ==========				:close-on-click-modal="false"
 		v-dialogdrag============================================= 弹 窗 ==========================================================-->
-		<el-dialog
-			class="dialogClass"
-			:close-on-click-modal="false"
-			:visible.sync="dialogVisible"
-			@close="closeDialog"
-			v-dialogDrag
-			title="对比详情"
-		>
-			<dialogview
-				v-loading="dialogfullscreenLoading"
-				element-loading-background="rgba(0, 0, 0, 0.8)"
-				:dialogParama="dialogParama"
-				:shootPhotoList="shootPhotoList"
-				:showImg="showImg"
-				@cs="changeShowStatus"
-			></dialogview>
-		</el-dialog>
-		<!-- ======================================================= 分页器 ========================================================== -->
-		<el-row ref="footerHeight" class="bottomBox" type="flex" justify="flex-end">
-			<el-col :span="24" class="footerPages" style="text-align:right">
-				<el-pagination
-					@size-change="handleSizeChange"
-					@current-change="handleCurrentChange"
-					:current-page="currentPage"
-					layout="total,prev, pager, next,jumper"
-					:page-size="pageSize"
-					:total="total"
-					background
-				></el-pagination>
-			</el-col>
-		</el-row>
-	</el-row>
+    <el-dialog class="dialogClass"
+               :close-on-click-modal="false"
+               :visible.sync="dialogVisible"
+               @close="closeDialog"
+               v-dialogDrag
+               title="对比详情">
+      <dialogview v-loading="dialogfullscreenLoading"
+                  element-loading-background="rgba(0, 0, 0, 0.8)"
+                  :dialogParama="dialogParama"
+                  :shootPhotoList="shootPhotoList"
+                  :showImg="showImg"
+                  @cs="changeShowStatus"></dialogview>
+    </el-dialog>
+    <!-- ======================================================= 分页器 ========================================================== -->
+    <el-row ref="footerHeight"
+            class="bottomBox"
+            type="flex"
+            justify="flex-end">
+      <el-col :span="24"
+              class="footerPages"
+              style="text-align:right">
+        <el-pagination @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       layout="total,prev, pager, next,jumper"
+                       :page-size="pageSize"
+                       :total="total"
+                       background></el-pagination>
+      </el-col>
+    </el-row>
+  </el-row>
 </template>
 <script>
 import dialogview from "@/pages/faceModule/components/dialogForm.vue";
 import elPopverTree from "@/pages/faceModule/components/ElPopverTree.vue";
 import alPopverTree from "@/pages/faceModule/components/AlElTree.vue";
-import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
 import * as api from "@/pages/faceModule/http/logSearchHttp.js";
 export default {
   components: { dialogview, elPopverTree, alPopverTree, RecoginizeCard },
   mounted: function() {
     let h =
-			window.innerHeight ||
-			document.documentElement.clientHeight ||
-			document.body.clientHeight;
+      window.innerHeight ||
+      document.documentElement.clientHeight ||
+      document.body.clientHeight;
     let w =
-			window.innerWidth ||
-			document.documentElement.clientWidth ||
-			document.body.clientWidth;
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth;
     console.log(w);
     h = h - 65;
     this.$refs.compareRecordHeight.$el.style.height = h + "px";
     // 当窗口发生变化时
-    let that = this;
-    window.addEventListener("resize", function() {
-      let h =
-				window.innerHeight ||
-				document.documentElement.clientHeight ||
-				document.body.clientHeight;
-      let w =
-				window.innerWidth ||
-				document.documentElement.clientWidth ||
-				document.body.clientWidth;
-      h = h - 65;
-      console.log(w);
-      if (this.deactivated) return;
-      that.$refs.compareRecordHeight.$el.style.height = h + "px";
-    });
+    window.addEventListener("resize", this.resizeView);
 
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("对比查询", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("对比查询", "isOwn");
 
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    if (this.ShowAuthDisabled) {
-      this.getTaskList();
-    }
+    this.getTaskList();
   },
   activated: function() {
     this.deactivated = false;
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
+    this.getTaskList(false);
   },
   deactivated: function() {
     this.deactivated = true;
     console.log("------deactivated------");
+    window.removeEventListener("resize", this.resizeView);
+  },
+  computed: {
+    // isOneProject() {
+    //   return this.$store.state.home.platformLevel;
+    // }
   },
   watch: {
     DeviceTreeList(val) {
@@ -216,6 +215,15 @@ export default {
     }
   },
   methods: {
+    resizeView() {
+      let h =
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight;
+      h = h - 65;
+      if (this.deactivated) return;
+      this.$refs.compareRecordHeight.$el.style.height = h + "px";
+    },
     resetQueryAct() {
       this.checkedChannelsUuidList = []; // string[]抓拍设备否
       this.checkedTaskUuidList = []; // string[]布控任务否
@@ -225,7 +233,7 @@ export default {
       this.genderOption = ""; // string抓拍性别否
       this.startTime = this.$common.getStartTime();
       this.endTime = this.$common.getCurrentTime();
-      this.selectDate = null;
+      this.selectDate = "today";
       this.$refs.DeviceRef.clearAction();
     },
     transferAct(transferArray) {
@@ -285,9 +293,9 @@ export default {
     queryAct() {
       if (this.startTime && this.endTime) {
         /* eslint-disable */
-				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
-				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
-				/* eslint-enable */
+        var d1 = new Date(this.startTime.replace(/\-/g, "/"));
+        var d2 = new Date(this.endTime.replace(/\-/g, "/"));
+        /* eslint-enable */
         if (this.startTime !== "" && this.endTime !== "" && d1 >= d2) {
           this.$message({
             message: "开始时间必须小于结束时间！",
@@ -326,8 +334,6 @@ export default {
       if (!data.faceMonitorUuids) data.faceMonitorUuids = null;
       if (!data.faceLibraryUuids) data.faceLibraryUuids = null;
       if (!data.genderCapture) data.genderCapture = null;
-      if (!data.staffName) data.staffName = null;
-      if (!data.credentialNo) data.credentialNo = null;
       api
         .getRecognizeList(data)
         .then(res => {
@@ -369,7 +375,7 @@ export default {
       var data = {
         faceUuid: rowData.faceUuid,
         triggerFaceMonitor: 1,
-        limit: 8,
+        limit: 100,
         page: 1
       };
       this.dialogfullscreenLoading = true;
@@ -391,9 +397,10 @@ export default {
     },
     // 获取任务列表
     getTaskList(isTrue = true) {
+      if (!this.ShowAuthDisabled) return;
       this.checkedTaskUuidList = [];
       api
-        .getTaskList()
+        .getTaskList({ projectUuid: this.activeProject })
         .then(res => {
           if (res.data.success) {
             this.taskItemList = res.data.data;
@@ -441,7 +448,7 @@ export default {
             // 月初 则向前退weekday - today天
             // 判断 月大 月小
             let lastMonthDays =
-							[1, 3, 5, 7, 8, 10, 12].indexOf(month + 1) > -1 ? 31 : 30;
+              [1, 3, 5, 7, 8, 10, 12].indexOf(month + 1) > -1 ? 31 : 30;
             firstDay = lastMonthDays - weekday + today;
           }
           let firstdate = new Date(day.getFullYear(), month - 1, firstDay);
@@ -471,21 +478,13 @@ export default {
       }
 
       console.log(this.startTime, "-----", this.endTime);
-    },
-    // 鼠标划过覆盖的hover弹窗事件
-    mymouseover: event => {
-      mouseover(event);
-    },
-    mymouseout(event) {
-      mouseout(event);
-    },
-    mymousemove(event) {
-      mousemove(event);
     }
   },
   data() {
     return {
-      selectDate: null,
+      selectData: [],
+      activeProject: "",
+      selectDate: "today",
       CRTaskPopoverClass: "CRTaskPopoverClass",
       CompareRecordPopoverClass: "CompareRecordPopoverClass",
       totalCompareItemList: new Array(),
@@ -533,464 +532,466 @@ export default {
       certificateNum: null,
       genderOption: "",
       OwnAuthDisabled: true,
-      ShowAuthDisabled: true
+      ShowAuthDisabled: true,
+      isOneProject: true
     };
   }
 };
 </script>
 <style>
 .CompareRecord .el-input--prefix .el-input__inner {
-	padding-left: 10px;
+  padding-left: 10px;
 }
 .CompareRecord .el-input--suffix .el-input__inner {
-	padding-right: 10px;
+  padding-right: 10px;
 }
 
 .CompareRecord .el-button {
-	line-height: 1;
-	background: transparent;
-	border: 0;
-	color: #efefef;
-	text-align: center;
-	box-sizing: border-box;
-	outline: 0;
-	margin: 0;
-	font-weight: 500;
-	padding: 12px 20px;
-	font-size: 14px;
-	border-radius: 4px;
+  line-height: 1;
+  background: transparent;
+  border: 0;
+  color: #efefef;
+  text-align: center;
+  box-sizing: border-box;
+  outline: 0;
+  margin: 0;
+  font-weight: 500;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 4px;
 }
 .CompareRecord .el-input__prefix {
-	left: 110%;
-	-webkit-transform: translateX(-200%);
-	transform: translateX(-200%);
+  left: 110%;
+  -webkit-transform: translateX(-200%);
+  transform: translateX(-200%);
 }
 .CompareRecord .el-checkbox-button__inner,
 .CompareRecord .el-radio-button__inner {
-	background: rgba(255, 255, 255, 0.1);
-	color: #ffffff;
-	margin-right: 9px;
-	border: 1px solid transparent;
-	padding: 8px 20px;
-	font-size: 13px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  margin-right: 9px;
+  border: 1px solid transparent;
+  padding: 8px 20px;
+  font-size: 13px;
 }
 .el-checkbox-button.is-focus .el-checkbox-button__inner,
 .CompareRecord .el-checkbox-button:first-child .el-checkbox-button__inner,
 .CompareRecord .el-radio-button:first-child .el-radio-button__inner {
-	border: 1px solid transparent;
+  border: 1px solid transparent;
 }
 .CompareRecord .topBoxDateRadioBtnBox {
-	min-width: 310px;
+  min-width: 310px;
 }
 .CompareRecord .topBoxGenderRadioBtnBox {
-	min-width: 250px;
+  min-width: 250px;
 }
 .CompareRecord .el-checkbox-button.is-checked .el-checkbox-button__inner,
 .CompareRecord .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-	background: rgba(40, 255, 187, 0.1);
-	border-radius: 2px;
-	border-radius: 2px;
-	border: 1px solid #26d39d;
-	box-shadow: 0px 0 0 0 #26d39d;
+  background: rgba(40, 255, 187, 0.1);
+  border-radius: 2px;
+  border-radius: 2px;
+  border: 1px solid #26d39d;
+  box-shadow: 0px 0 0 0 #26d39d;
 }
 .CompareRecord .topBoxDeviceBox {
-	min-width: 240px;
+  min-width: 240px;
 }
 .CompareRecord .topBoxTaskBox {
-	min-width: 240px;
+  min-width: 240px;
 }
 .CompareRecord .topBoxQualityCheckBox {
-	min-width: 360px;
+  min-width: 360px;
 }
 .CompareRecord .el-checkbox-group {
-	display: inline-block;
+  display: inline-block;
 }
 .topBoxDiv {
-	padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 .CompareRecord .topBoxBtnBox {
-	min-width: 320px;
-	padding-bottom: 20px;
+  min-width: 320px;
+  padding-bottom: 20px;
 }
 .CompareRecord .compareBoxTxt {
-	font-size: 14px;
-	color: #aaaaaa;
+  font-size: 14px;
+  color: #aaaaaa;
 }
 .CompareRecord.el-pagination__jump {
-	margin-left: 24px;
-	font-weight: 400;
-	color: #cccccc;
+  margin-left: 24px;
+  font-weight: 400;
+  color: #cccccc;
 }
 .compareRecordTxt {
-	font-family: "PingFangSC-Regular";
-	font-size: 14px;
-	color: #888888;
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #888888;
 }
 .CompareRecordPopoverClass .is-checked .el-checkbox__inner,
 .CompareRecordPopoverClass
-	.el-checkbox__input.is-indeterminate
-	.el-checkbox__inner {
-	background-color: transparent;
-	border-color: #28ffbb;
-	/* color:#28FFBB; */
+  .el-checkbox__input.is-indeterminate
+  .el-checkbox__inner {
+  background-color: transparent;
+  border-color: #28ffbb;
+  /* color:#28FFBB; */
 }
 .CompareRecordPopoverClass .el-checkbox__inner::after {
-	-webkit-box-sizing: content-box;
-	box-sizing: content-box;
-	content: "";
-	border: 1px solid #28ffbb;
-	border-left: 0;
-	border-top: 0;
-	height: 7px;
-	left: 4px;
-	position: absolute;
-	top: 1px;
-	-webkit-transform: rotate(45deg) scaleY(0);
-	transform: rotate(45deg) scaleY(0);
-	width: 3px;
-	-webkit-transform-origin: center;
-	transform-origin: center;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  content: "";
+  border: 1px solid #28ffbb;
+  border-left: 0;
+  border-top: 0;
+  height: 7px;
+  left: 4px;
+  position: absolute;
+  top: 1px;
+  -webkit-transform: rotate(45deg) scaleY(0);
+  transform: rotate(45deg) scaleY(0);
+  width: 3px;
+  -webkit-transform-origin: center;
+  transform-origin: center;
 }
 .CompareRecordPopoverClass .el-checkbox__inner {
-	display: inline-block;
-	position: relative;
-	border: 1px solid #dcdfe6;
-	border-radius: 2px;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	width: 14px;
-	height: 12px;
-	background-color: transparent;
-	z-index: 1;
-	margin: 0px;
+  display: inline-block;
+  position: relative;
+  border: 1px solid #dcdfe6;
+  border-radius: 2px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 14px;
+  height: 12px;
+  background-color: transparent;
+  z-index: 1;
+  margin: 0px;
 }
 
 .CompareRecordPopoverClass
-	.el-tree--highlight-current
-	.el-tree-node.is-current
-	> .el-tree-node__content {
-	background-color: transparent;
+  .el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: transparent;
 }
 .CRTaskPopoverClass .el-tree,
 .CompareRecordPopoverClass .el-tree {
-	position: relative;
-	cursor: default;
-	background: #202127;
-	color: #efefee;
+  position: relative;
+  cursor: default;
+  background: #202127;
+  color: #efefee;
 }
 .CompareRecordPopoverClass .el-tree-node__content:hover {
-	background-color: #000000;
-	/* color: #; */
+  background-color: #000000;
+  /* color: #; */
 }
 .CompareRecordPopoverClass .el-tree {
-	color: #aaaaaa;
-	background: none;
+  color: #aaaaaa;
+  background: none;
 }
 .CompareRecordPopoverClass .el-tree-node__content:hover {
-	background: none;
+  background: none;
 }
 .CompareRecordPopoverClass .el-tree-node:focus > .el-tree-node__content {
-	background: none;
-	/* color: #28FFBB; */
+  background: none;
+  /* color: #28FFBB; */
 }
 .CRTaskPopoverClass {
-	position: absolute;
-	background: #202127;
-	min-width: 150px;
-	/* border: 1px solid rgba(40,255,187, 1); */
-	padding: 12px;
-	z-index: 2000;
-	color: #606266;
-	line-height: 1.4;
-	text-align: justify;
-	font-size: 14px;
-	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	max-height: 80%;
-	overflow: auto;
+  position: absolute;
+  background: #202127;
+  min-width: 150px;
+  /* border: 1px solid rgba(40,255,187, 1); */
+  padding: 12px;
+  z-index: 2000;
+  color: #606266;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: 14px;
+  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  max-height: 80%;
+  overflow: auto;
 }
 
 .CompareRecordPopoverClass {
-	width: 50%;
-	height: 50%;
-	position: absolute;
-	background: #202127;
-	min-width: 150px;
-	/* border: 1px solid rgba(40,255,187, 1); */
-	padding: 12px;
-	z-index: 2000;
-	color: #606266;
-	line-height: 1.4;
-	text-align: justify;
-	font-size: 14px;
-	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	max-height: 80%;
-	overflow: auto;
+  width: 50%;
+  height: 50%;
+  position: absolute;
+  background: #202127;
+  min-width: 150px;
+  /* border: 1px solid rgba(40,255,187, 1); */
+  padding: 12px;
+  z-index: 2000;
+  color: #606266;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: 14px;
+  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  max-height: 80%;
+  overflow: auto;
 }
 .CompareRecord .el-date-editor.el-input,
 .CompareRecord .el-date-editor.el-input__inner {
-	width: 180px;
+  width: 180px;
 }
 .CompareRecord .dialogClass .el-dialog__body {
-	padding: 0;
-	color: #606266;
-	font-size: 14px;
+  padding: 0;
+  color: #606266;
+  font-size: 14px;
 }
 .CompareRecord .textclipsClass {
-	display: inline-block;
-	/* width: 100%; */
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	-webkit-line-clamp: 1; /*3表示只显示3行*/
-	/* autoprefixer: off */
-	-webkit-box-orient: vertical;
-	/* autoprefixer: on */
+  display: inline-block;
+  /* width: 100%; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1; /*3表示只显示3行*/
+  /* autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /* autoprefixer: on */
 }
 .CompareRecord .el-button--primary {
-	background: rgba(40, 255, 187, 0.15);
-	border: 1px solid rgba(32, 204, 150, 0.8);
-	border-radius: 3px;
-	font-family: "PingFangSC-Regular";
-	font-size: 14px;
-	color: #ffffff;
-	/* margin-left: 8%; */
+  background: rgba(40, 255, 187, 0.15);
+  border: 1px solid rgba(32, 204, 150, 0.8);
+  border-radius: 3px;
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #ffffff;
+  /* margin-left: 8%; */
 }
 .CompareRecord .el-progress .el-progress-circle {
-	transform: rotate(90deg);
-	-ms-transform: rotate(90deg);
-	-webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
 }
 .CompareRecord .topBoxInputBox {
-	width: 220px;
-	padding-bottom: 20px;
+  width: 220px;
+  padding-bottom: 20px;
 }
 .CompareRecord .topBoxInputBox .el-input {
-	width: 160px;
+  width: 160px;
 }
 .CompareRecord .dialogClass {
-	text-align: left;
+  text-align: left;
 }
 .my_el-dialog__header {
-	padding: 20px 20px 10px;
-	height: 58px;
-	box-sizing: border-box;
-	border-bottom: 1px solid rgba(40, 255, 187, 0.2);
+  padding: 20px 20px 10px;
+  height: 58px;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(40, 255, 187, 0.2);
 }
 .CompareRecord .el-dialog__title {
-	line-height: 24px;
-	font-family: "PingFangSC-Regular";
-	font-size: 20px;
-	color: #ffffff;
-	text-align: left;
-	margin-left: 11px;
+  line-height: 24px;
+  font-family: "PingFangSC-Regular";
+  font-size: 20px;
+  color: #ffffff;
+  text-align: left;
+  margin-left: 11px;
 }
 .CompareRecord .el-dialog {
-	width: 920px;
-	height: 760px;
-	position: relative;
-	margin: 0 auto 50px;
-	color: #fff;
-	background: #24272a;
-	border-radius: 3px;
-	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
+  width: 920px;
+  /* height: 760px; */
+  position: relative;
+  margin: 0 auto 50px;
+  color: #fff;
+  background: #24272a;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .CompareRecord .fontColor {
-	font-family: "PingFangSC-Regular";
-	font-size: 16px;
-	color: #cccccc;
-	letter-spacing: 0;
+  font-family: "PingFangSC-Regular";
+  font-size: 16px;
+  color: #cccccc;
+  letter-spacing: 0;
 }
 .CompareRecord .fontTheme {
-	font-family: "PingFangSC-Regular";
-	font-size: 14px;
-	color: rgb(39, 150, 119) !important;
-	letter-spacing: 0;
-	cursor: pointer;
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: rgb(39, 150, 119) !important;
+  letter-spacing: 0;
+  cursor: pointer;
 }
 .CompareRecord .fontThemes {
-	font-family: "PingFangSC-Regular";
-	font-size: 14px;
-	color: #28ffbb;
-	letter-spacing: 0;
-	cursor: pointer;
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #28ffbb;
+  letter-spacing: 0;
+  cursor: pointer;
 }
 .CompareRecord .el-dialog__header {
-	/* display: none; */
-	padding: 20px 20px 10px;
+  /* display: none; */
+  padding: 20px 20px 10px;
 }
 .CompareRecord .el-progress__text {
-	font-size: 14px !important;
-	color: #fff;
-	display: inline-block;
-	vertical-align: middle;
-	/*margin-left: 10px;*/
-	line-height: 1;
+  font-size: 14px !important;
+  color: #fff;
+  display: inline-block;
+  vertical-align: middle;
+  /*margin-left: 10px;*/
+  line-height: 1;
 }
 .CompareRecord .activec .el-progress__text {
-	font-size: 14px !important;
-	color: #ff5f5f !important;
-	display: inline-block;
-	vertical-align: middle;
-	/*margin-left: 10px;*/
-	line-height: 1;
+  font-size: 14px !important;
+  color: #ff5f5f !important;
+  display: inline-block;
+  vertical-align: middle;
+  /*margin-left: 10px;*/
+  line-height: 1;
 }
 .CompareRecord .el-select-dropdown__item {
-	font-size: 14px;
-	padding: 0 20px;
-	position: relative;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	color: #efefef;
-	height: 34px;
-	line-height: 34px;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	cursor: pointer;
+  font-size: 14px;
+  padding: 0 20px;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #efefef;
+  height: 34px;
+  line-height: 34px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 .CompareRecord .el-select-dropdown {
-	position: absolute;
-	z-index: 1001;
-	border: 1px solid #e4e7ed;
-	border-radius: 4px;
-	background: rgba(39, 42, 45, 0.9);
-	box-shadow: 2px 2px 16px 0 rgba(2, 0, 14, 0.3);
-	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	margin: 5px 0;
+  position: absolute;
+  z-index: 1001;
+  border: 1px solid #e4e7ed;
+  border-radius: 4px;
+  background: rgba(39, 42, 45, 0.9);
+  box-shadow: 2px 2px 16px 0 rgba(2, 0, 14, 0.3);
+  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 5px 0;
 }
 .CompareRecord .el-select {
-	width: 50%;
-	display: inline-block;
-	position: relative;
+  width: 50%;
+  display: inline-block;
+  position: relative;
 }
 .CompareRecord .el-select .el-tag {
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	border-color: transparent;
-	margin: 2px 0 2px 6px;
-	color: #e4e7ed;
-	background-color: transparent;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-color: transparent;
+  margin: 2px 0 2px 6px;
+  color: #e4e7ed;
+  background-color: transparent;
 }
 .el-picker-panel {
-	background: #202127;
-	box-shadow: 2px 2px 16px 0 rgba(2, 0, 14, 0.3);
-	color: #ffffff;
-	border: 1px solid #e4e7ed;
-	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	border-radius: 4px;
-	line-height: 30px;
-	margin: 5px 0;
+  background: #202127;
+  box-shadow: 2px 2px 16px 0 rgba(2, 0, 14, 0.3);
+  color: #ffffff;
+  border: 1px solid #e4e7ed;
+  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  line-height: 30px;
+  margin: 5px 0;
 }
 .el-time-spinner__item.active:not(.disabled) {
-	color: #ffffff;
-	font-weight: 700;
+  color: #ffffff;
+  font-weight: 700;
 }
 .el-time-panel {
-	margin: 5px 0;
-	border: 1px solid #e4e7ed;
-	background: #202127;
-	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	border-radius: 2px;
-	position: absolute;
-	width: 180px;
-	left: 0;
-	z-index: 1000;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+  margin: 5px 0;
+  border: 1px solid #e4e7ed;
+  background: #202127;
+  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  position: absolute;
+  width: 180px;
+  left: 0;
+  z-index: 1000;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .el-picker-panel__icon-btn {
-	font-size: 12px;
-	color: #f2f6fc;
-	border: 0;
-	background: 0 0;
-	cursor: pointer;
-	outline: 0;
-	margin-top: 8px;
+  font-size: 12px;
+  color: #f2f6fc;
+  border: 0;
+  background: 0 0;
+  cursor: pointer;
+  outline: 0;
+  margin-top: 8px;
 }
 .CompareRecord .reccordBoxClass {
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	display: flex;
-	flex-wrap: wrap;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-content: flex-start;
-	background: rgba(36, 39, 42, 1);
-	box-sizing: border-box;
-	padding-left: 17px;
-	/* padding-right: 15px; */
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-content: flex-start;
+  background: rgba(36, 39, 42, 1);
+  box-sizing: border-box;
+  padding-left: 17px;
+  /* padding-right: 15px; */
 }
 .CompareRecord .elCardBoxClass {
-	margin: 16px 2% 0 0;
-	color: #ffffff;
-	box-sizing: border-box;
-	border-radius: 2px;
-	overflow: hidden;
+  width: 382px;
+  margin: 16px 10px 0 10px;
+  color: #ffffff;
+  box-sizing: border-box;
+  border-radius: 2px;
+  overflow: hidden;
 }
 .textclipClass {
-	display: inline-block;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	-webkit-line-clamp: 1; /*3表示只显示3行*/
-	/* autoprefixer: off */
-	-webkit-box-orient: vertical;
-	/* autoprefixer: on */
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1; /*3表示只显示3行*/
+  /* autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /* autoprefixer: on */
 }
 .CompareRecord {
-	font-family: Helvetica, sans-serif;
-	text-align: center;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	background: rgb(28, 29, 32);
-	padding: 2%;
+  font-family: Helvetica, sans-serif;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: rgb(28, 29, 32);
+  padding: 2%;
 }
 .CompareRecord .topBox {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: center;
-	padding: 25px 40px 0px 27px;
-	background: rgba(36, 39, 42, 1);
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-	/* overflow-y: auto; */
-	box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 40px 0px 27px;
+  background: rgba(36, 39, 42, 1);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+  /* overflow-y: auto; */
+  box-sizing: border-box;
 }
 .CompareRecord .bottomBox {
-	padding: 25px 27px 20px;
-	display: flex;
-	align-items: center;
-	width: 100%;
-	height: 65px;
-	background: rgb(36, 39, 42);
+  padding: 25px 27px 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 65px;
+  background: rgb(36, 39, 42);
 }
 .topBox .bth-title {
-	opacity: 0.8;
-	font-family: "PingFangSC-Regular";
-	font-size: 14px;
-	color: #ffffff;
+  opacity: 0.8;
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #ffffff;
 }
 .CompareRecord .topTitleTxt {
-	font-family: "PingFangSC-Regular";
-	font-size: 13px;
-	color: #ffffff;
-	text-align: left;
+  font-family: "PingFangSC-Regular";
+  font-size: 13px;
+  color: #ffffff;
+  text-align: left;
 }
 </style>

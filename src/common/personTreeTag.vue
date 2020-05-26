@@ -1,6 +1,6 @@
 <template>
 	<el-dialog
-		class="MyDialogClass dialogCenter"
+		class="MyDialogClass"
 		width="700px"
 		:title="title"
 		:modal="modal"
@@ -155,7 +155,7 @@ export default {
 			console.log(this.dynamicTags);
 			let index = -1;
 			for (var i = 0; i < num.length; i++) {
-				if (num[i].treeName === treeName && num[i].id === data.id) {
+				if ((!num[i].treeName && num[i].id === data.id) ||(num[i].treeName === treeName && num[i].id === data.id)) {
 					index = i;
 					break;
 				}
@@ -212,6 +212,9 @@ export default {
 	font-family: PingFangSC-Regular;
 	font-size: 12px;
 	color: #ffffff;
+}
+.MyDialogClass .left-contain .el-input__inner{
+	padding-left: 30px;
 }
 .MyDialogClass .el-input__prefix {
 	position: absolute;

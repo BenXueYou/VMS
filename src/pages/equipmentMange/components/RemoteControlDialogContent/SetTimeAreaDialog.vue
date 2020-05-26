@@ -6,7 +6,7 @@
              :modal="false"
              :close-on-click-modal="false"
              class="sadDialog"
-             :visible.sync="AddAccesTimeDialogVisible">
+             :visible.sync="AccessTimeDialogVisible">
     <div class='body'>
 
       <el-button class='addIcon'
@@ -17,7 +17,6 @@
              alt="">
         设置时段
       </el-button>
-
       <el-table :data="timeTableData"
                 max-height="380"
                 style="height:250px;"
@@ -57,7 +56,7 @@
                    type="primary">取消</el-button>
       </div>
 
-      <add-access-time-dialog :visible.sync='aaaaaaVisible'
+      <add-access-time-dialog :visible.sync='addAccessTimeDialogVisible'
                               :title="timetitle"
                               :mark="mark"
                               :value="value"
@@ -172,9 +171,9 @@ export default {
       icons,
       name: "",
       data: [],
-      aaaaaaVisible: false,
+      addAccessTimeDialogVisible: false,
       confirmVisible: false,
-      AddAccesTimeDialogVisible: false,
+      AccessTimeDialogVisible: false,
       timeData: [],
       row: {},
       confirmText: "",
@@ -185,7 +184,7 @@ export default {
     };
   },
   mounted() {
-    this.AddAccesTimeDialogVisible = this.visible;
+    this.AccessTimeDialogVisible = this.visible;
   },
   methods: {
     addSuccess() {
@@ -215,7 +214,7 @@ export default {
       this.timetitle = "新增通行时间段";
       this.timeData = [];
       this.row = {};
-      this.aaaaaaVisible = true;
+      this.addAccessTimeDialogVisible = true;
     },
     editRow(row) {
       api.getTimeDetail(row.periodUuid).then(res => {
@@ -249,7 +248,7 @@ export default {
             }
             this.timeData = timeArea;
             console.log(timeArea);
-            this.aaaaaaVisible = true;
+            this.addAccessTimeDialogVisible = true;
           }
         }
       });
@@ -282,7 +281,7 @@ export default {
       } else {
         this.timeTableData = [];
       }
-      this.AddAccesTimeDialogVisible = this.visible;
+      this.AccessTimeDialogVisible = this.visible;
     }
   },
   components: {

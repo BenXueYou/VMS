@@ -6,11 +6,11 @@
   pointer-events: none;
 }
 div[disabled],
-div span[disabled]{
+div span[disabled] {
   pointer-events: none;
   // cursor: not-allowed!important;
   background-color: #82848a !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 span[disabled],
 li[disabled] {
@@ -88,6 +88,7 @@ img,
   left: 0;
   width: 100%;
   height: 100%;
+  outline: none !important;
 }
 .el-image-viewer__canvas img {
   max-width: 75% !important;
@@ -103,6 +104,7 @@ img,
   left: 0;
   opacity: 0.5;
   background: #000;
+  outline: none !important;
 }
 .el-image-viewer__wrapper .el-icon-circle-close:before {
   content: "\E6DB";
@@ -126,6 +128,19 @@ img,
 }
 .el-image-viewer__actions {
   bottom: 20vh;
+}
+.image-slot {
+  width: 100%;
+  height: 100%;
+  background-color: #212325;
+  img {
+    width: 100%;
+    height: 100%;
+    background-color: #212325;
+  }
+}
+.el-image__placeholder {
+  background-color: #212325;
 }
 /**************************************单选框样式*********************************************/
 
@@ -499,7 +514,7 @@ img,
   }
 
   .el-progress-bar__outer {
-    height: 4px !important;
+    height: 4px;
   }
 
   .el-progress-bar__outer {
@@ -692,7 +707,7 @@ $selecthoverColor: rgba(40, 255, 187, 0.05);
 
 $tablehoverColor: rgba(
   $color: #01b5ff,
-  $alpha: 0.05
+  $alpha: 0.05,
 );
 
 /************************* table ***********************************/
@@ -858,7 +873,7 @@ input[type="number"] {
 }
 
 .el-scrollbar .el-scrollbar__wrap {
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 .el-scrollbar__wrap {
   margin-right: -6px !important;
@@ -1007,6 +1022,9 @@ input::-webkit-input-placeholder {
 }
 .el-textarea__inner {
   color: #ffffff;
+  background-color: transparent;
+  border: 1px solid rgba($color: #ffffff, $alpha: 0.15);
+  border-radius: 2px;
 }
 .el-button--default,
 .el-button--default:hover,
@@ -1065,4 +1083,15 @@ input::-webkit-input-placeholder {
 }
 .el-picker-panel__footer {
   border-top: 1px solid rgba($color: #e4e4e4, $alpha: 0.3);
+}
+.el-input.is-disabled .el-input__inner {
+  border-color: rgba($color: #ffffff, $alpha: 0.15);
+}
+.el-radio-button:first-child .el-radio-button__inner {
+  border-left: none;
+}
+a:-webkit-any-link {
+  background-color: none;
+  text-decoration: none;
+  color: #dddddd;
 }

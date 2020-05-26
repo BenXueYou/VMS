@@ -11,12 +11,12 @@
       <div class="body form-item">
         <label class="label"
                for>设备名称：</label>
-        <span class='name'>{{devName}}</span>
+        <span class='name' :title="devName">{{devName}}</span>
       </div>
       <div class="body form-item">
         <label class="label"
                for>通道名称：</label>
-        <span class='name'>{{channelName}}</span>
+        <span class='name' :title="channelName">{{channelName}}</span>
       </div>
       <div class="body form-item">
         <label class="label"
@@ -114,8 +114,8 @@ export default {
         this.devName = this.videoinfo.deviceName;
         this.channelName = this.videoinfo.channelName;
         this.channelType = this.videoinfo.channelType;
-        this.jd = "";
-        this.wd = "";
+        this.jd = this.videoinfo.longitude;
+        this.wd = this.videoinfo.latitude;
       } else {
         this.devName = "";
         this.channelName = "";
@@ -184,6 +184,10 @@ $labelwidth: 8em;
       font-family: "PingFangSC-Regular";
       font-size: 13px;
       color: #dddddd;
+      width: 180px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
     .input {
       width: calc(100% - #{$labelwidth});

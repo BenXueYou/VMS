@@ -96,7 +96,7 @@ export default {
         _this.checkList.push(a);
       }
     });
-    this.dealTime();
+    // this.dealTime();
   },
   methods: {
     updateTime(index, obj) {
@@ -216,6 +216,13 @@ export default {
         weeks: this.checkListNumber,
         timeArea: this.timeSelection
       });
+    },
+    timeArea: {
+      handler(newval, oldVal) {
+        this.timeSelection = newval;
+      },
+      deep: true,
+      immediate: true
     }
   }
 };

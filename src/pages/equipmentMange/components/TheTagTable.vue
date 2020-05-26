@@ -143,39 +143,40 @@ export default {
         return "";
       }
     },
-    viewType: {
-      type: String,
-      default() {
-        return "";
-      }
-    }
+    // viewType: {
+    //   type: String,
+    //   default() {
+    //     return "door,video";
+    //   }
+    // }
   },
   data() {
     return {
+      viewType: "door,video",
       options: [
         {
-          value: null,
-          label: "全部通道类型"
+          key: null,
+          value: "全部通道类型"
         },
         {
-          label: "门禁报警输入",
-          value: "door_aic"
+          value: "门禁报警输入",
+          key: "door_aic"
         },
         {
-          label: "门禁报警输出",
-          value: "door_aoc"
+          value: "门禁报警输出",
+          key: "door_aoc"
         },
         {
-          label: "门",
-          value: "door"
+          value: "门",
+          key: "door"
         },
         {
-          label: "读头",
-          value: "readhead"
+          value: "读头",
+          key: "readhead"
         },
         {
-          label: "门禁视频",
-          value: "chn_door_ipc"
+          value: "门禁视频",
+          key: "chn_door_ipc"
         }
       ],
       cnOptions: [
@@ -271,7 +272,7 @@ export default {
         .then(res => {
           this.showloading = false;
           console.log(res);
-          let fanyi = JSON.parse(localStorage.localEnums);
+          let fanyi = JSON.parse(sessionStorage.localEnums);
           if (res.data.success && res.data.data) {
             let num = res.data.data.list || [];
             for (let i = 0, len = num.length; i < len; i++) {
@@ -313,7 +314,6 @@ export default {
         return;
       }
       // 导入通道的时候去获取下拉列表
-
       this.checkedNode = [];
       this.exportDialogVisible = true;
     },
@@ -375,9 +375,20 @@ export default {
         if (res.data.success) {
           this.$message.success("添加通道成功了！");
           this.exportDialogVisible = false;
-          // alert(this.tagUuid);
           this.$emit("updateTree", this.tagUuid);
           this.getTagList();
+        }
+      });
+    },
+    getChannnelType() {
+      api.getScond(this.viewType).then(res => {
+        if (res.data.data) {
+          let data = res.data.data || [];
+          data.unshift({
+            key: null,
+            value: "全部通道类型"
+          });
+          this.options = data;
         }
       });
     }
@@ -386,28 +397,7 @@ export default {
     let info = this.$refs.tablecontent.getBoundingClientRect();
     this.tableHeight = info.height - 30 - 60 - 36 - 40;
     this.pageSize = ~~(this.tableHeight / 50);
-    // 获取标签列表
-    // this.getTagList();
-    // for (let i = 0; i < this.pageSize; i++) {
-    //   this.tableData.push({
-    //     chanelName: "192.128.1.门" + (i + 1),
-    //     chanelMode: "xxxx门",
-    //     belong: "1313123131",
-    //     sign: "特殊区域",
-    //     status: "移出"
-    //   });
-    // }
-    api.getScond(this.viewType).then(res => {
-      console.log(res);
-      if (res.data.data) {
-        let data = res.data.data || [];
-        data.unshift({
-          key: null,
-          value: "全部通道类型"
-        });
-        this.options = data;
-      }
-    });
+    this.getChannnelType();
   },
   watch: {
     tagUuid(val) {
@@ -417,7 +407,7 @@ export default {
       } else {
         this.tableData = [];
       }
-    }
+    },
   }
 };
 </script>

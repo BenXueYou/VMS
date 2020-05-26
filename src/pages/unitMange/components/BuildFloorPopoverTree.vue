@@ -53,8 +53,9 @@
 </template>
 
 <script>
+import TheLeftmenu from "@/pages/AreaManagement/views/leftWrap";
 export default {
-  components: {},
+  components: { TheLeftmenu },
   props: {
     width: {
       type: String,
@@ -79,7 +80,7 @@ export default {
     lastLevel: {
       type: String,
       default: "floor"
-    },
+    }
   },
   data() {
     return {
@@ -102,12 +103,72 @@ export default {
   created() {},
   mounted() {
     this.initData();
-    document.getElementById("i-input").addEventListener("click", (e) => {
+    document.getElementById("i-input").addEventListener("click", e => {
       e.stopPropagation();
       this.isShowPopover = !this.isShowPopover;
     });
   },
   methods: {
+    getAreaStruct(projectUuid) {
+      return new Promise(resolve => {
+        this.$houseHttp
+          .getAreaStructByProjectUuid(projectUuid, {})
+          .then(res => {
+            let body = res.data || [];
+            let data = [];
+            if (body.data && body.data.id) {
+              data = [
+                {
+                  id: body.data.id,
+                  label: body.data.label,
+                  projectUuid: projectUuid,
+                  type: body.data.type,
+                  children: [],
+                  nextCount: 1
+                }
+              ];
+            }
+            resolve(data);
+          });
+      });
+    },
+    getInfrastructure(projectUuid, parentUuid) {
+      return new Promise(resolve => {
+        this.$houseHttp
+          .getInfrastructureByProjectUuid(projectUuid, {
+            parentUuid
+          })
+          .then(res => {
+            if (!res.data.data) {
+              resolve([]);
+            } else {
+              let data = (res.data.data || []).map(item => {
+                // 记录projectUuid
+                item.projectUuid = projectUuid;
+                return item;
+              });
+              resolve(data);
+            }
+          });
+      });
+    },
+    async addData(data, callback) {
+      console.log(data);
+      if (data.type === "project") {
+        // 传入project-id获取对应的
+        let newArr = await this.getAreaStruct(data.id);
+        callback(newArr);
+      } else {
+        let newArr = await this.getInfrastructure(data.projectUuid, data.id);
+        callback(newArr);
+      }
+    },
+    clickNodeAll(data, node) {
+      // 点击组织和区域树的时候不用管
+      if (data.type !== "organization" && data.type !== "project") {
+        this.$emit("setTreeRootData", data);
+      }
+    },
     initData() {
       if (!this.initTreeRootData) {
         return;
@@ -141,7 +202,10 @@ export default {
               } else {
                 for (let item of res.data.data) {
                   this.$set(item, "leaf", true);
-                  if (item.nextCount !== 0 && item.type !== this.lastLevelType) {
+                  if (
+                    item.nextCount !== 0 &&
+                    item.type !== this.lastLevelType
+                  ) {
                     this.$set(item, "leaf", false);
                   }
                 }
@@ -175,6 +239,7 @@ export default {
       }
     },
     handleNodeClick(obj, node, component) {
+      console.log(node);
       if (!this.isAllCanSelected) {
         if (obj.type === this.lastLevelType) {
           this.afterNodeClick(obj, node, component);
@@ -233,7 +298,7 @@ export default {
     },
     showPopover() {
       this.initData();
-    },
+    }
   },
   watch: {
     filterText(val) {
@@ -244,7 +309,7 @@ export default {
         this.initData();
       },
       deep: true
-    },
+    }
   },
   destroyed() {}
 };

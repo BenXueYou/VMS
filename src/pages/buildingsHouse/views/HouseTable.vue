@@ -2,21 +2,25 @@
   <div class="house-main">
     <div class="access-main">
       <div class="access-search">
-        <el-button :disabled="!OwnAuthDisabled"
+        <el-button v-if="isOneProject"
+                   :disabled="!OwnAuthDisabled"
                    @click="addHouse"
                    type="primary"
                    size="small">新增房屋</el-button>
-        <el-button :disabled="!OwnAuthDisabled"
+        <el-button v-if="isOneProject"
+                   :disabled="!OwnAuthDisabled"
                    style="margin-left: 1%;"
                    @click="batchImport"
                    type="primary"
                    size="small">批量导入</el-button>
-        <el-button :disabled="!OwnAuthDisabled"
+        <el-button v-if="isOneProject"
+                   :disabled="!OwnAuthDisabled"
                    style="margin-left: 1%;"
                    @click="batchExport"
                    type="primary"
                    size="small">批量导出</el-button>
-        <el-button :disabled="!OwnAuthDisabled"
+        <el-button v-if="isOneProject"
+                   :disabled="!OwnAuthDisabled"
                    style="margin-left: 1%;"
                    @click="deleteHouses"
                    type="primary"
@@ -47,13 +51,23 @@
             <div class="house-more-action">
               <span class="topTitleTxtMore"
                     style="margin-left: -40px;">楼栋单元：</span>
-              <build-floor-popover-tree width="170px"
+              <build-floor-popover-tree v-if="isOneProject"
+                                        width="170px"
                                         :initTreeRootData="initTreeRootData"
                                         @setUseData="setUseData"
                                         :nodeText.sync="nodeText"
                                         ref="buildPopoverTree"
                                         :lastLevelType="lastLevelType"
                                         :isAllCanSelected="true" />
+              <two-level-build-floor-popover-tree v-else
+                                                  width="170px"
+                                                  :initTreeRootData="initTreeRootData"
+                                                  @setUseData="setUseData"
+                                                  :nodeText.sync="nodeText"
+                                                  ref="buildPopoverTree"
+                                                  :lastLevelType="lastLevelType"
+                                                  :isAllCanSelected="true" />
+
             </div>
             <div class="house-more-action">
               <span class="topTitleTxtMore">房屋类型：</span>
@@ -87,7 +101,7 @@
                          size="small"
                          style="margin-top:5px;margin-right: 10px;"
                          type="primary">检索</el-button>
-              <el-button :disabled="!ShowAuthDisabled"
+              <el-button :disabled="!OwnAuthDisabled"
                          @click="resetQuery"
                          style="margin-top:5px;"
                          type="text">重置</el-button>
@@ -101,7 +115,8 @@
                     @selection-change="handleSelectionChange"
                     v-loading="isLoading"
                     style="width: 99%">
-            <el-table-column type="selection"></el-table-column>
+            <el-table-column type="selection"
+                             v-if="isOneProject"></el-table-column>
             <el-table-column type="index"
                              label="序号"
                              width="60"></el-table-column>
@@ -142,16 +157,18 @@
                              @click="lookDetail(scope.row)"
                              type="text"
                              size="small">一房一档</el-button>
-                  <el-button :disabled="!OwnAuthDisabled"
-                             @click="editHouse(scope.row)"
-                             type="text"
-                             size="small">编辑</el-button>
-                  <el-button :disabled="!OwnAuthDisabled"
-                             @click="deleteHouse(scope.row)"
-                             type="text"
-                             size="small">
-                    <span :style="OwnAuthDisabled?`color:'#DF5656'`: `color:'#82848a'`">删除</span>
-                  </el-button>
+                  <template v-if="isOneProject">
+                    <el-button :disabled="!OwnAuthDisabled"
+                               @click="editHouse(scope.row)"
+                               type="text"
+                               size="small">编辑</el-button>
+                    <el-button :disabled="!OwnAuthDisabled"
+                               @click="deleteHouse(scope.row)"
+                               type="text"
+                               size="small">
+                      <span :style="`color: ${OwnAuthDisabled ? '#DF5656' : 'gray'}`">删除</span>
+                    </el-button>
+                  </template>
                 </div>
               </template>
             </el-table-column>
@@ -172,17 +189,19 @@
 
 <script>
 import BuildFloorPopoverTree from "@/pages/unitMange/components/BuildFloorPopoverTree";
-
+import TwoLevelBuildFloorPopoverTree from "@/pages/unitMange/components/TwoLevelBuildFloorPopoverTree";
 export default {
   components: {
+    TwoLevelBuildFloorPopoverTree,
     BuildFloorPopoverTree
   },
   props: {},
   data() {
     return {
-      roomName: "",
-      roomsType: "",
-      roomsUse: "",
+      isBHFShow: false,
+      roomName: null,
+      roomsType: null,
+      roomsUse: null,
       lastLevelType: "",
       tableData: [],
       multipleSelection: [],
@@ -201,7 +220,11 @@ export default {
       },
       roomsUuidArr: [],
       ShowAuthDisabled: true,
-      OwnAuthDisabled: true
+      OwnAuthDisabled: true,
+      peopleFilesDialogVisiable: false,
+      peopleStaffUuid: "",
+      projectUuid: "",
+      isOneProject: false // 是否下级平台
     };
   },
   created() {},
@@ -209,7 +232,8 @@ export default {
     // this.initData();
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isOwn");
-    // this.OwnAuthDisabled = false;
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
   },
   methods: {
     initData() {
@@ -224,6 +248,7 @@ export default {
       this.$houseHttp
         .getHouseList({
           infrastructureUuid: this.infrastructureUuid,
+          projectUuid: this.projectUuid,
           roomName: this.roomName,
           roomsType: this.roomsType,
           roomsUse: this.roomsUse,
@@ -240,7 +265,11 @@ export default {
         });
     },
     getHouseListSuccessResponse(body) {
-      this.tableData = body.data.list;
+      let tableData = body.data.list || [];
+      this.tableData = tableData.map(element => {
+        element.projectUuid = this.projectUuid;
+        return element;
+      });
       this.handlePageInfo(body.data);
     },
     handlePageInfo(data) {
@@ -256,14 +285,38 @@ export default {
     },
     setUseData(params) {
       this.infrastructureUuid = params.node.data.id;
+      console.log(this.infrastructureUuid);
     },
     addHouse() {
       this.$emit("addHouse");
     },
-    lookDetail(row) {},
-    editHouse(row) {
-      this.$emit("editHouse", row);
+    lookDetail(row) {
+      // 查看一房一档
+      // this.isBHFShow = !this.isBHFShow;
+      // this.infrastructureUuid = row.infrastructureUuid;
+      // this.projectUuid = row.projectUuid;
+      console.log(row);
+      this.$bus.$emit("showBuildHouseFiles", {
+        projectUuid: row.projectUuid,
+        address: row.address,
+        infrastructureUuid: row.infrastructureUuid,
+        moduleName: "楼栋房屋"
+      });
     },
+    editHouse(row) {
+      // this.$emit("editHouse", row);
+      this.$houseHttp
+        .getDetailInfrastructure(row)
+        .then(res => {
+          if (res.data.success) {
+            this.$emit("editHouse", res.data.data || {});
+          } else {
+            console.log('查询房屋的信息错误');
+          }
+        })
+        .catch(() => {});
+    },
+
     deleteHouse(row) {
       this.roomsUuidArr = [];
       this.formatItems(row);
@@ -327,6 +380,7 @@ export default {
         pageSize: 13,
         currentPage: 1
       };
+      // this.infrastructureUuid = this.initTreeRootData.id;
       this.getHouseList();
     },
     resetQuery() {
@@ -369,6 +423,7 @@ export default {
     initTreeRootData: {
       handler(val) {
         this.infrastructureUuid = val.id;
+        this.projectUuid = val.projectUuid;
         this.resetData();
         this.initData();
       },

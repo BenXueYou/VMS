@@ -139,3 +139,7 @@ $activemenuborder: rgba(40, 255, 187, 0.8);
 .el-form-item.is-success .el-textarea__inner:focus {
   border-color: $add-text-color !important;
 }
+.leftmenu .el-progress .el-progress-bar__outer {
+  width: 230px;
+  height: 10px;
+}

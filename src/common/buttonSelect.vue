@@ -6,7 +6,6 @@
               class="selectInput"
               v-model="selectvalue"
               @click.native='show'>
-
     </el-input>
     <span class='icon'>
       <i class="el-icon-caret-bottom"></i>
@@ -14,7 +13,6 @@
     <el-collapse-transition>
       <div class='selectWrap'
            v-show="showSelect">
-
         <div style="height:180px;overflow:auto;">
           <div class="selectItem"
                v-for="(item,index) in options"
@@ -28,7 +26,6 @@
                  alt="">
           </div>
         </div>
-
         <div class="diviedline"></div>
         <div class="Sbutton"
              @click='add'>

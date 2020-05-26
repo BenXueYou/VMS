@@ -54,7 +54,8 @@
                   <img src="@/assets/images/person_g.png"
                        width="11px"
                        height="11px">
-                  <span style="margin-left: 4px; width: 80px">{{item.faceLibraryName}}</span>
+                  <span class="text-show"
+                        style="margin-left: 4px; width: 100px">{{item.faceLibraryName}}</span>
                   <template v-for="(item, index) in staffTypeOption">
                     <div :key="index"
                          class="system-select">
@@ -212,7 +213,7 @@ export default {
   components: {
     PicQulitySelect,
     SelectFace,
-    SelectVideo,
+    SelectVideo
   },
   props: {
     isAdd: {
@@ -252,32 +253,47 @@ export default {
           { min: 1, max: 32, message: "长度在 1 到 32 个字符", trigger: "blur" }
         ],
         faceSimilarityThreshold: [
-          { required: true, message: "相似度不能为空", trigger: "blur" },
+          { required: true, message: "相似度不能为空", trigger: "blur" }
         ],
         reservedCount: [
           { required: true, message: "目标人列表不能为空", trigger: "blur" },
           { validator: validatorlength, trigger: "blur" }
         ],
         alarmed: [
-          { required: true, message: '请选择是否报警', trigger: 'change' },
+          { required: true, message: "请选择是否报警", trigger: "change" }
         ],
         popup: [
-          { required: true, message: '请选择是否报警弹窗', trigger: 'change' },
+          { required: true, message: "请选择是否报警弹窗", trigger: "change" }
         ],
         taskColour: [
-          { required: true, message: '请选择布控颜色', trigger: 'change' },
+          { required: true, message: "请选择布控颜色", trigger: "change" }
         ],
         faceCapturePhotoQualities: [
-          { type: 'array', required: true, message: '请选择图片需达到的质量', trigger: 'change' },
+          {
+            type: "array",
+            required: true,
+            message: "请选择图片需达到的质量",
+            trigger: "change"
+          }
         ],
         faceLibraryUuids: [
-          { type: 'array', required: true, message: '请选择人脸库', trigger: 'change' },
+          {
+            type: "array",
+            required: true,
+            message: "请选择人脸库",
+            trigger: "change"
+          }
         ],
         channelUuids: [
-          { type: 'array', required: true, message: '请选择视频源', trigger: 'change' },
+          {
+            type: "array",
+            required: true,
+            message: "请选择视频源",
+            trigger: "change"
+          }
         ],
         alarmSoundUrl: [
-          { required: true, message: '请选择报警声音', trigger: 'change' },
+          { required: true, message: "请选择报警声音", trigger: "change" }
         ]
       },
       isShowAddFaceDB: false,
@@ -287,7 +303,7 @@ export default {
       staffTypeOption: [],
       initSelectFaceData: [],
       initSelectVideoData: [],
-      alarmSoundOption: [],
+      alarmSoundOption: []
     };
   },
   created() {},
@@ -374,7 +390,10 @@ export default {
         });
     },
     addFaceDB() {
-      this.initSelectFaceData = this.$common.copyArray(this.faceDBSelectedList, this.initSelectFaceData);
+      this.initSelectFaceData = this.$common.copyArray(
+        this.faceDBSelectedList,
+        this.initSelectFaceData
+      );
       this.isShowAddFaceDB = true;
     },
     confirmAddFaceDB(val) {
@@ -387,13 +406,16 @@ export default {
       this.faceDBSelectedList.forEach(v => {
         this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
       });
-      this.$refs.monitorForm.validateField('faceLibraryUuids');
+      this.$refs.monitorForm.validateField("faceLibraryUuids");
     },
     cancelAddFaceDB() {
       this.isShowAddFaceDB = false;
     },
     addVideoSource() {
-      this.initSelectVideoData = this.$common.copyArray(this.videoSrcSelectedList, this.initSelectVideoData);
+      this.initSelectVideoData = this.$common.copyArray(
+        this.videoSrcSelectedList,
+        this.initSelectVideoData
+      );
       this.isShowAddVideoSrc = true;
     },
     confirmAddVideoSrc(val) {
@@ -406,7 +428,7 @@ export default {
       this.videoSrcSelectedList.forEach(v => {
         this.formLabelAlign.channelUuids.push(v.channelUuid);
       });
-      this.$refs.monitorForm.validateField('channelUuids');
+      this.$refs.monitorForm.validateField("channelUuids");
     },
     cancelAddVideoSrc() {
       this.isShowAddVideoSrc = false;
@@ -422,7 +444,7 @@ export default {
       this.faceDBSelectedList.forEach(v => {
         this.formLabelAlign.faceLibraryUuids.push(v.faceLibraryUuid);
       });
-      this.$refs.monitorForm.validateField('faceLibraryUuids');
+      this.$refs.monitorForm.validateField("faceLibraryUuids");
     },
     deleteVideoItem(item) {
       this.formLabelAlign.channelUuids = [];
@@ -435,12 +457,15 @@ export default {
       this.videoSrcSelectedList.forEach(v => {
         this.formLabelAlign.channelUuids.push(v.channelUuid);
       });
-      this.$refs.monitorForm.validateField('channelUuids');
+      this.$refs.monitorForm.validateField("channelUuids");
     },
     setFromDataForEdit(detailData) {
       this.faceDBSelectedList = [];
       this.videoSrcSelectedList = [];
-      this.formLabelAlign = this.$common.copyObject(detailData, this.formLabelAlign);
+      this.formLabelAlign = this.$common.copyObject(
+        detailData,
+        this.formLabelAlign
+      );
       this.$set(this.formLabelAlign, "faceLibraryUuids", []);
       this.$set(this.formLabelAlign, "channelUuids", []);
       if (this.formLabelAlign.libraryList) {
@@ -496,7 +521,7 @@ export default {
   watch: {
     "formLabelAlign.faceCapturePhotoQualities": {
       handler(val) {
-        this.$refs.monitorForm.validateField('faceCapturePhotoQualities');
+        this.$refs.monitorForm.validateField("faceCapturePhotoQualities");
       },
       deep: true
     }

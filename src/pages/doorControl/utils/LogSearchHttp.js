@@ -8,21 +8,33 @@ export var LogSearchHttp = {
   /**
    * 门禁记录列表查询
    */
-  getDoorLog(holder) {
-    let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.getDoorLog}`;
+  getDoorLog(holder, moduleHead) {
+    let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.getDoorLog(holder.projectUuid)}`;
     let params = {};
     for (let k in holder) {
       if (holder[k] !== "" && holder[k] !== null && holder[k] !== undefined) {
         params[k] = holder[k];
       }
     }
-    return axios.get(api, {params: params});
+    return moduleHead ? axios.get(api, {headers: moduleHead.headers, params: params}) : axios.get(api, {params: params});
   },
+  // 张旭东  开门记录查询接口增加dashboard 2020-04-23
+  getDoorLog_zxd(holder, moduleHead) {
+    let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.getDoorLog_zxd(holder.projectUuid)}`;
+    let params = {};
+    for (let k in holder) {
+      if (holder[k] !== "" && holder[k] !== null && holder[k] !== undefined) {
+        params[k] = holder[k];
+      }
+    }
+    return moduleHead ? axios.get(api, {headers: moduleHead.headers, params: params}) : axios.get(api, {params: params});
+  },
+
   /**
    * 报警记录列表查询
    */
-  getAlarmLog(holder) {
-    let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.getAlarmLog}`;
+  getAlarmLog(holder, moduleHead) {
+    let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.getAlarmLog(holder.projectUuid)}`;
 
     let params = {};
     for (let k in holder) {
@@ -30,7 +42,7 @@ export var LogSearchHttp = {
         params[k] = holder[k];
       }
     }
-    return axios.get(api, {params: params});
+    return moduleHead ? axios.get(api, {headers: moduleHead.headers, params: params}) : axios.get(api, {params: params});
   },
   // 报警记录详情
   getAlarmLogDetail(holder) {
@@ -111,10 +123,13 @@ export var LogSearchHttp = {
   /**
    * 远程控制门状态
    */
-  handleDoorStatus(holder) {
+  handleDoorStatus(holder, moduleHead) {
     let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.handleDoorStatus(holder.channelUuid, holder.action)}`;
-
-    return axios.put(api);
+    let data = {};
+    for (let k in holder) {
+      data[k] = holder[k];
+    }
+    return moduleHead ? axios.put(api, data, moduleHead) : axios.put(api);
   },
   /**
    * 获取门状态统计
@@ -142,6 +157,34 @@ export var LogSearchHttp = {
       data[k] = holder[k];
     }
     return axios.post(api, data);
+  },
+  /**
+   * 查询人员预警记录
+   */
+  getWarningRecord(holder) {
+    let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.getWarningRecord}`;
+
+    let params = {};
+    for (let k in holder) {
+      if (holder[k]) {
+        params[k] = holder[k];
+      }
+    }
+    return axios.get(api, {params: params});
+  },
+  /**
+   * 查询预警主题
+   */
+  getThemeList(holder) {
+    let api = `${protocolHeader}${ip}${RestApi.api.recordSearch.getThemeList}`;
+
+    let params = {};
+    for (let k in holder) {
+      if (holder[k]) {
+        params[k] = holder[k];
+      }
+    }
+    return axios.get(api, {params: params});
   },
 };
 

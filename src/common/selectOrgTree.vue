@@ -20,9 +20,6 @@
       </el-input>
       <el-scrollbar style="height: 87%;"
                     class="i-tree-style">
-        <!-- <el-tree :data="data"
-                 :props="defaultProps"
-                 @node-click="handleNodeClick"></el-tree> -->
         <el-tree :data="data"
                  :props="defaultProps"
                  node-key="id"
@@ -83,74 +80,23 @@ export default {
       default() {
         return true;
       }
+    },
+    isOneProject: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       checkedKeys: [],
       treeData: [],
-      data: [
-        {
-          label: "一级 1",
-          children: [
-            {
-              label: "二级 1-1",
-              children: [
-                {
-                  label: "三级 1-1-1"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: "一级 2",
-          children: [
-            {
-              label: "二级 2-1",
-              children: [
-                {
-                  label: "三级 2-1-1"
-                }
-              ]
-            },
-            {
-              label: "二级 2-2",
-              children: [
-                {
-                  label: "三级 2-2-1"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: "一级 3",
-          children: [
-            {
-              label: "二级 3-1",
-              children: [
-                {
-                  label: "三级 3-1-1"
-                }
-              ]
-            },
-            {
-              label: "二级 3-2",
-              children: [
-                {
-                  label: "三级 3-2-1"
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      data: [],
       nodeText: "",
       defaultProps: {
         children: "children",
         label: "label",
-        isLeaf: "isLeaf"
+        isLeaf: "isLeaf",
+        disabled: true
       },
       defaultExpKeys: [],
       labelArr: [],
@@ -342,7 +288,7 @@ export default {
   watch: {
     aaaaaa() {
       this.checkedUuid = this.aaaaaa;
-       console.log(this.aaaaaa);
+      console.log(this.aaaaaa);
     },
     visible(val) {
       if (val) {
@@ -379,9 +325,6 @@ export default {
     background: #2a2e31 !important;
   }
   .el-tree-node__content {
-    .checked-img {
-      // display: none;
-    }
     &:focus {
       .checked-img {
         display: block;

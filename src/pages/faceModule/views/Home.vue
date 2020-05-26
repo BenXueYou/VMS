@@ -1,240 +1,244 @@
 <template>
-	<div id="home" class="RTask">
-		<el-row type="flex" class="row-bg" justify="center" ref="heightBox">
-			<el-container style>
-				<el-header>
-					<el-popover
-						ref="popverBox"
-						popper-class="elPopoverClass"
-						:visible-arrow="false"
-						v-model="visible_popver"
-						placement="right"
-						trigger="click"
-					>
-						<el-row class="taskParentBox">
-							<el-row class="taskParent taskParentPopoverBox">
-								<el-tree
-									ref="deviceTree"
-									:props="defaultProps"
-									:check-strictly="true"
-									:highlight-current="true"
-									:indent="10"
-									:expand-on-click-node="false"
-									:data="deviceTreeList"
-									lazy
-									:load="loadNode"
-									node-key="id"
-									:default-expanded-keys="defaultExpandedKeys"
-									@node-click="handleNodeClick"
-								></el-tree>
-							</el-row>
-							<el-row class="taskParent taskParentBgClass">
-								<div class="checkBoxTitle">
-									<el-checkbox
-										class="checkBoxClass"
-										v-model="notCheckAll"
-										@change="handleCheckAllChange"
-									>只呈现单路摄像机</el-checkbox>
-								</div>
-								<el-radio-group
-									v-if="channelInfoList"
-									class="taskParent radioGroup"
-									v-model="checkedChannel"
-									@change="handleCheckedCitiesChange"
-								>
-									<el-radio
-										class="el-radio-myclass"
-										:disabled="!OwnAuthDisabled"
-										v-for="(channelItem,index) in channelInfoList"
-										:label="channelItem"
-										:key="index"
-									>
-										<img
-											class="radioIcon"
-											:src="getIcon(channelItem.chnOnlineOrNot,channelItem.channelType)"
-											alt
-											srcset
-										/>
-										{{channelItem.nickName}}
-									</el-radio>
-								</el-radio-group>
-								<el-row v-else style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
-							</el-row>
-						</el-row>
-						<el-row slot="reference">
-							<img src="@/assets/sxj.png" alt />
-							<el-button :disabled="!ShowAuthDisabled" class="leftflexButton">选择摄像机</el-button>
-							<img src="@/assets/drop-down.png" alt />
-						</el-row>
-					</el-popover>
-				</el-header>
-				<el-main style="position: relative;" ref="mainHeightBox">
-					<!-- 视频播放区域 -->
-					<div
-						class="main-box"
-						v-loading="mainVideoScreenLoading"
-						element-loading-background="rgba(0, 0, 0, 0.8)"
-					>
-						<div id="poster_img"></div>
-						<div ref="canvasRefs" id="player" class="fill"></div>
-					</div>
-				</el-main>
-				<!-- 底部人脸抓拍记录图片list -->
-				<el-footer :height="footerHeight">
-					<el-row type="flex" justify="space-between" class="footer-top-row">
-						<el-col :span="8" class="imgTxtClass" style="min-width: 115px;text-align:left;">
-							<img
-								style="margin-right:12px"
-								:src="footerLiftType?require('@/assets/icon/stream-people.png'):require('@/assets/icon/face-photo.png')"
-							/>
-							<span>{{!footerLiftType?"人脸抓拍数：":"人流量统计结果"}}</span>
-							<span v-if="!footerLiftType">{{todayShootCount}}张</span>
-						</el-col>
-						<el-col :span="16" class="asidFontColor asidHeaderTxt">
-							<template v-if="$common.getAuthIsOwn('抓拍查询', 'isShow')">
-								<router-link
-									style="padding:0px 6px 0 30px;font-size:14px"
-									class="fontTheme"
-									to="FaceRecord"
-								>
-									更多
-									<img style="margin-left:6px" src="@/assets/icon/more.png" alt="更多" />
-								</router-link>
-							</template>
-							<el-switch
-								@change="footerTypeAct"
-								v-model="footerLiftType"
-								active-color="rgb(11,49,49)"
-								inactive-color="rgb(11,49,49)"
-							></el-switch>
-						</el-col>
-					</el-row>
-					<el-row type="flex" v-show="!footerLiftType" class="footerRowClass" justify="space-between">
-						<el-col
-							ref="footerCardImgHeight"
-							class="footerCardClass"
-							:span="3"
-							v-for="(o,index) in 9"
-							:key="index"
-						>
-							<img-card :photoItem="photoList[index]" />
-						</el-col>
-					</el-row>
-					<el-row class="bar_botClass" v-show="footerLiftType">
-						<el-row
-							v-loading="fullscreenLoading"
-							element-loading-background="rgba(0, 0, 0, 0.8)"
-							ref="canvsWidth"
-							id="bar_bot"
-						></el-row>
-					</el-row>
-				</el-footer>
-			</el-container>
-			<!--- 右侧的识别信息  --->
-			<el-aside :width="asideWidth" class="asidClass">
-				<el-row type="flex" justify="space-between" class="aside-row">
-					<el-col class="textclipsClass fontColor asidHeader asidColumsLeftClass" :span="12">
-						<div class="asidColumsLeftClass imgTxtClass" style="min-width:97px">
-							<img style="margin-right:12px" src="@/assets/icon/task.png" />
-							<span class="el-dropdown-link textclipsClass">订阅任务：</span>
-						</div>
-						<el-popover
-							popper-class="RTreePopoverClass"
-							placement="bottom"
-							@show="popverShow('tree')"
-							@hide="popverHidden('tree')"
-							trigger="click"
-						>
-							<el-checkbox
-								:indeterminate="isIndeterminate"
-								v-model="checkTaskAll"
-								@change="handleTaskCheckAllChange"
-							>全选</el-checkbox>
-							<el-tree
-								ref="tree"
-								:data="taskList"
-								show-checkbox
-								node-key="faceMonitorUuid"
-								:props="defaultTreeProps"
-								default-expand-all
-								@check="checkChanges"
-							></el-tree>
-							<el-row slot="reference" style="width:100%">
-								<el-button
-									class="leftflexButton textclipsClass"
-									style="width:calc(100% - 15px);padding:10px 4px;!important"
-								>
-									<span
-										class="textclipsClass"
-										@mouseover="mymouseover"
-										@mouseout="mymouseout"
-										@mousemove="mymousemove"
-									>{{asidDropdownMednu}}</span>
-								</el-button>
-								<!-- <img src="@/assets/drop-down.png" alt /> -->
-								<i class="el-icon-caret-bottom"></i>
-							</el-row>
-						</el-popover>
-					</el-col>
-					<el-col :span="12" class="asidFontColor asidColumsRightClass imgTxtClass">
-						<span
-							class="asidFontColor"
-							style="margin-right:12px;"
-							@mouseover="mymouseover"
-							@mouseout="mymouseout"
-							@mousemove="mymousemove"
-						>今日次数：{{todayCompareCount}}人</span>
-						<template v-if="$common.getAuthIsOwn('对比查询', 'isShow')">
-							<router-link class="fontTheme" to="CompareRecord">更多</router-link>
-							<img style="padding-right:15px" src="@/assets/icon/more.png" />
-						</template>
-					</el-col>
-				</el-row>
-				<el-row class="asidListBox">
-					<div
-						class="asidListRow"
-						v-for="(o,index) in 5"
-						@dblclick="doRecoginizeDetail(index)"
-						:key="index"
-					>
-						<recoginize-card
-							imgWidth="99"
-							:recoginizeItem="comparePhotoList[index]"
-							@detailClick="doRecoginizeDetail(index)"
-						/>
-					</div>
-				</el-row>
-			</el-aside>
-		</el-row>
-		<!-- ======================================================= 弹 窗 ========================================================== -->
-		<el-dialog class="HomeDialogClass" :visible.sync="dialogVisible" @close="closeDialog">
-			<el-row>
-				<div class="my_el-dialog__header">
-					<span class="el-dialog__title">对比详情</span>
-					<button type="button" aria-label="Close" class="el-dialog__headerbtn">
-						<i class="el-dialog__close el-icon el-icon-close" @click="dialogVisible = false"></i>
-					</button>
-				</div>
-			</el-row>
-			<dialogview
-				:dialogParama="dialogParama"
-				v-loading="dialogfullscreenLoading"
-				element-loading-background="rgba(0, 0, 0, 0.8)"
-			></dialogview>
-		</el-dialog>
-	</div>
+  <div id="home"
+       class="RTask">
+    <el-row type="flex"
+            class="row-bg"
+            justify="center"
+            ref="heightBox">
+      <el-container style>
+        <el-header>
+          <el-popover ref="popverBox"
+                      popper-class="elPopoverClass"
+                      :visible-arrow="false"
+                      v-model="visible_popver"
+                      placement="right"
+                      trigger="click">
+            <el-row class="taskParentBox">
+              <el-row class="taskParent taskParentPopoverBox">
+                <the-leftmenu v-if="!isOneProject"
+                              ref="leftMenu"
+                              :ShowAuthDisabled="ShowAuthDisabled"
+                              :OwnAuthDisabled="OwnAuthDisabled"
+                              :isOnlyArea="false"
+                              @clickNode="clickNodeAll"
+                              @addData="addData"
+                              :isShowInput="false"
+                              orgType="areaOrg">
+                </the-leftmenu>
+                <el-tree v-else
+                         ref="deviceTree"
+                         :props="defaultProps"
+                         :check-strictly="true"
+                         :highlight-current="true"
+                         :indent="10"
+                         :expand-on-click-node="false"
+                         :data="deviceTreeList"
+                         lazy
+                         :load="loadNode"
+                         node-key="id"
+                         :default-expanded-keys="defaultExpandedKeys"
+                         @node-click="handleNodeClick"></el-tree>
+              </el-row>
+              <el-row class="taskParent taskParentBgClass">
+                <div class="checkBoxTitle">
+                  <el-checkbox class="checkBoxClass"
+                               v-model="showSingleChannel"
+                               @change="handleCheckAllChange">只呈现单路摄像机</el-checkbox>
+                </div>
+                <el-radio-group v-if="channelInfoList"
+                                class="taskParent radioGroup"
+                                v-model="checkedChannel"
+                                @change="handleCheckedCitiesChange">
+                  <el-radio class="el-radio-myclass"
+                            :disabled="!OwnAuthDisabled"
+                            v-for="(channelItem,index) in channelInfoList"
+                            :label="channelItem"
+                            :key="index">
+                    <img class="radioIcon"
+                         :src="getIcon(channelItem.chnOnlineOrNot,channelItem.channelType)"
+                         alt
+                         srcset />
+                    {{channelItem.nickName}}
+                  </el-radio>
+                </el-radio-group>
+                <el-row v-else
+                        style="margin:15px;color:#ffffff">任务没有关联摄像机</el-row>
+              </el-row>
+            </el-row>
+            <el-row slot="reference">
+              <img src="@/assets/sxj.png"
+                   alt />
+              <el-button :disabled="!ShowAuthDisabled"
+                         class="leftflexButton">选择摄像机</el-button>
+              <img src="@/assets/drop-down.png"
+                   alt />
+            </el-row>
+          </el-popover>
+        </el-header>
+        <el-main style="position: relative;"
+                 ref="mainHeightBox">
+          <!-- 视频播放区域 -->
+          <div class="main-box"
+               v-loading="mainVideoScreenLoading"
+               element-loading-background="rgba(0, 0, 0, 0.8)">
+            <div id="poster_img"></div>
+            <div ref="canvasRefs"
+                 id="player"
+                 class="fill"></div>
+          </div>
+        </el-main>
+        <!-- 底部人脸抓拍记录图片list -->
+        <el-footer :height="footerHeight">
+          <el-row type="flex"
+                  justify="space-between"
+                  class="footer-top-row">
+            <el-col :span="8"
+                    class="imgTxtClass"
+                    style="min-width: 115px;text-align:left;">
+              <img style="margin-right:12px"
+                   :src="footerLiftType?require('@/assets/icon/stream-people.png'):require('@/assets/icon/face-photo.png')" />
+              <span>{{!footerLiftType?"人脸抓拍数：":"人流量统计结果"}}</span>
+              <span v-if="!footerLiftType">{{todayShootCount}}张</span>
+            </el-col>
+            <el-col :span="16"
+                    class="asidFontColor asidHeaderTxt">
+              <template v-if="$common.getAuthIsOwn('抓拍查询', 'isShow')">
+                <router-link style="padding:0px 6px 0 30px;font-size:14px"
+                             class="fontTheme"
+                             to="FaceRecord">
+                  更多
+                  <img style="margin-left:6px"
+                       src="@/assets/icon/more.png"
+                       alt="更多" />
+                </router-link>
+              </template>
+              <el-switch @change="footerTypeAct"
+                         v-model="footerLiftType"
+                         active-color="rgb(11,49,49)"
+                         inactive-color="rgb(11,49,49)"></el-switch>
+            </el-col>
+          </el-row>
+          <el-row type="flex"
+                  v-show="!footerLiftType"
+                  class="footerRowClass"
+                  justify="space-between">
+            <el-col ref="footerCardImgHeight"
+                    class="footerCardClass"
+                    :span="3"
+                    v-for="(o,index) in 9"
+                    :key="index">
+              <img-card :photoItem="photoList[index]" />
+            </el-col>
+          </el-row>
+          <el-row class="bar_botClass"
+                  v-show="footerLiftType">
+            <el-row v-loading="fullscreenLoading"
+                    element-loading-background="rgba(0, 0, 0, 0.8)"
+                    ref="canvsWidth"
+                    id="bar_bot"></el-row>
+          </el-row>
+        </el-footer>
+      </el-container>
+      <!--- 右侧的识别信息  --->
+      <el-aside :width="asideWidth"
+                class="asidClass">
+        <el-row type="flex"
+                justify="space-between"
+                class="aside-row">
+          <el-col class="textclipsClass fontColor asidHeader asidColumsLeftClass"
+                  :span="12">
+            <div class="asidColumsLeftClass imgTxtClass"
+                 style="width:97px">
+              <img style="margin-right:12px"
+                   src="@/assets/icon/task.png" />
+              <span class="el-dropdown-link textclipsClass">订阅任务：</span>
+            </div>
+            <el-popover popper-class="RTreePopoverClass"
+                        placement="bottom"
+                        @show="popverShow('tree')"
+                        @hide="popverHidden('tree')"
+                        trigger="click">
+              <el-checkbox :indeterminate="isIndeterminate"
+                           v-model="checkTaskAll"
+                           @change="handleTaskCheckAllChange">全选</el-checkbox>
+              <el-tree ref="tree"
+                       :data="taskList"
+                       show-checkbox
+                       node-key="faceMonitorUuid"
+                       :props="defaultTreeProps"
+                       default-expand-all
+                       @check="checkChanges"></el-tree>
+              <el-row slot="reference">
+                <el-button class="leftflexButton textclipsClass">
+                  <span class="textclipsClass"
+                        @mouseover="mymouseover"
+                        @mouseout="mymouseout"
+                        @mousemove="mymousemove">{{asidDropdownMednu}}</span>
+                </el-button>
+                <!-- <img src="@/assets/drop-down.png" alt /> -->
+                <i class="el-icon-caret-bottom"></i>
+              </el-row>
+            </el-popover>
+          </el-col>
+          <el-col :span="12"
+                  class="asidFontColor asidColumsRightClass imgTxtClass">
+            <span class="asidFontColor"
+                  style="margin-right:12px;"
+                  @mouseover="mymouseover"
+                  @mouseout="mymouseout"
+                  @mousemove="mymousemove">今日次数：{{todayCompareCount}}人</span>
+            <template v-if="$common.getAuthIsOwn('对比查询', 'isShow')">
+              <router-link class="fontTheme"
+                           to="CompareRecord">更多</router-link>
+              <img style="padding-right:15px"
+                   src="@/assets/icon/more.png" />
+            </template>
+          </el-col>
+        </el-row>
+        <el-row class="asidListBox">
+          <div class="asidListRow"
+               v-for="(o,index) in 5"
+               @dblclick="doRecoginizeDetail(index)"
+               :key="index">
+            <recoginize-card imgWidth="99"
+                             :recoginizeItem="comparePhotoList[index]"
+                             @detailClick="doRecoginizeDetail(index)" />
+          </div>
+        </el-row>
+      </el-aside>
+    </el-row>
+    <!-- ======================================================= 弹 窗 ========================================================== -->
+    <el-dialog class="HomeDialogClass"
+               :visible.sync="dialogVisible"
+               @close="closeDialog">
+      <el-row>
+        <div class="my_el-dialog__header">
+          <span class="el-dialog__title">对比详情</span>
+          <button type="button"
+                  aria-label="Close"
+                  class="el-dialog__headerbtn">
+            <i class="el-dialog__close el-icon el-icon-close"
+               @click="dialogVisible = false"></i>
+          </button>
+        </div>
+      </el-row>
+      <dialogview :dialogParama="dialogParama"
+                  v-loading="dialogfullscreenLoading"
+                  element-loading-background="rgba(0, 0, 0, 0.8)"></dialogview>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import RestApi from "@/utils/RestApi.js";
 import dialogview from "@/pages/faceModule/components/dialogForm.vue";
 import alPopoverTree from "@/pages/faceModule/components/AlElTree.vue";
 import { mouseover, mouseout, mousemove } from "@/common/js/mouse.js"; // 注意路径
-import BigImg from "@/pages/faceModule/components/BigImg.vue";
 import ImgCard from "@/pages/faceModule/components/ImgCard.vue";
 import RecoginizeCard from "@/pages/faceModule/components/RecoginizeCard.vue";
 import * as api from "@/pages/faceModule/http/homeBaseHttp.js";
 import * as logApi from "@/pages/faceModule/http/logSearchHttp.js";
 import * as api2 from "@/pages/VideoPreview/ajax.js";
+import TheLeftmenu from "@/pages/AreaManagement/views/leftWrap";
 import { mapState } from "vuex";
 export default {
   name: "home",
@@ -243,7 +247,7 @@ export default {
     alPopoverTree,
     ImgCard,
     RecoginizeCard,
-    "big-img": BigImg
+    TheLeftmenu
   },
   data: function(argument) {
     return {
@@ -260,12 +264,11 @@ export default {
       taskList: [],
       visible_popver: false, // task弹窗是否弹出，默认隐藏
       channelInfoList: [], // 所有通道名称和ID的二元list
-      notCheckAll: false, // 通道勾选的list的长度
+      showSingleChannel: false, // 通道勾选的list的长度
       checkTaskAll: true,
       checkedChannelsUuidList: [], // 当前勾选的通道Id的list
       checkedChannel: "",
       checkedChannelsUuid: "", // 当前轮询的ID
-      websocket: null,
       photoList: [], // 抓拍列表
       comparePhotoList: [], // 人臉對比列表
       photoStaticList: Array.from({ length: 24 }, () => 0), // 人流量统计
@@ -295,10 +298,10 @@ export default {
       checkedTaskUUidList: [],
       checkedNodes: [],
       dialogfullscreenLoading: false,
-      stompClient: null,
       defaultExpandedKeys: [],
       video_mgr: null,
       lastRstpUrl: "",
+      isOneProject: true,
       ShowAuthDisabled: true,
       OwnAuthDisabled: true
     };
@@ -317,6 +320,9 @@ export default {
     })
   },
   mounted: function() {
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
+
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("人脸预览", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("人脸预览", "isOwn");
     this.vlc = null;
@@ -328,48 +334,33 @@ export default {
     this.asideWidth = 0.3 * w + "px";
     this.$refs.mainHeightBox.$el.style.height = h - 300 + "px";
     // 当窗口发生变化时
-    let that = this;
-    window.addEventListener("resize", function() {
-      let w = that.WIDTH();
-      let h = that.HEIGHT();
-      w = w - 200;
-      h = h - 50;
-      that.$nextTick(() => {
-        that.$refs.heightBox.$el.style.height = h + "px";
-        that.asideWidth = 0.3 * w + "px";
-        that.$refs.mainHeightBox.$el.style.height = h - 300 + "px";
-        // that.canvas.height = that.HEIGHT() - 450;
-        // that.canvas.width = (16 * that.canvas.height) / 9;
-      });
-      that.drawLine();
-    });
+    window.addEventListener("resize", this.resizeHanleAct);
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    if (this.ShowAuthDisabled) {
-      this.getDeviceList();
-    }
+    this.getDeviceList();
   },
 
   destroyed: function() {
-    console.log("关闭页面");
-    if (this.websocket) {
-      this.websocket.close();
-    }
-    this.stompClient = null;
-    this.websocket = null;
+    window.removeEventListener("resize", this.resizeHanleAct);
   },
-  deactivated: function() {},
+  deactivated: function() {
+    window.removeEventListener("resize", this.resizeHanleAct);
+  },
   activated: function() {
     if (!this.ShowAuthDisabled) return;
     this.getTaskList();
+    if (!this.isOneProject) {
+      this.getPhotoList();
+    }
     this.$nextTick(() => {
       if (this.video_mgr && this.video) {
         this.video_mgr.stop(this.video);
       }
       if (this.canvas) {
-        console.log(this.$refs.canvasRefs);
-        this.$refs.canvasRefs.removeChild(this.canvas);
-        this.canvas = null;
+        try {
+          this.$refs.canvasRefs.removeChild(this.canvas);
+          this.canvas = null;
+        } catch (error) {}
       }
       if (this.lastRstpUrl) {
         this.loadVideo();
@@ -377,28 +368,16 @@ export default {
     });
   },
   watch: {
+    showSingleChannel(val) {},
     CapturePhotoArr(val) {
       console.log(val);
-      // let arr = [];
-      // let snapshotTotal = this.todayShootCount;
-      // snapshotTotal++;
-      // val.map(item => {
-      //   if (this.checkedChannelsUuidList.indexOf(item.channelUuid) !== -1) {
-      //     arr.unshift(item);
-      //   } else {
-      //     if (
-      //       this.checkedChannelsUuidList &&
-      //       this.checkedChannelsUuidList.length
-      //     ) {
-      //       snapshotTotal--;
-      //     }
-      //   }
-      // });
+      if (!this.ShowAuthDisabled) return;
       // 判断推送过来数据是不是选中的通道
       let channelUuid = val[val.length - 1].channelUuid;
       if (
-        !this.notCheckAll ||
-				this.checkedChannelsUuidList.indexOf(channelUuid) !== -1
+        !this.showSingleChannel ||
+        (this.showSingleChannel &&
+          this.checkedChannel.channelUuid === channelUuid)
       ) {
         // 显示的是单通道
         this.todayShootCount++;
@@ -409,24 +388,10 @@ export default {
       }
     },
     RecognizationArr(val) {
-      // 这里socket推送抓拍记录，会有已经的历史记录，所以直接推送过来第一张加入到抓拍记录
+      // 这里socket推送识别记录，会有已经的历史记录，所以直接推送过来第一张加入到识别记录
       console.log(val);
-      // let num = val;
-      // let arr = [];
+      if (!this.ShowAuthDisabled) return;
       this.todayCompareCount += 1;
-
-      // arr.unshift(val[val.length - 1]);
-      // val.map(item => {
-      //   if (this.checkedTaskUUidList.indexOf(item.faceMonitorUuid) !== -1) {
-      //     arr.unshift(item);
-      //   } else {
-      //     if (this.checkedTaskUUidList && this.checkedTaskUUidList.length) {
-      //       if (this.todayCompareCount > 0) {
-      //         this.todayCompareCount -= 1;
-      //       }
-      //     }
-      //   }
-      // });
       this.comparePhotoList.unshift(val[val.length - 1]);
       if (this.comparePhotoList.length > 5) {
         this.comparePhotoList.pop();
@@ -451,6 +416,79 @@ export default {
     }
   },
   methods: {
+    resizeHanleAct() {
+      let w = this.WIDTH();
+      let h = this.HEIGHT();
+      w = w - 200;
+      h = h - 50;
+      this.$nextTick(() => {
+        this.$refs.heightBox.$el.style.height = h + "px";
+        this.asideWidth = 0.3 * w + "px";
+        this.$refs.mainHeightBox.$el.style.height = h - 300 + "px";
+        // that.canvas.height = that.HEIGHT() - 450;
+        // that.canvas.width = (16 * that.canvas.height) / 9;
+      });
+      this.drawLine();
+    },
+    // 点击树节点，返回树节点数据方法
+    clickNodeAll(data) {
+      console.log(data);
+      if (data.type !== "areaOrg" && data.type !== "project") {
+        // 判断该次点击是子项目树节点
+        this.handleNodeClick(data);
+      }
+    },
+    // 点击请求子项目下一级节点，将数据返回挂载到树上的方法
+    async addData(data, callback) {
+      if (data.type === "project") {
+        data.projectUuid = data.id;
+        let rootArr = await this.httpLoadNodeData(data);
+        if (!rootArr[0] || !rootArr.length) {
+          callback(rootArr || []);
+          return;
+        }
+        data.projectUuid = rootArr[0].projectUuid;
+        data.type = rootArr[0].type;
+        data.id = rootArr[0].id;
+      }
+      let newArr = await this.httpLoadNodeData(data);
+      callback(newArr);
+    },
+    httpLoadNodeData(data) {
+      let newData = [];
+      let params = {
+        parentOrgUuid: data.id,
+        projectUuid: data.projectUuid,
+        shootType: "face,body"
+      };
+      if (data.type === "project") {
+        params.parentOrgUuid = "";
+      }
+      return new Promise(resolve => {
+        if (!this.ShowAuthDisabled) {
+          resolve(newData);
+        }
+        api
+          .getFaceDeviceList(params)
+          .then(res => {
+            if (res.data.success && res.data.data) {
+              newData = res.data.data || [];
+              newData = newData.map(item => {
+                item.projectUuid = data.projectUuid;
+                return item;
+              });
+            }
+            if (this.channelInfoList && !this.channelInfoList.length) {
+              this.handleNodeClick(newData[0], true);
+            }
+            resolve(newData);
+          })
+          .catch(err => {
+            console.log(err);
+            resolve(newData);
+          });
+      });
+    },
     loadNode(node, resolve) {
       api
         .getFaceDeviceList({
@@ -480,14 +518,22 @@ export default {
         });
     },
     // 点击设备树的事件
-    handleNodeClick(data) {
+    handleNodeClick(data, isGet) {
       api
-        .getDeviceChannelList({ parentOrgUuid: data.id })
+        .getDeviceChannelList({
+          parentOrgUuid: data.id,
+          projectUuid: data.projectUuid
+        })
         .then(res => {
           if (res.data.success && res.data.data) {
-            this.channelInfoList = res.data.data;
+            this.channelInfoList = (res.data.data || []).map(item => {
+              item.projectUuid = data.projectUuid;
+              return item;
+            });
+            // 判断当前已经有了选中的通道，则不会更新已经选中的通道
+            if (this.checkedChannel && this.checkedChannel.channelUuid) return;
             this.checkedChannel = this.channelInfoList[0];
-            if (this.notCheckAll) {
+            if (this.showSingleChannel) {
               // 勾了单选
               this.checkedChannelsUuidList = [];
               this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
@@ -498,7 +544,9 @@ export default {
                 this.checkedChannelsUuidList.push(item.channelUuid);
               });
             }
-            this.getPhotoList();
+            if (!isGet) {
+              this.getPhotoList();
+            }
             if (this.channelInfoList[0].chnOnlineOrNot === "offline") {
               this.$message.warning("设备离线");
               return;
@@ -520,13 +568,9 @@ export default {
       for (let i = 0; i < treeIcons.length; i++) {
         if (treeIcons[i].value === type) {
           if (isOnline === "offline") {
-            icon = require(`@/assets/images/treeIcons/${
-              treeIcons[i].icon
-            }2.png`);
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
           } else {
-            icon = require(`@/assets/images/treeIcons/${
-              treeIcons[i].icon
-            }.png`);
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
           }
           break;
         }
@@ -535,6 +579,7 @@ export default {
     },
     // 获取设备列表
     getDeviceList(uuid) {
+      if (!this.ShowAuthDisabled) return;
       let data = { parentOrgUuid: uuid };
       api
         .getFaceDeviceList(data)
@@ -576,11 +621,8 @@ export default {
         .catch(() => {});
     },
     log() {
-      console.log(this.checkedTaskUUidList);
       let task = this.taskList || [],
         num = [];
-      console.log(task);
-      console.log(this.checkedTaskUUidList);
       for (let j = 0; j < this.checkedTaskUUidList.length; j++) {
         let index = -1;
         for (let i = 0; i < task.length; i++) {
@@ -622,7 +664,7 @@ export default {
     // 只呈现单路摄像机
     handleCheckAllChange(val) {
       console.log("默认勾选单路摄像机，改变对比列表数据以及抓拍数据", val);
-      this.notCheckAll = val;
+      this.showSingleChannel = val;
       if (val) {
         // 勾了单选
         this.checkedChannelsUuidList = [];
@@ -664,7 +706,7 @@ export default {
         true
       );
       // 更新抓拍总数
-      if (this.notCheckAll) {
+      if (this.showSingleChannel) {
         this.checkedChannelsUuidList = [];
         this.checkedChannelsUuidList[0] = this.checkedChannel.channelUuid;
         this.todayShootCount = 0;
@@ -678,8 +720,10 @@ export default {
     },
     // 布控任务通道ID获取码流参数
     getRtspInChannelUuid(channelUuid, channelName, isBool) {
+      if (!this.OwnAuthDisabled) return;
       let data = {
         channelUuid: channelUuid,
+        projectUuid: this.checkedChannel.projectUuid,
         streamType: this.streamType
       };
       // 停止上一个视频的播放
@@ -696,12 +740,22 @@ export default {
           if (res.data.success) {
             let data = res.data.data;
             Object.assign(this.checkedChannel, data);
-            this.loadVideo(data);
+            this.loadVideo(this.checkedChannel);
           }
         })
         .catch(() => {});
     },
+    // 获取流媒体地址
+    getPreviewInfoAA(data) {
+      return new Promise(resolve => {
+        api2.getPreviewInfoAA(data).then(res => {
+          let data = res.data.data || {};
+          resolve(data);
+        });
+      });
+    },
     async loadVideo(data) {
+      if (!this.OwnAuthDisabled) return;
       if (data) {
         this.lastRstpUrl = data.rtspUrl;
       } else {
@@ -709,8 +763,15 @@ export default {
           rtspUrl: this.lastRstpUrl
         };
       }
+      let { jDescription } = this.$store.getters;
+      if (jDescription && !jDescription.list) {
+        let signData = await this.getPreviewInfoAA({
+          asgName: this.checkedChannel.projectUuid
+        });
+        this.$store.commit("setJDescription", signData);
+        jDescription = signData;
+      }
       // 获取流媒体服务地址参数
-      let { jMedia, jSignal } = this.$store.getters;
       if (!this.video_mgr) {
         // eslint-disable-next-line
         this.video_mgr = new CVideoMgrSdk();
@@ -721,12 +782,12 @@ export default {
       // this.canvas.height = this.HEIGHT() - 450;
       // this.canvas.width = (16 * this.canvas.height) / 9;
       // 设置新的视频对象播放参数
-      console.log(jSignal);
+      console.log(jDescription);
       this.video = await this.video_mgr.setup({
         element: this.canvas,
         decodeMod: "video",
-        jSignal: JSON.stringify(jSignal),
-        jMedia: JSON.stringify(jMedia),
+        jDescription,
+        webProtocol: window.location.protocol,
         url: data.rtspUrl,
         protocol: "rtsp",
         action: "preview",
@@ -756,22 +817,29 @@ export default {
       var data = {
         page: 1,
         limit: 9,
-        channelUuids: this.checkedChannelsUuidList.toString(),
         snapshotTimeStart: this.$common.getStartTime(),
         snapshotTimeEnd: this.$common.getCurrentTime()
       };
-      if (!data.channelUuids) data.channelUuids = null;
-      logApi.getSnapshotList(data).then(res => {
-        if (res.data.success && res.data.data) {
-          this.photoList = res.data.data.list;
-          this.todayShootCount = res.data.data.total;
-        } else {
-          this.$message({
-            message: "没有查找到相关的抓拍记录",
-            type: "warning"
-          });
-        }
-      });
+      if (this.showSingleChannel) {
+        data.channelUuids = this.checkedChannel.channelUuid;
+      }
+      logApi
+        .getSnapshotList(data)
+        .then(res => {
+          console.log(res.data);
+          if (res.data.success && res.data.data) {
+            this.photoList = res.data.data.list || [];
+            this.todayShootCount = res.data.data.total;
+          } else {
+            this.$message({
+              message: "没有查找到相关的抓拍记录",
+              type: "warning"
+            });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 获取布控任务对比列表信息
@@ -805,7 +873,7 @@ export default {
     },
     // 获取人流量分布统计，判断参数是否单一相机
     getPhotoStaticList() {
-      if (!this.notCheckAll) {
+      if (!this.showSingleChannel) {
         this.getStaticsPeopleAPi({ channelUuid: null });
       } else {
         this.getStaticsPeopleAPi({
@@ -852,7 +920,6 @@ export default {
           this.asidDropdownMednu.length - 1
         );
       }
-      // 预防在接口返回结果前，websocket就有推送数据
       this.todayCompareCount = 0;
       this.getRecongizeList();
     },
@@ -869,7 +936,7 @@ export default {
       this.updatedFlag = true;
       var data = {
         faceUuid: rowData.faceUuid,
-        limit: 8,
+        limit: 100,
         page: 1
       };
       this.dialogfullscreenLoading = true;
@@ -1059,12 +1126,12 @@ export default {
   object-fit: fill;
   width: 100%;
   z-index: 2;
-	background: rgba(33, 35, 37, 1);
-	display: none;
+  background: rgba(33, 35, 37, 1);
+  display: none;
 }
 #player video {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 .el-radio-myclass {
   margin: 10px 0px 9px;
@@ -1352,7 +1419,13 @@ export default {
   border: 0px;
   padding: 0px 12px;
 }
-
+.elPopoverClass .leftmenu {
+  width: 100% !important;
+}
+.elPopoverClass .leftmenu .tabs {
+  padding: 0;
+  height: calc(100% - 30px) !important;
+}
 .RTask a:-webkit-any-link {
   cursor: pointer;
   color: #28ffbb !important;
@@ -1443,16 +1516,6 @@ export default {
   /* border:1px solid rgb(45, 78, 75); */
   background-color: transparent;
 }
-.RTask .footerCardImg {
-  width: 100%;
-  height: 100%;
-  -webkit-background-size: cover;
-  -webkit-background-origin: content;
-  background-origin: content;
-  background-size: auto 100%;
-  -webkit-background-origin: content;
-  background-origin: content;
-}
 #home {
   font-family: Helvetica, sans-serif;
   text-align: center;
@@ -1486,22 +1549,17 @@ export default {
   background-color: transparent;
   color: #ffffff;
   border: 0;
-  padding: 10px 12px;
   font-size: 14px;
-}
-.font12 {
-  font-size: 12px;
+  min-width: 80px;
+  max-width: calc(100% - 25px);
+  padding: 10px 4px;
+  text-align: left;
 }
 .RTask .aside-row {
   background-color: transparent;
   /* line-height: 30px; */
   color: #28ffbb;
   margin: 2% 0px 0px;
-}
-
-.font-white {
-  color: #fff;
-  font-weight: 700;
 }
 .RTask .el-aside {
   color: #333;
@@ -1514,9 +1572,7 @@ export default {
 .RTask .el-main {
   color: #333;
   text-align: center;
-  /* background: rgba(36, 39, 42, 1); */
   background: rgba(33, 35, 37, 1);
-  /* padding: 20px 25px; */
 }
 
 .RTask .main-box {

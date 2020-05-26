@@ -2,7 +2,7 @@ import axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 // import store from "@/store/store.js";
 
-let logUrl = RestApi.api.logAPi;
+let logUrl = RestApi.logAPi;
 
 export function getLogList(params) {
   let { getLogListUrl: url } = logUrl;

@@ -1,9 +1,9 @@
 <template>
   <el-row ref="headerH"
-          class="header left_menu">
+          class="DoorControlHeaderBox left_menu">
     <el-row class="el-row">
       <el-col :span="24">
-        <el-menu :default-active="defaultActive"
+        <el-menu :default-active="$route.path"
                  class="el-menu-vertical"
                  @open="handleOpen"
                  @close="handleClose"
@@ -54,6 +54,8 @@
                           :disabled="!$common.getAuthIsOwn('联动动作', 'isShow')">联动动作</el-menu-item>
             <el-menu-item index="/DoorControl/PublicMessage"
                           :disabled="!$common.getAuthIsOwn('发布公告', 'isShow')">发布公告</el-menu-item>
+            <el-menu-item index="/DoorControl/AccessWarning"
+                          :disabled="!$common.getAuthIsOwn('人员进出预警', 'isShow')">人员进出预警</el-menu-item>
           </el-submenu>
           <el-menu-item class="doorStateClass"
                         :disabled="!$common.getAuthIsOwn('门禁记录', 'isShow')"
@@ -70,6 +72,14 @@
             <img class="access_autn_select"
                  :src="menuTitle === '/DoorControl/DoorAlarmRecord'? require('@/assets/images/doorAccess/left_menu_alarm_select.png'):require('@/assets/images/doorAccess/left_menu_alarm_icon.png')" />
             报警记录
+          </el-menu-item>
+          <el-menu-item class="doorStateClass"
+                        :disabled="!$common.getAuthIsOwn('人员预警记录', 'isShow')"
+                        index="/DoorControl/WarningRecord"
+                        :class="menuTitle === 'WarningRecord'? 'submenuActiveClass' : ''">
+            <img class="access_autn_select"
+                 :src="menuTitle === '/DoorControl/WarningRecord'? require('@/assets/images/doorAccess/left_menu_alarm_select.png'):require('@/assets/images/doorAccess/left_menu_alarm_icon.png')" />
+            人员预警记录
           </el-menu-item>
           <el-menu-item class="doorStateClass"
                         :disabled="!$common.getAuthIsOwn('门状态', 'isShow')"
@@ -90,8 +100,8 @@ export default {
     console.log(this.$route);
     // this.$router.push("AccessCaseConfig");
     // this.$router.push("{ name: this.$route.name }");
-    this.defaultActive = this.$route.fullPath;
-    console.log(this.defaultActive);
+    // this.defaultActive = this.$route.fullPath;
+    // console.log(this.defaultActive);
   },
   data: function() {
     return {
@@ -109,7 +119,7 @@ export default {
       this.menuTitle = key;
     },
     handleSelect(index, indexpath) {
-      // console.log(index, indexpath);
+      console.log(index, indexpath);
       this.menuTitle = indexpath[0];
       // console.log(this.menuTitle);
       this.subRoute = index.split("/")[index.split("/").length - 1];
@@ -194,11 +204,9 @@ export default {
   border: none;
   min-width: 138px;
 }
-.header {
+.DoorControlHeaderBox {
   width: 100%;
   height: 100%;
-  /* max-width: 200px; */
-  /* height: 1025px; */
   background: rgba(35, 38, 41, 0.8);
   box-sizing: border-box;
   position: relative;

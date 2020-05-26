@@ -21,13 +21,13 @@
         <img v-if='item.icon'
              :src="item.icon"
              alt="">
-
         <span class='treename'
               :title="item.label">
           {{item.label}}
         </span>
 
         <span class="threeline"
+              v-if="showTreeLineMenu"
               :class="{'disabled':operatorDisabled}"
               @click.stop.prevent='$emit("clickmenu",{index:index,version:item.version,rankOrder:item.rankOrder,orgUuid:item.orgUuid,sliblings:root,isLastOne:index===(root.length-1),node:parent+"-"+index,value:item.label,e:$event})'>
 
@@ -175,10 +175,22 @@ export default {
     }
   },
   props: {
+    isLazy: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
     operatorDisabled: {
       type: Boolean,
       default() {
         return false;
+      }
+    },
+    showTreeLineMenu: {
+      type: Boolean,
+      default() {
+        return true;
       }
     },
     data: {
@@ -647,7 +659,7 @@ export default {
         margin-left: $iconleft;
         display: inline-block;
         vertical-align: middle;
-        width: 11px;
+        width: 20px;
         height: 12px;
       }
       .treename {

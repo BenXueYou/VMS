@@ -41,6 +41,7 @@ import defaultIcon from "@/assets/images/Video/defaultIcon.png";
 import voice from "@/assets/images/Video/voice.png";
 import video from "@/assets/images/Video/video.png";
 import screenshot from "@/assets/images/Video/screenshot.png";
+import fullscreen2 from "@/assets/images/Video/fullscreen2.png";
 import close from "@/assets/images/Video/close.png";
 import zhen from "@/assets/images/Video/zhen.png";
 import stop from "@/assets/images/Video/stop.png";
@@ -60,7 +61,12 @@ import doubleLeft from "@/assets/images/Video/doubleLeft.png";
 import doubleRight from "@/assets/images/Video/doubleRight.png";
 import refresh2 from "@/assets/images/Video/refresh.png";
 
+import addImgIcon from "@/assets/images/pic_qa.png";
+import peopleflow from "@/assets/images/person_g.png";
+
 export default {
+  peopleflow,
+  addImgIcon,
   doubleLeft,
   refresh2,
   doubleRight,
@@ -83,6 +89,7 @@ export default {
   voice,
   video,
   screenshot,
+  fullscreen2,
   close,
   defaultIcon,
   fullScreen,

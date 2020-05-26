@@ -25,7 +25,7 @@ export default {
   mounted: function() {},
   methods: {
     switchModule() {
-      console.log("-----", this.$route.path);
+    //   console.log("-----", this.$route.path);
       this.app_visible_popver = false;
     }
   }

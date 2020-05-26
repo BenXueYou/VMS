@@ -29,13 +29,21 @@
                        @onConfirm="onConfirmEditOrAddBuildDialog" />
     <div v-if="isShowMain"
          class="build-main">
-      <left-tree @onClickAllTypeAdd="onClickAllTypeAdd"
+      <!-- <left-tree @onClickAllTypeAdd="onClickAllTypeAdd"
                  @add="add"
                  @setInitArea="setInitArea"
                  ref="leftTree"
                  @setTreeRootData="setTreeRootData"
                  style="height: 100%;"
-                 @edit="edit" />
+                 @edit="edit" /> -->
+      <component @onClickAllTypeAdd="onClickAllTypeAdd"
+                 @add="add"
+                 @setInitArea="setInitArea"
+                 ref="leftTree"
+                 @setTreeRootData="setTreeRootData"
+                 style="height: 100%;"
+                 @edit="edit"
+                 :is="!isOneProject?'LeftTree':'OneLevelLeftTree'"></component>
       <house-table v-show="isShowHouseTable"
                    @addHouse="addHouse"
                    @editHouse="editHouse"
@@ -59,6 +67,7 @@ import AddOrEditHouse from "@/pages/buildingsHouse/components/AddOrEditHouseDial
 import PatchImport from "@/pages/buildingsHouse/components/PatchImportDialog";
 import PatchExport from "@/pages/buildingsHouse/components/PatchExportDialog";
 import LeftTree from "@/pages/buildingsHouse/views/LeftTree";
+import OneLevelLeftTree from "@/pages/buildingsHouse/views/OneLevelLeftTree";
 import HouseTable from "@/pages/buildingsHouse/views/HouseTable";
 import AddOrEditBuild from "@/pages/buildingsHouse/components/AddOrEditBuildDialog";
 import AddOrEditUnit from "@/pages/buildingsHouse/components/AddOrEditUnitDialog";
@@ -73,7 +82,8 @@ export default {
     PatchImport,
     PatchExport,
     AddOrEditBuild,
-    AddOrEditUnit
+    AddOrEditUnit,
+    OneLevelLeftTree
   },
   props: {},
   data() {
@@ -94,14 +104,16 @@ export default {
       specialType: "",
       isInitArea: false,
       ShowAuthDisabled: true,
-      OwnAuthDisabled: false
+      OwnAuthDisabled: false,
+      isOneProject: false
     };
   },
   created() {},
   mounted() {
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("楼栋房屋", "isOwn");
-    // this.OwnAuthDisabled = false;
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
     this.initData();
   },
   activated() {
@@ -111,6 +123,7 @@ export default {
   },
   methods: {
     initData() {
+      if (!this.isOneProject) return;
       if (!this.ShowAuthDisabled) return;
       this.getAreaStruct();
     },
@@ -232,7 +245,7 @@ export default {
       this.$set(
         this.$refs.addOrEditHouse.formLabelAlign,
         "roomsName",
-        copyRow.infrastructureName
+        copyRow.roomsName
       );
       this.$set(
         this.$refs.addOrEditHouse.formLabelAlign,
@@ -242,12 +255,12 @@ export default {
       this.$set(
         this.$refs.addOrEditHouse.formLabelAlign,
         "roomsType",
-        copyRow.roomType
+        copyRow.roomsType
       );
       this.$set(
         this.$refs.addOrEditHouse.formLabelAlign,
         "roomsUse",
-        copyRow.roomUse
+        copyRow.roomsUse
       );
       this.$set(
         this.$refs.addOrEditHouse.formLabelAlign,
@@ -268,6 +281,26 @@ export default {
         this.$refs.addOrEditHouse.formLabelAlign,
         "version",
         copyRow.version
+      );
+      this.$set(
+        this.$refs.addOrEditHouse.formLabelAlign,
+        "picture",
+        copyRow.picture
+      );
+      this.$set(
+        this.$refs.addOrEditHouse.formLabelAlign,
+        "enablePhone",
+        copyRow.enablePhone
+      );
+      this.$set(
+        this.$refs.addOrEditHouse.formLabelAlign,
+        "staffCallSequenceList",
+        copyRow.staffCallSequenceList
+      );
+      this.$set(
+        this.$refs.addOrEditHouse,
+        "tableData",
+        copyRow.staffCallSequenceList
       );
     },
     batchImport() {
@@ -324,7 +357,6 @@ export default {
       this.isShowHouseTable = true;
       setTimeout(() => {
         this.$refs.leftTree.refreshNode();
-        // this.$refs.houseTable.getHouseList();
       }, 200);
     },
     onCancelEditOrAddUnit() {

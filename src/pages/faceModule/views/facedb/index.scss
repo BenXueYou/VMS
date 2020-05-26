@@ -33,7 +33,7 @@ $maincolor: #28ffbb;
           vertical-align: top;
           display: inline-block;
           line-height: 40px;
-          padding-right: 30px;
+          padding-right: 20px;
           cursor: pointer;
           .header-line {
             border-left: 2px solid #26D39D;;
@@ -45,7 +45,6 @@ $maincolor: #28ffbb;
             display: inline-block;
             height: 16px;
             padding-right: 16px;
-            vertical-align: inherit;
           }
 
           span {
@@ -62,7 +61,7 @@ $maincolor: #28ffbb;
             color: #ffffff;
             text-align: justify;
             height: 32px;
-            padding: 7px 16px;
+            padding: 7px 5px;
             box-sizing: border-box;
           }
         }
@@ -76,9 +75,14 @@ $maincolor: #28ffbb;
         }
 
         .rightoperat {
+          padding-right: 0;
+          float: right;
           .searchinput {
             width: 120px;
             padding-right: 15px;
+          }
+          .el-button{
+            padding: 7px 16px;
           }
         }
       }

@@ -10,7 +10,21 @@ export var HomeAjax = {
   queryBaseTypeByGroup() {
     let api = RestApi.api.queryBaseTypeByGroup;
     return axios.get(api);
-  }
+  },
+  /**
+   * 地图获取接口
+   */
+  getMapStyle() {
+    let api = RestApi.api.getMapStyle;
+    return axios.get(api);
+  },
+  /**
+   * 区域行政边界获取接口
+   */
+  getAreaMapBorder() {
+    let api = RestApi.api.getAreaMapBorder;
+    return axios.get(api);
+  },
 };
 
 function install(Vue) {

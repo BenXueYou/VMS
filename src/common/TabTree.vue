@@ -48,7 +48,6 @@
 import residentTree from "./residentTree";
 import icons from "@/common/icon.js";
 import tagTree from "./tagTree.vue";
-import * as api from "@/pages/equipmentMange/ajax.js";
 export default {
   components: { residentTree, tagTree },
   props: {
@@ -134,8 +133,8 @@ export default {
       this.$emit("onConfirm", this.checkeTreedNodes);
       this.$emit("update:isShow", false);
     },
-    transferCheckedNodes(data, nodeBool, treeName) {
-      this.$emit("transferCheckedNodes", data, nodeBool, treeName);
+    transferCheckedNodes(data, nodeBool, treeName, radio) {
+      this.$emit("transferCheckedNodes", data, nodeBool, treeName, radio);
     },
     handleClick(val) {
       console.log("点击tab回调事件===", val);

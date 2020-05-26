@@ -1,31 +1,32 @@
 <template>
   <div class="VideoPreviewContent">
-    <left-content orgType="device"
-                  needType
-                  tagType="device"
-                  ref="leftTree"
-                  :ShowAuthDisabled="ShowAuthDisabled"
-                  :OwnAuthDisabled="OwnAuthDisabled"
-                  @playRtsp="playRtsp"
-                  @jumpToPlayback="jumpToPlayback"
-                  @updateView="updateView"
-                  @ctrl="ctrl"
-                  @openView="openView"
-                  @preset="preset"
-                  @addPreset="addPreset"
-                  @updatePreset="updatePreset"
-                  @deletePreset="deletePreset"
-                  @changetab="changetab"
-                  @clickNode="clickNode"
-                  @switchLuxiang="switchLuxiang"
-                  :showCloudControl="showCloudControl"
-                  :channelUuid="operatorChannelUuid"></left-content>
+    <component orgType="device"
+               needType
+               tagType="device"
+               ref="leftTree"
+               :ShowAuthDisabled="ShowAuthDisabled"
+               :OwnAuthDisabled="OwnAuthDisabled"
+               @playRtsp="playRtsp"
+               @jumpToPlayback="jumpToPlayback"
+               @updateView="updateView"
+               @ctrl="ctrl"
+               @openView="openView"
+               @preset="preset"
+               @addPreset="addPreset"
+               @updatePreset="updatePreset"
+               @deletePreset="deletePreset"
+               @changetab="changetab"
+               @clickNode="clickNode"
+               @switchLuxiang="switchLuxiang"
+               :showCloudControl="showCloudControl"
+               :channelUuid="operatorChannelUuid"
+               :is="!isOneProject?'LeftContent':'OneLevelLeft'"></component>
+
     <div class="right"
          ref="right">
-      <!-- :style="{'max-width':maxRightWidth+'px'}" -->
       <div class="vedioWrap"
-           :class="{'fullVideoWrap':fullscreen}"
-           ref="vedioWrap">
+           ref="vedioWrap"
+           id="vedioWrapPreview">
         <video-wrap v-for="(item,index) in showFenlu"
                     :ref="'video'+index"
                     :key="index"
@@ -39,6 +40,7 @@
                     :position="item.position"
                     :left="item.left"
                     :top="item.top"
+                    @fullscreen2="fullscreen2"
                     :isRecord="!!item.isRecord"
                     :isStopVoice="!!item.isStopVoice"
                     :fenlu="fenluIndex+1"
@@ -69,11 +71,11 @@
           <gt-button class="button"
                      @click="saveShiTu"
                      :disabled="!OwnAuthDisabled"
-                     :style="{'backgroundColor':OwnAuthDisabled?'':'gray'}"
                      :showClose="false">保存视图</gt-button>
           <el-dropdown @command="changeView"
                        trigger="click">
             <gt-button class="button"
+                       :disabled="!ShowAuthDisabled"
                        :showClose="false">
               {{videoMode}}
               <i class="el-icon-caret-bottom"></i>
@@ -85,6 +87,7 @@
           </el-dropdown>
 
           <gt-button class="button"
+                     :disabled="!ShowAuthDisabled"
                      :icon="icons.fullScreen"
                      @click="PreviewAreafullScreen"
                      :showClose="false"
@@ -108,6 +111,7 @@
 
 <script>
 import LeftContent from "./views/Left";
+import OneLevelLeft from "./views/OneLevelLeft";
 import VideoWrap from "@/pages/VideoPreview/components/video";
 import TreeAppendTagDialog from "@/common/TreeAppendTagDialog";
 import videoInfoDialog from "@/pages/VideoPreview/components/videoInfoDialog";
@@ -123,7 +127,7 @@ export default {
   computed: {
     operatorChannelUuid() {
       if (this.videoArr.length) {
-        return this.videoArr[this.operatorIndex].channelUuid;
+        return this.videoArr[this.operatorIndex].channelUuid || "";
       } else {
         return "";
       }
@@ -148,6 +152,7 @@ export default {
   },
   components: {
     LeftContent,
+    OneLevelLeft,
     VideoWrap,
     TreeAppendTagDialog,
     videoInfoDialog,
@@ -248,25 +253,51 @@ export default {
       parentArr: new Array(36), // 用来记录所有的视频
       timer: null,
       cnt: 0,
+      isOneProject: false,
       ShowAuthDisabled: false,
       OwnAuthDisabled: false
     };
   },
   mounted() {
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
+
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("视频预览", "isOwn");
-    // this.OwnAuthDisabled = false;
-    // this.ShowAuthDisabled = true;
-    // this.OwnAuthDisabled = false;
-    // this.OwnAuthDisabled = true;
     this.jugdeJump();
-    this.chooseFenlu(1);
-    this.jishi();
+    this.$nextTick(() => {
+      this.chooseFenlu(1);
+    });
+    window.addEventListener("resize", this.initWrapDom);
+    const that = this;
+    window.onresize = function() {
+      that.jishi();
+      if (
+        !document.fullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement
+      ) {
+        that.$nextTick(() => {
+          that.$set(that.menuData[that.menuData.length - 1], "label", "全屏");
+        });
+      }
+    };
+    document.addEventListener("keydown", e => {
+      if (e.keyCode === 27) {
+        this.fullscreen = false;
+        this.isAutoScreen = -1;
+        this.initWrapDom();
+      }
+    });
 
     // 监听F11事件
 
     // 下面是MDZZ代码
     this.initWrapDom();
+    if (this.isOneProject) {
+      this.getPreviewInfoForAllSet();
+    }
   },
   destroyed() {
     // clearInterval(this.timer);
@@ -284,8 +315,24 @@ export default {
     });
   },
   methods: {
+    getPreviewInfoAAForAllSet() {
+      return new Promise(resolve => {
+        api2.getPreviewInfoAA().then(res => {
+          let data = res.data.data || {};
+          resolve(data);
+        });
+      });
+    },
+    async getPreviewInfoForAllSet() {
+      let data = await this.getPreviewInfoAAForAllSet();
+      this.$store.commit("setJDescription", data);
+    },
     changeView(val) {
-      this.videoArr[this.operatorIndex].mode = val;
+      if (this.videoArr) {
+        this.videoArr.forEach(v => {
+          v.mode = val;
+        });
+      }
       // this.initWrapDom();
       this.videoArr.concat();
     },
@@ -405,7 +452,8 @@ export default {
           },
           channelUuid: item.channelUuid, // 通道uuid
           rtspUrl: item.rtspUrl, // rtsp rtspUrl
-          streamType: item.streamType // 流类型
+          streamType: item.streamType, // 流类型
+          projectUuid: item.projectUuid
         };
       });
       let data = {
@@ -446,6 +494,7 @@ export default {
       }
       api2
         .preset(this.videoArr[this.operatorIndex].channelUuid, {
+          projectUuid: this.videoArr[this.operatorIndex].operatorData.parentUuid,
           action, // 操作类型，必填
           index // 预置点，必填
         })
@@ -504,6 +553,23 @@ export default {
         this.$refs.leftTree.getPreset(true);
       });
     },
+    getPreviewInfoAA(projectUuid) {
+      return new Promise(resolve => {
+        api2.getPreviewInfoAA({
+          asgName: projectUuid,
+        }).then(res => {
+          let data = res.data.data || {};
+          resolve(data);
+        });
+      });
+    },
+    async getPreviewInfo(projectUuid) {
+      // const { jSignal, jMedia } = this.$store.getters;
+      // if (!jSignal.srcUuid || !jMedia.srcUuid) {
+      let data = await this.getPreviewInfoAA(projectUuid);
+      this.$store.commit("setJDescription", data);
+      // }
+    },
     playRtsp(
       channelUuid,
       streamType = "",
@@ -525,10 +591,14 @@ export default {
       // console.log(channelUuid, streamType, adata, operator);
       // 请求码流地址从而进行播放
       // 两种情况，一种是新的视频播放，另一种是切换码流类型在进行播放
+      if (!this.isOneProject) {
+        this.getPreviewInfo(adata.parentUuid);
+      }
       api2
         .getPreviewInfo({
           channelUuid,
-          streamType
+          streamType,
+          projectUuid: adata.parentUuid
         })
         .then(res => {
           // console.log(res);
@@ -561,10 +631,11 @@ export default {
         });
     },
     setData(index, rtspUrl, channelUuid, streamType, operatorData) {
-      this.videoArr[index].streamType = streamType;
-      this.videoArr[index].operatorData = operatorData;
-      this.videoArr[index].channelUuid = channelUuid;
-      this.videoArr[index].rtspUrl = rtspUrl;
+      this.$set(this.videoArr[index], "streamType", streamType);
+      this.$set(this.videoArr[index], "operatorData", operatorData);
+      this.$set(this.videoArr[index], "channelUuid", channelUuid);
+      this.$set(this.videoArr[index], "rtspUrl", rtspUrl);
+      this.$set(this.videoArr[index], "projectUuid", operatorData.parentUuid ? operatorData.parentUuid : this.$store.state.home.projectUuid);
       this.showCloudControl = this.updateCloud();
     },
     judgeEnoughBoard() {},
@@ -653,7 +724,6 @@ export default {
     changetab(tab) {
       // 左边菜单的切换tab事件
       this.tabName = tab.name;
-      console.log(tab);
     },
     initWrapDom() {
       // 这里要给他16:9的效果
@@ -792,6 +862,7 @@ export default {
       }
       api2
         .ctrl(this.videoArr[this.operatorIndex].channelUuid, {
+          projectUuid: this.videoArr[this.operatorIndex].operatorData.parentUuid,
           action, // 操作类型，必填
           start, // 开始/结束，必填
           speed // 速度，必填
@@ -817,6 +888,7 @@ export default {
       this.$ContextMenu({
         data: this.menuData,
         event: e,
+        dom: document.getElementById("vedioWrapPreview"),
         target: this.$refs.vedioWrap,
         callback(value) {
           // value表示点击按钮的value
@@ -825,6 +897,7 @@ export default {
       });
     },
     closeVideo(index) {
+      this.$refs['video' + index][0].isLoadingVideo = false;
       this.operatorIndex = index;
       this.videoArr[index].rtspUrl = "";
       this.videoArr[index].streamType = "";
@@ -859,6 +932,7 @@ export default {
                 this.videoArr[this.operatorIndex].endTime = "";
                 this.videoArr[this.operatorIndex].mode = "original";
                 this.videoArr[this.operatorIndex].timeData = [];
+                this.$refs['video' + this.operatorIndex][0].isLoadingVideo = false;
                 this.videoArr.concat();
               })
               .catch(() => {});
@@ -880,12 +954,13 @@ export default {
             }
           )
             .then(() => {
-              this.videoArr = this.videoArr.map(item => {
+              this.videoArr = this.videoArr.map((item, index) => {
                 item.rtspUrl = "";
                 item.startTime = "";
                 item.endTime = "";
                 item.mode = "original";
                 item.timeData = [];
+                this.$refs['video' + index][0].isLoadingVideo = false;
                 return item;
               });
             })
@@ -897,14 +972,14 @@ export default {
             this.$message.error("该分路上没有通道！");
           } else {
             api2
-              .getCameraInfo({
+              .getCameraInfo(this.tabName === 'view' ? this.videoArr[this.operatorIndex].projectUuid : this.videoArr[this.operatorIndex].operatorData.parentUuid, {
                 channelUuid: this.videoArr[this.operatorIndex].channelUuid
               })
               .then(res => {
                 /* eslint-disable */
                 let data = res.data.data || {};
                 let channelTyepCN =
-                  JSON.parse(localStorage.getItem("localEnums"))["chn"][
+                  JSON.parse(sessionStorage.getItem("localEnums"))["chn"][
                     data.channelType
                   ] || data.channelType;
                 data.channelType = channelTyepCN;
@@ -923,7 +998,9 @@ export default {
           } else {
             this.switchLuxiang(
               this.videoArr[this.operatorIndex].channelUuid,
-              this.videoArr[this.operatorIndex].operatorData.label
+              this.tabName === 'view' ? "" : this.videoArr[this.operatorIndex].operatorData.label,
+              this.tabName === 'view' ? this.videoArr[this.operatorIndex].projectUuid : this.videoArr[this.operatorIndex].operatorData.parentUuid,
+              this.tabName === 'view' ? {parentUuid:this.videoArr[this.operatorIndex].projectUuid} : this.videoArr[this.operatorIndex].operatorData,
             );
           }
           break;
@@ -990,7 +1067,6 @@ export default {
       let item = this.videoArr[index];
       item.isRecord = true;
       this.videoArr.splice(index, 1, item);
-
       this.$refs["video" + index][0].record();
     },
     stopRecord(index) {
@@ -1012,7 +1088,7 @@ export default {
       this.videoArr.splice(index, 1, item);
       this.$refs["video" + index][0].stopRecord();
     },
-    switchLuxiang(channelUuid, channelName) {
+    switchLuxiang(channelUuid, channelName, parentUuid, operatorData) {
       // 判断有没有操作权限，没有则不进行跳转
       // 这里的操作权限是看视频回放的，而不是视频预览的
       if (
@@ -1032,7 +1108,7 @@ export default {
       this.$bus.$emit("setLocalTag", "VideoPlayback");
       this.$router.push({
         name: "VideoPlayback",
-        params: { channelUuid, channelName }
+        params: { channelUuid, channelName, parentUuid, operatorData}
       });
     },
     screenShot(index) {
@@ -1061,42 +1137,55 @@ export default {
         this.$message.error("该分路没有视频在播放，切换失败！");
         return;
       }
-      this.playRtsp(this.videoArr[index].channelUuid, streamType, {}, index);
+      this.$set(this.videoArr[index], "operatorData", {
+        parentUuid: this.videoArr[index].projectUuid
+      });
+      this.playRtsp(this.videoArr[index].channelUuid, streamType, this.videoArr[index].operatorData, index);
     },
     PreviewAreafullScreen() {
-      var element = document.documentElement;
-      // this.setFullScreen(this.$refs.vedioWrap);
-
-      if (this.fullscreen) {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitCancelFullScreen) {
-          document.webkitCancelFullScreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-        console.log("已还原！");
-      } else {
-        // 否则，进入全屏
+      let element = this.$refs.vedioWrap;
+      if (
+        !document.fullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement
+      ) {
+        // current working methods
         if (element.requestFullscreen) {
           element.requestFullscreen();
-        } else if (element.webkitRequestFullScreen) {
-          element.webkitRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          element.msRequestFullscreen();
         } else if (element.mozRequestFullScreen) {
           element.mozRequestFullScreen();
-        } else if (element.msRequestFullscreen) {
-          // IE11
-          element.msRequestFullscreen();
+        } else if (element.webkitRequestFullscreen) {
+          element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         }
-        console.log("已全屏！");
-        // this.fullscreen = !this.fullscreen;
-        setTimeout(() => {
-          this.fullscreen = true;
-          this.initWrapDom();
-        }, 100);
+        // this.$emit("fullScreenCall", "full");
+        // this.screenText = "退出全屏";
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        // this.$emit("fullScreenCall", "exitFull");
+        // this.screenText = "全屏";
       }
+      this.$nextTick(() => {
+        if (this.menuData[this.menuData.length - 1].label === "全屏") {
+          this.$set(this.menuData[this.menuData.length - 1], "label", "取消全屏")
+        } else {
+          this.$set(this.menuData[this.menuData.length - 1], "label", "全屏")
+        }
+      });
+      setTimeout(() => {
+        this.fullscreen = true;
+        this.initWrapDom();
+      }, 100);
       // // 改变当前全屏状态
     },
     setFullScreen(target) {
@@ -1115,7 +1204,7 @@ export default {
     },
     getChannleUuid() {
       // eslint-disable-next-line
-      // this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid;
+      // this.operatorChannelUuid = this.videoArr[this.operatorIndex].channelUuid || "";
     },
     updateCloud() {
       if (this.operatorIndex < 0 || !this.videoArr[this.operatorIndex]) {
@@ -1132,7 +1221,10 @@ export default {
           this.videoArr[this.operatorIndex].operatorData.realType
         ) !== -1
       );
-    }
+    },
+    fullscreen2(index) {
+      this.setFullScreen(this.$refs.video0[index].getCanvas());
+    },
   },
   watch: {
     operatorIndex(val) {

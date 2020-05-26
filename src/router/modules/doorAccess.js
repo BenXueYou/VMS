@@ -1,28 +1,80 @@
 // import DoorControl from "@/pages/doorControl/views/DoorControl";
-const DoorControl = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/DoorControl');
+const DoorControl = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/DoorControl"
+  );
 
 // 门禁控制权限 高级设置
-const AntiBack = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessSetting/AntiBack');
-const FirstCardOpen = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessSetting/FirstCardOpen');
-const Interlocking = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessSetting/Interlocking');
-const LinkageAction = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessSetting/LinkageAction');
-const ManMakeUpOpen = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessSetting/ManMakeUpOpen');
-const PublicMessage = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessSetting/PublicMessage');
-const WayMakeUpOpen = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessSetting/WayMakeUpOpen');
+const AntiBack = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessSetting/AntiBack"
+  );
+const FirstCardOpen = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessSetting/FirstCardOpen"
+  );
+const Interlocking = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessSetting/Interlocking"
+  );
+const LinkageAction = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessSetting/LinkageAction"
+  );
+const ManMakeUpOpen = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessSetting/ManMakeUpOpen"
+  );
+const PublicMessage = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessSetting/PublicMessage"
+  );
+const WayMakeUpOpen = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessSetting/WayMakeUpOpen"
+  );
+const AccessWarning = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessSetting/AccessWarning"
+  );
 
 // 门禁通行权限
-const AccessCaseConfig = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessConfig/AccessCaseConfig');
-const AccessGroupConfig = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessConfig/AccessGroupConfig');
-const AccessTimeConfig = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorAccessConfig/AccessTimeConfig');
+const AccessCaseConfig = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessConfig/AccessCaseConfig"
+  );
+const AccessGroupConfig = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessConfig/AccessGroupConfig"
+  );
+const AccessTimeConfig = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorAccessConfig/AccessTimeConfig"
+  );
 
 // 记录检索
-const DoorAccessRecord = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/recordSearch/DoorAccessRecord');
-const DoorAlarmRecord = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/recordSearch/DoorAlarmRecord');
-const DoorDialogRecord = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/recordSearch/DoorDialogRecord');
+const DoorAccessRecord = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/recordSearch/DoorAccessRecord"
+  );
+const DoorAlarmRecord = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/recordSearch/DoorAlarmRecord"
+  );
+const DoorDialogRecord = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/recordSearch/DoorDialogRecord"
+  );
+const WarningRecord = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/recordSearch/WarningRecord"
+  );
 
 // 门状态
-const DoorStatus = () => import(/* webpackChunkName: "DoorControl" */ '@/pages/doorControl/views/doorStatus/DoorStatus');
-
+const DoorStatus = () =>
+  import(
+    /* webpackChunkName: "DoorControl" */ "@/pages/doorControl/views/doorStatus/DoorStatus"
+  );
 
 // 高级配置子路由数组
 const doorAccessSetting = [
@@ -55,6 +107,12 @@ const doorAccessSetting = [
     name: "WayMakeUpOpen",
     component: WayMakeUpOpen,
     title: "多验证方式组合开门"
+  },
+  {
+    path: "AccessWarning",
+    name: "AccessWarning",
+    component: AccessWarning,
+    title: "人员进出预警"
   },
   {
     path: "LinkageAction",
@@ -105,6 +163,12 @@ const doorAccessSetting = [
     title: "通话记录"
   },
   {
+    path: "WarningRecord",
+    name: "WarningRecord",
+    component: WarningRecord,
+    title: "人员预警记录"
+  },
+  {
     path: "DoorStatus",
     name: "DoorStatus",
     component: DoorStatus,
@@ -115,8 +179,7 @@ const doorAccessSetting = [
     redirect: "AccessGroupConfig"
   }
 ];
-const doorAccessMap =
-{
+const doorAccessMap = {
   path: "/DoorControl",
   name: "DoorControl",
   component: DoorControl,
@@ -124,7 +187,7 @@ const doorAccessMap =
   children: doorAccessSetting,
   icon: "doorControl",
   type: "app",
-  redirect: '/DoorControl/' //设置默认子路由
+  redirect: "/DoorControl/" //设置默认子路由
 };
 
 export default doorAccessMap;

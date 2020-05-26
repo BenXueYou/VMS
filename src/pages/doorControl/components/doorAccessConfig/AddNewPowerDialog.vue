@@ -7,10 +7,7 @@
        :close-on-press-escape="false"
        :append-to-body="true"
        @close="close">
-
-    <div class='myTitle'>
-      {{ title}}
-    </div>
+    <div class='myTitle'>{{ title}}</div>
     <div class="dash-line"></div>
     <el-form ref="form"
              :rules="rules"
@@ -24,7 +21,6 @@
                   class="nameInput"
                   v-model="data.name"></el-input>
       </el-form-item>
-
       <el-form-item label="请选择哪些人能通行："
                     prop="people">
         <el-button class='iconButton'
@@ -67,7 +63,6 @@
           </gt-button>
         </div>
       </el-form-item>
-
       <el-form-item label="通行规则："
                     prop="rule">
         <el-radio-group v-model="data.rule"
@@ -76,58 +71,24 @@
           <el-radio label="normal">固定时间段通行</el-radio>
         </el-radio-group>
       </el-form-item>
-
       <el-form-item label="通行时间段："
                     v-show="showTimeArea"
                     prop="time">
-        <!-- <el-select v-model="data.time">
-          <el-option v-for="(item,index) in timeOptions"
-                     :key="index"
-                     :label="item.periodName"
-                     :value="item.periodUuid">
-          </el-option>
-        </el-select> -->
         <button-select :value.sync="data.time"
                        @add="showTime"
                        :name="timeName"
                        :options="timeOptions">
-
         </button-select>
-        <!-- <el-button class='iconButton'
-                   @click="showTime"
-                   type="primary"
-                   size='small'>
-          <img :src="icons.tianjia"
-               alt="">
-          设置时段
-        </el-button> -->
       </el-form-item>
-
       <el-form-item label="特殊日期："
                     v-show="showTimeArea"
                     prop="date">
-        <!-- <el-select v-model="data.date">
-          <el-option v-for="(item,index) in dateOptions"
-                     :key="index"
-                     :label="item.holidayName"
-                     :value="item.holidayUuid">
-          </el-option>
-        </el-select> -->
         <button-select :value.sync="data.date"
                        :name="dateName"
                        @add="showDate"
                        buttonName="新增特殊日期"
                        :options="dateOptions">
-
         </button-select>
-        <!-- <el-button class='iconButton'
-                   @click="showDate"
-                   type="primary"
-                   size='small'>
-          <img :src="icons.tianjia"
-               alt="">
-          对某些固定日期单独设置通行权限，如节假日
-        </el-button> -->
         <span class='dateTips'> 对某些固定日期单独设置通行权限，如节假日</span>
       </el-form-item>
     </el-form>
@@ -142,22 +103,18 @@
                  @click="cancelClick"
                  size="small">取消</el-button>
     </div>
+    <!-- 设置通行时间段 -->
     <set-time-area-dialog :visible.sync="settimevisible"
                           @confirm="confirmTime"
                           title="通行时间段">
-
     </set-time-area-dialog>
+    <!-- 设置特殊日期 -->
     <set-date-area-dialog :visible.sync="setdatevisible"
                           @confirm="confirmDate">
-
     </set-date-area-dialog>
 
-    <!-- <choose-dialog :visible.sync="chooseVisible">
-
-    </choose-dialog> -->
-
     <tab-tree-tag title="请选择允许通行的人"
-                  rightTxt="已选的标签、部门、设备、门、地址、员工或居民"
+                  rightTxt="已选的部门、员工、标签"
                   :modal="false"
                   :tabs="tabs1"
                   :isShow.sync="chooseVisible"
@@ -165,20 +122,16 @@
                   @onConfirm="peopleConfirm"></tab-tree-tag>
 
     <div style="height:40px;"></div>
-
     <tab-tree-tag title="请选择允许通行的门"
-                  rightTxt="已选的标签、部门、设备、门、地址、员工或居民"
+                  rightTxt="已选的设备、门、标签"
                   :tabs="tabs2"
                   :modal="false"
                   :isShow.sync="chooseVisible2"
                   :checkedList="doorList"
                   @onConfirm="doorConfirm"></tab-tree-tag>
-
     <div style="height:40px;"></div>
-
   </div>
 </template>
-
 <script>
 import icons from "@/common/icon.js";
 import SetTimeAreaDialog from "@/pages/equipmentMange/components/RemoteControlDialogContent/SetTimeAreaDialog";
@@ -257,17 +210,9 @@ export default {
       tabs1: [
         {
           id: "1",
-          label: "员工",
+          label: "人员",
           treeType: "person",
           treeRef: "tree1",
-          nodeKey: "id"
-        },
-        {
-          id: "2",
-          label: "居民",
-          treeType: "resident",
-          treeNodeType: "staff",
-          treeRef: "tree2",
           nodeKey: "id"
         },
         {
@@ -298,14 +243,6 @@ export default {
           nodeKey: "id"
         },
         {
-          id: "2",
-          label: "地址",
-          treeType: "resident",
-          treeNodeType: "door",
-          treeRef: "tree2",
-          nodeKey: "id"
-        },
-        {
           id: "3",
           label: "标签",
           treeType: "device",
@@ -328,6 +265,39 @@ export default {
       dateName: "",
       timeName: ""
     };
+  },
+  mounted() {
+    let projectType = this.$store.state.home.projectType;
+    // 判断不是学校项目则加入基建的选项
+    if (projectType.platformType !== "school") {
+      this.tabs1.push({
+        id: "2",
+        label: "居民",
+        treeType: "resident",
+        treeNodeType: "staff",
+        treeRef: "tree2",
+        nodeKey: "id"
+      });
+      this.tabs2.push({
+        id: "2",
+        label: "地址",
+        treeType: "resident",
+        treeNodeType: "door",
+        treeRef: "tree2",
+        nodeKey: "id"
+      });
+      // 按照id 大小排序
+      this.tabs1.sort((item1, item2) => {
+        let id1 = Number(item1.id);
+        let id2 = Number(item2.id);
+        return id1 - id2;
+      });
+      this.tabs2.sort((item1, item2) => {
+        let id1 = Number(item1.id);
+        let id2 = Number(item2.id);
+        return id1 - id2;
+      });
+    }
   },
   methods: {
     doorConfirm(checkedNodes) {

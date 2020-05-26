@@ -18,6 +18,7 @@ service.interceptors.request.use(
   config => {
     // Do something before request is sent
     // 获取token projectUuid
+    if(!config.headers)config.headers = {};
     let Authorization = store.state.home.Authorization;
     let projectUuid = store.state.home.projectUuid;
     config.headers["Authorization"] = Authorization;
@@ -50,10 +51,8 @@ service.interceptors.response.use(
         sessionStorage.setItem("projectUuid", "");
         sessionStorage.setItem("tagViewArr", "");
         sessionStorage.setItem("localTag", "");
-        sessionStorage.setItem("iccSignalRule", "");
-        sessionStorage.setItem("iccMediaRule", "");
+        sessionStorage.setItem("jDescription", "");
         sessionStorage.setItem("Authorization", "");
-        sessionStorage.setItem("projectUuid", "");
         Toast.error(response.data.msg);
         router.replace({
           name: "Login"

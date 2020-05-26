@@ -5,6 +5,7 @@
              width="420px"
              :close-on-click-modal="false"
              @close="close"
+             :modal="false"
              :append-to-body="true">
     <div class="body">
 

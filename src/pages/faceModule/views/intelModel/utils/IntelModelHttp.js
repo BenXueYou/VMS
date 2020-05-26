@@ -6,7 +6,7 @@ export var IntelModelHttp = {
    * 智能模型列表查询
    */
   getIntelModelList(holder) {
-    let api = `${RestApi.api.faceModuleAPi.getIntelModelList}`;
+    let api = `${RestApi.faceModuleAPi.getIntelModelList}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -17,7 +17,7 @@ export var IntelModelHttp = {
    * 智能模型详情查询
    */
   getIntelModelDetails(holder) {
-    let api = `${RestApi.api.faceModuleAPi.getIntelModelDetails(holder.modelUuid)}`;
+    let api = `${RestApi.faceModuleAPi.getIntelModelDetails(holder.modelUuid)}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -28,7 +28,7 @@ export var IntelModelHttp = {
    * 报警列表查询
    */
   getJudgedList(holder) {
-    let api = `${RestApi.api.faceModuleAPi.getJudgedList}`;
+    let api = `${RestApi.faceModuleAPi.getJudgedList}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -39,7 +39,7 @@ export var IntelModelHttp = {
    * 修改智能模型
    */
   editIntelModel(holder) {
-    let api = `${RestApi.api.faceModuleAPi.editIntelModel}`;
+    let api = `${RestApi.faceModuleAPi.editIntelModel}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -47,7 +47,7 @@ export var IntelModelHttp = {
     return axios.put(api, data);
   },
   editIntelModelStatus(holder) {
-    let api = `${RestApi.api.faceModuleAPi.editIntelModelStatus}`;
+    let api = `${RestApi.faceModuleAPi.editIntelModelStatus}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -58,7 +58,7 @@ export var IntelModelHttp = {
    * 新增智能模型
    */
   addIntelModel(holder) {
-    let api = `${RestApi.api.faceModuleAPi.addIntelModel}`;
+    let api = `${RestApi.faceModuleAPi.addIntelModel}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -69,7 +69,7 @@ export var IntelModelHttp = {
    * 删除智能模型
    */
   deleteIntelModel(holder) {
-    let api = `${RestApi.api.faceModuleAPi.deleteIntelModel(holder.modelUuid)}`;
+    let api = `${RestApi.faceModuleAPi.deleteIntelModel(holder.modelUuid)}`;
     return axios.delete(api);
   },
 };

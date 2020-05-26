@@ -259,8 +259,8 @@ export default {
       }
 
       if (
-        this.credentialType &&
-				this.credentialType === "id_card" &&
+        this.staffInfo.credentialType &&
+				this.staffInfo.credentialType === "id_card" &&
 				this.staffInfo.credentialNo &&
 				!this.$common.isCredentialNo(this.staffInfo.credentialNo)
       ) {

@@ -20,7 +20,8 @@
           <div class="download-text">下载房屋模板</div>
         </div>
       </div>
-      <div class="file-import">
+      <div v-show="!loading"
+           class="file-import">
         <div class="import-text">导入文件：</div>
         <!-- @click="onClickImportFile" -->
         <div class="import-button"
@@ -56,13 +57,13 @@
         <div class="import-text"
              v-if="resultMsg.length"
              style="width:300px;text-align:left;text-indent:30px;color:rgb(223, 86, 86);">
-          成功{{successPeople}}个 失败{{failPeople}}个
+          成功{{successPeople}} 失败{{failPeople}}
           <!-- {{resultMsg}} -->
         </div>
         <div class="import-text"
              v-if="successResultMsg.length"
              style="width:300px;text-align:left;text-indent:30px;color:rgb(38, 211, 157);">
-          成功{{successPeople}}个 失败{{failPeople}}个
+          成功 {{successPeople}} 间 失败 {{failPeople}} 间
           <!-- {{successResultMsg}} -->
         </div>
         <div class="important-text download-text"
@@ -76,7 +77,8 @@
     </div>
     <div slot="footer"
          class="dialog-footer">
-      <el-button type="primary"
+      <el-button :loading="loading"
+                 type="primary"
                  @click="onClickImport">导入</el-button>
       <el-button type="primary"
                  @click="onClickCancel">取消</el-button>
@@ -107,6 +109,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       isCurrentShow: false,
       uploader: null, // 实例化文件上传对象
       fileIdNum: [], // 上传存储的文件流
@@ -118,7 +121,8 @@ export default {
       startProgress: false,
       resultMsg: "",
       successResultMsg: "",
-      fileName: ""
+      fileName: "",
+      setT: null
     };
   },
   created() {},
@@ -130,6 +134,7 @@ export default {
         this.$message.error("请先上传文件");
         return;
       }
+      this.loading = true;
       api
         .buildingProgressUrl({ importTaksUuid: this.importTaksUuid })
         .then(res => {
@@ -137,20 +142,18 @@ export default {
           if (res.data.success) {
             this.percentage = parseInt(res.data.data);
             if (this.percentage < 100) {
-              setTimeout(() => {
+              if (this.setT) return;
+              this.setT = setTimeout(() => {
                 this.getProgress();
               }, 2000);
             } else if (this.percentage === 100) {
+              clearTimeout(this.setT);
+              this.setT = null;
+              this.loading = false;
               this.getResult();
             }
           }
         });
-      api.getResultImport({ taskUuid: this.importTaksUuid }).then(res => {
-        console.log(res);
-        let data = res.data.data || {};
-        this.successPeople = data.success;
-        this.failPeople = data.fail;
-      });
     },
     funBuildFile(url, name) {
       var xhr = new XMLHttpRequest();
@@ -186,14 +189,20 @@ export default {
         return;
       }
       // tips:基建没有导入结果，直接去错误日志
-      api
-        .buildIsHaveErrorFile({ importTaksUuid: this.importTaksUuid })
-        .then(res => {
-          console.log(res);
-          if (res.data.success) {
-            // this.failPeople = res.data.data;
-          }
-        });
+      // api
+      //   .buildIsHaveErrorFile({ importTaksUuid: this.importTaksUuid })
+      //   .then(res => {
+      //     console.log(res);
+      //     this.failPeople = res.data.success;
+      //   }).catch(() => {
+      //     this.failPeople = false;
+      //   });
+      api.getResultImport({ taskUuid: this.importTaksUuid }).then(res => {
+        console.log(res);
+        let data = res.data.data || {};
+        this.successPeople = data.success;
+        this.failPeople = data.fail;
+      });
     },
     // 下载失败日志
     downloadLog() {
@@ -407,6 +416,7 @@ export default {
         this.startProgress = false;
         this.resultMsg = "";
         this.successResultMsg = "";
+        this.fileName = "";
         this.$nextTick(() => {
           this.uploadInit();
         });
@@ -473,7 +483,6 @@ export default {
       font-size: 12px;
       color: #dddddd;
       text-align: right;
-      white-space: nowrap;
     }
     .import-button {
       margin-left: 4%;

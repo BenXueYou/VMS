@@ -52,7 +52,6 @@ export var Storage = {
     try {
       data = JSON.parse(jsonStr);
     } catch (error) {
-      console.log(key);
       console.log(error);
     }
     return data;

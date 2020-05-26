@@ -1,26 +1,17 @@
 import axios from "@/utils/Request";
-// import RestApi from '@/utils/RestApi';
+import store from '@/store/store';
 import RestApi from "@/utils/RestApi";
-let ip = window.config.ip;
-let protocolHeader = window.config.protocolHeader;
-export let ResidentManageAjax = {
+let ip = window.config.ip,
+  protocolHeader = window.config.protocolHeader,
+  httpRsidentHeader = `${protocolHeader}${ip}`;
+export var ResidentManageAjax = {
   /**
    * 获取居民列表
-   * address string (query) 住址
-   * cellphone string (query) 手机号码
-   * createTimeOver string (query) 注册时间 止
-   * createTimeStart string (query) 注册时间 启
-   * gender string (query) 性别
-   * limit integer($int32) (query) 每页显示行数
-   * page integer($int32) (query) 当前页数
-   * projectUuid string(path) 项目
-   * UUIDqueryType string (query) 查询类型,infrastructure 基建；staffLabel按标签
-   * queryTypeUuid string (query) 查询类型uuid
-   * staffName string (query) 姓名
-   * staffType string (query) 人员类型
    */
   getResidentListApi(xhr) {
-    let url = `${protocolHeader}${ip}${RestApi.api.residentManage.getResidentListApi}`;
+    let projectUuid = store.state.home.projectUuid;
+    if (xhr.projectUuid) projectUuid = xhr.projectUuid;
+    let url = `${httpRsidentHeader}${RestApi.api.residentManage.getResidentListApi(projectUuid)}`;
     return axios({
       method: "get",
       url,
@@ -32,7 +23,7 @@ export let ResidentManageAjax = {
    * groupUuid
    */
   postResidentApi(xhr) {
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.postResidentApi}`;
+    let api = `${httpRsidentHeader}${RestApi.api.residentManage.postResidentApi}`;
     return axios.post(api, xhr);
   },
   /**
@@ -41,7 +32,7 @@ export let ResidentManageAjax = {
    * page  当前页树
    */
   putResidentApi(xhr) {
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.putResidentApi}`;
+    let api = `${httpRsidentHeader}${RestApi.api.residentManage.putResidentApi}`;
     return axios.put(api, xhr);
   },
   /**
@@ -49,7 +40,7 @@ export let ResidentManageAjax = {
    * groupUuid
    */
   deleteResidentApi(groupUuidList) {
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.deleteResidentApi}`;
+    let api = `${httpRsidentHeader}${RestApi.api.residentManage.deleteResidentApi}`;
     return axios.delete(api, { data: groupUuidList });
     // return axios.delete(api, {params: {uuid: groupUuidList}});
   },
@@ -58,27 +49,49 @@ export let ResidentManageAjax = {
    * limit 每页条数
    * page  当前页树
    */
-  getResidentDetailApi(xhr) {
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.getResidentDetailApi}${
+  getResidentDetailApi(xhr, logcontent = {}) {
+    let projectUuid = '';
+    if (xhr && xhr.projectUuid) {
+      projectUuid = xhr.projectUuid;
+    } else {
+      projectUuid = store.state.home.projectUuid;
+    }
+    let api = `${httpRsidentHeader}${RestApi.api.residentManage.getResidentDetailApi(projectUuid)}${
       xhr.staffUuid
     }`;
-    return axios.get(api);
+    let headers;
+    if (logcontent.modelName) {
+      headers = {
+        VIEW_MODULE_NAME: encodeURIComponent(logcontent.modelName),
+        VIEW_MODULE_DETAIL: encodeURIComponent(logcontent.detailContent)
+      };
+    }
+    return axios.get(api, {
+      headers: headers
+    });
   },
   /**
    * 初始化刷新树
    */
   getResidentTreeDataApi(xhr) {
-    let api = `${protocolHeader}${ip}${
-      RestApi.api.residentManage.getResidentTreeDataApi
-    }`;
+    let api = '';
+    if (xhr && xhr.projectUuid) {
+      api = `${httpRsidentHeader}${
+        RestApi.api.residentManage.getResidentTreeDataApi(xhr.projectUuid)
+      }`;
+    } else {
+      api = `${httpRsidentHeader}${
+        RestApi.api.residentManage.getResidentTreeDataApi(store.state.home.projectUuid)
+      }`;
+    }
     return axios.get(api);
   },
   /**
    * 根据当前的节点id获取子节点
    */
   getResidentTreeNodeDataApi(xhr) {
-    let api = `${protocolHeader}${ip}${
-      RestApi.api.residentManage.getResidentTreeSubDataApi
+    let api = `${httpRsidentHeader}${
+      RestApi.api.residentManage.getResidentTreeSubDataApi(store.state.home.projectUuid)
     }?parentUuid=${xhr}`;
     return axios.get(api);
   },
@@ -86,16 +99,17 @@ export let ResidentManageAjax = {
    * 居民管理左侧菜单楼栋房屋，获取子节点
    */
   getResidentLeftMenuSubDataApi(xhr) {
-    let api = `${protocolHeader}${ip}${
-      RestApi.api.residentManage.getResidentLeftMenuSubDataApi
-    }${xhr}/unit`;
+    let projectUuid = xhr.projectUuid || store.state.home.projectUuid;
+    let api = `${httpRsidentHeader}${
+      RestApi.api.residentManage.getResidentLeftMenuSubDataApi(projectUuid)
+    }${xhr.id}/unit`;
     return axios.get(api);
   },
   /**
    * 获取门禁权限列表
    */
   getDoorAccessAuthListApi(groupType = 'normal') {
-    let api = `${protocolHeader}${ip}${
+    let api = `${httpRsidentHeader}${
       RestApi.api.residentManage.getDoorAccessAuthListApi
     }?limit=10000&page=1&groupType=${groupType}`;
     return axios.get(api);
@@ -104,8 +118,8 @@ export let ResidentManageAjax = {
    * 根据子节点可以获取到底下的人员
    */
   getResidentTreeStaffNodeApi(parentUuid, type) {
-    let api = `${protocolHeader}${ip}${
-      RestApi.api.residentManage.getResidentTreeStaffNodeApi
+    let api = `${httpRsidentHeader}${
+      RestApi.api.residentManage.getResidentTreeStaffNodeApi()
     }?parentUuid=${parentUuid}&type=${type}`;
     return axios.get(api);
   },
@@ -113,7 +127,7 @@ export let ResidentManageAjax = {
    * 获取居民标签详情
    */
   getResidentTagDetail(xhr) {
-    let api = `${protocolHeader}${ip}${
+    let api = `${httpRsidentHeader}${
       RestApi.api.residentManage.getResidentTagDetailApi
     }`;
     xhr.tagType = "resident";
@@ -128,11 +142,11 @@ export let ResidentManageAjax = {
    */
   addElementToTag(xhr, tagObj) {
     console.log(xhr, tagObj);
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.addElementToTag}`;
-    let params = [];
+    let api = `${httpRsidentHeader}${RestApi.api.residentManage.addElementToTag}`;
+    var params = [];
     for (let i = 0; i < xhr.length; i++) {
       let element = xhr[i];
-      let item = {
+      var item = {
         elementSn: i,
         elementUuid: element.id,
         elementType: element.type,
@@ -148,7 +162,7 @@ export let ResidentManageAjax = {
    */
   deleteElementFromTag(xhr, tagObj) {
     console.log(tagObj);
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.deleteElementFromTag}`;
+    let api = `${httpRsidentHeader}${RestApi.api.residentManage.deleteElementFromTag}`;
     for (let i = 0; i < xhr.length; i++) {
       let element = xhr[i];
       element.elementSn = i;
@@ -167,7 +181,7 @@ export let ResidentManageAjax = {
    */
   putElementForResidentTag(xhr, tagObj) {
     console.log(tagObj);
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.putElementToTag}`;
+    let api = `${httpRsidentHeader}${RestApi.api.residentManage.putElementToTag}`;
     for (let i = 0; i < xhr.length; i++) {
       let element = xhr[i];
       element.elementSn = i;
@@ -182,38 +196,12 @@ export let ResidentManageAjax = {
   },
   /**
    * getResidentFromDevice
-   *
    */
-  /**
- * id: (...)
-label: (...)
-nextCount: (...)
-orgName: (...)
-orgSn: (...)
-orgType: (...)
-orgUuid: (...)
-treeName: ""
-type: (...)
-version: (...)
-extInfo	string
-
-扩展信息
-resSn	integer($int32)
-资源序号
-resType	string
-资源类型
-resUuid	string
-资源UUID
-setUuid	string
-集合UUID
-version	integer($int32)
-版本号
- */
   getResidentFromDevice(xhr) {
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.getResidentFromDevice}`;
-    let params = [];
-    for (let i = 0; i < xhr.length; i++) {
-      let item = {};
+    let api = `${httpRsidentHeader}${RestApi.api.residentManage.getResidentFromDevice}`;
+    var params = [];
+    for (var i = 0; i < xhr.length; i++) {
+      var item = {};
       item.resSn = i;
       item.resType = xhr[i].type;
       item.resUuid = xhr[i].id;
@@ -229,38 +217,29 @@ version	integer($int32)
   // 人脸图片质量检测
   // { “imageBase64” ：“string” }
   getFaceQualityDetection(xhr) {
-    let api = `${protocolHeader}${ip}${RestApi.api.faceQualityDetection}`;
+    let api = `${httpRsidentHeader}${RestApi.faceQualityDetection}`;
     return axios.post(api, xhr);
   },
   // 获取单元(楼栋)基建下的层与房屋展开信息
-  getFloorAndHouse(infrastructureUuid) {
-    let api = `${protocolHeader}${ip}${
-      RestApi.api.residentManage.getFloorAndHouse
-    }${infrastructureUuid}/floorAndHouse`;
+  getFloorAndHouse(xhr) {
+    let projectUuid = xhr.projectUuid || store.state.home.projectUuid;
+    var api = `${httpRsidentHeader}${
+      RestApi.api.residentManage.getFloorAndHouse(projectUuid)
+    }${xhr.id}/floorAndHouse`;
     return axios.get(api);
   },
   // 统计居民管理信息
   getResidentStaticData() {
-    let api = `${protocolHeader}${ip}${RestApi.api.residentManage.getResidentStaticData}`;
+    var api = `${httpRsidentHeader}${RestApi.api.residentManage.getResidentStaticData(store.state.home.projectUuid)}`;
     return axios.get(api);
   },
   // 获取居民标签概要信息
   getResidentTagBriefDetail(tagUuid, needType) {
-    let api = `${protocolHeader}${ip}${
+    var api = `${httpRsidentHeader}${
       RestApi.api.residentManage.getResidentTagBriefDetail
     }${tagUuid}/tagElement/${needType}`;
     return axios.get(api);
-  },
-
-  // 居民导出
-  downLoadResidentData() {
-    let url = `${protocolHeader}${ip}${RestApi.api.residentManage.downLoadResidentApi}`;
-    return axios({
-      method: "get",
-      responseType: 'blob', // 二进制流
-      url,
-    });
-  },
+  }
 };
 
 function install(Vue) {

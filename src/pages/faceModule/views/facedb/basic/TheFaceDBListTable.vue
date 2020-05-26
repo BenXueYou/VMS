@@ -1,50 +1,57 @@
 <template>
-	<div class="tablelist" ref="tablelist">
-		<div>
-			<el-table :data="listTableData" border style="width: 100%;" v-loading="listtableloadding">
-				<el-table-column prop="index" label="序号" width="120">
-					<template slot-scope="scope">
-						<!-- {{("0"+(parseInt(scope.$index)+1)).slice(-2)}} -->
-						<el-checkbox
-							v-model="scope.row.checked"
-							@change="selectchange"
-						>{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
-					</template>
-				</el-table-column>
-				<el-table-column
-					v-for="(item,index) in tableColumnsList"
-					:key="index"
-					:prop="item.propName"
-					:label="item.labelName"
-				>
-					<template slot-scope="scope">
-						<span :title="scope.row[item.propName]">{{scope.row[item.propName]}}</span>
-					</template>
-				</el-table-column>
-				<el-table-column label="操作" min-width="120">
-					<template slot-scope="scope">
-						<el-button :disabled='!OwnAuthDisabled' type="text" size="small" @click="editface(scope.row)">
-							<i class="el-icon-edit-outline"></i>
-							编辑
-						</el-button>
-						<el-button :disabled='!OwnAuthDisabled' type="text" size="small" @click="deleteface(scope.row)">
-							<i class="el-icon-delete"></i>
-							删除
-						</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
-		</div>
-		<div class="faceDBFooter">
-			<el-pagination
-				@current-change="currentChange"
-				:current-page="pageNow"
-				layout="total,prev, pager, next,jumper"
-				:page-size="listPageSize"
-				:total="total"
-				background
-			></el-pagination>
-			<!-- <el-pagination
+  <div class="tablelist"
+       ref="tablelist">
+    <div>
+      <el-table :data="listTableData"
+                border
+                style="width: 100%;"
+                v-loading="listtableloadding">
+        <el-table-column prop="index"
+                         label="序号"
+                         width="120">
+          <template slot-scope="scope">
+            <!-- {{("0"+(parseInt(scope.$index)+1)).slice(-2)}} -->
+            <el-checkbox v-model="scope.row.checked"
+                         @change="selectchange">{{("0"+(parseInt(scope.$index)+1)).slice(-2)}}</el-checkbox>
+          </template>
+        </el-table-column>
+        <el-table-column v-for="(item,index) in tableColumnsList"
+                         :key="index"
+                         :prop="item.propName"
+                         :label="item.labelName">
+          <template slot-scope="scope">
+            <span :title="scope.row[item.propName]">{{scope.row[item.propName]}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作"
+                         min-width="120">
+          <template slot-scope="scope">
+            <el-button :disabled='!OwnAuthDisabled'
+                       type="text"
+                       size="small"
+                       @click="editface(scope.row)">
+              <i class="el-icon-edit-outline"></i>
+              编辑
+            </el-button>
+            <el-button :disabled='!OwnAuthDisabled'
+                       type="text"
+                       size="small"
+                       @click="deleteface(scope.row)">
+              <i class="el-icon-delete"></i>
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="faceDBFooter">
+      <el-pagination @current-change="currentChange"
+                     :current-page="pageNow"
+                     layout="total,prev, pager, next,jumper"
+                     :page-size="listPageSize"
+                     :total="total"
+                     background></el-pagination>
+      <!-- <el-pagination
 				background
 				layout="prev, pager, next"
 				:page-size="listPageSize"
@@ -64,8 +71,8 @@
 					type="number"
 				></el-input>
 			</div>-->
-		</div>
-	</div>
+    </div>
+  </div>
 </template>
 <script>
 const COLUMNS = [
@@ -212,61 +219,65 @@ export default {
 
 <style lang="scss" scoped>
 .tablelist {
-	height: 100%;
+  height: 100%;
+  min-height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .faceDBFooter {
-	position: relative;
-	.totalpagetitle {
-		font-size: 14px;
-		color: #fff;
-		float: right;
-		margin-right: 20px;
-		margin-top: 17px;
-	}
-	.el-pagination {
-		margin-right: 1px;
-		margin-top: 10px;
-		float: right;
-	}
-	.tiaozhuan {
-		position: absolute;
-		right: 20px;
-		top: 6px;
-		span {
-			font-size: 14px;
-			color: #fff;
-			padding-right: 20px;
-		}
-		.yeshu {
-			display: inline-block;
-			width: 90px;
-			input {
-				padding: 0px;
-			}
-		}
-	}
+  position: relative;
+  .totalpagetitle {
+    font-size: 14px;
+    color: #fff;
+    float: right;
+    margin-right: 20px;
+    margin-top: 17px;
+  }
+  .el-pagination {
+    margin-right: 1px;
+    margin-top: 10px;
+    float: right;
+  }
+  .tiaozhuan {
+    position: absolute;
+    right: 20px;
+    top: 6px;
+    span {
+      font-size: 14px;
+      color: #fff;
+      padding-right: 20px;
+    }
+    .yeshu {
+      display: inline-block;
+      width: 90px;
+      input {
+        padding: 0px;
+      }
+    }
+  }
 }
 </style>
 
 <style  lang="scss">
 .tiaozhuan {
-	span {
-		display: inline-block;
-		vertical-align: middle;
-	}
-	.yeshu {
-		display: inline-block;
-		width: 90px;
-		vertical-align: middle;
-		height: 40px;
+  span {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .yeshu {
+    display: inline-block;
+    width: 90px;
+    vertical-align: middle;
+    height: 40px;
 
-		.el-input__inner {
-			margin-top: 5px;
-			width: 50px;
-			height: 28px;
-			line-height: 28px;
-			padding: 0px 5px;
-		}
-	}
+    .el-input__inner {
+      margin-top: 5px;
+      width: 50px;
+      height: 28px;
+      line-height: 28px;
+      padding: 0px 5px;
+    }
+  }
 }
 </style>

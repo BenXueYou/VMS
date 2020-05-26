@@ -180,23 +180,21 @@ export default {
     },
     getAllCheckedLeafUuid(data) {
       // 遍历数据
+      if (!data || data.length === 0) {
+        return;
+      }
       for (let i = 0, len = data.length; i < len; i++) {
-        // 判断是不是叶子节点
+        if (data[i].isShow || data[i].isOwn) {
+          this.showNum.push({
+            featureName: data[i].nodeName,
+            featureUuid: data[i].featureUuid,
+            isShow: data[i].isShow,
+            isOwn: data[i].isOwn,
+            authUuids: data[i].auth
+          });
+        }
         if (data[i].childNodes && data[i].childNodes.length) {
           this.getAllCheckedLeafUuid(data[i].childNodes);
-        } else {
-          // let num = this.getUuid(data[i].auth, data[i].checkAuth);
-          // num有长度则表示要显示
-          // 如果是否显示或者操作权限有true则保存下来
-          if (data[i].isShow || data[i].isOwn) {
-            this.showNum.push({
-              featureName: data[i].nodeName,
-              featureUuid: data[i].featureUuid,
-              isShow: data[i].isShow,
-              isOwn: data[i].isOwn,
-              authUuids: data[i].auth
-            });
-          }
         }
       }
     },
@@ -279,7 +277,8 @@ export default {
     getData() {
       api
         .getAuth({
-          roleUuid: ""
+          roleUuid: "",
+          projectType: this.$store.state.home.projectType.platformType
         })
         .then(res => {
           console.log(res.data);

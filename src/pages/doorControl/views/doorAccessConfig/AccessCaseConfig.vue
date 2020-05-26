@@ -282,38 +282,38 @@ export default {
 @import "@/style/variables.scss";
 
 .wrap {
-  height: 100%;
-  padding: $rightContentPadding;
-  box-sizing: border-box;
-  background-color: $rigthContentBackgroundColor;
-  .tableContent {
-    overflow: auto;
-  }
-  .dateLine {
-    display: flex;
-    flex-wrap: wrap;
-    @include font-s;
-    font-size: 13px;
-    line-height: 20px;
-    .date {
-      width: 200px;
-      text-align: right;
-    }
-    .time {
-      width: 140px;
-      text-align: left;
-      text-indent: 15px;
-    }
-  }
-  .button {
-    @include button30;
-    @include font-s;
-    font-size: 13px;
-    margin: 0px 0px 20px;
-  }
-  .pagination {
-    margin-top: 15px;
-    float: right;
-  }
+	height: 100%;
+	padding: $rightContentPadding;
+	box-sizing: border-box;
+	background-color: $rigthContentBackgroundColor;
+	.tableContent {
+		overflow: auto;
+	}
+	.dateLine {
+		display: flex;
+		flex-wrap: wrap;
+		@include font-s;
+		font-size: 13px;
+		line-height: 20px;
+		.date {
+			width: 200px;
+			text-align: right;
+		}
+		.time {
+			width: 140px;
+			text-align: left;
+			text-indent: 15px;
+		}
+	}
+	.button {
+		@include button30;
+		@include font-s;
+		font-size: 13px;
+		margin: 0px 0px 20px;
+	}
+	.pagination {
+		margin-top: 15px;
+		float: right;
+	}
 }
 </style>

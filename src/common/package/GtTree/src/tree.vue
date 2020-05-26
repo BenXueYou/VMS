@@ -4,7 +4,9 @@
                 :operatorDisabled="operatorDisabled"
                 :searchtype="searchtype"
                 :data='newData'
+                :showTreeLineMenu='showTreeLineMenu'
                 :show-checkbox="showCheckbox"
+                :isLazy="isLazy"
                 @clickmenu='clickmenu'
                 @updateExtend="updateExtend"
                 @updateSelect="updateSelect"
@@ -405,6 +407,12 @@ export default {
         return false;
       }
     },
+    isLazy: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
     operatorDisabled: {
       type: Boolean,
       default() {
@@ -415,6 +423,12 @@ export default {
       type: Boolean,
       default() {
         return false;
+      }
+    },
+    showTreeLineMenu: {
+      type: Boolean,
+      default() {
+        return true;
       }
     },
     initdata: {

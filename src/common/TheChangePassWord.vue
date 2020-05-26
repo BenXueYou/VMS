@@ -120,11 +120,18 @@ export default {
         this.$message.error("两次的密码不一致!");
         return;
       }
-      var eReg1 = /^(?![^a-zA-Z]+$)(?!\D+$)/;
-      if (!eReg1.test(this.newPasswordConfirm)) {
-        this.$message.warning(
-          "修改的密码至少包含数字，字母这两种（区分大小写）"
-        );
+      if (this.newPassword.length < 6 || this.newPassword.length > 16) {
+        this.$message.error("密码长度位于6-16!");
+        return;
+      }
+      var eReg = /^(?![^a-zA-Z]+$)(?!\D+$)/;
+      if (!eReg.test(this.newPassword)) {
+        this.$message.error("密码至少包含数字，字母这两种（区分大小写）");
+        return;
+      }
+      Reg = /^[^\s]*$/;
+      if (!Reg.test(this.newPassword)) {
+        this.$message.error("密码不能包含空格");
         return;
       }
       if (this.newPasswordConfirm && this.password) {

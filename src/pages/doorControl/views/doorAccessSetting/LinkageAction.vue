@@ -23,8 +23,8 @@
     </el-header>
     <el-main class="bodyBox">
       <el-table :data="tableData"
-                style="width: 100%"
                 height="100%"
+                width="100%"
                 v-loading="isLoading">
         <el-table-column type="index"
                          :index="tableIndex"
@@ -224,6 +224,12 @@ export default {
   }
 };
 </script>
+<style>
+.LinkageAction .el-table__empty-block {
+  width: 100% !important;
+}
+</style>
+
 <style lang="scss" scoped>
 .LinkageAction {
   height: 100%;

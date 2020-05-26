@@ -2,14 +2,16 @@
 	<div class="home-main">
 		<div class="app-menu">
 			<!-- <div class="type-title">应用业务</div> -->
-			<template v-for="(item, index) in menuArr[0].children">
-				<menu-item
-					:key="index"
-					@onClickMenu="onClickMenu(item)"
-					:item="item"
-					v-if="item.name !== 'Home'"
-				/>
-			</template>
+      <template v-if="menuArr && menuArr.length > 0">
+        <template v-for="(item, index) in menuArr[0].children">
+          <menu-item
+            :key="index"
+            @onClickMenu="onClickMenu(item)"
+            :item="item"
+            v-if="item.name !== 'Home'"
+          />
+        </template>
+      </template>
 			<!-- v-if="item.name !== 'Home' && item.type === 'app'" -->
 		</div>
 		<!-- <div class="config-menu">
@@ -35,7 +37,6 @@ export default {
   data() {
     return {
       tagViewArr: [],
-      menuArr: []
     };
   },
   created() {
@@ -54,14 +55,18 @@ export default {
       // console.log(constantRouterMap[0].children);
       // console.log(window.sessionStorage.getItem("useruuid"));
       // console.log(this.$router);
-      this.menuArr = JSON.parse(window.sessionStorage.getItem("routerData"));
+      // this.menuArr = this.$store.state.home.routerData;
     },
     onClickMenu(compomentItem) {
-      console.log(compomentItem);
       this.$store.dispatch("addTagViewItem", compomentItem);
       this.$store.dispatch("setLocalTag", compomentItem.name);
       this.$bus.$emit("setLocalTag", compomentItem.name);
       this.$router.push({ name: compomentItem.name });
+    }
+  },
+  computed: {
+    menuArr() {
+      return this.$store.state.home.routerData;
     }
   },
   watch: {},

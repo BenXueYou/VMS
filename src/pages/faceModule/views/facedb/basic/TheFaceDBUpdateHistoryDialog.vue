@@ -330,10 +330,10 @@ export default {
     downloadErrTemp() {
       // let alink = document.createElement("a");
       // alink.download = "error.xlsx";
-      // alink.href = RestApi.api.faceModuleAPi.faceDBApi.downloadErrTemp(this.$store.state.home.projectUuid) + "?importTaskUuid=" + this.importTaskUuid;
+      // alink.href = RestApi.faceModuleAPi.faceDBApi.downloadErrTemp(this.$store.state.home.projectUuid) + "?importTaskUuid=" + this.importTaskUuid;
       // alink.click();
       this.$common.funBuildFile(
-        RestApi.api.faceModuleAPi.faceDBApi.downloadErrTemp(
+        RestApi.faceModuleAPi.faceDBApi.downloadErrTemp(
           this.$store.state.home.projectUuid
         ) +
           "?importTaskUuid=" +

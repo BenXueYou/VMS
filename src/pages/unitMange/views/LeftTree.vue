@@ -1,290 +1,161 @@
 <template>
-  <div class="unit-left-tree">
-    <div class="tree-input">
-      <el-input placeholder="搜索期号／楼栋／单元"
-                v-model="filterText"
-                style="width: 95%">
-        <img slot="prefix"
-             :src="icons.search">
-      </el-input>
-    </div>
-    <el-tabs v-model="activeName">
-      <el-tab-pane label="楼栋单元"
-                   name="first"
-                   style="height: 68vh;"
-                   class="i-tree">
-        <el-scrollbar style="height: 100%;transition:0.2s">
-          <el-tree :data="treeData"
-                   :props="defaultProps"
-                   node-key="id"
-                   :indent="10"
-                   lazy
-                   :load="loadNode"
-                   ref="buildingTree"
-                   :filter-node-method="filterNode"
-                   :default-expanded-keys="defaultExpKeys"
-                   :highlight-current="true"
-                   :expand-on-click-node="false"
-                   @node-click="handleNodeClick">
-            <div class="custom-tree-node i-tree-item"
-                 slot-scope="{ node }">
-              <div class="i-tree-item-icon">
-                <img :src="iconShow(node)"
-                     width="10.9px"
-                     height="9px"
-                     style="margin-right: 4px;">
-                {{ node.label }}
-              </div>
-            </div>
-          </el-tree>
-        </el-scrollbar>
-      </el-tab-pane>
-    </el-tabs>
+  <div class="UnitLeftMenu">
+    <the-leftmenu ref="leftMenu"
+                  :ShowAuthDisabled='ShowAuthDisabled'
+                  :OwnAuthDisabled='OwnAuthDisabled'
+                  :isOnlyArea="isOnlyArea"
+                  @clickNode="clickNodeAll"
+                  @addData="addData"
+                  :isTabs="true"
+                  orgType="areaOrg"></the-leftmenu>
   </div>
 </template>
 
 <script>
-import icons from "@/common/icon.js";
-
+import TheLeftmenu from "@/pages/AreaManagement/views/leftWrap";
+// import * as api from "@/pages/equipmentMange/ajax.js";
 export default {
-  components: {},
-  props: {},
+  name: "AreaManagement",
+  props: {
+    ShowAuthDisabled: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
+    OwnAuthDisabled: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    }
+  },
   data() {
     return {
-      icons,
-      filterText: "",
-      activeName: "first",
-      treeData: [],
-      defaultProps: {
-        children: "children",
+      isOnlyArea: false,
+      devprops: {
         label: "label",
+        children: "zones",
         isLeaf: "leaf"
       },
-      currentNodeId: null,
-      isExpanded: false,
-      currentNode: null,
       defaultExpKeys: [],
+      searchText: "",
+      parentOrgUuid: "",
+      needType: "",
+      orgType: "staff",
       lastLevelType: ""
     };
   },
-  created() {},
-  mounted() {
-    this.initData();
+  components: {
+    TheLeftmenu
   },
   methods: {
-    initData() {
-      this.getAreaStruct();
-    },
-    getAreaStruct() {
-      this.$houseHttp.getAreaStruct({}).then(res => {
-        let body = res.data;
-        this.getAreaStructSuccessResponse(body);
+    getAreaStruct(projectUuid) {
+      return new Promise(resolve => {
+        this.$houseHttp
+          .getAreaStructByProjectUuid(projectUuid, {})
+          .then(res => {
+            let body = res.data || {};
+            let data = [];
+            if (body.data && body.data.id) {
+              data = [
+                {
+                  id: body.data.id,
+                  label: body.data.label,
+                  projectUuid: projectUuid,
+                  type: body.data.type,
+                  children: [],
+                  nextCount: 1
+                }
+              ];
+              let extInfo = body.data.extInfo;
+              console.log(extInfo);
+              if (extInfo && extInfo.length) {
+                this.lastLevelType = extInfo[extInfo.length - 1].type;
+              }
+            }
+            resolve(data);
+          });
       });
     },
-    getAreaStructSuccessResponse(body) {
-      if (!body.data) {
-        return;
-      }
-      this.treeData = [
-        {
-          id: body.data.id,
-          label: body.data.label,
-          type: body.data.type,
-          children: []
-        }
-      ];
-      this.getInfrastructure(body.data.id);
-      this.setLastLevelType(body.data.extInfo);
-    },
-    setLastLevelType(data) {
-      if (!data) {
-        return;
-      }
-      for (let index in data) {
-        if (parseInt(index) === data.length - 1) {
-          this.lastLevelType = data[index].type;
-          this.$emit("setLastLevelType", this.lastLevelType);
-        }
-      }
-    },
-    getInfrastructure(parentUuid) {
-      this.$houseHttp
-        .getInfrastructure({
-          parentUuid
-        })
-        .then(res => {
-          let body = res.data;
-          this.handleGetTreeSuccessResponse(body);
-        });
-    },
-    handleGetTreeSuccessResponse(body) {
-      if (body.data) {
-        this.treeData[0].children = body.data;
-        for (let item of this.treeData[0].children) {
-          this.$set(item, "leaf", true);
-          if (item.nextCount !== 0 && item.type !== this.lastLevelType) {
-            this.$set(item, "leaf", false);
-          }
-        }
-      }
-      this.handleDefaultExpKeys();
-      this.setDefaultSelectedKey(this.treeData[0].id);
-    },
-    handleDefaultExpKeys() {
-      if (this.treeData && this.treeData.length !== 0) {
-        this.defaultExpKeys.push(this.treeData[0].id);
-      }
-    },
-    setDefaultSelectedKey(id) {
-      setTimeout(() => {
-        this.$refs.buildingTree.setCurrentKey(id);
-        this.$emit("setTreeRootData", this.treeData[0]);
-      }, 200);
-    },
-    handleNodeClick(obj, node, component) {
-      console.log(node);
-      this.$emit("setTreeRootData", obj);
-      this.currentNode = node;
-      // if (obj.nextCount !== 0 && obj.type !== this.lastLevelType) {
-      //   this.expandedSet(node);
-      // }
-    },
-    expandedSet(node) {
-      if (this.currentNodeId && this.currentNodeId === node.id) {
-        this.isExpanded = !this.isExpanded;
-        if (this.isExpanded && node.level !== 1) {
-          this.setChild(node);
-        }
-        this.$set(node, "expanded", this.isExpanded);
-      } else {
-        this.$set(node, "expanded", false);
-        this.currentNodeId = node.id;
-        this.isExpanded = false;
-      }
-    },
-    setChild(node) {
-      this.$set(node, "loading", true);
-      this.$houseHttp
-        .getInfrastructure({
-          parentUuid: node.data.id
-        })
-        .then(res => {
-          this.$set(node, "loading", false);
-          this.$set(node, "loaded", true);
-          if (!res.data.data) {
-            this.$set(node, "isLeaf", true);
-          } else {
-            this.$set(node.data, "children", []);
-            this.$set(node, "childNodes", []);
-            for (let item of res.data.data) {
-              this.$set(item, "leaf", true);
-              if (item.nextCount !== 0 && item.type !== this.lastLevelType) {
-                this.$set(item, "leaf", false);
-              }
+    getInfrastructure(projectUuid, parentUuid) {
+      return new Promise(resolve => {
+        this.$houseHttp
+          .getInfrastructureByProjectUuid(projectUuid, {
+            parentUuid
+          })
+          .then(res => {
+            if (!res.data.data) {
+              resolve([]);
+            } else {
+              let data = (res.data.data || []).map(item => {
+                // 记录projectUuid
+                item.projectUuid = projectUuid;
+                if (item.nextCount !== 0 && item.type === this.lastLevelType) {
+                  this.$set(item, "leaf", true);
+                  this.$set(item, "children", false);
+                  this.$set(item, "nextCount", 0);
+                }
+                return item;
+              });
+              resolve(data);
             }
-            node.doCreateChildren(res.data.data);
-          }
-        });
+          });
+      });
     },
-    loadNode(node, resolve) {
-      if (node.level === 0) {
-        return;
-      }
-      this.$houseHttp
-        .getInfrastructure({
-          parentUuid: node.data.id
-        })
-        .then(res => {
-          if (!res.data.data) {
-            resolve([]);
-          } else {
-            for (let item of res.data.data) {
-              this.$set(item, "leaf", true);
-              if (item.nextCount !== 0 && item.type !== this.lastLevelType) {
-                this.$set(item, "leaf", false);
-              }
-            }
-            resolve(res.data.data);
-          }
-        });
-    },
-    iconShow(node) {
-      let icon = "";
-      if (!node) {
-        icon = require("@/assets/images/building/area.png");
-      } else {
-        let type = node.data.type;
-        if (type === "infrastructure") {
-          type = "area";
+    async addData(data, callback) {
+      console.log(data);
+      if (data.type === "project") {
+        // 传入project-id获取对应的
+        let rootArr = await this.getAreaStruct(data.id);
+        if (rootArr && !rootArr.length) {
+          callback(rootArr);
+          return;
         }
-        icon = require(`@/assets/images/building/${type}.png`);
+        data.id = rootArr[0].id;
+        data.projectUuid = rootArr[0].projectUuid;
+        this.$emit("setTreeRootData", rootArr[0]);
       }
-      return icon;
+      let newArr = await this.getInfrastructure(data.projectUuid, data.id);
+      callback(newArr);
     },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+    clickNodeAll(data, node) {
+      // 点击组织和区域树的时候不用管
+      if (data.type !== "areaOrg" && data.type !== "project") {
+        this.$emit("setTreeRootData", data);
+      }
     }
-  },
-  watch: {
-    filterText(val) {
-      this.$refs.buildingTree.filter(val);
-    }
-  },
-  destroyed() {}
+  }
 };
 </script>
-
-<style lang="scss">
-.unit-left-tree {
-  .el-input__prefix {
-    position: absolute;
-    left: 36px;
-    top: 7px;
-  }
-  .el-input--prefix .el-input__inner {
-    padding-left: 28px;
-  }
-  .el-tree {
-    background: rgba($color: #212326, $alpha: 1);
-  }
-  .el-tabs__nav-wrap::after {
-    background-color: rgba($color: #ffffff, $alpha: 0.15);
-  }
+<style>
+.custom-tree-node {
+  width: 100%;
+}
+.UnitLeftMenu .is-leaf {
+  display: none !important;
+}
+.UnitLeftMenu .leftmenu .tabs {
+  height: calc(100% - 80px) !important;
 }
 </style>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style lang="scss" scoped>
-.unit-left-tree {
-  // width: 15%;
+.UnitLeftMenu {
+  padding: 15px;
   width: 320px !important;
-  height: 100%;
-  background: rgba($color: #232629, $alpha: 0.8);
-  padding: 0 1%;
+  background-color: rgba(37, 41, 45, 0.8);
   box-sizing: border-box;
-  .tree-input {
-    height: 90px;
+  height: 100%;
+  .oneRoad {
     display: flex;
-    align-items: center;
-    .image {
-      margin-left: 10px;
-      cursor: pointer;
+    width: 100%;
+    justify-content: space-between;
+    .operatorIcon {
+      display: none;
     }
-  }
-  .i-tree {
-    padding: 10px 0;
-    box-sizing: border-box;
-    .i-tree-item {
-      width: 100%;
-      .i-tree-item-icon {
-        display: flex;
-        align-items: center;
-        .action-icon {
-          margin-left: auto;
-          margin-right: 10px;
-          cursor: pointer;
-        }
-      }
+    &:hover .operatorIcon {
+      display: block;
     }
   }
 }

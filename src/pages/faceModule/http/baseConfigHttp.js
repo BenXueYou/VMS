@@ -1,7 +1,7 @@
 import Axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 import store from '@/store/store.js';
-let FaceModuleApi = RestApi.api.faceModuleAPi;
+let FaceModuleApi = RestApi.faceModuleAPi;
 
 /** ******************************************* 基础设置 ************************************** */
 // 基础设置接口

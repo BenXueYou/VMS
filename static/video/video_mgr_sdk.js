@@ -6,21 +6,21 @@ function CVideoMgrSdk(observer) {
 CVideoMgrSdk.prototype.setup = async function({
   element,
   decodeMod,
-  jSignal,
-  jMedia,
+  jDescription,
+  webProtocol,
   url,
   protocol,
   action,
   speed,
   file
 }) {
-  console.log(element);
+//   console.log(element);
   var video = new CVideo(this);
   let ret = await video.setup({
     element,
     decodeMod,
-    jSignal,
-    jMedia,
+    jDescription,
+    webProtocol,
     url,
     protocol,
     action,
@@ -46,6 +46,26 @@ CVideoMgrSdk.prototype.play = async function(video) {
   }
   return false;
 };
+
+CVideoMgrSdk.prototype.enableDecoder = function(video, enable)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i) {
+        if (video === this.m_videoList[i]) {
+            video.enableDecoder(enable);
+        }
+    }
+}
+
+CVideoMgrSdk.prototype.resetBuffer = function(video)
+{
+    var i = 0;
+    for (i = 0; i < this.m_videoList.length; ++i) {
+        if (video === this.m_videoList[i]) {
+            video.resetBuffer();
+        }
+    }
+}
 
 CVideoMgrSdk.prototype.stop = async function(video) {
   var i = 0;

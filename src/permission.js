@@ -1,15 +1,7 @@
 import router, { getRoute } from "./router";
 import store from "@/store/store";
+import Vue from 'vue';
 // import { Message } from 'element-ui';
-
-// permissiom judge
-/* function hasPermission(roles, permissionRoles) {
-  // 去除了角色校验的权限的操作，永远都是true
-  // if (roles.indexOf('admin') >= 0) return true // admin权限 直接通过
-  // if (!permissionRoles) return true
-  // return roles.some(role => permissionRoles.indexOf(role) >= 0)
-  return true;
-} */
 import * as api from "@/pages/user/http/ajax.js";
 const whiteList = ["/Login"]; // 不重定向白名单
 let isInitRoute = false;
@@ -26,80 +18,55 @@ router.beforeEach((to, from, next) => {
     if (to.path === "/Login") {
       // next({ path: '/' })
       next();
-      // NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
     } else {
       // 判断改账户是否选择了项目
       if (to.path === "/projectManage") {
-        console.log("projectUuid===", store.state.home.projectUuid);
         next();
         // return;
       }
-      if (!isInitRoute && to.path !== "/projectManage") {
-        if (sessionStorage.getItem("projectUuid") !== "") {
-          isInitRoute = true;
-          // 这里根据项目的uuid去请求用户的权限菜单
-          api
-            .getHomeMenu({
-              accountUuid: window.sessionStorage.getItem("useruuid").trim()
-            })
-            .then(res => {
-              console.log(res);
-              if (res.data.success) {
-                let data = res.data.data || [];
-                let getAllData = false; // 测试用的，先显示全部的菜单那
-                let routerData = getRoute(data, getAllData);
-                window.sessionStorage.setItem(
-                  "routerData",
-                  JSON.stringify(routerData)
-                );
-                router.addRoutes(routerData);
-              }
-            })
-            .catch(() => {
-              // let routerData = getRoute([], true);
-              // window.sessionStorage.setItem(
-              //   "routerData",
-              //   JSON.stringify(routerData)
-              // );
-              // router.addRoutes(routerData);
-            });
-          getAccountTypeByUserUuid(
-            window.sessionStorage.getItem("useruuid").trim()
-          );
-
-          // 这里请求用户的权限列表
-          getAuthList();
-        }
-      }
-
-      /* console.log("topath : ", to.path);
-      if (store.state.user.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
-        store.dispatch('GetUserInfo').then(res => { // 拉取user_info
-          const roles = res.body.role;
-          store.dispatch('GenerateRoutes', { roles }).then(() => { // 生成可访问的路由表
-            console.log("add routes", store.state.permission.addRouters);
-            router.addRoutes(store.state.permission.addRouters);// 动态添加可访问路由表
-            next({ ...to, replace: true });// hack方法 确保addRoutes已完成 ,replace: true so the navigation will not leave a history record
-            // router.replace(to);
+      let paramsObj = JSON.parse(Vue.prototype.$common.getQueryString("paramObj"));
+      if (paramsObj) {
+        store.dispatch("setProjectUuid", paramsObj.projectUuid);
+        store.dispatch("setProjectType", paramsObj.projectType);
+        store.dispatch("clearTagView");
+        let index = window.location.href.indexOf("#");
+        let suffix = window.location.href.substring(0, index + 1);
+        if (paramsObj.projectType.platformType === "school") {
+          store.dispatch("addTagViewItem", {
+            path: "/SchoolBoard",
+            name: "SchoolBoard",
+            key: "SchoolBoard",
+            title: "学校看板",
           });
-        }).catch((e) => {
-          console.log(e);
-          store.dispatch('FedLogOut').then(() => {
-            Message.error('验证失败,请重新登录');
-            next({ path: '/login' });
-          });
-        });
-      } else {
-        // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
-        if (hasPermission(store.state.user.roles, to.meta.role)) {
-          next();//
+          store.dispatch("setLocalTag", "SchoolBoardHome");
+          window.location.href = `${suffix}/SchoolBoard/SchoolBoardHome`;
         } else {
-          next({ path: '/401', query: { noGoBack: true } });
-          // NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
+          store.dispatch("addTagViewItem", {
+            path: "/CommunityBoard",
+            name: "CommunityBoard",
+            key: "CommunityBoard",
+            title: "社区看板",
+          });
+          store.dispatch("setLocalTag", "CommunityBoardHome");
+          window.location.href = `${suffix}/CommunityBoard/CommunityBoardHome`;
         }
-        // 可删 ↑
-      } */
-      next();
+        setTimeout(() => {
+          window.location.reload();
+        }, 200);
+      } else {
+        if (!isInitRoute && to.path !== "/projectManage") {
+          if (sessionStorage.getItem("projectUuid") !== "") {
+            // 测试获取不到动态的 accountType
+            isInitRoute = true;
+            // 这里根据项目的uuid去请求用户的权限菜单
+            getMenu();
+            getAccountTypeByUserUuid(
+              window.sessionStorage.getItem("useruuid").trim()
+            );
+          }
+        }
+        next();
+      }
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
@@ -107,7 +74,6 @@ router.beforeEach((to, from, next) => {
       next();
     } else {
       next("/Login"); // 否则全部重定向到登录页
-      // NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
     }
   }
 });
@@ -115,6 +81,37 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
   // NProgress.done() // 结束Progress
 });
+function getMenu() {
+  api
+    .getHomeMenu({
+      accountUuid: window.sessionStorage.getItem("useruuid").trim(),
+      projectType: store.state.home.projectType.platformType
+    })
+    .then(res => {
+      if (res.data.success) {
+        let data = res.data.data || [];
+        let getAllData = false; // 测试用的，先显示全部的菜单那
+        let routerData = getRoute(data, getAllData);
+        let setModuleList = ['全部'], operateModuleList = ['全部'];
+        // 生成日志模块，下拉框的options
+        routerData[0].children.forEach(element => {
+          if (element.moduleType && element.moduleType.indexOf('set') !== -1) {
+            setModuleList.push(element.title);
+          }
+          if (element.moduleType && element.moduleType.indexOf('operation') !== -1) {
+            operateModuleList.push(element.title);
+          }
+        });
+        store.dispatch("setRouterData", routerData);
+        store.dispatch("setSetModuleList", setModuleList);
+        store.dispatch("setOperateModuleList", operateModuleList);
+        router.addRoutes(routerData);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
 // 根据userUuid查询账号类型
 function getAccountTypeByUserUuid(userUuid) {
   api
@@ -122,39 +119,43 @@ function getAccountTypeByUserUuid(userUuid) {
     .then(res => {
       if (res.data.success) {
         store.dispatch("setAccountType", res.data.data.accountType);
+        getAuthList();
       } else {
         alert(res.data.msg);
       }
     })
-    .catch(() => {});
+    .catch((err) => {
+      console.log(err);
+    });
 }
 // 获取权限列表
 function getAuthList() {
-  console.log(sessionStorage.getItem("useruuid"));
   api
     .getAccountFeatureAuth({
-      accountUuid: sessionStorage.getItem("useruuid")
+      accountUuid: sessionStorage.getItem("useruuid"),
+      projectType: store.state.home.projectType.platformType
     })
     .then(res => {
       if (res) {
-        console.log(res);
         let data = res.data.data || [];
         let AllModulesArr = [];
         getAllModulesArr(data, AllModulesArr);
         store.dispatch("setAuthList", AllModulesArr);
       }
+    }).catch((err) => {
+      console.log(err);
     });
 }
 
 // 将所有的模块扁化
 function getAllModulesArr(data, AllModulesData) {
-  if (data && data.length) {
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].childNodes) {
-        getAllModulesArr(data[i].childNodes, AllModulesData);
-      } else {
-        AllModulesData.push(data[i]);
-      }
+  if (!data || data.length === 0) {
+    return;
+  }
+  for (let i = 0; i < data.length; i++) {
+    AllModulesData.push(data[i]);
+    if (data[i].childNodes && data[i].childNodes.length !== 0) {
+      getAllModulesArr(data[i].childNodes, AllModulesData);
     }
   }
 }
@@ -162,4 +163,4 @@ function getAllModulesArr(data, AllModulesData) {
  * 格式化路由映射 服务器返回的类 变成路由所需要的类
  */
 // eslint-disable-next-line no-unused-vars
-function formateRouterMap() {}
+function formateRouterMap() { }

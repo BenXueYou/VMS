@@ -4,19 +4,13 @@
     <div class="searchWrap">
       <el-input :placeholder="orgType=='staff'?'搜索组织/标签/名称':'搜索设备/标签/名称'"
                 class='mysearchText'
-                :disabled="!OwnAuthDisabled"
                 v-model="searchText">
         <img slot="prefix"
              class="image"
              :src="icons.search"
              alt>
       </el-input>
-      <!-- <img v-if="activeName==='view'"
-           @click="showAddTagDialog"
-           :src="icons.addSign"
-           alt> -->
     </div>
-
     <el-tabs v-model="activeName"
              class="tabs"
              :class="{'tabsPanel':showCloudControl}"
@@ -27,27 +21,40 @@
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
+                 :data="treeData"
+                 default-expand-all
+                 :filter-node-method="filterNode"
                  ref="tree1"
                  :default-expanded-keys="defaultExpKeys"
                  node-key="id"
-                 class='videoTree'
-                 lazy>
+                 class='videoTree'>
           <div class="custom-tree-node"
                @contextmenu="saveClickData(node, data,$event)"
                slot-scope="{ node, data }">
             <div class="channelStatus">
+              <span v-if="((data.type!='areaOrg'&&data.openFlag)||(data.type=='project' && !data.isHaveRoot))&&(!data.children)"
+                    @click.stop="getProjectChildTree(node,data)"
+                    class="el-tree-node__expand-icon el-icon-caret-right"></span>
+
+              <img v-if="data.type === 'project'"
+                   src="@/assets/icon/area_tree_last_node.png"
+                   style="margin-right:3px"
+                   alt="">
+              <img src="@/assets/images/equipment/floder.png"
+                   v-else-if="(data.type==='areaOrg') || (data.nodeType==='orgNode')"
+                   alt="">
               <img :src="data.icon"
-                   v-if="data.icon"
+                   v-else
                    alt="">
               <span @dblclick.stop="openVidoeByDBClick(node,data,$event)"
                     class="span "
                     :draggable="data.nodeType==='chnNode'"
                     @dragstart="dragstart(data,$event)"
-                    :class="{'channelOffline':!data.isOnline}"
+                    :class="{'channelOffline':!data.isOnline&&(data.type!='areaOrg'&&data.type!='project'&&data.resType!='organization')}"
                     :title="node.label">{{ node.label }}</span>
 
               <span class="el-dropdown-link  "
-                    v-if="data.isOnline||data.nodeType!='chnNode'"
+                    v-if="data.isOnline||(data.nodeType!='chnNode'&&data.type!='areaOrg'&&data.type!='project')"
                     @click.stop="saveClickData(node, data,$event)">
                 <img class="checked-img threelinemenu"
                      v-if="OwnAuthDisabled"
@@ -61,68 +68,16 @@
 
               </span>
             </div>
-
           </div>
         </el-tree>
-      </el-tab-pane>
-      <el-tab-pane label="标签"
-                   class="mypanel2"
-                   name="tag">
-        <el-tree :props="props"
-                 class='videoTree2'
-                 :load="loadNode"
-                 :default-expanded-keys="defaultExpKeys"
-                 node-key="id"
-                 :expand-on-click-node="false"
-                 lazy
-                 @node-click="handleNodeClick">
-          <div class="custom-tree-node"
-               @contextmenu="saveClickData(node, data,$event)"
-               slot-scope="{ node, data }">
-            <div class="channelStatus channelStatus2">
-              <img :src="data.icon"
-                   v-if="data.icon"
-                   alt="">
-              <span class="span"
-                    @dblclick.stop="openVidoeByDBClick(node,data,$event)"
-                    @click.stop="saveClickData('', data)"
-                    :draggable="data.hasOwnProperty('channelType')"
-                    @dragstart="dragstart(data,$event)"
-                    :title="node.label"
-                    :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
-
-            </div>
-            <el-dropdown trigger="click"
-                         @command="handleCommand"
-                         placement="bottom"
-                         class='threelinemenu'>
-              <span class="el-dropdown-link"
-                    v-if="data.isOnline||!data.hasOwnProperty('channelType')"
-                    @click="saveClickData(node, data)">
-                <img class="checked-img"
-                     v-if="OwnAuthDisabled"
-                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
-                     style="margin-right: 20%;">
-                <img class="checked-img"
-                     v-else
-                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA7UlEQVRYR+2VPQrCQBBGvy1E2DbVTAptJbaWgkfw5wSW4n1SewJzBMHSwk6bNNpM2mCpgUgKQSXbCEMi7PY73+PtzKxBw8c0nA8P4A20y4CI7ABMNCfDGLMhouUr48OAiBwAjJQBTkQ0rAXIsqxfFEVfE8BaewyC4FYLoBnsqt2uJvQGKgMi0tM0wczX9/rfY7gFMNMEALBl5oVrDyQApsoACTPPnWNY7QJNACK6OJ9AM9jvgf8wkKZp11o71uyFPM/3URTdXWN4BjDQBABwZubIBRADWNUAPH6E6nzfK8syDsNw7b9jb8AbaI2BJ65iOiHBES+mAAAAAElFTkSuQmCC"
-                     style="width:12px;margin-right: 20%;">
-              </span>
-              <el-dropdown-menu :slot="!OwnAuthDisabled?'':'dropdown'">
-                <el-dropdown-item command="video">打开视频</el-dropdown-item>
-                <el-dropdown-item command="playback">查看录像</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </div>
-        </el-tree>
-
       </el-tab-pane>
       <el-tab-pane label="视图"
                    name="view">
         <el-tree :props="viewProps"
                  class='videoTree3'
                  :data="viewTreeData"
-                 refs="tree3"
+                 :filter-node-method="filterNode"
+                 ref="tree3"
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node"
                @dblclick.stop="openVidewTu(data)"
@@ -130,7 +85,8 @@
             <span class="span"
                   style='min-width:120px;display:inline-block;'
                   :title="node.label">{{ node.label }}</span>
-            <el-dropdown trigger="click"
+            <el-dropdown v-if='OwnAuthDisabled'
+                         trigger="click"
                          @command="handleCommand"
                          placement="bottom"
                          class='threelinemenu'>
@@ -145,7 +101,7 @@
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA7UlEQVRYR+2VPQrCQBBGvy1E2DbVTAptJbaWgkfw5wSW4n1SewJzBMHSwk6bNNpM2mCpgUgKQSXbCEMi7PY73+PtzKxBw8c0nA8P4A20y4CI7ABMNCfDGLMhouUr48OAiBwAjJQBTkQ0rAXIsqxfFEVfE8BaewyC4FYLoBnsqt2uJvQGKgMi0tM0wczX9/rfY7gFMNMEALBl5oVrDyQApsoACTPPnWNY7QJNACK6OJ9AM9jvgf8wkKZp11o71uyFPM/3URTdXWN4BjDQBABwZubIBRADWNUAPH6E6nzfK8syDsNw7b9jb8AbaI2BJ65iOiHBES+mAAAAAElFTkSuQmCC"
                      style="width:12px;margin-right: 20%;">
               </span>
-              <el-dropdown-menu :slot="!OwnAuthDisabled?'':'dropdown'">
+              <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="view">打开视图</el-dropdown-item>
                 <el-dropdown-item command="renameView">重命名</el-dropdown-item>
                 <el-dropdown-item command="deleteView">删除</el-dropdown-item>
@@ -244,7 +200,7 @@
                alt="">
         </div>
         <!-- 进入预置点的设置 -->
-        <div class="button"
+        <!-- <div class="button"
              @click="setYZ"
              v-show="!isChoose"
              title="">
@@ -271,7 +227,7 @@
              title="">
           <img :src="icons.deleteIcon"
                alt="">
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -365,6 +321,7 @@ export default {
   },
   data() {
     return {
+      treeData: [],
       operatorData: "", // 存储树菜单正在操作的节点
       changeTitle: "视图重命名",
       addTitle: "",
@@ -472,6 +429,7 @@ export default {
     this.data2 = [];
     this.parentOrgUuid = "";
     this.Treeparent = "";
+    this.getAreaData();
     // this.getOrgTree(true);
   },
   activated() {},
@@ -483,6 +441,86 @@ export default {
     })
   },
   methods: {
+    // 点击树节点展开的方法
+    getProjectChildTree(node, data) {
+      let params = {
+        parentUuid: data.id,
+        parentType: data.nodeType
+      };
+      if (data.type === "project") {
+        this.httpLoadTreeRootData(node, data, params);
+      } else {
+        this.httpLoadNextNodeData(node, data, params);
+      }
+    },
+    // 根据项目id初始化该项目下的设备组织树
+    httpLoadTreeRootData(node, data, params) {
+      api2.getPlayTreeByProjectUuid(data.id).then(res => {
+        let newArr = res.data.data || [];
+        newArr.map(item => {
+          item.parentUuid = data.id;
+          item.isOnline = true;
+          if (item.nodeType === "chnNode") {
+            item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          }
+          if (item.nodeType === "devNode") {
+            item.isOnline = item.extInfo.devOnlineOrNot === "online";
+          }
+          item.icon = this.getIcon(item.isOnline, item.realType);
+          return item;
+        });
+        if (!data.children) {
+          this.$set(data, "children", []);
+        }
+        this.$set(node, "expanded", true);
+        console.log(newArr);
+        if (!newArr[0] || !newArr[0].parentUuid) {
+          return;
+        }
+        this.$set(data, "isHaveRoot", true);
+        params.parentUuid = newArr[0].id;
+        data.parentUuid = newArr[0].parentUuid;
+        params.parentType = newArr[0].nodeType;
+        this.httpLoadNextNodeData(node, data, params);
+        console.log(data);
+      });
+    },
+    // 请求树下级节点的方法
+    httpLoadNextNodeData(node, data, params) {
+      api2.getPlayTreeByProjectUuid(data.parentUuid, params).then(res => {
+        let newArr = res.data.data || [];
+        newArr.map(item => {
+          item.parentUuid = data.parentUuid;
+          item.isOnline = true;
+          if (item.nodeType === "chnNode") {
+            item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          }
+          if (item.nodeType === "devNode") {
+            item.isOnline = item.extInfo.devOnlineOrNot === "online";
+          }
+          item.icon = this.getIcon(item.isOnline, item.realType);
+          return item;
+        });
+        if (!data.children) {
+          this.$set(data, "children", []);
+        }
+        data.children.push(...(newArr || []));
+        this.$set(node, "expanded", true);
+        console.log(node);
+      });
+    },
+
+    getAreaData() {
+      api
+        .getAreaAllOrg({
+          // parentOrgUuid: this.parentOrgUuid,
+          orgType: "areaOrg"
+        })
+        .then(res => {
+          let result = res.data.data || [];
+          this.treeData = result;
+        });
+    },
     dragstart(data, e) {
       if (!this.OwnAuthDisabled) {
         return;
@@ -492,42 +530,38 @@ export default {
       e.dataTransfer.setData("whereform", "tree");
       e.dataTransfer.setData("operatorData", JSON.stringify(data));
     },
-    changeYuZhi() {
-      // 下拉列表修改预置点，暂且不需要什么操作
-      // for (let i = 0; i < this.yuzhiOptions.length; i++) {
-      //   if (this.yuzhiOptions[i].presetPositionUuid === this.yuzhi) {
-      //     console.log(this.yuzhiOptions[i]);
-      //     this.maxStepLength = Math.max(
-      //       this.maxStepLength,
-      //       this.yuzhiOptions[i].stepLength
-      //     );
-      //     this.steplen = this.yuzhiOptions[i].stepLength;
-      //     break;
-      //   }
-      // }
-    },
+    changeYuZhi() {},
+    // 取预设点列表
     getPreset(resetYuzhi = false) {
-      api2.getPreset({ channelUuid: this.channelUuid }).then(res => {
-        let data = res.data.data || {};
-        let list = (data && data.list) || [];
-        let presetPosCount = data.presetPosCount || 256;
-        let num = Array.from({ length: presetPosCount }, (item, index) => {
-          return {
-            isNew: true, // 表示是否没被设置过的预置点
-            presetPositionUuid: index, // 预置点uuid
-            presetPoisition: index, // 预置点位置
-            presetName: index + 1, // 预置点名称
-            presetNo: index // 预置点编号}
-          };
+      // 预置点需要根据用户选择了项目之后再去进行选择，可以再显示预置点的时候在去请求
+      api2
+        .getPreset(
+          {
+            channelUuid: this.channelUuid
+          },
+          this.operatorData.parentUuid
+        )
+        .then(res => {
+          let data = res.data.data || {};
+          let list = (data && data.list) || [];
+          let presetPosCount = data.presetPosCount || 256;
+          let num = Array.from({ length: presetPosCount }, (item, index) => {
+            return {
+              isNew: true, // 表示是否没被设置过的预置点
+              presetPositionUuid: index, // 预置点uuid
+              presetPoisition: index, // 预置点位置
+              presetName: index + 1, // 预置点名称
+              presetNo: index // 预置点编号}
+            };
+          });
+          for (let i = 0, len = list.length; i < len; i++) {
+            num[list[i].presetNo] = list[i];
+            num[list[i].presetNo].isNew = false;
+          }
+          // console.log(num);
+          this.yuzhi = "";
+          this.yuzhiOptions = num;
         });
-        for (let i = 0, len = list.length; i < len; i++) {
-          num[list[i].presetNo] = list[i];
-          num[list[i].presetNo].isNew = false;
-        }
-        // console.log(num);
-        this.yuzhi = "";
-        this.yuzhiOptions = num;
-      });
     },
     viewhandleCheckChange() {
       console.log(this.$refs.tree3.getCheckedNodes());
@@ -536,13 +570,14 @@ export default {
       if (!this.OwnAuthDisabled) {
         return;
       }
-      // console.log(node, data, e);
       e.preventDefault();
       e.stopPropagation();
       this.operatorData = data;
       // 不在线的通道 ，双击进行展示
       if (data.isOnline === false) {
         this.$message.error("设备不在线");
+      } else if (data.type === "areaOrg" || data.type === "project") {
+        // 区域树上面的结构就不做处理
       } else {
         if (data.hasOwnProperty("channelUuid") || data.nodeType === "chnNode") {
           this.chuliData();
@@ -550,7 +585,7 @@ export default {
       }
     },
     saveClickData(node, data, event) {
-      if (!this.OwnAuthDisabled) {
+      if (!this.OwnAuthDisabled || data.type === "areaOrg") {
         return;
       }
       // 点击三角菜单保存树节点信息
@@ -586,7 +621,6 @@ export default {
           ],
           event: event,
           callback(value) {
-            // alert(value);
             // value表示点击按钮的value
             _this.handleCommand(value);
           }
@@ -598,7 +632,8 @@ export default {
       api2
         .getOnlineChannel({
           parentUuid,
-          parentType
+          parentType,
+          projectUuid: this.operatorData.parentUuid
         })
         .then(res => {
           console.log(res);
@@ -606,33 +641,37 @@ export default {
           // 这里获取到通道UUid
           for (let i = 0; i < data.length; i++) {
             data[i].realType = data[i].type;
+            data[i].projectUuid = this.operatorData.parentUuid;
+            data[i].parentUuid = this.operatorData.parentUuid;
             this.getPreviewInfo(data[i].channelUuid, data[i], streamType, -1);
           }
         });
     },
     chuliData(streamType = "") {
       console.log(this.operatorData);
-      if (this.operatorData.nodeType === "chnNode") {
-        this.getPreviewInfo(
+      if (
+        this.operatorData.nodeType === "devNode" ||
+        this.operatorData.nodeType === "orgNode"
+      ) {
+        // 点击的节点是设备或组织，根据点击的节点获取当前在线的通道
+        this.getOnlineChannelList(
           this.operatorData.id,
-          this.operatorData,
+          this.operatorData.nodeType,
           streamType
         );
-      } else if (this.operatorData.nodeType === "devNode") {
-        // 点击的是设备，根据设备
-        this.getOnlineChannelList(this.operatorData.id, "devNode", streamType);
-      } else if (this.operatorData.nodeType === "orgNode") {
-        // 根据组织来获取通道
-        this.getOnlineChannelList(this.operatorData.id, "orgNode", streamType);
-      } else if (this.operatorData.hasOwnProperty("channelType")) {
+      } else if (
+        this.operatorData.nodeType === "chnNode" ||
+        this.operatorData.hasOwnProperty("channelType")
+      ) {
+        // 右键点击的是通道，则获取rtsp地址去播放视频
         this.getPreviewInfo(
-          this.operatorData.channelUuid,
+          this.operatorData.channelUuid || this.operatorData.id,
           this.operatorData,
           streamType
         );
       } else if (this.operatorData.hasOwnProperty("tagType")) {
+        // 点击节点的是标签节点，则获取当前标签下的在线通道
         this.getChannelByNode(this.operatorData.id).then(res => {
-          console.log(res);
           let data = res || [];
           for (let i = 0; i < data.length; i++) {
             // 判断设备在不在线
@@ -642,7 +681,36 @@ export default {
             }
           }
         });
+      } else if (
+        this.operatorData.type &&
+        this.operatorData.type === "project"
+      ) {
+        // 点击的是区域树末级节点
+        this.operatorData.parentUuid = this.operatorData.id;
+        this.httpLoadTreeChannelData(this.operatorData, streamType);
+      } else {
+        console.log("当前的节点:", this.operatorData);
       }
+    },
+    httpLoadTreeChannelData(data, streamType) {
+      api2.getPlayTreeByProjectUuid(data.id).then(res => {
+        let newArr = res.data.data || [];
+        if (!newArr.length) return;
+        newArr.map(item => {
+          item.parentUuid = data.id;
+          item.isOnline = true;
+          if (item.nodeType === "chnNode") {
+            item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          }
+          if (item.nodeType === "devNode") {
+            item.isOnline = item.extInfo.devOnlineOrNot === "online";
+          }
+          item.icon = this.getIcon(item.isOnline, item.realType);
+          return item;
+        });
+        console.log(newArr[0], "=======", this.operatorData);
+        this.getOnlineChannelList(newArr[0].id, newArr[0].nodeType, streamType);
+      });
     },
     openVidewTu(data) {
       if (!data) {
@@ -655,7 +723,6 @@ export default {
         return;
       }
       console.log(command);
-      console.log(this.operatorData);
       if (command === "video") {
         // 打开视频操作
         this.chuliData();
@@ -692,14 +759,8 @@ export default {
       }
     },
     getPreviewInfo(channelUuid, data, streamType, operator = 1) {
-      // if (!data.isOnline) {
-      //   return;
-      // }
       console.log(channelUuid, data, streamType, operator);
       this.$emit("playRtsp", channelUuid, streamType, data, operator);
-    },
-    handleNodeClick() {
-      // 点击展开
     },
     getIcon(isOnline, type) {
       let treeIcons = window.config.treeIcons || [],
@@ -707,59 +768,16 @@ export default {
       for (let i = 0; i < treeIcons.length; i++) {
         if (treeIcons[i].value === type) {
           if (!isOnline) {
-            icon = require(`@/assets/images/treeIcons/${
-              treeIcons[i].icon
-            }2.png`);
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
           } else {
-            icon = require(`@/assets/images/treeIcons/${
-              treeIcons[i].icon
-            }.png`);
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
           }
           break;
         }
       }
       return icon;
     },
-    async devloadNode(node, resolve) {
-      setTimeout(async () => {
-        //  懒加载子结点
-        console.log(node);
-        if (!this.ShowAuthDisabled) {
-          return resolve([]);
-        }
-        let data = await this.videoTree(
-          node.data && node.data.id,
-          node.data && node.data.nodeType
-        );
-        if (node.level === 0) {
-          if (data.length) {
-            this.defaultExpKeys.push(data[0].id);
-            this.showMaxWidth = true;
-          }
-        }
-        data = data.map(item => {
-          item.leaf = !item.openFlag;
-          item.isOnline = true;
-          if (item.nodeType === "chnNode") {
-            item.isOnline = item.extInfo.chnOnlineOrNot === "online";
-          }
-          if (item.nodeType === "devNode") {
-            item.isOnline = item.extInfo.devOnlineOrNot === "online";
-          }
-          item.icon = this.getIcon(item.isOnline, item.realType);
-          return item;
-        });
-        // data = [
-        //   {
-        //     label: "测试",
-        //     id: "49D2B7299EAAA3AF295E33F03B982D32",
-        //     leaf: true
-        //   }
-        // ];
-        console.log(data);
-        return resolve(data);
-      }, 0);
-    },
+    async devloadNode(node, resolve) {},
     videoTree(parentUuid, parentType) {
       // 换成视频回放树，添加nvr设备
       let data = {};
@@ -781,31 +799,6 @@ export default {
             resolve([]);
           });
       });
-      // 下面是新树的接口，不满足有nvr的条件，更换成上面的
-      // let data = {
-      //   viewType: "video",
-      //   treeStructure: "orgNode$device|chnNode",
-      //   authEnable: false,
-      //   parentUuid: parentOrgUuid,
-      //   parentType,
-      //   recursiveEnable: true,
-      //   extInfo: {
-      //     aimType: "chnOnlineStatus",
-      //     aimDetail: null
-      //   }
-      // };
-      // return new Promise((resolve, reject) => {
-      //   api2
-      //     .getPreviewTree(data)
-      //     .then(res => {
-      //       let list = res.data.data || [];
-      //       resolve(list);
-      //     })
-      //     .catch(err => {
-      //       console.log(err);
-      //       resolve([]);
-      //     });
-      // });
     },
     async loadNode(node, resolve) {
       setTimeout(async () => {
@@ -846,7 +839,6 @@ export default {
               item.leaf = true;
               item.isOnline = item.extInfo.chnOnlineOrNot === "online";
               item.icon = this.getIcon(item.isOnline, item.channelType);
-
               return item;
             });
             resolve(list);
@@ -918,6 +910,7 @@ export default {
             data[i].isNew === false
           ) {
             data[i].presetName = this.VideoOprName;
+            data[i].projectUuid = this.operatorData.parentUuid;
             flag = true;
             this.$emit("updatePreset", data[i]);
           }
@@ -929,6 +922,7 @@ export default {
             presetPoisition: this.yuzhi + 1, // 预置点位置
             presetName: this.VideoOprName, // 预置点名称
             presetNo: this.yuzhi, // 预置点编号
+            projectUuid: this.operatorData.parentUuid, // 预置点编号
             channelUuid: this.channelUuid // 通道uuid
           };
           this.$emit("addPreset", data);
@@ -936,6 +930,7 @@ export default {
       } else {
         api2
           .cruize({
+            projectUuid: this.operatorData.parentUuid,
             action: "string", // 操作类型，必填
             routeIndex: "int", // 巡航点，必填
             pointIndex: "int" // 预置点，必填
@@ -1370,22 +1365,6 @@ export default {
       downData,
       upData
     }) {
-      // console.log({
-      //   index,
-      //   version,
-      //   rankOrder,
-      //   orgUuid,
-      //   sliblings,
-      //   isLastOne,
-      //   node,
-      //   value,
-      //   e,
-      //   downData,
-      //   upData
-      // });
-
-      // console.log(downData);
-      // console.log(upData);
       this.downData = downData;
       this.upData = upData;
       // 存储上个uuid 和 父节点路径
@@ -1645,22 +1624,43 @@ export default {
         // this.parentOrgUuid="";
         this.getOrgTree(true);
       } else if (tab.index === "1") {
-        this.getOrgTag();
+        // this.getOrgTag();
+        this.getViewTree();
       } else if (tab.index === "2") {
         // 获取视图代码
         this.getViewTree();
       }
       this.$emit("changetab", tab);
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      let returnVal = false;
+      if (this.activeName === "view") {
+        returnVal = data.viewName.indexOf(value) !== -1;
+      } else {
+        returnVal = data.label.indexOf(value) !== -1;
+      }
+      return returnVal;
     }
   },
   watch: {
     channelUuid() {
       // 监听channelUuid改变，然后去获取云台控制列表
       // 重新获取
-      this.getPreset();
+    },
+    showCloudControl(val) {
+      if (val) {
+        this.getPreset();
+      }
     },
     searchText(val) {
-      this.$refs[this.treeName].filter(this.searchText);
+      if (this.activeName === "organiza") {
+        this.$refs.tree1.filter(val);
+      } else if (this.activeName === "tag") {
+        this.$refs.tree2.filter(val);
+      } else {
+        this.$refs.tree3.filter(val);
+      }
     },
     Treeparent(val) {
       // console.log("=--==========================================");
@@ -1674,6 +1674,7 @@ export default {
 #treeLaa {
   .is-leaf {
     // width: 15px !important;
+    display: none;
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
     padding: 0px !important;
@@ -1763,16 +1764,6 @@ export default {
   height: 100%;
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
-  .videoTree {
-    //  height: calc(100vh - 150px);
-    // height: calc(100vh - 250px);
-    // width:500px;
-    // overflow: auto;
-  }
-
-  .mysearchText {
-  }
-
   .custom-tree-node {
     flex: 1;
     display: flex;
@@ -1782,9 +1773,6 @@ export default {
     padding-right: 18px;
     height: 100%;
     white-space: nowrap;
-    // overflow: hidden;
-    // text-overflow: ellipsis;
-    // width: calc(100% - 30px);
     .channelStatus {
       display: flex;
       justify-content: flex-start;
@@ -1885,11 +1873,6 @@ export default {
   .tabsPanel {
     // height: calc(100vh - 550px);
     position: relative;
-  }
-  .mypanel {
-    // height: calc(100vh - 60px - 70px - 80px);
-    // overflow: auto;
-    // position: absolute;\
   }
   .cloundControlPannel {
     user-select: none;

@@ -6,9 +6,9 @@ export var ProjectManageAjax = {
   /**
    * 登录
    */
-  setLogUuid(holder) {
+  setLogUuid(holder, projectUuid) {
     let api = `${window.location.protocol}//${ip}/${
-      RestApi.api.login.setLogUuid
+      RestApi.api.login.setLogUuid(projectUuid)
     }`;
     return axios.post(api, `logUuid=${holder.logUuid}`, {
       headers: {

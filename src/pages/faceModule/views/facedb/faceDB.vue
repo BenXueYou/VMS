@@ -99,7 +99,7 @@
 						@click="faceLibUpdateRecord"
 						v-if="selectLibRow.faceLibraryType === 'staticFaceLib'"
 					>
-						<el-button :disabled="!ShowAuthDisabled" type="primary">
+						<el-button :disabled="!ShowAuthDisabled" type="text">
 							<img src="@/assets/images/faceModule/facedb_update_history.png" alt />
 							<span :disabled="!ShowAuthDisabled">更新历史</span>
 						</el-button>
@@ -300,6 +300,7 @@ export default {
       deleteWay: "",
       row: "",
       faceLibraryUuid: "",
+      projectUuid: this.$store.state.home.projectUuid,
       uploadstatusZnarr: [],
       defaultHeader: require("@/assets/user.png"),
       listTableColumns: [], // 右边表格，显示哪些数据
@@ -386,7 +387,7 @@ export default {
         return;
       }
       this.$common.funBuildFile(
-        RestApi.api.faceModuleAPi.faceDBApi.downloadFace(
+        RestApi.faceModuleAPi.faceDBApi.downloadFace(
           this.$store.state.home.projectUuid
         ) +
 					"?templateType=" +
@@ -445,6 +446,7 @@ export default {
       console.log(`第${this.pageNow}页，一页${this.pageSize}条`);
       let params = {
         faceLibraryUuid: this.faceLibraryUuid,
+        projectUuid: this.projectUuid,
         staffName: this.staffName,
         page: this.pageNow,
         limit: this.pageSize
@@ -683,6 +685,7 @@ export default {
       this.selectLibRow = row;
       this.faceLibraryUuid = this.selectLibRow.faceLibraryUuid;
       this.libraryName = this.selectLibRow.faceLibraryName;
+      this.projectUuid = this.selectLibRow.projectUuid;
       // this.currentRowStyle(this.selectLibRow.index);
       this.currentRowIndex = this.getIndexById(row);
       this.selectall = false;
@@ -708,7 +711,7 @@ export default {
       this.addtitle = "修改人脸";
       faceApi
         .getStaffDetail({
-          faceUuid: uuid
+          faceUuid: uuid,
         })
         .then(res => {
           if (res.data.success && res.data.data) {

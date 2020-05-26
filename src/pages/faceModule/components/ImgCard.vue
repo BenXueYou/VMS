@@ -1,34 +1,31 @@
 <template>
-	<!-- 过渡动画 -->
-	<transition name="fade">
-		<div class="ImgCardClass" style="width:100%;height:100%">
-			<div class="footerImgBox">
-				<img
-					:src="$common.setPictureShow(photoItem.faceCapturePhotoUrl,PicSourceType)"
-					class="image footerCardImg"
-				/>
-			</div>
-			<div
-				class="HomeFooterChannelName textclipsClass"
-				style="width:100%;"
-				@mouseover="mymouseover"
-				@mouseout="mymouseout"
-				@mousemove="mymousemove"
-			>
-				{{(photoItem)&&
+  <!-- 过渡动画 -->
+  <transition name="fade">
+    <div class="ImgCardClass"
+         style="width:100%;height:100%">
+      <div class="footerImgBox">
+        <img :src="$common.setPictureShow(photoItem.faceCapturePhotoUrl,PicSourceType)"
+             class="image footerCardImg" />
+      </div>
+      <div class="HomeFooterChannelName textclipsClass"
+           style="width:100%;"
+           @mouseover="mymouseover"
+           @mouseout="mymouseout"
+           @mousemove="mymousemove">
+        {{(photoItem)&&
 				(photoItem.channelName)?photoItem.channelName:'-- --'}}
-			</div>
-			<div class="HomeFooterChannelName">
-				<span
-					style="width:100%;display: inline-block;"
-					class="textclipsClass"
-					@mouseover="mymouseover"
-					@mouseout="mymouseout"
-					@mousemove="mymousemove"
-				>{{(photoItem)&&(photoItem.captureDatetime)?photoItem.captureDatetime:'-- --'}}</span>
-			</div>
-		</div>
-	</transition>
+      </div>
+      <div class="HomeFooterChannelName">
+        <span style="width:100%;display: inline-block;"
+              class="textclipsClass"
+              @mouseover="mymouseover"
+              @mouseout="mymouseout"
+              @mousemove="mymousemove">
+          {{(photoItem)&&
+        (photoItem.captureDatetime)?photoItem.captureDatetime.split(' ')[1]:'-- --'}}</span>
+      </div>
+    </div>
+  </transition>
 </template>
 <script>
 import RestApi from "@/utils/RestApi.js";
@@ -68,31 +65,31 @@ export default {
 </script>
 <style lang="postcss">
 .ImgCardClass {
-	/* width: 100%; */
-	height: 100%;
-	box-sizing: border-box;
+  /* width: 100%; */
+  height: 100%;
+  box-sizing: border-box;
 }
 .ImgCardClass .footerImgBox {
-	width: 100%;
-	height: 65%;
-	box-sizing: border-box;
-	padding: 10px 0px;
+  width: 100%;
+  height: 65%;
+  box-sizing: border-box;
+  padding: 10px 0px;
 }
 .ImgCardClass .HomeFooterChannelName {
-	font-size: 12px;
-	position: relative;
-	color: #cccccc;
-	width: 100%;
-	height: 17.5%;
+  font-size: 12px;
+  position: relative;
+  color: #cccccc;
+  width: 100%;
+  height: 17.5%;
 }
 .ImgCardClass .footerCardImg {
-	width: 100%;
-	height: 100%;
-	-webkit-background-size: cover;
-	-webkit-background-origin: content;
-	background-origin: content;
-	background-size: auto 100%;
-	-webkit-background-origin: content;
-	background-origin: content;
+  width: 100%;
+  height: 100%;
+  -webkit-background-size: cover;
+  -webkit-background-origin: content;
+  background-origin: content;
+  background-size: auto 100%;
+  -webkit-background-origin: content;
+  background-origin: content;
 }
 </style>

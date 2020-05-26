@@ -10,8 +10,10 @@
       <el-table ref="multipleTable"
                 :data="data"
                 tooltip-effect="dark"
-                style="width: 100%;height:300px;"
-                max-height="300">
+                style="width: 100%;height:600px;overflow:auto"
+                class="infinite-list"
+                v-el-table-infinite-scroll="load"
+                max-height="600">
 
         <el-table-column prop="staffName"
                          width='120'
@@ -52,9 +54,13 @@
 
 <script>
 import icons from "@/common/icon.js";
+import elTableInfiniteScroll from "el-table-infinite-scroll";
 import * as api from "@/pages/equipmentMange/ajax.js";
 export default {
   name: "showStaffDialog.vue",
+  directives: {
+    "el-table-infinite-scroll": elTableInfiniteScroll
+  },
   props: {
     width: {
       type: String,
@@ -105,11 +111,15 @@ export default {
       updateDialogVisible: false,
       tableData: [],
       TreechangeNameDialogVisible: false,
-      selectDevice: []
+      selectDevice: [],
+      currentPage: 1
     };
   },
   mounted() {},
   methods: {
+    load(data) {
+      this.$emit("loadNextPage", data);
+    },
     close() {
       this.$emit("update:visible", false);
       this.$emit("close");

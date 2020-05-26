@@ -6,7 +6,7 @@ export var statisticHttp = {
    * 抓拍统计（全部）
    */
   getFaceCaptureAll(holder) {
-    let api = `${RestApi.api.faceModuleAPi.getFaceCaptureAll}`;
+    let api = `${RestApi.faceModuleAPi.getFaceCaptureAll}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -17,7 +17,7 @@ export var statisticHttp = {
    * 抓拍统计（单一）
    */
   getFaceCaptureOne(holder) {
-    let api = `${RestApi.api.faceModuleAPi.getFaceCaptureOne}`;
+    let api = `${RestApi.faceModuleAPi.getFaceCaptureOne}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -28,7 +28,7 @@ export var statisticHttp = {
    * 对比统计（全部）
    */
   getCompareAll(holder) {
-    let api = `${RestApi.api.faceModuleAPi.getCompareAll}`;
+    let api = `${RestApi.faceModuleAPi.getCompareAll}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -39,7 +39,7 @@ export var statisticHttp = {
    * 对比统计（单一）
    */
   getCompareOne(holder) {
-    let api = `${RestApi.api.faceModuleAPi.getCompareOne}`;
+    let api = `${RestApi.faceModuleAPi.getCompareOne}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];

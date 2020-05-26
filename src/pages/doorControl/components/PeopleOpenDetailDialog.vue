@@ -5,6 +5,8 @@
 		:visible.sync="isCurrentShow"
 		:before-close="onClickCancel"
 		:close-on-click-modal="false"
+    :modal="!isAppend"
+    :append-to-body="isAppend"
 	>
 		<person-info-dialog
 			:isShow="isShowPersonInfo"
@@ -67,6 +69,10 @@ export default {
   },
   props: {
     isShow: {
+      type: Boolean,
+      default: false
+    },
+    isAppend: {
       type: Boolean,
       default: false
     }

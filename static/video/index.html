@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <script src='./decoder/wfs.js'></script>
     <script src='./decoder/wfsControl.js'></script>
+    <script src='./decoder/jmuxer.min.js'></script>
+    <script src='./decoder/jmuxer_control.js'></script>
     <script src="sync_websocket.js"></script>
     <script src="deque.js"></script>
     <script src="./decoder/common.js"></script>
@@ -23,7 +25,7 @@
 
     server_ip: <input id="ip" type="text" name="url" value="192.168.9.199"></input><br>
     url: <input id="url" type="text" name="url"
-        value="rtsp://admin:admin@192.168.9.221:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif"></input><br>
+        value="rtsp://admin:admin123456@192.168.9.203/Streaming/Channels/301?transportmode=unicast"></input><br>
     action: <input id="preview" type="radio" name="action" checked=true>preview</input><input id="playback" type="radio"
         name="action">playback</input><br>
     <button id="button" type="button" onclick="slot_createCanvas()">create canvas</button><br>
@@ -50,6 +52,8 @@
     <button id="button_stopRecord" type="button" onclick="slot_stopRecord()">stop record</button>
     <p id="p"></p>
     <div id="div"></div>
+    <div id="container" style="width: 400px; margin: 0 auto;">
+    </div>
 </body>
 
 </html>

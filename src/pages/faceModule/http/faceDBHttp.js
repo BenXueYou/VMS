@@ -1,7 +1,7 @@
 import Axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 import store from '@/store/store.js';
-let FaceModuleApi = RestApi.api.faceModuleAPi;
+let FaceModuleApi = RestApi.faceModuleAPi;
 /** *******************************************人脸库管理 ************************************** */
 // 增
 export function addFaceLid(data) {
@@ -69,7 +69,11 @@ export function addStaffInfo(data) {
 }
 // 人脸库人员列表
 export function getStaffList(data) {
-  let url = FaceModuleApi.faceDBApi.getStaffListUrl(store.state.home.projectUuid);
+  let projectUuid = store.state.home.projectUuid;
+  if (data.projectUuid) {
+    projectUuid = data.projectUuid;
+  }
+  let url = FaceModuleApi.faceDBApi.getStaffListUrl(projectUuid);
   return Axios({
     method: 'GET',
     url,
@@ -78,7 +82,11 @@ export function getStaffList(data) {
 }
 // 人脸库人员详情
 export function getStaffDetail(data) {
-  let url = FaceModuleApi.faceDBApi.getStaffDetailUrl(store.state.home.projectUuid);
+  let projectUuid = store.state.home.projectUuid;
+  if (data.projectUuid) {
+    projectUuid = data.projectUuid;
+  }
+  let url = FaceModuleApi.faceDBApi.getStaffDetailUrl(projectUuid);
   return Axios({
     method: 'GET',
     url,

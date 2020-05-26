@@ -61,10 +61,6 @@ export default {
       type: String,
       default: ""
     },
-    aaaaaa: {
-      type: String,
-      default: ""
-    },
     houseUuid: {
       type: String,
       default: ""
@@ -90,10 +86,7 @@ export default {
     };
   },
   created() {},
-  mounted() {
-    // this.initData();
-    this.checkedUuid = this.aaaaaa;
-  },
+  mounted() {},
   methods: {
     initData() {
       this.getAreaStruct();
@@ -133,54 +126,23 @@ export default {
             }
           }
           resolve(res.data.data);
-          // console.log(this.defaultExpKeys);
-          // this.$refs.popoverTree.setCheckedKeys(this.defaultExpKeys);
+          if (this.houseUuid) {
+            this.$refs.popoverTree.setChecked(this.houseUuid);
+            console.log(this.$refs.popoverTree.getCheckedKeys());
+          }
         }
       });
     },
-    getInfrastructureToHouse(parentUuid) {
-      // this.defaultExpKeys.push(this.treeData[0].id);
-      // return ;
-      // this.$houseHttp
-      //   .getInfrastructureToHouse({
-      //     parentUuid
-      //   })
-      //   .then(res => {
-      //     let body = res.data;
-      //     this.handleGetTreeSuccessResponse(body);
-      //   });
-    },
-    // handleGetTreeSuccessResponse(body) {
-    //   if (body.data) {
-    //     this.treeData[0].children = body.data;
-    //     for (let item of this.treeData[0].children) {
-    //       this.$set(item, "leaf", true);
-    //       if (item.nextCount !== 0) {
-    //         this.$set(item, "leaf", false);
-    //       }
-    //     }
-    //   }
-    //   this.handleDefaultExpKeys();
-    // },
-    // handleDefaultExpKeys() {
-    //   if (this.treeData && this.treeData.length !== 0) {
-    //     this.defaultExpKeys.push(this.treeData[0].id);
-    //   }
-    // },
     handleNodeClick(obj, node, component) {
       this.checkedUuid = node.data.id;
       // if (obj.type === this.lastLevelType) {
       this.currentNode = node;
-      this.labelArr = [];
-      this.upAddress = "";
-      // this.getLabelArr(node);
-      // this.getUpAddress(this.labelArr);
       this.nodeText = this.getWanZheng(node).substr(1);
       this.$emit("setUseData", {
         node: this.currentNode
       });
-      console.log(node);
-      this.defaultExpKeys = [node.data.id];
+      console.log(this.nodeText);
+      // this.defaultExpKeys = [node.data.id];
       // }
     },
     getWanZheng(node) {
@@ -189,27 +151,6 @@ export default {
         return "";
       }
       return this.getWanZheng(node.parent) + "/" + node.data.label;
-    },
-    getLabelArr(node) {
-      if (!node) {
-        if (this.labelArr.length !== 0) {
-          this.labelArr.pop();
-        }
-        return;
-      }
-      this.labelArr.push(node.data.label);
-      this.getLabelArr(node.parent);
-    },
-    getUpAddress(labelArr) {
-      if (!this.labelArr || this.labelArr.length === 0) {
-        return;
-      }
-      if (!this.upAddress) {
-        this.upAddress = this.labelArr.pop();
-      } else {
-        this.upAddress = `${this.upAddress}／${this.labelArr.pop()}`;
-      }
-      this.getUpAddress(this.labelArr);
     },
     filterNode(value, data) {
       if (!value) return true;
@@ -220,25 +161,19 @@ export default {
     }
   },
   watch: {
-    aaaaaa() {
-      this.checkedUuid = this.aaaaaa;
-      console.log(this.aaaaaa);
-    },
     filterText(val) {
       this.$refs.popoverTree.filter(val);
     },
-    initTreeRootData: {
-      handler(val) {
-        this.initData();
-      },
-      deep: true
-    },
-    name() {
-      // 这行代码导致，完整路径选择之后，会被替换成不是完整路径
-      // this.nodeText = this.name;
+    name(val) {
+      let uuid = this.$refs.popoverTree.getCheckedKeys();
+      if (!uuid.length) {
+        this.nodeText = val;
+      }
     },
     houseUuid() {
-      this.defaultExpKeys = [this.houseUuid];
+      // this.defaultExpKeys = [this.houseUuid];
+      this.checkedUuid = this.houseUuid;
+      this.$refs.popoverTree.setChecked(this.houseUuid);
     }
   },
   destroyed() {}

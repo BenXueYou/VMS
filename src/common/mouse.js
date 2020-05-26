@@ -20,13 +20,13 @@ export const mouseover = ($event) => {
     document.querySelector('#span').innerHTML = text;
     let spanWidth = span.offsetWidth;
     document.body.removeChild(span);
-    if (spanWidth > boxWidth) {
+    // if (spanWidth > boxWidth) {
     let bgObj = document.createElement("div");
     bgObj.style.cssText = `position:absolute;top:${top+5}px;left:${left}px;color:#fff;background:#333;max-width:400px;border-radius:5px;padding:10px;display:inline-block;font-size:12px;z-index:9999`;
     bgObj.setAttribute('id', 'bgObj');
     document.body.appendChild(bgObj);
     document.querySelector('#bgObj').innerHTML = text;
-    }
+    // }
 }
     //鼠标移出浮层消失
 export const mouseout = ($event) => {

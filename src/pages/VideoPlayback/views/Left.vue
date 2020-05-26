@@ -10,10 +10,6 @@
              :src="icons.search"
              alt>
       </el-input>
-      <!-- <img @click="showAddChildrenDialog"
-           v-show="tabsIndex==2"
-           :src="icons.add"
-           alt> -->
     </div>
     <el-tabs v-model="activeName"
              class="tabs"
@@ -24,67 +20,42 @@
                    name="organiza">
         <el-tree :props="devprops"
                  :load="devloadNode"
+                 :data="treeData"
                  :default-expanded-keys="defaultExpKeys"
+                 :filter-node-method="filterNode"
                  ref="tree1"
-                 lazy
                  show-checkbox
                  class='videoTree'
                  node-key="id"
-                 :default-checked-keys="defaultExpandedKeys"
-                 @check-change="devhandleCheckChange">
+                 :default-checked-keys="defaultExpandedKeys">
           <div class="custom-tree-node"
                slot-scope="{ node,data }">
             <div class="channelStatus">
+              <span v-if="((data.type!='areaOrg'&&data.openFlag)||(data.type=='project' && !data.isHaveRoot))&&(!data.children)"
+                    @click.stop="getProjectChildTree(node,data)"
+                    class="initExpandIcon el-tree-node__expand-icon el-icon-caret-right"></span>
               <img :src="data.icon"
                    v-if="data.icon"
                    alt="">
-              <span :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
-            </div>
-
-          </div>
-        </el-tree>
-      </el-tab-pane>
-      <el-tab-pane label="标签"
-                   class="mypanel mypanel2"
-                   name="tag">
-        <el-tree :props="tagprops"
-                 :load="tagloadNode"
-                 :expand-on-click-node="false"
-                 :default-expanded-keys="defaultExpKeys"
-                 lazy
-                 node-key="id"
-                 class='videoTree'
-                 ref="tree2"
-                 show-checkbox
-                 :default-checked-keys="defaultExpandedKeys"
-                 @check-change="taghandleCheckChange"
-                 @node-click="taghandleNodeClick">
-          <div class="custom-tree-node"
-               slot-scope="{ node,data }">
-            <div class="channelStatus"
-                 v-if="data.icon">
-              <img :src="data.icon"
-                   alt="">
-              <span :class="{'channelOffline':!data.isOnline}">{{ node.label }}</span>
+              <span :class="{'channelOffline':!data.isOnline&&(data.type!='areaOrg'&&data.type!='project'&&data.resType!='organization')}">{{ node.label }}</span>
             </div>
           </div>
         </el-tree>
-
       </el-tab-pane>
       <el-tab-pane label="视图"
                    name="view">
-
         <el-tree :props="viewProps"
                  class='videoTree2 videoTree3'
                  :data="viewTreeData"
-                 refs="tree3"
+                 :filter-node-method="filterNode"
+                 ref="tree3"
                  @check-change="viewhandleCheckChange">
           <div class="custom-tree-node viewTree"
                @dblclick.stop="openView(data,$event)"
                slot-scope="{ node, data }">
             <span class="span"
                   :title="node.label">{{ node.label }}</span>
-            <el-dropdown trigger="click"
+            <el-dropdown v-if="OwnAuthDisabled" trigger="click"
                          @command="handleCommand"
                          placement="bottom"
                          class='threelinemenu'>
@@ -99,7 +70,7 @@
                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA7UlEQVRYR+2VPQrCQBBGvy1E2DbVTAptJbaWgkfw5wSW4n1SewJzBMHSwk6bNNpM2mCpgUgKQSXbCEMi7PY73+PtzKxBw8c0nA8P4A20y4CI7ABMNCfDGLMhouUr48OAiBwAjJQBTkQ0rAXIsqxfFEVfE8BaewyC4FYLoBnsqt2uJvQGKgMi0tM0wczX9/rfY7gFMNMEALBl5oVrDyQApsoACTPPnWNY7QJNACK6OJ9AM9jvgf8wkKZp11o71uyFPM/3URTdXWN4BjDQBABwZubIBRADWNUAPH6E6nzfK8syDsNw7b9jb8AbaI2BJ65iOiHBES+mAAAAAElFTkSuQmCC"
                      style="width:12px;margin-right: 20%;">
               </span>
-              <el-dropdown-menu :slot="!OwnAuthDisabled?'':'dropdown'">
+              <el-dropdown-menu v-if="OwnAuthDisabled" slot="'dropdown'">
                 <el-dropdown-item command="view">打开视图</el-dropdown-item>
                 <el-dropdown-item command="renameView">重命名</el-dropdown-item>
                 <el-dropdown-item command="deleteView">删除</el-dropdown-item>
@@ -109,7 +80,6 @@
         </el-tree>
       </el-tab-pane>
     </el-tabs>
-
     <div class="timeSelect">
       <div class='startWrap'>
         <div class="label">
@@ -191,6 +161,7 @@ export default {
     d.setMinutes(0);
     d.setSeconds(0);
     return {
+      treeData: [],
       defaultExpKeys: [],
       defaultExpandedKeys: [],
       changeNameDialogVisible: false,
@@ -221,7 +192,98 @@ export default {
       operatorData: {}
     };
   },
+  watch: {
+    searchText(val) {
+      if (this.activeName === "organiza") {
+        this.$refs.tree1.filter(val);
+      } else if (this.activeName === "tag") {
+        this.$refs.tree2.filter(val);
+      } else {
+        this.$refs.tree3.filter(val);
+      }
+    }
+  },
+  mounted() {
+    this.getAreaData();
+  },
   methods: {
+    filterNode(value, data) {
+      if (!value) return true;
+      let returnVal = false;
+      if (this.activeName === "view") {
+        returnVal = data.viewName.indexOf(value) !== -1;
+      } else {
+        returnVal = data.label.indexOf(value) !== -1;
+      }
+      return returnVal;
+    },
+    getProjectChildTree(node, data) {
+      let params = {
+        parentUuid: data.id,
+        parentType: data.nodeType
+      };
+      if (data.type === "project") {
+        api2.getPlayTreeByProjectUuid(data.id).then(res => {
+          let newArr = res.data.data || [];
+          newArr.map(item => {
+            item.parentUuid = data.id;
+            return item;
+          });
+          if (!data.children) {
+            this.$set(data, "children", []);
+          }
+          this.$set(node, "expanded", true);
+          if (newArr[0] && !newArr[0].parentUuid) {
+            this.$set(data, "isHaveRoot", true);
+            return;
+          }
+          // data.children.push(...(newArr || []));
+          console.log(newArr);
+          params.parentUuid = newArr[0].id;
+          data.parentUuid = newArr[0].parentUuid;
+          params.parentType = newArr[0].nodeType;
+          this.httpLoadNextNodeData(node, data, params);
+        });
+      } else {
+        this.httpLoadNextNodeData(node, data, params);
+      }
+    },
+    // 请求树下级节点的方法
+    httpLoadNextNodeData(node, data, params) {
+      api2.getPlayTreeByProjectUuid(data.parentUuid, params).then(res => {
+        let newArr = res.data.data || [];
+        newArr.map(item => {
+          item.parentUuid = data.parentUuid;
+          item.isOnline = true;
+          if (item.nodeType === "chnNode") {
+            item.isOnline = item.extInfo.chnOnlineOrNot === "online";
+          }
+          if (item.nodeType === "devNode") {
+            item.isOnline = item.extInfo.devOnlineOrNot === "online";
+          }
+          item.icon = this.getIcon(item.isOnline, item.realType);
+          return item;
+        });
+        if (!data.children) {
+          this.$set(data, "children", []);
+        }
+        data.children.push(...(newArr || []));
+        this.$set(node, "expanded", true);
+        console.log(node);
+      });
+    },
+    getAreaData() {
+      api
+        .getAreaAllOrg({
+          // parentOrgUuid: this.parentOrgUuid,
+          orgType: "areaOrg"
+        })
+        .then(res => {
+          let result = res.data.data || [];
+
+          this.treeData = result;
+        });
+    },
     setKeys(id) {
       if (this.defaultExpandedKeys.indexOf(id) === -1) {
         this.defaultExpandedKeys.push(id);
@@ -295,9 +357,11 @@ export default {
     handleClick(tab) {
       if (tab.index === "0") {
       } else if (tab.index === "1") {
+        this.getViewTree();
       } else if (tab.index === "2") {
         this.getViewTree();
       }
+      this.$emit("changetab", tab);
     },
     getViewTree() {
       setTimeout(() => {
@@ -337,13 +401,9 @@ export default {
       for (let i = 0; i < treeIcons.length; i++) {
         if (treeIcons[i].value === type) {
           if (!isOnline) {
-            icon = require(`@/assets/images/treeIcons/${
-              treeIcons[i].icon
-            }2.png`);
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}2.png`);
           } else {
-            icon = require(`@/assets/images/treeIcons/${
-              treeIcons[i].icon
-            }.png`);
+            icon = require(`@/assets/images/treeIcons/${treeIcons[i].icon}.png`);
           }
           break;
         }
@@ -380,14 +440,6 @@ export default {
           item.icon = this.getIcon(item.isOnline, item.realType);
           return item;
         });
-        // data = [
-        //   {
-        //     label: "测试",
-        //     id: "49D2B7299EAAA3AF295E33F03B982D32",
-        //     h5Type: "channel",
-        //     leaf: true
-        //   }
-        // ];
         return resolve(data);
       }, 0);
     },
@@ -415,13 +467,6 @@ export default {
     devhandleCheckChange() {
       console.log(this.$refs.tree1.getCheckedNodes());
     },
-    taghandleCheckChange() {
-      console.log(this.$refs.tree2.getCheckedNodes());
-      // this.deal();
-    },
-    taghandleNodeClick() {
-      // 点击展开
-    },
     async tagloadNode(node, resolve) {
       setTimeout(async () => {
         if (!this.ShowAuthDisabled) {
@@ -431,12 +476,16 @@ export default {
         console.log(node);
         if (node.level === 0) {
           let data = await this.getTagTreeData();
-          if (data.length) {
-            this.defaultExpKeys.push(data[0].id);
+          console.log(data);
+          if (node.level === 0) {
+            if (data.length) {
+              this.defaultExpKeys.push(data[0].id);
+            }
           }
           return resolve(data);
         } else if (node.level === 1) {
           let data = await this.getChannelByNode(node.data.id);
+          console.log(data);
           return resolve(data);
         }
       }, 0);
@@ -492,15 +541,6 @@ export default {
         this.$message.error("时间选择跨度不可以超过1个月");
         return;
       }
-      // if (
-      //   d1.getFullYear() !== d2.getFullYear() ||
-      //   d1.getMonth() !== d2.getMonth() ||
-      //   d1.getDate() !== d2.getDate()
-      // ) {
-      //   this.$message.error("请选择同一天时间！");
-      //   return;
-      // }
-      // alert(this.activeName);
       // 获取树选中的节点
       let treeData = [];
       if (this.activeName === "organiza") {
@@ -548,10 +588,10 @@ export default {
 @import "@/style/variables.scss";
 #VideoPlaybackContentLeft {
   .el-tree-node__content > label.el-checkbox {
-    margin-right: 4px;
+    margin-right: 6px;
   }
-  .is-leaf {
-    // width: 15px !important;
+  .el-tree-node__content > label.el-checkbox {
+    margin-right: 4px;
   }
   .el-tree-node__content > .el-tree-node__expand-icon {
     padding: 0px !important;
@@ -568,9 +608,6 @@ export default {
   }
   .showMaxWidth {
     width: 196px;
-  }
-  .mypanel2 {
-    // width: 228px;
   }
   .el-tree-node__label {
     text-indent: 10px;
@@ -592,11 +629,9 @@ export default {
       margin-top: 12px;
     }
   }
-  // .el-input {
-  //   width: 175px !important;
-  // }
-  .el-tree {
-    // overflow: auto;
+  .initExpandIcon.el-icon-caret-right:before {
+    content: "\E791";
+    font-size: 15px;
   }
   .el-input__inner {
     padding-left: 30px;
@@ -617,11 +652,6 @@ export default {
 .videoTree2 .el-tree-node__content {
   width: 100% !important;
 }
-.videoTree3 {
-  .span {
-    // padding-left: 20px;
-  }
-}
 </style>
 
 <style lang="scss" scoped>
@@ -632,13 +662,6 @@ export default {
   height: 100%;
   $iconWidth: 40px;
   background-color: rgba(35, 38, 41, 0.8);
-  // padding: 0px 26px 25px;
-  // overflow: auto;
-  .videoTree {
-    // height: calc(100vh - 380px);
-    // width:500px;
-    // overflow: auto;
-  }
   .custom-tree-node {
     width: 100%;
     flex: 1;
@@ -649,6 +672,12 @@ export default {
     padding-right: 8px;
     .channelStatus {
       user-select: none;
+      position: relative;
+      .initExpandIcon {
+        position: absolute;
+        left: -33px;
+        top: 2px;
+      }
       img {
         width: 10px;
         height: 10px;

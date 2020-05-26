@@ -3,7 +3,7 @@ import RestApi from "@/utils/RestApi";
 
 export var ModuleCountHttp = {
   getModelList(holder) {
-    let api = `${RestApi.api.faceModuleAPi.getModelList}`;
+    let api = `${RestApi.faceModuleAPi.getModelList}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];

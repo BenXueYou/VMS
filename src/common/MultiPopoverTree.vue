@@ -1,53 +1,58 @@
 <template>
-  <el-popover class="popverTree"
-              ref="popverBox"
-              popper-class="popverTree"
-              :visible-arrow="false"
-              :value="visible_popver"
-              @show="visiblePopverAct"
-              placement="bottom"
-              trigger="click">
-    <el-row>
-      <el-input prefix-icon="el-icon-search"
-                placeholder="输入关键字进行过滤"
-                v-model="filterText"></el-input>
-      <el-tree class="filter-tree"
-               :class="{checkedBoxClass:treeType!=='residentTree'}"
-               :show-checkbox="treeType==='residentTree'?false:true"
-               :check-strictly="true"
-               :data="treeData"
-               lazy
-               :load="loadNode"
-               :props="treeType!=='residentTree'?defaultProps:defaultResidentProps"
-               :node-key="treeType!=='residentTree'?'groupUuid':'id'"
-               :default-expanded-keys="defaultExpandedKeys"
-               @node-click="nodeClick"
-               @check="checkAct"
-               :expand-on-click-node="false"
-               :filter-node-method="filterNode"
-               ref="roomTree"
-               :indent="treeType!=='residentTree'?23:15">
-        <div class="custom-tree-node i-tree-item"
-             slot-scope="{ node, data }">
-          <div class="i-tree-item-icon">
-            {{ node.label}}
-            <img v-show="treeType==='residentTree' && node.checked && data.type === lastLevelType"
-                 src="@/assets/images/doorAccess/checked_icon.png"
-                 width="10.9px"
-                 height="9px"
-                 style="margin-right: 20%;" />
-          </div>
-        </div>
-      </el-tree>
-    </el-row>
-    <el-input slot="reference"
-              :style="`width: ${inputWidth}`"
-              v-model="checkedNodeName"
-              :clearable="true"
-              suffix-icon="el-icon-caret-bottom"
-              @clear="clearAction()"
-              :placeholder="`${placeholderTxt}`"></el-input>
-  </el-popover>
+	<el-popover
+		class="popverTree"
+		ref="popverBox"
+		popper-class="popverTree"
+		:visible-arrow="false"
+		:value="visible_popver"
+		@show="visiblePopverAct"
+		placement="bottom"
+		trigger="click"
+	>
+		<el-row>
+			<el-input prefix-icon="el-icon-search" placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
+			<el-tree
+				class="filter-tree"
+				:class="{checkedBoxClass:treeType!=='residentTree'}"
+				:show-checkbox="treeType==='residentTree'?false:true"
+				:check-strictly="true"
+				:data="treeData"
+				lazy
+				:load="loadNode"
+				:props="treeType!=='residentTree'?defaultProps:defaultResidentProps"
+				:node-key="treeType!=='residentTree'?'groupUuid':'id'"
+				:default-expanded-keys="defaultExpandedKeys"
+				@node-click="nodeClick"
+				@check="checkAct"
+				:expand-on-click-node="false"
+				:filter-node-method="filterNode"
+				ref="roomTree"
+				:indent="treeType!=='residentTree'?23:15"
+			>
+				<div class="custom-tree-node i-tree-item" slot-scope="{ node, data }">
+					<div class="i-tree-item-icon">
+						{{ node.label}}
+						<img
+							v-show="treeType==='residentTree' && node.checked && data.type === lastLevelType"
+							src="@/assets/images/doorAccess/checked_icon.png"
+							width="10.9px"
+							height="9px"
+							style="margin-right: 20%;"
+						/>
+					</div>
+				</div>
+			</el-tree>
+		</el-row>
+		<el-input
+			slot="reference"
+			:style="`width: ${inputWidth}`"
+			v-model="checkedNodeName"
+			:clearable="true"
+			suffix-icon="el-icon-caret-bottom"
+			@clear="clearAction()"
+			:placeholder="`${placeholderTxt}`"
+		></el-input>
+	</el-popover>
 </template>
 <script>
 export default {
@@ -290,41 +295,41 @@ export default {
 </script>
 <style>
 .checkedBoxClass .el-tree-node__expand-icon {
-  display: none !important;
+	display: none !important;
 }
 .popverTree {
-  width: 215px;
-  /* position: absolute; */
-  /* top: 10px;
+	width: 215px;
+	/* position: absolute; */
+	/* top: 10px;
     left: 100px; */
 }
 </style>
 
 <style lang='scss' scoped>
 .checkedBoxClass {
-  padding-left: 23px;
-  box-sizing: border-box;
-  .el-tree-node__content > .el-tree-node__expand-icon {
-    display: none !important;
-  }
+	padding-left: 23px;
+	box-sizing: border-box;
+	.el-tree-node__content > .el-tree-node__expand-icon {
+		display: none !important;
+	}
 }
 .el-input {
-  display: inline-block;
-  width: 215px !important;
-  /* width: 30%; */
-  height: 30px;
+	display: inline-block;
+	width: 215px !important;
+	/* width: 30%; */
+	height: 30px;
 }
 .el-tree {
-  position: relative;
-  cursor: default;
-  background: transparent;
-  color: #dee5f4;
-  font-family: PingFangSC-Regular;
-  font-size: 14px;
-  color: #dddddd;
-  width: 215px;
-  height: 350px;
-  overflow: auto;
+	position: relative;
+	cursor: default;
+	background: transparent;
+	color: #dee5f4;
+	font-family: PingFangSC-Regular;
+	font-size: 14px;
+	color: #dddddd;
+	width: 215px;
+	height: 350px;
+	overflow: auto;
 }
 </style>
 

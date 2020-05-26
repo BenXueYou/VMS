@@ -15,7 +15,6 @@
         <label class="label"
                for>上级：</label>
         <el-select v-model="selectValue"
-                   
                    placeholder>
           <el-option v-for="item in options"
                      :key="item.value"
@@ -51,7 +50,7 @@ export default {
     title: {
       type: String,
       default() {
-        return "新建子结点";
+        return "新建子节点";
       }
     },
     center: {

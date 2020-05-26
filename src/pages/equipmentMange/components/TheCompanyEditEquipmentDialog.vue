@@ -4,17 +4,19 @@
       <span class="shuline">设备编辑</span>
       <div class="buttongroup">
         <el-button @click="confirm"
+                   v-if="isOneProject"
+                   :loading="isLoading"
                    class="button"
                    size="small"
                    type="primary">保存</el-button>
         <el-button @click="close"
                    class="button"
                    size="small"
-                   type="primary">取消</el-button>
+                   type="primary">返回</el-button>
       </div>
     </div>
     <div class="body"
-               ref='scroll'>
+         ref='scroll'>
       <el-form :model="ruleForm"
                :rules="rules"
                ref="ruleForm"
@@ -33,6 +35,7 @@
         <el-form-item label="设备名称："
                       prop="nickName">
           <el-input v-model.trim="ruleForm.nickName"
+                    :readonly="!isOneProject"
                     size="samll"></el-input>
         </el-form-item>
         <!-- 新增一些选项 -->
@@ -43,31 +46,36 @@
 
         <el-form-item label="设备IP："
                       v-if="isLocal">
-          <el-input v-model.trim="ruleForm.deviceIp"
+          <el-input :readonly="!isOneProject"
+                    v-model.trim="ruleForm.deviceIp"
                     size="samll"></el-input>
         </el-form-item>
 
         <el-form-item label="设备端口号："
                       v-if="isLocal">
-          <el-input v-model.trim="ruleForm.devicePort"
+          <el-input :readonly="!isOneProject"
+                    v-model.trim="ruleForm.devicePort"
                     size="samll"></el-input>
         </el-form-item>
 
         <el-form-item label="用户名："
                       v-if="isLocal">
-          <el-input v-model.trim="ruleForm.deviceUsername"
+          <el-input :readonly="!isOneProject"
+                    v-model.trim="ruleForm.deviceUsername"
                     size="samll"></el-input>
         </el-form-item>
 
         <el-form-item label="密码："
                       v-if="isLocal">
-          <el-input v-model.trim="ruleForm.devicePassword"
+          <el-input :readonly="!isOneProject"
+                    v-model.trim="ruleForm.devicePassword"
                     size="samll"></el-input>
         </el-form-item>
 
         <el-form-item label="所属子服务："
                       v-if="isLocal">
           <el-select v-model="ruleForm.belongServiceUuid"
+                     :disabled="!isOneProject"
                      @change="changeOptions"
                      placeholder="请选择">
             <el-option v-for="item in localService"
@@ -79,7 +87,8 @@
         <!-- 上面都是新增的 -->
         <el-form-item label="设备类型："
                       prop="deviceType">
-          <el-select v-model="ruleForm.deviceType"
+          <el-select disabled
+                     v-model="ruleForm.deviceType"
                      placeholder="请选择">
             <el-option v-for="item in deviceTypeArr"
                        :key="item.value"
@@ -89,38 +98,58 @@
           <!-- <el-input v-model="ruleForm.deviceType"
                     readonly></el-input> -->
         </el-form-item>
+        <el-form-item label="设备型号："
+                      prop="productType">
+          <el-input v-model="ruleForm.productType"
+                    readonly></el-input>
+        </el-form-item>
 
         <el-form-item label="组织结构："
                       prop="oriz">
-          <popover-tree width="250px"
+          <popover-tree v-if="isOneProject"
+                        width="250px"
                         orgType="device"
                         :name="orgName"
+                        :isOneProject="!isOneProject"
                         :orgUuid="orgUuid"
                         @setUseData="setOrgData"
                         ref="popoverTree" />
+          <el-input v-else
+                    :readonly="!isOneProject"
+                    v-model.trim="orgName"
+                    size="samll"></el-input>
         </el-form-item>
 
-        <el-form-item label="楼栋单元："
+        <el-form-item v-if="$store.state.home.projectType.platformType !== 'school'"
+                      label="楼栋单元："
                       prop="build">
-          <build-house-popover-tree width="250px"
+          <build-house-popover-tree v-if="isOneProject"
+                                    width="250px"
                                     :name="houseName"
                                     :houseUuid="houseUuid"
                                     @setUseData="setHouseData" />
+          <el-input v-else
+                    :readonly="!isOneProject"
+                    v-model.trim="houseName"
+                    size="samll"></el-input>
         </el-form-item>
-
         <el-form-item label="1400上传国标码"
                       prop="gBCode">
-          <el-input v-model.trim="ruleForm.gBCode"
+          <el-input :readonly="!isOneProject"
+                    v-model.trim="ruleForm.gBCode"
                     size="samll"></el-input>
         </el-form-item>
         <el-form-item label="设备描述："
                       prop="desc">
-          <el-input v-model.trim="ruleForm.desc"
+          <el-input :readonly="!isOneProject"
+                    v-model.trim="ruleForm.desc"
                     size="samll"></el-input>
         </el-form-item>
       </el-form>
+      <el-button type="text"
+                 v-if="isLocal && !isOneProject">通道</el-button>
       <el-button type="primary"
-                 v-if="isLocal"
+                 v-if="isLocal && isOneProject"
                  :disabled="netStatus!='online'"
                  @click="syncChannel">同步通道</el-button>
       <div class="section door"
@@ -135,9 +164,11 @@
              v-for="(item,index) in doorData"
              :key="index">
           <label class="label">门{{index+1}}：</label>
-          <el-input v-model="item.nickName"></el-input>
+          <el-input :readonly="!isOneProject"
+                    v-model="item.nickName"></el-input>
           <label class="label">通道类型：</label>
-          <el-select v-model="item.channelType"
+          <el-select :disabled="!isOneProject"
+                     v-model="item.channelType"
                      placeholder="请选择">
             <el-option v-for="item in options"
                        :key="item.value"
@@ -147,6 +178,7 @@
           </el-select>
           <label class="label">能力：</label>
           <el-select v-model="item.ability"
+                     :disabled="!isOneProject"
                      style='width:230px;'
                      placeholder="请选择"
                      @change="gogo"
@@ -158,14 +190,16 @@
             </el-option>
           </el-select>
           <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"
+          <el-input :readonly="!isOneProject"
+                    v-model="item.gBCode"
                     @change="gogo"></el-input>
           <div class="mytagWrap">
             <gt-button class="button"
                        @close="deleteTag(1,index,x)"
                        v-for="(i,x) in item.tagPOList"
                        :key="x">{{i.tagName}}</gt-button>
-            <el-button class="addIcon"
+            <el-button v-if="isOneProject"
+                       class="addIcon"
                        type="primary"
                        @click="chooseTag(1,index)"
                        size="small">
@@ -175,274 +209,17 @@
           </div>
         </div>
       </div>
-
-      <div class="section door"
-           v-if="dutouData.length">
-        <div class="head">
-          <img :src="icons.door"
-               alt>
-          读头
-        </div>
-        <div class="form-item"
-             v-for="(item,index) in dutouData"
-             :key="index">
-          <label class="label">读头{{index+1}}：</label>
-          <el-input v-model="item.nickName"></el-input>
-          <label class="label">通道类型：</label>
-          <el-select v-model="item.channelType"
-                     placeholder="请选择">
-            <el-option v-for="item in options"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">能力：</label>
-          <el-select v-model="item.ability"
-                     style='width:230px;'
-                     placeholder="请选择"
-                     multiple
-                     @change="gogo">
-            <el-option v-for="item in abilityOption"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
-          <div class="mytagWrap">
-            <gt-button class="button"
-                       @close="deleteTag(2,index,x)"
-                       v-for="(i,x) in item.tagPOList"
-                       :key="x">{{i.tagName}}</gt-button>
-            <el-button class="addIcon"
-                       type="primary"
-                       @click="chooseTag(2,index)"
-                       size="small">
-              <i class="el-icon-circle-plus-outline"></i>
-              选择标签
-            </el-button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section door"
-           v-if="shuruData.length">
-        <div class="head">
-          <img :src="icons.door"
-               alt>
-          报警输入
-        </div>
-        <div class="form-item"
-             v-for="(item,index) in shuruData"
-             :key="index">
-          <label class="label">报警输入{{index+1}}：</label>
-          <el-input v-model="item.nickName"></el-input>
-          <label class="label">通道类型：</label>
-          <el-select v-model="item.channelType"
-                     placeholder="请选择">
-            <el-option v-for="item in alarmInOptions"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">能力：</label>
-          <el-select v-model="item.ability"
-                     style='width:230px;'
-                     placeholder="请选择"
-                     @change="gogo"
-                     multiple>
-            <el-option v-for="item in abilityOption"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
-          <div class="mytagWrap">
-            <gt-button class="button"
-                       @close="deleteTag(3,index,x)"
-                       v-for="(i,x) in item.tagPOList"
-                       :key="x">{{i.tagName}}</gt-button>
-            <el-button class="addIcon"
-                       type="primary"
-                       @click="chooseTag(3,index)"
-                       size="small">
-              <i class="el-icon-circle-plus-outline"></i>
-              选择标签
-            </el-button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section door"
-           v-if="shuchuData.length">
-        <div class="head">
-          <img :src="icons.door"
-               alt>
-          报警输出
-        </div>
-        <div class="form-item"
-             v-for="(item,index) in shuchuData"
-             :key="index">
-          <label class="label">报警输出{{index+1}}：</label>
-          <el-input v-model="item.nickName"></el-input>
-          <label class="label">通道类型：</label>
-          <el-select v-model="item.channelType"
-                     placeholder="请选择">
-            <el-option v-for="item in alarmOutOptions"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">能力：</label>
-          <el-select v-model="item.ability"
-                     style='width:230px;'
-                     placeholder="请选择"
-                     @change="gogo"
-                     multiple>
-            <el-option v-for="item in abilityOption"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
-          <div class="mytagWrap">
-            <gt-button class="button"
-                       @close="deleteTag(4,index,x)"
-                       v-for="(i,x) in item.tagPOList"
-                       :key="x">{{i.tagName}}</gt-button>
-            <el-button class="addIcon"
-                       type="primary"
-                       @click="chooseTag(4,index)"
-                       size="small">
-              <i class="el-icon-circle-plus-outline"></i>
-              选择标签
-            </el-button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section door"
-           v-if="ipc.length">
-        <div class="head">
-          <img :src="icons.door"
-               alt>
-          人脸抓拍相机
-        </div>
-        <div class="form-item"
-             v-for="(item,index) in ipc"
-             :key="index">
-          <label class="label">相机{{index+1}}：</label>
-          <el-input v-model="item.nickName"></el-input>
-          <label class="label">通道类型：</label>
-          <el-select v-model="item.channelType"
-                     @change="gogo"
-                     placeholder="请选择">
-            <el-option v-for="item in options"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">能力：</label>
-          <el-select v-model="item.ability"
-                     style='width:230px;'
-                     placeholder="请选择"
-                     @change="gogo"
-                     multiple>
-            <el-option v-for="item in abilityOption"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
-          <div class="mytagWrap">
-            <gt-button class="button"
-                       @close="deleteTag(5,index,x)"
-                       v-for="(i,x) in item.tagPOList"
-                       :key="x">{{i.tagName}}</gt-button>
-            <el-button class="addIcon"
-                       type="primary"
-                       @click="chooseTag(5,index)"
-                       size="small">
-              <i class="el-icon-circle-plus-outline"></i>
-              选择标签
-            </el-button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section door"
-           v-if="bullet_camera.length">
-        <div class="head">
-          <img :src="icons.door"
-               alt>
-          枪机
-        </div>
-        <div class="form-item"
-             v-for="(item,index) in bullet_camera"
-             :key="index">
-          <label class="label">枪机{{index+1}}：</label>
-          <el-input v-model="item.nickName"></el-input>
-          <label class="label">通道类型：</label>
-          <el-select v-model="item.channelType"
-                     @change="gogo"
-                     placeholder="请选择">
-            <el-option v-for="item in options"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">能力：</label>
-          <el-select v-model="item.ability"
-                     style='width:230px;'
-                     placeholder="请选择"
-                     @change="gogo"
-                     multiple>
-            <el-option v-for="item in abilityOption"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
-          </el-select>
-          <label class="label">通道国标码：</label>
-          <el-input v-model="item.gBCode"></el-input>
-          <div class="mytagWrap">
-            <gt-button class="button"
-                       @close="deleteTag(6,index,x)"
-                       v-for="(i,x) in item.tagPOList"
-                       :key="x">{{i.tagName}}</gt-button>
-            <el-button class="addIcon"
-                       type="primary"
-                       @click="chooseTag(6,index)"
-                       size="small">
-              <i class="el-icon-circle-plus-outline"></i>
-              选择标签
-            </el-button>
-          </div>
-        </div>
-      </div>
-
-      <channel-set-row v-for="(item,index) in abstractArr"
-                       v-if="visible"
-                       :key="index"
-                       :options="options"
-                       :index="index"
-                       :abilityOption="abilityOption"
-                       @update="updateData"
-                       :channelType="item.name"
-                       :data="item.data"></channel-set-row>
-
+      <template v-for="(item,index) in abstractArr">
+        <channel-set-row v-if="visible"
+                         :key="index"
+                         :options="options"
+                         :index="index"
+                         :isOneProject='isOneProject'
+                         :abilityOption="abilityOption"
+                         @update="updateData"
+                         :channelType="item.name"
+                         :data="item.data"></channel-set-row>
+      </template>
       <person-tree-tag title="请选择要添加的标签"
                        rightTxt="已选择的标签"
                        :isShow.sync="isShow"
@@ -455,11 +232,13 @@
     <div slot="footer"
          class="footer">
       <el-button @click="confirm"
-                 class='aaaaaaaaaa'
+                 v-if="isOneProject"
+                 :loading="isLoading"
+                 class='footerBtn'
                  type="primary">保存</el-button>
       <el-button @click="close"
-                 class='aaaaaaaaaa'
-                 type="primary">取消</el-button>
+                 class='footerBtn'
+                 type="primary">返回</el-button>
     </div>
   </div>
 </template>
@@ -554,12 +333,23 @@ export default {
       }
     }
   },
+  computed: {
+    // isOneProject() {
+    //   return this.$store.state.home.platformLevel;
+    // }
+  },
+  mounted() {
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
+  },
   data() {
     return {
+      isLoading: false,
       abstractArr: [],
       orgUuid: "",
       isLocal: false,
       service: "",
+      isOneProject: true,
       alarmInOptions: [
         {
           value: "pulse_fence",
@@ -694,6 +484,7 @@ export default {
         deviceIp: "",
         devicePort: "",
         deviceUsername: "",
+        productType: "",
         devicePassword: ""
       },
       rules: {
@@ -732,10 +523,6 @@ export default {
       houseName: "",
       bullet_camera: []
     };
-  },
-  mounted() {
-    // this.editEquipmentDialogVisible = this.visible;
-    // this.name = this.value;
   },
   methods: {
     updateData(channelType, index, data) {
@@ -860,7 +647,7 @@ export default {
     },
     setHouseData(params) {
       this.ruleForm.build = params.node.data.id;
-      this.houseName = params.name;
+      // this.houseName = params.name;
     },
     saveData() {
       let num = [];
@@ -927,6 +714,7 @@ export default {
           nickName: this.ruleForm.nickName,
           orgUuid: this.ruleForm.oriz,
           remarks: this.ruleForm.remarks,
+          productType: this.ruleForm.productType,
           version: this.ruleForm.version,
           channelList: num
         };
@@ -940,31 +728,47 @@ export default {
           deviceUuid: this.deviceUuid,
           nickName: this.ruleForm.nickName,
           version: this.ruleForm.version,
+          productType: this.ruleForm.productType,
           channelList: num
         };
       }
       console.log(data);
+      this.isLoading = true;
       if (this.isLocal) {
-        api.editManualEquipment(data).then(res => {
-          console.log(res);
-          if (res.data.success) {
-            this.$message.success("保存成功！");
-            this.$emit("showEdit", true);
-          }
-        });
+        api
+          .editManualEquipment(data)
+          .then(res => {
+            console.log(res);
+            this.isLoading = false;
+            if (res.data.success) {
+              this.$message.success("保存成功！");
+              this.$emit("showEdit", true);
+            }
+          })
+          .catch(() => {
+            this.isLoading = false;
+          });
       } else {
-        api.saveDevice(data).then(res => {
-          console.log(res);
-          if (res.data.success) {
-            this.$message.success("保存成功！");
-            this.$emit("showEdit", true);
-          }
-        });
+        api
+          .saveDevice(data)
+          .then(res => {
+            console.log(res);
+            this.isLoading = false;
+            if (res.data.success) {
+              this.$message.success("保存成功！");
+              this.$emit("showEdit", true);
+            }
+          })
+          .catch(() => {
+            this.isLoading = false;
+          });
       }
     },
     confirm() {
       console.log(this.doorData);
       console.log(this.dutouData);
+      console.log(this.$refs.ruleForm);
+
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.saveData();
@@ -988,7 +792,9 @@ export default {
   watch: {
     update() {
       let val = this.visible;
-      this.$refs.scroll.scrollTop = 0;
+      this.$nextTick(() => {
+        this.$refs.scroll.scrollTop = 0;
+      });
       if (val) {
         console.log(this.row);
         this.row.extInfo = this.row.extInfo || {};
@@ -1007,6 +813,7 @@ export default {
           version: this.row.version,
           deviceIp: this.row.deviceIp,
           devicePort: this.row.devicePort,
+          productType: this.row.productType,
           deviceUsername:
             this.row.extInfo.loginInfo && this.row.extInfo.loginInfo.loginName,
           devicePassword:
@@ -1063,30 +870,6 @@ export default {
             name: k,
             data: arr
           });
-          // console.log(k);
-          // if (k === window.config.door) {
-          //   this.doorData = deal(this.row.channelMapList[k]);
-          // } else if (k === window.config.readhead) {
-          //   this.dutouData = deal(this.row.channelMapList[k]);
-          // } else if (k === window.config.door_aic) {
-          //   this.shuruData = deal(this.row.channelMapList[k]);
-          // } else if (k === window.config.door_aoc) {
-          //   this.shuchuData = deal(this.row.channelMapList[k]);
-          // } else if (k === "face_ipc") {
-          //   let aaa = deal(this.row.channelMapList[k]);
-          //   this.ipc = aaa;
-          // } else if (k === "bullet_camera") {
-          //   let bbb = deal(this.row.channelMapList[k]);
-          //   this.bullet_camera = bbb;
-          //   console.log(bbb);
-          // } else {
-          //   // 这里将channelMapList里面剩下的枚举值放到一个数组里面
-          //   let arr = deal(this.row.channelMapList[k]);
-          //   this.abstractArr.push({
-          //     name: k,
-          //     data: arr
-          //   });
-          // }
         }
         console.log(this.abstractArr);
         // this.ipc = this.ipc.concat();
@@ -1098,12 +881,6 @@ export default {
 
         this.houseName = this.row.infrastructureName;
         this.houseUuid = this.row.infrastructureUuid;
-        this.$nextTick(() => {
-          this.$refs.scroll.initBar();
-        });
-        // if (this.isLocal) {
-        // this.getServiceList();
-        // }
       } else {
         this.abstractArr = [];
         this.orgName = "";
@@ -1187,7 +964,7 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
       margin-right: 30px;
       margin-top: 5px;
       .button {
-        width: 66px;
+        min-width: 66px;
         @include button30;
       }
     }
@@ -1290,8 +1067,8 @@ $dashline: 1px dashed rgba(255, 255, 255, 0.1);
     overflow: hidden;
     display: flex;
     justify-content: flex-end;
-    .aaaaaaaaaa {
-      width: 66px;
+    .footerBtn {
+      min-width: 66px;
       @include button30;
     }
   }

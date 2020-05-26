@@ -254,7 +254,7 @@ export default {
     },
     confirm() {
       if (this.roleName === "") {
-        this.$message.error("请输入姓名!");
+        this.$message.error("请输入角色名称!");
       } else {
         this.submit(false);
       }

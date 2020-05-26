@@ -1,14 +1,15 @@
 import GtTree from "./GtTree/index.js";
 import GtBigImage from "./GtBigImage/index.js";
 import GtButton from "./GtButton/index.js";
+import GtLoading from "./GtLoading/index.js";
 import GtScroll from "./GtScroll/index.js";
 import GtContextMenu from "./GtContextMenu/index.js";
 
 import "./index.scss";
 
-const components = [GtTree, GtButton, GtScroll];
+const components = [GtTree, GtLoading, GtButton, GtScroll];
 
-const install = function(Vue, opts = {}) {
+const install = function (Vue, opts = {}) {
   components.forEach(component => {
     Vue.component(component.name, component);
   });

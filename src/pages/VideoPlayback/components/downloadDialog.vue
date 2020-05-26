@@ -160,12 +160,12 @@ export default {
         console.log(data);
         this.$message.success("下载完成!");
       });
-      let { jMedia, jSignal } = this.$store.getters;
-      console.log(jMedia, jSignal);
+      let { jDescription } = this.$store.getters;
+      console.log(jDescription);
       var video = await video_mgr.setup({
-        jSignal: JSON.stringify(jSignal),
-        jMedia: JSON.stringify(jMedia),
+        jDescription,
         url: url,
+        webProtocol: window.location.protocol,
         protocol: "rtsp",
         action: "download",
         speed: 4

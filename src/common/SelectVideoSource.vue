@@ -19,7 +19,8 @@
                  src="@/assets/images/search_s.png">
           </el-input>
           <div class="videoSrc-list">
-            <el-tabs v-model="activeName">
+            <el-tabs v-model="activeName"
+                     v-if="isOneProject">
               <el-tab-pane label="设备树"
                            name="dev">
                 <el-tree :props="defaultProps"
@@ -27,6 +28,7 @@
                          :indent="10"
                          :data="treeData"
                          ref="elTree"
+                         :expand-on-click-node="false"
                          lazy
                          :load="loadNode"
                          :default-expanded-keys="defaultExpKeys"
@@ -73,6 +75,18 @@
                 </el-tree>
               </el-tab-pane>
             </el-tabs>
+            <the-leftmenu ref="leftMenu"
+                          v-if="!isOneProject && isShowTwoLevelTree"
+                          :ShowAuthDisabled='true'
+                          :OwnAuthDisabled='false'
+                          :isOnlyArea="false"
+                          :isShowInput="false"
+                          :isCanChecked="true"
+                          :ownWidth="340"
+                          needType="orgAndVideoDev"
+                          @clickNode="clickNodeAll"
+                          @addData="addData"
+                          orgType="areaOrg"></the-leftmenu>
           </div>
         </div>
       </div>
@@ -119,8 +133,11 @@
 </template>
 
 <script>
+import TheLeftmenu from "@/pages/AreaManagement/views/leftWrap";
+import * as api from "@/pages/equipmentMange/ajax.js";
+
 export default {
-  components: {},
+  components: { TheLeftmenu },
   props: {
     isShow: {
       type: Boolean,
@@ -146,10 +163,14 @@ export default {
       },
       treeData: [],
       treeDataTag: [],
+      isOneProject: true,
+      isShowTwoLevelTree: false
     };
   },
   created() {},
   mounted() {
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
   },
   methods: {
     getFirstData() {
@@ -162,6 +183,9 @@ export default {
         .then(res => {
           if (res.data.data) {
             this.treeData = res.data.data;
+            this.treeData.forEach(v => {
+              v.isChecked = false;
+            });
           }
         });
       this.$faceControlHttp
@@ -173,50 +197,47 @@ export default {
             this.treeDataTag = res.data.data.list;
           }
         });
-      this.selectedList = this.$common.copyArray(this.initSelectData, this.selectedList);
+      this.selectedList = this.$common.copyArray(
+        this.initSelectData,
+        this.selectedList
+      );
     },
     loadNode(node, resolve) {
       if (node.level !== 0) {
         if (node.data.type === "organization") {
           this.$faceControlHttp
-            .getDevList({
-              needType: "orgAndVideoDev",
-              orgType: "device",
-              parentOrgUuid: node.data.id
+            .getDeviceChannelList({
+              parentOrgUuid: node.data.id,
+              projectUuid: this.$store.state.home.projectUuid,
+              shootType: "faceSnap"
             })
             .then(res => {
               if (!res.data.data) {
                 resolve([]);
               } else {
-                for (let item of res.data.data) {
-                  this.$set(item, "leaf", true);
-                  if (item.nextCount !== 0) {
-                    this.$set(item, "leaf", false);
-                  }
+                let result = [];
+                if (res.data.data) {
+                  res.data.data.forEach(v => {
+                    result.push({
+                      id: v.channelUuid,
+                      label: v.nickName,
+                      channelUuid: v.channelUuid,
+                      channelName: v.nickName,
+                      channelType: v.channelType
+                    });
+                  });
                 }
-                resolve(res.data.data);
-              }
-            });
-        } else if (node.data.hasOwnProperty("deviceType")) {
-          this.$faceControlHttp
-            .getDevChannelList(node.data.id, {
-              viewType: "video",
-            })
-            .then(res => {
-              if (!res.data.data) {
-                resolve([]);
-              } else {
-                for (let item of res.data.data) {
+                for (let item of result) {
                   this.$set(item, "leaf", true);
                 }
                 this.selectedList.forEach(v => {
-                  res.data.data.forEach(v2 => {
+                  result.forEach(v2 => {
                     if (v2.id === v.id) {
                       this.$set(v2, "checked", true);
                     }
                   });
                 });
-                resolve(res.data.data);
+                resolve(result);
               }
             });
         } else if (node.data.hasOwnProperty("channelType")) {
@@ -244,8 +265,10 @@ export default {
                     dataList.push({
                       id: v.channelUuid,
                       label: v.channelName,
+                      channelUuid: v.channelUuid,
+                      channelName: v.channelName,
                       channelType: v.channelType
-                    })
+                    });
                   });
                   this.selectedList.forEach(v => {
                     dataList.forEach(v2 => {
@@ -265,23 +288,63 @@ export default {
       }
     },
     deleteItem(item) {
-      for (let [i, v] of this.selectedList.entries()) {
-        if (v.id === item.id) {
-          if (this.$refs.elTree.getNode(v.id)) {
-            this.$set(this.$refs.elTree.getNode(v.id).data, "checked", false);
+      if (this.isOneProject) {
+        for (let [i, v] of this.selectedList.entries()) {
+          if (v.id === item.id) {
+            if (this.$refs.elTree.getNode(v.id)) {
+              this.$set(this.$refs.elTree.getNode(v.id).data, "checked", false);
+            }
+            if (this.$refs.elTreeTag.getNode(v.id)) {
+              this.$set(
+                this.$refs.elTreeTag.getNode(v.id).data,
+                "checked",
+                false
+              );
+            }
+            this.selectedList.splice(i, 1);
           }
-          if (this.$refs.elTreeTag.getNode(v.id)) {
-            this.$set(this.$refs.elTreeTag.getNode(v.id).data, "checked", false);
+        }
+      } else {
+        for (let [i, v] of this.selectedList.entries()) {
+          if (v.id === item.id) {
+            if (this.$refs.leftMenu.$refs.mytree.getNode(v.id)) {
+              this.$set(
+                this.$refs.leftMenu.$refs.mytree.getNode(v.id).data,
+                "checked",
+                false
+              );
+            }
+            this.selectedList.splice(i, 1);
           }
-          this.selectedList.splice(i, 1);
         }
       }
     },
     handleNodeClick(obj, node, component) {
+      if (obj.type === "organization") {
+        obj.isChecked = !obj.isChecked;
+        if (node.childNodes) {
+          node.childNodes.forEach(v => {
+            this.$set(v.data, "checked", obj.isChecked);
+            if (v.data.checked) {
+              if (!this.selectedList.some(val => val.id === v.data.id)) {
+                this.selectedList.push(v.data);
+              }
+            } else {
+              for (let [i, v2] of this.selectedList.entries()) {
+                if (v2.id === v.data.id) {
+                  this.selectedList.splice(i, 1);
+                }
+              }
+            }
+          });
+        }
+      }
       if (obj.hasOwnProperty("channelType")) {
         this.$set(obj, "checked", !obj.checked);
         if (obj.checked) {
-          this.selectedList.push(obj);
+          if (!this.selectedList.some(val => val.id === obj.id)) {
+            this.selectedList.push(obj);
+          }
         } else {
           for (let [i, v] of this.selectedList.entries()) {
             if (v.id === obj.id) {
@@ -296,16 +359,81 @@ export default {
       this.$emit("onCancel");
     },
     onClickCancel() {
-      this.resetFormData();
+      // this.resetFormData();
+      if (!this.isOneProject) {
+        this.isShowTwoLevelTree = false;
+      }
       this.$emit("onCancel");
     },
-    resetFormData() {},
+    // resetFormData() {},
     onChangeInput() {},
+    addData(data, callback) {
+      let peojectuuid = data.childProjectUuid;
+      let params = {
+        parentOrgUuid: data.type === "project" ? "" : data.id,
+        needType: "orgAndVideoDev",
+        orgType: "device"
+      };
+      let projectUuid = data.type === "project" ? data.id : data.projectUuid;
+      if (data.type === "project") {
+        api.getOrgByProjectUuid(params, projectUuid).then(res => {
+          let result = res.data.data || [];
+          for (let i = 0; i < result.length; i++) {
+            result[i].projectUuid = projectUuid;
+            result[i].nextCount = 1;
+            result[i].isChecked = false;
+          }
+          callback(result);
+        });
+      } else {
+        this.$faceControlHttp
+        .getDeviceChannelList({
+          parentOrgUuid: data.id,
+          projectUuid,
+          shootType: "faceSnap"
+        })
+        .then(res => {
+          let result = [];
+          if (res.data.data) {
+            res.data.data.forEach(v => {
+              result.push({
+                id: v.channelUuid,
+                label: v.nickName,
+                channelUuid: v.channelUuid,
+                channelName: v.nickName,
+                channelType: v.channelType
+              });
+            });
+          }
+          if (result.length === 0) {
+            data.nextCount = 0;
+          }
+          for (let i = 0; i < result.length; i++) {
+            result[i].projectUuid = projectUuid;
+          }
+          this.selectedList.forEach(v => {
+            result.forEach(v2 => {
+              if (v2.id === v.id) {
+                this.$set(v2, "checked", true);
+              }
+            });
+          });
+          callback(result);
+        });
+      }
+    },
+    clickNodeAll(data, node) {
+      if (data.type === "areaOrg" || data.type === "project") {
+        return;
+      }
+      this.handleNodeClick(data, node);
+    }
   },
   watch: {
     isShow(val) {
       this.isCurrentShow = val;
       if (val) {
+        this.isShowTwoLevelTree = true;
         this.getFirstData();
       } else {
         this.treeData = [];

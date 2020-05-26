@@ -1,15 +1,15 @@
 import Axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 import store from '@/store/store.js';
-let FaceModuleApi = RestApi.api.faceModuleAPi;
+let FaceModuleApi = RestApi.faceModuleAPi;
 
 /** ******************************************* 人脸预览 ************************************** */
 export function getFaceDeviceList(data) {
-  if (data) {
-    data.projectUuid = store.state.home.projectUuid;
-    data.orgType = 'device';
+  if (data && !data.orgType) {
+    data.orgType = "device";
   }
-  let url = FaceModuleApi.baseDataApi.getFaceDeviceList(store.state.home.projectUuid);
+  let projectUuid = data.projectUuid ? data.projectUuid : store.state.home.projectUuid;
+  let url = FaceModuleApi.baseDataApi.getFaceDeviceList(projectUuid);
   return Axios({
     method: 'GET',
     url,
@@ -17,9 +17,14 @@ export function getFaceDeviceList(data) {
   });
 }
 export function getDeviceChannelList(data) {
-  if (data) { data.projectUuid = store.state.home.projectUuid; }
-  data.shootType = "faceSnap,bodySnap";
-  let url = FaceModuleApi.baseDataApi.getDeviceChannelList(store.state.home.projectUuid);
+  if (!data.shootType) {
+    data.shootType = "faceSnap,bodySnap";
+  }
+  if (data.shootType === 'shootType') {
+    data.shootType = null;
+  }
+  let projectUuid = data && data.projectUuid ? data.projectUuid : store.state.home.projectUuid;
+  let url = FaceModuleApi.baseDataApi.getDeviceChannelList(projectUuid);
   return Axios({
     method: 'GET',
     url,

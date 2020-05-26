@@ -74,6 +74,7 @@
                     v-model='speed'></el-input> -->
           <el-select class='speed'
                      @change="changeFenlu"
+                     style="width: 65px"
                      v-model='fenluIndex'>
             <el-option v-for="(item,index) in fenlu"
                        :key="index"
@@ -424,14 +425,17 @@ export default {
     fenlnWW() {
       this.fenluIndex = this.fenlnWW;
     },
-    data(val) {
-      // console.log(val);
-      let newData = JSON.parse(JSON.stringify(this.data));
-      newData.sort((a, b) => {
-        return a.position - b.position;
-      });
-      this.controlData = newData;
-      this.getMaxTime();
+    data: {
+      handler(val) {
+        // console.log(val);
+        let newData = JSON.parse(JSON.stringify(this.data));
+        newData.sort((a, b) => {
+          return a.position - b.position;
+        });
+        this.controlData = newData;
+        this.getMaxTime();
+      },
+      deep: true,
     },
     zoom(newVal, oldVal) {
       // console.log(newVal, oldVal);

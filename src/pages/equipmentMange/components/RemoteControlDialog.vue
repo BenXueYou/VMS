@@ -23,6 +23,7 @@
         <component :is='currentComponents'
                    :ShowAuthDisabled="ShowAuthDisabled"
                    :OwnAuthDisabled="OwnAuthDisabled"
+                   @onCancel='close'
                    :deviceUuid="deviceUuid">
         </component>
         <!-- </keep-alive> -->
@@ -42,9 +43,10 @@ import system from "./RemoteControlDialogContent/system";
 import WorkStatus from "./RemoteControlDialogContent/WorkStatus";
 import Timing from "./RemoteControlDialogContent/Timing";
 import alarmSeting from "./RemoteControlDialogContent/alarmSeting";
+import callSetting from './RemoteControlDialogContent/callSettting';
 import MeasureTemperature from "./RemoteControlDialogContent/MeasureTemperature";
 
-let menuData = [
+const menuData = [
   {
     label: "设备信息",
     component: "DeviveInfo"
@@ -80,13 +82,9 @@ let menuData = [
   {
     component: "alarmSeting",
     label: "设备报警配置"
-  },
-  {
-    component: "MeasureTemperature",
-    label: "体温配置"
   }
 ];
-let menuData2 = [
+const visitorMenuData = [
   {
     label: "设备信息",
     component: "DeviveInfo"
@@ -96,6 +94,28 @@ let menuData2 = [
     component: "Vistor"
   },
 
+  {
+    component: "NetParam",
+    label: "网络参数"
+  },
+  {
+    component: "Timing",
+    label: "校时"
+  },
+  {
+    component: "system",
+    label: "系统升级&维护"
+  }
+];
+const buildingIntercom = [
+  {
+    label: "设备信息",
+    component: "DeviveInfo"
+  },
+  {
+    label: " 通话设置",
+    component: "callSetting"
+  },
   {
     component: "NetParam",
     label: "网络参数"
@@ -122,6 +142,7 @@ export default {
     Relay,
     alarmSeting,
     Vistor,
+    callSetting,
     MeasureTemperature
   },
   props: {
@@ -161,16 +182,22 @@ export default {
         return false;
       }
     },
-    isVistors: {
-      type: Boolean,
+    viewType: {
+      type: String,
       default() {
-        return false;
+        return "door";
       }
     },
     center: {
       type: Boolean,
       default() {
         return true;
+      }
+    },
+    bodyTemperature: {
+      type: String,
+      default() {
+        return "";
       }
     }
   },
@@ -198,10 +225,18 @@ export default {
       if (val) {
         this.currentComponents = "DeviveInfo";
         this.leftActiveIndex = 0;
-        if (!this.isVistors) {
-          this.menuData = JSON.parse(JSON.stringify(menuData));
+        if (this.viewType === "visitor") {
+          this.menuData = JSON.parse(JSON.stringify(visitorMenuData));
+        } else if (this.viewType === "door") {
+          this.menuData = JSON.parse(JSON.stringify(buildingIntercom));
         } else {
-          this.menuData = JSON.parse(JSON.stringify(menuData2));
+          this.menuData = JSON.parse(JSON.stringify(menuData));
+        }
+        if (this.bodyTemperature === "1") {
+          this.menuData.push({
+            component: "MeasureTemperature",
+            label: "体温配置"
+          });
         }
       } else {
         this.currentComponents = "";

@@ -1,135 +1,240 @@
 ## 项目结构
-    ├─assets                                  图片资源
-    │  ├─icon
-    │  └─images
-    │      ├─building
-    │      ├─doorAccess
-    │      ├─equipment
-    │      ├─faceModule
-    │      ├─login
-    │      ├─personMange
-    │      ├─resident
-    │      └─vistorManage
-    ├─common                                 公共组件
-    │  ├─baseComponent
-    │  ├─js
-    │  └─package                             自定义树控件
-    │      ├─GtBigImage
-    │      │  └─src
-    │      ├─GtButton
-    │      │  └─src
-    │      ├─GtContextMenu
-    │      │  └─src
-    │      ├─GtScroll
-    │      │  └─src
-    │      ├─GtTimePicker
-    │      │  └─src
-    │      └─GtTree
-    │          └─src
-    ├─pages                                  模块代码
-    │  ├─alarmDialog                         报警弹窗
-    │  ├─buildingsHouse                      楼栋房屋
-    │  │  ├─components
-    │  │  ├─utils
-    │  │  └─views
-    │  ├─doorControl                         门禁控制
-    │  │  ├─components
-    │  │  │  ├─doorAccessConfig
-    │  │  │  └─doorAccessSetting
-    │  │  ├─utils
-    │  │  └─views
-    │  │      ├─doorAccessConfig
-    │  │      ├─doorAccessSetting
-    │  │      ├─doorStatus
-    │  │      └─recordSearch
-    │  ├─equipmentMange                       设备管理
-    │  │  ├─components
-    │  │  │  └─RemoteControlDialogContent     远程控制
-    │  │  ├─utils
-    │  │  └─views
-    │  ├─faceModule                           人脸识别
-    │  │  ├─components
-    │  │  └─views
-    │  │      ├─companion                     同行人
-    │  │      │  ├─util
-    │  │      │  └─view
-    │  │      ├─facealarm                     人脸报警
-    │  │      │  └─basic
-    │  │      ├─faceControl                   人脸布控
-    │  │      │  ├─components
-    │  │      │  ├─utils
-    │  │      │  └─view
-    │  │      ├─facedb                        人脸库
-    │  │      │  └─basic
-    │  │      ├─intelModel                    智能模型
-    │  │      │  ├─components
-    │  │      │  ├─utils
-    │  │      │  └─view
-    │  │      ├─judgeAnalysis                 研判报警
-    │  │      │  ├─components
-    │  │      │  ├─utils
-    │  │      │  └─view
-    │  │      ├─moduleCount                    模型统计
-    │  │      │  ├─components
-    │  │      │  ├─utils
-    │  │      │  └─view
-    │  │      ├─personTrace                    人员轨迹
-    │  │      │  ├─components
-    │  │      │  ├─utils
-    │  │      │  └─view
-    │  │      ├─searchFaceWithFace             以脸搜脸
-    │  │      │  ├─utils
-    │  │      │  └─view
-    │  │      ├─settings                       基础设置
-    │  │      │  ├─util
-    │  │      │  └─view
-    │  │      └─statisticalForms               统计分析
-    │  │          ├─util
-    │  │          └─view
-    │  ├─home                              首页tab组件                             
-    │  │  ├─components
-    │  │  ├─utils
-    │  │  └─views
-    │  ├─login                             登陆页
-    │  │  ├─utils
-    │  │  └─views
-    │  ├─main                              首页顶部tab组件
-    │  │  ├─components
-    │  │  ├─utils
-    │  │  └─views
-    │  ├─personMange                       员工管理
-    │  │  ├─components
-    │  │  ├─utils
-    │  │  └─views
-    │  ├─projectManage                     多项目弹窗
-    │  ├─residentManage                    居民管理
-    │  │  ├─components
-    │  │  ├─utils
-    │  │  └─views
-    │  ├─unitMange                         单位管理
-    │  │  ├─components
-    │  │  ├─utils
-    │  │  └─views
-    │  └─vistorMange                       访客管理
-    │      ├─components
-    │      │  ├─vistorAccess
-    │      │  ├─vistorBlacklist
-    │      │  ├─vistorRecord
-    │      │  └─vistorSet
-    │      ├─utils
-    │      │  └─vistorAccess
-    │      └─views
-    │          ├─vistorAccess
-    │          ├─vistorBlacklist
-    │          ├─vistorRecord
-    │          └─vistorSet
-    ├─router                              路由
-    │  └─modules
-    ├─store                               vuex
-    │  └─modules                          
-    ├─style                               全局样式  
-    └─utils                               全局函数
-        └─restApi                         全局API
+├─assets
+│  ├─icon                          一些图标
+│  ├─images                        全局图标
+│  │  ├─ActualPopulation              实有人口                v1.8——迭代二新增
+│  │  ├─auth                          权限模块                v1.6新增
+│  │  ├─bayonet                       车辆识别                v1.8——迭代一新增 
+│  │  ├─building                      楼栋
+│  │  ├─communityBoard                社区看板                v1.8——迭代五新增
+│  │  ├─dataBoard                     数据看板                v2.0新增
+│  │  ├─doorAccess                    门禁控制                v1.0
+│  │  ├─downTown                      街镇看板                v2.0
+│  │  ├─equipment                     设备资源                v1.0
+│  │  ├─faceModule                    人脸识别                v1.3
+│  │  ├─log                           日志查询                v1.6
+│  │  ├─login                         登陆                   v1.6
+│  │  ├─map                           地图                   v1.7
+│  │  │  └─icon
+│  │  ├─personMange                   员工管理
+│  │  ├─resident                      居民管理
+│  │  ├─SchoolBoard                   学校看板                v1.10
+│  │  ├─sys                           系统设置                v1.7
+│  │  ├─temperature                   高温预警                v1.10
+│  │  ├─treeIcons                     视频模块设备树的图标     v1.4
+│  │  ├─Video                         视频模块其他图标         v1.4
+│  │  └─vistorManage                  访客管理                v1.2
+│  └─temperature                      测温门禁                v1.6.1
+├─common                              公共组件
+│  ├─baseComponent                        基本拍照弹窗组件，
+│  ├─js                                   图标js类
+│  └─package                              UI组件类
+│      ├─GtBigImage
+│      │  └─src
+│      ├─GtButton
+│      │  └─src
+│      ├─GtContextMenu
+│      │  └─src
+│      ├─GtScroll
+│      │  └─src
+│      ├─GtTimePicker
+│      │  └─src
+│      └─GtTree
+│          └─src
+├─pages                             vue功能模块
+│  ├─alarmDialog                        全局报警弹窗              v1.3
+│  ├─AreaManagement                     区域组织                  v2.0
+│  │  ├─components
+│  │  └─views
+│  ├─bayonet                            车辆识别                  v1.8
+│  │  ├─components
+│  │  ├─http
+│  │  └─views
+│  ├─buildingsHouse                     楼栋房屋 基建组织          v1.0
+│  │  ├─components
+│  │  ├─utils
+│  │  └─views
+│  ├─BuildHouseFile                    一房一档                   v1.8
+│  │  └─components
+│  ├─carManage                          车辆登记                  v1.8
+│  │  ├─components
+│  │  ├─utils
+│  │  └─views
+│  ├─communityBoard                      社区看板                 v1.8、v2.1
+│  │  ├─ActualBuildHouse                     实有房屋
+│  │  │  ├─components
+│  │  │  └─views
+│  │  ├─ActualEquipment                      实有装备
+│  │  │  └─views
+│  │  ├─ActualInstallation                   实有安防设施
+│  │  │  └─views
+│  │  ├─ActualPopulation                     实有人口
+│  │  │  └─views
+│  │  ├─ActualPopwerStatistics               实有力量与统计
+│  │  │  └─views
+│  │  ├─ActualUnit                           实有单位
+│  │  │  ├─components
+│  │  │  └─http
+│  │  ├─components
+│  │  ├─defanceDev                           设备状态
+│  │  │  ├─utils
+│  │  │  └─views
+│  │  └─utils
+│  ├─DataBoard                               数据看板             v2.0
+│  │  ├─ActualBuildHouse                     实有房屋
+│  │  │  ├─components
+│  │  │  └─views
+│  │  ├─ActualEquipment                      实有装备
+│  │  │  └─views
+│  │  ├─ActualInstallation                   实有安防设备
+│  │  │  └─views
+│  │  ├─ActualPopulation                     实有人口
+│  │  │  ├─components
+│  │  │  └─views
+│  │  ├─ActualPopwerStatistics               实有力量与统计
+│  │  │  └─views
+│  │  ├─ActualUnit                           实有单位
+│  │  │  ├─components
+│  │  │  └─http
+│  │  ├─components                           实有设备
+│  │  ├─defanceDev                           
+│  │  │  ├─utils
+│  │  │  └─views
+│  │  ├─FacePerception                      人脸感知
+│  │  └─utils
+│  ├─deviceStatus                           设备状态             v2.0
+│  │  └─views
+│  ├─doorControl                            门禁控制             v1.0、1.2.1
+│  │  ├─components
+│  │  │  ├─doorAccessConfig
+│  │  │  └─doorAccessSetting
+│  │  ├─utils
+│  │  └─views
+│  │      ├─doorAccessConfig
+│  │      ├─doorAccessSetting
+│  │      ├─doorStatus
+│  │      └─recordSearch
+│  ├─equipmentMange                        设备管理              v1.0、1.2
+│  │  ├─components
+│  │  │  └─RemoteControlDialogContent          设备远程控制
+│  │  └─views
+│  ├─faceModule                            人脸识别              v1.3
+│  │  ├─components
+│  │  ├─http
+│  │  └─views
+│  │      ├─companion                       同行人分析
+│  │      │  ├─util
+│  │      │  └─view
+│  │      ├─facealarm
+│  │      │  └─basic
+│  │      ├─faceControl                      人脸布控
+│  │      │  ├─components
+│  │      │  ├─utils
+│  │      │  └─view
+│  │      ├─facedb                           人脸库
+│  │      │  └─basic
+│  │      ├─intelModel                       智能模型
+│  │      │  ├─components
+│  │      │  ├─utils
+│  │      │  └─view
+│  │      ├─judgeAnalysis                    研判查询
+│  │      │  ├─components
+│  │      │  ├─utils
+│  │      │  └─view
+│  │      ├─moduleCount                      模型统计
+│  │      │  ├─components
+│  │      │  ├─utils
+│  │      │  └─view
+│  │      ├─personTrace                       人员轨迹
+│  │      │  └─view
+│  │      ├─searchFaceWithFace                以脸搜脸
+│  │      │  ├─components
+│  │      │  ├─utils
+│  │      │  └─view
+│  │      ├─settings
+│  │      │  └─view
+│  │      └─statisticalForms                  统计分析
+│  │          ├─util
+│  │          └─view
+│  ├─hardwareManage                         实有装备              v1.8
+│  │  ├─components
+│  │  └─utils
+│  ├─home                                   首页模块菜单
+│  │  ├─components
+│  │  ├─utils
+│  │  └─views
+│  ├─log                                    日志                 v1.6
+│  │  ├─components
+│  │  ├─http
+│  │  └─views
+│  ├─login                                  登陆页
+│  │  └─utils
+│  ├─main                                   全局通知             v1.3
+│  │  └─views
+│  ├─mapConfig                              地图配置             v1.7
+│  │  ├─components
+│  │  ├─utils
+│  │  └─views
+│  ├─mapOperate                             地图操作             v1.7
+│  │  ├─components
+│  │  ├─utils
+│  │  └─views
+│  ├─peopleFiles                            一人一档             v1.8
+│  │  └─components
+│  ├─personMange                            员工管理             v1.0
+│  │  ├─components
+│  │  └─views
+│  ├─prewarnMegatemp                        高温预警             v1.10
+│  │  ├─components
+│  │  └─utils
+│  ├─projectManage                         项目切换的菜单
+│  │  └─utils
+│  ├─residentManage                        居民管理              v1.0、1.8
+│  │  ├─components
+│  │  ├─utils
+│  │  └─views
+│  ├─schoolBoard                           学校看板             v1.10
+│  │  ├─components
+│  │  └─faculty                                在岗安保
+│  │      ├─components
+│  │      └─utils
+│  ├─systemConfig                          系统设置             v1.7
+│  │  ├─utils
+│  │  └─views
+│  ├─unitMange                             单位管理             v1.0、v1.8
+│  │  ├─components
+│  │  ├─utils
+│  │  └─views
+│  ├─user                                  用户管理             v1.6
+│  │  ├─components
+│  │  ├─http
+│  │  └─views
+│  ├─VideoPlayback                         视频回放             v1.4
+│  │  ├─components
+│  │  └─views
+│  ├─VideoPreview                          视频预览             v1.4
+│  │  ├─components
+│  │  └─views
+│  └─VisitorManage                           访客管理             v1.1
+│      ├─components
+│      │  ├─vistorAccess
+│      │  ├─vistorBlacklist
+│      │  ├─vistorRecord
+│      │  └─vistorSet
+│      ├─utils
+│      │  └─vistorAccess
+│      └─views
+│          ├─vistorAccess
+│          ├─vistorBlacklist
+│          ├─vistorRecord
+│          └─vistorSet
+├─router                                   路由模块
+│  └─modules
+├─store                                    本地存储管理
+│  └─modules
+├─style                                    全局样式
+└─utils                                    全局的函数（http）
+    └─restApi                                 全局API
 
 
 ## common目录下面公共组件的使用方法

@@ -58,28 +58,28 @@
         </div>
         <div class="asidCompareTxtClass"
              :style="`width:${imgWidth>95?'100%':'84px'};`">
-          <div class="asidFontClass">{{recoginizeItem.staffName||'姓名:-- --'}}</div>
-          <div class="asidFontClass">{{$common.getEnumItemName("staff_t", recoginizeItem.staffType)||'人员类型'}}</div>
-          <div class="asidFontClass">{{recoginizeItem.libraryName||'所属库:-- -- '}}</div>
+          <div class="asidFontClass">{{recoginizeItem.staffName||'姓名:--'}}</div>
+          <div class="asidFontClass">{{$common.getEnumItemName("staff_t", recoginizeItem.staffType)||'人员类型:--'}}</div>
+          <div class="asidFontClass">{{recoginizeItem.libraryName||'所属库:-- '}}</div>
           <div @mouseover="mymouseover"
                @mouseout="mymouseout"
                @mousemove="mymousemove"
-               class="asidFontClass textclipsClass aaaaaa">{{recoginizeItem.channelName||'通道名称'}}</div>
+               class="asidFontClass textclipsClass aaaaaa">{{recoginizeItem.channelName||'抓拍通道:--'}}</div>
           <template v-if="imgWidth>95">
             <div @mouseover="mymouseover"
                  @mouseout="mymouseout"
                  @mousemove="mymousemove"
-                 class="textclipsClass asidFontClass">{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime:'抓拍时间：-- --'}}</div>
+                 class="textclipsClass asidFontClass">{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime:'抓拍时间:-- --'}}</div>
           </template>
           <template v-else>
             <div @mouseover="mymouseover"
                  @mouseout="mymouseout"
                  @mousemove="mymousemove"
-                 class="textclipsClass asidFontClass">{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[0]:'抓拍日期：-- --'}}</div>
+                 class="textclipsClass asidFontClass">{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[0]:'抓拍日期:-- --'}}</div>
             <div @mouseover="mymouseover"
                  @mouseout="mymouseout"
                  @mousemove="mymousemove"
-                 class="textclipsClass asidFontClass">{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[1]:'抓拍时间：-- --'}}</div>
+                 class="textclipsClass asidFontClass">{{recoginizeItem.captureDatetime?recoginizeItem.captureDatetime.split(" ")[1]:'抓拍时间:-- --'}}</div>
           </template>
         </div>
       </div>

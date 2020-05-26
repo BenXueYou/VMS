@@ -79,9 +79,7 @@
         <span>移至人脸库：</span>
         <el-select v-model="dataBase"
                    size="small"
-                   multiple
                    clearable
-                   collapse-tags
                    placeholder="请选择人脸库"
                    style="width: 240px;margin-left: 20px;">
           <el-option v-for="item in dataBaseOptions"
@@ -91,7 +89,8 @@
           </el-option>
         </el-select>
       </div>
-      <div class="content-status" style="margin-bottom: 10px;">
+      <div class="content-status"
+           style="margin-bottom: 10px;">
         <span>处理意见：</span>
         <el-input type="textarea"
                   :rows="2"
@@ -103,6 +102,7 @@
     <div slot="footer"
          class="dialog-footer">
       <el-button type="primary"
+                 :disabled="!OwnAuthDisabled"
                  @click="onClickConfirm"
                  size="small">确认</el-button>
       <el-button type="primary"
@@ -127,32 +127,36 @@ export default {
       isCurrentShow: false,
       typeRadio: "",
       dataBaseOptions: [],
-      dataBase: [],
+      dataBase: "",
       remark: "",
       checkAll: true,
       checkedDevices: [],
       devices: [],
       isIndeterminate: false,
       infoList: [],
-      isLoading: false
+      isLoading: false,
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    this.ShowAuthDisabled = this.$common.getAuthIsOwn("研判查询", "isShow");
+    this.OwnAuthDisabled = this.$common.getAuthIsOwn("研判查询", "isOwn");
+  },
   methods: {
     onClickCancel() {
       this.$emit("onCancel");
       this.resetData();
     },
     onClickConfirm() {
-      this.$emit("onCancel");
-      this.resetData();
+      this.handleJudgeDetail();
     },
     resetData() {
       this.modelItem = {};
       this.typeRadio = "";
       this.dataBaseOptions = [];
-      this.dataBase = [];
+      this.dataBase = "";
       this.remark = "";
       this.checkAll = true;
       this.checkedDevices = [];
@@ -161,12 +165,14 @@ export default {
       this.infoList = [];
     },
     getLibrarys() {
-      this.$faceControlHttp.getFacedbList({
-        faceLibraryType: "systemFaceLib,captureFaceLib,dynamicFaceLib,staticFaceLib"
-      }).then(res => {
-        let body = res.data;
-        this.getFacedbListSuccess(body);
-      });
+      this.$faceControlHttp
+        .getFacedbList({
+          faceLibraryType: "staticFaceLib"
+        })
+        .then(res => {
+          let body = res.data;
+          this.getFacedbListSuccess(body);
+        });
     },
     getFacedbListSuccess(body) {
       this.dataBaseOptions = body.data;
@@ -214,8 +220,11 @@ export default {
       this.isLoading = true;
       this.$judgeHttp
         .getJudgeDetails({
-          faceModelAnalysisResultUuid: this.modelItem.faceModelAnalysisResultUuid,
-          channelUuidList: this.checkedDevices ? this.checkedDevices.join(",") : ""
+          faceModelAnalysisResultUuid: this.modelItem
+            .faceModelAnalysisResultUuid,
+          channelUuidList: this.checkedDevices
+            ? this.checkedDevices.join(",")
+            : ""
         })
         .then(res => {
           let body = res.data;
@@ -228,6 +237,24 @@ export default {
     },
     getJudgeDetailsSuccess(body) {
       this.infoList = body.data;
+    },
+    handleJudgeDetail() {
+      this.$judgeHttp
+        .handleJudgeDetail({
+          faceModelAnalysisResultUuid: this.modelItem.faceModelAnalysisResultUuid,
+          faceLibraryUuid: this.dataBase,
+          status: this.typeRadio,
+          dealSuggestion: this.remark
+        })
+        .then(res => {
+          let body = res.data;
+          this.handleJudgeDetailSuccess(body);
+        });
+    },
+    handleJudgeDetailSuccess(body) {
+      this.$cToast.success(body.msg);
+      this.$emit("onConfirm");
+      this.resetData();
     }
   },
   watch: {
@@ -235,6 +262,8 @@ export default {
       this.isCurrentShow = val;
       if (val) {
         this.getLibrarys();
+        this.typeRadio = this.modelItem.status;
+        this.remark = this.modelItem.dealSuggestion || "";
       }
     }
   }

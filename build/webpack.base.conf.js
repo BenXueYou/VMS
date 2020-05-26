@@ -8,6 +8,7 @@ function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
+// 加载 eslint 规则
 const createLintingRule = () => ({
   test: /\.(js|vue)$/,
   loader: 'eslint-loader',

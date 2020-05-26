@@ -90,7 +90,6 @@ export default {
       // 树上的节点选中发生了改变
       // console.log(data, checked, indeterminate);
       console.log(this.$refs.tree1.getCheckedNodes());
-      this.deal;
     },
     loadNode(node, resolve) {
       //  懒加载子结点

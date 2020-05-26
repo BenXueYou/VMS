@@ -109,6 +109,8 @@ export default {
       staffName: "",
       gender: "",
       infrastructureUuids: "",
+      companyUuid: "",
+      projectUuid: this.$store.state.home.projectUuid,
       contact: "",
       tableData: [],
       pageInfo: {
@@ -152,9 +154,16 @@ export default {
           staffName: this.staffName,
           gender: this.gender,
           contact: this.contact,
+          companyUuid: this.companyUuid,
           infrastructureUuids: this.infrastructureUuids,
+          projectUuid: this.projectUuid,
           limit: this.pageInfo.pageSize,
           page: this.pageInfo.currentPage
+        },
+        {
+          modelName: "单位管理",
+          type: "查看",
+          detailContent: `查看${this.unitsName}单位的从业人员`
         })
         .then(res => {
           let body = res.data;

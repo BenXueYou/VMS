@@ -134,7 +134,19 @@ export default {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
-    transferCheckedNodes(data, nodeBool, treeName) {
+    transferCheckedNodes(data, nodeBool, treeName, radio) {
+      console.log(data, nodeBool, treeName, radio);
+      // 判断是不是单选
+      if (radio) {
+        if (nodeBool) {
+          this.dynamicTags = [data];
+          this.checkeTreedNodes = [data];
+        } else {
+          this.dynamicTags = [];
+          this.checkeTreedNodes = [];
+        }
+        return;
+      }
       var num = this.dynamicTags;
       let index = -1;
       for (var i = 0; i < num.length; i++) {

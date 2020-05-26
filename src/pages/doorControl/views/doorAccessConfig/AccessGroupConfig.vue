@@ -168,6 +168,7 @@
                         :key="index"
                         @show="showPeople(item)"
                         class="message">
+              <!-- 当前新建的权限组选取的是叶子节点，没有选择树节点，则直接展示该人员信心 -->
               <div v-if="item.resType=='staff' || item.resType=='resident'"
                    class="hoverPerson">
                 <div class="head">
@@ -188,6 +189,7 @@
                   </p>
                 </div>
               </div>
+              <!-- 当前新建的权限组选取的是选择树节点，则查找该节点的下的人员列表 -->
               <div v-else
                    class="hoverPerson">
                 <!-- <div class="xulie">
@@ -237,6 +239,7 @@
     <the-company-table-xiafa-dialog :visible.sync="TheCompanyTableXiafaDialogVisible"></the-company-table-xiafa-dialog>
 
     <staff-dialog :visible.sync="personDialogVisible"
+                  @loadNextPage='loadNextPage'
                   :data="staffList"></staff-dialog>
 
     <door-dialog :visible.sync="doorDialogVisible"
@@ -249,12 +252,11 @@ import TheCompanyTableXiafaDialog from "@/pages/equipmentMange/components/TheCom
 import icons from "@/common/icon.js";
 import ConfirmDialog from "@/common/ConfirmDialog";
 import AddNewPowerDialog from "@/pages/doorControl/components/doorAccessConfig/AddNewPowerDialog";
-import * as api from "../../utils/ajax.js";
+import * as api from "@/pages/doorControl/utils/ajax.js";
 import * as api2 from "@/pages/equipmentMange/ajax.js";
 import staffDialog from "@/common/showStaffDialog";
 import doorDialog from "@/common/showDoorDialog";
 import { turnTimesArea, turnWeek, turnWeekToNumber } from "@/utils/date.js";
-import RestApi from "@/utils/RestApi.js";
 export default {
   data() {
     return {
@@ -304,7 +306,9 @@ export default {
       personDialogVisible: false,
       doorDialogVisible: false,
       ShowAuthDisabled: true,
-      OwnAuthDisabled: true
+      OwnAuthDisabled: true,
+      selectHoverItem: null,
+      currentPage: 1
     };
   },
   activated() {
@@ -318,26 +322,6 @@ export default {
   },
   methods: {
     showDoor(item) {
-      // console.log(item);
-      // if (item.resType === "organization") {
-      //   // 组织
-      //   api2.getTDByOrgUuid(item.resUuid).then(res => {
-      //     console.log(res);
-      //     if (res.data.success) {
-      //       this.doorList = res.data.data || [];
-      //     }
-      //   });
-      // } else if (item.resType === "access_ctrl") {
-      //   // 设备
-      //   api2.getTDByDUuid(item.resUuid).then(res => {
-      //     console.log(res);
-      //     if (res.data.success) {
-      //       this.doorList = res.data.data || [];
-      //     }
-      //   });
-      // } else if (item.resType === "door") {
-      //   // 门
-      // }
       // 重新调用一个接口
       if (item.resType === "door") {
       } else {
@@ -352,48 +336,83 @@ export default {
         });
       }
     },
+    loadNextPage(data) {
+      console.log(data);
+      if (this.currentPage) {
+        if (
+          this.selectHoverItem.resType !== "staff" ||
+          this.selectHoverItem.resType !== "resident"
+        ) {
+          this.currentPage++;
+          let data = {
+            resourceType: this.selectHoverItem.resType,
+            page: this.currentPage,
+            limit: 15
+          };
+          this.httpAccessGroupStaffNode(data, this.selectHoverItem);
+        }
+      }
+    },
     showPeople(item) {
       console.log(item);
-
+      this.selectHoverItem = item;
+      this.currentPage = 1;
+      this.staffList = [];
       if (item.resType === "staff" || item.resType === "resident") {
         let data = {
           staffUuid: item.resUuid
         };
         this.staffInfo = {};
-        api.staffDetail(data).then(res => {
-          let data = res.data || {};
-          if (data) {
-            let transfer = JSON.parse(sessionStorage.localEnums);
-            if (data.lifePictureUrl) {
-              data.lifePictureUrl = RestApi.api.imageUrl + data.lifePictureUrl;
-            }
-            this.staffInfo = {
-              name: data.staffName || "",
-              sex: transfer.gender[data.gender],
-              zhuhu: transfer.staff_t[data.staffType] || "",
-              phone: data.cellphone || "",
-              address: data.address || "",
-              pic: data.lifePictureUrl || icons.defaultHead
-            };
-          }
-        });
+        this.httpAccessGroupStaffInfo(data);
       } else {
         let data = {
-          resourceType: item.resType
+          resourceType: item.resType,
+          limit: 15,
+          page: 1
         };
-        api2.getResource(data, item.resUuid).then(res => {
-          console.log(res);
-          if (res.data.success) {
-            let result = res.data.data || [];
-            let transfer = JSON.parse(sessionStorage.localEnums);
-            for (let i = 0, len = result.length; i < len; i++) {
-              result[i].sex = transfer.gender[result[i].gender];
-              result[i].nation = transfer.nation[result[i].nation];
-            }
-            this.staffList = result;
-          }
-        });
+        this.httpAccessGroupStaffNode(data, item);
       }
+    },
+    // 查看权限组内所有节点，包含的人员列表
+    httpAccessGroupStaffNode(data, item) {
+      api2.getResource(data, item.resUuid).then(res => {
+        if (res.data.success) {
+          let result = res.data.data || [];
+          let transfer = JSON.parse(sessionStorage.localEnums);
+          for (let i = 0, len = result.length; i < len; i++) {
+            result[i].sex = transfer.gender[result[i].gender];
+            result[i].nation = transfer.nation[result[i].nation];
+          }
+          // this.staffList = result;
+          console.log(data, "========", result);
+          if (result && !result.length) {
+            this.currentPage = 0;
+            return;
+          }
+          this.staffList = this.staffList.concat(result);
+        }
+      });
+    },
+    httpAccessGroupStaffInfo(data) {
+      api.staffDetail(data).then(res => {
+        let data = res.data || {};
+        if (data) {
+          let transfer = JSON.parse(sessionStorage.localEnums);
+          if (data.lifePictureUrl) {
+            data.lifePictureUrl = this.$common.setPictureShow(
+              data.lifePictureUrl
+            );
+          }
+          this.staffInfo = {
+            name: data.staffName || "",
+            sex: transfer.gender[data.gender],
+            zhuhu: transfer.staff_t[data.staffType] || "",
+            phone: data.cellphone || "",
+            address: data.address || "",
+            pic: data.lifePictureUrl || icons.defaultHead
+          };
+        }
+      });
     },
     lookMoreDoor() {
       this.doorDialogVisible = true;
@@ -405,7 +424,8 @@ export default {
       // 下发一个权限组
       api
         .xiafa({
-          authGroupUuids: this.groupUuidNum
+          authGroupUuids: this.groupUuidNum,
+          deviceType: "IAC"
         })
         .then(res => {
           console.log(res);
@@ -528,21 +548,6 @@ export default {
               this.$refs.mytable.setCurrentRow(this.tableData[index]);
             }
           }
-        } else {
-          this.tableData = [];
-          this.groupName = "";
-          this.doorNum = [];
-          this.peopleNum = [];
-          this.doorChildNum = [];
-          this.time = [];
-          this.updateTime = "";
-          this.createTime = "";
-          this.groupName = "";
-          this.updateMan = "";
-          this.date = [];
-          this.doorCount = 0;
-          this.peopleCount = 0;
-          this.doorNum = [];
         }
       });
     },

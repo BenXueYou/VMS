@@ -109,7 +109,8 @@
                        layout="total,prev, pager, next,jumper"
                        :page-size="pageSize"
                        :total="total"
-                       background></el-pagination>
+                       background>
+        </el-pagination>
       </el-col>
     </el-row>
     <!-- --------------------------    弹窗   ------------------------------------- -->

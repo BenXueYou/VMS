@@ -11,7 +11,6 @@
         <div class="title-button">
           <el-button type="primary"
                      @click="onClickConfirm"
-                     :loading="isLoadButton"
                      size="small">确定</el-button>
           <el-button type="primary"
                      @click="onClickCancel"
@@ -187,7 +186,6 @@
           <div class="bottom-button">
             <el-button type="primary"
                       @click="onClickConfirm"
-                      :loading="isLoadButton"
                       size="small">确定</el-button>
             <el-button type="primary"
                       @click="onClickCancel"
@@ -278,8 +276,7 @@ export default {
       specialType: "",
       differentFloorList: [],
       isShowConFloor: true,
-      isShowConHouse: true,
-      isLoadButton: false
+      isShowConHouse: true
     };
   },
   created() {},
@@ -331,7 +328,6 @@ export default {
       }
     },
     addUnit() {
-      this.isLoadButton = true;
       this.initAddParams();
       this.$houseHttp
         .addUnit({
@@ -347,13 +343,9 @@ export default {
         .then(res => {
           let body = res.data;
           this.addUnitSuccessResponse(body);
-        })
-        .catch(() => {
-          this.isLoadButton = false;
         });
     },
     addUnitSuccessResponse(body) {
-      this.isLoadButton = false;
       this.$cToast.success(body.msg);
       this.resetFormData();
       this.$emit("onConfirm", "add");

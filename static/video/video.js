@@ -1,6 +1,7 @@
 function CVideo(observer) {
   this.m_session = null;
   this.m_decoder = null;
+  this.m_bDecoder = true;
   this.m_canvas = null;
   this.decodeMod = null;
   this.m_download = null;
@@ -13,8 +14,8 @@ function CVideo(observer) {
 CVideo.prototype.setup = async function({
   element,
   decodeMod,
-  jSignal,
-  jMedia,
+  jDescription,
+  webProtocol,
   url,
   protocol,
   action,
@@ -27,8 +28,8 @@ CVideo.prototype.setup = async function({
   this.m_speed = speed;
   this.m_file = file;
   this.m_session = new CSession(
-    jSignal,
-    jMedia,
+    jDescription,
+    webProtocol,
     url,
     protocol,
     action,
@@ -44,6 +45,19 @@ CVideo.prototype.play = async function() {
   return await this.m_session.play();
   //this.m_decoder.play();
 };
+
+CVideo.prototype.enableDecoder = function(enable)
+{
+    this.m_bDecoder = enable;
+}
+
+CVideo.prototype.resetBuffer = function()
+{
+    if (this.m_decoder != null)
+    {
+        this.m_decoder.resetBuffer();
+    }
+}
 
 CVideo.prototype.onSdp = function(sdp) {
   if (this.m_action === "preview" || this.m_action === "playback") {
@@ -62,14 +76,14 @@ CVideo.prototype.onSdp = function(sdp) {
 
 CVideo.prototype.onMedia = function(data) {
   // 1. 检查是否入缓存
-  if (this.m_decoder != null) {
+  if (this.m_decoder != null && this.m_bDecoder) {
     this.m_decoder.media(data);
   }
 
   // 2. 如果有下载模块 写入下载模块
   // fix: 下载模块暂未实现
   if (this.m_download != null) {
-    this.m_download.writeBlob(data);
+    this.m_download.writeArray(data);
   }
 };
 

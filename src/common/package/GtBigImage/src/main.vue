@@ -53,6 +53,8 @@ export default {
   opacity: 0.3;
 }
 .zoom {
+  max-width: 80vw;
+  max-height: 80vh;
   animation: zoom 0.3s linear both;
 }
 @keyframes zoom {

@@ -150,7 +150,8 @@
       <el-col :span="16"
               class="right-col">
         <div>
-          <span class="cursorClass" style="color:#26D39D"
+          <span class="cursorClass"
+                style="color:#26D39D"
                 @click="AddTag">
             <i class="el-icon-circle-plus-outline"></i>添加
           </span>
@@ -222,7 +223,7 @@
     </set-date-area-dialog>
 
     <tab-tree-tag title="请选择允许通行的人"
-                  rightTxt="已选的分组、设备、门或者地址"
+                  rightTxt="已选的部门、员工、标签"
                   :modal="false"
                   :tabs="tabs1"
                   :isShow.sync="chooseVisible"
@@ -271,15 +272,6 @@ export default {
           treeNodeType: "door",
           radio: true,
           nodeKey: "id"
-        },
-        {
-          id: "2",
-          label: "地址",
-          treeType: "resident",
-          treeRef: "tree2",
-          nodeKey: "id",
-          treeNodeType: "door",
-          radio: true
         }
       ],
       elPopoverClass: "ManMakeUpOpenClass",
@@ -318,22 +310,44 @@ export default {
           treeType: "person",
           treeRef: "tree1",
           nodeKey: "id"
-        },
-        {
-          id: "2",
-          label: "地址",
-          treeType: "resident",
-          treeNodeType: "staff",
-          treeRef: "tree2",
-          nodeKey: "id"
         }
+        // {
+        //   id: "2",
+        //   label: "地址",
+        //   treeType: "resident",
+        //   treeNodeType: "staff",
+        //   treeRef: "tree2",
+        //   nodeKey: "id"
+        // }
       ],
       peopleVersion: 0,
       groupName: ""
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+    let projectType = this.$store.state.home.projectType;
+    // 判断不是学校项目则加入基建的选项
+    if (projectType.platformType !== "school") {
+      this.tabs.push({
+        id: "2",
+        label: "地址",
+        treeType: "resident",
+        treeRef: "tree2",
+        nodeKey: "id",
+        treeNodeType: "door",
+        radio: true
+      });
+      this.tabs1.push({
+        id: "2",
+        label: "地址",
+        treeType: "resident",
+        treeNodeType: "staff",
+        treeRef: "tree2",
+        nodeKey: "id"
+      });
+    }
+  },
   methods: {
     transferCheckedNodes(data, nodeBool, treeName) {
       console.log(data, nodeBool, treeName);
@@ -536,6 +550,7 @@ export default {
           }
         }
         this.peopleList = checkeTreedNodes;
+        console.log(this.peopleList);
         this.time = this.row.periodUuid;
         this.date = this.row.holidayUuid;
         this.inputMinTime = this.row.intervals;
@@ -591,7 +606,7 @@ $fontColor: #dddddd;
 }
 .ManMakeUpOpen .el-radio {
   width: 50%;
-  margin: 5px 0 15px!important;
+  margin: 5px 0 15px !important;
 }
 .ManMakeUpOpen .el-radio__label {
   color: $fontColor;

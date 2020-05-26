@@ -17,7 +17,6 @@ import {
   getTaskLibsList,
   compareTwoFacePhoto,
   getDeviceList,
-  getFaceLibsAndDeviceList,
   getRecongizeList,
   getBodyDeviceList,
   tempCtrlTask,
@@ -26,7 +25,6 @@ import {
   getBobyRecNum,
   getCompareRecList
 } from './api';
-import { resolve } from 'url';
 
 Vue.use(Vuex);
 
@@ -186,18 +184,6 @@ const store = new Vuex.Store({
             resolve(res.data);
           }).catch(function (err) {
             console.log(err);
-            resolve(false);
-          });
-        }
-      );
-    },
-    // 根据任务列表获取任务关联的设备和人脸库
-    getFaceLibsAndDeviceList(context, payload) {
-      return new Promise(
-        (resolve, reject) => {
-          getFaceLibsAndDeviceList(payload).then((res) => {
-            resolve(res.data);
-          }).catch((err) => {
             resolve(false);
           });
         }

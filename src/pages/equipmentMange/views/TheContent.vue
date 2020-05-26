@@ -6,13 +6,29 @@
                  @showEdit="showEdit"
                  @updateTree="updateTree"
                  @switch="changeDevTypeArr"
+                 @changeViewType='changeViewType'
                  @serverList="serverList"
                  :ShowAuthDisabled="ShowAuthDisabled"
                  :OwnAuthDisabled="OwnAuthDisabled"
                  :viewType="viewType"
                  :is="tabMap[tabName]"></component>
     </keep-alive>
-    <the-company-edit-equipment-dialog v-show="isShowEdit"
+    <component :is='EditDialogMap'
+               v-show="isShowEdit"
+               :projectUuid="projectUuid"
+               :row="row"
+               :update="update"
+               :isVideo="viewType==='video'"
+               :deviceTypeArr="deviceTypeArr"
+               :localService="localService"
+               :visible="isShowEdit"
+               :netStatus="netStatus"
+               :viewType="viewType"
+               :deviceUuid="deviceUuid"
+               @updateEdit="showEdit"
+               @showEdit="hiddenEdit"></component>
+    <!-- <the-company-edit-equipment-dialog v-show="isShowEdit"
+                                       :projectUuid="projectUuid"
                                        :row="row"
                                        :update="update"
                                        :isVideo="viewType==='video'"
@@ -20,17 +36,20 @@
                                        :localService="localService"
                                        :visible="isShowEdit"
                                        :netStatus="netStatus"
+                                       :viewType="viewType"
                                        :deviceUuid="deviceUuid"
                                        @updateEdit="showEdit"
                                        @showEdit="hiddenEdit">
-    </the-company-edit-equipment-dialog>
+    </the-company-edit-equipment-dialog> -->
   </div>
 </template>
 <script>
 import TheCompanyTable from "../components/TheCompanyTable";
 import TheTagTable from "../components/TheTagTable";
 import TheCompanyEditEquipmentDialog from "../components/TheCompanyEditEquipmentDialog";
+import EditDoorRoomEquipment from "../components/EditDoorRoomEquipment";
 import * as api from "../ajax";
+import { mapState } from "vuex";
 export default {
   name: "wrap",
   props: {
@@ -62,10 +81,29 @@ export default {
       }
     }
   },
-  components: { TheTagTable, TheCompanyTable, TheCompanyEditEquipmentDialog },
+  computed: {
+    ...mapState({
+      orgUuid: state => {
+        return state.equipment.orgUuid;
+      },
+      projectUuid: state => {
+        return state.equipment.projectUuid;
+      },
+      DeviceOnOffArr: state => {
+        return state.equipment.DeviceOnOffArr;
+      }
+    })
+  },
+  components: {
+    TheTagTable,
+    TheCompanyTable,
+    TheCompanyEditEquipmentDialog,
+    EditDoorRoomEquipment
+  },
   data() {
     return {
       deviceTypeArr: [],
+      isOneProject: false,
       localService: [],
       isShowEdit: false,
       editEquipMentDialgoVisible: true,
@@ -73,6 +111,7 @@ export default {
       deviceUuid: "",
       viewType: "door",
       netStatus: "offline",
+      EditDialogMap: "TheCompanyEditEquipmentDialog",
       update: 0 // 新建一个int变量，监听他来进行修改数据
     };
   },
@@ -91,15 +130,20 @@ export default {
     updateTree(uuid) {
       this.$emit("updateTree", uuid);
     },
-    showEdit(deviceUuid, netStatus) {
+    showEdit(row, isOneProject) {
+      this.EditDialogMap =
+        row.devMode !== "buildingIntercom"
+          ? "TheCompanyEditEquipmentDialog"
+          : "EditDoorRoomEquipment";
       this.row = {};
-      this.deviceUuid = deviceUuid;
-      api.getDeviceDetail(deviceUuid).then(res => {
+      this.deviceUuid = row.deviceUuid;
+      this.isOneProject = isOneProject;
+      api.getDeviceDetail(row.deviceUuid, row.projectUuid).then(res => {
         if (res.data.success) {
           this.row = res.data.data;
           this.isShowEdit = true;
           this.update++;
-          this.netStatus = netStatus;
+          this.netStatus = row.netStatus;
         }
       });
     },

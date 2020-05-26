@@ -1,5 +1,117 @@
 import store from "@/store/store.js";
 export var COMMON = {
+  /**
+ * 过滤空对象 参数recurse 表是否递归过滤
+ */
+  deleteEmptyObject(obj, recurse) {
+    for (var i in obj) {
+      if (this.isEmptyObj(obj[i])) {
+        delete obj[i];
+      } else if (recurse && typeof obj[i] === 'object') {
+        this.deleteEmptyObject(obj[i], recurse);
+      }
+    }
+    return obj;
+  },
+  /**
+   * 过滤空字符串  参数recurse 表是否递归过滤
+   */
+  deleteEmptyString(obj, recurse) {
+    for (var i in obj) {
+      if (obj[i] === '') {
+        delete obj[i];
+      } else if (recurse && typeof obj[i] === 'object') {
+        this.deleteEmptyString(obj[i], recurse);
+      }
+    }
+    return obj;
+  },
+  // 转换今日，昨日，
+  transSelectDate(value) {
+    if (!value) return;
+    let day = new Date();
+    let dateTimeObj = {
+      startTime: '',
+      endTime: ''
+    };
+    value = value.toLowerCase();
+    switch (value) {
+      case "lastday":
+        day.setDate(day.getDate() - 1);
+        let str = this.timestampToFormatter(day, "yyyy-mm-dd");
+        dateTimeObj.startTime = str + " " + "00:00:00";
+        dateTimeObj.endTime = str + " " + "23:59:59";
+        break;
+      case "today":
+        str = this.timestampToFormatter(day, "yyyy-mm-dd");
+        dateTimeObj.startTime = str + " " + "00:00:00";
+        dateTimeObj.endTime = str + " " + "23:59:59";
+        break;
+      case "thisweek":
+        str = this.timestampToFormatter(day, "yyyy-mm-dd");
+        let weekday = new Date().getDay();
+        dateTimeObj.startTime = this.getSpaceDate(-weekday) + ' 00:00:00';
+        dateTimeObj.endTime = str + " " + "23:59:59";
+        break;
+      case "lastmonth":
+        let firstdate = new Date(
+          new Date().getFullYear(),
+          new Date().getMonth() - 1,
+          1
+        );
+        firstdate = this.timestampToFormatter(
+          firstdate,
+          "yyyy-mm-dd"
+        );
+        let enddate = new Date(
+          new Date().getFullYear(),
+          new Date().getMonth() - 1,
+          new Date(day.getFullYear(), day.getMonth(), 0).getDate()
+        );
+        enddate = this.timestampToFormatter(enddate, "yyyy-mm-dd");
+        dateTimeObj.startTime = firstdate + " " + "00:00:00";
+        dateTimeObj.endTime = enddate + " " + "23:59:59";
+        break;
+      case "thismonth":
+        day.setDate(1);
+        firstdate = this.timestampToFormatter(day, "yyyy-mm-dd");
+        enddate = this.timestampToFormatter(
+          new Date().getTime(),
+          "yyyy-mm-dd"
+        );
+        dateTimeObj.startTime = firstdate + " " + "00:00:00";
+        dateTimeObj.endTime = enddate + " " + "23:59:59";
+        break;
+    }
+    return dateTimeObj;
+  },
+  plusXing(str, frontLen, endLen) {
+    if (!str) return '';
+    frontLen = str.length < frontLen ? 0 : frontLen;
+    endLen = str.length < endLen ? str.length : endLen;
+    let len = str.length - frontLen - endLen;
+    let xing = '';
+    if (len) {
+      for (var i = 0; i < len; i++) {
+        xing += '*';
+      }
+      return str.substring(0, frontLen) + xing + str.substring(str.length - endLen);
+    } else {
+      return str.substring(0, frontLen) + '*';
+    }
+  },
+  // 获取当前时间的前移或后移几天
+  getSpaceDate(a) {
+    var date1 = new Date();
+    // time1 = date1.getFullYear() + "-" + (date1.getMonth() + 1) + "-" + date1.getDate();
+    var date2 = new Date(date1);
+    date2.setDate(date1.getDate() + a);
+    let m = date2.getMonth() + 1;
+    let month = m > 9 ? m : "0" + m;
+    let day = date2.getDate() > 9 ? date2.getDate() : "0" + date2.getDate();
+    var time2 = date2.getFullYear() + "-" + month + "-" + day;
+    return time2;
+  },
   // 根据模块按钮查找权限
   /**
    * moduleName,模块名称，名字全匹配，传汉字
@@ -30,6 +142,7 @@ export var COMMON = {
 
   //校验身份证号
   isCredentialNo(value) {
+    if (!value) return false;
     var num = value.toUpperCase();
     // 身份证号码为15位或者18位，15位时全为数字，18位前17位为数字，最后一位是校验位，可能为数字或字符X。
     var reg = /^(\d{18,18}|\d{15,15}|\d{17,17}X)$/;
@@ -65,50 +178,17 @@ export var COMMON = {
       );
       var bGoodDay;
       bGoodDay =
-        dtmBirth.getFullYear() == Number(arrSplit[2]) &&
-        dtmBirth.getMonth() + 1 == Number(arrSplit[3]) &&
-        dtmBirth.getDate() == Number(arrSplit[4]);
+        dtmBirth.getFullYear() === Number(arrSplit[2]) &&
+        dtmBirth.getMonth() + 1 === Number(arrSplit[3]) &&
+        dtmBirth.getDate() === Number(arrSplit[4]);
       if (!bGoodDay) {
         return false;
       } else {
         // 检验18位身份证的校验码是否正确。
         // 校验位按照ISO 7064:1983.MOD
         // 11-2的规定生成，X可以认为是数字10。
-        var valnum;
-        var arrInt = new Array(
-          7,
-          9,
-          10,
-          5,
-          8,
-          4,
-          2,
-          1,
-          6,
-          3,
-          7,
-          9,
-          10,
-          5,
-          8,
-          4,
-          2
-        );
-        var arrCh = new Array(
-          "1",
-          "0",
-          "X",
-          "9",
-          "8",
-          "7",
-          "6",
-          "5",
-          "4",
-          "3",
-          "2"
-        );
-        var nTemp = 0,
-          i;
+        var valnum, arrInt = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2], arrCh = ["1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2"];
+        var nTemp = 0, i;
         for (var i = 0; i < 17; i++) {
           nTemp += num.substr(i, 1) * arrInt[i];
         }
@@ -153,13 +233,13 @@ export var COMMON = {
     console.log(url, itemData);
     var xhr = new XMLHttpRequest();
     xhr.responseType = "blob"; // 返回类型blob
-    xhr.onload = function() {
+    xhr.onload = function () {
       // 定义请求完成的处理函数
       if (this.status === 200) {
         var blob = this.response;
         var reader = new FileReader();
         reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签href
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           var str = e.target.result;
           var type = str.substring(str.indexOf("/") + 1, str.indexOf(";"));
           var a = document.createElement("a"); // 转换完成，创建一个a标签用于下载
@@ -192,7 +272,7 @@ export var COMMON = {
     // 通过Images对象
     let image = new Image();
     image.setAttribute("crossOrigin", "anonymous");
-    image.onload = function(e) {
+    image.onload = function (e) {
       let canvas = document.createElement("canvas");
       canvas.width = image.width;
       canvas.height = image.height;
@@ -257,9 +337,9 @@ export var COMMON = {
       window.config.protocolHeader +
       window.config.ip +
       `/fileforward-server-v1/project/${
-        store.state.home.projectUuid
+      store.state.home.projectUuid
       }/fileforward/fileByUrl?asgName=${
-        store.state.home.projectUuid
+      store.state.home.projectUuid
       }&fileUrl=` +
       url;
 
@@ -271,13 +351,13 @@ export var COMMON = {
       httpRequest = new ActiveXObject("MsXml2.XmlHttp");
     }
     httpRequest.responseType = "blob";
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
       if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
           var value = this.response;
           var reader = new window.FileReader();
           reader.readAsDataURL(value);
-          reader.onloadend = function() {
+          reader.onloadend = function () {
             var base64data = reader.result;
             base64data = base64data
               .replace("data:image/jpeg;base64,", "jpeg:")
@@ -296,23 +376,16 @@ export var COMMON = {
       "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
     );
     httpRequest.send(null);
-    // this.getJSON(url).then(function (data) {
-    //   console.log(data);
-    // },
-    //   function (status) {
-    //     alert('Something went wrong.');
-    //     console.log(status);
-    //   })
   },
   getJSON(url) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open("get", url, true);
       xhr.setRequestHeader(
         "Accept",
         "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
       );
-      xhr.onload = function() {
+      xhr.onload = function () {
         var status = xhr.status;
         if (status == 200) {
           resolve(xhr.response);
@@ -387,6 +460,18 @@ export var COMMON = {
       "-" +
       this.change(MyDate.getDate()) +
       " 00:00:00"
+    );
+  },
+  // 获取当前时间
+  getDayEndTime() {
+    var MyDate = new Date();
+    return (
+      MyDate.getFullYear() +
+      "-" +
+      this.change(MyDate.getMonth() + 1) +
+      "-" +
+      this.change(MyDate.getDate()) +
+      " 23:59:59"
     );
   },
   // 获取当前时间
@@ -511,29 +596,18 @@ export var COMMON = {
 
   // 设置图片显示，若无则显示 默认图片
   setPictureShow(imgUrl, picType) {
-    let imgUrlReturn;
-    if (imgUrl == null || !imgUrl || imgUrl === "" || imgUrl === undefined) {
-      imgUrlReturn = require("@/assets/images/user.png");
-    } else if (picType === "facelog") {
-      imgUrlReturn =
-        window.config.protocolHeader +
-        window.config.ip +
-        `/fileforward-server-v1/project/${
-          store.state.home.projectUuid
-        }/fileforward/fileByUrl?asgName=${
-          store.state.home.projectUuid
-        }&fileUrl=` +
-        imgUrl;
-    } else {
-      imgUrlReturn =
-        window.config.protocolHeader +
-        window.config.ip +
-        `/fileforward-server-v1/project/${
-          store.state.home.projectUuid
-        }/fileforward/fileByUrl?fileUrl=` +
-        imgUrl;
+    if (!imgUrl) {
+      return imgUrl || require("@/assets/images/user.png");
     }
-    return imgUrlReturn;
+    let projectUuid = store.state.home.projectUuid,
+      urlHeader = `${window.config.protocolHeader}${window.config.ip}`,
+      imgUrlReturn = `${urlHeader}/fileforward-server-v1/project/${projectUuid}/fileforward/fileByUrl?`;
+      
+    if (picType === "facelog") {
+      return imgUrlReturn += `asgName=${projectUuid}&fileUrl=${imgUrl}`
+    } else {
+      return imgUrlReturn += `fileUrl=${imgUrl}`
+    }
   },
   /**
    * 深拷贝数组
@@ -588,8 +662,6 @@ export var COMMON = {
     }
     let types = [];
 
-    // console.log(store.state.home.localEnums);
-    // console.log(typeof store.state.home.localEnums);
     for (let groupStrKey in store.state.home.localEnums) {
       if (groupStr === groupStrKey) {
         // console.log(store.state.home.localEnums[groupStrKey]);
@@ -622,6 +694,9 @@ export var COMMON = {
       if (typeStr == enumItem.typeStr) {
         return enumItem.typeName;
       }
+    }
+    if (typeStr && (typeStr.indexOf('unknow') !== -1 || typeStr.indexOf('other') !== -1)) {
+      return '未知'
     }
     return typeStr;
   },
@@ -698,14 +773,14 @@ export var COMMON = {
     if (method == "POST") {
       xhr.setRequestHeader("Content-type", "application/json");
     }
-    xhr.onload = function() {
+    xhr.onload = function () {
       // 请求完成
       if (this.status == 200) {
         // 返回200
         var blob = this.response;
         var reader = new FileReader();
         reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           // 转换完成，创建一个a标签用于下载
           var a = document.createElement("a");
           a.download = name;
@@ -730,7 +805,7 @@ export var COMMON = {
     var previous = 0;
     if (!options) options = {};
 
-    var later = function() {
+    var later = function () {
       //
       previous = options.leading === false ? 0 : new Date().getTime();
       timeout = null;
@@ -738,7 +813,7 @@ export var COMMON = {
       if (!timeout) context = args = null;
     };
 
-    var throttled = function() {
+    var throttled = function () {
       // 记录当前时间
       var now = new Date().getTime();
       // 如果是第一次进来，并且leading等于false,设置previous等于now,可以阻止事件立即执行
@@ -762,7 +837,7 @@ export var COMMON = {
       }
     };
 
-    throttled.cancel = function() {
+    throttled.cancel = function () {
       clearTimeout(timeout);
       previous = 0;
       timeout = null;
@@ -787,6 +862,70 @@ export var COMMON = {
 
     const event = new MouseEvent("click");
     $a.dispatchEvent(event);
+  },
+  // 获取路径上的参数
+  getQueryString(key) {
+    //key存在先通过search取值如果取不到就通过hash来取
+    var after = window.location.search.substr(1) || window.location.hash.split("?")[1];
+    if (after) {
+      var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+      var r = after.match(reg);
+      if (r != null) {
+        return decodeURIComponent(r[2]);
+      }
+      else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  },
+  // 用js维护一套产生不重复id的机制
+  genModelIndex() {
+    let idStr = Date.now().toString(36);
+    idStr += Math.random().toString(36).substr(3);
+    return idStr;
+  },
+  // 拼接类型的翻译
+  transferValidateType(item, signal = "&", typeStr = "pass") {
+    if (!item) return item;
+    let validateTypeArr = item.split(signal);
+    let str = "";
+    validateTypeArr.map(im => {
+      str += this.getEnumItemName(typeStr, im);
+      str += ",";
+    });
+    return str.substr(0, str.length - 1);
+  },
+  // 姓名的脱敏显示（隐藏第二个字）
+  getCodeName(str) {
+    let nameArr = [];
+    let codeName = "";
+    if (str) {
+      for (let i = 0; i < str.length; i++) {
+        nameArr.push(str.charAt(i));
+      }
+      switch (nameArr.length) {
+        case 2:
+          codeName = nameArr[0] + "*";
+          break;
+        case 3:
+          codeName = nameArr[0] + "*" + nameArr[2];
+          break;
+        case 4:
+          codeName = nameArr[0] + "*" + "*" + nameArr[3];
+          break;
+        case 5:
+          codeName = nameArr[0] + "*" + "*" + "*"+ nameArr[4];
+          break;
+        case 6:
+          codeName = nameArr[0] + "*" + "*" + "*"+ "*"+ nameArr[5];
+          break;
+        default:
+          codeName = str;
+      }
+    }
+    return codeName;
   }
 };
 function install(Vue) {

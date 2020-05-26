@@ -1,152 +1,162 @@
 <template>
-	<div class="faceAlarmBg">
-		<div class="facealarm">
-			<el-row class="topBox" type="flex" justify="space-between">
-				<div class="topBoxDiv topTitleTxt topBoxTaskBox">
-					任务：
-					<alPopverTree
-						:treeDataList="taskItemList"
-						:alPopoverClass="facealarmPopoverClass"
-						:defaultProps="defaultProps"
-						nodeKey="faceMonitorUuid"
-						inputWidth="160px"
-						@transferAct="transferTaskAct"
-						ref="taskMonitorRef"
-					></alPopverTree>
-				</div>
-				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;">
-					抓拍设备：
-					<alPopverTree
-						:treeDataList="DeviceTreeList"
-						:alPopoverClass="facealarmPopoverClass"
-						:defaultProps="defaultDeviceProps"
-						nodeKey="channelUuid"
-						inputWidth="160px"
-						@transferAct="transferCheckedChannel"
-						ref="DeviceRef"
-					></alPopverTree>
-				</div>
-				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
-					所属库：
-					<alPopverTree
-						:treeDataList="faceDBList"
-						:alPopoverClass="facealarmPopoverClass"
-						:defaultProps="faceDBDefaultProps"
-						nodeKey="faceLibraryUuid"
-						ref="faceLibRef"
-						inputWidth="160px"
-						@transferAct="transferCheckedFaceDB"
-					></alPopverTree>
-				</div>
-				<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
-					姓名：
-					<el-input placeholder v-model="staffName" />
-				</div>
-				<div :span="4" class="topTitleTxt topBoxInputBox" style="text-align:left;display:block">
-					证件号：
-					<el-input placeholder v-model="credentialNo" />
-				</div>
-				<div :span="4" class="topBoxDiv topBoxGenderRadioBtnBox">
-					<span class="topTitleTxt" style="margin-right:15px;">性别:</span>
-					<el-radio-group v-model="genderOption">
-						<el-radio-button label>不限</el-radio-button>
-						<el-radio-button label="male">男</el-radio-button>
-						<el-radio-button label="female">女</el-radio-button>
-					</el-radio-group>
-				</div>
-				<div class="topBoxDiv topBoxDateTimeBox">
-					<span class="topTitleTxt" style="margin-right:15px;">时段：</span>
-					<el-date-picker
-						class="left-space"
-						value-format="yyyy-MM-dd HH:mm:ss"
-						v-model="startTime"
-						type="datetime"
-						placeholder="选择日期"
-						@change="changeDate"
-					></el-date-picker>
-					<span class="facealarmTxt">至</span>
-					<el-date-picker
-						class="left-space"
-						value-format="yyyy-MM-dd HH:mm:ss"
-						v-model="endTime"
-						type="datetime"
-						placeholder="选择日期"
-						@change="changeDate"
-					></el-date-picker>
-				</div>
-				<div class="topBoxDiv topBoxDateRadioBtnBox">
-					<el-radio-group style="margin-right:0px" v-model="selectDate" @change="selectDateAct">
-						<el-radio-button label="today">今天</el-radio-button>
-						<el-radio-button label="lastday">昨天</el-radio-button>
-						<el-radio-button label="thisWeek">本周</el-radio-button>
-						<el-radio-button label="thisMonth">本月</el-radio-button>
-					</el-radio-group>
-				</div>
-				<div class="topBoxDeviceBox topBoxDiv topTitleTxt" style="text-align:left;display:block">
-					状态：
-					<el-select
-						v-model="status"
-						filterable
-						@visible-change="selectvisiblechange"
-						@change="selectChange"
-						collapse-tags
-						placeholder="全部"
-						class="header-line-input"
-					>
-						<el-option
-							v-for="item in statusOptions"
-							:key="item.typeStr"
-							:label="item.typeName"
-							:value="item.typeStr"
-						></el-option>
-					</el-select>
-				</div>
-				<div :span="2" style="margin-top:-15px;">
-					<el-button
-						:disabled="!ShowAuthDisabled"
-						icon="el-icon-search"
-						class="search-btn"
-						@click="queryBtnAct"
-						type="primary"
-					>查询</el-button>
-					<el-button
-						:disabled="!ShowAuthDisabled"
-						class="search-btn"
-						@click="resetData"
-						type="primary"
-					>重置</el-button>
-				</div>
-			</el-row>
-			<div class="facealarm-table">
-				<el-radio-group :disabled="!ShowAuthDisabled" class="switchBtn" v-model="showindex" @change="changeIndex">
-					<el-radio label="0">图片</el-radio>
-					<el-radio label="1">列表</el-radio>
-				</el-radio-group>
-				<component
-					:is="['theFaceAlarmImageTable','faceAlarmTable'][showindex]"
-					:pageSize="pageSize"
-					:pageNow="pageNow"
-					:pageCount="pageCount"
-					:tableData="tableData"
-					:isloading="isloading"
-					@lookAlarmDetail="lookAlarmDetail"
-					@pagechange="pagechange"
-				></component>
-				<el-dialog
-					class="dialogClass"
-					:close-on-click-modal="false"
-					:visible.sync="faceImgDialogVisible"
-					@close="faceImgDialogVisible=false"
-					v-dialogDrag
-					title="报警详情"
-				>
-					<AlarmDetailDialog
-						v-loading="dialogfullscreenLoading"
-						element-loading-background="rgba(0, 0, 0, 0.8)"
-						:dialogParama="detail"
-					></AlarmDetailDialog>
-				</el-dialog>
-				<!-- <the-face-alarm-dialog
+  <div class="faceAlarmBg">
+    <div class="facealarm">
+      <el-row class="topBox"
+              type="flex"
+              justify="space-between">
+        <!-- <div v-if="!isOneProject"
+             class="topBoxDiv topTitleTxt topBoxTaskBox">
+          请选择小区：
+          <el-select v-model="activeProject"
+                     clearable>
+            <el-option v-for="item in selectData"
+                       :label="item.childProjectName"
+                       :value="item.childProjectUuid"
+                       :key="item.childProjectUuid"></el-option>
+          </el-select>
+        </div> -->
+        <div class="topBoxDiv topTitleTxt topBoxTaskBox">
+          任务：
+          <alPopverTree :treeDataList="taskItemList"
+                        :alPopoverClass="facealarmPopoverClass"
+                        :defaultProps="defaultProps"
+                        nodeKey="faceMonitorUuid"
+                        inputWidth="160px"
+                        @transferAct="transferTaskAct"
+                        ref="taskMonitorRef"></alPopverTree>
+        </div>
+        <div class="topBoxDeviceBox topBoxDiv topTitleTxt"
+             style="text-align:left;">
+          抓拍设备：
+          <alPopverTree :treeDataList="DeviceTreeList"
+                        :alPopoverClass="facealarmPopoverClass"
+                        :defaultProps="defaultDeviceProps"
+                        nodeKey="channelUuid"
+                        inputWidth="160px"
+                        @transferAct="transferCheckedChannel"
+                        ref="DeviceRef"></alPopverTree>
+        </div>
+        <div class="topBoxDeviceBox topBoxDiv topTitleTxt"
+             style="text-align:left;display:block">
+          所属库：
+          <alPopverTree :treeDataList="faceDBList"
+                        :alPopoverClass="facealarmPopoverClass"
+                        :defaultProps="faceDBDefaultProps"
+                        nodeKey="faceLibraryUuid"
+                        ref="faceLibRef"
+                        inputWidth="160px"
+                        @transferAct="transferCheckedFaceDB"></alPopverTree>
+        </div>
+        <div :span="4"
+             class="topTitleTxt topBoxInputBox"
+             style="text-align:left;display:block">
+          姓名：
+          <el-input placeholder
+                    clearable
+                    v-model="staffName" />
+        </div>
+        <div :span="4"
+             clearable
+             class="topTitleTxt topBoxInputBox"
+             style="text-align:left;display:block">
+          证件号：
+          <el-input placeholder
+                    clearable
+                    v-model="credentialNo" />
+        </div>
+        <div :span="4"
+             class="topBoxDiv topBoxGenderRadioBtnBox">
+          <span class="topTitleTxt"
+                style="margin-right:15px;">性别:</span>
+          <el-radio-group v-model="genderOption">
+            <el-radio-button label>不限</el-radio-button>
+            <el-radio-button label="male">男</el-radio-button>
+            <el-radio-button label="female">女</el-radio-button>
+          </el-radio-group>
+        </div>
+        <div class="topBoxDiv topBoxDateTimeBox">
+          <span class="topTitleTxt"
+                style="margin-right:15px;">时段：</span>
+          <el-date-picker class="left-space"
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          v-model="startTime"
+                          type="datetime"
+                          placeholder="选择日期"
+                          @change="changeDate"></el-date-picker>
+          <span class="facealarmTxt">至</span>
+          <el-date-picker class="left-space"
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          v-model="endTime"
+                          type="datetime"
+                          placeholder="选择日期"
+                          @change="changeDate"></el-date-picker>
+        </div>
+        <div class="topBoxDiv topBoxDateRadioBtnBox">
+          <el-radio-group style="margin-right:0px"
+                          v-model="selectDate"
+                          @change="selectDateAct">
+            <el-radio-button label="today">今天</el-radio-button>
+            <el-radio-button label="lastday">昨天</el-radio-button>
+            <el-radio-button label="thisWeek">本周</el-radio-button>
+            <el-radio-button label="thisMonth">本月</el-radio-button>
+          </el-radio-group>
+        </div>
+        <div class="topBoxDeviceBox topBoxDiv topTitleTxt"
+             style="text-align:left;display:block">
+          状态：
+          <el-select v-model="status"
+                     filterable
+                     @visible-change="selectvisiblechange"
+                     @change="selectChange"
+                     collapse-tags
+                     placeholder="全部"
+                     class="header-line-input">
+            <el-option v-for="item in statusOptions"
+                       :key="item.typeStr"
+                       :label="item.typeName"
+                       :value="item.typeStr"></el-option>
+          </el-select>
+        </div>
+        <div :span="2"
+             style="margin-top:-15px;">
+          <el-button :disabled="!ShowAuthDisabled"
+                     icon="el-icon-search"
+                     class="search-btn"
+                     @click="queryBtnAct"
+                     type="primary">查询</el-button>
+          <el-button :disabled="!ShowAuthDisabled"
+                     class="search-btn"
+                     @click="resetData"
+                     type="primary">重置</el-button>
+        </div>
+      </el-row>
+      <div class="facealarm-table">
+        <el-radio-group :disabled="!ShowAuthDisabled"
+                        class="switchBtn"
+                        v-model="showindex"
+                        @change="changeIndex">
+          <el-radio label="0">图片</el-radio>
+          <el-radio label="1">列表</el-radio>
+        </el-radio-group>
+        <component :is="['theFaceAlarmImageTable','faceAlarmTable'][showindex]"
+                   :pageSize="pageSize"
+                   :pageNow="pageNow"
+                   :pageCount="pageCount"
+                   :tableData="tableData"
+                   :isloading="isloading"
+                   @lookAlarmDetail="lookAlarmDetail"
+                   @pagechange="pagechange"></component>
+        <el-dialog class="dialogClass"
+                   :close-on-click-modal="false"
+                   :visible.sync="faceImgDialogVisible"
+                   @close="faceImgDialogVisible=false"
+                   v-dialogDrag
+                   title="报警详情">
+          <AlarmDetailDialog v-loading="dialogfullscreenLoading"
+                             element-loading-background="rgba(0, 0, 0, 0.8)"
+                             :dialogParama="detail"></AlarmDetailDialog>
+        </el-dialog>
+        <!-- <the-face-alarm-dialog
 				title="报警详情"
 				:detail="detail"
 				:detail2="detail2"
@@ -155,10 +165,10 @@
 				:faceDBDialogVisible="faceImgDialogVisible"
 				@close="facealarmvisible=false"
 				></the-face-alarm-dialog>-->
-				<!-- <face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" /> -->
-			</div>
-		</div>
-	</div>
+        <!-- <face-img-dialog :visible.sync="faceImgDialogVisible" :faceImgDialogData="detail" /> -->
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -184,6 +194,8 @@ export default {
   },
   data() {
     return {
+      selectData: [],
+      activeProject: "",
       dialogfullscreenLoading: false,
       imageHeader: RestApi.api.imageUrl,
       isIndeterminate: false,
@@ -256,25 +268,49 @@ export default {
       checkFaceDBNameString: "对比人脸库",
       selectDate: null,
       ShowAuthDisabled: true,
-      OwnAuthDisabled: true
+      OwnAuthDisabled: true,
+      isOneProject: true
     };
   },
   fiters: {},
   activated() {
     console.log("activated");
     if (this.ShowAuthDisabled) {
+      // this.handleGetAllProject();
       this.getTaskList();
     }
   },
+  computed: {
+    // isOneProject() {
+    //   return this.$store.state.home.platformLevel;
+    // }
+  },
   mounted() {
     console.log("mounted");
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
     this.startTime = this.$common.getStartTime();
     this.endTime = this.$common.getCurrentTime();
-    this.statusOptions = this.$common.getEnumByGroupStr("alarm_r");
+    // this.statusOptions = this.$common.getEnumByGroupStr("alarm_r");
+    this.statusOptions = [
+      {
+        typeStr: null,
+        typeName: "全部"
+      },
+      {
+        typeStr: "processed",
+        typeName: "已处理"
+      },
+      {
+        typeStr: "to_be_processed",
+        typeName: "待处理"
+      }
+    ];
 
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("报警查询", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("报警查询", "isOwn");
     if (this.ShowAuthDisabled) {
+      // this.handleGetAllProject(false);
       this.getTaskList(false);
     }
   },
@@ -299,10 +335,30 @@ export default {
     }
   },
   methods: {
+    handleGetAllProject(isUpdateTableData) {
+      this.isLoading = true;
+      this.tableData = [];
+      this.$unitHttp
+        .getAllProjects({
+          childProjectName: "",
+          orgUuid: "",
+          limit: 1000000,
+          page: 1
+        })
+        .then(res => {
+          let list = res.data.data.list || [];
+          this.selectData = [...list];
+          this.activeProject = this.selectData[0].childProjectUuid;
+          this.getTaskList(isUpdateTableData);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     // 获取布控任务
-    getTaskList(isTrue) {
+    getTaskList(isTrue = true) {
       api
-        .getTaskList()
+        .getTaskList({ projectUuid: this.activeProject })
         .then(res => {
           if (res.data.success) {
             this.taskItemList = res.data.data || [];
@@ -353,7 +409,7 @@ export default {
             // 月初 则向前退weekday - today天
             // 判断 月大 月小
             let lastMonthDays =
-							[1, 3, 5, 7, 8, 10, 12].indexOf(month + 1) > -1 ? 31 : 30;
+              [1, 3, 5, 7, 8, 10, 12].indexOf(month + 1) > -1 ? 31 : 30;
             firstDay = lastMonthDays - weekday + today;
           }
           let firstdate = new Date(day.getFullYear(), month - 1, firstDay);
@@ -443,9 +499,9 @@ export default {
       this.init();
       if (this.startTime && this.endTime) {
         /* eslint-disable */
-				var d1 = new Date(this.startTime.replace(/\-/g, "/"));
-				var d2 = new Date(this.endTime.replace(/\-/g, "/"));
-				/* eslint-enable */
+        var d1 = new Date(this.startTime.replace(/\-/g, "/"));
+        var d2 = new Date(this.endTime.replace(/\-/g, "/"));
+        /* eslint-enable */
         if (this.startTime !== "" && this.endTime !== "" && d1 >= d2) {
           this.$message({
             message: "开始时间必须小于结束时间！",
@@ -571,26 +627,26 @@ export default {
       if (hours > 1) {
         return (
           new111.getFullYear() +
-					"-" +
-					addZero(new111.getMonth() + 1) +
-					"-" +
-					addZero(new111.getDate()) +
-					" " +
-					addZero(hours - 1) +
-					":" +
-					addZero(new111.getMinutes()) +
-					":" +
-					addZero(new111.getSeconds())
+          "-" +
+          addZero(new111.getMonth() + 1) +
+          "-" +
+          addZero(new111.getDate()) +
+          " " +
+          addZero(hours - 1) +
+          ":" +
+          addZero(new111.getMinutes()) +
+          ":" +
+          addZero(new111.getSeconds())
         );
       } else {
         return (
           new111.getFullYear() +
-					"-" +
-					addZero(new111.getMonth() + 1) +
-					"-" +
-					addZero(new111.getDate()) +
-					" " +
-					"00:00:00"
+          "-" +
+          addZero(new111.getMonth() + 1) +
+          "-" +
+          addZero(new111.getDate()) +
+          " " +
+          "00:00:00"
         );
       }
       function addZero(num) {
@@ -604,221 +660,196 @@ export default {
 <style lang="scss" scoped>
 @import "./index.scss";
 </style>
-
 <style>
 .facealarm .topBoxInputBox {
-	width: 220px;
-	padding-bottom: 20px;
+  width: 220px;
+  padding-bottom: 20px;
 }
 .facealarm .topBoxInputBox .el-input {
-	width: 160px;
+  width: 160px;
 }
 .facealarm .el-input--prefix .el-input__inner {
-	padding-left: 10px;
+  padding-left: 10px;
 }
 .facealarm .el-input--suffix .el-input__inner {
-	padding-right: 10px;
+  padding-right: 10px;
 }
 
 .facealarm .el-button {
-	line-height: 1;
-	background: transparent;
-	border: 0;
-	/* color: #efefef; */
-	color: #26d39d;
-	text-align: center;
-	box-sizing: border-box;
-	outline: 0;
-	margin: 0;
-	font-weight: 500;
-	padding: 12px 20px;
-	font-size: 14px;
-	border-radius: 4px;
+  line-height: 1;
+  background: transparent;
+  border: 0;
+  /* color: #efefef; */
+  color: #26d39d;
+  text-align: center;
+  box-sizing: border-box;
+  outline: 0;
+  margin: 0;
+  font-weight: 500;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 4px;
 }
 .facealarm .el-input__prefix {
-	left: 110%;
-	-webkit-transform: translateX(-200%);
-	transform: translateX(-200%);
+  left: 110%;
+  -webkit-transform: translateX(-200%);
+  transform: translateX(-200%);
 }
 .facealarm .facealarmTxt {
-	color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.15);
 }
 .facealarm .el-checkbox-button__inner,
 .facealarm .el-radio-button__inner {
-	background: rgba(255, 255, 255, 0.1);
-	color: #ffffff;
-	margin-right: 9px;
-	border: 0;
-	padding: 8px 20px;
-	font-size: 13px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  margin-right: 9px;
+  border: 0;
+  padding: 8px 20px;
+  font-size: 13px;
 }
 .facealarm .el-checkbox-button:first-child .el-checkbox-button__inner,
 .facealarm .el-radio-button:first-child .el-radio-button__inner {
-	border: 0;
-	/* margin-left: 30px; */
+  border: 0;
+  /* margin-left: 30px; */
 }
 .facealarm .el-button--primary {
-	background: rgba(40, 255, 187, 0.15);
-	border: 1px solid rgba(32, 204, 150, 0.8);
-	border-radius: 3px;
-	font-family: "PingFangSC-Regular";
-	font-size: 14px;
-	color: #ffffff;
-	/* margin-left: 8%; */
+  background: rgba(40, 255, 187, 0.15);
+  border: 1px solid rgba(32, 204, 150, 0.8);
+  border-radius: 3px;
+  font-family: "PingFangSC-Regular";
+  font-size: 14px;
+  color: #ffffff;
+  /* margin-left: 8%; */
 }
 .facealarm .topBoxDateRadioBtnBox {
-	min-width: 310px;
+  min-width: 310px;
 }
 .facealarm .topBoxGenderRadioBtnBox {
-	min-width: 250px;
+  min-width: 250px;
 }
 .facealarm .el-checkbox-button.is-checked .el-checkbox-button__inner,
 .facealarm .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-	background: rgba(40, 255, 187, 0.1);
-	border-radius: 2px;
-	border-radius: 2px;
-	border: 0;
-	box-shadow: 0px 0 0 0 #26d39d;
+  background: rgba(40, 255, 187, 0.1);
+  border-radius: 2px;
+  border-radius: 2px;
+  border: 0;
+  box-shadow: 0px 0 0 0 #26d39d;
 }
 .facealarm .topBoxDeviceBox {
-	min-width: 240px;
+  min-width: 240px;
 }
 .facealarm .topBoxTaskBox {
-	min-width: 240px;
+  min-width: 240px;
 }
 .facealarm .topBoxQualityCheckBox {
-	min-width: 360px;
+  min-width: 360px;
 }
 .facealarm .el-checkbox-group {
-	display: inline-block;
+  display: inline-block;
 }
 .facealarm .topTitleTxt {
-	font-family: "PingFangSC-Regular";
-	font-size: 13px;
-	color: #ffffff;
-	text-align: left;
+  font-family: "PingFangSC-Regular";
+  font-size: 13px;
+  color: #ffffff;
+  text-align: left;
 }
 .facealarm .topBoxDiv {
-	padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 .facealarm .topBox {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: center;
-	padding: 25px 40px 0px 27px;
-	background: rgba(36, 39, 42, 1);
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-	/* overflow-y: auto; */
-	box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 40px 0px 27px;
+  background: rgba(36, 39, 42, 1);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
 }
 .facealarm .el-input--prefix .el-input__inner {
-	padding: 0px 10px;
+  padding: 0px 10px;
 }
 .facealarmPopoverClass .is-checked .el-checkbox__inner,
 .facealarmPopoverClass
-	.el-checkbox__input.is-indeterminate
-	.el-checkbox__inner {
-	background-color: transparent;
-	border-color: #28ffbb;
-	/* color:#28FFBB; */
+  .el-checkbox__input.is-indeterminate
+  .el-checkbox__inner {
+  background-color: transparent;
+  border-color: #28ffbb;
+  /* color:#28FFBB; */
 }
 .facealarmPopoverClass .el-checkbox__inner::after {
-	-webkit-box-sizing: content-box;
-	box-sizing: content-box;
-	content: "";
-	border: 1px solid #28ffbb;
-	border-left: 0;
-	border-top: 0;
-	height: 7px;
-	left: 4px;
-	position: absolute;
-	top: 1px;
-	-webkit-transform: rotate(45deg) scaleY(0);
-	transform: rotate(45deg) scaleY(0);
-	width: 3px;
-	transform-origin: center;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  content: "";
+  border: 1px solid #28ffbb;
+  border-left: 0;
+  border-top: 0;
+  height: 7px;
+  left: 4px;
+  position: absolute;
+  top: 1px;
+  -webkit-transform: rotate(45deg) scaleY(0);
+  transform: rotate(45deg) scaleY(0);
+  width: 3px;
+  transform-origin: center;
 }
 .facealarmPopoverClass .el-checkbox__inner {
-	display: inline-block;
-	position: relative;
-	border: 1px solid #dcdfe6;
-	border-radius: 2px;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	width: 14px;
-	height: 12px;
-	background-color: transparent;
-	z-index: 1;
+  display: inline-block;
+  position: relative;
+  border: 1px solid #dcdfe6;
+  border-radius: 2px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 14px;
+  height: 12px;
+  background-color: transparent;
+  z-index: 1;
 }
 
 .facealarmPopoverClass
-	.el-tree--highlight-current
-	.el-tree-node.is-current
-	> .el-tree-node__content {
-	background-color: transparent;
+  .el-tree--highlight-current
+  .el-tree-node.is-current
+  > .el-tree-node__content {
+  background-color: transparent;
 }
-.facealarmPopoverClass .el-tree,
-.facealarmPopoverClass .el-tree {
-	position: relative;
-	cursor: default;
-	background: #202127;
-	color: #efefee;
-}
-.facealarmPopoverClass {
-	position: absolute;
-	background: #202127;
-	min-width: 150px;
-	/* border: 1px solid rgba(40,255,187, 1); */
-	padding: 12px;
-	z-index: 2000;
-	color: #606266;
-	line-height: 1.4;
-	text-align: justify;
-	font-size: 14px;
-	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	max-height: 80%;
-	overflow: auto;
-}
-
 .facealarmPopoverClass .el-tree-node__content:hover {
-	background-color: #000000;
-	/* color: #; */
+  background-color: #000000;
+  /* color: #; */
 }
 .facealarm .elCardBoxHeaders {
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-	padding-bottom: 12px;
-	padding: 9px 15px;
-	/* background: rgba(227, 53, 53, 0.8); */
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+  padding: 9px 15px;
 }
 .facealarmPopoverClass .el-tree {
-	color: #aaaaaa;
-	background: none;
+  position: relative;
+  cursor: default;
+  background: #202127;
+  color: #efefee;
 }
 .facealarmPopoverClass .el-tree-node__content:hover {
-	background: none;
+  background: none;
 }
 .facealarmPopoverClass .el-tree-node:focus > .el-tree-node__content {
-	background: none;
-	/* color: #28FFBB; */
+  background: none;
+  /* color: #28FFBB; */
 }
 .facealarmPopoverClass {
-	width: 50%;
-	height: 50%;
-	position: absolute;
-	background: #202127;
-	min-width: 150px;
-	/* border: 1px solid rgba(40,255,187, 1); */
-	padding: 12px;
-	z-index: 2000;
-	color: #606266;
-	line-height: 1.4;
-	text-align: justify;
-	font-size: 14px;
-	-webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-	max-height: 80%;
-	overflow: auto;
+  width: 50%;
+  max-height: 50%;
+  position: absolute;
+  background: #202127;
+  min-width: 150px;
+  /* border: 1px solid rgba(40,255,187, 1); */
+  padding: 12px;
+  z-index: 2000;
+  color: #606266;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: 14px;
+  -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  max-height: 80%;
+  overflow: auto;
 }
 </style>

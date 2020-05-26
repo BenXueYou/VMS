@@ -1,73 +1,115 @@
-import store from '@/store/store.js';
+import store from "@/store/store.js";
 let ip = window.config.ip,
   // projectUuid = window.config.projectUuid;
   projectUuid = store.state.home.projectUuid;
 
 // let zhengyu = "sppc-basedata-service-v1";
-let zhengyu = window.config.zhengyu;
-let wsh = window.config.wsh;
-let wyf = window.config.wyf;
-let sbPrefix = `${window.config.protocolHeader}${ip}/${zhengyu}/project/${projectUuid}`;
-let xfPrefix = `${window.config.protocolHeader}${ip}/${wsh}/project/${projectUuid}`;
-let listPrefix = `${window.config.protocolHeader}${ip}/${wyf}/project/${projectUuid}`;
-let temporary = `${window.config.protocolHeader}192.168.9.175:15005/project/${projectUuid}`;
+// let zhengyu = window.config.zhengyu;
+// let wsh = window.config.wsh;
+// let wyf = window.config.wyf;
+const BaseDataPrefix = `${
+  window.config.protocolHeader
+}${ip}/basedata-v1/project/${projectUuid}`;
+const IacConfigPrefix = `${
+  window.config.protocolHeader
+}${ip}/iacconfig-v1/project/${projectUuid}`;
+const IaCappPrefix = `${
+  window.config.protocolHeader
+}${ip}/iacapp-v1/project/${projectUuid}`;
+let temporary = `${
+  window.config.protocolHeader
+}192.168.9.175:15005/project/${projectUuid}`;
+
 export default {
-  addNewDateUrl: `${xfPrefix}/doorAuthGroup/holidayGroup/holidayGroup`,
+  addNewDateUrl: `${IacConfigPrefix}/doorAuthGroup/holidayGroup/holidayGroup`,
   editDateUrl: holidayUuid =>
-    `${xfPrefix}/doorAuthGroup/holidayGroup/holidayGroup/${holidayUuid}`,
+    `${IacConfigPrefix}/doorAuthGroup/holidayGroup/holidayGroup/${holidayUuid}`,
   deleteDateUrl: holidayUuid =>
-    `${xfPrefix}/doorAuthGroup/holidayGroup/holidayGroup/${holidayUuid}`,
-  addNewPermissionUrl: `${xfPrefix}/doorAuthGroup/doorAuthGroup/doorAuthGroup`,
+    `${IacConfigPrefix}/doorAuthGroup/holidayGroup/holidayGroup/${holidayUuid}`,
+  addNewPermissionUrl: `${IacConfigPrefix}/doorAuthGroup/doorAuthGroup/doorAuthGroup`,
   editPermissionUrl: groupUuid =>
-    `${xfPrefix}/doorAuthGroup/doorAuthGroup/doorAuthGroup/${groupUuid}`,
+    `${IacConfigPrefix}/doorAuthGroup/doorAuthGroup/doorAuthGroup/${groupUuid}`,
   deletePermissionUrl: groupUuid =>
-    `${xfPrefix}/doorAuthGroup/doorAuthGroup/doorAuthGroup/${groupUuid}`,
-  editPMUrl: groupUuid => `${listPrefix}/permission/${groupUuid}/edit`,
-  addNewTimeUrl: `${xfPrefix}/doorAuthGroup/periodMgr/periodMgr`,
+    `${IacConfigPrefix}/doorAuthGroup/doorAuthGroup/doorAuthGroup/${groupUuid}`,
+  editPMUrl: groupUuid => `${IaCappPrefix}/permission/${groupUuid}/edit`,
+  addNewTimeUrl: `${IacConfigPrefix}/doorAuthGroup/periodMgr/periodMgr`,
   editTimeUrl: periodUuid =>
-    `${xfPrefix}/doorAuthGroup/periodMgr/periodMgr/${periodUuid}`,
+    `${IacConfigPrefix}/doorAuthGroup/periodMgr/periodMgr/${periodUuid}`,
   deleteTimeUrl: periodUuid =>
-    `${xfPrefix}/doorAuthGroup/periodMgr/periodMgr/${periodUuid}`,
-  qxListUrl: `${listPrefix}/permission`,
-  qxDetailUrl: groupUuid => `${listPrefix}/permission/${groupUuid}`,
-  dateListUrl: `${listPrefix}/holiday`,
-  dateListAllUrl: `${listPrefix}/holiday/all`,
-  dateDatailUrl: holidayUuid => `${listPrefix}/holiday/${holidayUuid}`,
-  timeListUrl: `${listPrefix}/period`,
-  timeListAllUrl: `${listPrefix}/period/all`,
-  timeDetailUrl: periodUuid => `${listPrefix}/period/${periodUuid}`,
+    `${IacConfigPrefix}/doorAuthGroup/periodMgr/periodMgr/${periodUuid}`,
+  qxListUrl: `${IaCappPrefix}/permission`,
+  qxDetailUrl: groupUuid => `${IaCappPrefix}/permission/${groupUuid}`,
+  dateListUrl: `${IaCappPrefix}/holiday`,
+  dateListAllUrl: `${IaCappPrefix}/holiday/all`,
+  dateDatailUrl: holidayUuid => `${IaCappPrefix}/holiday/${holidayUuid}`,
+  timeListUrl: `${IaCappPrefix}/period`,
+  timeListAllUrl: `${IaCappPrefix}/period/all`,
+  timeDetailUrl: periodUuid => `${IaCappPrefix}/period/${periodUuid}`,
   // 数据下发
-  xifaUrl: `${xfPrefix}/issueAuthData`,
+  xifaUrl: `${IacConfigPrefix}/issueAuthData`,
   // 获取人员的详情接口
-  staffDetailUrl: `${window.config.protocolHeader}${ip}/${zhengyu}/base/staffInfo/staff`,
+  staffDetailUrl: `${
+    window.config.protocolHeader
+  }${ip}/basedata-v1/base/staffInfo/staff`,
   // 多人组合开门的接口
   // addDRZHUrl: `${temporary}/advancedConf/combinationDoorOpen/combinationDoorOpen`,
   // updateDRZHUrl: groupUuid =>
   //   `${temporary}/advancedConf/combinationDoorOpen/combinationDoorOpen/${groupUuid}`,
   // deleteDRZHUrl: groupUuid =>
   //   `${temporary}/advancedConf/combinationDoorOpen/combinationDoorOpen/${groupUuid}`,
-  addDRZHUrl: `${xfPrefix}/advancedConf/combinationDoorOpen/combinationDoorOpen`,
+  addDRZHUrl: `${IacConfigPrefix}/advancedConf/combinationDoorOpen/combinationDoorOpen`,
   updateDRZHUrl: groupUuid =>
-    `${xfPrefix}/advancedConf/combinationDoorOpen/combinationDoorOpen/${groupUuid}`,
+    `${IacConfigPrefix}/advancedConf/combinationDoorOpen/combinationDoorOpen/${groupUuid}`,
   deleteDRZHUrl: groupUuid =>
-    `${xfPrefix}/advancedConf/combinationDoorOpen/combinationDoorOpen/${groupUuid}`,
+    `${IacConfigPrefix}/advancedConf/combinationDoorOpen/combinationDoorOpen/${groupUuid}`,
   // 获取多人组合的列表
-  getDRZHUrl: `${listPrefix}/staffgroup`,
-  detailDRZHUrl: groupUuid => `${listPrefix}/staffgroup/${groupUuid}`,
+  getDRZHUrl: `${IaCappPrefix}/staffgroup`,
+  detailDRZHUrl: groupUuid => `${IaCappPrefix}/staffgroup/${groupUuid}`,
   // 反潜回操作API
-  addAntiUrl: `${xfPrefix}/advancedConf/antisubmarineGroup/antisubmarineGroup`,
+  addAntiUrl: `${IacConfigPrefix}/advancedConf/antisubmarineGroup/antisubmarineGroup`,
   updateAntiUrl: groupUuid =>
-    `${xfPrefix}/advancedConf/antisubmarineGroup/antisubmarineGroup/${groupUuid}`,
+    `${IacConfigPrefix}/advancedConf/antisubmarineGroup/antisubmarineGroup/${groupUuid}`,
   deleteAntiUrl: groupUuid =>
-    `${xfPrefix}/advancedConf/antisubmarineGroup/antisubmarineGroup/${groupUuid}`,
+    `${IacConfigPrefix}/advancedConf/antisubmarineGroup/antisubmarineGroup/${groupUuid}`,
   switchAntiUrl: (groupUuid, enabled) =>
-    `${xfPrefix}/advancedConf/antisubmarineGroup/antisubmarineGroup/${groupUuid}/enabled/${enabled}`,
+    `${IacConfigPrefix}/advancedConf/antisubmarineGroup/antisubmarineGroup/${groupUuid}/enabled/${enabled}`,
   // 互锁操作API
-  addITUrl: `${xfPrefix}/advancedConf/interlockingGroup/interlockingGroup`,
-  detailITUrl: groupUuid => `${listPrefix}/interlock/${groupUuid}`,
+  addITUrl: `${IacConfigPrefix}/advancedConf/interlockingGroup/interlockingGroup`,
+  detailITUrl: groupUuid => `${IaCappPrefix}/interlock/${groupUuid}`,
   deleteITUrl: groupUuid =>
-    `${xfPrefix}/advancedConf/interlockingGroup/interlockingGroup/${groupUuid}`,
-  updateITUrl:(groupUuid)=>`${xfPrefix}/advancedConf/interlockingGroup/interlockingGroup/${groupUuid}`,
+    `${IacConfigPrefix}/advancedConf/interlockingGroup/interlockingGroup/${groupUuid}`,
+  updateITUrl: groupUuid =>
+    `${IacConfigPrefix}/advancedConf/interlockingGroup/interlockingGroup/${groupUuid}`,
   switchITUrl: (groupUuid, enabled) =>
-    `${xfPrefix}/advancedConf/interlockingGroup/interlockingGroup/${groupUuid}/enabled/${enabled}`
+    `${IacConfigPrefix}/advancedConf/interlockingGroup/interlockingGroup/${groupUuid}/enabled/${enabled}`,
+
+  getAccessList: `${
+    window.config.protocolHeader
+  }${ip}/iacconfig-v1/project/${projectUuid}/prewarning/plan/list`,
+
+  getAccessDetail: warningPlanUuid =>
+    `${
+      window.config.protocolHeader
+    }${ip}/iacconfig-v1/project/${projectUuid}/prewarning/plan/info/${warningPlanUuid}`,
+  addAccessRecord: `${
+    window.config.protocolHeader
+  }${ip}/iacconfig-v1/project/${projectUuid}/prewarning/plan/info`,
+  updateAccessRecord: `${
+    window.config.protocolHeader
+  }${ip}/iacconfig-v1/project/${projectUuid}/prewarning/plan/info`,
+  deleteAccessRecord: `${
+    window.config.protocolHeader
+  }${ip}/iacconfig-v1/project/${projectUuid}/prewarning/plan`,
+  updateAccessRecordStatus: `${
+    window.config.protocolHeader
+  }${ip}/iacconfig-v1/project/${projectUuid}/prewarning/plan/enable`, // 是否启用和禁用人员预警进出记录
+  uploadSound: `${
+    window.config.protocolHeader
+  }${ip}/iacconfig-v1/project/${projectUuid}/prewarning/plan/config/sound`,
+  getOranizition: `${
+    window.config.protocolHeader
+  }${ip}/sppc-iacapp-service-v1/project/${projectUuid}/sysStaff/info/list`,
+  getPersonnel: `${
+    window.config.protocolHeader
+  }${ip}/sppc-iacapp-service-v1/project/${projectUuid}/personnel/info/list`
 };

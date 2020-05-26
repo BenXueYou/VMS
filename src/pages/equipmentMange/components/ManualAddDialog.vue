@@ -74,13 +74,13 @@
                         ref="popoverTree" />
         </el-form-item>
 
-        <el-form-item label="楼栋单元："
+       <!--  <el-form-item label="楼栋单元："
                       prop="infrastructureUuid">
           <build-house-popover-tree width="250px"
                                     :name="houseName"
                                     :houseUuid="houseUuid"
                                     @setUseData="setHouseData" />
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item label="设备描述："
                       prop="remarks">
@@ -342,6 +342,10 @@ export default {
       this.houseName = params.node.data.label;
     },
     saveData() {
+      if (this.localService && !this.localService.length) {
+        this.$message({ type: 'warning', message: "子服务列表为空" });
+        return;
+      }
       const getServiceNameByUuid = uuid => {
         return this.localService.filter(v => {
           return v.belongServiceUuid === uuid;

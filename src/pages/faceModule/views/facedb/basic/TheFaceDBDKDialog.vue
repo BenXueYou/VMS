@@ -98,7 +98,7 @@ export default {
   },
   computed: {
     // concatLink() {
-    //   return RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(this.$store.state.home.projectUuid) + "?templateType=" + this.templatetype;
+    //   return RestApi.faceModuleAPi.faceDBApi.downloadDBTemp(this.$store.state.home.projectUuid) + "?templateType=" + this.templatetype;
     // },
     filename() {
       var num = [];
@@ -140,14 +140,14 @@ export default {
         // let alink = document.createElement("a");
         // alink.download = "person.xlsx";
         // alink.href =
-        //   RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(
+        //   RestApi.faceModuleAPi.faceDBApi.downloadDBTemp(
         //     this.$store.state.home.projectUuid
         //   ) +
         //   "?templateType=" +
         //   this.templatetype;
         // alink.click();
         this.$common.funBuildFile(
-          RestApi.api.faceModuleAPi.faceDBApi.downloadDBTemp(
+          RestApi.faceModuleAPi.faceDBApi.downloadDBTemp(
             this.$store.state.home.projectUuid
           ) +
 						"?templateType=" +
@@ -169,7 +169,7 @@ export default {
       if (this.fileIdNum.length) {
         this.uploader.settings.multipart_params.templateType = this.templatetype;
         this.uploader.settings.multipart_params.uuid = new Date().getTime();
-        this.uploader.settings.url = RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
+        this.uploader.settings.url = RestApi.faceModuleAPi.faceDBApi.addDaoKuTask(
           this.$store.state.home.projectUuid,
           this.libraryuuid
         );
@@ -192,7 +192,7 @@ export default {
 			let num = new Date().getTime();
 			this.uploader = new plupload.Uploader({
 				browse_button: "fileSelect", // 这里填写触发元素的按钮ID
-				url: RestApi.api.faceModuleAPi.faceDBApi.addDaoKuTask(
+				url: RestApi.faceModuleAPi.faceDBApi.addDaoKuTask(
 					_this.$store.state.home.projectUuid,
 					_this.libraryuuid
 				), // 上传的地址

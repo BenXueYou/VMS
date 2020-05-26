@@ -22,7 +22,6 @@
                src="../../../assets/images/resident/unabled_modify.png"
                alt />
           修改标签
-
         </span>
         <span style="color:rgba(255,255,255,0.1)">|</span>
         <span :class="ShowAuthDisabled?'cursorClass':'disabled'"
@@ -45,17 +44,20 @@
                    size="small"
                    @click="removeTagAct">移出</el-button>
       </el-header>
-      <el-table ref="multipleTagTable"
+      <el-table ref="ResidentTagTable"
                 :data="tableData"
                 tooltip-effect="dark"
                 class="tableBoxClass"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection"
-                         width="100"></el-table-column>
+                         width="60"></el-table-column>
         <el-table-column prop="staffName"
+                         width="380"
                          label="名称"></el-table-column>
         <el-table-column prop="address"
-                         label="楼栋房屋"></el-table-column>
+                         width="380"
+                         label="楼栋房屋"
+                         show-overflow-tooltip></el-table-column>
       </el-table>
       <el-footer class="footerClass">
         <el-pagination @size-change="handleSizeChange"
@@ -91,12 +93,6 @@
           {{checkedLeftTagData.tagName}}：
         </el-col>
         <el-col :span="16">
-          <!-- <p v-for="(value, name) in residentTag"
-             :key="name"
-             v-show="tn[name]">
-            <span style='display:inline-block;width:60px;'>包含{{tn[name]}}</span>
-            <span>{{value || 0}}</span>
-					</p>-->
           <p>
             <span>包含区域</span>
             <span>{{residentTag.area || 0}}</span>
@@ -201,7 +197,7 @@ export default {
       window.innerHeight ||
       document.documentElement.clientHeight ||
       document.body.clientHeight;
-    this.$refs.multipleTagTable.$el.style.height = h - 280 + "px";
+    // this.$refs.ResidentTagTable.$el.style.height = h - 280 + "px";
     // 这里 -1 是为了去掉表头高度
     this.pageSize = parseInt((h - 280) / 48) - 1;
     console.log(this.tableSize);
@@ -212,7 +208,7 @@ export default {
         window.innerHeight ||
         document.documentElement.clientHeight ||
         document.body.clientHeight;
-      that.$refs.multipleTagTable.$el.style.height = h - 280 + "px";
+      // that.$refs.ResidentTagTable.$el.style.height = h - 280 + "px";
       var pageSize = parseInt((h - 280) / 48) - 1;
       if (pageSize !== that.pageSize && that.isResize) {
         that.pageSize = pageSize;
@@ -253,7 +249,7 @@ export default {
       }
       this.isShow = !this.isShow;
     },
-    getTagTreeDetail() {
+    getTagTreeDetail(isTagCheckedStaff, limit) {
       if (this.checkedLeftTagData && !this.checkedLeftTagData.tagUuid) {
         this.$message({ type: "warning", message: "没有选择标签" });
         this.tableData = [];
@@ -261,28 +257,40 @@ export default {
       }
       let queryTyoeUuid = this.checkedLeftTagData.tagUuid;
       var xhr = {
-        limit: this.pageSize,
+        limit: limit || this.pageSize,
         page: this.currentPage,
         queryType: "staffLabel",
         queryTypeUuid: queryTyoeUuid
       };
       this.mainScreenLoading = true;
-      setTimeout(() => {
-        this.mainScreenLoading = false;
-      }, 10000);
-      this.$ResidentManageAjax.getResidentListApi(xhr).then(res => {
-        this.mainScreenLoading = false;
-        this.tableData = [];
-        if (res.data.success && res.data.data.list) {
-          this.tableData = res.data.data.list;
-          this.total = res.data.data.total;
-        } else {
-          this.$message({
-            type: "error",
-            message: "出错了！！！"
-          });
-        }
-      });
+      this.$ResidentManageAjax
+        .getResidentListApi(xhr)
+        .then(res => {
+          this.mainScreenLoading = false;
+          if (isTagCheckedStaff) {
+            (res.data.data.list || []).forEach(item => {
+              item.id = item.staffUuid;
+              item.label = item.staffName;
+              item.type = item.staffType;
+              this.checkedNode.push(item);
+            });
+            return;
+          }
+          this.tableData = [];
+          this.total = 0;
+          if (res.data.success && res.data.data.list) {
+            this.tableData = res.data.data.list;
+            this.total = res.data.data.total;
+          } else {
+            this.$message({
+              type: "error",
+              message: "出错了！！！"
+            });
+          }
+        })
+        .catch(() => {
+          this.mainScreenLoading = false;
+        });
     },
     removeTagAct() {
       if (this.checkedNode && !this.checkedNode.length) {
@@ -373,6 +381,7 @@ export default {
         return;
       }
       if (!this.$common.getAuthIsOwn("居民管理", "isShow")) return;
+      if (!this.$common.getAuthIsOwn("居民管理", "isShow")) return;
       var tagUuid = this.checkedLeftTagData.tagUuid;
       this.$ResidentManageAjax
         .getResidentTagBriefDetail(tagUuid, "resident")
@@ -385,6 +394,12 @@ export default {
           }
         });
     },
+    changeDialogVisibleAct() {
+      this.changeDialogVisible = this.$common.getAuthIsOwn(
+        "居民管理",
+        "isShow"
+      );
+    },
     onCancel() {
       this.isShow = !this.isShow;
     },
@@ -393,6 +408,10 @@ export default {
       console.log(this.checkedLeftTagData, "添加地址居民到标签", data);
       this.checkedNode = data;
       if (this.checkedLeftTagData && !this.checkedLeftTagData.tagUuid) {
+        this.$message({ type: "warning", message: "没有选择标签" });
+        return;
+      }
+      if (!data || !data.length) {
         this.$message({ type: "warning", message: "没有选择标签" });
         return;
       }
@@ -418,6 +437,9 @@ export default {
           this.checkStaffUuids.push(item.staffUuid);
         });
       }
+    },
+    getTagCheckedStaff() {
+      this.getTagTreeDetail(true, 10000000);
     }
   },
   watch: {
@@ -432,12 +454,7 @@ export default {
       console.log(val, this.tableData);
       this.checkedNode = [];
       if (val && this.total) {
-        this.tableData.forEach(item => {
-          item.id = item.staffUuid;
-          item.label = item.staffName;
-          item.type = item.staffType;
-          this.checkedNode.push(item);
-        });
+        this.getTagCheckedStaff();
       }
     },
     checkedLeftTagData(val) {
@@ -504,17 +521,17 @@ export default {
     overflow: auto;
   }
   .el-main .el-header {
-    // height: ;
     line-height: 60px;
     padding-left: 30px;
   }
   .tableBoxClass {
-    width: 60%;
+    width: 860px;
+    min-height: calc(100% - 120px);
     padding: 0px 30px;
     box-sizing: border-box;
   }
   .footerClass {
-    width: calc(60% - 30px);
+    width: calc(860px - 30px);
     text-align: right;
   }
   .changeTagBox {

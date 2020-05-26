@@ -1,9 +1,12 @@
 <template>
   <el-dialog width="30%"
              title="详情信息"
+             top="26vh"
              :visible.sync="isCurrentShow"
              :before-close="onClickCancel"
-             :close-on-click-modal="false">
+             :close-on-click-modal="false"
+             :modal="!isAppend"
+             :append-to-body="isAppend">
     <div class="dialog-content">
       <!--内容-->
       <div class="lock-info">
@@ -44,6 +47,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isAppend: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

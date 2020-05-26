@@ -1,56 +1,71 @@
 <template>
-	<div class="door-list">
-		<div class="list-button">
-			<el-button :disabled="!OwnAuthDisabled" @click="allOpen" type="primary" size="small">全部开门</el-button>
-			<el-button :disabled="!OwnAuthDisabled" @click="allClose" type="primary" size="small">全部关门</el-button>
-			<el-button :disabled="!OwnAuthDisabled" @click="allDismiss" type="primary" size="small">全部消警</el-button>
-			<div class="number-icon">
-				<div class="number-text">
-					<span>全部：</span>
-					<span>{{total}}</span>
-				</div>
-				<div class="number-text">
-					<img src="@/assets/images/door_open.png" width="9px" height="11px" style="margin-right: 5px;" />
-					<span>门开：</span>
-					<span>{{opened}}</span>
-				</div>
-				<div class="number-text">
-					<img src="@/assets/images/door_close.png" width="9px" height="11px" style="margin-right: 5px;" />
-					<span>门关：</span>
-					<span>{{closed}}</span>
-				</div>
-				<div class="number-text">
-					<span>报警：</span>
-					<span>{{alarmed}}</span>
-				</div>
-				<div class="number-text">
-					<span>在线：</span>
-					<span>{{online}}</span>
-				</div>
-				<div class="number-text">
-					<span>离线：</span>
-					<span>{{offline}}</span>
-				</div>
-			</div>
-		</div>
-		<el-scrollbar class="scrollbar">
-			<div class="list-items">
-				<template v-for="(item, index) in itemListData">
-					<door-item :key="index" :doorItem="item" @handleDoorStatus="handleDoorStatus" />
-				</template>
-			</div>
-		</el-scrollbar>
-		<div class="footer">
-			<el-pagination
-				background
-				layout="total, prev, pager, next, jumper"
-				:page-size="pageInfo.pageSize"
-				:current-page="pageInfo.currentPage"
-				@current-change="handleCurrentChange"
-				:total="pageInfo.total"
-			></el-pagination>
-		</div>
-	</div>
+  <div class="door-list">
+    <div class="list-button">
+      <el-button :disabled="!OwnAuthDisabled"
+                 @click="allOpen"
+                 type="primary"
+                 size="small">全部开门</el-button>
+      <el-button :disabled="!OwnAuthDisabled"
+                 @click="allClose"
+                 type="primary"
+                 size="small">全部关门</el-button>
+      <el-button :disabled="!OwnAuthDisabled"
+                 @click="allDismiss"
+                 type="primary"
+                 size="small">全部消警</el-button>
+      <div class="number-icon">
+        <div class="number-text">
+          <span>全部：</span>
+          <span>{{total}}</span>
+        </div>
+        <div class="number-text">
+          <img src="@/assets/images/door_open.png"
+               width="9px"
+               height="11px"
+               style="margin-right: 5px;" />
+          <span>门开：</span>
+          <span>{{opened}}</span>
+        </div>
+        <div class="number-text">
+          <img src="@/assets/images/door_close.png"
+               width="9px"
+               height="11px"
+               style="margin-right: 5px;" />
+          <span>门关：</span>
+          <span>{{closed}}</span>
+        </div>
+        <div class="number-text">
+          <span>报警：</span>
+          <span>{{alarmed}}</span>
+        </div>
+        <div class="number-text">
+          <span>在线：</span>
+          <span>{{online}}</span>
+        </div>
+        <div class="number-text">
+          <span>离线：</span>
+          <span>{{offline}}</span>
+        </div>
+      </div>
+    </div>
+    <el-scrollbar class="scrollbar">
+      <div class="list-items">
+        <template v-for="(item, index) in itemListData">
+          <door-item :key="index"
+                     :doorItem="item"
+                     @handleDoorStatus="handleDoorStatus" />
+        </template>
+      </div>
+    </el-scrollbar>
+    <div class="footer">
+      <el-pagination background
+                     layout="total, prev, pager, next, jumper"
+                     :page-size="pageInfo.pageSize"
+                     :current-page="pageInfo.currentPage"
+                     @current-change="handleCurrentChange"
+                     :total="pageInfo.total"></el-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -214,25 +229,25 @@ export default {
     },
     connectSocket() {
       /* eslint-disable */
-			let socket = new SockJS(
-				window.config.protocolHeader + window.config.socketIP
-			);
-			this.stompClient = Stomp.over(socket);
-			this.stompClient.connect(
-				// { projectUuid: window.config.projectUuid },
-				{ projectUuid: this.$store.state.home.projectUuid },
-				frame => {
-					console.log("connect success: ", frame);
-					this.stompClient.subscribe("/user/topic/status/channel", greeting => {
-						console.log("subscribe success: ", greeting);
-						this.handleSubscribe(JSON.parse(greeting.body));
-					});
-				},
-				err => {
-					console.log("error, errMsg: ", err);
-				}
-			);
-			/* eslint-enable */
+      let socket = new SockJS(
+        window.config.protocolHeader + window.config.socketIP
+      );
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect(
+        // { projectUuid: window.config.projectUuid },
+        { projectUuid: this.$store.state.home.projectUuid },
+        frame => {
+          console.log("connect success: ", frame);
+          this.stompClient.subscribe("/user/topic/status/channel", greeting => {
+            console.log("subscribe success: ", greeting);
+            this.handleSubscribe(JSON.parse(greeting.body));
+          });
+        },
+        err => {
+          console.log("error, errMsg: ", err);
+        }
+      );
+      /* eslint-enable */
     },
     disConnectSocket() {
       if (this.stompClient != null) {
@@ -327,56 +342,56 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .door-list {
-	width: 84%;
-	height: 100%;
-	padding: 1.3% 0% 1.3% 1.1%;
-	box-sizing: border-box;
-	margin-left: 20px;
-	background: #212325;
-	.list-button {
-		width: 100%;
-		display: flex;
-		flex-flow: row nowrap;
-		align-items: center;
-		.number-icon {
-			width: 50%;
-			min-width: 500px;
-			margin-left: auto;
-			margin-right: 0;
-			font-family: PingFangSC-Regular;
-			font-size: 13px;
-			display: flex;
-			flex-flow: row nowrap;
-			justify-content: center;
-			color: #ffffff;
-			align-items: center;
-			.number-text {
-				display: flex;
-				align-items: center;
-				margin-right: 8px;
-				span {
-					white-space: nowrap;
-				}
-				&:last-child {
-					margin-right: 0px;
-				}
-			}
-		}
-	}
-	.scrollbar {
-		height: 88%;
-		width: 100%;
-		margin-top: 28px;
-	}
-	.list-items {
-		display: flex;
-		flex-flow: row wrap;
-		align-content: flex-start;
-	}
-	.footer {
-		width: 100%;
-		display: flex;
-		justify-content: flex-end;
-	}
+  width: 84%;
+  height: 100%;
+  padding: 1.3% 0% 1.3% 1.1%;
+  box-sizing: border-box;
+  margin-left: 20px;
+  background: #212325;
+  .list-button {
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    .number-icon {
+      width: 50%;
+      min-width: 500px;
+      margin-left: auto;
+      margin-right: 0;
+      font-family: PingFangSC-Regular;
+      font-size: 13px;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      color: #ffffff;
+      align-items: center;
+      .number-text {
+        display: flex;
+        align-items: center;
+        margin-right: 8px;
+        span {
+          white-space: nowrap;
+        }
+        &:last-child {
+          margin-right: 0px;
+        }
+      }
+    }
+  }
+  .scrollbar {
+    height: 88%;
+    width: 100%;
+    margin-top: 28px;
+  }
+  .list-items {
+    display: flex;
+    flex-flow: row wrap;
+    align-content: flex-start;
+  }
+  .footer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 </style>

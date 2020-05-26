@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div class='displayWrap'
        ref="displayWrap"
        @contextmenu="contextmenu"
@@ -35,7 +35,8 @@
         <el-dropdown style='margin:13px 30px 0px 0px;'
                      @command='clickMenu'
                      trigger="click">
-          <span class="el-dropdown-link">
+          <span class="el-dropdown-link"
+                @click.stop>
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAGxJREFUGBmlj7EJgEAQBPf8F+ENTBQMbEBsytRm7EQwF0sxMREzG/hbv4SD33h2YGTksRMywLACvDxQLSViY+ChwGfh8hhJDWtS9DaN3L6A24jYWg6Eey1cHiMTz1khnUUj0McrGAitLYfUEH75HhuBIHOOjAAAAABJRU5ErkJggg=="
                  alt="">
           </span>
@@ -50,13 +51,19 @@
     <!-- 默认摄像头图片 -->
     <img class='camera'
          :src="icons.defaultIcon"
-         v-show="!rtspUrl.length"
+         v-show="!rtspUrl.length&&!IsShowAddIcon"
+         alt="">
+    <img src="@/assets/images/addVideo.png"
+         v-show="IsAddMenu && IsShowAddIcon"
+         class='camera'
          alt="">
     <!-- <div class='tipsText'
          v-show="rtspUrl.length">
       码流请求中
     </div> -->
     <!-- 1 -->
+    <gt-loading v-if="isLoadingVideo"
+                msg='加载中'></gt-loading>
     <div id='canvasWrap'
          ref='canvasRefs'
          :class="{'fullscreen':mode!='original'}">
@@ -76,16 +83,10 @@ export default {
     height: {
       type: Number
     },
-    fenlu: {
-      type: Number
-    },
     left: {
       type: Number
     },
     top: {
-      type: Number
-    },
-    position: {
       type: Number
     },
     index: {
@@ -95,6 +96,12 @@ export default {
       type: Boolean
     },
     IsShowMenu: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    IsShowAddIcon: {
       type: Boolean,
       default() {
         return false;
@@ -157,6 +164,8 @@ export default {
   },
   data() {
     return {
+      isLoadingVideo: false,
+      IsAddMenu: true,
       icons,
       ip: "",
       port: "",
@@ -179,11 +188,8 @@ export default {
       let obj = {
         main: "主码流",
         sub: "辅码流",
-        thrid: "第三码流"
+        third: "第三码流"
       };
-      console.log("-------------------");
-      console.log(this.streamType);
-      console.log(obj[this.streamType]);
       return obj[this.streamType];
     },
     menuData() {
@@ -200,6 +206,10 @@ export default {
           icon: "screenshot",
           name: "抓图"
         },
+        // {
+        //   icon: "fullscreen2",
+        //   name: "全屏"
+        // },
         {
           icon: "close",
           name: "关闭"
@@ -224,9 +234,6 @@ export default {
     mode(val) {
       // this.calcHeight();
     },
-    position(val) {
-      console.log(val);
-    },
     streamType(val) {
       // 码流切换，则先停掉，在重新播放
       // 判断是否在播放，在切换
@@ -240,7 +247,6 @@ export default {
       this.calcHeight();
     },
     rtspUrl(val) {
-      console.log("码流的视频url改变了：   " + val);
       if (val) {
         // 播放之前判断是否已经在播放了，如果有则删除掉
         if (this.canvas) {
@@ -294,19 +300,23 @@ export default {
       this.speed = this.speed / 2;
       await this.video_mgr.speedControl(this.video, this.speed);
     },
-    async pause() {
-      if (!this.video || !this.video_mgr) {
-        this.$message.error("该选中框没有视频在播放！");
-        return;
+    async pause(playStatus) {
+      // if (!this.video || !this.video_mgr) {
+      //   this.$message.error("该选中框没有视频在播放！");
+      //   return;
+      // }
+      if (!playStatus) {
+        playStatus = this.playStatus;
       }
-      if (this.playStatus === 0) {
+      // alert(playStatus);
+      if (playStatus === 0) {
         // 如果按钮待播放，点击这个按钮没有反应
         return;
-      } else if (this.playStatus === 1) {
+      } else if (playStatus === 1) {
         // 正在播放就停止
         await this.video_mgr.pause(this.video);
         this.$message.success("暂停视频");
-      } else if (this.playStatus === 2) {
+      } else if (playStatus === 2) {
         await this.video_mgr.resume(this.video);
         this.$message.success("继续播放视频");
       }
@@ -324,6 +334,7 @@ export default {
       this.video_mgr.stopRecord(this.video);
     },
     getCanvas() {
+      console.log(this.canvas);
       return this.canvas || this.$refs.displayWrap;
     },
     drag(url) {
@@ -338,7 +349,6 @@ export default {
         console.log(url);
         this.video_mgr.drag(this.video, url);
       } else {
-        // alert(1);
         this.playVideo();
       }
     },
@@ -361,15 +371,17 @@ export default {
         // 如果宽高比大于16:9 则按照高计算宽
         if (this.width / this.height >= 16 / 9) {
           let width = this.width;
-          if (this.mode === "fullscreen") {
-            this.canvas.width = this.width;
-            let height = ~~((9 / 16) * width);
-            this.canvas.height = height;
-            return;
-          } else {
-            this.canvas.width = width;
-            this.canvas.height = this.height;
-          }
+          // if (this.mode === "fullscreen") {
+          //   this.canvas.width = this.width;
+          //   let height = ~~((9 / 16) * width);
+          //   this.canvas.height = height;
+          //   return;
+          // } else {
+          //   this.canvas.width = width;
+          //   this.canvas.height = this.height;
+          // }
+          this.canvas.width = width;
+          this.canvas.height = this.height;
         } else {
           let height = this.height;
           if (this.mode === "fullscreen") {
@@ -388,8 +400,8 @@ export default {
     async playVideo() {
       this.canvas = document.createElement("video");
       this.calcHeight();
-      let { jMedia, jSignal } = this.$store.getters;
-      console.log(jMedia, jSignal);
+      let { jDescription } = this.$store.getters;
+      console.log("jDescription: ", jDescription);
       // let w, h;
       // if (this.streamType === "main") {
       //   w = 1920;
@@ -403,20 +415,18 @@ export default {
       // }
       // console.log(w, h);
       console.log("播放的url" + this.rtspUrl);
-      // this.video = await this.video_mgr.setup(
-      //   JSON.stringify(jSignal),
-      //   JSON.stringify(jMedia),
-      //   this.rtspUrl,
-      //   "rtsp",
-      //   this.action,
-      //   this.speed,
-      //   this.canvas
-      // );
+      this.isLoadingVideo = true;
+      setTimeout(()=>{
+        if(this.isLoadingVideo){
+          this.isLoadingVideo = false;
+        }
+      },60000);
+      this.IsAddMenu = false;
       this.video = await this.video_mgr.setup({
         element: this.canvas,
         decodeMod: this.decodeMod,
-        jSignal: JSON.stringify(jSignal),
-        jMedia: JSON.stringify(jMedia),
+        jDescription,
+        webProtocol: window.location.protocol,
         url: this.rtspUrl,
         protocol: "rtsp",
         action: this.action,
@@ -427,6 +437,7 @@ export default {
         await this.video_mgr.play(this.video);
       }
       this.$refs.canvasRefs.appendChild(this.canvas);
+      this.isLoadingVideo = false;
     },
     stopVideo() {
       if (this.video && this.video_mgr) {
@@ -438,6 +449,7 @@ export default {
           this.$refs.canvasRefs.removeChild(this.canvas);
         }
       }
+      this.IsAddMenu = true;
       this.canvas = null;
     },
     dragstart(e) {
@@ -473,7 +485,7 @@ export default {
     dragover(e) {
       e.preventDefault();
     },
-    clickMenu(index) {
+    clickMenu(index, event) {
       if (index === 0) {
         // 声音
         this.$emit("openVideoVoice", this.index);
@@ -487,8 +499,13 @@ export default {
       } else if (index === 2) {
         // 抓图
         this.$emit("screenShot", this.index);
-      } else if (index === 3) {
+      } else if (index == 3) {
+        // 全屏
+        // this.$emit("fullscreen2", this.index);
+        this.$emit("closeVideo", this.index);
+      } else if (index === 4) {
         // 关闭
+        this.IsAddMenu = true;
         this.$emit("closeVideo", this.index);
       }
     },
@@ -523,6 +540,7 @@ export default {
   box-sizing: border-box;
   overflow: hidden;
   z-index: 1;
+  cursor: pointer;
   #canvasWrap {
     position: absolute;
     width: 100%;
@@ -593,7 +611,6 @@ export default {
       max-width: 80%;
     }
   }
-
   .camera {
     position: absolute;
     top: calc(50% + 0px);

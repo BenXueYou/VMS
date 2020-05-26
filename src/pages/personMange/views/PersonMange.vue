@@ -84,7 +84,7 @@
                   <el-button type="primary"
                              :disabled='!ShowAuthDisabled'
                              style="width: 110px;"
-                             @click.stop="clearSearchInfo(),isOtherSearch=!isOtherSearch">其他检索条件</el-button>
+                             @click.stop="isOtherSearch=!isOtherSearch">其他检索条件</el-button>
                   <div class="conditionWrap"
                        v-show="isOtherSearch">
                     <div class="infoWrap">
@@ -428,7 +428,9 @@
                       <img class="img"
                            v-if="OwnAuthDisabled"
                            src="@/assets/images/personMange/edit.png" />
-                      <i class="el-icon-edit-outline" style="margin-right:10px;opacity:0.5;"></i>
+                      <i class="el-icon-edit-outline"
+                         v-else
+                         style="margin-right:10px;opacity:0.5;"></i>
 
                       <!-- <img class="img"
                            v-else
@@ -599,6 +601,20 @@
                   </div>
                 </div>
                 <div class="infoWrap"
+                     v-if="$store.state.home.projectType.platformType === 'school'"
+                     style="height: auto;">
+                  <div class="left">人员类别：</div>
+                  <div class="right apartment">
+                    <el-select v-model="personCategory"
+                               placeholder="请选择人员类别">
+                      <el-option v-for="item in personCategoryOptions"
+                                 :key="item.typeStr"
+                                 :label="item.typeName"
+                                 :value="item.typeStr"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="infoWrap"
                      style="height: auto;margin-bottom: 50px;position: relative;">
                   <div class="left">标签：</div>
                   <div class="right apartment">
@@ -661,6 +677,7 @@
                   <div class="right">
                     <el-input style="width: 200px;height: 30px;margin-right: 10px;"
                               v-model="idNumber"
+                              @blur='blurAct'
                               placeholder="证件号码"></el-input>
                   </div>
                 </div>
@@ -1021,11 +1038,11 @@
                 <div class="text">信息来源：<span v-if="source!='platform'">{{this.source}}设备</span><span v-if="source=='platform'">平台录入</span></div>
                 <div class="btnWrap">
                   <el-button style="width: 120px;"
-                   :loading='isloading'
+                             :loading='isloading'
                              @click="addPersonMember('continue')"
                              v-show="addEditMember==='add'">保存并继续添加</el-button>
                   <el-button style="width: 80px;"
-                   :loading='isloading'
+                             :loading='isloading'
                              @click="addEditPerson()">确认</el-button>
                   <el-button style="width: 80px;margin-right: 15px;"
                              @click="closeAddEdit">取消</el-button>
@@ -1127,8 +1144,7 @@
       </div>
     </div>
     <!--详情弹窗-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="detailDialog"
+    <el-dialog class="detailDialog"
                :title="'员工详情'"
                :visible.sync="detailDialog"
                @close="closeDialog"
@@ -1293,8 +1309,7 @@
       </div>
     </el-dialog>
     <!--删除弹窗-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="deleteDialog"
+    <el-dialog class="deleteDialog"
                :visible.sync="deleteDialog"
                width="400px">
       <div class="con">
@@ -1311,8 +1326,7 @@
       </div>
     </el-dialog>
     <!--修改名称弹窗-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="editDialog"
+    <el-dialog class="editDialog"
                :title="'修改名称'"
                :visible.sync="editDialog"
                close="closeDialog"
@@ -1330,8 +1344,7 @@
       </div>
     </el-dialog>
     <!--修改标签弹窗-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="editDialog"
+    <el-dialog class="editDialog"
                :title="'修改标签'"
                :visible.sync="editLabelDialog"
                close="closeDialog"
@@ -1349,8 +1362,7 @@
       </div>
     </el-dialog>
     <!--新建部门弹窗-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="editDialog"
+    <el-dialog class="editDialog"
                :title="'新建部门'"
                :visible.sync="newDialog"
                @close="closeDialog"
@@ -1396,40 +1408,8 @@
     <the-resident-import-dialog :isShow.sync="importDialog"
                                 title="批量导入员工"
                                 type="personnel"></the-resident-import-dialog>
-
-    <!--  <el-dialog :class="{'dialogCenter':true}" class='importDialog'
-               :title="'Excel批量导入人员'"
-               :visible.sync="importDialog"
-               @close="closeDialog"
-               width="540px">
-      <div class="con">
-        <div class="download">
-          <div class="left">批量导入方式：</div>
-          <div class="middle">
-            <div>1.下载人员模板表格</div>
-            <div>2.在表格内填写人员信息</div>
-            <div>3.选择文件导入</div>
-          </div>
-          <div class="right">
-            <div><img src="./../../../assets/images/download_template.png" /></div>
-            <div>下载人员模版</div>
-          </div>
-        </div>
-        <div class="file">
-          <div class="title">导入文件：</div>
-          <div class="choose"><img src="./../../../assets/images/select_file.png" /><span>选择文件</span></div>
-        </div>
-        <div class="btnWrap">
-          <el-button style="width: 66px;">导入</el-button>
-          <el-button style="width: 66px;">取消</el-button>
-        </div>
-
-      </div>
-		</el-dialog>-->
-
     <!--Excel批量导出人员-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="exportDialog"
+    <el-dialog class="exportDialog"
                :title="'Excel批量导出人员'"
                :visible.sync="exportDialog"
                @close="closeDialog"
@@ -1457,8 +1437,7 @@
     </el-dialog>
 
     <!--数据统计弹窗-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="StaticsViewDialogClass"
+    <el-dialog class="StaticsViewDialogClass"
                width="550px"
                :title="chartTitle"
                :visible.sync="dataChartDialog"
@@ -1498,8 +1477,7 @@
       </div>
     </el-dialog>
     <!--新增卡片弹窗-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="addCardDialog"
+    <el-dialog class="addCardDialog"
                :title="'新增卡片'"
                :visible.sync="addCardDialog"
                @close="closeDialog"
@@ -1550,8 +1528,7 @@
       </div>
     </el-dialog>
     <!--编辑卡片弹窗-->
-    <el-dialog :class="{'dialogCenter':true}"
-               class="addCardDialog"
+    <el-dialog class="addCardDialog"
                :title="'编辑卡片'"
                :visible.sync="editCardDialog"
                @close="closeDialog"
@@ -1602,8 +1579,7 @@
       </div>
     </el-dialog>
     <!--h5拍照-->
-    <el-dialog :class="{'dialogCenter':true}"
-               title="拍照"
+    <el-dialog title="拍照"
                center
                :visible.sync="shootPhotoDialogVisible"
                :width="`${canvWidth ? canvWidth + 50 : '1300'}px`"
@@ -1614,7 +1590,7 @@
              ref="video"></video>
       <img v-show="shootPhotoShow"
            id="img"
-           src>
+           src />
       <span slot="footer"
             style="padding:15px">
         <el-button type="primary"
@@ -1664,7 +1640,8 @@
 <script>
 import * as api from "@/pages/equipmentMange/ajax.js";
 import TheResidentImportDialog from "@/pages/residentManage/components/TheResidentImportDialog";
-import TheLeftmenu from "./../../equipmentMange/views/TheLeftmenu";
+// import TheLeftmenu from "./../../equipmentMange/views/TheLeftmenu";
+import TheLeftmenu from "./../../equipmentMange/views/OneLevelLeftTree";
 import tabTreeTag from "@/common/TabTreeTag";
 import TheResidentTagTable from "./../../residentManage/components/TheResidentTagTable";
 import personTreeTag from "@/common/personTreeTag";
@@ -1680,6 +1657,13 @@ export default {
   props: {},
   data() {
     return {
+      personCategory: "student",
+      personCategoryOptions: [
+        { id: "teacher", label: "教职工" },
+        { id: "security", label: "安保" },
+        { id: "student", label: "学生" },
+        { id: "parents", label: "家长" }
+      ],
       checkedNode5: [],
       WIamgeurl: RestApi.api.imageUrl,
       mainListLoading1: false,
@@ -1759,6 +1743,7 @@ export default {
         { value: 0, name: "女" },
         { value: 0, name: "比对照片数" },
         { value: 0, name: "比对指纹数" },
+        { value: 0, name: "比对证件数" },
         { value: 0, name: "比对卡片数" }
       ],
       exportDialog: false,
@@ -1787,15 +1772,6 @@ export default {
       isListForm: true,
       isImageForm: false,
       totalStaff: "0",
-      // tableData: new Array(10).fill({
-      //   devName: "陈婷婷",
-      //   ip: "销售一部",
-      //   devId: "女",
-      //   devMode: "13722345609",
-      //   doorCount: "021-23443216",
-      //   netStatus: "online",
-      //   time: "2018-10-08 13:08:32"
-      // }),
       tableData: [],
       tableData1: [],
       imageData: new Array(30).fill({
@@ -1944,7 +1920,7 @@ export default {
       mediaStreamTrack: null,
       ShowAuthDisabled: true,
       OwnAuthDisabled: true,
-      isloading: false,
+      isloading: false
     };
   },
   created() {},
@@ -1954,8 +1930,15 @@ export default {
     this.isResize = true;
   },
   mounted() {
-    this.ShowAuthDisabled = this.$common.getAuthIsOwn("员工管理", "isShow");
-    this.OwnAuthDisabled = this.$common.getAuthIsOwn("员工管理", "isOwn");
+    let projectType = this.$store.state.home.projectType || {};
+    if (projectType && projectType.platformType === "school") {
+      this.ShowAuthDisabled = this.$common.getAuthIsOwn("人力资源", "isShow");
+      this.OwnAuthDisabled = this.$common.getAuthIsOwn("人力资源", "isOwn");
+    } else {
+      this.ShowAuthDisabled = this.$common.getAuthIsOwn("员工管理", "isShow");
+      this.OwnAuthDisabled = this.$common.getAuthIsOwn("员工管理", "isOwn");
+    }
+
     this.idTypeArr = this.$common.getEnumByGroupStr("cred");
     this.degreeArr = this.$common.getEnumByGroupStr("edu");
     this.nationalityArr = this.$common.getEnumByGroupStr("nationality");
@@ -1963,6 +1946,9 @@ export default {
     this.maritalArr = this.$common.getEnumByGroupStr("marital");
     this.cardFuncArr = this.$common.getEnumByGroupStr("card_u");
     this.sexArr = this.$common.getEnumByGroupStr("gender");
+    this.personCategoryOptions = this.$common.getEnumByGroupStr(
+      "staff_category"
+    );
     let that = this;
     setTimeout(function() {
       that.parentNodeId = that.clickNodeId;
@@ -2008,6 +1994,12 @@ export default {
     this.isResize = false;
   },
   methods: {
+    blurAct() {
+      let isValite = this.$common.isCredentialNo(this.idNumber);
+      if (this.idType === "id_card" && !isValite) {
+        this.$message({ type: "warning", message: "身份证号不合法" });
+      }
+    },
     deleteaaaaadccaa() {
       if (this.staffUuidList.length) {
         this.deleteDialog = true;
@@ -2118,6 +2110,11 @@ export default {
           });
           return;
         }
+      }
+      let isValite = this.$common.isCredentialNo(this.idNumber);
+      if (this.idType === "id_card" && !isValite) {
+        this.$message({ type: "warning", message: "身份证号不合法" });
+        return;
       }
       var cardList = [];
       if (this.islListWrap1 === true) {
@@ -2242,7 +2239,8 @@ export default {
             // 2.普通员工和上级的字段
             isLeader: Number(this.staffInfo), // 是否上级
             leaderOrgUuid: this.leaderOrgUuid, // 负责部门
-            nickName: this.nickName // 别名
+            nickName: this.nickName, // 别名
+            staffCategory: this.personCategory // 人员类别
           }
         )
         .then(res => {
@@ -2306,6 +2304,11 @@ export default {
           });
           return;
         }
+      }
+      let isValite = this.$common.isCredentialNo(this.idNumber);
+      if (this.idType === "id_card" && !isValite) {
+        this.$message({ type: "warning", message: "身份证号不合法" });
+        return;
       }
       var cardList = [];
       if (this.islListWrap1 === true) {
@@ -2400,6 +2403,7 @@ export default {
             "/personnel/info",
           {
             address: this.censusRegister, // 户籍
+            staffCategory: this.personCategory, // 人员类别
             beginTime: this.startTime, // 有效开始时间
             cardList: cardList, // 卡片信息
             cellphone: this.phoneNum, // 手机号
@@ -2657,27 +2661,22 @@ export default {
     deleteCard(e) {
       if (e === "1") {
         this.islListWrap1 = false;
+        this.cardNoWrap1 = "";
       } else if (e === "2") {
+        this.cardNoWrap2 = "";
         this.islListWrap2 = false;
       } else if (e === "3") {
+        this.cardNoWrap3 = "";
         this.islListWrap3 = false;
       } else if (e === "4") {
+        this.cardNoWrap4 = "";
         this.islListWrap4 = false;
       } else if (e === "5") {
+        this.cardNoWrap5 = "";
         this.islListWrap5 = false;
       }
     },
     addCardConfirm() {
-      // for (let i = 0; i < this.cardList.length; i++) {
-      //   if (this.addCardName === this.cardList[i].cardName) {
-      //     this.$message.error("卡片名称重复!");
-      //     return;
-      //   }
-      //   if (this.addCard === this.cardList[i].cardId) {
-      //     this.$message.error("卡号重复!");
-      //     return;
-      //   }
-      // }
       if (
         this.addCardName === this.cardNameWrap1 ||
         this.addCardName === this.cardNameWrap2 ||
@@ -2940,6 +2939,12 @@ export default {
     },
     changeFile(file, fileList) {
       console.log("file===", file);
+      const isLt500k = file.size / 1024 / 1024 < 0.488;
+      if (!isLt500k) {
+        this.$message.error("上传头像图片大小不能超过 500k!");
+        this.deleteUpload();
+        return;
+      }
       if (file.raw.type === "image/jpg" || file.raw.type === "image/jpeg") {
         this.frontUploaded = true;
         this.frontPhoto = URL.createObjectURL(file.raw);
@@ -3383,6 +3388,12 @@ export default {
       this.checkedNode1 = [];
       this.checkedNode2 = [];
       this.checkedNode3 = [];
+      this.cardNameWrap1 = "";
+      this.cardNameWrap2 = "";
+      this.cardNameWrap3 = "";
+      this.cardNameWrap4 = "";
+      this.cardNameWrap5 = "";
+      this.cardNameWrap6 = "";
       this.labelUuid = [];
       this.nickName = "";
       this.apartmentUuid = [];
@@ -3400,10 +3411,6 @@ export default {
         this.initApartmentTree();
         this.clickNode(res);
       } else {
-        if (res.tagUuids) {
-          this.tableData1 = [];
-          return;
-        }
         this.currentPage2 = 1;
         this.labelName = res.tagName;
         this.labelTagUuid = res.tagUuid;
@@ -3637,6 +3644,7 @@ export default {
                 ? res.data.data.gender
                 : "male";
               this.nation = res.data.data.nation;
+              this.personCategory = res.data.data.staffCategory;
               this.idNumber = res.data.data.credentialNo;
               this.phoneNum = res.data.data.cellphone;
               this.telephone = res.data.data.fixedLine;
@@ -4226,6 +4234,13 @@ export default {
 }
 .personMange .el-dialog__wrapper {
   overflow: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.personMange .dialogCenter .el-dialog {
+  position: absolute;
 }
 .personMange .rightmenu .listForm {
   width: 100%;

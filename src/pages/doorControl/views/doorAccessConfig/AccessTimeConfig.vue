@@ -15,57 +15,50 @@
                @click="add"
                icon="el-icon-edit-outline">新增</el-button>
 
-    <div class="tableContent"
-         :style="{'height':tableHeight+'px'}">
-      <el-table :data="tableData"
-                class="mytable"
-                style="width: 100%;overflow:initial;">
-        <el-table-column prop="name"
-                         width="180"
-                         label="名称"></el-table-column>
-        <el-table-column prop="weeks"
-                         label="自然周">
-          <template slot-scope="scope">
-            <p v-for="(item , index) in scope.row.weeks"
-               :key="index">{{item}}</p>
-          </template>
-        </el-table-column>
-        <el-table-column prop="timeAreas"
-                         label="通行时间">
-          <template slot-scope="scope">
-            <el-tooltip :content="item"
-                        v-for="(item , index) in scope.row.timeAreas"
-                        :key="index">
-              <div>{{item}}</div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column prop="remarks"
-                         label="备注"></el-table-column>
-        <el-table-column label="操作"
-                         width="210">
-          <template slot-scope="scope">
-            <el-button :disabled="!OwnAuthDisabled"
-                       @click="editEquipment(scope.row)"
-                       type="text"
-                       size="small">编辑</el-button>
-            <el-button :disabled="!OwnAuthDisabled"
-                       type="text"
-                       class="deleteText"
-                       @click="deleteEquip(scope.row)"
-                       size="small">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-
-    <el-pagination @current-change="handleCurrentChange"
-                   :current-page.sync="pageNow"
-                   :page-size="pageSize"
-                   background
-                   class="pagination"
-                   layout="total, prev, pager, next, jumper"
-                   :total="dataTotal"></el-pagination>
+		<div class="tableContent" :style="{'height':tableHeight+'px'}">
+			<el-table :data="tableData" class="mytable" style="width: 100%;overflow:initial;">
+				<el-table-column prop="name" width="180" label="名称"></el-table-column>
+				<el-table-column prop="weeks" label="自然周">
+					<template slot-scope="scope">
+						<p v-for="(item , index) in scope.row.weeks" :key="index">{{item}}</p>
+					</template>
+				</el-table-column>
+				<el-table-column prop="timeAreas" label="通行时间">
+					<template slot-scope="scope">
+						<el-tooltip :content="item" v-for="(item , index) in scope.row.timeAreas" :key="index">
+							<div>{{item}}</div>
+						</el-tooltip>
+					</template>
+				</el-table-column>
+				<el-table-column prop="remarks" label="备注"></el-table-column>
+				<el-table-column label="操作" width="210">
+					<template slot-scope="scope">
+						<el-button
+							:disabled="!OwnAuthDisabled"
+							@click="editEquipment(scope.row)"
+							type="text"
+							size="small"
+						>编辑</el-button>
+						<el-button
+							:disabled="!OwnAuthDisabled"
+							type="text"
+							class="deleteText"
+							@click="deleteEquip(scope.row)"
+							size="small"
+						>删除</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+		</div>
+		<el-pagination
+			@current-change="handleCurrentChange"
+			:current-page.sync="pageNow"
+			:page-size="pageSize"
+			background
+			class="pagination"
+			layout="total, prev, pager, next, jumper"
+			:total="dataTotal"
+		></el-pagination>
 
     <add-access-time-dialog :visible.sync="AddAccesTimeDialogVisible"
                             :title="title"
@@ -108,6 +101,7 @@ export default {
       this.getTimeList();
     },
     getTimeList() {
+      this.tableData = [];
       api
         .getTimeList({
           limit: this.pageSize,
@@ -274,9 +268,9 @@ export default {
 
 <style lang="scss">
 .mytable {
-  p {
-    margin: 0px;
-  }
+	p {
+		margin: 0px;
+	}
 }
 </style>
 
@@ -284,22 +278,22 @@ export default {
 @import "@/style/variables.scss";
 
 .wrap {
-  height: 100%;
-  padding: $rightContentPadding;
-  box-sizing: border-box;
-  background-color: $rigthContentBackgroundColor;
-  .tableContent {
-    overflow: auto;
-  }
-  .button {
-    @include button30;
-    @include font-s;
-    font-size: 13px;
-    margin: 0px 0px 20px;
-  }
-  .pagination {
-    margin-top: 15px;
-    float: right;
-  }
+	height: 100%;
+	padding: $rightContentPadding;
+	box-sizing: border-box;
+	background-color: $rigthContentBackgroundColor;
+	.tableContent {
+		overflow: auto;
+	}
+	.button {
+		@include button30;
+		@include font-s;
+		font-size: 13px;
+		margin: 0px 0px 20px;
+	}
+	.pagination {
+		margin-top: 15px;
+		float: right;
+	}
 }
 </style>

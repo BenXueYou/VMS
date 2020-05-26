@@ -23,8 +23,6 @@ class CWebSocket
                         reject(-1);
                     }
                 }
-                this.m_websocket.onclose = (e) => {
-                }
 
                 this.m_websocket.onmessage = (evt) => {
                     let s = evt.data;
@@ -61,6 +59,9 @@ class CWebSocket
                 this.m_websocket.send(JSON.stringify(content));
             else
                 reject("");
+            this.m_websocket.onclose = (e) => {
+              resolve("");
+            }
         });
     }
 }

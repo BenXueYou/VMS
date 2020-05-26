@@ -1,14 +1,97 @@
 import axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
-// import store from "@/store/store.js";
+import store from "@/store/store.js";
 
-let sbUrl = RestApi.api.sbUrl;
+let sbUrl = RestApi.sbUrl;
 // var projectUuid = store.state.home.projectUuid;
 
+export function getRoomMachineCallParamUrl(params) {
+  let url = sbUrl.getRoomMachineCallParamUrl;
+  return axios({
+    method: 'get',
+    url,
+    params
+  });
+}
+export function putRoomMachineCallParamUrl(params) {
+  let url = sbUrl.getRoomMachineCallParamUrl;
+  return axios({
+    method: 'put',
+    url,
+    data: params
+  });
+}
+
 // 获取组织架构树
-export function getOrgTree(params, orgType) {
+export function getOrgTree(params, orgType, id) {
   params.orgType = orgType;
-  let url = sbUrl.getOrgUrl;
+  let url = sbUrl.getOrgUrl(id);
+  // console.log(param);
+  // if (param.length) {
+  //   url += `?orgUuidArr=${param.toString()}`;
+  // }
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+// 传进来projectUuid来进行获取设备树
+export function getOrgByProjectUuid(params, uuid) {
+  let url = sbUrl.getOrgByProjectUuidUrl(uuid);
+  // console.log(param);
+  // if (param.length) {
+  //   url += `?orgUuidArr=${param.toString()}`;
+  // }
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+
+// 获取区域项目的列表
+export function getAreaProject(params, id) {
+  let url = sbUrl.getAreaProjectUrl(id);
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+// 设置区域项目的列表在哪个层级
+export function setAreaProject(data, id) {
+  let url = sbUrl.setAreaProjectUrl(id);
+  return axios({
+    method: "post",
+    url,
+    data
+  });
+}
+// 删除区域项目的列表在哪个层级
+export function deleteAreaProject(data, id) {
+  let url =
+    sbUrl.deleteAreaProjectUrl(id) +
+    `?childProjectUuid=${data.childProjectUuid}`;
+  return axios({
+    method: "delete",
+    url,
+    data
+  });
+}
+
+// 获取区域管理组织架构树
+export function getAreaOrg(params, id) {
+  let url = sbUrl.getAreaOrgUrl(id);
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+// 获取区域管理组织架构树--一次性
+export function getAreaAllOrg(params, id) {
+  let url = sbUrl.getAreaAllOrgUrl(id);
   // console.log(param);
   // if (param.length) {
   //   url += `?orgUuidArr=${param.toString()}`;
@@ -20,8 +103,8 @@ export function getOrgTree(params, orgType) {
   });
 }
 // 操作组织架构树
-export function operatorOrgTree(data) {
-  let url = sbUrl.operatorOrgUrl;
+export function operatorOrgTree(data, id) {
+  let url = sbUrl.operatorOrgUrl(id);
   return axios({
     method: "post",
     url,
@@ -36,7 +119,8 @@ export function getScond(viewType) {
   });
 }
 export function getResultImport(params) {
-  let url = sbUrl.getResultImportUrl;
+  // let url = sbUrl.getResultImportUrl;
+  let url = sbUrl.getBuildgingImportResApi(store.state.home.projectUuid);
   return axios({
     method: "get",
     url,
@@ -44,8 +128,8 @@ export function getResultImport(params) {
   });
 }
 // 操作标签 上下移动
-export function opeartorTag(data) {
-  let url = sbUrl.operatorTagUrl;
+export function opeartorTag(data, id) {
+  let url = sbUrl.operatorTagUrl(id);
   return axios({
     method: "put",
     url,
@@ -53,24 +137,48 @@ export function opeartorTag(data) {
   });
 }
 // 编辑权限组接口
-export function getTDByType(resUuid, resType) {
-  let url = sbUrl.getTDByTypeUrl(resUuid, resType);
+export function getTDByType(resUuid, resType, id, params) {
+  let url = sbUrl.getTDByTypeUrl(resUuid, resType, id);
   return axios({
     method: "get",
-    url
+    url,
+    params
   });
 }
 // 编辑权限组接口
-export function getDeviceInfoByChannel(channelUuid) {
-  let url = sbUrl.getDeviceInfoByChannelUrl(channelUuid);
+export function getDeviceInfoByChannel(channelUuid, id) {
+  let url = sbUrl.getDeviceInfoByChannelUrl(channelUuid, id);
   return axios({
     method: "get",
     url
   });
 }
+
+export function getViewTypeList(resUuid, resType) {
+  let url = sbUrl.getViewTypeListUrl(resUuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+export function getTongDaoType(resUuid, resType) {
+  let url = sbUrl.getTongDaoTypeUrl(resUuid);
+  return axios({
+    method: "get",
+    url
+  });
+}
+// // 编辑权限组接口
+// export function getDeviceInfoByChannel(channelUuid) {
+//   let url = sbUrl.getDeviceInfoByChannelUrl(channelUuid);
+//   return axios({
+//     method: "get",
+//     url
+//   });
+// }
 // 添加组织树节点
-export function addOrgTree(param) {
-  let url = sbUrl.addOrgUrl;
+export function addOrgTree(param, id) {
+  let url = sbUrl.addOrgUrl(id);
   return axios({
     method: "post",
     url,
@@ -78,8 +186,8 @@ export function addOrgTree(param) {
   });
 }
 // 添加标签节点
-export function addTag(param) {
-  let url = sbUrl.addTagUrl;
+export function addTag(param, id) {
+  let url = sbUrl.addTagUrl(id);
   return axios({
     method: "post",
     url,
@@ -87,24 +195,24 @@ export function addTag(param) {
   });
 }
 // 删除节点
-export function deleteOrgTree(uuid) {
-  let url = sbUrl.deleteOrgUrl(uuid);
+export function deleteOrgTree(uuid, id) {
+  let url = sbUrl.deleteOrgUrl(uuid, id);
   return axios({
     method: "delete",
     url
   });
 }
 // 删除标签
-export function deleteTag(tagUuid) {
-  let url = sbUrl.deleteTagUrl(tagUuid);
+export function deleteTag(tagUuid, id) {
+  let url = sbUrl.deleteTagUrl(tagUuid, id);
   return axios({
     method: "delete",
     url
   });
 }
 // 更新节点数据
-export function updateOrg(param) {
-  let url = sbUrl.updateOrgUrl;
+export function updateOrg(param, id) {
+  let url = sbUrl.updateOrgUrl(id);
   return axios({
     method: "put",
     url,
@@ -112,8 +220,8 @@ export function updateOrg(param) {
   });
 }
 // 获取基建树
-export function getIninfrastructureList(uuid) {
-  let url = sbUrl.getIninfrastructureListUrl(uuid);
+export function getIninfrastructureList(uuid, id) {
+  let url = sbUrl.getIninfrastructureListUrl(uuid, id);
   return axios({
     method: "get",
     url
@@ -128,8 +236,8 @@ export function dataBackup(uuid) {
   });
 }
 // 更新标签数据
-export function updateTagUrl(param) {
-  let url = sbUrl.updateTagUrl;
+export function updateTagUrl(param, id) {
+  let url = sbUrl.updateTagUrl(id);
   return axios({
     method: "put",
     url,
@@ -145,7 +253,7 @@ export function getconfigissue() {
   });
 }
 // 让某个机器开始下发
-export function setConfigIssue(param) {
+export function setConfigIssue(param, id) {
   let url = sbUrl.setConfigIssue;
   return axios({
     method: "POST",
@@ -172,8 +280,8 @@ export function stopConfigIssue(deviceUuid, taskUuid) {
   });
 }
 // 获取标签列表
-export function getTagList(params) {
-  let url = sbUrl.getTagUrl;
+export function getTagList(params, id) {
+  let url = sbUrl.getTagUrl(id);
   return axios({
     method: "get",
     url,
@@ -182,8 +290,8 @@ export function getTagList(params) {
 }
 // ---------------------------------设备列表相关接口---------------
 // 删除通道标签
-export function deleteChannelTagUrl(data, channelUuid, channelType) {
-  let url = sbUrl.deleteChannelTagUrl(channelUuid, channelType);
+export function deleteChannelTagUrl(data, channelUuid, channelType, id) {
+  let url = sbUrl.deleteChannelTagUrl(channelUuid, channelType, id);
   return axios({
     method: "delete",
     url,
@@ -191,8 +299,11 @@ export function deleteChannelTagUrl(data, channelUuid, channelType) {
   });
 }
 // 获取设备列表
-export function getDevList(params) {
-  let url = sbUrl.getDevListUrl;
+export function getDevList(params, id) {
+  if (!id) {
+    id = store.state.home.projectUuid;
+  }
+  let url = sbUrl.getDevListUrl(id);
   return axios({
     method: "get",
     url,
@@ -200,16 +311,16 @@ export function getDevList(params) {
   });
 }
 //  根据设备拿到通道
-export function getTDByDUuid(uuid) {
-  let url = sbUrl.getTDByDUuidUrl(uuid);
+export function getTDByDUuid(uuid, id) {
+  let url = sbUrl.getTDByDUuidUrl(uuid, id);
   return axios({
     method: "get",
     url
   });
 }
 // 根据组织拿到通道
-export function getTDByOrgUuid(uuid, params = {}) {
-  let url = sbUrl.getTDByOrgUuidUrl(uuid);
+export function getTDByOrgUuid(uuid, params = {}, id) {
+  let url = sbUrl.getTDByOrgUuidUrl(uuid, id);
   return axios({
     method: "get",
     url,
@@ -217,16 +328,17 @@ export function getTDByOrgUuid(uuid, params = {}) {
   });
 }
 // 获取设备列表的详情
-export function getDeviceDetail(uuid) {
-  let url = sbUrl.deviceDetailUrl(uuid);
+export function getDeviceDetail(uuid, projectUuid) {
+  projectUuid = projectUuid || store.state.home.projectUuid;
+  let url = sbUrl.deviceDetailUrl(uuid, projectUuid);
   return axios({
     method: "get",
     url
   });
 }
 // 保存设备的信息
-export function saveDevice(data) {
-  let url = sbUrl.saveDeviceUrl;
+export function saveDevice(data, id) {
+  let url = sbUrl.saveDeviceUrl(id);
   return axios({
     method: "put",
     data,
@@ -234,8 +346,8 @@ export function saveDevice(data) {
   });
 }
 // 删除已管理的设备
-export function deleteDevice(data) {
-  let url = sbUrl.deleteDeviceUrl;
+export function deleteDevice(data, id) {
+  let url = sbUrl.deleteDeviceUrl(id);
   return axios({
     method: "delete",
     url,
@@ -243,8 +355,8 @@ export function deleteDevice(data) {
   });
 }
 // 添加未管理的设备到管理设备中去
-export function addNewDevice(data) {
-  let url = sbUrl.addNewDeviceUrl;
+export function addNewDevice(data, id) {
+  let url = sbUrl.addNewDeviceUrl(id);
   return axios({
     method: "post",
     url,
@@ -252,8 +364,8 @@ export function addNewDevice(data) {
   });
 }
 // 获取标签通道
-export function getChannelByTag(params) {
-  let url = sbUrl.getChannelByTagUrl;
+export function getChannelByTag(params, id) {
+  let url = sbUrl.getChannelByTagUrl(id);
   return axios({
     method: "get",
     url,
@@ -262,8 +374,8 @@ export function getChannelByTag(params) {
 }
 
 // 导入标签通道
-export function importElement(data, uuid) {
-  let url = sbUrl.importElementUrl(uuid);
+export function importElement(data, uuid, id) {
+  let url = sbUrl.importElementUrl(uuid, id);
   return axios({
     method: "post",
     url,
@@ -272,8 +384,8 @@ export function importElement(data, uuid) {
 }
 
 // 获取权限组已添加的人资源下的具体的人员列表
-export function getResource(params, uuid) {
-  let url = sbUrl.getResourceUrl(uuid);
+export function getResource(params, uuid, id) {
+  let url = sbUrl.getResourceUrl(uuid, id);
   return axios({
     method: "get",
     url,
@@ -281,8 +393,8 @@ export function getResource(params, uuid) {
   });
 }
 // 将标签通道移动出去
-export function removeTag(data) {
-  let url = sbUrl.removeTagUrl;
+export function removeTag(data, id) {
+  let url = sbUrl.removeTagUrl(id);
   return axios({
     method: "delete",
     url,
@@ -290,8 +402,8 @@ export function removeTag(data) {
   });
 }
 // 获取未管理列表
-export function getNoGuanLi(params) {
-  let url = sbUrl.getNoGuanLiUrl;
+export function getNoGuanLi(params, id) {
+  let url = sbUrl.getNoGuanLiUrl(id);
   // alert(url);
   // 添加参数
   // Object.assign(params, { 'projectUuid': projectUuid });
@@ -302,8 +414,8 @@ export function getNoGuanLi(params) {
   });
 }
 // 添加标签通道
-export function importDevice(data) {
-  let url = sbUrl.importDeviceUrl;
+export function importDevice(data, id) {
+  let url = sbUrl.importDeviceUrl(id);
   return axios({
     method: "post",
     url,
@@ -342,7 +454,6 @@ export function setDoor(data, uuid) {
     data
   });
 }
-
 export function getTempMeasure(uuid) {
   let url = sbUrl.getTempMeasure(uuid);
   return axios({
@@ -397,8 +508,8 @@ export function getFace(uuid) {
     url
   });
 }
-export function setFace(data, uuid) {
-  let url = sbUrl.setFaceUrl + `?deviceUuid=${uuid}`;
+export function setFace(data, uuid, id) {
+  let url = sbUrl.setFaceUrl(id) + `?deviceUuid=${uuid}`;
   return axios({
     method: "put",
     url,
@@ -421,11 +532,12 @@ export function getDoorDutou(uuid) {
     url
   });
 }
-export function getChnByD(uuid) {
-  let url = sbUrl.getChnByDUrl(uuid);
+export function getChnByD(deviceUuid, projectUuid, params) {
+  let url = sbUrl.getChnByDUrl(deviceUuid, projectUuid);
   return axios({
     method: "get",
-    url
+    url,
+    params
   });
 }
 // 设置门读头的数据
@@ -439,7 +551,7 @@ export function setDoorDutou(data, uuid, deviceUuid) {
 }
 // 设置网路参数
 export function setNet(data) {
-  let url = sbUrl.setNetUrl;
+  let url = sbUrl.setNetUrl();
   return axios({
     method: "put",
     url,
@@ -455,7 +567,7 @@ export function getTime(params) {
   });
 }
 export function setTime(data, uuid) {
-  let url = sbUrl.setTimeUrl + `?deviceUuid=${uuid}`;
+  let url = sbUrl.setTimeUrl() + `?deviceUuid=${uuid}`;
   return axios({
     method: "put",
     url,
@@ -470,7 +582,7 @@ export function getAlarm(uuid) {
   });
 }
 export function setAlarm(data, uuid) {
-  let url = sbUrl.setAlarmUrl + `?deviceUuid=${uuid}`;
+  let url = sbUrl.setAlarmUrl() + `?deviceUuid=${uuid}`;
   return axios({
     method: "put",
     url,
@@ -572,12 +684,12 @@ export function exportProgress(params) {
 }
 // 下载基建模板
 export function downloadBuliding() {
-  let url = sbUrl.downloadBulidingUrl;
+  let url = sbUrl.downloadBulidingUrl();
   return url;
 }
 // 下载基建模板之前的请求，判断返回的是不是文件流
 export function beforeDownloadJugde() {
-  let url = sbUrl.downloadBulidingUrl;
+  let url = sbUrl.downloadBulidingUrl();
   return axios({
     url,
     method: "get"
@@ -585,20 +697,20 @@ export function beforeDownloadJugde() {
 }
 // 导入基建文件
 export function buildingExportUrl() {
-  let url = sbUrl.buildingExportUrl;
+  let url = sbUrl.buildingExportUrl();
   return url;
 }
 // 获取基建进度
-export function buildingProgressUrl(params = {}) {
-  let url = sbUrl.buildingProgressUrl + `/${params.importTaksUuid}`;
+export function buildingProgressUrl(params = {}, id) {
+  let url = sbUrl.buildingProgressUrl(id) + `/${params.importTaksUuid}`;
   return axios({
     method: "get",
     url
   });
 }
 // buildIsHaveErrorFileUrl
-export function buildIsHaveErrorFile(uuid) {
-  let url = sbUrl.buildIsHaveErrorFileUrl(uuid.importTaksUuid);
+export function buildIsHaveErrorFile(uuid, id) {
+  let url = sbUrl.buildIsHaveErrorFileUrl(uuid.importTaksUuid, id);
   return axios({
     url,
     method: "get"
@@ -613,8 +725,8 @@ export function beforeErrorlogDownload(uuid) {
   });
 }
 // 获取错误日志
-export function buildingErrorUrl(uuid) {
-  let url = sbUrl.buildingErrorUrl(uuid);
+export function buildingErrorUrl(uuid, id) {
+  let url = sbUrl.buildingErrorUrl(uuid, id);
   return url;
 }
 // 获取访客机登记配置
@@ -681,39 +793,39 @@ export function judgeTask(params) {
   });
 }
 // 获取本地服务列表
-export function serviceList(viewType) {
-  let url = sbUrl.serviceListUrl + "/" + viewType;
+export function serviceList(viewType, id) {
+  let url = sbUrl.serviceListUrl(id) + "/" + viewType;
   return axios({
     method: "get",
     url
   });
 }
-export function DType(viewType) {
-  let url = sbUrl.DTypetUrl + "/" + viewType;
+export function DType(viewType, id) {
+  let url = sbUrl.DTypetUrl(id) + "/" + viewType;
   return axios({
     method: "get",
     url
   });
 }
 // 获取设备类型列表
-export function deviceTypeListUrl(viewType) {
-  let url = sbUrl.deviceTypeListUrl + "/" + viewType;
+export function deviceTypeListUrl(viewType, id) {
+  let url = sbUrl.deviceTypeListUrl(id) + "/" + viewType;
   return axios({
     method: "get",
     url
   });
 }
 // 同步通道
-export function syncChannel(deviceUuid) {
-  let url = sbUrl.syncChannelUrl + `?deviceUuid=${deviceUuid}`;
+export function syncChannel(deviceUuid, id) {
+  let url = sbUrl.syncChannelUrl(id) + `?deviceUuid=${deviceUuid}`;
   return axios({
     method: "PUT",
     url
   });
 }
 // 手动添加设备
-export function manualEquipment(data) {
-  let url = sbUrl.manualEquipmentUrl;
+export function manualEquipment(data, id) {
+  let url = sbUrl.manualEquipmentUrl(id);
   return axios({
     method: "POST",
     url,
@@ -722,7 +834,7 @@ export function manualEquipment(data) {
 }
 // 手动编辑设备
 export function editManualEquipment(data) {
-  let url = sbUrl.manualEquipmentUrl;
+  let url = sbUrl.manualEquipmentUrl();
   return axios({
     method: "PUT",
     url,
@@ -760,20 +872,5 @@ export function setImmediateSyncSettingl(uuid, data) {
     method: "put",
     url,
     data
-  });
-}
-export function getTongDaoType(resUuid, resType) {
-  let url = sbUrl.getTongDaoTypeUrl(resUuid);
-  return axios({
-    method: "get",
-    url
-  });
-}
-
-export function getViewTypeList(resUuid, resType) {
-  let url = sbUrl.getViewTypeListUrl(resUuid);
-  return axios({
-    method: "get",
-    url
   });
 }

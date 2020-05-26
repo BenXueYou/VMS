@@ -35,27 +35,62 @@ export default {
     });
   },
   mounted() {
-    console.log(this.$store.state.home.projectList);
     this.data = this.$store.state.home.projectList;
   },
   methods: {
     selectRow(index) {
       let uuid = this.data[index].projectUuid;
+      let projectType = this.data[index];
       this.$store.dispatch("setProjectUuid", uuid);
+      this.$store.dispatch("setProjectType", projectType);
+      this.$store.dispatch(
+        "setPlatformLevel",
+        Boolean(projectType.platformLevel === "levelOne")
+      );
       this.$ProjectManageAjax
         .setLogUuid({
           logUuid: sessionStorage.getItem("logUuid")
-        })
+        }, uuid)
         .then(res => {
           // let body = res.data;
           // this.loginSuccessResponse(body);
         });
       // 刷新页面以便于更新projectUuid
       this.$nextTick(() => {
-        this.$router.push("/home");
-        window.location.reload();
+        // 切换项目清除顶部的菜单
+        this.$store.dispatch("setTagViewArr", []);
+        this.$store.dispatch("setLocalTag", "Home");
+        // 清除缓存的项目流媒体地址
+        sessionStorage.setItem("jDescription", {});
+        this.getMapSet(uuid);
       });
-    }
+    },
+    getMapSet(projectUuid) {
+      this.$sysConfigHttp
+        .getMapSet(projectUuid)
+        .then(res => {
+          if (res.data.data) {
+            this.$store.dispatch("setMapSetData", res.data.data);
+          } else {
+            this.$store.dispatch("setMapSetData", {
+              returnVal: "",
+              supplier: "baidu"
+            });
+          }
+          // 刷新页面以便于更新projectUuid
+          this.$router.push("/home");
+          window.location.reload();
+        })
+        .catch(() => {
+          this.$store.dispatch("setMapSetData", {
+            returnVal: "",
+            supplier: "baidu"
+          });
+          // 刷新页面以便于更新projectUuid
+          this.$router.push("/home");
+          window.location.reload();
+        });
+    },
   }
 };
 </script>

@@ -1,28 +1,18 @@
-var protocolHeader = window.location.protocol;
-var hostname = window.location.hostname;
-var ip, websocketIp, imageUrl;
-// var Authorization = "Basic d2ViOjEyMzQ1Ng=="
-var Authorization = "Basic YXBwOjEyMzQ1Ng==";
+var ip,
+  websocketIp,
+  imageUrl,
+  protocolHeader = window.location.protocol,
+  hostname = window.location.hostname,
+  Authorization = "Basic YXBwOjEyMzQ1Ng==";
 var DEBUG = "DEBUG";
 if (DEBUG == "DEBUG") {
   // 测试环境
-  ip = "192.168.9.232:15000";
-  websocketIp = "192.168.9.232:15007";
-  imageUrl =
-    protocolHeader +
-    "//" +
-    ip +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
+  ip = "192.168.9.102:15000";
+  websocketIp = "192.168.9.102:15007";
 } else if (DEBUG == "TEST") {
   // 提测环境
-  // ip = "192.168.9.141:15000";
-  ip = "192.168.9.232:15000";
-  websocketIp = "192.168.9.232:80";
-  imageUrl =
-    protocolHeader +
-    "//" +
-    ip +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
+  ip = "192.168.9.210:15000";
+  websocketIp = "192.102.9.210:15007";
 } else {
   // 部署环境
   if (protocolHeader === "https:") {
@@ -32,156 +22,22 @@ if (DEBUG == "DEBUG") {
     ip = hostname + ":15000";
     websocketIp = hostname + ":80";
   }
-  var imgUrlStr = protocolHeader + "//" + ip;
-  imageUrl =
-    imgUrlStr +
-    "/fileforward-server-v1/project/test_database_api/fileforward/fileByUrl?fileUrl=";
 }
 // 设备资源的类型前端字典表:front end so difficult
-var resourceType = {
-  video: [
-    {
-      id: "ipc/nvr/decoder",
-      label: "视频设备"
-    },
-    {
-      id: "bullet_camera/dome_camera/ball_camera/bullet_camera_ptz",
-      label: "监控点"
-    },
-    {
-      id: "auth_video_input",
-      label: "输入"
-    },
-    {
-      id: "auth_video_output",
-      label: "输出"
-    }
-  ],
-  door: [
-    {
-      id: "access_ctrl",
-      label: "门禁设备"
-    },
-    {
-      id: "door",
-      label: "门禁点"
-    },
-    {
-      id: "door_aic",
-      label: "输入"
-    },
-    {
-      id: "door_aoc",
-      label: "输出"
-    },
-    {
-      id: "readhead",
-      label: "读头"
-    }
-  ],
-  alarm: [
-    {
-      id: "auth_alarm",
-      label: "门禁设备"
-    },
-    {
-      id: "auth_alarm_zone",
-      label: "防区"
-    },
-    {
-      id: "auth_alarm_subsystem",
-      label: "子系统"
-    },
-    {
-      id: "auth_alarm_output",
-      label: "输出"
-    }
-  ],
-  visitor: [
-    {
-      id: "auth_visitor",
-      label: "访客设备"
-    }
-  ]
-};
-let treeIcons = [
-  {
-    label: "文件",
-    value: "device",
-    icon: "doc"
-  },
-  {
-    label: "IPC",
-    value: "ipc",
-    icon: "ip"
-  },
-  {
-    label: "NVR",
-    value: "nvr",
-    icon: "nvr"
-  },
-  {
-    label: "门禁",
-    value: "door",
-    icon: "door"
-  },
-  {
-    label: "人工访客",
-    value: "hand_visitordevice",
-    icon: "rgfk"
-  },
-  {
-    label: "自助访客",
-    value: "auto_visitordevice",
-    icon: "zzfk"
-  },
-  {
-    label: "枪机",
-    value: "bullet_camera",
-    icon: "qj"
-  },
-  {
-    label: "半球",
-    value: "dome_camera",
-    icon: "bq"
-  },
-  {
-    label: "球机",
-    value: "ball_camera",
-    icon: "qiuji"
-  },
-  {
-    label: "人脸门",
-    value: "",
-    icon: "rl"
-  },
-  {
-    label: "普通门",
-    value: "",
-    icon: "pt"
-  },
-  {
-    label: "带云台的枪机",
-    value: "bullet_camera_ptz",
-    icon: "ytqj"
-  }
-];
 window.config = {
   DeBug: true,
-  resourceType,
-  treeIcons,
   Authorization: Authorization,
   ip: ip,
   projectUuid: "75dc384f95b84e16a93d7910552a4693",
-  zhengyu: "basedata-v1",
-  zhangwz: "iacserv-v1",
+  // zhengyu: "basedata-v1",
+  // zhangwz: "iacserv-v1",
   door: "door",
   readhead: "readhead",
   door_ipc: "door_ipc",
   door_aoc: "door_aoc",
   door_aic: "door_aic",
-  wsh: "iacconfig-v1",
-  wyf: "iacapp-v1",
+  // wsh: "iacconfig-v1",
+  // wyf: "iacapp-v1",
   socketIP: websocketIp + "/webSocketServer",
   orgType: "device",
   tagType: "device",
@@ -190,40 +46,12 @@ window.config = {
   forbidBtnArr: ["uncome", "unleave"],
   signOffBtnArr: ["unleave", "leave_overtime"],
   PicSourceType: "facelog",
-  alinkArr: [
-    {
-      strName: "关于广拓",
-      strValue: "http://www.gato.com.cn/Intro/index/cat_id/84.html"
-    },
-    {
-      strName: "联系我们",
-      strValue: "http://www.gato.com.cn/Contact/index.html"
-    },
-    {
-      strName: "产品中心",
-      strValue: "http://www.gato.com.cn/Product/index.html"
-    },
-    {
-      strName: "解决方案",
-      strValue: "http://www.gato.com.cn/Solution/index.html"
-    },
-    {
-      strName: "成功案例",
-      strValue: "http://www.gato.com.cn/Case/index.html"
-    },
-    {
-      strName: "服务支持",
-      strValue: "http://www.gato.com.cn/Download/index/cat_id/65.html"
-    },
-    {
-      strName: "资质荣誉",
-      strValue: "http://www.gato.com.cn/Honor/index/cat_id/74.html"
-    },
-    {
-      strName: "新闻中心",
-      strValue: "http://www.gato.com.cn/News/index.html"
-    }
-  ],
+  subCaptureApi: "/user/topic/face-1.3/client/capture",
+  subRecognizationApi: "/user/topic/face-1.3/client/recognization",
+  subMonitorAlarmApi: "/user/topic/face-1.3/client/monitorAlarm",
+  subDeviceOnOffApi: "/user/topic/status/device",
+  subPrewarningApi: "/user/topic/staff/prewarning/info",
+  subBayonetApi: "/user/topic/dashboard-1.8/client/vehicleSnapshotMessage",
   door_machine: [],
   video: [{ value: "ipc", label: "IPC" }],
   alarm: [],
@@ -233,5 +61,3 @@ window.config = {
     { value: "vistor_machine", label: "测试访客机" }
   ]
 };
-
-// tableData: Array.from({ length: 15 }, (v, i) => ({ id: i, staffName: '李怡婷', createTime: '2017-06-20 12:00:00', gender: '女', deviceName: '广拓门禁', address: '上海地铁恒通大厦' })),

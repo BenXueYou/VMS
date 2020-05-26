@@ -1,5 +1,6 @@
 <template>
-  <div class="el-menu-div">
+  <div class="el-menu-div"
+       id="el-menu-div">
     <el-menu :default-active="activeIndex"
              class="el-menu-demo"
              mode="horizontal"
@@ -10,8 +11,9 @@
       <el-menu-item index="Home"
                     v-show="projectUuid">首页</el-menu-item>
       <template v-for="(item, index) in $store.state.home.tagViewArr">
-        <el-menu-item :key="index"
-                      :index="item.name">
+        <el-menu-item :key="item.key"
+                      :index="item.name"
+                      v-if="index < $store.state.home.tagHoldNum - 1">
           <span>{{item.title}}</span>
           <div class="icon-close-replace"></div>
           <img src="@/assets/images/close.png"
@@ -19,6 +21,23 @@
                @click.stop="onClickDelete(item)">
         </el-menu-item>
       </template>
+      <el-dropdown trigger="click"
+                   placement="bottom"
+                   v-if="$store.state.home.tagViewArr.length >= $store.state.home.tagHoldNum">
+        <img src="@/assets/icon/more_menu.png">
+        <el-dropdown-menu slot="dropdown">
+          <template v-for="(item, index) in $store.state.home.tagViewArr">
+            <el-dropdown-item :key="item.key"
+                              v-if="index >= $store.state.home.tagHoldNum - 1"
+                              @click.native.stop="dropMenuClick(item)">
+              <span>{{item.title}}</span>
+              <img src="@/assets/icon/delete_menu.png"
+                   style="margin-left: 12px;"
+                   @click.stop="onClickDelete(item)">
+            </el-dropdown-item>
+          </template>
+        </el-dropdown-menu>
+      </el-dropdown>
     </el-menu>
   </div>
 </template>
@@ -52,6 +71,8 @@ export default {
       this.$router.push({ name: "Home" });
     }
     this.registerEventbus();
+    let tagDivWidth = document.getElementById("el-menu-div").offsetWidth;
+    this.$store.dispatch("setTagHoldNum", parseInt(tagDivWidth / 120));
   },
   activated() {},
   methods: {
@@ -63,9 +84,15 @@ export default {
     onClickDelete(item) {
       this.$store.dispatch("delTagViewItem", item);
       if (item.name === this.$store.state.home.localTag) {
-        if (this.$store.state.home.tagViewArr.length > 0) {
+        if (this.$store.state.home.tagViewArr.length > 0 && this.$store.state.home.tagViewArr.length < this.$store.state.home.tagHoldNum - 1) {
           // eslint-disable-next-line
           let index = this.$store.state.home.tagViewArr.length - 1;
+          let laseMenuName = this.$store.state.home.tagViewArr[index].name;
+          this.$store.dispatch("setLocalTag", laseMenuName);
+          this.$bus.$emit("setLocalTag", laseMenuName);
+          this.$router.push({ name: laseMenuName });
+        } else if (this.$store.state.home.tagViewArr.length >= this.$store.state.home.tagHoldNum - 1) {
+          let index = this.$store.state.home.tagHoldNum - 2;
           let laseMenuName = this.$store.state.home.tagViewArr[index].name;
           this.$store.dispatch("setLocalTag", laseMenuName);
           this.$bus.$emit("setLocalTag", laseMenuName);
@@ -76,6 +103,15 @@ export default {
           this.$router.push({ name: "Home" });
         }
       }
+    },
+    dropMenuClick(item) {
+      this.$store.dispatch("delTagViewItem", item);
+      this.$store.dispatch("addTagViewItem", item);
+      this.$store.dispatch("setLocalTag", item.name);
+      this.$nextTick(() => {
+        this.activeIndex = item.name;
+      });
+      this.$router.push({ name: item.name });
     },
     registerEventbus() {
       this.$bus.$on("setLocalTag", localTag => {
@@ -109,17 +145,22 @@ export default {
   }
 };
 </script>
-
 <style lang="scss">
 .el-menu-div {
+  width: 85%;
+  overflow-x: auto;
   .el-menu.el-menu--horizontal {
     border-bottom: 0px !important;
   }
-  .el-menu--horizontal>.el-menu-item {
+  .el-menu--horizontal > .el-menu-item {
     height: 50px;
     line-height: 50px;
   }
   .el-menu-demo {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-flow: row nowrap;
     .el-menu-item {
       font-family: PingFangSC-Regular;
       font-size: 14px;

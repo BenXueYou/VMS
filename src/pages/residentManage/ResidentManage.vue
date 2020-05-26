@@ -1,19 +1,26 @@
 <template>
   <div class="resident">
-    <the-leftmenu @tabClick="leftTabClick"
-                  :ShowAuthDisabled="ShowAuthDisabled"
-                  :OwnAuthDisabled="OwnAuthDisabled"></the-leftmenu>
+    <keep-alive>
+      <one-level-left-menu v-if="isOneProject"
+                          @tabClick="leftTabClick"
+                          :ShowAuthDisabled="ShowAuthDisabled"
+                          :OwnAuthDisabled="OwnAuthDisabled"></one-level-left-menu>
+      <the-leftmenu v-else></the-leftmenu>
+    </keep-alive>
+
     <the-wrap :tabName="tabName"></the-wrap>
   </div>
 </template>
 
 <script>
 import TheLeftmenu from "./views/TheLeftmenu";
+import OneLevelLeftMenu from "./views/OneLevelLeftMenu";
 import TheWrap from "./views/TheContent";
 import { mapState } from "vuex";
 export default {
   components: {
     TheLeftmenu,
+    OneLevelLeftMenu,
     TheWrap
   },
   props: {},
@@ -25,6 +32,7 @@ export default {
       addTagDialogVisible: false,
       residentTagType: "resident",
       ShowAuthDisabled: false,
+      isOneProject: false,
       OwnAuthDisabled: false
     };
   },
@@ -38,16 +46,11 @@ export default {
     })
   },
   mounted() {
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
+    console.log(this.isOneProject);
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("居民管理", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("居民管理", "isOwn");
-    console.log(this.ShowAuthDisabled);
-    console.log(this.OwnAuthDisabled);
-    // const { commit, state, getters } = this.$store;
-    // console.log(state.resident.count);
-    // commit("increment");
-    // console.log(state.resident.count);
-    // console.log(getters.doubleCount);
-    // console.log(this.count);
   },
   methods: {
     leftTabClick(tabName, id) {

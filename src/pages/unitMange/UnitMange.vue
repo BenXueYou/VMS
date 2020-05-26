@@ -7,20 +7,29 @@
     <add-or-edit-unit-dialog :isShow="isShowAddOrEditDialog"
                              @onCancel="onCancelAddOrEditDialog"
                              :isAdd="isAdd"
+                             :isOneProject='isOneProject'
                              ref="addOrEditUnitDialog"
                              @onConfirm="onConfirmAddOrEditDialog" />
-    <left-tree @setTreeRootData="setTreeRootData"
+    <!-- <left-tree @setTreeRootData="setTreeRootData"
                style="height: 100%;"
                ref="unitLeftTree"
-               @setLastLevelType="setLastLevelType" />
+               @setLastLevelType="setLastLevelType" /> -->
+    <component @setTreeRootData="setTreeRootData"
+               style="height: 100%;"
+               ref="unitLeftTree"
+               @setLastLevelType="setLastLevelType"
+               :is="!isOneProject?'LeftTree':'OneLevelLeftTree'"></component>
+
     <div class="main">
       <div class="access-main">
         <div class="access-search">
-          <el-button :disabled="!OwnAuthDisabled"
+          <el-button v-if="isOneProject"
+                     :disabled="!OwnAuthDisabled"
                      @click="addUnit"
                      type="primary"
                      size="small">新增单位</el-button>
-          <el-button :disabled="!OwnAuthDisabled"
+          <el-button v-if="isOneProject"
+                     :disabled="!OwnAuthDisabled"
                      @click="deleteUnits"
                      type="primary"
                      size="small">删除</el-button>
@@ -69,13 +78,22 @@
               <div class="unit-more-action">
                 <span class="topTitleTxtMore"
                       style="margin-left: -40px;">楼栋单元：</span>
-                <build-floor-popover-tree width="170px"
+                <build-floor-popover-tree v-if="isOneProject"
+                                          width="170px"
                                           :initTreeRootData="initTreeRootData"
                                           @setUseData="setUseData"
                                           :nodeText.sync="nodeText"
                                           ref="buildPopoverTree"
                                           :lastLevelType="lastLevelType"
                                           :isAllCanSelected="true" />
+                <two-level-build-floor-popover-tree v-else
+                                                    width="170px"
+                                                    :initTreeRootData="initTreeRootData"
+                                                    @setUseData="setUseData"
+                                                    :nodeText.sync="nodeText"
+                                                    ref="buildPopoverTree"
+                                                    :lastLevelType="lastLevelType"
+                                                    :isAllCanSelected="true" />
               </div>
               <div class="unit-more-action">
                 <el-button :disabled="!ShowAuthDisabled"
@@ -98,7 +116,8 @@
                       @selection-change="handleSelectionChange"
                       v-loading="isLoading"
                       style="width: 100%">
-              <el-table-column type="selection"></el-table-column>
+              <el-table-column type="selection"
+                               v-if="isOneProject"></el-table-column>
               <el-table-column type="index"
                                label="序号"
                                width="60"></el-table-column>
@@ -135,11 +154,12 @@
                                @click="lookDetail(scope.row)"
                                type="text"
                                size="small">查看从业人员</el-button>
-                    <el-button :disabled="!OwnAuthDisabled"
+                    <el-button :disabled="!(isOneProject ? OwnAuthDisabled:ShowAuthDisabled)"
                                @click="editUnit(scope.row)"
                                type="text"
-                               size="small">编辑</el-button>
-                    <el-button :disabled="!OwnAuthDisabled"
+                               size="small">{{isOneProject ? '编辑' : '详情'}}</el-button>
+                    <el-button v-if="isOneProject"
+                               :disabled="!OwnAuthDisabled"
                                @click="deleteUnit(scope.row)"
                                type="text"
                                size="small">
@@ -168,14 +188,17 @@
 import LookStaffDetails from "@/pages/unitMange/components/LookStaffDetails";
 import AddOrEditUnitDialog from "@/pages/unitMange/components/AddOrEditUnitDialog";
 import LeftTree from "@/pages/unitMange/views/LeftTree";
+import OneLevelLeftTree from "@/pages/unitMange/views/OneLevelLeftTree";
 import BuildFloorPopoverTree from "@/pages/unitMange/components/BuildFloorPopoverTree";
-
+import TwoLevelBuildFloorPopoverTree from "@/pages/unitMange/components/TwoLevelBuildFloorPopoverTree";
 export default {
   components: {
     LookStaffDetails,
     AddOrEditUnitDialog,
     LeftTree,
-    BuildFloorPopoverTree
+    BuildFloorPopoverTree,
+    TwoLevelBuildFloorPopoverTree,
+    OneLevelLeftTree
   },
   props: {},
   data() {
@@ -199,19 +222,27 @@ export default {
       unitsUuid: [],
       initTreeRootData: null,
       infrastructureUuid: "",
+      projectUuid: "",
       lastLevelType: "",
       nodeText: "",
       isShowPop: false,
       ShowAuthDisabled: true,
       OwnAuthDisabled: true,
-      unitName: ""
+      unitName: "",
+      isOneProject: false
     };
   },
   created() {},
   mounted() {
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
+
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("单位管理", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("单位管理", "isOwn");
-    this.initData();
+    this.companyTypeOptions = this.$common.getEnumByGroupStr("company_t");
+    if (this.isOneProject) {
+      this.initData();
+    }
   },
   methods: {
     initData() {
@@ -224,6 +255,8 @@ export default {
     setTreeRootData(data) {
       this.initTreeRootData = data;
       this.infrastructureUuid = this.initTreeRootData.id;
+      this.projectUuid = this.initTreeRootData.projectUuid;
+      this.initData();
       this.$refs.addOrEditUnitDialog.initTreeRootData = data;
     },
     setUseData(params) {
@@ -242,6 +275,7 @@ export default {
           companyType: this.companyType,
           chargePerson: this.chargePerson,
           infrastructureUuid: this.infrastructureUuid,
+          projectUuid: this.projectUuid,
           limit: this.pageInfo.pageSize,
           page: this.pageInfo.currentPage
         })
@@ -255,7 +289,11 @@ export default {
         });
     },
     handleGetAllUnitsSuccessResponse(body) {
-      this.tableData = body.data.list;
+      let tableData = body.data.list || [];
+      this.tableData = tableData.map(item => {
+        item.projectUuid = this.projectUuid;
+        return item;
+      });
       this.handlePageInfo(body.data);
     },
     handlePageInfo(data) {
@@ -297,6 +335,8 @@ export default {
         row
       ).infrastructureUuid;
       this.$refs.lookStaffDetails.unitsName = row.companyName;
+      this.$refs.lookStaffDetails.companyUuid = row.companyUuid;
+      this.$refs.lookStaffDetails.projectUuid = row.projectUuid;
       this.isShowStaffDetails = true;
     },
     formatData(row) {
@@ -312,7 +352,7 @@ export default {
         if (!infrastructureUri) {
           infrastructureUri = item.infrastructureUri;
         } else {
-          infrastructureUri = infrastructureUri + "，" + item.infrastructureUri;
+          infrastructureUri = infrastructureUri + "," + item.infrastructureUri;
         }
       }
       let infrastructure = {
@@ -378,6 +418,11 @@ export default {
       );
       this.$set(
         this.$refs.addOrEditUnitDialog.formLabelAlign,
+        "picture",
+        copyRow.picture
+      );
+      this.$set(
+        this.$refs.addOrEditUnitDialog.formLabelAlign,
         "infrastructureUuid",
         infrastructureUuid
       );
@@ -386,6 +431,73 @@ export default {
         "nodeText",
         infrastructureUri
       );
+    },
+    getUnitsDetail(row) {
+      this.$unitHttp
+        .getDetailUnits(row)
+        .then(res => {
+          if (res.data.success) {
+            this.isAdd = false;
+            this.isShowAddOrEditDialog = true;
+            this.$refs.addOrEditUnitDialog.isShowPopover = true;
+            let copyRow = {};
+            copyRow = this.$common.copyObject(res.data.data || {}, copyRow);
+            let infrastructureUuid = this.formatData(copyRow)
+              .infrastructureUuid;
+            let infrastructureUri = this.formatData(copyRow).infrastructureUri;
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "companyUuid",
+              copyRow.companyUuid
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "companyName",
+              copyRow.companyName
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "companyType",
+              copyRow.companyType
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "chargePersonName",
+              copyRow.chargePersonName
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "chargePersonPhone",
+              copyRow.chargePersonPhone
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "remarks",
+              copyRow.remarks
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "version",
+              copyRow.version
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "infrastructureUuid",
+              infrastructureUuid
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "nodeText",
+              infrastructureUri
+            );
+            this.$set(
+              this.$refs.addOrEditUnitDialog.formLabelAlign,
+              "picture",
+              copyRow.picture
+            );
+          }
+        })
+        .catch(() => {});
     },
     deleteUnit(row) {
       this.unitsUuid = [];
@@ -443,6 +555,15 @@ export default {
               .delUnits({
                 unitsUuids: this.unitsUuid,
                 unitName: this.multipleSelection
+                  .map(item => {
+                    return item.companyName;
+                  })
+                  .join(",")
+              },
+              {
+                modelName: "单位管理",
+                type: "删除",
+                detailContent: "删除单位-" + this.multipleSelection
                   .map(item => {
                     return item.companyName;
                   })

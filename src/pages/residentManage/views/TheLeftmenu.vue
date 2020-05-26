@@ -9,36 +9,29 @@
              :src="icons.search"
              alt />
       </el-input>
-      <img @click="addTagClick"
-           v-if="this.treeName !=='tree1'"
-           :src="icons.add"
-           alt />
     </div>
     <el-tabs v-model="activeName"
-             class="tabs"
-             @tab-click="handleClick">
+             class="tabs">
       <el-tab-pane label="楼栋房屋"
                    name="first">
         <div class="i-tree">
-          <el-tree :data="data"
-                   :props="defaultProps"
+          <el-tree :data="AreaTreeData"
                    node-key="id"
-                   :indent="10"
-                   ref="tree1"
-                   lazy
-                   :load="loadNode"
+                   :props="AreaProps"
+                   ref="ResidentTree"
                    :filter-node-method="filterNode"
-                   :highlight-current="true"
-                   :expand-on-click-node="false"
-                   :default-expanded-keys="defaultExpandedKeys"
-                   @node-click="handleNodeClick">
-            <div class="custom-tree-node i-tree-item"
-                 slot-scope="{ node }">
+                   default-expand-all
+                   @node-click="handleNodeClick"
+                   :expand-on-click-node="false">
+            <div class="i-tree-item"
+                 style="width:100%;"
+                 slot-scope="{ node, data }">
               <div v-if="node.data.myChildren">
                 <el-popover placement="right-start"
                             trigger="hover"
+                            popper-class="RLMPopverClass"
                             @show="showHoverMenu(node)">
-                  <el-card class="box-card">
+                  <el-card class="RLMBoxCard">
                     <div slot="header"
                          class="clearfix">
                       <div style="padding-left:10px;border-left: 4px solid #26D39D;">{{upAddress}}</div>
@@ -73,62 +66,32 @@
                   </div>
                 </el-popover>
               </div>
-              <div v-else>
-                <div class="i-tree-item-icon">
-                  <img :src="iconShow(node)"
+              <div v-else
+                   class="i-tree-item-icon flex-sbt">
+                <div class="text-show"
+                     style="width: 100px;"
+                     :title="node.label">
+                  <!-- isHaveChild表示展开项目，有没有根节点 -->
+                  <!-- 有三角箭头的需要是项目结构 -->
+                  <!-- 或者不是组织节点并且有nextCount -->
+                  <span v-if="((data.type=='project'&& !data.isHaveRoot )||(data.type!='areaOrg'&&data.nextCount))&&!(data.children&&data.children.length)"
+                        @click.stop="getProjectChildTree(node,data)"
+                        class="my-el-tree-node-icon el-tree-node__expand-icon el-icon-caret-right"></span>
+                  <img v-if="data.type === 'project'"
+                       src="@/assets/icon/area_tree_last_node.png"
+                       style="margin-right:3px"
+                       alt="">
+                  <img v-else
+                       src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAJCAYAAADkZNYtAAAAAXNSR0IArs4c6QAAAFJJREFUGBljXLVq1WUGBgYdIAYDRkbGef///88JCwv7DhOD0YxAxf9hHCT6HVDTZyQ+A9CAKyzIAkhsIaCkEBIfxJRnQhPAyx2qiq/g9RVC8goA5EYWrRlv3uIAAAAASUVORK5CYII="
                        width="10.9px"
                        height="9px"
-                       style="margin-right: 4px;" />
-                  <!-- <img :src="icons.folder" width="16px" height="13px" style="margin-right: 4px;"> -->
-                  <span class="text-show">{{node.label}}</span>
-                </div>
+                       style="margin-right: 4px;" />{{node.label}}</div>
               </div>
             </div>
           </el-tree>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="标签"
-                   name="second">
-        <gt-tree title="修改标签"
-                 ref="tree2"
-                 class="tree"
-                 :operatorDisabled="!OwnAuthDisabled"
-                 @clickmenu="clickmenu2"
-                 @exportData="exportData2"
-                 :initdata="data2"></gt-tree>
-      </el-tab-pane>
     </el-tabs>
-
-    <tree-append-child-dialog :options="appendNodeOptions"
-                              @confirm="addchildren"
-                              :visible.sync="appendChildrenDialogVisible"></tree-append-child-dialog>
-
-    <tree-change-name-dialog @confirm="changeName"
-                             :value="nodeValue"
-                             title="修改标签"
-                             :visible.sync="changeNameDialogVisible"></tree-change-name-dialog>
-
-    <el-dialog class="tagDialogBox"
-               title="新增标签"
-               :visible.sync="addTagDialogVisible"
-               width="25%"
-               center>
-      <div class="changeTagBox">
-        标签名称：
-        <el-input placeholder="请填写标签名称"
-                  v-model="newTagName"></el-input>
-      </div>
-      <span slot="footer"
-            class="dialog-footer">
-        <el-button type="primary"
-                   @click="addTagDialogVisibleTrue">保 存</el-button>
-        <el-button type="primary"
-                   @click="addTagClick">取 消</el-button>
-      </span>
-    </el-dialog>
-    <confirm-dialog :visible.sync="isDeleteVisible"
-                    @confirm="deleteNode"
-                    confirmText="确定删除"></confirm-dialog>
   </div>
 </template>
 <script>
@@ -138,7 +101,6 @@ import ConfirmDialog from "@/common/ConfirmDialog";
 import * as api from "@/pages/equipmentMange/ajax.js";
 import { mapState } from "vuex";
 import icons from "@/common/icon.js";
-import { addTreeKey, copyTreeKey } from "@/utils/tree";
 export default {
   name: "leftmenu",
   components: {
@@ -164,13 +126,10 @@ export default {
     return {
       lastLevelType: "",
       isDeleteVisible: false,
-      treeName: "tree1",
+      treeName: "ResidentTree",
       activeName: "first",
       icons,
       searchText: "", // 搜索框的文本
-      appendChildrenDialogVisible: false,
-      addTagDialogVisible: false,
-      changeNameDialogVisible: false,
       node: "", // 用于存储当前的操作的节点
       nodeValue: "", // 值
       defaultProps: {
@@ -178,144 +137,235 @@ export default {
         label: "label",
         isLeaf: "leaf"
       },
+      AreaProps: {
+        children: "children",
+        label: "label",
+        isLeaf: "leaf"
+      },
       labelArr: [],
       upAddress: "",
       defaultExpandedKeys: [],
-      data: [],
-      data2: [],
       currentNode: {},
       isExpanded: false,
       orgType: "organization.device",
       tagType: "resident",
       newTagName: "",
       appendNodeOptions: [],
-      residentTagType: "resident"
+      residentTagType: "resident",
+      AreaTreeData: [],
+      defaultAreaExpKeys: [],
+      defaultAreaExpandedKeys: []
     };
   },
   mounted() {},
   activated() {
-    this.registerEventbus();
-    this.initData();
+    setTimeout(() => {
+      let projectType = this.$store.state.home.projectType || {};
+      if (projectType.platformLevel !== "levelOne") {
+        this.getAreaData(true);
+      }
+    }, 0);
   },
   computed: {
-    ...mapState({
-      checkedLeftTagData: state => {
-        console.log(state);
-        return state.resident.curLeftTagData;
-      }
-    })
+    ...mapState({})
   },
   methods: {
+    getProjectChildTree(node, data) {
+      if (!data.children) {
+        this.$set(data, "children", []);
+      }
+      if (data.type === "project") {
+        data.projectUuid = data.id;
+        this.initData(data);
+      } else {
+        this.loadNode(node, data);
+      }
+    },
+
+    handleNodeClick(data, node, component) {
+      console.log(data);
+      // 判断非区域组织节点击
+      if (data.type !== "areaOrg" && data.type !== "project") {
+        this.handleOneProjectNodeClick(data, node);
+      } else if (data.type === "project") {
+        // 获取子项目基建结构事件
+        if (!data.children) {
+          this.$set(data, "children", []);
+        }
+        data.projectUuid = data.id;
+        // this.initData(data);
+      } else {
+        // 点击区域组织节点
+        console.log("点击区域组织节点");
+      }
+    },
+    // 点击子项目节点响应事件
+    handleOneProjectNodeClick(data, node) {
+      this.resetData();
+      this.getLabelArr(node);
+      this.getUpAddress(this.labelArr);
+      data.name = this.upAddress;
+      this.$store.commit("SET_LEFT_MENU_Data", data);
+      this.appendNodeOptions = data.children;
+      if (this.currentNode && this.currentNode === node) {
+        if (this.isExpanded && node.level !== 1) {
+          this.defaultExpandedKeys.push(data.id);
+        } else {
+          var index = this.defaultExpandedKeys.indexOf(node.data.id);
+          this.defaultExpandedKeys.splice(index, 1);
+        }
+      } else {
+        this.currentNode = node;
+      }
+    },
+    getAreaData() {
+      api
+        .getAreaAllOrg({
+          // parentOrgUuid: this.parentOrgUuid,
+          orgType: "areaOrg"
+        })
+        .then(res => {
+          let result = res.data.data || [];
+          let firstPrjectRoot = this.findFirstProject(result);
+          this.getProjectChildTree(firstPrjectRoot, firstPrjectRoot);
+          this.AreaTreeData = result;
+        });
+    },
+    // 遍历查找第一个项目
+    findFirstProject(dataArr) {
+      dataArr = dataArr || [];
+      let firstObj = null;
+      for (let i = 0, len = dataArr.length; i < len; i++) {
+        const obj = dataArr[i];
+        if (obj.type === "project") {
+          return obj;
+        } else {
+          if (obj.children) {
+            firstObj = this.findFirstProject(obj.children);
+            if (firstObj !== null) return firstObj;
+          }
+        }
+      }
+      return firstObj;
+    },
     clickHoverMenu(node, subItem, item) {
-      console.log(node);
+      // 加载projectUuid
       var name = subItem.label;
       if (item && item.label) {
         name = item.label + "／" + name;
+        subItem.projectUuid = item.projectUuid;
       }
       subItem.name = this.upAddress + "／" + name;
-      console.log(subItem);
       this.$store.commit("SET_LEFT_MENU_Data", subItem);
-      console.log(this.$refs.tree1.getCheckedKeys());
-      this.$refs.tree1.setCurrentKey(node.data.id);
+      console.log(this.$refs.ResidentTree.getCheckedKeys());
+      this.$refs.ResidentTree.setCurrentKey(node.data.id);
     },
-    addTagClick(evt) {
-      if (!this.$common.getAuthIsOwn("居民管理", "isOwn")) return;
-      this.newTagName = "";
-      this.addTagDialogVisible = !this.addTagDialogVisible;
-    },
-    addTagDialogVisibleTrue() {
-      console.log(this.newTagName);
-      if (this.newTagName && this.newTagName.length) {
-        this.addTagHttp();
-      } else {
-        this.$message({
-          message: "标签名不能为空",
-          type: "warning"
-        });
-      }
-    },
-    addTagHttp() {
-      api
-        .addTag({
-          tagName: this.newTagName,
-          tagSn: this.getMaxSn(),
-          tagType: this.residentTagType
+    // 根据点击树节点的id获取当前节点的字节
+    loadNode(node, data, parentData) {
+      this.$ResidentManageAjax
+        .getResidentLeftMenuSubDataApi({
+          id: data.id,
+          projectUuid: data.projectUuid
         })
         .then(res => {
-          if (res.data.success) {
-            this.addTagDialogVisible = !this.addTagDialogVisible;
-            console.log("居民标签添加成功", res.data);
-            this.getOrgTag("add");
-          }
-          this.newTagName = "";
-        });
-    },
-    getOrgTag(isFi) {
-      if (!this.ShowAuthDisabled) {
-        return;
-      }
-      api
-        .getTagList({
-          tagType: this.tagType
-        })
-        .then(res => {
-          if (res.data.data && res.data.data.list) {
-            let result = res.data.data.list;
-            addTreeKey(result, "icon", icons.sign);
-            addTreeKey(result, "havechildren", "no");
-            copyTreeKey(result, "label", "tagName");
-            copyTreeKey(result, "orgUuid", "tagUuid");
-            this.data2 = result;
-            console.log(!isFi, "====刷新======", this.data2);
-            if (isFi === "add") {
-              var newTag = this.data2[this.data2.length - 1];
-              this.nodeValue = newTag.tagName;
-              this.$store.commit("SET_Cur_Left_Tag_Data", newTag);
-              return;
-            }
-            if (!isFi) {
-              if (this.data2.length) {
-                this.nodeValue = this.data2[0].tagName;
-                this.$store.commit("SET_Cur_Left_Tag_Data", this.data2[0]);
+          console.log(res.data.data);
+          let newData = res.data.data;
+          for (let item of newData) {
+            if (
+              item.nodeType === "area" ||
+              item.nodeType === "phase" ||
+              item.nodeType === "unit" ||
+              item.nodeType === "building"
+            ) {
+              this.$set(item, "leaf", true);
+              this.$set(item, "projectUuid", data.projectUuid);
+
+              if (item.nextCount !== 0) {
+                this.$set(item, "leaf", false);
               } else {
-                this.$store.commit("SET_Cur_Left_Tag_Data", { tagUuid: "" });
+                this.getFloorAndHouse(item);
               }
             } else {
-              for (var i = 0; i < this.data2.length; i++) {
-                var item = this.data2[i];
-                if (item.tagUuid === isFi.tagUuid) {
-                  this.nodeValue = this.data2[i].tagName;
-                  this.$store.commit("SET_Cur_Left_Tag_Data", this.data2[i]);
-                  break;
-                }
-              }
+              this.$set(item, "leaf", false);
+              break;
             }
+          }
+          if (parentData) {
+            parentData.children.push(...(newData || []));
+          } else {
+            data.children.push(...(newData || []));
+          }
+          // data.$set("children", newData);
+        });
+    },
+    getFloorAndHouse(item) {
+      this.$ResidentManageAjax
+        .getFloorAndHouse({
+          id: item.id,
+          projectUuid: item.projectUuid
+        })
+        .then(res => {
+          if (res.data.data && res.data.data.length) {
+            let data = (res.data.data || []).map(im => {
+              im.projectUuid = item.projectUuid;
+              return im;
+            });
+            this.$set(item, "myChildren", data);
           }
         });
     },
+    setLastLevelType(data) {
+      if (!data) {
+        return;
+      }
+      for (let index in data) {
+        if (parseInt(index) === data.length - 1) {
+          this.lastLevelType = data[index].type;
+        }
+      }
+    },
+    showHoverMenu(node) {
+      this.resetData();
+      this.getLabelArr(node);
+      this.getUpAddress(this.labelArr);
+    },
     // 初始化刷新树的结构
-    initData() {
-      this.$ResidentManageAjax
-        .getResidentTreeDataApi(this.defaultExpandedKeys)
-        .then(res => {
-          console.log(res.data);
-          this.data = [];
-          if (res.data.success && res.data.data) {
-            this.data.push(res.data.data);
-            this.defaultExpandedKeys.push(this.data[0].id);
-            this.appendNodeOptions = [];
-            this.appendNodeOptions.push(this.data);
-            let checkedData = this.data[0];
-            checkedData.name = checkedData.label;
-            this.setLastLevelType(this.data.extInfo);
-            this.$store.commit("SET_LEFT_MENU_Data", checkedData);
-          } else {
-            this.$message({
-              type: "warning",
-              message: "没有获取到居民基建树"
-            });
+    initData(data) {
+      this.$ResidentManageAjax.getResidentTreeDataApi(data).then(res => {
+        console.log(res.data);
+        if (res.data.success && res.data.data) {
+          let newData = {
+            id: res.data.data.id,
+            label: res.data.data.label,
+            projectUuid: data.projectUuid,
+            type: res.data.data.type,
+            children: [],
+            nextCount: 1
+          };
+
+          // newArr.push(newData || []);
+          // data.children.push(...(newArr || []));
+          this.loadNode({}, newData, data);
+          if (!newData.length) {
+            this.$set(data, "isHaveChild", true);
           }
-        });
+          this.defaultExpandedKeys.push(newData.id);
+          this.appendNodeOptions = [];
+          this.appendNodeOptions.push(newData);
+          let checkedData = newData;
+          checkedData.name = checkedData.label;
+          this.setLastLevelType(newData.extInfo);
+          this.$store.commit("SET_LEFT_MENU_Data", checkedData);
+        } else {
+          this.$message({
+            type: "warning",
+            message: "没有获取到居民基建树"
+          });
+          if (data.type === "project") {
+            this.$set(data, "isHaveRoot", true);
+          }
+        }
+      });
     },
     iconShow(node) {
       let icon = "";
@@ -358,101 +408,9 @@ export default {
       }
       this.getUpAddress(this.labelArr);
     },
-    exportData2(...arg) {
-      var obj = arg[3];
-      this.nodeValue = obj.tagName;
-      this.$store.commit("SET_Cur_Left_Tag_Data", obj);
-    },
     handleDefaultExpKeys() {
       if (this.data && this.data.length !== 0) {
         this.defaultExpandedKeys.push(this.data[0].id);
-      }
-    },
-    // 根据点击树节点的id获取当前节点的字节
-    loadNode(node, resolve) {
-      if (!this.ShowAuthDisabled) {
-        resolve([]);
-        return;
-      }
-      if (node.level === 0) {
-        resolve([]);
-        return;
-      }
-      this.$ResidentManageAjax
-        .getResidentLeftMenuSubDataApi(node.data.id)
-        .then(res => {
-          console.log(res.data.data);
-          if (res.data.data && res.data.data.length) {
-            for (let item of res.data.data) {
-              if (
-                item.nodeType === "area" ||
-                item.nodeType === "phase" ||
-                item.nodeType === "unit" ||
-                item.nodeType === "building"
-              ) {
-                this.$set(item, "leaf", true);
-                if (item.nextCount !== 0) {
-                  this.$set(item, "leaf", false);
-                } else {
-                  this.getFloorAndHouse(item);
-                }
-              } else {
-                this.$set(item, "leaf", false);
-                break;
-              }
-            }
-            resolve(res.data.data);
-          } else {
-            resolve([]);
-          }
-        });
-    },
-    getFloorAndHouse(item) {
-      this.$ResidentManageAjax.getFloorAndHouse(item.id).then(res => {
-        if (res.data.data && res.data.data.length) {
-          this.$set(item, "myChildren", res.data.data);
-        }
-      });
-    },
-    setLastLevelType(data) {
-      if (!data) {
-        return;
-      }
-      for (let index in data) {
-        if (parseInt(index) === data.length - 1) {
-          this.lastLevelType = data[index].type;
-        }
-      }
-    },
-    showHoverMenu(node) {
-      this.resetData();
-      this.getLabelArr(node);
-      this.getUpAddress(this.labelArr);
-    },
-    handleNodeClick(data, node, component) {
-      console.log(data, "-------------", node);
-      this.resetData();
-      this.getLabelArr(node);
-      this.getUpAddress(this.labelArr);
-      data.name = this.upAddress;
-      this.$store.commit("SET_LEFT_MENU_Data", data);
-      this.appendNodeOptions = data.children;
-      if (this.currentNode && this.currentNode === node) {
-        // this.isExpanded = !this.isExpanded;
-        // this.$set(node, "expanded", this.isExpanded);
-        // 点击
-        if (this.isExpanded && node.level !== 1) {
-          this.defaultExpandedKeys.push(data.id);
-          // this.setChild(node);
-          // 传值
-        } else {
-          var index = this.defaultExpandedKeys.indexOf(node.data.id);
-          this.defaultExpandedKeys.splice(index, 1);
-        }
-      } else {
-        // this.$set(node, "expanded", false);
-        this.currentNode = node;
-        // this.isExpanded = false;
       }
     },
     setChild(node) {
@@ -470,202 +428,6 @@ export default {
             node.doCreateChildren(res.data.data);
           }
         });
-    },
-    // 标签树的编辑事件
-    clickmenu2({
-      index,
-      version,
-      rankOrder,
-      orgUuid,
-      sliblings,
-      isLastOne,
-      node,
-      value,
-      e
-    }) {
-      if (!this.OwnAuthDisabled) {
-        return;
-      }
-      this.tagIndex = index;
-      // 树节点右边菜单的点击事件
-      var data = [
-        {
-          value: "changeName",
-          label: "修改名称"
-        },
-        {
-          value: "moveup",
-          label: "上移"
-        },
-        {
-          value: "movedown",
-          label: "下移"
-        },
-        {
-          value: "delete",
-          label: "删除"
-        }
-      ];
-      this.orgUuid = orgUuid;
-      this.version = version;
-      if (node.slice(-1)[0] === "0") {
-        data.splice(1, 1);
-        if (isLastOne) {
-          data.splice(1, 1);
-        }
-      } else {
-        if (isLastOne) {
-          data.splice(2, 1);
-        }
-      }
-      if (isLastOne) {
-        data.splice(3, 1);
-      }
-      this.treeName = "tree2";
-      this.node = node;
-      this.nodeValue = value;
-      this.showMenu(data, e);
-    },
-    showMenu(data, e) {
-      const _this = this;
-      this.$ContextMenu({
-        data: data,
-        event: e,
-        callback(value) {
-          // value表示点击按钮的value
-          if (value === "addChildre") {
-            _this.appendChildrenDialogVisible = true;
-          } else if (value === "changeName") {
-            _this.changeNameDialogVisible = true;
-          } else if (value === "movedown") {
-            _this.movedownNode();
-          } else if (value === "moveup") {
-            _this.moveupNode();
-          } else if (value === "delete") {
-            _this.isDeleteVisible = true;
-          }
-        }
-      });
-    },
-    addchildren(name) {
-      // 添加名字 点击确定之后的回调
-      if (this.treeName === "tree2") {
-        this.$refs[this.treeName].operator({
-          operator: "addChildre",
-          node: this.node,
-          value: name
-        });
-      } else {
-        console.log(this.appendNodeOptions);
-      }
-    },
-    changeName(name) {
-      if (this.treeName === "tree2") {
-        api
-          .updateTagUrl({
-            tagName: name,
-            tagType: this.tagType,
-            tagUuid: this.orgUuid,
-            version: this.version
-          })
-          .then(res => {
-            if (res.data.success) {
-              this.getOrgTag();
-            }
-          });
-      }
-    },
-    moveupNode() {
-      if (this.treeName === "tree2") {
-        let data = [
-          {
-            tagUuid: this.data2[this.tagIndex].tagUuid,
-            tagSn: this.data2[this.tagIndex - 1].tagSn,
-            version: this.data2[this.tagIndex].version
-          },
-          {
-            tagUuid: this.data2[this.tagIndex - 1].tagUuid,
-            tagSn: this.data2[this.tagIndex].tagSn,
-            version: this.data2[this.tagIndex - 1].version
-          }
-        ];
-        api.opeartorTag(data).then(res => {
-          if (res.data.success) {
-            this.getOrgTag();
-          }
-        });
-      }
-    },
-    movedownNode() {
-      if (this.treeName === "tree2") {
-        let data = [
-          {
-            tagUuid: this.data2[this.tagIndex].tagUuid,
-            tagSn: this.data2[this.tagIndex + 1].tagSn,
-            version: this.data2[this.tagIndex].version
-          },
-          {
-            tagUuid: this.data2[this.tagIndex + 1].tagUuid,
-            tagSn: this.data2[this.tagIndex].tagSn,
-            version: this.data2[this.tagIndex + 1].version
-          }
-        ];
-        api.opeartorTag(data).then(res => {
-          if (res.data.success) {
-            this.getOrgTag();
-          }
-        });
-      }
-    },
-    deleteNode() {
-      if (this.treeName === "tree1") {
-        api.deleteOrgTree(this.rankOrder, this.orgType).then(res => {
-          if (res.data.success) {
-            this.getOrgTree();
-          }
-        });
-      } else {
-        api.deleteTag(this.orgUuid).then(res => {
-          if (res.data.success) {
-            this.getOrgTag();
-          }
-        });
-      }
-      this.newTagName = "";
-    },
-    handleClick(tab, event) {
-      this.treeName = ["tree1", "tree2"][tab.index];
-      if (this.treeName === "tree2") {
-        this.getOrgTag();
-      } else {
-        this.initData();
-      }
-      this.$emit("tabClick", this.treeName);
-    },
-    getMaxSn() {
-      var max = 0;
-      for (var i = 0, len = this.data2.length; i < len; i++) {
-        if (this.data2[i].tagSn > max) {
-          max = this.data2[i].tagSn;
-        }
-      }
-      return max + 1;
-    },
-    registerEventbus() {
-      this.$bus.$on("ModifyTagName", localTag => {
-        this.changeNameDialogVisible = localTag;
-      });
-      this.$bus.$on("getLeftMenuTag", obj => {
-        this.getOrgTag(obj);
-      });
-      this.$bus.$on("getRefreshLeftMenu", obj => {
-        this.initData();
-      });
-    },
-    unRegisterEventbus() {
-      this.$bus.$off("ModifyTagName");
-      this.$bus.$off("getLeftMenuTag");
-      this.$bus.$off("getRefreshLeftMenu");
     },
     filterNode(obj, data) {
       if (data.label.indexOf(obj) !== -1) {
@@ -689,25 +451,28 @@ export default {
         });
       }
       this.appendNodeOptions = arr;
-    },
-
-    checkedLeftTagData(val) {
-      console.log(val);
-      this.orgUuid = val.tagUuid;
-      this.version = val.version;
     }
-  },
-  deactivated() {
-    this.unRegisterEventbus();
-  },
-  destroyed() {
-    this.unRegisterEventbus();
   }
 };
 </script>
 <style lang="scss">
 @import "@/style/variables.scss";
+.RLMPopverClass {
+  max-width: calc(100% - 500px);
+  max-height: 80%;
+  overflow: auto;
+}
 #ResdientLeftMenu {
+  .el-tabs__content {
+    overflow-y: auto;
+    position: relative;
+    height: calc(100% - 80px);
+  }
+  .flex-sbt {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
   .el-tabs__item {
     color: #dddddd;
   }
@@ -744,8 +509,20 @@ export default {
       }
     }
   }
+  .el-tree-node__expand-icon.is-leaf {
+    color: transparent;
+    cursor: default;
+    width: 0;
+  }
+  .el-tree-node__content > .el-tree-node__expand-icon {
+    padding: 6px 3px 6px 0px;
+  }
+  .text-show .my-el-tree-node-icon {
+    padding: 6px 0;
+    margin-left: -2px;
+  }
 }
-.box-card .el-card__header {
+.RLMBoxCard .el-card__header {
   padding: 10px 0px;
   margin: 0 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -764,9 +541,7 @@ export default {
 .text-item-Title {
   margin-right: 30px;
 }
-.textClips {
-  /* display: inline-block; */
-  /* width: 100%; */
+.leftmenu .textClips {
   font-family: "PingFangSC-Regular";
   white-space: nowrap;
   overflow: hidden;
@@ -802,23 +577,18 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/style/variables.scss";
-.box-card {
-  background: transparent;
-  font-family: "PingFangSC-Regular";
-  font-size: 13px;
-  color: #dddddd;
-  letter-spacing: 0;
-  border: none;
-  box-shadow: none;
-  max-height: calc(99vh - 20px);
-  overflow: auto;
+.RLMBoxCard {
   margin-top: 20px;
+  background-color: transparent;
+  color: #dddddd;
+  border: none;
+  width: 100%;
+  overflow: auto;
 }
 .leftmenu {
   width: $equLeftMenuWidth;
   box-sizing: border-box;
   height: 100%;
-  overflow: auto;
   background-color: rgba(37, 41, 45, 0.8);
   $iconWidth: 40px;
   .changeTagBox {
@@ -847,6 +617,7 @@ export default {
   }
   .tabs {
     padding: 0px 26px 25px;
+    height: calc(100% - 80px);
   }
   .tree-input {
     height: 100px;
@@ -861,6 +632,8 @@ export default {
   .i-tree {
     // padding: 20px 0;
     box-sizing: border-box;
+    overflow: auto;
+    height: 100%;
     .i-tree-item {
       width: 100%;
       .i-tree-item-icon {
@@ -875,12 +648,6 @@ export default {
       }
     }
   }
-  width: $equLeftMenuWidth;
-  box-sizing: border-box;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(37, 41, 45, 0.8);
-  $iconWidth: 40px;
   .changeTagBox {
     color: #dddddd;
     text-align: center;
@@ -919,7 +686,7 @@ export default {
     }
   }
   .i-tree {
-    padding: 20px 0;
+    padding: 0px 0 20px;
     box-sizing: border-box;
     .i-tree-item {
       width: 100%;

@@ -5,6 +5,8 @@
 		:visible.sync="isCurrentShow"
 		:before-close="onClickCancel"
 		:close-on-click-modal="false"
+    :modal="!isAppend"
+    :append-to-body="isAppend"
 	>
 		<div class="dialog-content">
 			<!--内容-->
@@ -27,7 +29,7 @@
 						<div class="info-details-title-text">开锁图片1</div>
 					</div>
 					<div class="info-details-items">验证时间：{{$common.setStringText(itemData.validateTime)}}</div>
-					<div class="info-details-items">验证方式：{{transferValidateType(itemData.validateType)}}</div>
+					<div class="info-details-items">验证方式：{{$common.transferValidateType(itemData.validateType)}}</div>
 					<div class="info-details-items">验证地址：{{$common.setStringText(itemData.doorName)}}</div>
 					<div class="info-details-items">验证设备：{{$common.setStringText(itemData.readHeadName)}}</div>
 					<div
@@ -118,6 +120,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isAppend: {
+      type: Boolean,
+      default: false
+    },
     OwnAuthDisabled: {
       type: Boolean,
       default() {
@@ -157,15 +163,6 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    transferValidateType(item, signal = "&", typeStr = "pass") {
-      let validateTypeArr = item.split(signal);
-      let str = "";
-      validateTypeArr.map(im => {
-        str += this.$common.getEnumItemName(typeStr, im);
-        str += ",";
-      });
-      return str.substr(0, str.length - 1);
-    },
     downloadImg(itemData) {
       if (!this.OwnAuthDisabled) {
         return;

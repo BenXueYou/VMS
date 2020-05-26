@@ -37,7 +37,7 @@
 						@close="handleClose()"
 					>
 						<el-row type="flex" style="width:280px" justify="space-around">
-							<el-col :span="6" style="width:75px;padding-right:15px;" class="textClips">{{tag.label}}</el-col>
+							<el-col :span="6" class="FCTCBtextClips">{{tag.label}}</el-col>
 							<el-col :span="18" style="width:210px">
 								<el-checkbox-group class="FCCheckedBox" v-model="tag.medium" @change="changeAct">
 									<el-checkbox
@@ -76,13 +76,6 @@ export default {
           treeRef: "tree1",
           nodeKey: "id"
         },
-        {
-          id: "2",
-          label: "楼栋房屋",
-          treeType: "resident",
-          treeRef: "tree2",
-          nodeKey: "id"
-        }
       ]
     },
     isShow: {
@@ -152,7 +145,10 @@ export default {
         this.checkeTreedNodes.forEach(item => {
           if (item.medium && item.medium.length) {
           } else {
-            this.$message({ type: "error", message: "人脸、卡片、指纹至少选一个" });
+            this.$message({
+              type: "error",
+              message: "人脸、卡片、指纹至少选一个"
+            });
           }
         });
       } else {
@@ -248,17 +244,15 @@ export default {
 .FCCheckedBox {
 	display: inline-block;
 }
-.textClips {
-	/* display: inline-block; */
-	/* width: 100%; */
+.FCTCBtextClips {
+	width: 75px;
+	padding-right: 15px;
 	font-family: "PingFangSC-Regular";
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	-webkit-line-clamp: 1; /*3表示只显示3行*/
-	/* autoprefixer: off */
 	-webkit-box-orient: vertical;
-	/* autoprefixer: on */
 }
 .FCCheckedBox .el-checkbox__label {
 	display: inline-block;

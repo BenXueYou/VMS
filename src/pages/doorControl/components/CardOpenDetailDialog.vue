@@ -3,7 +3,10 @@
              title="详情信息"
              :visible.sync="isCurrentShow"
              :before-close="onClickCancel"
-             :close-on-click-modal="false">
+             :close-on-click-modal="false"
+             top="26vh"
+             :modal="!isAppend"
+             :append-to-body="isAppend">
     <div class="dialog-content">
       <!--内容-->
       <div class="lock-info">
@@ -53,6 +56,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isAppend: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

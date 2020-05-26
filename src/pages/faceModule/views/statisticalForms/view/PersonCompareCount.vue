@@ -1,111 +1,94 @@
 <template>
-	<div class="main-block">
-		<div class="main-container">
-			<div class="search">
-				<span>统计方式：</span>
-				<el-radio-group
-					:disabled="!ShowAuthDisabled"
-					v-model="formType"
-					@change="handleFormTypeChange"
-					style="margin-left: 3px;"
-				>
-					<el-radio label="all">全部</el-radio>
-					<el-radio label="one">单一</el-radio>
-				</el-radio-group>
-				<img
-					src="@/assets/images/sort.png"
-					width="15.1px"
-					height="12px"
-					v-if="formType === 'all'"
-					style="margin:0 0.5% 0 6vw;"
-				/>
-				<span v-if="formType === 'all'">排序：</span>
-				<el-radio-group
-					:disabled="!ShowAuthDisabled"
-					v-model="sort"
-					v-if="formType === 'all'"
-					@change="handleSortChange"
-					style="margin: 2px 0 0 3px"
-				>
-					<el-radio label="desc">升序</el-radio>
-					<el-radio label="asc">降序</el-radio>
-				</el-radio-group>
-				<span v-if="formType === 'one'" class="left-space">布控任务：</span>
-				<el-select
-					v-model="faceMonitorUuid"
-					filterable
-					v-show="formType === 'one'"
-					collapse-tags
-					placeholder="请选择"
-				>
-					<el-option
-						v-for="item in missionArr"
-						:key="item.faceMonitorUuid"
-						:label="item.faceMonitorName"
-						:value="item.faceMonitorUuid"
-					></el-option>
-				</el-select>
-				<img
-					src="@/assets/images/report_type.png"
-					width="15.1px"
-					height="12px"
-					style="margin:0 0.5% 0 6vw;"
-				/>
-				<span>报表类型：</span>
-				<el-radio-group
-					:disabled="!ShowAuthDisabled"
-					v-model="typeRadio"
-					@change="handleTypeChange"
-					style="margin: 4px 0 0 3px;"
-				>
-					<el-radio :label="1">日报表</el-radio>
-					<el-radio :label="2">月报表</el-radio>
-				</el-radio-group>
-				<div class="button-div">
-					<span>统计日期：</span>
-					<el-date-picker
-						v-model="dateValue"
-						style="width: 150px; margin-left: 2px;"
-						:type="datePickerType"
-						:value-format="dateValueFormat"
-						@change="onChangeDate"
-						size="small"
-						placeholder="选择日期"
-					></el-date-picker>
-					<el-button
-						:disabled="!ShowAuthDisabled"
-						@click="searchData"
-						icon="el-icon-search"
-						type="primary"
-						style="width: 110px;margin-left: 10px;"
-						size="small"
-					>开始查询</el-button>
-				</div>
-			</div>
-			<div class="reslut">
-				<div id="myChart" :class="formType === 'all' ? 'chart-all' : 'chart-one'"></div>
-				<div class="time-line" v-if="formType === 'all'">
-					<div class="line-lable">时间轴：</div>
-					<div class="line-slider">
-						<el-slider
-							v-model="timeValue"
-							:max="sliderMax"
-							:step="1"
-							:show-tooltip="false"
-							@change="handleSliderChange"
-							class="time-slider"
-						></el-slider>
-						<div class="time-lable">
-							<template v-for="(item, index) in timeLableData">
-								<div :key="index">{{ changeNum(item) }}</div>
-							</template>
-						</div>
-					</div>
-					<div class="time-unit">{{unitText}}</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="main-block">
+    <div class="main-container">
+      <div class="search">
+        <span>统计方式：</span>
+        <el-radio-group :disabled="!ShowAuthDisabled"
+                        v-model="formType"
+                        @change="handleFormTypeChange"
+                        style="margin-left: 3px;">
+          <el-radio label="all">全部</el-radio>
+          <el-radio label="one">单一</el-radio>
+        </el-radio-group>
+        <img src="@/assets/images/sort.png"
+             width="15.1px"
+             height="12px"
+             v-if="formType === 'all'"
+             style="margin:0 0.5% 0 6vw;" />
+        <span v-if="formType === 'all'">排序：</span>
+        <el-radio-group :disabled="!ShowAuthDisabled"
+                        v-model="sort"
+                        v-if="formType === 'all'"
+                        @change="handleSortChange"
+                        style="margin: 2px 0 0 3px">
+          <el-radio label="desc">升序</el-radio>
+          <el-radio label="asc">降序</el-radio>
+        </el-radio-group>
+        <span v-if="formType === 'one'"
+              class="left-space">布控任务：</span>
+        <el-select v-model="faceMonitorUuid"
+                   filterable
+                   v-show="formType === 'one'"
+                   collapse-tags
+                   placeholder="请选择">
+          <el-option v-for="item in missionArr"
+                     :key="item.faceMonitorUuid"
+                     :label="item.faceMonitorName"
+                     :value="item.faceMonitorUuid"></el-option>
+        </el-select>
+        <img src="@/assets/images/report_type.png"
+             width="15.1px"
+             height="12px"
+             style="margin:0 0.5% 0 6vw;" />
+        <span>报表类型：</span>
+        <el-radio-group :disabled="!ShowAuthDisabled"
+                        v-model="typeRadio"
+                        @change="handleTypeChange"
+                        style="margin: 4px 0 0 3px;">
+          <el-radio :label="1">日报表</el-radio>
+          <el-radio :label="2">月报表</el-radio>
+        </el-radio-group>
+        <div class="button-div">
+          <span>统计日期：</span>
+          <el-date-picker v-model="dateValue"
+                          style="width: 150px; margin-left: 2px;"
+                          :type="datePickerType"
+                          :value-format="dateValueFormat"
+                          @change="onChangeDate"
+                          size="small"
+                          placeholder="选择日期"></el-date-picker>
+          <el-button :disabled="!ShowAuthDisabled"
+                     @click="searchData"
+                     icon="el-icon-search"
+                     type="primary"
+                     style="width: 110px;margin-left: 10px;"
+                     size="small">开始查询</el-button>
+        </div>
+      </div>
+      <div class="reslut">
+        <div id="myChart"
+             :class="formType === 'all' ? 'chart-all' : 'chart-one'"></div>
+        <div class="time-line"
+             v-if="formType === 'all'">
+          <div class="line-lable">时间轴：</div>
+          <div class="line-slider">
+            <el-slider v-model="timeValue"
+                       :max="sliderMax"
+                       :step="1"
+                       :show-tooltip="false"
+                       @change="handleSliderChange"
+                       class="time-slider"></el-slider>
+            <div class="time-lable">
+              <template v-for="(item, index) in timeLableData">
+                <div :key="index">{{ changeNum(item) }}</div>
+              </template>
+            </div>
+          </div>
+          <div class="time-unit">{{unitText}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -115,7 +98,7 @@ export default {
   data() {
     return {
       formType: "all",
-      sort: "desc",
+      sort: "asc",
       typeRadio: 1,
       dateValue: "",
       timeValue: 0,
@@ -139,7 +122,8 @@ export default {
       missionArr: [],
       tableData: [],
       ShowAuthDisabled: true,
-      OwnAuthDisabled: true
+      OwnAuthDisabled: true,
+      dataZoomStartVal: 30
     };
   },
   created() {},
@@ -251,7 +235,7 @@ export default {
       let nowDateVal = this.changeCommon();
       if (
         this.dateValue === this.$common.formatDate(new Date()).substr(0, 10) ||
-				this.dateValue === this.$common.formatDate(new Date()).substr(0, 7)
+        this.dateValue === this.$common.formatDate(new Date()).substr(0, 7)
       ) {
         if (val > nowDateVal) {
           this.timeValue = nowDateVal;
@@ -348,8 +332,8 @@ export default {
           this.getFaceCaptureSumByMonth();
         }
       } else {
-        if (!this.faceMonitorUuid || this.faceMonitorUuid.length) {
-          this.$message({type: 'warning', message: '请选择任务'});
+        if (!this.faceMonitorUuid) {
+          this.$message({ type: "warning", message: "请选择任务" });
           return;
         }
         if (this.typeRadio === 1) {
@@ -370,9 +354,9 @@ export default {
       this.tableData.forEach((v, i) => {
         if (
           (this.typeRadio === 1 &&
-						this.timeValue !== 0 &&
-						i === this.timeValue - 1) ||
-					(this.typeRadio === 2 && i === this.timeValue)
+            this.timeValue !== 0 &&
+            i === this.timeValue - 1) ||
+          (this.typeRadio === 2 && i === this.timeValue)
         ) {
           for (let item of v) {
             this.faceMonitorName.push(item.faceMonitorName);
@@ -392,7 +376,7 @@ export default {
                 handleSize: 0,
                 top: 50, // 滚动条靠左侧的百分比
                 bottom: 50,
-                start: 30, // 滚动条的起始位置
+                start: this.dataZoomStartVal, // 滚动条的起始位置
                 end: 100, // 滚动条的截止位置（按比例分割你的柱状图x轴长度）
                 zoomOnMouseWheel: true, // 如何触发缩放。可选值为：true：表示不按任何功能键，鼠标滚轮能触发缩放。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标滚轮能触发缩放。'ctrl'：表示按住 ctrl 和鼠标滚轮能触发缩放。'alt'：表示按住 alt 和鼠标滚轮能触发缩放。
                 moveOnMouseMove: true // 如何触发数据窗口平移。true：表示不按任何功能键，鼠标移动能触发数据窗口平移。false：表示鼠标滚轮不能触发缩放。'shift'：表示按住 shift 和鼠标移动能触发数据窗口平移。'ctrl'：表示按住 ctrl 和鼠标移动能触发数据窗口平移。'alt'：表示按住 alt 和鼠标移动能触发数据窗口平移。
@@ -423,6 +407,7 @@ export default {
       this.getFaceCaptureAll(date, reportType);
     },
     getFaceCaptureAll(date, reportType) {
+      this.dataZoomStartVal = 30;
       this.$statisticHttp
         .getCompareAll({
           sort: this.sort,
@@ -438,6 +423,9 @@ export default {
       this.resetData();
       if (body.data) {
         this.tableData = body.data;
+        if (this.tableData.length > 0) {
+          this.dataZoomStartVal = 100 - (15 / this.tableData[0].length) * 100;
+        }
         this.setTableData();
       }
       this.drawLine();
@@ -609,7 +597,7 @@ export default {
           grid: {
             left: "4%",
             right: "3%",
-            top: "20",
+            top: "30",
             bottom: "20",
             y: 100
           },
@@ -657,7 +645,7 @@ export default {
                     show: true,
                     textStyle: {
                       color: "#28FFBB",
-                      fontSize: 16,
+                      fontSize: 14,
                       fontFamily: "PingFangSC-Regular"
                     }
                   },
@@ -736,87 +724,87 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .main-block {
-	padding: 1.4%;
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
-	.main-container {
-		padding: 0 3%;
-		box-sizing: border-box;
-		background: #212325;
-		width: 100%;
-		height: 100%;
-		.search {
-			height: 100px;
-			width: 100%;
-			font-family: PingFangSC-Regular;
-			font-size: 13px;
-			color: #ffffff;
-			display: flex;
-			align-items: center;
-			.left-space {
-				margin-left: 6vw;
-			}
-			.button-div {
-				margin-left: auto;
-				margin-right: 0;
-			}
-		}
-		.reslut {
-			height: 90%;
-			width: 100%;
-			position: relative;
-			#myChart {
-				width: 100%;
-				height: 88%;
-			}
-			.chart-all {
-				margin-top: -2%;
-				margin-left: -3%;
-			}
-			.chart-one {
-				margin-top: 0;
-				margin-left: 0;
-			}
-			.time-line {
-				position: absolute;
-				bottom: 0;
-				width: 100%;
-				display: flex;
-				.line-lable {
-					height: 75px;
-					width: 4%;
-					font-family: PingFangSC-Regular;
-					font-size: 13px;
-					color: #dddddd;
-				}
-				.line-slider {
-					height: 75px;
-					width: 94%;
-					margin-top: -10px;
-					.time-slider {
-						width: 99%;
-						margin: 0 auto;
-					}
-					.time-lable {
-						width: 100%;
-						display: flex;
-						flex-flow: row nowrap;
-						justify-content: space-between;
-						font-family: PingFangSC-Regular;
-						font-size: 14px;
-						color: #bbbbbb;
-					}
-				}
-				.time-unit {
-					height: 75px;
-					width: 2%;
-					font-family: PingFangSC-Regular;
-					font-size: 13px;
-					color: #dddddd;
-				}
-			}
-		}
-	}
+  padding: 1.4%;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  .main-container {
+    padding: 0 3%;
+    box-sizing: border-box;
+    background: #212325;
+    width: 100%;
+    height: 100%;
+    .search {
+      height: 100px;
+      width: 100%;
+      font-family: PingFangSC-Regular;
+      font-size: 13px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      .left-space {
+        margin-left: 6vw;
+      }
+      .button-div {
+        margin-left: auto;
+        margin-right: 0;
+      }
+    }
+    .reslut {
+      height: 90%;
+      width: 100%;
+      position: relative;
+      #myChart {
+        width: 100%;
+        height: 88%;
+      }
+      .chart-all {
+        margin-top: -2%;
+        margin-left: -3%;
+      }
+      .chart-one {
+        margin-top: 0;
+        margin-left: 0;
+      }
+      .time-line {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        .line-lable {
+          height: 75px;
+          width: 4%;
+          font-family: PingFangSC-Regular;
+          font-size: 13px;
+          color: #dddddd;
+        }
+        .line-slider {
+          height: 75px;
+          width: 94%;
+          margin-top: -10px;
+          .time-slider {
+            width: 99%;
+            margin: 0 auto;
+          }
+          .time-lable {
+            width: 100%;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-between;
+            font-family: PingFangSC-Regular;
+            font-size: 14px;
+            color: #bbbbbb;
+          }
+        }
+        .time-unit {
+          height: 75px;
+          width: 2%;
+          font-family: PingFangSC-Regular;
+          font-size: 13px;
+          color: #dddddd;
+        }
+      }
+    }
+  }
 }
 </style>

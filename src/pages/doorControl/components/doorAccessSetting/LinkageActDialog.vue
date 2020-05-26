@@ -15,14 +15,13 @@
                :model="formLabelAlign"
                class="info-form">
         <el-form-item label="预案名称："
-                      prop="planName"
-                      required>
+                      prop="planName">
           <el-input class="time-interal"
+                    clearable
                     v-model="formLabelAlign.planName"></el-input>
         </el-form-item>
         <el-form-item label="设备："
-                      prop="deviceUuid"
-                      required>
+                      prop="deviceUuid">
           <el-popover class="popverTree"
                       ref="popverBox"
                       :popper-class="elPopoverClass"
@@ -171,11 +170,13 @@ export default {
         linkageOp: ""
       },
       rules: {
-        planName: {
-          required: true,
-          message: "预案名称不能为空",
-          trigger: "blur"
-        },
+        planName: [
+          {
+            required: true,
+            message: "预案名称不能为空",
+            trigger: "blur"
+          }
+        ],
         deviceUuid: {
           required: true,
           message: "设备不能为空",
@@ -224,26 +225,35 @@ export default {
           hasDoor: false,
           radio: true,
           treeLeafType: "device"
-        },
-        {
-          id: "2",
-          label: "地址",
-          treeType: "resident",
-          treeNodeType: "device",
-          treeRef: "tree2",
-          nodeKey: "id",
-          radio: true,
-          treeLeafType: "device"
         }
       ],
-      checkeTreedNodes: [],
+      checkeTreedNodes: []
     };
   },
   created() {},
   mounted() {
+    let projectType = this.$store.state.home.projectType;
+    // 判断不是学校项目则加入基建的选项
+    if (projectType.platformType !== "school") {
+      this.tabs.push({
+        id: "2",
+        label: "地址",
+        treeType: "resident",
+        treeNodeType: "device",
+        treeRef: "tree2",
+        nodeKey: "id",
+        radio: true,
+        treeLeafType: "device"
+      });
+    }
     this.initData();
   },
   methods: {
+    clearAction() {
+      this.checkeTreedNodes = [];
+      this.formLabelAlign.deviceName = "";
+      this.formLabelAlign.deviceUuid = "";
+    },
     initData() {
       this.triggerConditionOptions = this.$common.getEnumByGroupStr(
         "door_plan_t"
@@ -259,14 +269,12 @@ export default {
         // linkageType: this.formLabelAlign.linkageType,
         planName: this.formLabelAlign.planName,
         triggerCondition: this.formLabelAlign.triggerCondition,
-        triggerPos: this.formLabelAlign.triggerPos,
+        triggerPos: this.formLabelAlign.triggerPos
       };
-      this.$DoorSetAjax
-        .postLinkageAct(holder)
-        .then(res => {
-          let body = res.data;
-          this.addLinkSuccessResponse(body);
-        });
+      this.$DoorSetAjax.postLinkageAct(holder).then(res => {
+        let body = res.data;
+        this.addLinkSuccessResponse(body);
+      });
     },
     addLinkSuccessResponse(body) {
       this.$cToast.success(body.msg);
@@ -360,12 +368,10 @@ export default {
       if (!deviceUuid) {
         return;
       }
-      this.$DoorSetAjax
-        .getDeviceDoorVO(deviceUuid)
-        .then(res => {
-          let body = res.data;
-          this.getDeviceDoorVOSuccessResponse(body);
-        });
+      this.$DoorSetAjax.getDeviceDoorVO(deviceUuid).then(res => {
+        let body = res.data;
+        this.getDeviceDoorVOSuccessResponse(body);
+      });
     },
     getDeviceDoorVOSuccessResponse(body) {
       this.linkagePosOptions = [];
@@ -376,7 +382,7 @@ export default {
           for (let item2 of item.extInfo.linkageAction) {
             linkageActionOp.push({
               typeName: this.$common.getEnumItemName("door_plan_d", item2),
-              typeStr: item2,
+              typeStr: item2
             });
           }
           this.linkagePosOptions.push({

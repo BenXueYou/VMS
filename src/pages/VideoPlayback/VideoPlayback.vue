@@ -1,15 +1,25 @@
 <template>
   <div class='VideoPlaybackContent'>
-    <left-content @playRtsp="playRtsp"
+    <!-- <left-content @playRtsp="playRtsp"
                   @updateView="updateView"
                   :ShowAuthDisabled="ShowAuthDisabled"
                   :OwnAuthDisabled="OwnAuthDisabled"
                   ref="leftTree"
-                  @openView="openView"></left-content>
+                  @openView="openView"></left-content> -->
+    <component @playRtsp="playRtsp"
+               @updateView="updateView"
+               :ShowAuthDisabled="ShowAuthDisabled"
+               :OwnAuthDisabled="OwnAuthDisabled"
+               @changetab="changetab"
+               ref="leftTree"
+               @openView="openView"
+               :is="!isOneProject?'LeftContent':'OneLevelLeft'"></component>
+
     <div class='right'
          ref='rigth'>
+      <!-- :class="{'fullVideoWrap':fullscreen}" -->
       <div class='vedioWrap'
-           :class="{'fullVideoWrap':fullscreen}"
+           id="vedioWrap"
            ref='vedioWrap'>
         <video-wrap v-for="(item,index) in showFenlu"
                     :ref="'video'+index"
@@ -21,6 +31,7 @@
                     :IsShowMenu="!!item.rtspUrl"
                     :rtspUrl="item.rtspUrl"
                     :streamType="item.streamType"
+                    @fullscreen2="fullscreen2"
                     :left="item.left"
                     :top="item.top"
                     :playStatus="item.playStatus"
@@ -40,8 +51,7 @@
                     @click="ClickViDeoA(index)">
         </video-wrap>
       </div>
-      <div class="footer"
-           v-if="!fullscreen">
+      <div class="footer">
         <control-panel @download="download"
                        @saveView="saveView"
                        @choosetime="choosetime"
@@ -91,6 +101,7 @@
 
 <script>
 import LeftContent from "./views/Left";
+import OneLevelLeft from "./views/OneLevelLeft";
 import TreeAppendTagDialog from "@/common/TreeAppendTagDialog";
 import VideoWrap from "@/pages/VideoPreview/components/video";
 import ControlPanel from "@/pages/VideoPlayback/components/ControlPanel";
@@ -117,6 +128,7 @@ let videoArrAA = Array.from({ length: 16 }, (item, index) => {
     endTime: "",
     mode: "original",
     playStatus: 0,
+    operatorData: {},
     timeData: [
       // {
       //   startTime: "2019-11-12 00:00:00", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
@@ -134,6 +146,7 @@ export default {
   name: "VideoPreview",
   components: {
     LeftContent,
+    OneLevelLeft,
     VideoWrap,
     TreeAppendTagDialog,
     videoInfoDialog,
@@ -150,6 +163,7 @@ export default {
       endTime: "2019-11-19 23:59:59",
       videoSpeed: 1,
       videoinfo: {},
+      isOneProject: false,
       appendViewVisible: false,
       showBroadCastVisible: false,
       setTimeVisible: false,
@@ -226,8 +240,12 @@ export default {
           value: "全屏"
         }
       ],
-      ShowAuthDisabled: false,
-      OwnAuthDisabled: false
+      ShowAuthDisabled: true,
+      OwnAuthDisabled: true,
+      treeSelectArr: [],
+      preOperatorData: null,
+      projectUuid: this.$store.state.home.projectUuid,
+      tabName: ""
     };
   },
   computed: {
@@ -270,6 +288,11 @@ export default {
     }
   },
   mounted() {
+    let projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(projectType.platformLevel === "levelOne");
+    if (this.isOneProject) {
+      this.getPreviewInfoForAllSet();
+    }
     this.ShowAuthDisabled = this.$common.getAuthIsOwn("视频回放", "isShow");
     this.OwnAuthDisabled = this.$common.getAuthIsOwn("视频回放", "isOwn");
     this.jugdeJump();
@@ -280,7 +303,24 @@ export default {
     const that = this;
     window.onresize = function() {
       that.jishi();
+      if (
+        !document.fullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement
+      ) {
+        that.$nextTick(() => {
+          that.$set(that.menuData[that.menuData.length - 1], "label", "全屏");
+        });
+      }
     };
+    document.addEventListener("keydown", e => {
+      if (e.keyCode === 27) {
+        this.fullscreen = false;
+        this.isAutoScreen = -1;
+        this.initWrapDom();
+      }
+    });
   },
   activated() {
     this.$nextTick(() => {
@@ -298,8 +338,25 @@ export default {
     // window.onresize = null;
   },
   methods: {
+    getPreviewInfoAAForAllSet() {
+      return new Promise(resolve => {
+        api2.getPreviewInfoAA().then(res => {
+          let data = res.data.data || {};
+          resolve(data);
+        });
+      });
+    },
+    async getPreviewInfoForAllSet() {
+      let data = await this.getPreviewInfoAAForAllSet();
+      this.$store.commit("setJDescription", data);
+    },
     changeMode(mode) {
-      this.videoArr[this.operatorIndex].mode = mode;
+      if (this.videoArr) {
+        this.videoArr.forEach(v => {
+          v.mode = mode;
+        });
+      }
+      // this.videoArr[this.operatorIndex].mode = mode;
       this.videoArr.concat();
     },
     jishi() {
@@ -326,7 +383,12 @@ export default {
     },
     setPlayTime(startTime, endTime) {
       // 设置回放时间
-      this.choosetime(this.operatorIndex, startTime, endTime);
+      this.$set(this.videoArr[this.operatorIndex], "startTime", startTime);
+      this.$set(this.videoArr[this.operatorIndex], "endTime", endTime);
+      let temp = this.operatorIndex;
+      this.operatorIndex = 0;
+      this.operatorIndex = temp;
+      this.choosetime(this.operatorIndex, startTime, endTime, "setPlayBackTime");
       // this.$refs["video" + this.operatorIndex][0].setPlayTime(
       //   startTime,
       //   endTime
@@ -392,19 +454,31 @@ export default {
         this.$route.params.channelUuid &&
         this.$route.path === "/VideoPlayback"
       ) {
+        this.preOperatorData = this.$common.copyObject(this.$route.params.operatorData, this.preOperatorData);
         this.jumpVideo(
           this.$route.params.channelUuid,
-          this.$route.params.channelName
+          this.$route.params.channelName,
+          this.$route.params.parentUuid,
         );
       }
     },
-    jumpVideo(id, name) {
+    jumpVideo(id, name, parentUuid) {
       if (!this.ShowAuthDisabled) {
         return;
       }
+      if (parentUuid) {
+        this.projectUuid = parentUuid;
+      }
       let d = new Date();
-      let ymd = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-      let hms = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      // let ymd = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+      let date2 = new Date();
+      let m = date2.getMonth() + 1;
+      let month = m > 9 ? m : "0" + m;
+      let day = date2.getDate() > 9 ? date2.getDate() : "0" + date2.getDate();
+      let ymd = date2.getFullYear() + "-" + month + "-" + day;
+      let h = d.getHours();
+      let hour = h > 9 ? h : "0" + h;
+      let hms = `${hour}:${d.getMinutes()}:${d.getSeconds()}`;
       this.$refs.leftTree.setKeys(id);
       this.playVideo(
         id,
@@ -412,26 +486,40 @@ export default {
         ymd + " 00:00:00",
         ymd + " " + hms,
         "normal_vod",
-        "main"
+        "main",
+        false,
+        parentUuid
       );
     },
     // 录像播放跳转时间
-    async choosetime(index, chooseTime, endTime = "") {
+    async choosetime(index, chooseTime, endTime = "", actionName) {
+      // 获取播放的开始时间和时间，用这个时间去获取新的rtspUrl,
+      // 然后塞给底层的方法
       // eslint-disable-next-line
       let { channelUuid, videoType, streamType } = this.videoArr[index];
       if (!endTime) {
         endTime = this.videoArr[this.operatorIndex].endTime;
+      }
+      this.operatorIndex = index;
+      if (this.treeSelectArr[index]) {
+        this.projectUuid = this.treeSelectArr[index].parentUuid;
+        this.videoArr[index].operatorData = this.$common.copyObject(this.treeSelectArr[index], this.videoArr[index].operatorData);
+      } else {
+        this.videoArr[index].operatorData = this.$common.copyObject(this.preOperatorData, this.videoArr[index].operatorData);
       }
       let data = await this.backup(
         channelUuid,
         chooseTime,
         endTime,
         videoType,
-        streamType
+        streamType,
+        this.projectUuid
       );
-      this.operatorIndex = index;
       this.videoArr[index].rtspUrl = data.rtspUrl;
       this.videoArr[index].playStatus = 1;
+      if (actionName && actionName === "setPlayBackTime") {
+        this.videoArr[index].timeData = data.videos;
+      }
       this.videoArr.concat();
       console.log(`index=${index}  拖拽url=${data.rtspUrl}`);
       this.$refs["video" + index][0].drag(data.rtspUrl);
@@ -454,6 +542,11 @@ export default {
       }
       // 打开视图之后，默认选中第一分路的视频
       this.operatorIndex = 0;
+      if (this.treeSelectArr[0]) {
+        this.videoArr[0].operatorData = this.$common.copyObject(this.treeSelectArr[0], this.videoArr[0].operatorData);
+      } else {
+        this.videoArr[0].operatorData = this.$common.copyObject(this.preOperatorData, this.videoArr[0].operatorData);
+      }
       let newdata = JSON.parse(JSON.stringify(data));
       // let elements = newdata.elements.map((item, index) => {
       //   item.position = index;
@@ -490,7 +583,8 @@ export default {
           channelUuid: item.channelUuid, // 通道uuid
           rtspUrl: item.rtspUrl, // rtsp rtspUrl
           streamType: item.streamType,
-          timeData: item.timeData // 流类型
+          timeData: item.timeData, // 流类型
+          projectUuid: item.projectUuid
         };
       });
       // 存储每个视频分路的名字
@@ -530,9 +624,11 @@ export default {
       // this.startTime = sd;
       // this.endTime = ed;
       // 播放rtsp,传过来的可能是多个通道id
+      this.treeSelectArr = this.$common.copyArray(arr, this.treeSelectArr);
       for (let i = 0; i < arr.length; i++) {
         // nodeType: "chnNode"
         // 判断传过来的数据，类型是不是通道
+        this.$set(arr[i], "projectUuid", arr[i].parentUuid ? arr[i].parentUuid : this.$store.state.home.projectUuid);
         if (
           arr[i].nodeType === "chnNode" ||
           arr[i].hasOwnProperty("channelType")
@@ -544,63 +640,60 @@ export default {
             ed,
             videoType,
             streamType,
-            i === 0
+            i === 0,
+            arr[i].parentUuid
           );
         }
       }
     },
-    async playVideo(id, channelName, sd, ed, videoType, streamType, isFrist) {
-      let data = await this.backup(id, sd, ed, videoType, streamType);
-      // videos是录像的信息，现在将这些放倒控制面板中
-      // {
-      //       "rtspUrl" : "string", // 回放RtspUrl
-      //       "localId": "string", // 本地流媒体服务智能组件id
-      //       "videos":
-      //           [
-      //               {
-      //                   "fileName":"string", //文件名
-      //                   "startTime":"string", // 开始时间（yyyy-MM-dd hh:mm:ss），必填
-      //                   "endTime":"string", // 结束时间（yyyy-MM-dd hh:mm:ss），必填
-      //                   "videoType":"string", // 录像类型，必填
-      //                   "streamType":"string"	// 码流类型
-      //               }
-      //           ]
-      //   }
-      // 处理数据
-      console.log(data);
-      let videos = {};
-      // let timeData = videos.map(item => {
-      //   let startTime = item.startTime.split(" ")[1];
-      //   let endTime = item.endTime.split(" ")[1];
-      //   if (sd.split(" ")[0] !== item.startTime.split(" ")[0]) {
-      //     // 返回来的第一个时间为前一天
-      //     startTime = "00:00:00";
-      //   }
-      //   if (ed.split(" ")[0] !== item.endTime.split(" ")[0]) {
-      //     // 返回来的第一个时间为前一天
-      //     endTime = "24:00:00";
-      //   }
-      //   return {
-      //     startTime,
-      //     endTime,
-      //     videoType: item.videoType,
-      //     fileName: item.fileName
-      //   };
-      // });
-      // console.log(timeData);
-      // if(timeData.length){
-      //   // 如果没有时间段，则表示没有录像
-      //   this.$messge.error('该通道')
-      //   return ;
+    getPreviewInfoAA(projectUuid) {
+      return new Promise(resolve => {
+        api2
+          .getPreviewInfoAA({
+            asgName: projectUuid
+          })
+          .then(res => {
+            let data = res.data.data || {};
+            resolve(data);
+          });
+      });
+    },
+    async getPreviewInfo(projectUuid) {
+      // const { jSignal, jMedia } = this.$store.getters;
+      // if (!jSignal.srcUuid || !jMedia.srcUuid) {
+      let data = await this.getPreviewInfoAA(projectUuid);
+      this.$store.commit("setJDescription", data);
       // }
+    },
+    async playVideo(
+      id,
+      channelName,
+      sd,
+      ed,
+      videoType,
+      streamType,
+      isFrist,
+      projectUuid
+    ) {
+      this.getPreviewInfo(projectUuid);
+      let data = await this.backup(
+        id,
+        sd,
+        ed,
+        videoType,
+        streamType,
+        projectUuid
+      );
+      // videos是录像的信息，现在将这些放倒控制面板中
+      // 处理数据
+      let videos = {};
       // 回放码流地址后面需要添加开始时间
       let rtspUrl = data.rtspUrl;
-      // if(rtspUrl.indexOf("?"))
-      // if (timeData.length) {
-      //   rtspUrl += "?starttime=" + sd.split(" ")[0] + timeData[0].startTime;
-      // }
       // 模拟数据
       data.videos = data.videos || [];
+      if (data.videos.length === 0) {
+        return;
+      }
       videos = {
         fileName: channelName, // 文件名
         videoType: videoType, // 录像类型，必填
@@ -631,6 +724,12 @@ export default {
         this.$message.error("超过16路码流播放了！");
       } else {
         this.operatorIndex = index;
+        if (this.treeSelectArr[index]) {
+          this.projectUuid = this.treeSelectArr[index].parentUuid;
+          this.videoArr[index].operatorData = this.$common.copyObject(this.treeSelectArr[index], this.videoArr[index].operatorData);
+        } else {
+          this.videoArr[index].operatorData = this.$common.copyObject(this.preOperatorData, this.videoArr[index].operatorData);
+        }
         let item = this.videoArr[index];
         videos = Object.assign(item, videos);
         this.videoArr.splice(this.operatorIndex++, 1, videos);
@@ -642,9 +741,39 @@ export default {
         }
         if (this.operatorIndex >= 16) {
           this.operatorIndex = 15;
+          if (this.treeSelectArr[15]) {
+            this.videoArr[15].operatorData = this.$common.copyObject(this.treeSelectArr[15], this.videoArr[15].operatorData);
+          } else {
+            this.videoArr[15].operatorData = this.$common.copyObject(this.preOperatorData, this.videoArr[15].operatorData);
+          }
         }
+        this.videoArr[this.operatorIndex].initStartRstpUrl = this.videoArr[this.operatorIndex].rtspUrl;
       }
       console.log(this.videoArr);
+    },
+    backup(
+      channelUuid,
+      startTime,
+      endTime,
+      videoType,
+      streamType,
+      projectUuid
+    ) {
+      return new Promise((resolve, reject) => {
+        api2
+          .backup({
+            channelUuid,
+            startTime,
+            endTime,
+            videoType,
+            streamType,
+            projectUuid
+          })
+          .then(res => {
+            let data = res.data.data;
+            resolve(data);
+          });
+      });
     },
     records(channelUuid, startTime, endTime, videoType, streamType) {
       return new Promise((resolve, reject) => {
@@ -664,22 +793,6 @@ export default {
           })
           .catch(() => {
             resolve([]);
-          });
-      });
-    },
-    backup(channelUuid, startTime, endTime, videoType, streamType) {
-      return new Promise((resolve, reject) => {
-        api2
-          .backup({
-            channelUuid,
-            startTime,
-            endTime,
-            videoType,
-            streamType
-          })
-          .then(res => {
-            let data = res.data.data;
-            resolve(data);
           });
       });
     },
@@ -764,6 +877,13 @@ export default {
     },
     ClickViDeoA(index) {
       this.operatorIndex = index;
+      if (this.treeSelectArr[index]) {
+        this.projectUuid = this.treeSelectArr[index].parentUuid;
+        this.videoArr[index].operatorData = this.$common.copyObject(this.treeSelectArr[index], this.videoArr[index].operatorData);
+      } else {
+        this.videoArr[index].operatorData = this.$common.copyObject(this.preOperatorData, this.videoArr[index].operatorData);
+      }
+      this.videoArr[this.operatorIndex].initStartRstpUrl = this.videoArr[this.operatorIndex].rtspUrl;
       this.getVideoSpeed();
     },
     showMenu(e, index) {
@@ -772,12 +892,19 @@ export default {
         return;
       }
       this.operatorIndex = index;
+      if (this.treeSelectArr[index]) {
+        this.projectUuid = this.treeSelectArr[index].parentUuid;
+        this.videoArr[index].operatorData = this.$common.copyObject(this.treeSelectArr[index], this.videoArr[index].operatorData);
+      } else {
+        this.videoArr[index].operatorData = this.$common.copyObject(this.preOperatorData, this.videoArr[index].operatorData);
+      }
       this.getVideoSpeed();
       const _this = this;
       e.preventDefault();
       this.$ContextMenu({
         data: this.menuData,
         event: e,
+        dom: document.getElementById("vedioWrap"),
         target: this.$refs.vedioWrap,
         callback(value) {
           // value表示点击按钮的value
@@ -788,6 +915,12 @@ export default {
     closeVideoAA(index) {
       if (index !== undefined) {
         this.operatorIndex = index;
+        if (this.treeSelectArr[index]) {
+          this.projectUuid = this.treeSelectArr[index].parentUuid;
+          this.videoArr[index].operatorData = this.$common.copyObject(this.treeSelectArr[index], this.videoArr[index].operatorData);
+        } else {
+          this.videoArr[index].operatorData = this.$common.copyObject(this.preOperatorData, this.videoArr[index].operatorData);
+        }
       }
       if (!this.videoArr[this.operatorIndex].channelUuid) {
         this.$message.error("该分路上没有通道！");
@@ -806,6 +939,7 @@ export default {
           }
         )
           .then(() => {
+            this.$refs['video' + index][0].isLoadingVideo = false;
             this.shutdownVideo();
           })
           .catch(() => {});
@@ -845,12 +979,13 @@ export default {
             }
           )
             .then(() => {
-              this.videoArr = this.videoArr.map(item => {
+              this.videoArr = this.videoArr.map((item, index) => {
                 item.rtspUrl = "";
                 item.startTime = "";
                 item.endTime = "";
                 item.timeData = [];
                 item.playStatus = 0;
+                this.$refs['video' + index][0].isLoadingVideo = false;
                 return item;
               });
             })
@@ -889,7 +1024,7 @@ export default {
           if (!this.videoArr[this.operatorIndex].channelUuid) {
             this.$message.error("该分路上没有通道！");
           } else {
-            this.swithlive(this.videoArr[this.operatorIndex].channelUuid);
+            this.swithlive(this.videoArr[this.operatorIndex].channelUuid, this.tabName === 'view' ? { parentUuid: this.videoArr[this.operatorIndex].projectUuid } : this.videoArr[this.operatorIndex].operatorData);
           }
           break;
         case "摄像机信息":
@@ -897,14 +1032,17 @@ export default {
             this.$message.error("该分路上没有通道！");
           } else {
             api2
-              .getCameraInfo({
-                channelUuid: this.videoArr[this.operatorIndex].channelUuid
-              })
+              .getCameraInfo(
+                this.tabName === 'view' ? this.videoArr[this.operatorIndex].projectUuid : this.videoArr[this.operatorIndex].operatorData.parentUuid,
+                {
+                  channelUuid: this.videoArr[this.operatorIndex].channelUuid
+                }
+              )
               .then(res => {
                 /* eslint-disable */
                 let data = res.data.data || {};
                 let channelTyepCN =
-                  JSON.parse(localStorage.getItem("localEnums"))["chn"][
+                  JSON.parse(sessionStorage.getItem("localEnums"))["chn"][
                     data.channelType
                   ] || data.channelType;
                 data.channelType = channelTyepCN;
@@ -995,6 +1133,8 @@ export default {
       this.getVideoSpeed();
     },
     pasueVideo() {
+      // alert(this.videoArr[this.operatorIndex].playStatus);
+      console.log(this.videoArr[this.operatorIndex]);
       if (this.videoArr[this.operatorIndex].playStatus === 0) {
         if (this.videoArr[this.operatorIndex].bzRtspUrl) {
           this.videoArr[this.operatorIndex].rtspUrl = this.videoArr[
@@ -1015,7 +1155,7 @@ export default {
     },
     stopVideo() {
       let item = this.videoArr[this.operatorIndex];
-      item.bzRtspUrl = item.rtspUrl; // 备用的url
+      item.bzRtspUrl = item.initStartRstpUrl; // 备用的url
       item.rtspUrl = "";
       item.playStatus = 0;
       this.videoArr.splice(this.operatorIndex, 1, item);
@@ -1026,7 +1166,7 @@ export default {
     setVideoTime() {
       this.setTimeVisible = true;
     },
-    swithlive(channelUuid) {
+    swithlive(channelUuid, data) {
       // 判断有没有操作权限，没有则不进行跳转
       if (
         !this.$common.getAuthIsOwn("视频预览", "isShow") ||
@@ -1045,7 +1185,7 @@ export default {
       this.$bus.$emit("setLocalTag", "VideoPreview");
       this.$router.push({
         name: "VideoPreview",
-        params: { channelUuid }
+        params: { channelUuid, data }
       });
     },
     getFormatTime(t) {
@@ -1115,34 +1255,45 @@ export default {
       this.videoArr.concat();
     },
     PreviewAreafullScreen() {
-      // this.setFullScreen(this.$refs.vedioWrap);
-      var element = document.documentElement;
-      if (this.fullscreen) {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitCancelFullScreen) {
-          document.webkitCancelFullScreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-        console.log("已还原！");
-      } else {
-        // 否则，进入全屏
+      let element = this.$refs.vedioWrap;
+      if (
+        !document.fullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement
+      ) {
+        // current working methods
         if (element.requestFullscreen) {
           element.requestFullscreen();
-        } else if (element.webkitRequestFullScreen) {
-          element.webkitRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          element.msRequestFullscreen();
         } else if (element.mozRequestFullScreen) {
           element.mozRequestFullScreen();
-        } else if (element.msRequestFullscreen) {
-          // IE11
-          element.msRequestFullscreen();
+        } else if (element.webkitRequestFullscreen) {
+          element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         }
-        console.log("已全屏！");
+        // this.$emit("fullScreenCall", "full");
+        // this.screenText = "退出全屏";
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        // this.$emit("fullScreenCall", "exitFull");
+        // this.screenText = "全屏";
       }
-      // // 改变当前全屏状态
+      this.$nextTick(() => {
+        if (this.menuData[this.menuData.length - 1].label === "全屏") {
+          this.$set(this.menuData[this.menuData.length - 1], "label", "取消全屏")
+        } else {
+          this.$set(this.menuData[this.menuData.length - 1], "label", "全屏")
+        }
+      });
       setTimeout(() => {
         this.fullscreen = true;
         this.initWrapDom();
@@ -1161,7 +1312,14 @@ export default {
       if (target.msRequestFullscreen) {
         target.msRequestFullscreen();
       }
-    }
+    },
+    fullscreen2(index) {
+      this.setFullScreen(this.$refs.video0[index].getCanvas());
+    },
+    changetab(tab) {
+      // 左边菜单的切换tab事件
+      this.tabName = tab.name;
+    },
   },
   watch: {
     "$route.path": function(newVal, oldVal) {

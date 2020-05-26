@@ -2,7 +2,7 @@ import axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 import store from "@/store/store.js";
 
-let pmUrl = RestApi.api.pmUrl;
+let pmUrl = RestApi.pmUrl;
 // 获取特殊日期列表
 export function getDateList(data) {
   let url = pmUrl.dateListUrl;
@@ -296,5 +296,87 @@ export function switchITUrl(uuid, enable, data) {
     },
     url,
     data
+  });
+}
+// -------------------- 人员进出记录 -----------------
+export function getAccessList(params) {
+  let url = pmUrl.getAccessList;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+export function getAccessDetail(uuid, params = {}) {
+  let url = pmUrl.getAccessDetail(uuid);
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+
+export function addAccessRecord(data) {
+  let url = pmUrl.addAccessRecord;
+  return axios({
+    method: "post",
+    url,
+    data
+  });
+}
+
+export function updateAccessRecord(uuid, data) {
+  let url = pmUrl.updateAccessRecord + `?warningPlanUuid=${uuid}`;
+  return axios({
+    method: "put",
+    url,
+    data
+  });
+}
+
+export function deleteAccessRecord(warningPlanUuid, data = {}) {
+  let url = pmUrl.deleteAccessRecord + `?warningPlanUuid=${warningPlanUuid}`;
+  return axios({
+    method: "delete",
+    url,
+    data
+  });
+}
+
+export function updateAccessRecordStatus(uuid, enable, data = {}) {
+  let url =
+    pmUrl.updateAccessRecordStatus +
+    `?warningPlanUuid=${uuid}&enable=${enable}`;
+  return axios({
+    method: "put",
+    url,
+    data
+  });
+}
+
+// 上传声音
+export function uploadSound(param, config) {
+  // return pmUrl.uploadSound;
+  let url = pmUrl.uploadSound;
+  return axios.post(url, param, config);
+}
+
+// 根据组织uuid获取居民
+export function getOranizition(params) {
+  let url = pmUrl.getOranizition;
+  return axios({
+    method: "get",
+    url,
+    params
+  });
+}
+
+// 根据组织uuid获取居民
+export function getPersonnel(params) {
+  let url = pmUrl.getPersonnel;
+  return axios({
+    method: "get",
+    url,
+    params
   });
 }

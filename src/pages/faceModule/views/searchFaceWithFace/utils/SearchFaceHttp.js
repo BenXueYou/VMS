@@ -6,7 +6,7 @@ export var SearchFaceHttp = {
    * 初始化小区
    */
   searchFace(holder) {
-    let api = `${RestApi.api.faceModuleAPi.searchFace}`;
+    let api = `${RestApi.faceModuleAPi.searchFace}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];
@@ -17,7 +17,7 @@ export var SearchFaceHttp = {
    * 临时布控
    */
   tempMonitor(holder) {
-    let api = `${RestApi.api.faceModuleAPi.tempMonitor}`;
+    let api = `${RestApi.faceModuleAPi.tempMonitor}`;
     let data = {};
     for (let k in holder) {
       data[k] = holder[k];

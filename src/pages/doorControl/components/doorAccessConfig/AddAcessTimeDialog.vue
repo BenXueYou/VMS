@@ -5,39 +5,33 @@
              :width="width"
              :modal="modal"
              :class="{'dialogCenter':center}"
-             :visible.sync="AddAcessTimeDialogVisible">
+             :visible.sync="AddAcessTimeDialogVisible"
+             append-to-body>
     <div class='cb'>
-
       <el-form :model="ruleForm"
                :rules="rules"
                class="timeForm"
                ref="form"
                label-width="130px">
-
         <el-form-item label="名称："
                       prop="name">
           <el-input v-model="ruleForm.name"
                     class="nameinput"></el-input>
         </el-form-item>
-
         <el-form-item label="备注："
                       v-if='showrRemarks'
                       prop="remarks">
           <el-input class="markinput"
                     v-model="ruleForm.remarks"></el-input>
         </el-form-item>
-
         <el-form-item label="通行时间：">
-
           <el-button class='button'
                      @click='addTime'
                      icon="el-icon-circle-plus-outline"
                      size="small">添加</el-button>
           <div class="dash-line"
                style="margin-bottom:15px;">
-
           </div>
-
           <div class="timePanelWrap">
             <time-panel-item v-for="(item,index) in timeData"
                              :key="item.weeks+'---'+index"
@@ -47,11 +41,8 @@
                              @delete='deleteItem(index)'>
             </time-panel-item>
           </div>
-
         </el-form-item>
-
         <el-form-item label="">
-
           <el-button @click='confirm'
                      class="surebtn"
                      type="primary">确定</el-button>
@@ -61,7 +52,6 @@
                      type="primary">取消</el-button>
         </el-form-item>
       </el-form>
-
     </div>
     <div style="height:20px;"></div>
   </el-dialog>
@@ -192,11 +182,14 @@ export default {
     updateItem(index, item) {
       console.log(index);
       console.log(item);
+      if (!item.timeArea.length) return;
       this.timeData[index] = item;
+      console.log('--------');
     },
     deleteItem(index) {
       // 删除某个数据
       this.timeData.splice(index, 1);
+      console.log(this.timeData);
     },
     judgeDuplicateData(data) {
       // 1.将所有同一天的时间段放在一起，然后判断是否有重叠
@@ -435,11 +428,13 @@ export default {
 
 $labelwidth: 5em;
 .timeareadialog {
+  max-height: 100vh;
   overflow: auto;
   overflow-x: hidden;
   .timePanelWrap {
     min-height: 180px;
-    // overflow-y: auto;
+    max-height: 65vh;
+    overflow-y: auto;
   }
   .cb {
     .timeForm {

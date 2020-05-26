@@ -168,7 +168,7 @@ export default {
         this.$emit("update:nodeText", this.upAddress);
         // this.nodeText = this.upAddress;
         this.$emit("setUseData", {
-          node: this.currentNode,
+          node: this.currentNode
         });
       }
     },
@@ -218,6 +218,9 @@ export default {
 <style lang="scss">
 .my-popover {
   height: 250px !important;
+  .el-scrollbar__wrap {
+    width: 100%;
+  }
 }
 .i-tree-style {
   .el-tree {
@@ -246,7 +249,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .i-tree-item {
-  width: 100%;
+  width: calc(100% - 30px);
   .i-tree-item-icon {
     display: flex;
     align-items: center;

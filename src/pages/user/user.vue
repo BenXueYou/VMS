@@ -159,7 +159,7 @@ export default {
   border: none;
   min-width: 138px;
 }
-.header {
+.userBox .header {
   width: 100%;
   height: 100%;
   /* max-width: 200px; */

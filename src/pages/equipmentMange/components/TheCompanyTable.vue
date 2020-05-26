@@ -1,39 +1,34 @@
 <template>
   <div class="wrap thecompanygroup">
     <div class="btn-group">
-      <el-button :class="{'default':index!=0}"
+      <el-button v-for="item in tabBtnArr"
+                 :key="item.index"
+                 :class="{'default':index!=item.index}"
                  :disabled="!ShowAuthDisabled"
-                 @click="switchType(0)"
-                 type="primary">门禁</el-button>
-      <el-button :class="{'default':index!=1}"
-                 :disabled="!ShowAuthDisabled"
-                 @click="switchType(1)"
-                 type="primary">视频</el-button>
-      <el-button :class="{'default':index!=2}"
-                 :disabled="!ShowAuthDisabled"
-                 @click="switchType(2)"
-                 type="primary">报警</el-button>
-      <el-button :class="{'default':index!=3}"
-                 @click="switchType(3)"
-                 :disabled="!ShowAuthDisabled"
-                 type="primary">访客机</el-button>
+                 @click="switchType(item)"
+                 type="primary">{{item.label}}</el-button>
     </div>
     <div class="tablecontent"
          ref="tablecontent">
       <div class="btn-group">
-        <el-button type="primary"
+        <el-button v-if="isOneProject"
+                   type="primary"
                    :disabled="!OwnAuthDisabled"
                    @click="addEquipMent">搜索设备</el-button>
-        <el-button type="primary"
+        <el-button v-if="isOneProject"
+                   type="primary"
                    :disabled="!OwnAuthDisabled"
                    @click="manualAdd">手动添加</el-button>
         <el-button type="primary"
+                   v-if="isOneProject"
                    :disabled="!OwnAuthDisabled"
                    @click="deletetableData">删除</el-button>
-        <el-button type="primary"
+        <el-button v-if="isOneProject"
+                   type="primary"
                    :disabled="!OwnAuthDisabled"
                    @click="update">批量升级</el-button>
-        <el-button type="primary"
+        <el-button v-if="isOneProject"
+                   type="primary"
                    :disabled="!OwnAuthDisabled"
                    @click="sendData">下发数据</el-button>
 
@@ -42,16 +37,16 @@
           <el-input class="input"
                     :disabled="!ShowAuthDisabled"
                     v-model="devName"></el-input>
-
-          <el-button type="primary"
-                     @click="retrieveVisible=!retrieveVisible"
-                     :disabled="!ShowAuthDisabled"
-                     size="small">其他条件检索</el-button>
           <el-button type="primary"
                      @click="searchBytext"
                      :disabled="!ShowAuthDisabled"
                      icon="el-icon-search"
                      size="small">检索</el-button>
+          <el-button type="primary"
+                     @click="retrieveVisible=!retrieveVisible"
+                     :disabled="!ShowAuthDisabled"
+                     size="small">其他条件检索</el-button>
+
         </div>
         <!-- <retrieve></retrieve> -->
         <input-retrieve :visible="retrieveVisible"
@@ -68,7 +63,10 @@
                 :style="{'height':tableHeight+'px'}"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection"
-                         width="55"></el-table-column>
+                         v-if="isOneProject"></el-table-column>
+        <el-table-column type="index"
+                         label="序号"
+                         width="60"></el-table-column>
         <el-table-column prop="devName"
                          label="设备名字">
           <template slot-scope="scope">
@@ -78,7 +76,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="ip"
-                         label="IP">
+                         label="IP地址">
           <template slot-scope="scope">
             <el-tooltip :content="scope.row.ip">
               <div>{{scope.row.ip}}</div>
@@ -93,13 +91,23 @@
             </el-tooltip>
           </template>
         </el-table-column>
+        <!-- 修改 设备型号 为 设备类型 -->
         <el-table-column prop="devMode"
                          width="120"
+                         show-overflow-tooltip
+                         label="设备类型">
+          <template slot-scope="scope">
+            <!-- <div>{{scope.row.devMode}}</div> -->
+            <div>{{$common.getEnumItemName('dev',scope.row.devMode)}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column v-if="index==4"
+                         prop="devMode"
+                         width="120"
+                         show-overflow-tooltip
                          label="设备型号">
           <template slot-scope="scope">
-            <el-tooltip :content="scope.row.devMode">
-              <div>{{scope.row.devMode}}</div>
-            </el-tooltip>
+            <div>{{scope.row.productType}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="doorCount"
@@ -113,12 +121,7 @@
         <el-table-column prop="alarmCount"
                          width="80"
                          v-else-if="index==2"
-                         label="门数量"></el-table-column>
-        <el-table-column prop="vistorCount"
-                         width="80"
-                         v-else-if="index==3"
-                         :label="index!=1?'门数量':'视频通道'"></el-table-column>
-
+                         label="防区数量"></el-table-column>
         <el-table-column prop="netStatus"
                          width="80"
                          label="网络状态">
@@ -133,7 +136,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="createTime"
-                         label="时间">
+                         label="添加时间">
           <template slot-scope="scope">
             <el-tooltip :content="scope.row.createTime">
               <div>{{scope.row.createTime}}</div>
@@ -143,26 +146,35 @@
         <el-table-column label="操作"
                          width="150">
           <template slot-scope="scope">
-            <el-button @click="editEquipment(scope.row)"
+            <el-button v-if="isOneProject"
+                       @click="editEquipment(scope.row)"
                        type="text"
                        :disabled="!OwnAuthDisabled"
-                       size="small">编辑</el-button>
-            <el-button type="text"
-                       class="deleteText"
-                       :disabled="!OwnAuthDisabled"
-                       @click="deleteEquip(scope.row)"
-                       size="small">删除</el-button>
-            <el-button type="text"
-                       v-if="index==1"
-                       @click="remoteControl(scope.row)"
-                       :disabled="(!!(scope.row.extInfo.fdLib!=1) || !OwnAuthDisabled)"
-                       size="small">配置</el-button>
-            <el-button type="text"
-                       v-if="index!=1"
-                       @click="remoteControl(scope.row)"
-                       :class="{'offLine':scope.row.netStatus==='offline'}"
-                       :disabled="(scope.row.netStatus==='offline'|| !(scope.row.extInfo.remoteConfig) || !OwnAuthDisabled)"
-                       size="small">配置</el-button>
+                       size="small"> 编辑</el-button>
+            <el-button v-else
+                       @click="editEquipment(scope.row)"
+                       type="text"
+                       :disabled="!ShowAuthDisabled"
+                       size="small"> 详情</el-button>
+            <template v-if="isOneProject">
+              <el-button type="text"
+                         class="deleteText"
+                         :disabled="!OwnAuthDisabled"
+                         @click="deleteEquip(scope.row)"
+                         size="small">删除</el-button>
+              <el-button type="text"
+                         v-if="index==1"
+                         @click="remoteControl(scope.row)"
+                         :disabled="(!!(scope.row.extInfo.fdLib!=1) || !OwnAuthDisabled)"
+                         size="small">配置</el-button>
+              <el-button type="text"
+                         v-if="index!=1"
+                         @click="remoteControl(scope.row)"
+                         :class="{'offLine':scope.row.netStatus==='offline'}"
+                         :disabled="(scope.row.netStatus!=='offline'|| !(scope.row.extInfo.remoteConfig) || !OwnAuthDisabled)"
+                         size="small">配置</el-button>
+
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -178,9 +190,10 @@
       </div>
 
       <remote-control-dialog :visible.sync="remoteControlDialogVisiable"
-                             :isVistors="index===3"
+                             :viewType="viewType"
                              :ShowAuthDisabled="ShowAuthDisabled"
                              :OwnAuthDisabled="OwnAuthDisabled"
+                             :bodyTemperature="bodyTemperature"
                              :deviceUuid="deviceUuid"></remote-control-dialog>
 
       <confirm-dialog :visible.sync="ConfirmDialogVisible"
@@ -198,28 +211,28 @@
                       @confirm="confirmUpgrade"
                       @close="close"></confirm-dialog>
 
+      <!-- 设备自动搜索添加弹窗 -->
       <the-company-add-equipment-dialog :visible.sync="addEquipMentDialgoVisible"
                                         :orgUuid="orgUuid"
                                         :deviceType="viewType"
                                         @confirm="addSuccess"></the-company-add-equipment-dialog>
-
+      <!-- 设备更新弹窗 -->
       <the-company-update-dialog :visible.sync="updateDialogVisible"
                                  :data="multipleSelection"></the-company-update-dialog>
 
       <the-company-upgradingDialog :visible.sync="upgradeVisible"></the-company-upgradingDialog>
-
+      <!-- 下发弹窗 -->
       <the-company-table-xiafa-dialog :visible.sync="TheCompanyTableXiafaDialogVisible"
                                       @confirm="getTableData"></the-company-table-xiafa-dialog>
-
+      <!-- 设备手动添加 -->
       <manual-add-dialog :visible.sync="manualAddVisible"
                          :deviceTypeArr="deviceTypeArr"
                          @commit="addSuccess"
                          :localService="localService"></manual-add-dialog>
+      <!-- 视频设备NVR的设置 -->
       <video-set-dialog :visible.sync="videoDialogVisiable"
                         :title="deviceTitle"
-                        :deviceUuid="deviceUuid">
-
-      </video-set-dialog>
+                        :deviceUuid="deviceUuid"></video-set-dialog>
 
     </div>
   </div>
@@ -237,7 +250,7 @@ import ManualAddDialog from "@/pages/equipmentMange/components/ManualAddDialog";
 import VideoSetDialog from "@/pages/equipmentMange/components/videoSetDialog";
 
 import * as api from "../ajax.js";
-import { mapState } from "vuex";
+// import { mapState } from "vuex";
 export default {
   name: "TheCompanyTable",
   props: {
@@ -256,6 +269,8 @@ export default {
   },
   data() {
     return {
+      projectType: {},
+      isOneProject: false, // 是否下级平台
       deviceTitle: "",
       viewType: "door",
       deviceTypeArr: window.config.door_machine,
@@ -286,7 +301,36 @@ export default {
       showloading: false,
       upgradeConfirmDialogVisible: false,
       deviceType: "door_machine",
+      bodyTemperature: "",
       productType: "",
+      tabBtnArr: [
+        {
+          index: 0,
+          type: "door",
+          label: "门禁"
+        },
+        {
+          index: 1,
+          type: "video",
+          label: "视频"
+        },
+        {
+          index: 2,
+          type: "alarm",
+          label: "报警"
+        },
+        {
+          index: 3,
+          type: "visitor",
+          label: "访客机"
+        },
+        {
+          index: 4,
+          type: "buildingIntercom",
+          // type: "door",
+          label: "楼寓对讲"
+        }
+      ],
       deleteOneRow: null, // 用于记录删除单个记录
       localService: [
         {
@@ -308,28 +352,27 @@ export default {
     TheCompanyTableXiafaDialog
   },
   computed: {
-    ...mapState({
-      orgUuid: state => {
-        return state.equipment.orgUuid;
-      },
-      DeviceOnOffArr: state => {
-        return state.equipment.DeviceOnOffArr;
-      }
-    })
+    orgUuid() {
+      return this.$store.state.equipment.orgUuid;
+    },
+    DeviceOnOffArr() {
+      return this.$store.state.equipment.DeviceOnOffArr;
+    },
+    projectUuid() {
+      return this.isOneProject
+        ? this.$store.state.home.projectUuid
+        : this.$store.state.equipment.projectUuid;
+    }
   },
   methods: {
-    serviceList() {
+    tableColumnType() {
+      return this.isOneProject ? "selection" : "index";
+    },
+    serviceList(projectUuid) {
       api
-        .serviceList(this.viewType)
+        .serviceList(this.viewType, projectUuid)
         .then(res => {
-          console.log(res);
           if (res.data.success) {
-            // this.localService = [
-            //   {
-            //     belongServiceName: "测试服务名称",
-            //     belongServiceUuid: "iotas_vd_serviceuuid_001"
-            //   }
-            // ].concat(res.data.data || []);
             let num = (res.data.data || []).map(item => {
               item.belongServiceName = item.serviceName;
               item.belongServiceUuid = item.serviceUuid;
@@ -348,14 +391,7 @@ export default {
       api
         .DType(this.viewType)
         .then(res => {
-          console.log(res);
           if (res.data.success) {
-            // this.localService = [
-            //   {
-            //     belongServiceName: "测试服务名称",
-            //     belongServiceUuid: "iotas_vd_serviceuuid_001"
-            //   }
-            // ].concat(res.data.data || []);
             let num = (res.data.data || []).map(item => {
               item.label = item.value;
               item.value = item.key;
@@ -363,7 +399,6 @@ export default {
             });
             this.deviceTypeArr = num;
           }
-          // this.$emit("serverList", this.localService);
           this.$emit("switch", this.deviceTypeArr);
         })
         .catch(() => {
@@ -384,30 +419,26 @@ export default {
         return;
       }
       this.showloading = true;
+      // 这里传入projectUuid,表示不同的项目
       api
-        .getDevList({
-          orgUuid: this.orgUuid,
-          limit: this.pageSize,
-          page: this.pageNow,
-          nickName: this.devName,
-          deviceIp: this.deviceIp,
-          productType: this.productType,
-          viewType: this.viewType
-          // deviceType: this.deviceType
-        })
+        .getDevList(
+          {
+            orgUuid: this.orgUuid,
+            limit: this.pageSize,
+            page: this.pageNow,
+            nickName: this.devName,
+            deviceIp: this.deviceIp,
+            productType: this.productType,
+            viewType: this.viewType
+            // deviceType: this.deviceType
+          },
+          this.projectUuid
+        )
         .then(res => {
           this.showloading = false;
-          console.log(res);
           let data = res.data.data;
           this.tableData = [];
           if (res.data.success && data.list && data.list.length) {
-            //  devName: "192.128.1." + (i + 1),
-            // ip: "192.128.1.1",
-            // devId: "123456789",
-            // devMode: "VB510F",
-            // doorCount: 1,
-            // netStatus: "online",
-            // time: "2018-10-08"
             let list = data.list;
             for (let i = 0, len = list.length; i < len; i++) {
               // list[i].devName = list[i].nickName;
@@ -415,18 +446,19 @@ export default {
               list[i].devName = list[i].nickName;
               list[i].ip = list[i].deviceIp;
               list[i].devId = list[i].deviceSn;
-              list[i].devMode = list[i].productType;
+              list[i].productType = list[i].productType;
+              list[i].devMode = list[i].deviceType;
               list[i].doorCount = list[i].extInfo.doorCount;
               list[i].videoCount = list[i].extInfo.videoCount;
               list[i].alarmCount = list[i].extInfo.alarmCount;
               list[i].vistorCount = 0;
               list[i].netStatus = list[i].deviceOnlineStatus;
               list[i].createTime = list[i].createTime;
+              list[i].projectUuid = this.projectUuid;
             }
             this.tableData = list;
             this.dataTotal = data.total;
           }
-          console.log(res);
         })
         .catch(() => {
           this.showloading = false;
@@ -468,9 +500,7 @@ export default {
             .map(val => val.deviceUuid)
             .toString()
         };
-        console.log(data);
         api.judgeTask(data).then(res => {
-          console.log(res);
           let data = res.data.data || [];
           // 用于测试，看是否有设备的时候是否可以取消选中状态！
           // let data = this.multipleSelection.map(val => val.deviceUuid);
@@ -479,7 +509,6 @@ export default {
             arr = arr.filter(val => {
               return !data.some(v => v.name === val);
             });
-            console.log(arr);
             if (!data.length) {
               this.ConfirmDialogVisible = true;
             } else {
@@ -493,19 +522,12 @@ export default {
       }
     },
     confirmxiafa() {
-      // this.upgradeVisible = true;
-      // 点击下发确定，获取选中了哪些数据
-      // this.multipleSelection
-      // console.log(this.multipleSelection);
-      // 修改:这边修改所有的数据
       let num = this.multipleSelection.map(item => {
         item.deviceName = item.nickName;
         item.ipAddress = item.deviceIp || item.ip;
         return item;
       });
-      console.log(num);
       api.setConfigIssue(num).then(res => {
-        console.log(res);
         if (res.data.success) {
           this.TheCompanyTableXiafaDialogVisible = true;
         }
@@ -514,9 +536,8 @@ export default {
     confirmUpgrade() {
       this.updateDialogVisible = true;
     },
+    // 手动添加
     manualAdd() {
-      // this.serviceList(this.viewType);
-      this.serviceList(this.viewType);
       this.DType(this.viewType);
       this.manualAddVisible = true;
     },
@@ -538,8 +559,6 @@ export default {
           return sum + (i === 0 ? "" : ",") + val.deviceUuid;
         }, "");
       }
-
-      // let data = { deviceUuid: num };
       api.deleteDevice(num).then(res => {
         if (res.data.success) {
           this.$message.success("删除成功");
@@ -548,44 +567,24 @@ export default {
       });
     },
     close() {},
-    switchType(index) {
-      var arr = ["door", "video", "alarm", "visitor"];
-      let num = [];
-      if (index === 0) {
-        num = this.door;
-      } else if (index === 1) {
-        num = this.video;
-      } else if (index === 2) {
-        num = this.alarm;
-      } else if (index === 3) {
-        num = this.vistor;
-      }
-      this.viewType = arr[index];
-      this.serviceList(this.viewType);
-      console.log(num);
-      // this.deviceTypeArr = num;
-      // this.deviceType = num.reduce((sum, val, index) => {
-      //   return sum + (index === 0 ? "" : ",") + val.value;
-      // }, "");
-      this.index = index;
+    switchType(item) {
+      this.viewType = item.type;
+      this.serviceList(this.projectUuid);
+      this.index = item.index;
       this.getTableData();
-      // this.deviceUuid = "123";
-      // this.remoteControlDialogVisiable = true;
-      this.$emit("changeViewType", arr[index]);
+      this.$emit("changeViewType", this.viewType);
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     editEquipment(row) {
       if (row.extInfo.source === "local") {
-        // this.serviceList(this.viewType);
-        this.$emit("showEdit", row.deviceUuid, row.netStatus);
+        this.$emit("showEdit", row, this.isOneProject);
       } else {
-        this.$emit("showEdit", row.deviceUuid, row.netStatus);
+        this.$emit("showEdit", row, this.isOneProject);
       }
-      this.serviceList(this.viewType);
+      this.serviceList(this.projectUuid);
       this.DType(this.viewType);
-      // this.editEquipMentDialgoVisible = true;
     },
     deleteEquip(row) {
       this.deleteOneRow = row;
@@ -601,47 +600,35 @@ export default {
       this.deleteConfirmDialogVisible = true;
     },
     remoteControl(row) {
-      // debugger;
-      // let deviceUuid = "494F1F75B788464BB05AE87DAB1E8AF2";
-      // this.deviceUuid = deviceUuid;
-
       this.deviceUuid = row.deviceUuid;
       // eslint-disable-next-line
       this[
         this.index === 1 ? "videoDialogVisiable" : "remoteControlDialogVisiable"
       ] = true;
       this.deviceTitle = row.devName;
+      this.bodyTemperature = row.extInfo.bodyTemperature
+        ? row.extInfo.bodyTemperature.toString()
+        : "";
+      console.log("row===", row);
     }
   },
   mounted() {
+    this.projectType = this.$store.state.home.projectType || {};
+    this.isOneProject = Boolean(this.projectType.platformLevel === "levelOne");
     setTimeout(() => {
       let info = this.$refs.tablecontent.getBoundingClientRect();
       this.tableHeight = info.height - 30 - 60 - 40 - 50;
       this.pageSize = ~~(this.tableHeight / 50);
-      // for (let i = 0; i < this.pageSize; i++) {
-      //   this.tableData.push({
-      //     devName: "192.128.1." + (i + 1),
-      //     ip: "192.128.1.1",
-      //     devId: "123456789",
-      //     devMode: "VB510F",
-      //     doorCount: 1,
-      //     netStatus: "online",
-      //     time: "2018-10-08"
-      //   });
-      // }
       // 获取是否有权限查看
       this.getTableData();
-      this.serviceList(this.viewType);
+      this.serviceList();
     }, 0);
   },
   watch: {
     orgUuid(val) {
-      // alert(val);
       this.getTableData();
     },
     DeviceOnOffArr(val) {
-      console.log(val);
-      console.log(this.tableData);
       let array = this.tableData;
       for (let index = 0; index < array.length; index++) {
         const element = array[index];

@@ -21,7 +21,8 @@
           <p class="star">密码：</p>
           <p class="star">确认密码：</p>
           <p>状态：</p>
-          <p>是否关联系统人员：</p>
+        <!--   <p v-if="isStreetTown!='streetTown'">是否关联系统人员：</p> -->
+          <p v-if="isLevelOne == 'levelOne'">是否关联系统人员：</p>
           <p>姓名：</p>
           <p>手机：</p>
           <p>邮箱：</p>
@@ -54,7 +55,7 @@
               <el-radio :label="0">禁用</el-radio>
             </el-radio-group>
           </p>
-          <p style="text-align: left;margin:28px 0 0 0">
+          <p style="text-align: left;margin:28px 0 0 0" v-if="isLevelOne == 'levelOne'">
             <el-switch :disabled="isSuperAdminAccount"
                        v-model="isAssociateSwitch"
                        active-color="rgba(32, 204, 150, 0.2)"
@@ -240,6 +241,14 @@ export default {
   },
   created() {},
   activated() {},
+  computed: {
+    isLevelOne() {
+      return this.$store.state.home.projectType.platformLevel;
+    },
+    isStreetTown() {
+      return this.$store.state.home.projectType.platformType;
+    },
+  },
   mounted() {
     this.invalidTimeVal = new Date();
     console.log("queryBody==", this.queryBody);
@@ -347,9 +356,9 @@ export default {
           this.$message({ type: "warning", message: "两次密码不一致" });
           return;
         }
-        var eReg1 = /^(?![^a-zA-Z]+$)(?!\D+$)/;
+        var eReg1 = /^(?![^a-z]+$)(?![^A-Z]+$)(?!\D+$)/;
         if (!eReg1.test(this.queryBody.password)) {
-          this.$message.warning("密码至少包含数字，字母这两种（区分大小写）");
+          this.$message.warning("密码至少包含数字，字母大写和小写这三种");
           return;
         }
         /* eslint-disable */

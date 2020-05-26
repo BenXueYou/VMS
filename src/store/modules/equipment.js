@@ -2,14 +2,18 @@ import { Storage } from "@/utils/Storage";
 const equipment = {
   state: {
     orgUuid: null, // 组织架构树左边的ID 便于右边的table来更新数据
+    projectUuid: null, // 用户存储设备的项目Uuid,
     tagUuid: null, // 设备的标签列表，便于右边的列表显示
     tagData: {}, // 标签所有的数据
     username: "",
-    DeviceOnOffArr: Storage.read("DeviceOnOffArr") || [],
+    DeviceOnOffArr: Storage.read("DeviceOnOffArr") || []
   },
   mutations: {
     setOrgUuid(state, id) {
       state.orgUuid = id;
+    },
+    setProjectUuid(state, id) {
+      state.projectUuid = id;
     },
     setTagUuid(state, id) {
       state.tagUuid = id;
@@ -38,7 +42,7 @@ const equipment = {
     },
     setDeviceOnOffArr({ commit }, DeviceOnOffArr) {
       commit("SET_DEVICEONOFFARR", DeviceOnOffArr);
-    },
+    }
   }
 };
 

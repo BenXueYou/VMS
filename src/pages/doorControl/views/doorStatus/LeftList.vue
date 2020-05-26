@@ -6,13 +6,13 @@
 			</el-input>
 		</div>
 		<el-tabs v-model="activeName" @tab-click="handleClick">
-			<el-tab-pane label="楼栋单元" name="1">
+			<!-- <el-tab-pane label="楼栋单元" name="1">
 				<building-tree
 					v-if="isShowBuildTree"
 					:filterText="filterText"
 					@setTreeRootData="setTreeRootData"
 				/>
-			</el-tab-pane>
+			</el-tab-pane> -->
 			<el-tab-pane label="设备树" name="2">
 				<org-device-tree
 					v-if="isShowOrgTree"
@@ -39,9 +39,9 @@ export default {
     return {
       icons,
       filterText: "",
-      activeName: "1",
-      isShowBuildTree: true,
-      isShowOrgTree: false,
+      activeName: "2",
+      isShowBuildTree: false,
+      isShowOrgTree: true,
       ShowAuthDisabled: true,
       OwnAuthDisabled: true,
     };

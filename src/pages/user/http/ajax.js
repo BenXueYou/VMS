@@ -1,10 +1,10 @@
 import axios from "@/utils/Request";
 import RestApi from "@/utils/RestApi";
 // import Axios from "axios";
-// import store from "@/store/store.js";
+import store from "@/store/store.js";
+let userUrl = RestApi.userUrl;
+let accountApi = RestApi.userUrl.accountApi;
 
-let userUrl = RestApi.api.userUrl;
-let accountApi = RestApi.api.userUrl.accountApi;
 export function getAccout(params) {
   let { getAccoutUrl: url } = userUrl;
   return axios({
@@ -39,6 +39,9 @@ export function getAuth(params) {
 }
 export function getAccountFeatureAuth(params) {
   let { getAccountFeatureAuthUrl: url } = userUrl.accountApi;
+  if (params.projectType) {
+    params.projectType = store.state.home.projectType.platformType;
+  }
   return axios({
     method: "get",
     url,

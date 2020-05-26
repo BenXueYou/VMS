@@ -10,10 +10,12 @@
          v-for="(item,index) in oData"
          :key="index">
       <label class="label">{{name}}{{index+1}}：</label>
-      <el-input v-model="item.nickName"
+      <el-input :readonly="!isOneProject"
+                v-model="item.nickName"
                 @change="gogo"></el-input>
       <label class="label">通道类型：</label>
-      <el-select v-model="item.channelType"
+      <el-select :disabled="!isOneProject"
+                 v-model="item.channelType"
                  @change="gogo"
                  placeholder="请选择">
         <el-option v-for="item in options"
@@ -23,7 +25,8 @@
         </el-option>
       </el-select>
       <label class="label">能力：</label>
-      <el-select v-model="item.ability"
+      <el-select :disabled="!isOneProject"
+                 v-model="item.ability"
                  style='width:230px;'
                  placeholder="请选择"
                  @change="gogo"
@@ -36,26 +39,30 @@
       </el-select>
       <div class='videoSetingaa'>
         <label class="label">通道国标码：</label>
-        <el-input v-model="item.gBCode"
+        <el-input :readonly="!isOneProject"
+                  v-model="item.gBCode"
                   @focus="gogo"
                   @change="gogo"></el-input>
         <label class="label">经度：</label>
-        <el-input v-model="item.longitude"
+        <el-input :readonly="!isOneProject"
+                  v-model="item.longitude"
                   type="number"
                   @focus="gogo"
                   @change="gogo"></el-input>
         <label class="label">纬度：</label>
-        <el-input v-model="item.latitude"
+        <el-input :readonly="!isOneProject"
+                  v-model="item.latitude"
                   type="number"
                   @focus="gogo"
                   @change="gogo"></el-input>
       </div>
       <div class="mytagWrap">
         <gt-button class="button"
-                   @close="deleteTag(2,index,x)"
+                   @close="deleteTag(index,x)"
                    v-for="(i,x) in item.tagPOList"
                    :key="x">{{i.tagName}}</gt-button>
-        <el-button class="addIcon"
+        <el-button v-if="isOneProject"
+                   class="addIcon"
                    type="primary"
                    @click="chooseTag(2,index)"
                    size="small">
@@ -108,6 +115,12 @@ export default {
       type: Array,
       default() {
         return [];
+      }
+    },
+    isOneProject: {
+      type: Boolean,
+      default() {
+        return false;
       }
     }
   },
